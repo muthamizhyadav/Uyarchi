@@ -7,16 +7,16 @@ const productService = require('../services/product.service');
 const createProduct = catchAsync(async (req, res) => {
   const { body } = req;
   const product = await productService.createProduct(body);
-  if(req.files) {
-    let path = ''
-    req.files.forEach(function(files, index, arr){
-      path = path + files.path + ","
-    })
-    path = path.substring(0, path.lastIndexOf(","))
-    product.image = path
+  if (req.files) {
+    let path = '';
+    req.files.forEach(function (files, index, arr) {
+      path = path + files.path + ',';
+    });
+    path = path.substring(0, path.lastIndexOf(','));
+    product.image = path;
   }
   res.status(httpStatus.CREATED).send(product);
-  await product.save()
+  await product.save();
 });
 
 const getProducts = catchAsync(async (req, res) => {
@@ -45,9 +45,9 @@ const deleteProduct = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    createProduct,
-    getProducts,
-    getproduct,
-    updateProduct,
-    deleteProduct,
-}
+  createProduct,
+  getProducts,
+  getproduct,
+  updateProduct,
+  deleteProduct,
+};
