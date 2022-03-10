@@ -1,6 +1,7 @@
 
 const mongoose = require('mongoose');
 const {v4} = require('uuid')
+const { toJSON, paginate } = require('./plugins');
 const productSchema = mongoose.Schema({
     _id:{
         type:String,
@@ -18,7 +19,7 @@ const productSchema = mongoose.Schema({
         default:[],
     },
     unit:{
-        type:String,
+        type:Number,
     },
     tags:{
         type:String,
@@ -30,7 +31,8 @@ const productSchema = mongoose.Schema({
         type:String,
     },
 })
-
+productSchema.plugin(toJSON);
+productSchema.plugin(paginate);
 const Product = mongoose.model('Product', productSchema);
 
 module.exports = Product;
