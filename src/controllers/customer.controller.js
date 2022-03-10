@@ -4,60 +4,60 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { customerService, tokenService } = require('../services');
 
-const createCustomer = catchAsync(async (req, res) => {
-    const customer= await customerService.createCustomer(req.body);
-    res.status(httpStatus.CREATED).send(customer);
+const create = catchAsync(async (req, res) => {
+  const customer = await customerService.createCustomer(req.body);
+  res.status(httpStatus.CREATED).send(customer);
 });
 
 const login = catchAsync(async (req, res) => {
-    const { email, password } = req.body;
-    const customer = await customerService.loginCustomerWithEmailAndPassword(email, password);
-    res.send({ customer });
+  const { email, password } = req.body;
+  const customer = await customerService.loginCustomerWithEmailAndPassword(email, password);
+  const tokens = await tokenService.generateAuthTokens(customer);
+  res.send({ customer, tokens });
 });
 
-const getCustomers = catchAsync(async (req, res) => {
-    const filter = pick(req.query, ['firstName', 'lastName']);
-    const options = pick(req.query, ['sortBy', 'limit', 'page']);
-    const result = await customerService.queryOems(filter, options);
-    res.send(result);
+// const getcustomer = catchAsync(async (req, res) => {
+//   const filter = pick(req.query, ['name', 'code']);
+//   const options = pick(req.query, ['sortBy', 'limit', 'page']);
+//   filter.active = true;
+//   const result = await oemService.queryOems(filter, options);
+//   res.send(result);
+// });
+
+const getcustomer = catchAsync(async (req, res) => {
+  const customer = await customerService.getCustomerById(req.params.customerId);
+  if (!customer) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Customer not found');
+  }
+  res.send(customer);
 });
 
-const getCustomer = catchAsync(async (req, res) => {
-    const customer = await customerService.getOemById(req.params.customerId);
-    if (!customer) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Customer not found');
-    }
-    res.send(customer);
+const listOems = catchAsync(async (req, res) => {
+  const results = await oemService.listOems();
+  res.send(results);
 });
 
-const listCustomer = catchAsync(async (req, res) => {
-    const results = await customerService.listCustomer();
-    res.send(results);
-});
-
-const updateCustomer = catchAsync(async (req, res) => {
-    const customer = await customerService.updateCustomerById(req.params.customerId, req.body);
-    res.send(customer);
+const updateOem = catchAsync(async (req, res) => {
+  const oem = await oemService.updateOemById(req.params.oemId, req.body);
+  res.send(oem);
 });
 
 const resetPassword = catchAsync(async (req, res) => {
-    await customerService.resetPassword(req.params.customerId, req.body.newPassword);
-    res.status(httpStatus.NO_CONTENT).send();
-});
-  
-  const changePassword = catchAsync(async (req, res) => {
-    await customerService.changePassword(req.params.customerId, req.body.oldPassword, req.body.newPassword);
-    res.status(httpStatus.NO_CONTENT).send();
+  await oemService.resetPassword(req.params.oemId, req.body.newPassword);
+  res.status(httpStatus.NO_CONTENT).send();
 });
 
+const changePassword = catchAsync(async (req, res) => {
+  await oemService.changePassword(req.params.oemId, req.body.oldPassword, req.body.newPassword);
+  res.status(httpStatus.NO_CONTENT).send();
+});
 
 module.exports = {
-    createCustomer,
-    login,
-    getCustomer,
-    getCustomers,
-    updateCustomer,
-    resetPassword,
-    changePassword,
-    listCustomer,
+  create,
+  login,
+  getcustomer,
+  updateOem,
+  resetPassword,
+  changePassword,
+  listOems,
 };
