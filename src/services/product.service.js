@@ -3,7 +3,7 @@ const { Product } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const createProduct = async (productBody) => {
-  const { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime,maxBidAomunt, minBidAmount } = productBody;
+  let { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime,maxBidAomunt, minBidAmount } = productBody;
   if(needBidding === 'no'){
     biddingStartDate = null,
     biddingStartTime = null,
@@ -11,6 +11,13 @@ const createProduct = async (productBody) => {
     biddingEndTime = null,
     maxBidAomunt = null,
     minBidAmount = null
+  }else{
+    biddingStartDate,
+    biddingStartTime,
+    biddingEndDate,
+    biddingEndTime,
+    maxBidAomunt,
+    minBidAmount
   }
   return Product.create(productBody);
 };
