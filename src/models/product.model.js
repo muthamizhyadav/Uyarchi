@@ -27,8 +27,51 @@ const productSchema = mongoose.Schema({
     image:{
         type:String,
     },
-    description:{
+    subscrption:{
         type:String,
+        enum:['yes','no']
+    },
+
+    enquiry:{
+        type:String,
+        enum:['yes','no'],
+    },
+    salePrice:{
+        type:Number
+    },
+    purchasePrice:{
+        type:Number
+    },
+    shippingPrice:{
+        type:Number
+    },
+    productTax:{
+        type:Number
+    },
+    productDiscount:{
+        type:Number
+    },
+    needBidding:{
+        type:String,
+        enum:['yes','no']
+    },
+    biddingStartDate:{
+        type:Date
+    },
+    biddingStartTime:{
+        type:String,
+    },
+    biddingEndDate:{
+        type:Date,
+    },
+    biddingEndTime:{
+        type:String
+    },
+    maxBidAomunt:{
+        type:Number,
+    },
+    minBidAmount:{
+        type:Number
     },
 })
 productSchema.plugin(toJSON);
