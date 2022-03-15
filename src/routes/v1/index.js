@@ -7,6 +7,7 @@ const customerRoute = require('./customer.route')
 const businessRoute =require('./businessDetails.route');
 const vendorRoute = require('./vendor.route')
 const config = require('../../config/config');
+const category = require('./category.route');
 
 const router = express.Router();
 
@@ -35,6 +36,10 @@ const defaultRoutes = [
   {
     path: '/vendor',
     route: vendorRoute,
+  },
+  {
+    path:'/category',
+    route: category,
   },
   
 ];
