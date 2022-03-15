@@ -5,3 +5,4 @@ module.exports.Product = require('./product.model');
 module.exports.Business = require('./businessDetails.model');
 module.exports.Vendor = require('./vendor.model')
 module.exports.sample = require('./sample.Model')
+module.exports.Slogger = require('./slogger.model')
