@@ -9,6 +9,9 @@ _id:{
 category:{
     type:Array,
 },
+description:{
+    type:String,
+}
 })
 categorySchema.plugin(toJSON);
 categorySchema.plugin(paginate);
