@@ -5,5 +5,9 @@ module.exports.userService = require('./user.service');
 module.exports.customerService = require('./customer.service');
 module.exports.BusinessService = require('./businessDetails.service');
 module.exports.VendorService = require('./vendor.service');
+<<<<<<< HEAD
 module.exports.sampleService = require('./sample.Service');
 module.exports.sloggerService = require('./slogger.service');
+=======
+module.exports.categoryService = require('./category.service');
+>>>>>>> vignesh
