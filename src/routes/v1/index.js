@@ -45,19 +45,16 @@ const defaultRoutes = [
     route: category,
   },
   {
-<<<<<<< HEAD
     path:'/combo',
     route: comboRoute,
   },
   {
     path: '/slogger',
     route:sloggerRoute,
-  },
-=======
+  },{
     path:'/cartManagement',
     route: cartManagement,
   }
->>>>>>> vignesh
   
 ];
 
