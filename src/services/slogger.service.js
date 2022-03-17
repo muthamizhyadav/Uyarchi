@@ -33,7 +33,9 @@ const deleteSloggerById = async (sloggerId) => {
     if (!slogger) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Slogger not found');
     }
-    await slogger.remove();
+    slogger.active = false,
+    slogger.archive = true,
+    await slogger.save()
     return slogger;
 };
 
