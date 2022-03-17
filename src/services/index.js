@@ -7,3 +7,4 @@ module.exports.BusinessService = require('./businessDetails.service');
 module.exports.VendorService = require('./vendor.service');
 module.exports.categoryService = require('./category.service');
 module.exports.cartManagementService = require('./cartManagement.service');
+module.exports.street = require('./street.service');

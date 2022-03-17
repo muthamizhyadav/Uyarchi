@@ -9,6 +9,7 @@ const vendorRoute = require('./vendor.route')
 const config = require('../../config/config');
 const category = require('./category.route');
 const cartManagement = require('./cartManagement.route');
+const street = require('./street.route');
 
 const router = express.Router();
 
@@ -45,6 +46,10 @@ const defaultRoutes = [
   {
     path:'/cartManagement',
     route: cartManagement,
+  },
+  {
+    path:'/street',
+    route: street,
   }
   
 ];
