@@ -10,6 +10,7 @@ const sloggerRoute = require('./slogger.route');
 const config = require('../../config/config');
 const comboRoute = require('./ProductCombo.route')
 const category = require('./category.route');
+const cartManagement = require('./cartManagement.route');
 
 const router = express.Router();
 
@@ -44,6 +45,7 @@ const defaultRoutes = [
     route: category,
   },
   {
+<<<<<<< HEAD
     path:'/combo',
     route: comboRoute,
   },
@@ -51,6 +53,11 @@ const defaultRoutes = [
     path: '/slogger',
     route:sloggerRoute,
   },
+=======
+    path:'/cartManagement',
+    route: cartManagement,
+  }
+>>>>>>> vignesh
   
 ];
 
