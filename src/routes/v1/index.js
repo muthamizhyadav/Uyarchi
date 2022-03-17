@@ -10,6 +10,7 @@ const config = require('../../config/config');
 const category = require('./category.route');
 const cartManagement = require('./cartManagement.route');
 const street = require('./street.route');
+const zone = require('./zone.route')
 
 const router = express.Router();
 
@@ -50,7 +51,11 @@ const defaultRoutes = [
   {
     path:'/street',
     route: street,
-  }
+  },
+  {
+    path:'/zone',
+    route: zone,
+  },
   
 ];
 
