@@ -11,6 +11,7 @@ category:{
 },
 description:{
     type:String,
+    default:'hi',
 }
 })
 categorySchema.plugin(toJSON);
