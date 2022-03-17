@@ -8,6 +8,7 @@ const businessRoute =require('./businessDetails.route');
 const vendorRoute = require('./vendor.route')
 const sloggerRoute = require('./slogger.route');
 const config = require('../../config/config');
+const comboRoute = require('./ProductCombo.route')
 const category = require('./category.route');
 
 const router = express.Router();
@@ -39,13 +40,12 @@ const defaultRoutes = [
     route: vendorRoute,
   },
   {
-<<<<<<< HEAD
-    path: '/slogger',
-    route: sloggerRoute,
-=======
     path:'/category',
     route: category,
->>>>>>> vignesh
+  },
+  {
+    path:'/combo',
+    route: comboRoute,
   },
   
 ];
