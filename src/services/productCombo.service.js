@@ -7,12 +7,16 @@ const createCombo = async(comboBody)=>{
 }
 
 const getProductComboById = async (id) => {
-    return ProductCombo.findById(id);
-  
+    const product = ProductCombo.findOne({active:true})
+    if(!product){
+        throw new ApiError(httpStatus.NOT_FOUND,"Product Combo Not Found")
+    }
+    return product;
 };
 
 
 const querCombo = async (filter, options) => {
+    
     return ProductCombo.paginate(filter, options);
 };
 
@@ -30,7 +34,9 @@ const deleteComboById = async (comboId) => {
     if (!combo) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Combo not found');
     }
-    await combo.remove();
+    combo.active = false,
+    combo.archive = true,
+    await combo.save()
     return combo;
 };
 

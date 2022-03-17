@@ -7,8 +7,11 @@ const createSlogger = async(sloggerBody)=>{
 }
 
 const getSloggerById = async (id) => {
-    return Slogger.findById(id);
-  
+    const slogger = Slogger.findOne({active:true})
+    if(!slogger){
+        throw new ApiError(httpStatus.NOT_FOUND,"Slogger Not Found")
+    }
+    return slogger
 };
 
 

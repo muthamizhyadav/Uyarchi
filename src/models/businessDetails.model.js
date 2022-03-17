@@ -45,6 +45,14 @@ const businessSchema = mongoose.Schema(
     minAmount: {
       type: Number,
     },
+    active:{
+      type:Boolean,
+      default:true  
+    },
+    archive:{
+      type:Boolean,
+      default:false,
+    },
   }, { timestamps: { createdAt: 'createdDate',updatedAt: 'updatedDate' } 
 });
 

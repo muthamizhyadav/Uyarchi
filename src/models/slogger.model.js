@@ -53,6 +53,14 @@ const sloggerSchema = mongoose.Schema({
     street:{
         type:String
     },
+    active:{
+        type:Boolean,
+        default:true,
+    },
+    archive:{
+        type:Boolean,
+        default:false,
+    },
 })
 
 

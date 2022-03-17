@@ -27,7 +27,9 @@ const deleteBusinessById = async (businessId) => {
   if (!business) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Business_Details not found');
   }
-  await business.remove();
+  business.archive=true,
+  business.active=false,
+  await business.save();
   return business;
 };
 module.exports = {

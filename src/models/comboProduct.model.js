@@ -24,6 +24,16 @@ const productComboSchema = mongoose.Schema({
     quantity:{
         type:Number,
     },
+    active:{
+        type:Boolean,
+        default:true,
+    },
+    archive:{
+        type:Boolean,
+        default:false,
+    },
+},{
+    timestamps:true,
 })
 
 productComboSchema.plugin(toJSON);

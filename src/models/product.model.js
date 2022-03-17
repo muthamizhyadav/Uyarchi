@@ -73,6 +73,14 @@ const productSchema = mongoose.Schema({
     minBidAmount:{
         type:Number
     },
+    active:{
+        type:Boolean,
+        default:true,
+    },
+    archive:{
+        type:Boolean,
+        default:false,
+    },
 })
 productSchema.plugin(toJSON);
 productSchema.plugin(paginate);
