@@ -11,6 +11,7 @@ const config = require('../../config/config');
 const comboRoute = require('./ProductCombo.route')
 const category = require('./category.route');
 const cartManagement = require('./cartManagement.route');
+const wardRoute = require('./ward.route');
 
 const router = express.Router();
 
@@ -54,6 +55,9 @@ const defaultRoutes = [
   },{
     path:'/cartManagement',
     route: cartManagement,
+  },{
+    path: '/ward',
+    route: wardRoute
   }
   
 ];

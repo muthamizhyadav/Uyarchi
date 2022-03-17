@@ -24,7 +24,7 @@ const cartManagementSchema = mongoose.Schema({
 })
 cartManagementSchema.plugin(toJSON);
 cartManagementSchema.plugin(paginate);
-const CartManagement = mongoose.model('Attendence', cartManagementSchema);
+const CartManagement = mongoose.model('Cart', cartManagementSchema);
 
 module.exports = CartManagement;
 
