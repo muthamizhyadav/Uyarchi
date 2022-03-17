@@ -47,6 +47,10 @@ const defaultRoutes = [
     path:'/combo',
     route: comboRoute,
   },
+  {
+    path: '/slogger',
+    route:sloggerRoute,
+  },
   
 ];
 

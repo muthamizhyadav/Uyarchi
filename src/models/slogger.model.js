@@ -1,11 +1,12 @@
+
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
 
 const sloggerSchema = mongoose.Schema({
   _id: {
-    type: String,
-    default: v4,
+    type:String,
+    default:v4(),
   },
   customerType: {
     type: String,
