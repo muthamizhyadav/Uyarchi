@@ -11,7 +11,15 @@ category:{
 },
 description:{
     type:String,
-    default:'hi',
+    default:'',
+},
+active:{
+    type:Boolean,
+    default:true,
+},
+archive:{
+    type:Boolean,
+    default:false,
 }
 })
 categorySchema.plugin(toJSON);

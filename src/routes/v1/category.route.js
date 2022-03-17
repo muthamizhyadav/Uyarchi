@@ -6,5 +6,9 @@ router
 .route('/')
 .post(categoryController.createCategory)
 
+router.route('/:categoryId')
+.get(categoryController.getCategoryhDetailsById)
+.put(categoryController.updateCategory)
+.delete(categoryController.deleteCategory);
 
 module.exports = router;

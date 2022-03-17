@@ -1,16 +1,22 @@
 const httpStatus = require('http-status');
-const { category } = require('../models');
+const { Category } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const createcategory = async (categoryBody) => {
-    return category.create(categoryBody);
+    return Category.create(categoryBody);
   };
   const getcategoryById = async (id) => {
-    return category.findById(id);
+    const category=Category.findOne({active:true});
+    if(!category){
+    throw new ApiError(httpStatus.NOT_FOUND,"Category Not Found")
+    }
+    return category
+
+
   };
 
   const querycategory = async (filter, options) => {
-    return category.paginate(filter, options);
+    return Category.paginate(filter, options);
   };
 
   const updatecategoryById = async (categoryId, updateBody) => {
@@ -23,14 +29,16 @@ const createcategory = async (categoryBody) => {
   };
 
   const deletecategoryById = async (categoryId) => {
-    const category = await getcategoryById(productId);
+    const category = await getcategoryById(categoryId);
     if (!category) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
     }
-    await category.remove();
+   category.active = false,
+   category.archive = true,
+   await category.save() 
     return category;
   };
-  
+
   module.exports = {
       createcategory,
       getcategoryById,
