@@ -11,6 +11,7 @@ const category = require('./category.route');
 const cartManagement = require('./cartManagement.route');
 const street = require('./street.route');
 const zone = require('./zone.route')
+const district = require('./district.route')
 
 const router = express.Router();
 
@@ -55,6 +56,10 @@ const defaultRoutes = [
   {
     path:'/zone',
     route: zone,
+  },
+  {
+    path:'/district',
+    route: district,
   },
   
 ];

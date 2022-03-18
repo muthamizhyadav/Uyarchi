@@ -7,10 +7,7 @@ const createStreet = async (streetBody) => {
   };
   
   const getStreetById = async (id) => {
-    const street=Street.findOne({active:true});
-    if(!street){
-        throw new ApiError(httpStatus.NOT_FOUND,"Street Not Found")
-        }
+    const street=Street.findById(id);
         return street
   };
   

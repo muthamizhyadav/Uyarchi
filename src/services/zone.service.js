@@ -7,10 +7,7 @@ const createZone = async (streetBody) => {
   };
   
   const getZoneById = async (id) => {
-    const zone=Zone.findOne({active:true});
-    if(!zone){
-        throw new ApiError(httpStatus.NOT_FOUND,"Zone Not Found")
-        }
+    const zone=Zone.findById(id);
         return zone
     
   };

@@ -11,7 +11,7 @@ const createZone = catchAsync(async (req, res) => {
 
 const getZoneDetailsById = catchAsync(async (req, res) => {
   const zone = await ZoneService.getZoneById(req.params.zoneId);
-  if (!zone) {
+  if (!zone || zone.active === false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Zone_Details not found');
   }
   res.send(zone);

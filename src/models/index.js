@@ -8,3 +8,4 @@ module.exports.Category = require('./category.model');
 module.exports.CartManagement = require('./cartManagement.model');
 module.exports.Street = require('./street.model');
 module.exports.Zone = require('./zone.model');
+module.exports.District = require('./district.model');

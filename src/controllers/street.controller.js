@@ -11,7 +11,7 @@ const createStreet = catchAsync(async (req, res) => {
 
 const getStreetDetailsById = catchAsync(async (req, res) => {
   const street = await StreetService.getStreetById(req.params.streetId);
-  if (!street) {
+  if (!street || street.active === false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Street_Details not found');
   }
   res.send(street);
