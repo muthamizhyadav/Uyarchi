@@ -11,7 +11,9 @@ const config = require('../../config/config');
 const comboRoute = require('./ProductCombo.route');
 const category = require('./category.route');
 const cartManagement = require('./cartManagement.route');
-const wardRoute = require('./ward.route');
+const street = require('./street.route');
+const zone = require('./zone.route')
+const district = require('./district.route')
 
 const router = express.Router();
 
@@ -58,9 +60,18 @@ const defaultRoutes = [
     route: cartManagement,
   },
   {
-    path: '/ward',
-    route: wardRoute,
+    path:'/street',
+    route: street,
   },
+  {
+    path:'/zone',
+    route: zone,
+  },
+  {
+    path:'/district',
+    route: district,
+  },
+  
 ];
 
 const devRoutes = [

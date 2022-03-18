@@ -12,3 +12,7 @@ module.exports.ProductComboService = require('./productCombo.service');
 module.exports.categoryService = require('./category.service');
 module.exports.cartManagementService = require('./cartManagement.service');
 module.exports.wardService = require('./ward.service');
+module.exports.cartManagementService = require('./cartManagement.service');
+module.exports.street = require('./street.service');
+module.exports.zone= require('./zone.service');
+module.exports.district= require('./district.service');
