@@ -35,8 +35,8 @@ const userSchema = mongoose.Schema(
       },
       private: true, // used by the toJSON plugin
     },
-    phoneNumber:{
-      type:Number
+    phoneNumber: {
+      type: Number,
     },
     role: {
       type: String,

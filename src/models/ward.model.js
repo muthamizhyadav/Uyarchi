@@ -18,13 +18,13 @@ const wardSchema = mongoose.Schema(
     ward: {
       type: String,
     },
-    active:{
-        type:Boolean,
-        default:true,
+    active: {
+      type: Boolean,
+      default: true,
     },
-    archive:{
-        type:Boolean,
-        default:false,
+    archive: {
+      type: Boolean,
+      default: false,
     },
   },
   {

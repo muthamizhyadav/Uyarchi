@@ -27,7 +27,7 @@ const getSloggerById = catchAsync(async (req, res) => {
   res.send(slogger);
 });
 
-const updateSlogger =  catchAsync(async (req, res) => {
+const updateSlogger = catchAsync(async (req, res) => {
   const slogger = await sloggerService.updateSloggerById(req.params.sloggerId, req.body);
   res.send(slogger);
 });
@@ -43,4 +43,3 @@ module.exports = {
   updateSlogger,
   deleteSloggerById,
 };
-

@@ -28,8 +28,8 @@ const businessSchema = mongoose.Schema(
     },
     needBidding: {
       type: String,
-      Enum:['Yes','No'],
-      default:'Yes',
+      Enum: ['Yes', 'No'],
+      default: 'Yes',
     },
     startDate: {
       type: Date,
@@ -45,21 +45,21 @@ const businessSchema = mongoose.Schema(
     minAmount: {
       type: Number,
     },
-    active:{
-      type:Boolean,
-      default:true  
+    active: {
+      type: Boolean,
+      default: true,
     },
-    archive:{
-      type:Boolean,
-      default:false,
+    archive: {
+      type: Boolean,
+      default: false,
     },
-  }, { timestamps: { createdAt: 'createdDate',updatedAt: 'updatedDate' } 
-});
+  },
+  { timestamps: { createdAt: 'createdDate', updatedAt: 'updatedDate' } }
+);
 
 businessSchema.plugin(toJSON);
 businessSchema.plugin(paginate);
 
-const Business = mongoose.model('BusinessDetails', businessSchema)
+const Business = mongoose.model('BusinessDetails', businessSchema);
 
-
-module.exports = Business
+module.exports = Business;

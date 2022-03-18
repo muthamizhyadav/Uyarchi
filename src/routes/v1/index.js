@@ -3,12 +3,12 @@ const authRoute = require('./auth.route');
 const userRoute = require('./user.route');
 const docsRoute = require('./docs.route');
 const productRoute = require('./product.route');
-const customerRoute = require('./customer.route')
-const businessRoute =require('./businessDetails.route');
-const vendorRoute = require('./vendor.route')
+const customerRoute = require('./customer.route');
+const businessRoute = require('./businessDetails.route');
+const vendorRoute = require('./vendor.route');
 const sloggerRoute = require('./slogger.route');
 const config = require('../../config/config');
-const comboRoute = require('./ProductCombo.route')
+const comboRoute = require('./ProductCombo.route');
 const category = require('./category.route');
 const cartManagement = require('./cartManagement.route');
 const wardRoute = require('./ward.route');
@@ -42,24 +42,25 @@ const defaultRoutes = [
     route: vendorRoute,
   },
   {
-    path:'/category',
+    path: '/category',
     route: category,
   },
   {
-    path:'/combo',
+    path: '/combo',
     route: comboRoute,
   },
   {
     path: '/slogger',
-    route:sloggerRoute,
-  },{
-    path:'/cartManagement',
+    route: sloggerRoute,
+  },
+  {
+    path: '/cartManagement',
     route: cartManagement,
-  },{
+  },
+  {
     path: '/ward',
-    route: wardRoute
-  }
-  
+    route: wardRoute,
+  },
 ];
 
 const devRoutes = [

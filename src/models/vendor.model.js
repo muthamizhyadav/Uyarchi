@@ -1,64 +1,67 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 const bcrypt = require('bcryptjs');
-const { v4 } = require('uuid')
-const vendorSchema = mongoose.Schema({
-    _id:{
-        type:String,
-        default:v4,
+const { v4 } = require('uuid');
+const vendorSchema = mongoose.Schema(
+  {
+    _id: {
+      type: String,
+      default: v4,
     },
-    name:{
-        type:String,
-        required:true,
+    name: {
+      type: String,
+      required: true,
     },
-    displayName:{
-        type:String,
-        required:true,
+    displayName: {
+      type: String,
+      required: true,
     },
-    phone:{
-        type:Number,
-        required:true,
+    phone: {
+      type: Number,
+      required: true,
     },
-    password:{
-        type:String,
-        min:5,
-        required:true,
+    password: {
+      type: String,
+      min: 5,
+      required: true,
     },
-    confirmPassword:{
-        type:String,
-        required:true,
+    confirmPassword: {
+      type: String,
+      required: true,
     },
-    companyName:{
-        type:String,
+    companyName: {
+      type: String,
     },
-    addressLine1:{
-        type:String,
+    addressLine1: {
+      type: String,
     },
-    addressLine2:{
-        type:String,
+    addressLine2: {
+      type: String,
     },
-    city:{
-        type:String,
+    city: {
+      type: String,
     },
-    state:{
-        type:String,
+    state: {
+      type: String,
     },
-    country:{
-        type:String,
+    country: {
+      type: String,
     },
-    pinCode:{
-        type:Number,
+    pinCode: {
+      type: Number,
     },
-    agree:{
-        type:Boolean,
+    agree: {
+      type: Boolean,
     },
-    active:{
-        type:Boolean,
-        default:true,
+    active: {
+      type: Boolean,
+      default: true,
     },
-},{
-    timestamps:true
-})
+  },
+  {
+    timestamps: true,
+  }
+);
 
 vendorSchema.plugin(toJSON);
 vendorSchema.plugin(paginate);

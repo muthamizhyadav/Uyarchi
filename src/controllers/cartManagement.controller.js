@@ -36,9 +36,9 @@ const deleteCartManagement = catchAsync(async (req, res) => {
   await CartManagementService.deleteCartManagementById(req.params.cartManagementId);
   res.status(httpStatus.NO_CONTENT).send();
 });
-  module.exports = {
-    createCartManagement,
-    getCartManagementDetailsById,
-    updateCartManagement,
-    deleteCartManagement,
-  };
+module.exports = {
+  createCartManagement,
+  getCartManagementDetailsById,
+  updateCartManagement,
+  deleteCartManagement,
+};

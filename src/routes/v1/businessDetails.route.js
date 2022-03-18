@@ -10,5 +10,4 @@ router
   .put(BusinessController.updateBusiness)
   .delete(BusinessController.deletBusiness);
 
-
-module.exports = router
+module.exports = router;

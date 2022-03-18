@@ -63,5 +63,8 @@ app.use(errorConverter);
 
 // handle error
 app.use(errorHandler);
-app.use('/C:\Users\SYSTEM 10\Downloads\node-express-boilerplate-master\Uyarchi\src\middlewares\.uploads',express.static('uploads'))
+app.use(
+  '/C:UsersSYSTEM 10Downloads\node-express-boilerplate-masterUyarchisrcmiddlewares.uploads',
+  express.static('uploads')
+);
 module.exports = app;

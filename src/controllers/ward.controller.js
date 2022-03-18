@@ -5,8 +5,8 @@ const catchAsync = require('../utils/catchAsync');
 const wardService = require('../services/ward.service');
 
 const createWard = catchAsync(async (req, res) => {
-    const ward = await wardService.createWard(req.body);
-    res.status(httpStatus.CREATED).send(ward);
+  const ward = await wardService.createWard(req.body);
+  res.status(httpStatus.CREATED).send(ward);
 });
 
 // const getProducts = catchAsync(async (req, res) => {
@@ -35,8 +35,8 @@ const deleteWard = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    createWard,
-    getward,
-    updateward,
-    deleteWard
+  createWard,
+  getward,
+  updateward,
+  deleteWard,
 };

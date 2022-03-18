@@ -39,9 +39,7 @@ const deleteProductById = async (productId) => {
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
   }
-  product.active = false,
-  product.archive = true,
-  await product.save()
+  (product.active = false), (product.archive = true), await product.save();
   return product;
 };
 module.exports = {

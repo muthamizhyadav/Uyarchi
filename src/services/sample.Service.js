@@ -3,10 +3,9 @@ const { sample } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const createSample = async (sampleBody) => {
-    return sample.create(sampleBody)
+  return sample.create(sampleBody);
 };
 
-
 module.exports = {
-    createSample
-}
+  createSample,
+};

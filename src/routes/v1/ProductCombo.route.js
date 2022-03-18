@@ -4,6 +4,10 @@ const productComboController = require('../../controllers/productCombo.controlle
 const router = express.Router();
 
 router.route('/').post(productComboController.createCombo);
-router.route('/:comboId').get(productComboController.getCombo).delete(productComboController.deleteCombo).put(productComboController.updateCombo);
+router
+  .route('/:comboId')
+  .get(productComboController.getCombo)
+  .delete(productComboController.deleteCombo)
+  .put(productComboController.updateCombo);
 
 module.exports = router;

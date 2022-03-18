@@ -4,17 +4,13 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { ProductComboService } = require('../services');
 
-
-
-
 const createCombo = catchAsync(async (req, res) => {
-    const combo = await ProductComboService.createCombo(req.body);
-    if (!combo) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Combo Not Fount.');
-    }
-    res.status(httpStatus.CREATED).send(combo);
-  });
-  
+  const combo = await ProductComboService.createCombo(req.body);
+  if (!combo) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Combo Not Fount.');
+  }
+  res.status(httpStatus.CREATED).send(combo);
+});
 
 // const getProducts = catchAsync(async (req, res) => {
 //   const filter = pick(req.query, ['productTitle', 'unit']);
@@ -42,8 +38,8 @@ const deleteCombo = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    createCombo,
-    getCombo,
-    updateCombo,
-    deleteCombo
+  createCombo,
+  getCombo,
+  updateCombo,
+  deleteCombo,
 };
