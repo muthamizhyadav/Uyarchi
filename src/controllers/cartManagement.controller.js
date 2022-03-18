@@ -5,8 +5,18 @@ const catchAsync = require('../utils/catchAsync');
 const CartManagementService = require('../services/cartManagement.service');
 
 const createCartManagement = catchAsync(async (req, res) => {
-    const cartManagement = await CartManagementService.createCartManagement(req.body);
-    res.status(httpStatus.CREATED).send(cartManagement);
+  const { body } = req;
+  const cart = await CartManagementService.createCartManagement(body);
+  if (req.files) {
+    let path = '';
+    req.files.forEach(function (files, index, arr) {
+      path = path + files.path + ',';
+    });
+    path = path.substring(0, path.lastIndexOf(','));
+    cart.image = path;
+  }
+  res.status(httpStatus.CREATED).send(cart);
+  await cart.save();
 });
 
 const getCartManagementDetailsById = catchAsync(async (req, res) => {

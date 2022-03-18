@@ -13,6 +13,9 @@ const cartManagementSchema = mongoose.Schema({
         type: String,
         Enum:['new','old'],
    },
+   image:{
+       type:String,
+   },
     active:{
         type:Boolean,
         default:true,

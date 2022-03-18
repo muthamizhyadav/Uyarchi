@@ -1,10 +1,10 @@
 const express = require('express');
-// const customerController = require('../../controllers/customer.controller');
 const cartManagementController = require('../../controllers/cartManagement.controller')
+const upload = require('../../middlewares/upload');
 const router = express.Router();
 router
 .route('/')
-.post(cartManagementController.createCartManagement)
+.post(upload.array('image'), cartManagementController.createCartManagement);
 
 router.route('/:cartManagementId')
 .get(cartManagementController.getCartManagementDetailsById)
