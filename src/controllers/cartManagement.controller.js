@@ -21,7 +21,7 @@ const createCartManagement = catchAsync(async (req, res) => {
 
 const getCartManagementDetailsById = catchAsync(async (req, res) => {
   const cartManagement = await CartManagementService.getCartManagementById(req.params.cartManagementId);
-  if (!cartManagement) {
+  if (!cartManagement || cartManagement.activve === false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'CartManagement_Details not found');
   }
   res.send(cartManagement);

@@ -21,7 +21,7 @@ const createSlogger = catchAsync(async (req, res) => {
 
 const getSloggerById = catchAsync(async (req, res) => {
   const slogger = await sloggerService.getSloggerById(req.params.sloggerId);
-  if (!slogger) {
+  if (!slogger || slogger.active === false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'slogger not found');
   }
   res.send(slogger);

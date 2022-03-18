@@ -18,7 +18,7 @@ const createWard = catchAsync(async (req, res) => {
 
 const getward = catchAsync(async (req, res) => {
   const ward = await wardService.getWardById(req.params.wardId);
-  if (!ward) {
+  if (!ward || ward.active === false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Ward not found');
   }
   res.send(ward);

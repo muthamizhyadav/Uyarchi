@@ -11,7 +11,7 @@ const createCategory = catchAsync(async (req, res) => {
 
 const getCategoryhDetailsById = catchAsync(async (req, res) => {
   const category = await categoryService.getcategoryById(req.params.categoryId);
-  if (!category) {
+  if (!category || category.active === false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Business_Details not found');
   }
   res.send(category);

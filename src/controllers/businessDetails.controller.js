@@ -21,7 +21,7 @@ const getBusinessDetails = catchAsync(async (req, res) => {
 
 const getbusinessDetailsbyId = catchAsync(async (req, res) => {
   const business = await BusinessService.getBusinessById(req.params.businessId);
-  if (!business) {
+  if (!business || !business.active === true) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Business_Details not found');
   }
   res.send(business);

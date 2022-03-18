@@ -25,7 +25,7 @@ const createCombo = catchAsync(async (req, res) => {
 
 const getCombo = catchAsync(async (req, res) => {
   const Combo = await ProductComboService.getProductComboById(req.params.comboId);
-  if (!Combo) {
+  if (!Combo || Combo.active === false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Combo not found');
   }
   res.send(Combo);

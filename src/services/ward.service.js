@@ -6,12 +6,8 @@ const createWard = async (wardBody) => {
   return Ward.create(wardBody);
 };
 
-const getWardById = async (id) => {
-  const ward = Ward.findOne({ active: true });
-  if (!ward) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'ward Not Found');
-  }
-  return ward;
+const getWardById = async (id, active) => {
+  return Ward.findById(id);
 };
 
 const querWard = async (filter, options) => {

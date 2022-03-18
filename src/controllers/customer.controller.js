@@ -26,7 +26,7 @@ const login = catchAsync(async (req, res) => {
 
 const getcustomer = catchAsync(async (req, res) => {
   const customer = await customerService.getCustomerById(req.params.customerId);
-  if (!customer) {
+  if (!customer || customer.active === false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Customer not found');
   }
   res.send(customer);
