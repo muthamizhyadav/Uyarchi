@@ -1,0 +1,23 @@
+service: uyarchi
+
+provider:
+  name: C.panel
+  runtime: nodejs14.x
+  stage: integrations
+  region: ap-south-1
+  environment:
+    JWT_SECRET: thisisasamplesecret
+    JWT_ACCESS_EXPIRATION_MINUTES: 240
+    JWT_REFRESH_EXPIRATION_DAYS: 30
+    JWT_RESET_PASSWORD_EXPIRATION_MINUTES: 10
+    NODE_ENV: development
+    JWT_VERIFY_EMAIL_EXPIRATION_MINUTES: 10
+    MONGODB_URL: mongodb://127.0.0.1:27017/Test
+    EMAIL_FROM: muthamizhyadav@gmail.com
+
+functions:
+  app:
+    handler: lambda.handler
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
