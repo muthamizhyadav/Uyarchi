@@ -46,6 +46,9 @@ const getUserByEmail = async (email) => {
   return User.findOne({ email });
 };
 
+const getUserByMobile = async (phoneNumber) =>{
+  return User.findOne({phoneNumber})
+};
 /**
  * Update user by id
  * @param {ObjectId} userId
@@ -84,6 +87,7 @@ module.exports = {
   queryUsers,
   getUserById,
   getUserByEmail,
+  getUserByMobile,
   updateUserById,
   deleteUserById,
 };
