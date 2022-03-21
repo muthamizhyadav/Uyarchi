@@ -16,6 +16,10 @@ const deliveryAddressSchema = mongoose.Schema({
     address:{
         type:String,
     },
+    addressType:{
+        type:String,
+        enum:['office','home','commercial'],  
+    },
     landMark:{
         type:String,
     },
