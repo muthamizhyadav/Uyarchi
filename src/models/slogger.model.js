@@ -1,15 +1,10 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
-const d1 = new Date();
-// console.log(d1);
 
-// converting to number
-const result = d1.getTime();
-// console.log(result);
 const sloggerSchema = mongoose.Schema({
   _id: {
-    type: Number,
+    type: String,
     default:v4,
   },
   customerType: {
