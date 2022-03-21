@@ -16,3 +16,4 @@ module.exports.cartManagementService = require('./cartManagement.service');
 module.exports.street = require('./street.service');
 module.exports.zone= require('./zone.service');
 module.exports.district= require('./district.service');
+module.exports.deliveryAddress= require('./deliveryAddress.service');
