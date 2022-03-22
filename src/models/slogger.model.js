@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
-const date = new Date().getTime()
-console.log(date)
 const sloggerSchema = mongoose.Schema({
   _id: {
-    type: Number,
-    default:date,
+    type: String,
+    default:v4,
   },
   customerType: {
     type: String,
