@@ -3,7 +3,7 @@ const { District } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const createDistrict = async (districtBody) => {
-    return District.create(districtBody);
+    return District.create(districtBody)
 };
 
 const getAllDistrict = async () => {

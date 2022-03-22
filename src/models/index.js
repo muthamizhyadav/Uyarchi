@@ -10,6 +10,7 @@ module.exports.ProductCombo = require('./comboProduct.model');
 module.exports.Category = require('./category.model');
 module.exports.Vendor = require('./vendor.model');
 module.exports.Category = require('./category.model');
+module.exports.District = require('./district.model');
 module.exports.CartManagement = require('./cartManagement.model');
 module.exports.Ward = require('./ward.model');
 module.exports.DeliveryAddress = require('./deliveryAddress.model');
