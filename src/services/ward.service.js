@@ -1,8 +1,16 @@
 const httpStatus = require('http-status');
 const { Ward } = require('../models');
+const Zone = require('../models/zone.model')
 const ApiError = require('../utils/ApiError');
 
+
 const createWard = async (wardBody) => {
+  const { zone, zoneId} = wardBody
+  console.log(zoneId)
+  let zon = await Zone.findById(zoneId)
+    if(zon === null || zon.zone !==  zone){
+      throw new ApiError(httpStatus.NO_CONTENT, "! 🖕oops")
+    }
   return Ward.create(wardBody);
 };
 

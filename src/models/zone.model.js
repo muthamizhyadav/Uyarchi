@@ -12,6 +12,7 @@ const zoneSchema = mongoose.Schema({
     zone:{
         type: String,
    },
+   
     active:{
         type:Boolean,
         default:true,

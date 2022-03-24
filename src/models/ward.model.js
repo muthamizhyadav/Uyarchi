@@ -18,6 +18,9 @@ const wardSchema = mongoose.Schema(
     ward: {
       type: String,
     },
+    zoneId:{
+      type: String,
+    },
     active: {
       type: Boolean,
       default: true,

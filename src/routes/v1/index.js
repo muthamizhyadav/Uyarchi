@@ -15,6 +15,7 @@ const street = require('./street.route');
 const zone = require('./zone.route')
 const district = require('./district.route')
 const deliveryAddress = require('./deliveryAddress.route')
+const ward = require('./ward.route')
 
 const router = express.Router();
 
@@ -67,6 +68,10 @@ const defaultRoutes = [
   {
     path:'/zone',
     route: zone,
+  },
+  {
+    path:'/ward',
+    route:ward,
   },
   {
     path:'/district',
