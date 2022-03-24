@@ -6,12 +6,9 @@ const District = require('../models/district.model');
 
 const createZone = async (zoneBody) => {
   const { districtId } = zoneBody
-  console.log(zoneBody)
   let dis = await District.findById(districtId);
   let values = {}
   values = {...zoneBody, ...{district:dis.district}}
-  console.log(values)
-  console.log(dis.district)
   if(dis === null){
     throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
   }
