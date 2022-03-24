@@ -5,9 +5,9 @@ const ApiError = require('../utils/ApiError');
 const District = require('../models/district.model');
 
 const createZone = async (zoneBody) => {
-  const { districtId, district } = zoneBody
+  const { districtId } = zoneBody
   let dis = await District.findById(districtId);
-  if(dis === null || dis.district !== district){
+  if(dis === null){
     throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
   }
   return Zone.create(zoneBody)
