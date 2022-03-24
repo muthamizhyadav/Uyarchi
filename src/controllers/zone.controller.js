@@ -17,6 +17,13 @@ const getZoneDetailsById = catchAsync(async (req, res) => {
   res.send(zone);
 });
 
+const getAllZones = catchAsync (async (req,res)=>{
+  const zones = await ZoneService.getAllZone(req.params);
+  if(!zones){
+    throw new ApiError(httpStatus.NOT_FOUND, "Zone Not Available ")
+  }
+  res.send(zones)
+})
 const updateZone = catchAsync(async (req, res) => {
   const zone = await ZoneService.updateZoneById(req.params.zoneId, req.body);
   res.send(zone);
@@ -28,6 +35,7 @@ const deleteZone = catchAsync(async (req, res) => {
 });
   module.exports = {
     createZone,
+    getAllZones,
     getZoneDetailsById,
     updateZone,
     deleteZone,

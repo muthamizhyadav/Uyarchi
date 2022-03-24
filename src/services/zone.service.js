@@ -13,6 +13,10 @@ const createZone = async (zoneBody) => {
   return Zone.create(zoneBody)
 };
 
+const getAllZone = async()=>{
+  return Zone.find();
+} 
+
 const getZoneById = async (id) => {
   const zone = Zone.findById(id);
   return zone;
@@ -40,6 +44,7 @@ const deleteZoneById = async (zoneId) => {
 };
 module.exports = {
   createZone,
+  getAllZone,
   getZoneById,
   updateZoneById,
   deleteZoneById,

@@ -4,7 +4,7 @@ const zoneController = require('../../controllers/zone.controller')
 const router = express.Router();
 router
 .route('/')
-.post(zoneController.createZone)
+.post(zoneController.createZone).get(zoneController.getAllZones)
 
 router.route('/:zoneId')
 .get(zoneController.getZoneDetailsById)
