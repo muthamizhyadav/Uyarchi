@@ -13,9 +13,8 @@ const login = catchAsync(async (req, res) => {
   const { phoneNumber , password } = req.body;
   const user = await authService.loginUserWithEmailAndPassword(phoneNumber, password);
   const tokens = await tokenService.generateAuthTokens(user);
-  console.log(tokens.access.token)
   let options = {
-    httpOnly : true
+    httpOnly : true,
   }
   res.cookie("token", tokens.access.token, options)
   res.send({ user, tokens })
