@@ -36,11 +36,11 @@ const getReceivedORderById = async (id, active) => {
   };
   
   const deleteReceivedOrdersById = async (receiveId) => {
-    const received = await getWardById(receiveId);
+    const received = await getReceivedORderById(receiveId);
     if (!received) {
       throw new ApiError(httpStatus.NOT_FOUND, 'ward not found');
     }
-    (received.active = false), (received.archive = true), await ward.save();
+    (received.active = false), (received.archive = true), await received.save();
     return received;
 };
 
