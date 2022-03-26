@@ -16,3 +16,4 @@ module.exports.Zone = require('./zone.model')
 module.exports.Ward = require('./ward.model');
 module.exports.ReceivedOrders = require('./receivedOrders.model');
 module.exports.DeliveryAddress = require('./deliveryAddress.model');
+module.exports.SCVPurchase = require('./scv.Purchase.model');

@@ -11,7 +11,10 @@ const cartManagementSchema = mongoose.Schema({
   },
   type: {
     type: String,
-    Enum: ['new', 'old'],
+    Enum: ['4 Wheeler', '3 Wheeler', '2 Wheeler'],
+  },
+  cartNumber:{
+    type:String,
   },
   image: {
     type: String,
@@ -24,6 +27,8 @@ const cartManagementSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+},{
+  timestamps: { createdAt: 'createdDate',updatedAt: 'updatedDate' } 
 });
 cartManagementSchema.plugin(toJSON);
 cartManagementSchema.plugin(paginate);

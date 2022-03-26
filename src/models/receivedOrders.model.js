@@ -27,7 +27,8 @@ const receivedOrderSchema = mongoose.Schema({
         default:false,
     },
     active:{
-        type:Boolean,
+        type:String,
+        enum:['Hold', 'Approved', 'Pending'],
         default:true,
     },
 },{
