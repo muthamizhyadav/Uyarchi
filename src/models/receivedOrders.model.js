@@ -22,6 +22,14 @@ const receivedOrderSchema = mongoose.Schema({
     status:{
         type:Boolean,
     },
+    archive:{
+        type:Boolean,
+        default:false,
+    },
+    active:{
+        type:Boolean,
+        default:true,
+    },
 },{
     timestamp:true
 });
