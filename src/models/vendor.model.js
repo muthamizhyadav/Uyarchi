@@ -8,13 +8,8 @@ const vendorSchema = mongoose.Schema(
       type: String,
       default: v4,
     },
-    name: {
-      type: String,
-      required: true,
-    },
-    displayName: {
-      type: String,
-      required: true,
+    email:{
+      type:String,
     },
     phone: {
       type: Number,
@@ -28,9 +23,6 @@ const vendorSchema = mongoose.Schema(
     confirmPassword: {
       type: String,
       required: true,
-    },
-    companyName: {
-      type: String,
     },
     addressLine1: {
       type: String,
