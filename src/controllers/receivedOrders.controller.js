@@ -20,7 +20,7 @@ const creatreceivedOrders = catchAsync(async (req, res) => {
 // });
 
 const getReceivedOrdersById = catchAsync(async (req, res) => {
-  const receive = await receiveOrdersService.getReceivedOrdersById(req.params.receiveId);
+  const receive = await receiveOrdersService.getReceivedORderById(req.params.receiveId);
   if (!receive || receive.active === false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Received Orders not found');
   }
