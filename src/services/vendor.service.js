@@ -4,6 +4,10 @@ const { Vendor } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const createVendor = async (vendorBody) => {
+  const { password, confirmPassword } =vendorBody
+  if(password !== confirmPassword){
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Password Does Not Match 😞');
+  }
   if (await Vendor.isEmailTaken(vendorBody.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }

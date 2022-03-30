@@ -19,7 +19,11 @@ const getWardById = async (id, active) => {
   return Ward.findById(id);
 };
 
-const queryWard = async (filter, options) => {
+const getAllWard = async ()=>{
+  return Ward.find();
+};
+
+const querWard = async (filter, options) => {
   return Ward.paginate(filter, options);
 };
 
@@ -44,6 +48,7 @@ const deleteWardById = async (wardId) => {
 module.exports = {
   createWard,
   getWardById,
+  getAllWard,
   updatewardById,
   deleteWardById,
 };

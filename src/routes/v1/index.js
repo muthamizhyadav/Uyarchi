@@ -17,6 +17,10 @@ const district = require('./district.route')
 const deliveryAddress = require('./deliveryAddress.route')
 const ward = require('./ward.route');
 const manageIssues = require('./manageIssues.route');
+const ward = require('./ward.route')
+const receive =require('./receivedOrderse.route');
+const scv = require('./scv.route');
+const manageScvRoute = require('./manageScv.route')
 
 const router = express.Router();
 
@@ -85,6 +89,18 @@ const defaultRoutes = [
   {
     path:'/manageIssues',
     route: manageIssues,
+  },
+  {
+    path: '/receivedOrders',
+    route: receive,
+  },
+  {
+    path: '/scv',
+    route: scv,
+  },
+  {
+    path: '/manageScv',
+    route: manageScvRoute
   },
   
 ];

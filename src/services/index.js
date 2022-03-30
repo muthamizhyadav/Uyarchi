@@ -17,5 +17,5 @@ module.exports.street = require('./street.service');
 module.exports.zone= require('./zone.service');
 module.exports.district= require('./district.service');
 module.exports.deliveryAddress= require('./deliveryAddress.service');
-module.exports.ManageIssues = require('./manageIssues.service');
-
+module.exports.receiveOrdersService = require('./receivedOrders.service');
+module.exports.manageScvService = require('./manageSCVOrders.service')
