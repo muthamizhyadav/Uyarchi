@@ -17,7 +17,6 @@ const district = require('./district.route')
 const deliveryAddress = require('./deliveryAddress.route')
 const ward = require('./ward.route');
 const manageIssues = require('./manageIssues.route');
-const ward = require('./ward.route')
 const receive =require('./receivedOrderse.route');
 const scv = require('./scv.route');
 const manageScvRoute = require('./manageScv.route')
