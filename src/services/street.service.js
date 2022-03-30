@@ -1,9 +1,18 @@
 const httpStatus = require('http-status');
 const { Street } = require('../models');
 const ApiError = require('../utils/ApiError');
+const Ward = require('../models/ward.model')
 
 const createStreet = async (streetBody) => {
-    return Street.create(streetBody);
+  const { wardId } = streetBody
+  let war = await Ward.findById(wardId)
+  console.log(war)
+  let values = {}
+  values = {...streetBody, ...{ward:war.ward}}
+  if(war === null){
+    throw new ApiError(httpStatus.NO_CONTENT, "!oops")
+  }
+    return Street.create(values);
   };
   
   const getStreetById = async (id) => {

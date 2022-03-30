@@ -15,3 +15,4 @@ module.exports.CartManagement = require('./cartManagement.model');
 module.exports.Zone = require('./zone.model')
 module.exports.Ward = require('./ward.model');
 module.exports.DeliveryAddress = require('./deliveryAddress.model');
+module.exports.ManageIssues = require('./manageIssues.model');

@@ -15,6 +15,9 @@ zone:{
 ward:{
     type:String,
 },
+wardId:{
+    type:String
+},
 street:{
     type:String,
 

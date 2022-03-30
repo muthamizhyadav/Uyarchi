@@ -15,10 +15,11 @@ const createWard = async (wardBody) => {
 };
 
 const getWardById = async (id, active) => {
+
   return Ward.findById(id);
 };
 
-const querWard = async (filter, options) => {
+const queryWard = async (filter, options) => {
   return Ward.paginate(filter, options);
 };
 
