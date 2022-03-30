@@ -24,7 +24,7 @@ const updateWorkhouseStockById = async (warehouseStockId, updateBody)=>{
     if(!warehouseStock){
         throw new ApiError(httpStatus.NOT_FOUND, 'wareHouseStock not found');
     }
-    warehouseStock = await WarehouseStock.findByIdAndUpdate({ _id:warehouseStock}, updateBody, {new:true});
+    warehouseStock = await WarehouseStock.findByIdAndUpdate({ _id:warehouseStockId}, updateBody, {new:true});
     return warehouseStock;
 };
 const deleteWarehouseStockById = async (warehouseStockId)=>{

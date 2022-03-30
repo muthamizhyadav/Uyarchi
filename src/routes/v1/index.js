@@ -18,6 +18,7 @@ const deliveryAddress = require('./deliveryAddress.route')
 const manageIssues = require('./manageIssues.route');
 const receive =require('./receivedOrderse.route');
 const scv = require('./scv.route');
+const ward = require('./ward.route')
 const manageScvRoute = require('./manageScv.route');
 const warehouseStock = require('./warehouseStock.route')
 
