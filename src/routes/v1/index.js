@@ -21,7 +21,8 @@ const scv = require('./scv.route');
 const ward = require('./ward.route')
 const manageScvRoute = require('./manageScv.route');
 const warehouseStock = require('./warehouseStock.route');
-const loadingExecuteRoute = require('./loading.execute.route')
+const loadingExecuteRoute = require('./loading.execute.route');
+const roleRoute = require('./role.route')
 
 const router = express.Router();
 
@@ -110,6 +111,10 @@ const defaultRoutes = [
   {
     path: '/loadingExecute',
     route: loadingExecuteRoute,
+  },
+  {
+    path: '/role',
+    route: roleRoute 
   },
   
 ];

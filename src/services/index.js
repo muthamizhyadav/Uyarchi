@@ -20,4 +20,5 @@ module.exports.deliveryAddress= require('./deliveryAddress.service');
 module.exports.receiveOrdersService = require('./receivedOrders.service');
 module.exports.manageScvService = require('./manageSCVOrders.service')
 module.exports.warehouseStock = require('./warehouseStock..service.')
-module.exports.loadingExecuteService = require('./loading.execute.service')
+module.exports.loadingExecuteService = require('./loading.execute.service');
+module.exports.RolesService = require('./roles.sservice')
