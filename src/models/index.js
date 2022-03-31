@@ -21,3 +21,4 @@ module.exports.DeliveryAddress = require('./deliveryAddress.model');
 module.exports.SCVPurchase = require('./scv.Purchase.model');
 module.exports.ManageSCV = require('./manageSCVOrders')
 module.exports.WarehouseStock = require('./warehouseStock.model')
+module.exports.LoadingExecute = require('./loading.execute.model')

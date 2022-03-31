@@ -20,7 +20,8 @@ const receive =require('./receivedOrderse.route');
 const scv = require('./scv.route');
 const ward = require('./ward.route')
 const manageScvRoute = require('./manageScv.route');
-const warehouseStock = require('./warehouseStock.route')
+const warehouseStock = require('./warehouseStock.route');
+const loadingExecuteRoute = require('./loading.execute.route')
 
 const router = express.Router();
 
@@ -105,7 +106,11 @@ const defaultRoutes = [
   {
     path:'/warehouseStock',
     route: warehouseStock,
-  }
+  },
+  {
+    path: '/loadingExecute',
+    route: loadingExecuteRoute,
+  },
   
 ];
 
