@@ -13,7 +13,10 @@ const menueSchema = mongoose.Schema({
     route:{
         type:String,
     },
-    
+    parentMenue:{
+        type:String,
+    },
+
 },{
     timestamps: { createdAt: 'createdDate',updatedAt: 'updatedDate' } 
 })
