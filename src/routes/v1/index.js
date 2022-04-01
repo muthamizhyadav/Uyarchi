@@ -118,7 +118,7 @@ const defaultRoutes = [
     route: roleRoute 
   },
   {
-    path: '/menue',
+    path: '/menu',
     route: menueRoute,
   },
   

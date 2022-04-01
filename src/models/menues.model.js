@@ -7,13 +7,13 @@ const menueSchema = mongoose.Schema({
         type:String,
         default:v4
     },
-    menueName:{
+    menuName:{
         type:String
     },
     route:{
         type:String,
     },
-    parentMenue:{
+    parentMenu:{
         type:String,
     },
 

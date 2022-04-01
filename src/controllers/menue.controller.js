@@ -15,7 +15,7 @@ const getMenuesById = catchAsync(async (req, res) => {
 });
 
 const getAllMenues = catchAsync(async (req, res) => {
-  const menue = await menuesService.createMenues(req.params);
+  const menue = await menuesService.getAllMenues(req.params);
   res.send(menue);
 });
 
