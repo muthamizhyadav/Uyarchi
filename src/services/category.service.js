@@ -22,7 +22,7 @@ const updatecategoryById = async (categoryId, updateBody) => {
   if (!cate) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
   }
-  cate = await category.findByIdAndUpdate({ _id: categoryId }, updateBody, { new: true });
+  cate = await Category.findByIdAndUpdate({ _id: categoryId }, updateBody, { new: true });
   return cate;
 };
 
