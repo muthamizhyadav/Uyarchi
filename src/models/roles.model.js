@@ -21,6 +21,18 @@ const rolesSchema= mongoose.Schema({
         type:Boolean,
         default:false,
     },
+    create:{
+        type:Boolean,
+    },
+    Read:{
+        type:Boolean,
+    },
+    Write:{
+        type:Boolean
+    },
+    Delete:{
+        type:Boolean,
+    },
 })
 
 rolesSchema.plugin(toJSON);

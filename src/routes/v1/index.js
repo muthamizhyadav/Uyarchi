@@ -23,6 +23,7 @@ const manageScvRoute = require('./manageScv.route');
 const warehouseStock = require('./warehouseStock.route');
 const loadingExecuteRoute = require('./loading.execute.route');
 const roleRoute = require('./role.route')
+const menueRoute = require('./menue.route')
 
 const router = express.Router();
 
@@ -115,6 +116,10 @@ const defaultRoutes = [
   {
     path: '/role',
     route: roleRoute 
+  },
+  {
+    path: '/menue',
+    route: menueRoute,
   },
   
 ];
