@@ -23,4 +23,5 @@ module.exports.ManageSCV = require('./manageSCVOrders')
 module.exports.WarehouseStock = require('./warehouseStock.model')
 module.exports.LoadingExecute = require('./loading.execute.model');
 module.exports.Roles = require('./roles.model');
-module.exports.Menues = require('./menues.model')
+module.exports.Menues = require('./menues.model');
+module.exports.Assign = require('./assign.model')

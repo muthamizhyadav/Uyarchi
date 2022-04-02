@@ -24,6 +24,7 @@ const warehouseStock = require('./warehouseStock.route');
 const loadingExecuteRoute = require('./loading.execute.route');
 const roleRoute = require('./role.route')
 const menueRoute = require('./menue.route')
+const assignRoute = require('./assign.route')
 
 const router = express.Router();
 
@@ -120,6 +121,10 @@ const defaultRoutes = [
   {
     path: '/menu',
     route: menueRoute,
+  },
+  {
+    path: '/assign',
+    route: assignRoute
   },
   
 ];
