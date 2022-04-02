@@ -4,9 +4,20 @@ const ApiError = require('../utils/ApiError');
 const scvPurchase = require('../models/scv.Purchase.model');
 
 const createMenues = async (menueBody) => {
-  return Menues.create(menueBody);
+  const { parentMenu } = menueBody
+  let  parentName ;
+  // console.log(parentMenu)
+  if(parentMenu === "0"){
+    parentName = "none"
+  }else{
+    const menu = await Menues.findById(parentMenu);
+    parentName = menu.menuName
+  }
+  // console.log(menuName)
+  let values = {}
+  values = {...menueBody, ...{parentName:parentName}}
+  return Menues.create(values);
 };
-
 const getMenuesById = async (id) => {
   return Menues.findById(id);
 };
