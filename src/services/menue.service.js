@@ -6,14 +6,12 @@ const scvPurchase = require('../models/scv.Purchase.model');
 const createMenues = async (menueBody) => {
   const { parentMenu } = menueBody
   let  parentName ;
-  // console.log(parentMenu)
-  if(parentMenu === "0"){
+  if(parentMenu === "0" || parentMenu ===null){
     parentName = "none"
   }else{
     const menu = await Menues.findById(parentMenu);
     parentName = menu.menuName
   }
-  // console.log(menuName)
   let values = {}
   values = {...menueBody, ...{parentName:parentName}}
   return Menues.create(values);
