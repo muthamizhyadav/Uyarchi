@@ -15,6 +15,7 @@ const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 const cookieparser = require('cookie-parser')
 const app = express();
+const path = require('path')
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
@@ -63,8 +64,13 @@ app.use(errorConverter);
 
 // handle error
 app.use(errorHandler);
-app.use(
-  '/C:UsersSYSTEM 10Downloads\node-express-boilerplate-masterUyarchisrcmiddlewares.uploads',
-  express.static('uploads')
-);
+app.use(express.static(path.join(__dirname, "./src/public")));
+// app.use(express.static(__dirname+'./public')); 
+app.use('/images', express.static('images'));
+
+// app.use(express.static("public"));
+// app.use(
+//   '/C:UsersSYSTEM 10Downloads\node-express-boilerplate-masterUyarchisrcmiddlewares.uploads',
+//   express.static('uploads')
+// );
 module.exports = app;
