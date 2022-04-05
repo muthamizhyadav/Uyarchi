@@ -21,17 +21,9 @@ const rolesSchema= mongoose.Schema({
         type:Boolean,
         default:false,
     },
-    create:{
-        type:Boolean,
-    },
-    Read:{
-        type:Boolean,
-    },
-    Write:{
-        type:Boolean
-    },
-    Delete:{
-        type:Boolean,
+    menus:{
+        type:Array,
+        default:[],
     },
 })
 
