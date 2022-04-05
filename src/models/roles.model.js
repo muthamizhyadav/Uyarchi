@@ -21,10 +21,26 @@ const rolesSchema= mongoose.Schema({
         type:Boolean,
         default:false,
     },
-    menus:{
-        type:Array,
-        default:[],
-    },
+    menus:[{
+        read:{
+            type:Boolean,
+        },
+        write:{
+            type:Boolean,
+        },
+        update:{
+            type:Boolean,
+        },
+        rm:{
+            type:Boolean,
+        },
+        menu_id:{
+            type:String
+        },
+        point:{
+            type:Number
+        }
+    }],
 })
 
 rolesSchema.plugin(toJSON);

@@ -1,9 +1,9 @@
 const httpStatus = require('http-status');
-const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { RolesService } = require('../services');
 const Roles = require('../models/roles.model');
+const menu = require('../models/menues.model')
 
 
 const createRoles = catchAsync(async (req, res) => {
@@ -15,7 +15,7 @@ const createRoles = catchAsync(async (req, res) => {
   });
   
   const getAllRoles = catchAsync(async (req, res)=>{
-      const role = await RolesService.getAllRoles(req.params)
+      const role = await RolesService.getAllRoles()
       res.send(role);
   })
   
@@ -24,6 +24,7 @@ const createRoles = catchAsync(async (req, res) => {
      if(!role){
          throw new ApiError(httpStatus.NOT_FOUND, "Roles Not Found");
      }
+     
      res.send(role)
  })
   
