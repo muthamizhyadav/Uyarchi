@@ -25,6 +25,10 @@ const assignSchema = mongoose.Schema({
     Position:{
         type:Number
     },
+    menus:{
+        type:Array,
+        default:[],
+    },
 })
 
 assignSchema.plugin(toJSON);

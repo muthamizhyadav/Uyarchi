@@ -19,6 +19,7 @@ const menueSchema = mongoose.Schema({
     parentName:{
         type:String,
     },
+    
 
 },{
     timestamps: { createdAt: 'createdDate',updatedAt: 'updatedDate' } 
