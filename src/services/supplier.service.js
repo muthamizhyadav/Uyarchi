@@ -3,7 +3,7 @@ const ApiError = require('../utils/ApiError');
 const { Supplier } = require('../models');
 
 const createSupplier = async (supplierBody) => {
-    return Supplier.create(supplierBody);
+    return Supplier.create(supplierBody)
   };
  
 const getAllSupplier = async ()=>{

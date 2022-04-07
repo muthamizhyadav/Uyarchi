@@ -11,7 +11,8 @@ const  createSupplier = catchAsync(async (req, res)=>{
 
 const getAllSupplier = catchAsync(async (req, res)=>{
     const supplier = await supplierService.getAllSupplier();
-    res.status(httpStatus.OK).res.send(supplier)
+    res.status(httpStatus.OK)
+    res.send(supplier)
 })
 
 const getSupplierById = catchAsync(async (req, res)=>{
