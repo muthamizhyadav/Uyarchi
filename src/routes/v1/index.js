@@ -25,6 +25,8 @@ const loadingExecuteRoute = require('./loading.execute.route');
 const roleRoute = require('./role.route')
 const menueRoute = require('./menue.route')
 const assignRoute = require('./assign.route')
+const supplierRoute = require('./supplier.route');
+
 
 const router = express.Router();
 
@@ -125,7 +127,10 @@ const defaultRoutes = [
   {
     path: '/assign',
     route: assignRoute
-  },
+  },{
+    path: '/supplier',
+    route: supplierRoute
+  }
   
 ];
 

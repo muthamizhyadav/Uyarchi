@@ -25,3 +25,4 @@ module.exports.LoadingExecute = require('./loading.execute.model');
 module.exports.Roles = require('./roles.model');
 module.exports.Menues = require('./menues.model');
 module.exports.Assign = require('./assign.model')
+module.exports.supplier = require('./supplier.model')
