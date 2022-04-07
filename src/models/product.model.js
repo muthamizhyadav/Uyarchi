@@ -10,12 +10,10 @@ const productSchema = mongoose.Schema({
     type: String,
   },
   category: {
-    type: Array,
-    default: [],
+    type: String,
   },
   subCategory: {
-    type: Array,
-    default: [],
+    type: String,
   },
   unit: {
     type: Number,
