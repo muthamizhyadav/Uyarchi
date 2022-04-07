@@ -12,11 +12,11 @@ const createProduct = catchAsync(async (req, res) => {
     req.files.forEach(function (files, index, arr) {
       path = "images/"+files.filename;
     });
-    path = path.substring(0, path.lastIndexOf(','));
     product.image = path;
   }
-  res.status(httpStatus.CREATED).send(product);
   await product.save();
+  res.status(httpStatus.CREATED).send(product);
+  
 });
 
 const getProducts = catchAsync(async (req, res) => {
