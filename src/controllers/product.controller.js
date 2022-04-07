@@ -10,7 +10,7 @@ const createProduct = catchAsync(async (req, res) => {
   if (req.files) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
-      path = path + files.path + ',';
+      path = "images/"+files.filename;
     });
     path = path.substring(0, path.lastIndexOf(','));
     product.image = path;

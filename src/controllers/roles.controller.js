@@ -5,7 +5,6 @@ const { RolesService } = require('../services');
 const Roles = require('../models/roles.model');
 const menu = require('../models/menues.model')
 
-
 const createRoles = catchAsync(async (req, res) => {
     const roles = await RolesService.createRoles(req.body);
     if (!roles) {
