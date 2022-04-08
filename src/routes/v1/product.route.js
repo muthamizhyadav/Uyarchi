@@ -12,4 +12,5 @@ router
 
 router.route('/stocks').post(productController.createStock)
 router.route('/stock/all').get(productController.getAllStock)
+router.route('/suppliers').post(productController.getStockBySupplierId);
 module.exports = router;

@@ -98,6 +98,9 @@ const stockSchema = mongoose.Schema({
   product:{
     type:Array,
   },
+  productName:{
+    type:String
+  }
 })
 
 stockSchema.plugin(toJSON);

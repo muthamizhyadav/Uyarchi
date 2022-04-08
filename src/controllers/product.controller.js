@@ -45,10 +45,16 @@ const getproduct = catchAsync(async (req, res) => {
   }
   res.send(product);
 });
+const getStockBySupplierId = catchAsync(async (req, res)=>{
+  const { body } = req;
+  const stock = await productService.getStockBySupplierId(body)
+  res.send(stock)
+})
 
 const updateProduct = catchAsync(async (req, res) => {
   const product = await productService.updateProductById(req.params.productId, req.body);
-  res.send(product);
+  res.json(product)
+  console.log(product)
 });
 
 const deleteProduct = catchAsync(async (req, res) => {
@@ -60,6 +66,7 @@ module.exports = {
   createProduct,
   createStock,
   getAllStock,
+  getStockBySupplierId,
   getProducts,
   getproduct,
   updateProduct,

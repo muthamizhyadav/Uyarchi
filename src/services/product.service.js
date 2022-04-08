@@ -31,6 +31,13 @@ const getAllStock = async()=>{
   return Stock.find()
 }
 
+const getStockBySupplierId = async (stockBody)=>{
+  const  {supplierId} = stockBody
+  console.log(supplierId)
+  let ff = await Stock.findOne({supplierId})
+  return ff
+}
+
 const getProductById = async (id) => {
   return Product.findById(id);
 };
@@ -60,6 +67,7 @@ module.exports = {
   createStock,
   getAllStock,
   getProductById,
+  getStockBySupplierId,
   updateProductById,
   deleteProductById,
   queryProduct,
