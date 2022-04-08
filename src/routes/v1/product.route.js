@@ -10,5 +10,6 @@ router
   .delete(productController.deleteProduct)
   .put(productController.updateProduct);
 
-router.route('/stock').post(productController.createStock).get(productController.getAllStock)
+router.route('/stocks').post(productController.createStock)
+router.route('/stock/all').get(productController.getAllStock)
 module.exports = router;
