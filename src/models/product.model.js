@@ -89,13 +89,13 @@ const stockSchema = mongoose.Schema({
     type:String,
     default:v4
   },
+  supplierId:{
+    type:String,
+  },
   supplierName:{
     type:String,
   },
   product:{
-    type:Array,
-  },
-  measureMent:{
     type:Array,
   },
 })

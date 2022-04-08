@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { Product, Stock } = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
+const Supplier = require('../models/supplier.model')
 
 const createProduct = async (productBody) => {
   let { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime, maxBidAomunt, minBidAmount } =
@@ -19,7 +20,11 @@ const createProduct = async (productBody) => {
 };
 
 const createStock = async(stockbody) =>{
-  return Stock.create(stockbody)
+  const  { supplierId } = stockbody
+  let values = {}
+  const supp = await Supplier.findById(supplierId)
+  values = {...stockbody, ...{supplierName:supp.supplierName}}
+  return Stock.create(values)
 }
 
 const getAllStock = async()=>{
