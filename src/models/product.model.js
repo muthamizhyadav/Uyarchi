@@ -83,4 +83,30 @@ productSchema.plugin(toJSON);
 productSchema.plugin(paginate);
 const Product = mongoose.model('Product', productSchema);
 
-module.exports = Product;
+
+const stockSchema = mongoose.Schema({
+  _id:{
+    type:String,
+    default:v4
+  },
+  supplierName:{
+    type:String,
+  },
+  product:{
+    type:Array,
+  },
+  measureMent:{
+    type:Array,
+  },
+})
+
+stockSchema.plugin(toJSON);
+stockSchema.plugin(paginate);
+
+const Stock = mongoose.model('Stock', stockSchema)
+
+
+module.exports = {
+  Stock,
+  Product,
+}

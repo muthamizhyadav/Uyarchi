@@ -19,6 +19,18 @@ const createProduct = catchAsync(async (req, res) => {
   
 });
 
+const createStock = catchAsync (async (req, res)=>{
+  const { body } =req;
+  const stock = await productService.createStock(body);
+  await stock.save();
+  res.status(httpStatus.CREATED).send(stock)
+});
+
+const getAllStock = catchAsync(async (req, res)=>{
+  const stock = await productService.getAllStock();
+  res.send(stock)
+})
+
 const getProducts = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['productTitle', 'unit']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
@@ -46,6 +58,8 @@ const deleteProduct = catchAsync(async (req, res) => {
 
 module.exports = {
   createProduct,
+  createStock,
+  getAllStock,
   getProducts,
   getproduct,
   updateProduct,

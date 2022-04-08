@@ -24,7 +24,6 @@ const getAllMenues = async () => {
   return Menues.find();
 };
 
-
 const updateMenuesById = async (menueId, updateBody) => {
   let menue = await getMenuesById(menueId);
   if (!menue) {

@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Product } = require('../models');
+const { Product, Stock } = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
 
 const createProduct = async (productBody) => {
@@ -17,6 +17,14 @@ const createProduct = async (productBody) => {
   }
   return Product.create(productBody);
 };
+
+const createStock = async(stockbody) =>{
+  return Stock.create(stockbody)
+}
+
+const getAllStock = async()=>{
+  return Stock.find()
+}
 
 const getProductById = async (id) => {
   return Product.findById(id);
@@ -44,6 +52,8 @@ const deleteProductById = async (productId) => {
 };
 module.exports = {
   createProduct,
+  createStock,
+  getAllStock,
   getProductById,
   updateProductById,
   deleteProductById,
