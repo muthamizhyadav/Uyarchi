@@ -46,8 +46,7 @@ const getproduct = catchAsync(async (req, res) => {
   res.send(product);
 });
 const getStockBySupplierId = catchAsync(async (req, res)=>{
-  const { body } = req;
-  const stock = await productService.getStockBySupplierId(body)
+  const stock = await productService.getStockBySupplierId(req.params.supplierId)
   res.send(stock)
 })
 

@@ -31,11 +31,8 @@ const getAllStock = async()=>{
   return Stock.find()
 }
 
-const getStockBySupplierId = async (stockBody)=>{
-  const  {supplierId} = stockBody
-  console.log(supplierId)
-  let ff = await Stock.findOne({supplierId})
-  return ff
+const getStockBySupplierId = async (id)=>{
+  return await Stock.findById(id)
 }
 
 const getProductById = async (id) => {
