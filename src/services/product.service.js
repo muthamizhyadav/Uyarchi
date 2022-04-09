@@ -20,7 +20,19 @@ const createProduct = async (productBody) => {
 };
 
 const createStock = async(stockbody) =>{
-  const  { supplierId } = stockbody
+  const  { supplierId,product  } = stockbody
+  product.forEach (async element => {
+    // console.log(element.product)
+    const productId = element.product
+    const pro = await Product.findById(productId)
+    console.log(pro.stock)
+    let oldStock = pro.stock
+    let newStock = element.measureMent
+    let totalStock = parseInt(oldStock)+parseInt(newStock)
+    pro.stock = totalStock
+    await Product.findByIdAndUpdate({ _id: productId }, {stock:totalStock}, { new: true });
+  })
+
   let values = {}
   const supp = await Supplier.findById(supplierId)
   values = {...stockbody, ...{supplierName:supp.supplierName}}

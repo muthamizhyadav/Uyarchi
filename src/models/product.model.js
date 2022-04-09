@@ -36,6 +36,9 @@ const productSchema = mongoose.Schema({
   salePrice: {
     type: Number,
   },
+  stock:{
+    type:Number
+  },
   purchasePrice: {
     type: Number,
   },
