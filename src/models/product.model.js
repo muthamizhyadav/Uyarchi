@@ -110,7 +110,7 @@ const stockSchema = mongoose.Schema({
   logisticCost:{
     type:Number,
   },
-  cooliCost:{
+  coolieCost:{
     type:Number,
   },
   misAllianceCost:{
