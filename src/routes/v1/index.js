@@ -26,7 +26,7 @@ const roleRoute = require('./role.route')
 const menueRoute = require('./menue.route')
 const assignRoute = require('./assign.route')
 const supplierRoute = require('./supplier.route');
-
+const expensesRoute = require('./expenses.route');
 
 const router = express.Router();
 
@@ -129,7 +129,10 @@ const defaultRoutes = [
     route: assignRoute
   },{
     path: '/supplier',
-    route: supplierRoute
+    route: supplierRoute,
+  },{
+    path: '/expenses',
+    route: expensesRoute,
   }
   
 ];
