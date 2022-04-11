@@ -16,7 +16,7 @@ const createProduct = async (productBody) => {
   } else {
     biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime, maxBidAomunt, minBidAmount;
   }
-  return Product.create(productBody);
+  return Product.create(productBody); 
 };
 
 const createStock = async(stockbody) =>{
@@ -24,6 +24,7 @@ const createStock = async(stockbody) =>{
   product.forEach (async element => {
     const productId = element.product
     const pro = await Product.findById(productId)
+    console.log(pro)
     let oldStock = pro.stock
     let newStock = element.measureMent
     let totalStock = parseInt(oldStock)+parseInt(newStock)

@@ -103,6 +103,9 @@ const stockSchema = mongoose.Schema({
   },
   productName:{
     type:String
+  },
+  totalPrice:{
+    type:Number
   }
 })
 
