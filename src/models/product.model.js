@@ -106,7 +106,16 @@ const stockSchema = mongoose.Schema({
   },
   totalPrice:{
     type:Number
-  }
+  },
+  logisticCost:{
+    type:Number,
+  },
+  cooliCost:{
+    type:Number,
+  },
+  misAllianceCost:{
+    type:Number,
+  },
 })
 
 stockSchema.plugin(toJSON);
