@@ -1,16 +1,5 @@
 const nodeMailer = require('nodemailer')
 
-// function generateOTP() {
-          
-//     // Declare a digits variable 
-//     // which stores all digits
-//     var digits = '0123456789';
-//     let OTP = '';
-//     for (let i = 0; i < 4; i++ ) {
-//         OTP += digits[Math.floor(Math.random() * 10)];
-//     }
-//     return OTP;
-// }
 const generateOTP = (()=>{
     var digits = '0123456789';
     let OTP = '';
@@ -20,7 +9,7 @@ const generateOTP = (()=>{
     return OTP
 })
 
-// }
+
 
 const transpoter = nodeMailer.createTransport({
     host: 'smtp.gmail.com',
