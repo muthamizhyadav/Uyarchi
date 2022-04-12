@@ -3,12 +3,12 @@ const catchAsync = require('../utils/catchAsync');
 const { authService, userService, tokenService, emailService } = require('../services');
 
 const register = catchAsync(async (req, res) => {
-  let emailcontent = ""
-  const user = await userService.createUser(req.body);
+  const user = await userService.createUser(req.body, req.params);
   const tokens = await tokenService.generateAuthTokens(user);
-  const email = await emailService.sendEmail(user.email)
-  console.log(email)
-  res.status(httpStatus.CREATED).send({ user, tokens, email});
+  const emails = await emailService.sendEmail(user.email);
+  user.OTP=emails.otp;
+  res.status(httpStatus.CREATED).send({ user, tokens, emails});
+  await user.save()
 });
 
 const login = catchAsync(async (req, res) => {
