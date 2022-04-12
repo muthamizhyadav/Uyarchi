@@ -18,7 +18,17 @@ if (config.env !== 'test') {
  * @param {string} text
  * @returns {Promise}
  */
+const generateOTP = ()=>{
+  digits = '0123456789'
+  let OTP = ''
+  for (let i=0; i<4; i++){
+    OTP+= digits[Math.floor(Math.random()*10)];
+  }
+  return OTP
+}
 const sendEmail = async (to, subject, text) => {
+  subject =  "DON't share your otp"
+  text = `Your Otp Expired With in 10 Minutes ${generateOTP()}`
   const msg = { from: config.email.from, to, subject, text };
   await transport.sendMail(msg);
 };

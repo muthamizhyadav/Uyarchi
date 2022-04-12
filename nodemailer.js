@@ -22,7 +22,7 @@ const transpoter = nodeMailer.createTransport({
 
 const options = {
     from:"muthamizhyadav@gmail.com",
-    to:"muthamizh153@gmail.com",
+    to:"vignesh1041996@gmail.com",
     text:`Hai Your OTP Is:${generateOTP()}`,
     subject:" Wow That is Simple"
 };

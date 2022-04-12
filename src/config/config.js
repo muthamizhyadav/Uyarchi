@@ -52,13 +52,13 @@ module.exports = {
   },
   email: {
     smtp: {
-      host: 'smtp.gmail.com',
-      port: 465,
+      host: envVars.SMTP_HOST,
+      port: envVars.SMTP_PORT,
       auth: {
-        user: "UyarchiDev",
-        pass: "uyar@123",
+        user: envVars.SMTP_USERNAME,
+        pass: envVars.SMTP_PASSWORD,
       },
     },
-    from: "uyarchidev@gmail.com",
+    from: envVars.EMAIL_FROM,
   },
 };
