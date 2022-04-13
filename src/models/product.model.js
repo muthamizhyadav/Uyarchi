@@ -126,8 +126,34 @@ stockSchema.plugin(paginate);
 
 const Stock = mongoose.model('Stock', stockSchema)
 
+const confirmStock = new mongoose.Schema({
+  _id:{
+    type:String,
+    default:v4,
+  },
+  stockId:{
+    type:String,
+    required:true,
+  },
+  products:{
+    type:Array,
+  },
+  active:{
+    type:Boolean,
+    default:true
+  },
+  archive:{
+    type:Boolean,
+    default:false,
+  },
+})
+confirmStock.plugin(toJSON);
+confirmStock.plugin(paginate);
+
+const ConfirmStock = mongoose.model('ConfirmStock', confirmStock)
 
 module.exports = {
   Stock,
   Product,
+  ConfirmStock,
 }

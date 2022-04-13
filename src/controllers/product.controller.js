@@ -26,6 +26,27 @@ const createStock = catchAsync (async (req, res)=>{
   res.status(httpStatus.CREATED).send(stock)
 });
 
+const createConfirmStock = catchAsync (async (req, res)=>{
+  const { body } = req;
+  const confirmStock = await productService.createConfirmStock(body, req.params);
+  res.status(httpStatus.CREATED).send(confirmStock)
+  await confirmStock.save()
+})
+
+const getconfirmStockById = catchAsync(async (req, res) => {
+  const confirmStock = await productService.getConfrimById(req.params.confirmStockId);
+  console.log(confirmStock)
+  if (!confirmStock || confirmStock.active === false) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'ConfirmStock not found');
+  }
+  res.send(confirmStock);
+});
+
+const getAllConfirmStock = catchAsync(async (req, res)=>{
+  const confirmStock = await productService.getAllConfirmStack();
+  res.send(confirmStock)
+})
+
 const getAllStock = catchAsync(async (req, res)=>{
   const stock = await productService.getAllStock();
   res.send(stock)
@@ -56,14 +77,29 @@ const updateProduct = catchAsync(async (req, res) => {
   console.log(product)
 });
 
+const updateConfirmStock = catchAsync(async (req, res)=>{
+  const confirmStock = await productService.updateConfirmById(req.params.confirmStockId, req.body)
+  res.send(confirmStock)
+})
+
 const deleteProduct = catchAsync(async (req, res) => {
   await productService.deleteProductById(req.params.productId);
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const deleteConfirmStockById = catchAsync(async (req, res)=>{
+  await productService.deleteConfirmStockById(req.params.confirmStockId);
+  res.status(httpStatus.NO_CONTENT).send();
+})
+
 module.exports = {
   createProduct,
   createStock,
+  createConfirmStock,
+  getAllConfirmStock,
+  getconfirmStockById,
+  updateConfirmStock,
+  deleteConfirmStockById,
   getAllStock,
   getStockBySupplierId,
   getProducts,
