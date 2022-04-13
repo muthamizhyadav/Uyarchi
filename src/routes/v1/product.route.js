@@ -20,4 +20,6 @@ router
   .get(productController.getconfirmStockById)
   .put(productController.updateConfirmStock)
   .delete(productController.deleteConfirmStockById)
+
+router.route('/arrived/:id').put(productController.updateArrivedById)
 module.exports = router;

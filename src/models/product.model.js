@@ -119,6 +119,10 @@ const stockSchema = mongoose.Schema({
   orderId:{
     type:String,
   },
+  arrived:{
+    type:Boolean,
+    default:false,
+  }
 })
 
 stockSchema.plugin(toJSON);

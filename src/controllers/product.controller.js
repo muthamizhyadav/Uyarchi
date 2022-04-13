@@ -82,6 +82,11 @@ const updateConfirmStock = catchAsync(async (req, res)=>{
   res.send(confirmStock)
 })
 
+const updateArrivedById = catchAsync(async (req, res)=>{
+  const stock = await productService.updateArrivedById(req.params.id, req.body)
+  res.send(stock)
+})
+
 const deleteProduct = catchAsync(async (req, res) => {
   await productService.deleteProductById(req.params.productId);
   res.status(httpStatus.NO_CONTENT).send();
@@ -103,6 +108,7 @@ module.exports = {
   getAllStock,
   getStockBySupplierId,
   getProducts,
+  updateArrivedById,
   getproduct,
   updateProduct,
   deleteProduct,
