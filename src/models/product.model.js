@@ -116,6 +116,9 @@ const stockSchema = mongoose.Schema({
   misAllianceCost:{
     type:Number,
   },
+  orderId:{
+    type:String,
+  },
 })
 
 stockSchema.plugin(toJSON);
