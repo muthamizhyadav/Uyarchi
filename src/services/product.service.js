@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Product, Stock, ConfirmStock } = require('../models/product.model');
+const { Product, Stock, ConfirmStock, LoadingExecute } = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
 const Supplier = require('../models/supplier.model');
 
@@ -38,11 +38,24 @@ const createStock = async (stockbody) => {
 const createConfirmStock = async (confirmBody) => {
   const { stockId } = confirmBody;
   const stocks = await Stock.findById(stockId);
-  let specific = stocks
+  let specific = stocks;
   if (stocks === null) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid Stock Id😞');
   }
   return ConfirmStock.create(confirmBody);
+};
+
+const createMainWherehouseLoadingExecute = async (MWLEbody) => {
+  const { productId } = MWLEbody;
+  const product = await Product.findById(productId);
+  if (product === null) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid Product Id 😞');
+  }
+  return LoadingExecute.create(MWLEbody);
+};
+
+const getAllMailWherehoustLoadingExecute = async () => {
+  return LoadingExecute.find();
 };
 
 const getAllConfirmStack = async () => {
@@ -64,19 +77,31 @@ const getStockBySupplierId = async (id) => {
 const getProductById = async (id) => {
   return Product.findById(id);
 };
+const getMailWherehoustLoadingExecuteById = async (id) => {
+  return LoadingExecute.findById(id);
+};
 
 const queryProduct = async (filter, options) => {
   return Product.paginate(filter, options);
 };
 
-const updateArrivedById = async (id)=>{
-  let stock = await Stock.findById(id)
-  if(!stock){
-    throw new ApiError(httpStatus.NOT_FOUND, "Stock Not Found")
+const updateMainWherehouseLoadingExecuteById = async (mwLoadingId, updateBody) => {
+  let loading = await getMailWherehoustLoadingExecuteById(mwLoadingId);
+  if (!loading) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'MainWherehouse Not Found');
   }
-  stock = await Stock.findByIdAndUpdate({_id:id}, {arrived:true}, {new: true})
-  return stock
-}
+  loading = await LoadingExecute.findByIdAndUpdate({ _id: mwLoadingId }, updateBody, { new: true });
+  return loading;
+};
+
+const updateArrivedById = async (id) => {
+  let stock = await Stock.findById(id);
+  if (!stock) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stock Not Found');
+  }
+  stock = await Stock.findByIdAndUpdate({ _id: id }, { arrived: true }, { new: true });
+  return stock;
+};
 const updateConfirmById = async (confirmStockId, updateBody) => {
   let confirmStock = await getConfrimById(confirmStockId);
   if (!confirmStock) {
@@ -112,17 +137,30 @@ const deleteConfirmStockById = async (confirmStockId) => {
   (confirmStock.active = false), (confirmStock.archive = true), await confirm.save();
 };
 
+const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
+  const loading = await getMailWherehoustLoadingExecuteById(mwLoadingId);
+  if (!loading) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Main Wherehouse Not found');
+  }
+  (loading.active = false), (loading.archive = true), await loading.save();
+};
+
 module.exports = {
   createProduct,
   createStock,
   createConfirmStock,
+  createMainWherehouseLoadingExecute,
   getAllConfirmStack,
+  getAllMailWherehoustLoadingExecute,
   getConfrimById,
   updateArrivedById,
   updateConfirmById,
   deleteConfirmStockById,
   getAllStock,
   getProductById,
+  getMailWherehoustLoadingExecuteById,
+  updateMainWherehouseLoadingExecuteById,
+  deleteMainWherehouseLoadingExecuteById,
   getStockBySupplierId,
   updateProductById,
   deleteProductById,

@@ -13,13 +13,22 @@ router
 router.route('/stocks').post(productController.createStock);
 router.route('/stock/all').get(productController.getAllStock);
 router.route('/suppliers/:supplierId').get(productController.getStockBySupplierId);
-router.route('/confirmStock').post(productController.createConfirmStock)
-router.route('/confirmStock/all').get(productController.getAllConfirmStock)
+router.route('/confirmStock').post(productController.createConfirmStock);
+router.route('/confirmStock/all').get(productController.getAllConfirmStock);
 router
   .route('/confirmStock/:confirmStockId')
   .get(productController.getconfirmStockById)
   .put(productController.updateConfirmStock)
-  .delete(productController.deleteConfirmStockById)
+  .delete(productController.deleteConfirmStockById);
+router.route('/arrived/:id').put(productController.updateArrivedById);
 
-router.route('/arrived/:id').put(productController.updateArrivedById)
+router
+  .route('/mwloadingExecute')
+  .post(productController.createMainWherehouseLoadingExecute)
+  router.route('/mwloadingExecute/all').get(productController.getAllMailWherehoustLoadingExecute);
+router
+  .route('/mwloadingExecutes/:mwLoadingId')
+  .get(productController.getMailWherehoustLoadingExecuteById)
+  .put(productController.updateMainWherehouseLoadingExecuteById)
+  .delete(productController.deleteMainWherehouseLoadingExecuteById);
 module.exports = router;

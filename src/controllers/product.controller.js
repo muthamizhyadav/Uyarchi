@@ -26,6 +26,13 @@ const createStock = catchAsync (async (req, res)=>{
   res.status(httpStatus.CREATED).send(stock)
 });
 
+const createMainWherehouseLoadingExecute = catchAsync (async (req, res)=>{
+  const { body } = req
+  const mwloading = await productService.createMainWherehouseLoadingExecute(body)
+  res.status(httpStatus.CREATED).send(mwloading)
+  await mwloading.save()
+})
+
 const createConfirmStock = catchAsync (async (req, res)=>{
   const { body } = req;
   const confirmStock = await productService.createConfirmStock(body, req.params);
@@ -41,6 +48,19 @@ const getconfirmStockById = catchAsync(async (req, res) => {
   }
   res.send(confirmStock);
 });
+
+const getMailWherehoustLoadingExecuteById = catchAsync(async (req, res)=>{
+  const mwloading = await productService.getMailWherehoustLoadingExecuteById(req.params.mwLoadingId);
+  if(!mwloading || mwloading.active === false){
+    throw new ApiError(httpStatus.NOT_FOUND, 'MainWherehouse Loading Execute Not Fiund');
+  }
+  res.send(mwloading)
+})
+
+const getAllMailWherehoustLoadingExecute =  catchAsync(async (req, res)=>{
+  const mwloading = await productService.getAllMailWherehoustLoadingExecute()
+  res.send(mwloading)
+})
 
 const getAllConfirmStock = catchAsync(async (req, res)=>{
   const confirmStock = await productService.getAllConfirmStack();
@@ -87,10 +107,20 @@ const updateArrivedById = catchAsync(async (req, res)=>{
   res.send(stock)
 })
 
+const updateMainWherehouseLoadingExecuteById = catchAsync(async(req, res)=>{
+  const mwloading = await productService.updateMainWherehouseLoadingExecuteById(req.params.mwLoadingId, req.body)
+  res.send(mwloading)
+})
+
 const deleteProduct = catchAsync(async (req, res) => {
   await productService.deleteProductById(req.params.productId);
   res.status(httpStatus.NO_CONTENT).send();
 });
+
+const deleteMainWherehouseLoadingExecuteById = catchAsync(async (req, res)=>{
+  await productService.deleteMainWherehouseLoadingExecuteById(req.params.mwLoadingId);
+  res.status(httpStatus.NO_CONTENT).send();
+})
 
 const deleteConfirmStockById = catchAsync(async (req, res)=>{
   await productService.deleteConfirmStockById(req.params.confirmStockId);
@@ -100,16 +130,21 @@ const deleteConfirmStockById = catchAsync(async (req, res)=>{
 module.exports = {
   createProduct,
   createStock,
+  createMainWherehouseLoadingExecute,
   createConfirmStock,
   getAllConfirmStock,
+  getAllMailWherehoustLoadingExecute,
   getconfirmStockById,
   updateConfirmStock,
   deleteConfirmStockById,
   getAllStock,
   getStockBySupplierId,
+  getMailWherehoustLoadingExecuteById,
   getProducts,
   updateArrivedById,
+  updateMainWherehouseLoadingExecuteById,
   getproduct,
   updateProduct,
   deleteProduct,
+  deleteMainWherehouseLoadingExecuteById,
 };

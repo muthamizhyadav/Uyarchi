@@ -36,8 +36,8 @@ const productSchema = mongoose.Schema({
   salePrice: {
     type: Number,
   },
-  stock:{
-    type:Number
+  stock: {
+    type: Number,
   },
   purchasePrice: {
     type: Number,
@@ -86,61 +86,96 @@ productSchema.plugin(toJSON);
 productSchema.plugin(paginate);
 const Product = mongoose.model('Product', productSchema);
 
-
 const stockSchema = mongoose.Schema({
-  _id:{
-    type:String,
-    default:v4
+  _id: {
+    type: String,
+    default: v4,
   },
-  supplierId:{
-    type:String,
+  supplierId: {
+    type: String,
   },
-  supplierName:{
-    type:String,
+  supplierName: {
+    type: String,
   },
-  product:{
-    type:Array,
+  product: {
+    type: Array,
   },
-  productName:{
-    type:String
+  productName: {
+    type: String,
   },
-  totalPrice:{
-    type:Number
+  totalPrice: {
+    type: Number,
   },
-  logisticCost:{
-    type:Number,
+  logisticCost: {
+    type: Number,
   },
-  coolieCost:{
-    type:Number,
+  coolieCost: {
+    type: Number,
   },
-  misAllianceCost:{
-    type:Number,
+  misAllianceCost: {
+    type: Number,
   },
-  orderId:{
-    type:String,
+  orderId: {
+    type: String,
   },
-  arrived:{
-    type:Boolean,
-    default:false,
-  }
-})
+  arrived: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 stockSchema.plugin(toJSON);
 stockSchema.plugin(paginate);
 
-const Stock = mongoose.model('Stock', stockSchema)
+const Stock = mongoose.model('Stock', stockSchema);
 
 const confirmStock = new mongoose.Schema({
-  _id:{
-    type:String,
-    default:v4,
+  _id: {
+    type: String,
+    default: v4,
   },
-  stockId:{
-    type:String,
-    required:true,
+  stockId: {
+    type: String,
+    required: true,
   },
-  products:{
-    type:Array,
+  products: {
+    type: Array,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+});
+confirmStock.plugin(toJSON);
+confirmStock.plugin(paginate);
+
+const ConfirmStock = mongoose.model('ConfirmStock', confirmStock);
+
+const loadingExecuteSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    default:v4
+  },
+  productId: {
+    type: String,
+  },
+  quantity: {
+    type: String,
+  },
+  wastage: {
+    type: String,
+  },
+  netWeight: {
+    type: String,
+  },
+  status: {
+    type: String,
+    enum: ['Delivered', 'UnDelivered'],
+    default: 'UnDelivered',
   },
   active:{
     type:Boolean,
@@ -148,16 +183,16 @@ const confirmStock = new mongoose.Schema({
   },
   archive:{
     type:Boolean,
-    default:false,
+    default:false
   },
-})
-confirmStock.plugin(toJSON);
-confirmStock.plugin(paginate);
-
-const ConfirmStock = mongoose.model('ConfirmStock', confirmStock)
+});
+loadingExecuteSchema.plugin(toJSON);
+loadingExecuteSchema.plugin(paginate);
+const LoadingExecute = mongoose.model('MainWharehouseLoadingExecute', loadingExecuteSchema);
 
 module.exports = {
   Stock,
   Product,
   ConfirmStock,
-}
+  LoadingExecute,
+};
