@@ -26,6 +26,13 @@ const createStock = catchAsync (async (req, res)=>{
   res.status(httpStatus.CREATED).send(stock)
 });
 
+const createBillRaise = catchAsync (async (req, res)=>{
+  const {body} = req;
+  const billRaise = await productService.createBillRaise(body);
+  res.status(httpStatus.CREATED).send(billRaise),
+  await billRaise.save();
+})
+
 const createMainWherehouseLoadingExecute = catchAsync (async (req, res)=>{
   const { body } = req
   const mwloading = await productService.createMainWherehouseLoadingExecute(body)
@@ -49,6 +56,14 @@ const getconfirmStockById = catchAsync(async (req, res) => {
   res.send(confirmStock);
 });
 
+const getBillRaiseById = catchAsync (async (req, res)=>{
+  const billRaise = await productService.getBillRaiseById(req.params.billRaiseId);
+  if(!billRaise || billRaise.active === false){
+    throw new ApiError(httpStatus.NOT_FOUND, "BillRaise Not Found");
+  }
+  res.send(billRaise)
+})
+
 const getMailWherehoustLoadingExecuteById = catchAsync(async (req, res)=>{
   const mwloading = await productService.getMailWherehoustLoadingExecuteById(req.params.mwLoadingId);
   if(!mwloading || mwloading.active === false){
@@ -60,6 +75,11 @@ const getMailWherehoustLoadingExecuteById = catchAsync(async (req, res)=>{
 const getAllMailWherehoustLoadingExecute =  catchAsync(async (req, res)=>{
   const mwloading = await productService.getAllMailWherehoustLoadingExecute()
   res.send(mwloading)
+})
+
+const getAllBillRaised = catchAsync (async(req, res)=>{
+  const billRaise = await productService.getAllBillRaised()
+  res.send(billRaise)
 })
 
 const getAllConfirmStock = catchAsync(async (req, res)=>{
@@ -97,6 +117,11 @@ const updateProduct = catchAsync(async (req, res) => {
   console.log(product)
 });
 
+const updateBillRaiseById = catchAsync (async (req, res)=>{
+  const billRaise = await productService.updateBillRaiseById(req.params.billRaiseId, req.body);
+  res.send(billRaise)
+})
+
 const updateConfirmStock = catchAsync(async (req, res)=>{
   const confirmStock = await productService.updateConfirmById(req.params.confirmStockId, req.body)
   res.send(confirmStock)
@@ -127,9 +152,19 @@ const deleteConfirmStockById = catchAsync(async (req, res)=>{
   res.status(httpStatus.NO_CONTENT).send();
 })
 
+const deleteBillRaise = catchAsync(async (req, res)=>{
+  await productService.deleteBillRaise(req.params.billRaiseId)
+  res.status(httpStatus.NO_CONTENT).send()
+})
+
 module.exports = {
   createProduct,
   createStock,
+  createBillRaise,
+  getAllBillRaised,
+  getBillRaiseById,
+  updateBillRaiseById,
+  deleteBillRaise,
   createMainWherehouseLoadingExecute,
   createConfirmStock,
   getAllConfirmStock,

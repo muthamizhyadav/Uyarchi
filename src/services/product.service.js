@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Product, Stock, ConfirmStock, LoadingExecute } = require('../models/product.model');
+const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise } = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
 const Supplier = require('../models/supplier.model');
 
@@ -54,6 +54,15 @@ const createMainWherehouseLoadingExecute = async (MWLEbody) => {
   return LoadingExecute.create(MWLEbody);
 };
 
+const createBillRaise = async (billRaiseBody) => {
+  const { productId } = billRaiseBody;
+  const product = await Product.findById(productId);
+  if (product === null) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid Product Id 😞');
+  }
+  return BillRaise.create(billRaiseBody);
+};
+
 const getAllMailWherehoustLoadingExecute = async () => {
   return LoadingExecute.find();
 };
@@ -77,8 +86,17 @@ const getStockBySupplierId = async (id) => {
 const getProductById = async (id) => {
   return Product.findById(id);
 };
+
 const getMailWherehoustLoadingExecuteById = async (id) => {
   return LoadingExecute.findById(id);
+};
+
+const getBillRaiseById = async (id) => {
+  return BillRaise.findById(id);
+};
+
+const getAllBillRaised = async () => {
+  return BillRaise.find();
 };
 
 const queryProduct = async (filter, options) => {
@@ -92,6 +110,15 @@ const updateMainWherehouseLoadingExecuteById = async (mwLoadingId, updateBody) =
   }
   loading = await LoadingExecute.findByIdAndUpdate({ _id: mwLoadingId }, updateBody, { new: true });
   return loading;
+};
+
+const updateBillRaiseById = async (billRaiseId, updateBody) => {
+  let billRaise = await getBillRaiseById(billRaiseId);
+  if (!billRaise) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'BillRaise Not Found');
+  }
+  billRaise = await BillRaise.findByIdAndUpdate({ _id: billRaiseId }, updateBody, { new: true });
+  return billRaise;
 };
 
 const updateArrivedById = async (id) => {
@@ -137,6 +164,14 @@ const deleteConfirmStockById = async (confirmStockId) => {
   (confirmStock.active = false), (confirmStock.archive = true), await confirm.save();
 };
 
+const deleteBillRaise = async (billRaiseId) => {
+  const billRaise = await getBillRaiseById(billRaiseId);
+  if (!billRaise) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'BillRaise Not Found');
+  }
+  (billRaise.active = false), (billRaise.archive = true), await billRaise.save();
+};
+
 const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
   const loading = await getMailWherehoustLoadingExecuteById(mwLoadingId);
   if (!loading) {
@@ -149,6 +184,11 @@ module.exports = {
   createProduct,
   createStock,
   createConfirmStock,
+  createBillRaise,
+  getAllBillRaised,
+  getBillRaiseById,
+  updateBillRaiseById,
+  deleteBillRaise,
   createMainWherehouseLoadingExecute,
   getAllConfirmStack,
   getAllMailWherehoustLoadingExecute,

@@ -190,9 +190,47 @@ loadingExecuteSchema.plugin(toJSON);
 loadingExecuteSchema.plugin(paginate);
 const LoadingExecute = mongoose.model('MainWharehouseLoadingExecute', loadingExecuteSchema);
 
+const billRaiseSchema = new mongoose.Schema({
+  _id:{
+    type:String,
+    default:v4,
+  },
+  productId:{
+    type:String,
+  },
+  pricingInKg:{
+    type:Number,
+  },
+  quantityInKg:{
+    type:Number,
+  },
+  netRate:{
+    type:Number,
+  },
+  status:{
+    type:String,
+    enum:['Deliverd', 'UnDelivered'],
+    default:'UnDelivered',
+  },
+  active:{
+    type:Boolean,
+    default:true,
+  },
+  archive:{
+    type:Boolean,
+    default:false,
+  },
+})
+
+billRaiseSchema.plugin(toJSON);
+billRaiseSchema.plugin(paginate);
+
+const BillRaise = mongoose.model("BillRaise", billRaiseSchema);
+
 module.exports = {
   Stock,
   Product,
   ConfirmStock,
   LoadingExecute,
+  BillRaise,
 };

@@ -31,4 +31,8 @@ router
   .get(productController.getMailWherehoustLoadingExecuteById)
   .put(productController.updateMainWherehouseLoadingExecuteById)
   .delete(productController.deleteMainWherehouseLoadingExecuteById);
+
+  router.route('/billRaise').post(productController.createBillRaise)
+  router.route('/billRaise/All').get(productController.getAllBillRaised)
+  router.route('/billRaise/:billRaiseId').get(productController.getBillRaiseById).put(productController.updateBillRaiseById).delete(productController.deleteConfirmStockById)
 module.exports = router;
