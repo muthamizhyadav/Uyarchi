@@ -1,7 +1,8 @@
 const httpStatus = require('http-status');
-const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise } = require('../models/product.model');
+const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise, ManageBill } = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
 const Supplier = require('../models/supplier.model');
+const ReceivedOrder = require('../models/receivedOrders.model')
 
 const createProduct = async (productBody) => {
   let { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime, maxBidAomunt, minBidAmount } =
@@ -18,6 +19,25 @@ const createProduct = async (productBody) => {
   }
   return Product.create(productBody);
 };
+
+const createManageBill = async (manageBillBody) =>{
+  const { billId, supplierId, orderId } = manageBillBody
+  console.log(billId)
+  const bill = await BillRaise.find()
+  console.log(bill)
+  if(bill === null){
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid BillId ")
+  }
+  const supplier = await Supplier.find()
+  if(supplier === null){
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid SupplierId")
+  }
+  const order = await ReceivedOrder.find();
+  if(order === null){
+    throw new ApiError(httpStatus.BAD_REQUEST, "OrderId Invalid")
+  }
+  return ManageBill.create(manageBillBody)
+}
 
 const createStock = async (stockbody) => {
   const { supplierId, product } = stockbody;
@@ -87,6 +107,10 @@ const getProductById = async (id) => {
   return Product.findById(id);
 };
 
+const getManageBill = async(id) =>{
+  return ManageBill.findById(id);
+}
+
 const getMailWherehoustLoadingExecuteById = async (id) => {
   return LoadingExecute.findById(id);
 };
@@ -102,6 +126,19 @@ const getAllBillRaised = async () => {
 const queryProduct = async (filter, options) => {
   return Product.paginate(filter, options);
 };
+
+const getAllManageBill = async ()=>{
+  return ManageBill.find()
+}
+
+const updateManageBill = async (manageBillId, updatebody) =>{
+  let manageBill = await getManageBill(manageBillId);
+  if(!manageBill){
+    throw new ApiError(httpStatus.NOT_FOUND, "ManageBill Not Found")
+  }
+  manageBill = await ManageBill.findByIdAndUpdate({_id:manageBillId}, updateBody, {new:true})
+  return manageBill
+}
 
 const updateMainWherehouseLoadingExecuteById = async (mwLoadingId, updateBody) => {
   let loading = await getMailWherehoustLoadingExecuteById(mwLoadingId);
@@ -156,6 +193,14 @@ const deleteProductById = async (productId) => {
   return product;
 };
 
+const deleteBillManage = async (manageBillId) =>{
+  const manageBill = await getManageBill(manageBillId)
+  if(!manageBill){
+    throw new ApiError(httpStatus.NOT_FOUND, "manage Bill Not Found")
+  }
+    manageBill.active = false, manageBill.archive = true, await manageBill.save()
+}
+
 const deleteConfirmStockById = async (confirmStockId) => {
   const confirmStock = await getConfrimById(confirmStockId);
   if (!confirmStock) {
@@ -184,6 +229,11 @@ module.exports = {
   createProduct,
   createStock,
   createConfirmStock,
+  createManageBill,
+  getAllManageBill,
+  getManageBill,
+  updateManageBill,
+  deleteBillManage,
   createBillRaise,
   getAllBillRaised,
   getBillRaiseById,

@@ -35,4 +35,10 @@ router
   router.route('/billRaise').post(productController.createBillRaise)
   router.route('/billRaise/All').get(productController.getAllBillRaised)
   router.route('/billRaise/:billRaiseId').get(productController.getBillRaiseById).put(productController.updateBillRaiseById).delete(productController.deleteConfirmStockById)
+
+router.route('/manageBill').post(productController.createManageBill)
+router.route('/managebill/all').get(productController.getAllManageBill)
+router.route('/manageBill/:manageBillId').get(productController.getManageBillById).put(productController.updateManageBill).delete(productController.deleteBillManage);
+
+
 module.exports = router;

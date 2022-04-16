@@ -26,6 +26,13 @@ const createStock = catchAsync (async (req, res)=>{
   res.status(httpStatus.CREATED).send(stock)
 });
 
+const createManageBill = catchAsync (async (req, res)=>{
+  const {body} = req;
+  const manageBill = await productService.createManageBill(body)
+  res.status(httpStatus.CREATED).send(manageBill)
+  await manageBill.save()
+})
+
 const createBillRaise = catchAsync (async (req, res)=>{
   const {body} = req;
   const billRaise = await productService.createBillRaise(body);
@@ -55,6 +62,19 @@ const getconfirmStockById = catchAsync(async (req, res) => {
   }
   res.send(confirmStock);
 });
+
+const getManageBillById = catchAsync (async (req, res)=>{
+  const manageBill = await productService.getManageBill(req.params.manageBillId);
+  if(!manageBill || manageBill.active === false){
+    throw new ApiError(httpStatus.NOT_FOUND, "ManageBill Not Found")
+  }
+  res.send(manageBill)
+})
+
+const getAllManageBill = catchAsync (async (req,res)=>{
+  const manage = await productService.getAllManageBill()
+  res.send(manage)
+})
 
 const getBillRaiseById = catchAsync (async (req, res)=>{
   const billRaise = await productService.getBillRaiseById(req.params.billRaiseId);
@@ -132,6 +152,11 @@ const updateArrivedById = catchAsync(async (req, res)=>{
   res.send(stock)
 })
 
+const updateManageBill = catchAsync (async (req, res)=>{
+  const manageBill = await productService.updateManageBill(req.params.billManageId, req.body);
+  res.send(manageBill)
+})
+
 const updateMainWherehouseLoadingExecuteById = catchAsync(async(req, res)=>{
   const mwloading = await productService.updateMainWherehouseLoadingExecuteById(req.params.mwLoadingId, req.body)
   res.send(mwloading)
@@ -141,6 +166,11 @@ const deleteProduct = catchAsync(async (req, res) => {
   await productService.deleteProductById(req.params.productId);
   res.status(httpStatus.NO_CONTENT).send();
 });
+
+const deleteBillManage = catchAsync (async (req, res)=>{
+  await productService.deleteBillManage(req.params.manageBillId);
+  res.status(httpStatus.NO_CONTENT).send()
+})
 
 const deleteMainWherehouseLoadingExecuteById = catchAsync(async (req, res)=>{
   await productService.deleteMainWherehouseLoadingExecuteById(req.params.mwLoadingId);
@@ -161,6 +191,11 @@ module.exports = {
   createProduct,
   createStock,
   createBillRaise,
+  createManageBill,
+  getAllManageBill,
+  getManageBillById,
+  updateManageBill,
+  deleteBillManage,
   getAllBillRaised,
   getBillRaiseById,
   updateBillRaiseById,

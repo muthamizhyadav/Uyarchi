@@ -227,10 +227,57 @@ billRaiseSchema.plugin(paginate);
 
 const BillRaise = mongoose.model("BillRaise", billRaiseSchema);
 
+const manageBillSchema=new mongoose.Schema({
+  _id:{
+    type:String,
+    default:v4
+  },
+  billId:{
+    type:String,
+  },
+  supplierId:{
+    type:String,
+
+  },
+  orderId:{
+    type:String,
+  },
+  orderQuantity:{
+    type:Number,
+  },
+  receivedQuanity:{
+    type:Number,
+  },
+  amountOriginal:{
+    type:Number,
+  },
+  amountFixed:{
+    type:Number,
+  },
+  status:{
+    type:String,
+    enum:['Paid','Pending'],
+    default:'Pending',
+  },
+  active:{
+    type:Boolean,
+    default:true
+  },
+  archive:{
+    type:Boolean,
+    default:false
+  },
+})
+manageBillSchema.plugin(toJSON);
+manageBillSchema.plugin(paginate);
+
+const ManageBill=mongoose.model('manageBill',manageBillSchema)
+
 module.exports = {
   Stock,
   Product,
   ConfirmStock,
   LoadingExecute,
   BillRaise,
+  ManageBill, 
 };
