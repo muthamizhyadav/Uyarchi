@@ -22,17 +22,16 @@ const createProduct = async (productBody) => {
 
 const createManageBill = async (manageBillBody) =>{
   const { billId, supplierId, orderId } = manageBillBody
-  console.log(billId)
-  const bill = await BillRaise.find()
-  console.log(bill)
+  const bill = await BillRaise.findById(billId)
   if(bill === null){
     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid BillId ")
   }
-  const supplier = await Supplier.find()
+  const supplier = await Supplier.findById(supplierId)
   if(supplier === null){
     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid SupplierId")
   }
-  const order = await ReceivedOrder.find();
+  const order = await ReceivedOrder.findById(orderId);
+  console.log(order)
   if(order === null){
     throw new ApiError(httpStatus.BAD_REQUEST, "OrderId Invalid")
   }
