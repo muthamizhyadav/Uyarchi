@@ -135,7 +135,7 @@ const updateManageBill = async (manageBillId, updatebody) =>{
   if(!manageBill){
     throw new ApiError(httpStatus.NOT_FOUND, "ManageBill Not Found")
   }
-  manageBill = await ManageBill.findByIdAndUpdate({_id:manageBillId}, updateBody, {new:true})
+  manageBill = await ManageBill.findByIdAndUpdate({_id:manageBillId}, updatebody, {new:true})
   return manageBill
 }
 
