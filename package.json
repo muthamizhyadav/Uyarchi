@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/hagopj13/node-express-boilerplate.git"
   },
-  "author": "Hagop Jamkojian <hagopj13@gmail.com>",
+  "author": "Muthamizhyadav <muthamizhyadav@gmail.com>",
   "license": "MIT",
   "engines": {
     "node": "16.14.0",
