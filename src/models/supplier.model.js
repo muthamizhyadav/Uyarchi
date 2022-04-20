@@ -15,6 +15,9 @@ const supplierSchema =  new mongoose.Schema({
         type:Number,
         required:true
     },
+    date:{
+        type:Date,
+    },
 })
 
 supplierSchema.plugin(toJSON);
