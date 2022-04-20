@@ -65,12 +65,15 @@ const createConfirmStock = async (confirmBody) => {
 };
 
 const createMainWherehouseLoadingExecute = async (MWLEbody) => {
-  const { productId } = MWLEbody;
+  const { productId, quantity, wastage } = MWLEbody;
+  let values = {}
+  netWeight = quantity + wastage
   const product = await Product.findById(productId);
   if (product === null) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid Product Id 😞');
   }
-  return LoadingExecute.create(MWLEbody);
+  values ={...MWLEbody, ...{netWeight}}
+  return LoadingExecute.create(values);
 };
 
 const createBillRaise = async (billRaiseBody) => {

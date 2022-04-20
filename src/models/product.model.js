@@ -180,13 +180,13 @@ const loadingExecuteSchema = new mongoose.Schema({
     type: String,
   },
   quantity: {
-    type: String,
+    type: Number,
   },
   wastage: {
-    type: String,
+    type: Number,
   },
   netWeight: {
-    type: String,
+    type: Number,
   },
   status: {
     type: String,
