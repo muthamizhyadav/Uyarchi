@@ -3,7 +3,7 @@ const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
 
 const d = new Date();
-let text = d.toUTCString();
+let text = d.toISTString();
 
 const productSchema = mongoose.Schema({
   _id: {
