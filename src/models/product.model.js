@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
+var moment = require('moment');
 
-const d = new Date();
-let text = d.toISTString();
+time = moment().format("YYYY-MM-DD HH:mm:ss");
+console.log(time)
 
 const productSchema = mongoose.Schema({
   _id: {
@@ -128,7 +129,7 @@ const stockSchema = mongoose.Schema({
   },
   date:{
     type:String,
-    default: text,
+    default: Date().toString({timeZone: 'IST'})
   }
 });
 
