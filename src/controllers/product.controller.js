@@ -162,6 +162,11 @@ const updateMainWherehouseLoadingExecuteById = catchAsync(async(req, res)=>{
   res.send(mwloading)
 })
 
+const updateStockStatusById = catchAsync(async(req, res)=>{
+  const status = await productService.updateStockStatucById(req.params.id, req.body)
+  res.send(status)
+})
+
 const deleteProduct = catchAsync(async (req, res) => {
   await productService.deleteProductById(req.params.productId);
   res.status(httpStatus.NO_CONTENT).send();
@@ -212,6 +217,7 @@ module.exports = {
   getMailWherehoustLoadingExecuteById,
   getProducts,
   updateArrivedById,
+  updateStockStatusById,
   updateMainWherehouseLoadingExecuteById,
   getproduct,
   updateProduct,

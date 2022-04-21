@@ -130,6 +130,11 @@ const stockSchema = mongoose.Schema({
   date:{
     type:String,
     default: Date().toString({timeZone: 'IST'})
+  },
+  status:{
+    type:String,
+    enum:['Pending', "Raised", "Delivered"],
+    default:"Pending",
   }
 });
 

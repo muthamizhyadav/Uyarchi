@@ -168,6 +168,16 @@ const updateArrivedById = async (id) => {
   stock = await Stock.findByIdAndUpdate({ _id: id }, { arrived: true }, { new: true });
   return stock;
 };
+
+const updateStockStatucById = async (id) => {
+  let stock = await Stock.findById(id);
+  if (!stock) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stock Not Found');
+  }
+  stock = await Stock.findByIdAndUpdate({ _id: id }, { status: "Raised" }, { new: true });
+  return stock;
+};
+
 const updateConfirmById = async (confirmStockId, updateBody) => {
   let confirmStock = await getConfrimById(confirmStockId);
   if (!confirmStock) {
@@ -234,6 +244,7 @@ module.exports = {
   createManageBill,
   getAllManageBill,
   getManageBill,
+  updateStockStatucById,
   updateManageBill,
   deleteBillManage,
   createBillRaise,
