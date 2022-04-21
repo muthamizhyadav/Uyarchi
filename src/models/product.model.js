@@ -129,7 +129,7 @@ const stockSchema = mongoose.Schema({
   },
   date:{
     type:String,
-    default: Date().toLocaleString('UTC +5:30', {timeZone: 'IST'})
+    default: Date().toLocaleString('IST', {timeZone: 'IST'})
   }
 });
 
