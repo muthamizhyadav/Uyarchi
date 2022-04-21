@@ -1,17 +1,8 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
-
-let options = {
-  timeZone: 'Asia/Kolkata',
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
-},
-formatter = new Intl.DateTimeFormat([], options);
+var moment = require('moment');
+time = moment().format("YYYY-MM-DD HH:mm:ss");
 
 const productSchema = mongoose.Schema({
   _id: {
@@ -136,7 +127,7 @@ const stockSchema = mongoose.Schema({
   },
   date:{
     type:Date,
-    default:formatter.format(new Date())
+    default:time
   }
 });
 
