@@ -17,6 +17,7 @@ router.route('/confirmStock').post(productController.createConfirmStock);
 router.route('/confirmStock/all').get(productController.getAllConfirmStock);
 router.route('/stock/:id').put(productController.updateStockStatusById);
 router.route('/sendData/:id').put(productController.sendStocktoLoadingExecute);
+router.route('/loadingExecute/all').get(productController.getLoadingExecuteDate);
 router
   .route('/confirmStock/:confirmStockId')
   .get(productController.getconfirmStockById)

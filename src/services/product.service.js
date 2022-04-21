@@ -190,11 +190,15 @@ const updateConfirmById = async (confirmStockId, updateBody) => {
 const sendStocktoLoadingExecute = async (id)=>{
   let stocks = await getStockBySupplierId(id)
   stocks = await Stock.findByIdAndUpdate({_id:id}, {loadingExecute:true}, {new:true})
-  console.log(stocks)
   if(!stocks.loadingExecute === true){
     return null
   }
   return stocks
+}
+
+const getLoadingExecuteDate = async()=>{
+  const loadings = Stock.find({loadingExecute:true})
+  return loadings
 }
 
 const updateProductById = async (productId, updateBody) => {
@@ -256,6 +260,7 @@ module.exports = {
   createManageBill,
   getAllManageBill,
   getManageBill,
+  getLoadingExecuteDate,
   updateStockStatucById,
   updateManageBill,
   deleteBillManage,

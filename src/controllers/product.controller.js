@@ -182,6 +182,11 @@ const sendStocktoLoadingExecute = catchAsync (async(req, res)=>{
   res.send(stocks)
 })
 
+const getLoadingExecuteDate = catchAsync(async (req, res)=>{
+  const loading = await productService.getLoadingExecuteDate()
+  res.send(loading)
+})
+
 const deleteMainWherehouseLoadingExecuteById = catchAsync(async (req, res)=>{
   await productService.deleteMainWherehouseLoadingExecuteById(req.params.mwLoadingId);
   res.status(httpStatus.NO_CONTENT).send();
@@ -209,6 +214,7 @@ module.exports = {
   getAllBillRaised,
   getBillRaiseById,
   updateBillRaiseById,
+  getLoadingExecuteDate,
   deleteBillRaise,
   createMainWherehouseLoadingExecute,
   createConfirmStock,
