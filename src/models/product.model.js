@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
 var moment = require('moment');
+
 time = moment().format("YYYY-MM-DD HH:mm:ss");
+console.log(time)
 
 const productSchema = mongoose.Schema({
   _id: {
@@ -126,8 +128,8 @@ const stockSchema = mongoose.Schema({
     default: false,
   },
   date:{
-    type:Date,
-    default:time
+    type:String,
+    default: moment().format("YYYY-MM-DD HH:mm:ss")
   }
 });
 
