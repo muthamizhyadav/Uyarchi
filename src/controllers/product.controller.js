@@ -177,6 +177,11 @@ const deleteBillManage = catchAsync (async (req, res)=>{
   res.status(httpStatus.NO_CONTENT).send()
 })
 
+const sendStocktoLoadingExecute = catchAsync (async(req, res)=>{
+  const stocks = await productService.sendStocktoLoadingExecute(req.params.id, req.body)
+  res.send(stocks)
+})
+
 const deleteMainWherehouseLoadingExecuteById = catchAsync(async (req, res)=>{
   await productService.deleteMainWherehouseLoadingExecuteById(req.params.mwLoadingId);
   res.status(httpStatus.NO_CONTENT).send();
@@ -223,4 +228,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   deleteMainWherehouseLoadingExecuteById,
+  sendStocktoLoadingExecute
 };

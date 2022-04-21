@@ -135,7 +135,11 @@ const stockSchema = mongoose.Schema({
     type:String,
     enum:['Pending', "Raised", "Delivered"],
     default:"Pending",
-  }
+  },
+  loadingExecute:{
+    type:Boolean,
+    default:false
+  },
 });
 
 stockSchema.plugin(toJSON);

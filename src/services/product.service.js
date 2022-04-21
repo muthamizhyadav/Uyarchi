@@ -187,6 +187,16 @@ const updateConfirmById = async (confirmStockId, updateBody) => {
   return confirmStock;
 };
 
+const sendStocktoLoadingExecute = async (id)=>{
+  let stocks = await getStockBySupplierId(id)
+  stocks = await Stock.findByIdAndUpdate({_id:id}, {loadingExecute:true}, {new:true})
+  console.log(stocks)
+  if(!stocks.loadingExecute === true){
+    return null
+  }
+  return stocks
+}
+
 const updateProductById = async (productId, updateBody) => {
   let prod = await getProductById(productId);
   if (!prod) {
@@ -195,6 +205,8 @@ const updateProductById = async (productId, updateBody) => {
   prod = await Product.findByIdAndUpdate({ _id: productId }, updateBody, { new: true });
   return prod;
 };
+
+
 
 const deleteProductById = async (productId) => {
   const product = await getProductById(productId);
@@ -259,6 +271,7 @@ module.exports = {
   updateArrivedById,
   updateConfirmById,
   deleteConfirmStockById,
+  sendStocktoLoadingExecute,
   getAllStock,
   getProductById,
   getMailWherehoustLoadingExecuteById,
