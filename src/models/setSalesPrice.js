@@ -9,10 +9,10 @@ const setSalesPriceSchema = new mongoose.Schema({
         default:v4,
     },
     date:{
-        type:Date,
+        type:String,
     },
     time:{
-        type:Date,
+        type:String,
     },
     product:{
         type:Array,
