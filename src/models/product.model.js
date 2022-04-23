@@ -74,6 +74,18 @@ const productSchema = mongoose.Schema({
   minBidAmount: {
     type: Number,
   },
+  onlinePrice:{
+    type:Number,
+  },
+  salesmanPrice:{
+    type:Array,
+  },
+  oldstock:{
+    type:Number
+  },
+  newstock:{
+    type:Number
+  },
   active: {
     type: Boolean,
     default: true,

@@ -2,9 +2,11 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { setSalesPrice } = require('../services');
+const { Product } = require('../models/product.model');
 
 
-const createSetSalesPrice = catchAsync(async (req, res) => {
+const createSetSalesPrice = catchAsync(async(req, res)=> {
+  
     const salesprice = await setSalesPrice.createSetSalesPrice(req.body);
     if (!salesprice) {
       throw new ApiError(httpStatus.NOT_FOUND, 'salesprice Not Fount.');
