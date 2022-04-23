@@ -131,6 +131,15 @@ const stockSchema = mongoose.Schema({
   orderId: {
     type: String,
   },
+  productQuantity:{
+    type:Number,
+  },
+  wastage:{
+    type:Number,
+  },
+  netKg:{
+    type:Number
+  },
   arrived: {
     type: Boolean,
     default: false,
