@@ -143,10 +143,8 @@ const updateProduct = catchAsync(async (req, res) => {
 });
 
 const updatingStatusForDelivered = catchAsync(async (req, res)=>{
-  let Body = req.body
-  let stock = await productService.updatingStatusForDelivered(req.params.id, req.body);
-  // let  
-  // res.send(stock);
+  const stock = await productService.updatingStatusForDelivered(req.params.id, req.body);
+  res.send(stock);
   await stock.save();
 })
 
@@ -163,6 +161,11 @@ const updateConfirmStock = catchAsync(async (req, res)=>{
 const updateArrivedById = catchAsync(async (req, res)=>{
   const stock = await productService.updateArrivedById(req.params.id, req.body)
   res.send(stock)
+})
+
+const updateStockQtyById = catchAsync(async (req, res)=>{
+  const stock = await productService.updateStockQtyById(req.params.id, req.body)
+  res.send(stock);
 })
 
 const updateManageBill = catchAsync (async (req, res)=>{
@@ -218,6 +221,7 @@ const deleteBillRaise = catchAsync(async (req, res)=>{
 module.exports = {
   createProduct,
   createStock,
+  updateStockQtyById,
   createBillRaise,
   createManageBill,
   getAllManageBill,

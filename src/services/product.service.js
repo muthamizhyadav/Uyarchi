@@ -175,13 +175,19 @@ const updateArrivedById = async (id) => {
 
 const updatingStatusForDelivered = async (id)=>{
   let stock = await Stock.findById(id);
-  let proqty = stock.productQuantity;
-  let wastage = stock.wastage;
-  let netkg = stock.netKg;
   if(!stock){
     throw new ApiError(httpStatus.NOT_FOUND, 'Stock Not Found');
   }
   stock = await Stock.findByIdAndUpdate({_id:id}, {status:'Delivered'}, {new:true});
+  return stock;
+}
+
+const updateStockQtyById = async(id, updateBody)=>{
+  let stock = await Stock.findById(id);
+  if(!stock){
+    throw new ApiError(httpStatus.NOT_FOUND, "Stock Not Found");
+  }
+  stock = await Stock.findByIdAndUpdate({_id:id}, updateBody, {new:true});
   return stock;
 }
 
@@ -289,6 +295,7 @@ module.exports = {
   createMainWherehouseLoadingExecute,
   getAllConfirmStack,
   getAllMailWherehoustLoadingExecute,
+  updateStockQtyById,
   getConfrimById,
   updateArrivedById,
   updateConfirmById,
