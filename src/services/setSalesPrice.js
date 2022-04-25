@@ -17,6 +17,11 @@ const createSetSalesPrice = async(salepriceBody, updatebody) =>{
     return SetSalesPrice.create(salepriceBody);
 }
 
+const getSetSalesPriceByDate = async(date)=>{
+  const setSale = await SetSalesPrice.find({date})
+  return setSale
+}
+
 const getAllSetSalesPrice = async()=>{
    return SetSalesPrice.find();
 }
@@ -50,6 +55,7 @@ const deleteSetSalesPriceById = async (salesPriceId) => {
 
 module.exports = {
     createSetSalesPrice,
+    getSetSalesPriceByDate,
     getAllSetSalesPrice,
     getSetSalesPriceById,
     updateSetSalesPriceById,

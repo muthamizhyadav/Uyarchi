@@ -19,6 +19,11 @@ const createSetSalesPrice = catchAsync(async(req, res)=> {
       res.send(salesprice);
   })
   
+  const getSetSalesPriceByDate = catchAsync (async (req, res)=>{
+    const setsales = await setSalesPrice.getSetSalesPriceByDate(req.params.date)
+    res.send(setsales)
+  })
+
  const getSetSalesPriceById = catchAsync (async (req, res)=>{
      const salesprice = await setSalesPrice.getSetSalesPriceById(req.params.salesPriceId);
      if(!salesprice){
@@ -40,6 +45,7 @@ const createSetSalesPrice = catchAsync(async(req, res)=> {
   module.exports = {
       createSetSalesPrice,
       getAllSetSalesPrice,
+      getSetSalesPriceByDate,
       getSetSalesPriceById,
       updateSetSalesPriceById,
       deleterolesById,

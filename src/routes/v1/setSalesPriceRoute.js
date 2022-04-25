@@ -9,5 +9,5 @@ router
   .get(setSalesPriceController.getSetSalesPriceById)
   .put(setSalesPriceController.updateSetSalesPriceById)
   .delete(setSalesPriceController.deleterolesById);
-
+router.route('/date/:date').get(setSalesPriceController.getSetSalesPriceByDate)
 module.exports = router;
