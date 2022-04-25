@@ -15,8 +15,16 @@ const setSalesPriceSchema = new mongoose.Schema({
         type:String,
     },
     product:{
-        type:Array,
-        default:[]
+        type:String,
+    },
+    onlinePrice:{
+        type:Number
+    },
+    salesmanPrice:{
+        type:Object
+    },
+    oldstock:{
+        type:Number
     },
     active:{
         type:Boolean,
