@@ -137,6 +137,12 @@ const updateProduct = catchAsync(async (req, res) => {
   console.log(product)
 });
 
+const updatingStatusForDelivered = catchAsync(async (req, res)=>{
+  const stock = await productService.updatingStatusForDelivered(req.params.id, req.body);
+  res.send(stock);
+  await stock.save();
+})
+
 const updateBillRaiseById = catchAsync (async (req, res)=>{
   const billRaise = await productService.updateBillRaiseById(req.params.billRaiseId, req.body);
   res.send(billRaise)
@@ -234,5 +240,6 @@ module.exports = {
   updateProduct,
   deleteProduct,
   deleteMainWherehouseLoadingExecuteById,
-  sendStocktoLoadingExecute
+  sendStocktoLoadingExecute,
+  updatingStatusForDelivered
 };

@@ -169,6 +169,15 @@ const updateArrivedById = async (id) => {
   return stock;
 };
 
+const updatingStatusForDelivered = async (id)=>{
+  let stock = await Stock.findById(id);
+  if(!stock){
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stock Not Found');
+  }
+  stock = await Stock.findByIdAndUpdate({_id:id}, {status:'Delivered'}, {new:true});
+  return stock;
+}
+
 const updateStockStatucById = async (id) => {
   let stock = await Stock.findById(id);
   if (!stock) {
@@ -267,6 +276,7 @@ module.exports = {
   createBillRaise,
   getAllBillRaised,
   getBillRaiseById,
+  updatingStatusForDelivered,
   updateBillRaiseById,
   deleteBillRaise,
   createMainWherehouseLoadingExecute,

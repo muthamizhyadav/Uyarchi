@@ -42,6 +42,6 @@ router
 router.route('/manageBill').post(productController.createManageBill)
 router.route('/managebill/all').get(productController.getAllManageBill)
 router.route('/manageBill/:manageBillId').get(productController.getManageBillById).put(productController.updateManageBill).delete(productController.deleteBillManage);
-
+router.route('/updateDelivered/:id').put(productController.updatingStatusForDelivered)
 
 module.exports = router;
