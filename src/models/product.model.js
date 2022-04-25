@@ -133,12 +133,15 @@ const stockSchema = mongoose.Schema({
   },
   productQuantity:{
     type:Number,
+    default:0,
   },
   wastage:{
     type:Number,
+    default:0,
   },
   netKg:{
-    type:Number
+    type:Number,
+    default:0,
   },
   arrived: {
     type: Boolean,

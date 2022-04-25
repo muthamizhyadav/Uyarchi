@@ -143,8 +143,10 @@ const updateProduct = catchAsync(async (req, res) => {
 });
 
 const updatingStatusForDelivered = catchAsync(async (req, res)=>{
-  const stock = await productService.updatingStatusForDelivered(req.params.id, req.body);
-  res.send(stock);
+  let Body = req.body
+  let stock = await productService.updatingStatusForDelivered(req.params.id, req.body);
+  // let  
+  // res.send(stock);
   await stock.save();
 })
 

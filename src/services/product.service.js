@@ -175,10 +175,13 @@ const updateArrivedById = async (id) => {
 
 const updatingStatusForDelivered = async (id)=>{
   let stock = await Stock.findById(id);
+  let proqty = stock.productQuantity;
+  let wastage = stock.wastage;
+  let netkg = stock.netKg;
   if(!stock){
     throw new ApiError(httpStatus.NOT_FOUND, 'Stock Not Found');
   }
-  stock = await Stock.findByIdAndUpdate({_id:id}, {productQuantity,wastage, netKg, status:'Delivered'}, {new:true});
+  stock = await Stock.findByIdAndUpdate({_id:id}, {status:'Delivered'}, {new:true});
   return stock;
 }
 
