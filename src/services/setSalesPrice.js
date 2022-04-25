@@ -1,7 +1,6 @@
 const httpStatus = require('http-status');
 const { SetSalesPrice } = require('../models');
 const ApiError = require('../utils/ApiError');
-const { Product } = require('../models/product.model')
 const moment = require('moment')
 
 const createSetSalesPrice = async(salepriceBody, updatebody) =>{
@@ -40,8 +39,6 @@ const getdataByDateWise = async(datawise)=>{
   for(let i = index; i <index+10; i++){
     let dates=new Date();
     dates.setDate(dates.getDate()-i);
-    // console.log( dates)
-    // console.log(moment(dates).format("DD-MM-yyyy"));
     const setSale = await SetSalesPrice.find({date:moment(dates).format("DD-MM-yyyy")})
     const date=moment(dates).format("DD-MM-yyyy");
     let row={
@@ -49,9 +46,7 @@ const getdataByDateWise = async(datawise)=>{
       value:setSale
     }
     ret.push(row);
-  //  console.log(setSale)
   }
-  console.log(ret)
   return ret;
 }
 

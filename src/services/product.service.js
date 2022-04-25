@@ -105,6 +105,12 @@ const getStockBySupplierId = async (id) => {
   return await Stock.findById(id);
 };
 
+const getAllienceBySupplierId = async(id)=>{
+  const stock = await Stock.findById(id)
+  let others = {totalPrice:stock.totalPrice, logisticCost:stock.logisticCost, coolieCost:stock.coolieCost, misAllianceCost:stock.misAllianceCost}
+  return others
+}
+
 const getProductById = async (id) => {
   return Product.findById(id);
 };
@@ -277,6 +283,7 @@ const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
 
 module.exports = {
   createProduct,
+  getAllienceBySupplierId,
   createStock,
   createConfirmStock,
   createManageBill,

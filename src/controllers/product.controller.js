@@ -136,6 +136,11 @@ const getStockBySupplierId = catchAsync(async (req, res)=>{
   res.send(stock)
 })
 
+const getAllienceBySupplierId = catchAsync(async(req, res)=>{
+  const stock = await productService.getAllienceBySupplierId(req.params.id);
+  res.send(stock)
+});
+
 const updateProduct = catchAsync(async (req, res) => {
   const product = await productService.updateProductById(req.params.productId, req.body);
   res.json(product)
@@ -220,6 +225,7 @@ const deleteBillRaise = catchAsync(async (req, res)=>{
 
 module.exports = {
   createProduct,
+  getAllienceBySupplierId,
   createStock,
   updateStockQtyById,
   createBillRaise,
