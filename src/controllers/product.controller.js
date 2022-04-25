@@ -97,6 +97,11 @@ const getAllMailWherehoustLoadingExecute =  catchAsync(async (req, res)=>{
   res.send(mwloading)
 })
 
+const getStocksByStatusDelivered = catchAsync(async (req, res)=>{
+  const stock = await productService.getStocksByStatusDelivered()
+  res.send(stock)
+})
+
 const getAllBillRaised = catchAsync (async(req, res)=>{
   const billRaise = await productService.getAllBillRaised()
   res.send(billRaise)
@@ -223,6 +228,7 @@ module.exports = {
   getLoadingExecuteDate,
   deleteBillRaise,
   createMainWherehouseLoadingExecute,
+  getStocksByStatusDelivered,
   createConfirmStock,
   getAllConfirmStock,
   getAllMailWherehoustLoadingExecute,

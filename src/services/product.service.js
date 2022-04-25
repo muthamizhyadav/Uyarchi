@@ -133,6 +133,10 @@ const getAllManageBill = async ()=>{
   return ManageBill.find()
 }
 
+const getStocksByStatusDelivered = async()=>{
+  return Stock.find({status:'Delivered'})
+}
+
 const updateManageBill = async (manageBillId, updatebody) =>{
   let manageBill = await getManageBill(manageBillId);
   if(!manageBill){
@@ -296,4 +300,5 @@ module.exports = {
   updateProductById,
   deleteProductById,
   queryProduct,
+  getStocksByStatusDelivered,
 };
