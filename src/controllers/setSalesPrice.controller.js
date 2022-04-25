@@ -19,6 +19,11 @@ const createSetSalesPrice = catchAsync(async(req, res)=> {
       res.send(salesprice);
   })
   
+  const getdataByDateWise = catchAsync(async (req, res)=>{
+    const setsale = await setSalesPrice.getdataByDateWise(req.params.date)
+    res.send(setsale)
+  })
+
   const getSetSalesPriceByDate = catchAsync (async (req, res)=>{
     const setsales = await setSalesPrice.getSetSalesPriceByDate(req.params.date)
     res.send(setsales)
@@ -44,6 +49,7 @@ const createSetSalesPrice = catchAsync(async(req, res)=> {
   
   module.exports = {
       createSetSalesPrice,
+      getdataByDateWise,
       getAllSetSalesPrice,
       getSetSalesPriceByDate,
       getSetSalesPriceById,
