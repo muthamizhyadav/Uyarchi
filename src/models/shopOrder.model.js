@@ -13,13 +13,16 @@ const ShopOrderPriceSchema = new mongoose.Schema({
     time:{
         type:String,
     },
-    shopName:{
+    shopId:{
         type:String,
         default:"",
     },
     product:{
         type:Array,
         default:[],
+    },
+    total:{
+        type:Number,
     },
     active:{
         type:Boolean,
