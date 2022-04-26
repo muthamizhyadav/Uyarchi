@@ -40,20 +40,26 @@ const createManageBill = async (manageBillBody) =>{
 
 const createStock = async (stockbody) => {
   const { supplierId, product, productName } = stockbody;
+  let pp =product.map((e)=>{
+    return e.product
+  })
+  console.log(pp)
+  const pros = await Product.findById(pp);
+  console.log(pros.productTitle)
   product.forEach(async (element) => {
     const productId = element.product;
     const pro = await Product.findById(productId);
     console.log(pro.productTitle);
     let oldStock = pro.stock;
-    
     let newStock = element.measureMent;
     let totalStock = parseInt(oldStock) + parseInt(newStock);
     await Product.findByIdAndUpdate({ _id: productId }, { stock: totalStock }, { new: true });
   });
   let values = {};
-  let pp = pro.productTitle;
+  // let pp = pro.productTitle;
+  // console.log(pp)
   const supp = await Supplier.findById(supplierId);
-  values = { ...stockbody, ...{ supplierName: supp.supplierName, productName:pp } };
+  values = { ...stockbody, ...{ supplierName: supp.supplierName, productName: pros.productTitle} };
   return Stock.create(values);
 };
 const createConfirmStock = async (confirmBody) => {
