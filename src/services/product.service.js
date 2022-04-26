@@ -56,8 +56,6 @@ const createStock = async (stockbody) => {
     await Product.findByIdAndUpdate({ _id: productId }, { stock: totalStock }, { new: true });
   });
   let values = {};
-  // let pp = pro.productTitle;
-  // console.log(pp)
   const supp = await Supplier.findById(supplierId);
   values = { ...stockbody, ...{ supplierName: supp.supplierName, productName: pros.productTitle} };
   return Stock.create(values);
