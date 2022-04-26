@@ -24,6 +24,15 @@ const ShopOrderPriceSchema = new mongoose.Schema({
     total:{
         type:Number,
     },
+    paymentValue:{
+        type:Number
+    },
+    oldBalance:{
+        type:Number,
+    },
+    status:{
+        type:String,
+    },
     active:{
         type:Boolean,
         default:true,
