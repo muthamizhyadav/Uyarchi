@@ -5,15 +5,15 @@ const moment = require('moment')
 
 const createSetSalesPrice = async(salepriceBody, updatebody) =>{
   console.log(salepriceBody.product)
-  // salepriceBody.product.forEach(async (element) => {
-  //  console.log(element.product)
-  //  const productId = element.product;
-  //  let onlinePrice = element.onlinePrice
-  //  let salesmanPrice = element.salesmanPrice
-  //  let oldstock = element.oldstock
-  //  console.log(oldstock)
-  //  await Product.findByIdAndUpdate({ _id: productId },{onlinePrice:onlinePrice, salesmanPrice:salesmanPrice, oldstock:oldstock}, { new: true });
-  // });
+  salepriceBody.product.forEach(async (element) => {
+   console.log(element.product)
+   const productId = element.product;
+   let onlinePrice = element.onlinePrice
+   let salesmanPrice = element.salesmanPrice
+   let oldstock = element.oldstock
+   console.log(oldstock)
+   await Product.findByIdAndUpdate({ _id: productId },{onlinePrice:onlinePrice, salesmanPrice:salesmanPrice, oldstock:oldstock}, { new: true });
+  });
     return SetSalesPrice.create(salepriceBody);
 }
 
