@@ -1,20 +1,23 @@
 const httpStatus = require('http-status');
-const { SetSalesPrice, Product } = require('../models');
+const { SetSalesPrice } = require('../models');
+const { Product } =require('../models/product.model')
 const ApiError = require('../utils/ApiError');
 const moment = require('moment')
 
 const createSetSalesPrice = async(salepriceBody) =>{
-  // console.log(salepriceBody)
-  // salepriceBody.product.foreach(async (element) => {
-  //  console.log(element.product)
-  //  const productId = element.product;
-  //  let onlinePrice = element.onlinePrice
-  //  let salesmanPrice = element.salesmanPrice
-  //  let oldstock = element.oldstock
-  //  console.log(oldstock)
-  //  await Product.findByIdAndUpdate({ _id: productId },{onlinePrice:onlinePrice, salesmanPrice:salesmanPrice, oldstock:oldstock}, { new: true });
-  // });
-    return SetSalesPrice.create(salepriceBody);
+  const bodycontent = salepriceBody
+  console.log(bodycontent)
+  
+   console.log(bodycontent.product)
+   const productId = bodycontent.product;
+   let onlinePrice = bodycontent.onlinePrice
+   let salesmanPrice = bodycontent.salesmanPrice
+   let oldstock = bodycontent.oldstock
+   console.log(oldstock)
+   await Product.findByIdAndUpdate({ _id: productId },{onlinePrice:onlinePrice, salesmanPrice:salesmanPrice, oldstock:oldstock}, { new: true });
+  // await Product.fi  
+  
+  return SetSalesPrice.create(salepriceBody);
 }
 
 const getSetSalesPriceByDate = async(date)=>{
