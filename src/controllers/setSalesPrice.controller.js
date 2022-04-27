@@ -20,12 +20,12 @@ const createSetSalesPrice = catchAsync(async(req, res)=> {
   })
   
   const getdataByDateWise = catchAsync(async (req, res)=>{
-    const setsale = await setSalesPrice.getdataByDateWise(req.params.date)
+    const setsale = await setSalesPrice.getdataByDateWise(req.params.date, req.params.id)
     res.send(setsale)
   })
 
   const getSetSalesPriceByDate = catchAsync (async (req, res)=>{
-    const setsales = await setSalesPrice.getSetSalesPriceByDate(req.params.date)
+    const setsales = await setSalesPrice.getSetSalesPriceByDate(req.params.date, req.params.id)
     res.send(setsales)
   })
 

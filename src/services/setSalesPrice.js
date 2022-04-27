@@ -14,14 +14,13 @@ const createSetSalesPrice = async(salepriceBody) =>{
    let salesmanPrice = bodycontent.salesmanPrice
    let oldstock = bodycontent.oldstock
    console.log(oldstock)
-   await Product.findByIdAndUpdate({ _id: productId },{onlinePrice:onlinePrice, salesmanPrice:salesmanPrice, oldstock:oldstock}, { new: true });
-  // await Product.fi  
+   await Product.findByIdAndUpdate({ _id: productId },{onlinePrice:onlinePrice, salesmanPrice:salesmanPrice, oldstock:oldstock}, { new: true }); 
   
   return SetSalesPrice.create(salepriceBody);
 }
 
-const getSetSalesPriceByDate = async(date)=>{
-  const setSale = await SetSalesPrice.find({date})
+const getSetSalesPriceByDate = async(date,id)=>{
+  const setSale = await SetSalesPrice.find({date:date, product:id})
   return setSale
 }
 
@@ -29,7 +28,8 @@ const getAllSetSalesPrice = async()=>{
    return SetSalesPrice.find();
 }
 
-const getdataByDateWise = async(datawise)=>{
+const getdataByDateWise = async(datawise, id)=>{
+  console.log(id)
   let ret = []
   let count = datawise;
   let index=0;
@@ -42,7 +42,7 @@ const getdataByDateWise = async(datawise)=>{
   for(let i = index; i <index+10; i++){
     let dates=new Date();
     dates.setDate(dates.getDate()-i);
-    const setSale = await SetSalesPrice.find({date:moment(dates).format("DD-MM-yyyy")})
+    const setSale = await SetSalesPrice.find({date:moment(dates).format("DD-MM-yyyy"),product:id})
     const date=moment(dates).format("DD-MM-yyyy");
     let row={
       date:date,

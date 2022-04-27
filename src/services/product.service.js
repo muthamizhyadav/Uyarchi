@@ -230,6 +230,7 @@ const sendStocktoLoadingExecute = async (id)=>{
   return stocks
 }
 
+
 const getLoadingExecuteDate = async()=>{
   const loadings = Stock.find({loadingExecute:true})
   return loadings
