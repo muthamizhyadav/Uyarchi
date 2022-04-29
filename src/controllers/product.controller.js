@@ -71,6 +71,13 @@ const getManageBillById = catchAsync (async (req, res)=>{
   res.send(manageBill)
 })
 
+const getStockById = catchAsync (async (req, res)=>{
+  const stock = await productService.getStockById(req.params.stockId);
+  // if(!stock || stock.active === false){
+  //   throw new ApiError(httpStatus.NOT_FOUND, "Stock Not Found")
+  // }
+  res.send(stock)
+})
 const getAllManageBill = catchAsync (async (req,res)=>{
   const manage = await productService.getAllManageBill()
   res.send(manage)
@@ -188,6 +195,11 @@ const updateStockStatusById = catchAsync(async(req, res)=>{
   res.send(status)
 })
 
+const updateStockById = catchAsync(async(req, res)=>{
+  const stack = await productService.updateStackById (req.params.stockId, req.body)
+  res.send(stack)
+})
+
 const deleteProduct = catchAsync(async (req, res) => {
   await productService.deleteProductById(req.params.productId);
   res.status(httpStatus.NO_CONTENT).send();
@@ -207,6 +219,8 @@ const getLoadingExecuteDate = catchAsync(async (req, res)=>{
   const loading = await productService.getLoadingExecuteDate()
   res.send(loading)
 })
+
+
 
 const deleteMainWherehouseLoadingExecuteById = catchAsync(async (req, res)=>{
   await productService.deleteMainWherehouseLoadingExecuteById(req.params.mwLoadingId);
@@ -228,6 +242,7 @@ module.exports = {
   getAllienceBySupplierId,
   createStock,
   updateStockQtyById,
+  getStockById,
   createBillRaise,
   createManageBill,
   getAllManageBill,
@@ -255,6 +270,7 @@ module.exports = {
   updateStockStatusById,
   updateMainWherehouseLoadingExecuteById,
   getproduct,
+  updateStockById,
   updateProduct,
   deleteProduct,
   deleteMainWherehouseLoadingExecuteById,

@@ -11,11 +11,13 @@ router
   .put(productController.updateProduct);
 
 router.route('/stocks').post(productController.createStock);
+router.route('/stocks/:stockId').put(productController.updateStockById)
 router.route('/stock/all').get(productController.getAllStock);
 router.route('/suppliers/:supplierId').get(productController.getStockBySupplierId);
 router.route('/confirmStock').post(productController.createConfirmStock);
 router.route('/confirmStock/all').get(productController.getAllConfirmStock);
-router.route('/stock/:id').put(productController.updateStockStatusById);
+router.route('/stock/:id').put(productController.updateStockStatusById)
+router.route('/updateStock/:stockId').put(productController.updateStockById);
 router.route('/sendData/:id').put(productController.sendStocktoLoadingExecute);
 router.route('/stock/delivered').get(productController.getStocksByStatusDelivered);
 router.route('/updateQty/:id').put(productController.updateStockQtyById);

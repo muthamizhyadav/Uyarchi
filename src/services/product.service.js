@@ -221,6 +221,7 @@ const updateConfirmById = async (confirmStockId, updateBody) => {
   return confirmStock;
 };
 
+
 const sendStocktoLoadingExecute = async (id)=>{
   let stocks = await getStockBySupplierId(id)
   stocks = await Stock.findByIdAndUpdate({_id:id}, {loadingExecute:true}, {new:true})
@@ -230,6 +231,24 @@ const sendStocktoLoadingExecute = async (id)=>{
   return stocks
 }
 
+const getStockById = async(stockId)=>{
+  const stocks = await Stock.findById(stockId)
+  if(!stocks){
+    throw new ApiError(httpStatus.NOT_FOUND, "Stock NOT Found")
+  }
+  return stocks
+}
+
+const updateStackById = async (stackId, updateBody) => {
+  // let stack = await getStockById(stackId);
+  // console.log(stck)
+  // if (!stack) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'stack not found');
+  // }
+  console.log(stackId)
+  stack = await Stock.findByIdAndUpdate({ _id: stackId }, updateBody, { new: true });
+  return stack;
+};
 
 const getLoadingExecuteDate = async()=>{
   const loadings = Stock.find({loadingExecute:true})
@@ -290,8 +309,10 @@ const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
 
 module.exports = {
   createProduct,
+  getStockById,
   getAllienceBySupplierId,
   createStock,
+  updateStackById,
   createConfirmStock,
   createManageBill,
   getAllManageBill,
