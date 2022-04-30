@@ -3,6 +3,7 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const productService = require('../services/product.service');
+const { Stock } = require('../models/product.model');
 
 const createProduct = catchAsync(async (req, res) => {
   const { body } = req;
@@ -237,6 +238,11 @@ const deleteBillRaise = catchAsync(async (req, res)=>{
   res.status(httpStatus.NO_CONTENT).send()
 })
 
+
+const getbillingexecutive=catchAsync(async(req,res)=>{
+  const stock=await productService.getbillingexecutives();
+  res.send(stock);
+})
 module.exports = {
   createProduct,
   getAllienceBySupplierId,

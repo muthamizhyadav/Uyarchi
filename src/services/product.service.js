@@ -240,12 +240,10 @@ const getStockById = async(stockId)=>{
 }
 
 const updateStackById = async (stackId, updateBody) => {
-  // let stack = await getStockById(stackId);
-  // console.log(stck)
-  // if (!stack) {
-  //   throw new ApiError(httpStatus.NOT_FOUND, 'stack not found');
-  // }
-  console.log(stackId)
+  let stack = await getStockById(stackId);
+  if (!stack) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'stack not found');
+  }
   stack = await Stock.findByIdAndUpdate({ _id: stackId }, updateBody, { new: true });
   return stack;
 };
@@ -306,6 +304,8 @@ const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
   }
   (loading.active = false), (loading.archive = true), await loading.save();
 };
+
+
 
 module.exports = {
   createProduct,

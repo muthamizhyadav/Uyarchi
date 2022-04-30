@@ -11,6 +11,7 @@ router
   .put(productController.updateProduct);
 
 router.route('/stocks').post(productController.createStock);
+// router.route('/closeorder').post(productController.getbillingexecutive);
 router.route('/stocks/:stockId').put(productController.updateStockById)
 router.route('/stock/all').get(productController.getAllStock);
 router.route('/suppliers/:supplierId').get(productController.getStockBySupplierId);
