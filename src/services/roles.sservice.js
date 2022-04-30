@@ -23,11 +23,8 @@ const getRolesById = async (id) => {
   };
 
 const updateRolesById = async (roleId, updateBody) => {
-  let role = await (roleId);
-  if (!role) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Roles not found');
-  }
-  role = await Roles.findByIdAndUpdate({ _id: p }, updateBody, { new: true });
+
+const  role = await Roles.findByIdAndUpdate({ _id: roleId }, updateBody, { new: true });
   return role;
 };
 
