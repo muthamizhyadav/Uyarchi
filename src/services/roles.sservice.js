@@ -10,9 +10,10 @@ const getAllRoles = async()=>{
    return Roles.find();
 }
 
-const queryRoles = async (filter, options) => {
-  return Roles.paginate(filter, options);
-};
+// const queryRoles = async (filter, options) => {
+//   return Roles.paginate(filter, options);
+// };
+
 const getRolesById = async (id) => {
     const role = Roles.findById(id);
     if (!role) {
@@ -26,7 +27,7 @@ const updateRolesById = async (roleId, updateBody) => {
   if (!role) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Roles not found');
   }
-  role = await Roles.findByIdAndUpdate({ _id: roleId }, updateBody, { new: true });
+  role = await Roles.findByIdAndUpdate({ _id: p }, updateBody, { new: true });
   return role;
 };
 
