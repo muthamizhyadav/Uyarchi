@@ -47,9 +47,10 @@ const createStock = async (stockbody) => {
 const date = new Date()
 const second =  Math.floor(10 + Math.random() * 99);
 const third =  Math.floor(10 + Math.random() * 99);
-let month=(date.getMonth() < 9 ? '0': '') + (date.getMonth());
+let month=(date.getMonth() < 9 ? '0': '') + (date.getMonth()+1);
 let day=(date.getDate() < 9 ? '0': '') + (date.getDate());
 let billid =first+''+day+''+second+''+month+''+third;
+console.log(month)
 
   const pros = await Product.findById(pp);
   product.forEach(async (element) => {
