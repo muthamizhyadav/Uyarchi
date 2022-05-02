@@ -160,7 +160,10 @@ const stockSchema = mongoose.Schema({
     type:Boolean,
     default:false
   },
-  
+  closeOrder:{
+    type:Boolean,
+    default:false
+  }
 });
 
 stockSchema.plugin(toJSON);

@@ -10,9 +10,10 @@ const getAllRoles = async()=>{
    return Roles.find();
 }
 
-const queryRoles = async (filter, options) => {
-  return Roles.paginate(filter, options);
-};
+// const queryRoles = async (filter, options) => {
+//   return Roles.paginate(filter, options);
+// };
+
 const getRolesById = async (id) => {
     const role = Roles.findById(id);
     if (!role) {
@@ -22,11 +23,8 @@ const getRolesById = async (id) => {
   };
 
 const updateRolesById = async (roleId, updateBody) => {
-  let role = await (roleId);
-  if (!role) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Roles not found');
-  }
-  role = await Roles.findByIdAndUpdate({ _id: roleId }, updateBody, { new: true });
+
+const  role = await Roles.findByIdAndUpdate({ _id: roleId }, updateBody, { new: true });
   return role;
 };
 
