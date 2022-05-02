@@ -146,7 +146,11 @@ const getAllManageBill = async ()=>{
 }
 
 const getStocksByStatusDelivered = async()=>{
-  return Stock.find({status:'Delivered', closeOrder:false})
+  return Stock.find({loadingExecute:true, closeOrder:false})
+}
+
+const getStockByLoadingExecute = async()=>{
+  return Stock.find({loadingExecute:true, closeOrder:true})
 }
 
 const updateManageBill = async (manageBillId, updatebody) =>{
@@ -332,6 +336,7 @@ module.exports = {
   getAllMailWherehoustLoadingExecute,
   updateStockQtyById,
   getConfrimById,
+  getStockByLoadingExecute,
   updateArrivedById,
   updateConfirmById,
   deleteConfirmStockById,

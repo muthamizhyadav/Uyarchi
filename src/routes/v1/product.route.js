@@ -21,6 +21,7 @@ router.route('/stock/:id').put(productController.updateStockStatusById)
 router.route('/updateStock/:stockId').put(productController.updateStockById);
 router.route('/sendData/:id').put(productController.sendStocktoLoadingExecute);
 router.route('/stock/delivered').get(productController.getStocksByStatusDelivered);
+router.route('/stock/loadingExecute').get(productController.getStockByLoadingExecute);
 router.route('/updateQty/:id').put(productController.updateStockQtyById);
 router.route('/loadingExecute/all').get(productController.getLoadingExecuteDate);
 router.route('/allience/:id').get(productController.getAllienceBySupplierId)

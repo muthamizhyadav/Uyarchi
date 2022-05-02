@@ -110,6 +110,11 @@ const getStocksByStatusDelivered = catchAsync(async (req, res)=>{
   res.send(stock)
 })
 
+const getStockByLoadingExecute = catchAsync(async (req, res)=>{
+  const stock = await productService.getStockByLoadingExecute()
+  res.send(stock)
+})
+
 const getAllBillRaised = catchAsync (async(req, res)=>{
   const billRaise = await productService.getAllBillRaised()
   res.send(billRaise)
@@ -268,6 +273,7 @@ module.exports = {
   getconfirmStockById,
   updateConfirmStock,
   deleteConfirmStockById,
+  getStockByLoadingExecute,
   getAllStock,
   getStockBySupplierId,
   getMailWherehoustLoadingExecuteById,
