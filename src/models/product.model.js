@@ -165,7 +165,11 @@ const stockSchema = mongoose.Schema({
   billId:{
     type:Number,
     unique:true
-  }
+  },
+  closeOrder:{
+    type:boolean,
+    default:false,
+  },
 });
 
 stockSchema.plugin(toJSON);
