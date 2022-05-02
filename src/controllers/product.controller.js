@@ -241,6 +241,11 @@ const getStocksByStatusDelivered = catchAsync(async (Req, res)=>{
   res.send(stock)
 })
 
+const getStockByStatusClosed = catchAsync(async(req, res)=>{
+  const stock = await productService.getStockByStatusClosed()
+  res.send(stock)
+})
+
 const deleteMainWherehouseLoadingExecuteById = catchAsync(async (req, res)=>{
   await productService.deleteMainWherehouseLoadingExecuteById(req.params.mwLoadingId);
   res.status(httpStatus.NO_CONTENT).send();
@@ -275,6 +280,7 @@ module.exports = {
   getStockByStatusRaised,
   getStocksByStatusDelivered,
   updateManageBill,
+  getStockByStatusClosed,
   deleteBillManage,
   getAllBillRaised,
   getBillRaiseById,

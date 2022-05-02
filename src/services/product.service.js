@@ -265,6 +265,10 @@ const getStockStatusDelivered = async()=>{
     :'Delivered'})
 }
 
+const getStockByStatusClosed = async()=>{
+  return Stock.find({status: 'Closed'})
+}
+
 const updateStackById = async (stackId, updateBody) => {
   let stack = await getStockById(stackId);
   if (!stack) {
@@ -347,6 +351,7 @@ module.exports = {
   getManageBill,
   getLoadingExecuteDate,
   updateStockStatucById,
+  getStockByStatusClosed,
   updateManageBill,
   deleteBillManage,
   getStockByStatusCreated,

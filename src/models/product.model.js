@@ -155,7 +155,7 @@ const stockSchema = mongoose.Schema({
   },
   status:{
     type:String,
-    enum:['Created','Pending', "Raised", "Delivered"],
+    enum:['Created','Pending', "Raised", "Delivered", "Closed"],
     default:'Created',
   },
   loadingExecute:{
