@@ -19,8 +19,11 @@ router.route('/confirmStock').post(productController.createConfirmStock);
 router.route('/confirmStock/all').get(productController.getAllConfirmStock);
 router.route('/stock/:id').put(productController.updateStockStatusById)
 router.route('/updateStock/:stockId').put(productController.updateStockById);
-router.route('/sendData/:id').put(productController.sendStocktoLoadingExecute);
+router.route('/stock/created').get(productController.getStockByStatusCreated);
+router.route('/stock/raised').get(productController.getStockByStatusRaised);
 router.route('/stock/delivered').get(productController.getStocksByStatusDelivered);
+router.route('/sendData/:id').put(productController.sendStocktoLoadingExecute);
+// router.route('/stock/delivered').get(productController.getStocksByStatusDelivered);
 router.route('/stock/loadingExecute').get(productController.getStockByLoadingExecute);
 router.route('/updateQty/:id').put(productController.updateStockQtyById);
 router.route('/loadingExecute/all').get(productController.getLoadingExecuteDate);

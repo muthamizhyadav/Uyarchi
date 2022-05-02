@@ -105,10 +105,10 @@ const getAllMailWherehoustLoadingExecute =  catchAsync(async (req, res)=>{
   res.send(mwloading)
 })
 
-const getStocksByStatusDelivered = catchAsync(async (req, res)=>{
-  const stock = await productService.getStocksByStatusDelivered()
-  res.send(stock)
-})
+// const getStocksByStatusDelivered = catchAsync(async (req, res)=>{
+//   const stock = await productService.getStocksByStatusDelivered()
+//   res.send(stock)
+// })
 
 const getStockByLoadingExecute = catchAsync(async (req, res)=>{
   const stock = await productService.getStockByLoadingExecute()
@@ -226,7 +226,20 @@ const getLoadingExecuteDate = catchAsync(async (req, res)=>{
   res.send(loading)
 })
 
+const getStockByStatusCreated = catchAsync(async (req, res)=>{
+  const stock  = await productService.getStockByStatusCreated()
+  res.send(stock)
+})
 
+const getStockByStatusRaised = catchAsync(async (Req, res)=>{
+  const stock = await productService.getStockByStatusRaised()
+  res.send(stock)
+})
+
+const getStocksByStatusDelivered = catchAsync(async (Req, res)=>{
+  const stock = await productService.getStocksByStatusDelivered()
+  res.send(stock)
+})
 
 const deleteMainWherehouseLoadingExecuteById = catchAsync(async (req, res)=>{
   await productService.deleteMainWherehouseLoadingExecuteById(req.params.mwLoadingId);
@@ -253,11 +266,14 @@ module.exports = {
   getAllienceBySupplierId,
   createStock,
   updateStockQtyById,
+  getStockByStatusCreated,
   getStockById,
   createBillRaise,
   createManageBill,
   getAllManageBill,
   getManageBillById,
+  getStockByStatusRaised,
+  getStocksByStatusDelivered,
   updateManageBill,
   deleteBillManage,
   getAllBillRaised,

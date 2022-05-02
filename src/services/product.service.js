@@ -67,7 +67,6 @@ let billid =first+''+day+''+second+''+month+''+third;
   return Stock.create(values);
 };
 
-
 const createConfirmStock = async (confirmBody) => {
   const { stockId } = confirmBody;
   const stocks = await Stock.findById(stockId);
@@ -106,6 +105,8 @@ const getAllMailWherehoustLoadingExecute = async () => {
 const getAllConfirmStack = async () => {
   return ConfirmStock.find();
 };
+
+
 
 const getAllStock = async () => {
   return Stock.find();
@@ -251,6 +252,18 @@ const getStockById = async(stockId)=>{
   return stocks
 }
 
+const  getStockByStatusCreated = async()=>{
+  return Stock.find({status:'Created'})
+}
+
+const  getStockByStatusRaised = async()=>{
+  return Stock.find({status:'Raised'})
+}
+
+const getStockStatusDelivered = async()=>{
+  return Stock.find({status:'Delivered'})
+}
+
 const updateStackById = async (stackId, updateBody) => {
   let stack = await getStockById(stackId);
   if (!stack) {
@@ -328,11 +341,14 @@ module.exports = {
   createConfirmStock,
   createManageBill,
   getAllManageBill,
+  getStockByStatusRaised,
+  getStockStatusDelivered,
   getManageBill,
   getLoadingExecuteDate,
   updateStockStatucById,
   updateManageBill,
   deleteBillManage,
+  getStockByStatusCreated,
   createBillRaise,
   getAllBillRaised,
   getBillRaiseById,
