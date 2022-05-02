@@ -167,7 +167,7 @@ const stockSchema = mongoose.Schema({
     unique:true
   },
   closeOrder:{
-    type:boolean,
+    type:Boolean,
     default:false,
   },
 });
