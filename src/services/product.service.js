@@ -154,9 +154,9 @@ const getAllManageBill = async ()=>{
   return ManageBill.find()
 }
 
-const getStocksByStatusDelivered = async()=>{
-  return Stock.find({loadingExecute:true, closeOrder:false})
-}
+// const getStocksByStatusDelivered = async()=>{
+//   return Stock.find({loadingExecute:true, closeOrder:false})
+// }
 
 const getStockByLoadingExecute = async()=>{
   return Stock.find({loadingExecute:true, closeOrder:true})
@@ -261,7 +261,8 @@ const  getStockByStatusRaised = async()=>{
 }
 
 const getStockStatusDelivered = async()=>{
-  return Stock.find({status:'Delivered'})
+  return Stock.find({status
+    :'Delivered'})
 }
 
 const updateStackById = async (stackId, updateBody) => {
@@ -374,5 +375,5 @@ module.exports = {
   updateProductById,
   deleteProductById,
   queryProduct,
-  getStocksByStatusDelivered,
+  getStockStatusDelivered,
 };

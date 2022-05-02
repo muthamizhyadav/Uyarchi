@@ -237,7 +237,7 @@ const getStockByStatusRaised = catchAsync(async (Req, res)=>{
 })
 
 const getStocksByStatusDelivered = catchAsync(async (Req, res)=>{
-  const stock = await productService.getStocksByStatusDelivered()
+  const stock = await productService.getStockStatusDelivered()
   res.send(stock)
 })
 
@@ -282,7 +282,6 @@ module.exports = {
   getLoadingExecuteDate,
   deleteBillRaise,
   createMainWherehouseLoadingExecute,
-  getStocksByStatusDelivered,
   createConfirmStock,
   getAllConfirmStock,
   getAllMailWherehoustLoadingExecute,
