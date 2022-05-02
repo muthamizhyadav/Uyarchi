@@ -198,14 +198,14 @@ const updateArrivedById = async (id) => {
   return stock;
 };
 
-const updatingStatusForDelivered = async (id)=>{
-  let stock = await Stock.findById(id);
-  if(!stock){
-    throw new ApiError(httpStatus.NOT_FOUND, 'Stock Not Found');
-  }
-  stock = await Stock.findByIdAndUpdate({_id:id}, {status:'Delivered'}, {new:true});
-  return stock;
-}
+// const updatingStatusForDelivered = async (id, updateBody)=>{
+//   let stock = await Stock.findById(id);
+//   if(!stock){
+//     throw new ApiError(httpStatus.NOT_FOUND, 'Stock Not Found');
+//   }
+//   stock = await Stock.findByIdAndUpdate({_id:id}, updateBody, {new:true});
+//   return stock;
+// }
 
 const updateStockQtyById = async(id, updateBody)=>{
   let stock = await Stock.findById(id);
@@ -216,12 +216,12 @@ const updateStockQtyById = async(id, updateBody)=>{
   return stock;
 }
 
-const updateStockStatucById = async (id) => {
+const updateStockStatucById = async (id, updatebody) => {
   let stock = await Stock.findById(id);
   if (!stock) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stock Not Found');
   }
-  stock = await Stock.findByIdAndUpdate({ _id: id }, { status: "Raised" }, { new: true });
+  stock = await Stock.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
   return stock;
 };
 
@@ -352,7 +352,7 @@ module.exports = {
   createBillRaise,
   getAllBillRaised,
   getBillRaiseById,
-  updatingStatusForDelivered,
+  // updatingStatusForDelivered,
   updateBillRaiseById,
   deleteBillRaise,
   createMainWherehouseLoadingExecute,
