@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
 
+
+
 const productSchema = mongoose.Schema({
   _id: {
     type: String,
@@ -160,6 +162,10 @@ const stockSchema = mongoose.Schema({
     type:Boolean,
     default:false
   },
+  billId:{
+    type:Number,
+    unique:true
+  }
 });
 
 stockSchema.plugin(toJSON);
