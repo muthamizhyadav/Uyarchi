@@ -12,7 +12,7 @@ provider:
     JWT_RESET_PASSWORD_EXPIRATION_MINUTES: 10
     NODE_ENV: development
     JWT_VERIFY_EMAIL_EXPIRATION_MINUTES: 10
-    MONGODB_URL: mongodb://127.0.0.1:27017/Test
+    MONGODB_URL: mongodb+srv://uyarchi:dev123@uyarchi.8dt00.mongodb.net/UyarchiDev?retryWrites=true&w=majority
     EMAIL_FROM: muthamizhyadav@gmail.com
 
 functions:

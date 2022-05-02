@@ -146,7 +146,7 @@ const getAllManageBill = async ()=>{
 }
 
 const getStocksByStatusDelivered = async()=>{
-  return Stock.find({status:'Delivered'})
+  return Stock.find({status:'Delivered', closeOrder:false})
 }
 
 const updateManageBill = async (manageBillId, updatebody) =>{
