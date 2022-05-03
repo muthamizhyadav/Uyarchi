@@ -24,6 +24,7 @@ module.exports.WarehouseStock = require('./warehouseStock.model')
 module.exports.LoadingExecute = require('./loading.execute.model');
 module.exports.Roles = require('./roles.model');
 module.exports.Menues = require('./menues.model');
+module.exports.Street = require('./street.model')
 module.exports.Assign = require('./assign.model')
 module.exports.Supplier = require('./supplier.model');
 module.exports.SetSalesPrice = require('./setSalesPrice');

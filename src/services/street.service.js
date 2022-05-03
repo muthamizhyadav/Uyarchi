@@ -6,20 +6,68 @@ const Ward = require('../models/ward.model')
 const createStreet = async (streetBody) => {
   const { wardId } = streetBody
   let war = await Ward.findById(wardId)
-  console.log(war)
   let values = {}
   values = {...streetBody, ...{ward:war.ward}}
   if(war === null){
     throw new ApiError(httpStatus.NO_CONTENT, "!oops")
   }
-    return Street.create(values);
+    return Street.create(values)
   };
   
   const getStreetById = async (id) => {
     const street=Street.findById(id);
-        return street
+      return street
   };
   
+const getAllStreet = async ()=>{
+  return Street.aggregate([{
+    $lookup: {
+        from: "zones",
+        localField: "zone",
+        foreignField: "_id",
+        as: "zoneData"
+    }
+},
+{
+    $unwind: "$zoneData"
+},
+{
+    $lookup: {
+        from: "districts",
+        localField: "district",
+        foreignField: "_id",
+        as: "districtData"
+    }
+},
+{
+  $unwind: "$districtData"
+},
+{
+  $lookup:{
+    from:"wards",
+    localField: "wardId",
+    foreignField:"_id",
+    as:"wardData"
+  },
+},
+{
+  $unwind:"$wardData"
+},
+{
+  $project:{
+    districtName:"$districtData.district",
+    zoneName:"$zoneData.zone",
+    // district:"$districtData.district",
+    // zoneId:"$zoneData._id",
+    wardName:"$wardData.ward",
+    street:1,
+    _id:1
+  }
+},
+
+])
+}
+
   const queryStreet = async (filter, options) => {
     return Street.paginate(filter, options);
   };
@@ -48,6 +96,7 @@ const createStreet = async (streetBody) => {
   module.exports = {
     createStreet,
     getStreetById,
+    getAllStreet,
     updateStreetById,
     deleteStreetById,
     queryStreet,

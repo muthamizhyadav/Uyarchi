@@ -4,7 +4,7 @@ const streetController = require('../../controllers/street.controller')
 const router = express.Router();
 router
 .route('/')
-.post(streetController.createStreet)
+.post(streetController.createStreet).get(streetController.getAllStreet)
 
 router.route('/:streetId')
 .get(streetController.getStreetDetailsById)

@@ -9,6 +9,11 @@ const createStreet = catchAsync(async (req, res) => {
     res.status(httpStatus.CREATED).send(street);
 });
 
+const getAllStreet = catchAsync(async (req,res)=>{
+  const street = await StreetService.getAllStreet()
+  res.send(street)
+})
+
 const getStreetDetailsById = catchAsync(async (req, res) => {
   const street = await StreetService.getStreetById(req.params.streetId);
   if (!street || street.active === false) {
@@ -31,4 +36,5 @@ const deleteStreet = catchAsync(async (req, res) => {
     getStreetDetailsById,
     updateStreet,
     deleteStreet,
+    getAllStreet,
   };
