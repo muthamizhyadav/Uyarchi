@@ -6,5 +6,5 @@ const router = express.Router();
 router.route('/').post(wardController.createWard).get(wardController.getAllWard);
 
 router.route('/:wardId').get(wardController.getward).put(wardController.updateward).delete(wardController.deleteWard);
-
+router.route('/wardByZone/:zoneId').get(wardController.getWardByZoneId)
 module.exports = router;

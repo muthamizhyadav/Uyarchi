@@ -19,6 +19,14 @@ const getAllZone = async()=>{
   return Zone.find();
 } 
 
+const getZoneByDistrict = async (districtId)=>{
+  const dis = await Zone.find({districtId})
+  if(dis === null){
+    throw new ApiError(httpStatus.NOT_FOUND, "District Id Is incorrect")
+  }
+  return dis
+}
+
 const getZoneById = async (id) => {
   const zone = Zone.findById(id);
   return zone;
@@ -47,6 +55,7 @@ const deleteZoneById = async (zoneId) => {
 module.exports = {
   createZone,
   getAllZone,
+  getZoneByDistrict,
   getZoneById,
   updateZoneById,
   deleteZoneById,

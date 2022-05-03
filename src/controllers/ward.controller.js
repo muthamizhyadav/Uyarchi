@@ -16,6 +16,11 @@ const createWard = catchAsync(async (req, res) => {
 //   res.send(result);
 // });
 
+const getWardByZoneId = catchAsync(async(req, res)=>{
+  const dis = await wardService.getWardByZoneId(req.params.zoneId)
+  res.send(dis)
+})
+
 const getward = catchAsync(async (req, res) => {
   const ward = await wardService.getWardById(req.params.wardId);
   if (!ward || ward.active === false) {
@@ -41,6 +46,7 @@ module.exports = {
   createWard,
   getAllWard,
   getward,
+  getWardByZoneId,
   updateward,
   deleteWard,
 };

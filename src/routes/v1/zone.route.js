@@ -11,4 +11,6 @@ router.route('/:zoneId')
 .put(zoneController.updateZone)
 .delete(zoneController.deleteZone);
 
+router.route('/zoneByDistrict/:districtId').get(zoneController.getZoneByDistrict)
+
 module.exports = router;

@@ -17,6 +17,11 @@ const getZoneDetailsById = catchAsync(async (req, res) => {
   res.send(zone);
 });
 
+const  getZoneByDistrict = catchAsync(async(req, res)=>{
+  const dis = await ZoneService.getZoneByDistrict(req.params.districtId);
+  res.send(dis) 
+})
+
 const getAllZones = catchAsync (async (req,res)=>{
   const zones = await ZoneService.getAllZone(req.params);
   if(!zones){
@@ -24,6 +29,7 @@ const getAllZones = catchAsync (async (req,res)=>{
   }
   res.send(zones)
 })
+
 const updateZone = catchAsync(async (req, res) => {
   const zone = await ZoneService.updateZoneById(req.params.zoneId, req.body);
   res.send(zone);
@@ -37,6 +43,7 @@ const deleteZone = catchAsync(async (req, res) => {
     createZone,
     getAllZones,
     getZoneDetailsById,
+    getZoneByDistrict,
     updateZone,
     deleteZone,
   };

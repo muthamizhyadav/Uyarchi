@@ -68,6 +68,15 @@ const getAllStreet = async ()=>{
 ])
 }
 
+const getStreetByWardId = async(wardId)=>{
+  console.log(wardId)
+  const street = await Street.find({wardId})
+  if(!street === null){
+    throw new ApiError(httpStatus.NOT_FOUND, "WardId Is Incorrect")
+  }
+  return street
+}
+
   const queryStreet = async (filter, options) => {
     return Street.paginate(filter, options);
   };
@@ -97,6 +106,7 @@ const getAllStreet = async ()=>{
     createStreet,
     getStreetById,
     getAllStreet,
+    getStreetByWardId,
     updateStreetById,
     deleteStreetById,
     queryStreet,

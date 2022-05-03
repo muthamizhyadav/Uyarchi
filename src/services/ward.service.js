@@ -58,6 +58,19 @@ const getAllWard = async ()=>{
 ])
 };
 
+const getWardByZoneId = async (zoneId)=>{
+  console.log(zoneId)
+  const zone = await Ward.find({zoneId});
+  console.log(zone)
+  const zones = await Zone.findById(zoneId)
+  console.log(zones)
+  if(!zone === null){
+    throw new ApiError(httpStatus.NOT_FOUND, "Zone Id Is InCorrect")
+  }
+  return zone
+}
+
+
 const querWard = async (filter, options) => {
   return Ward.paginate(filter, options);
 };
@@ -82,6 +95,7 @@ const deleteWardById = async (wardId) => {
 
 module.exports = {
   createWard,
+  getWardByZoneId,
   getWardById,
   getAllWard,
   updatewardById,
