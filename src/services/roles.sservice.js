@@ -7,6 +7,7 @@ const createRoles = async(rolesBody) =>{
 }
 
 const getAllRoles = async()=>{
+  
    return Roles.find();
 }
 

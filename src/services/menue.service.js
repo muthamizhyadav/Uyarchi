@@ -21,7 +21,16 @@ const getMenuesById = async (id) => {
 };
 
 const getAllMenues = async () => {
-  return Menues.find();
+  return Menues.aggregate([
+    {
+      $lookup: {
+        from: 'menues', 
+        localField: '_id', 
+        foreignField: 'parentMenu', 
+        as: 'child'
+      }
+    }
+  ])
 };
 
 const updateMenuesById = async (menueId, updateBody) => {
