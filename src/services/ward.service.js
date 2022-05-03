@@ -8,19 +8,54 @@ const createWard = async (wardBody) => {
   const { zone, zoneId} = wardBody
   console.log(zoneId)
   let zon = await Zone.findById(zoneId)
-    if(zon === null || zon.zone !==  zone){
-      throw new ApiError(httpStatus.NO_CONTENT, "! 🖕oops")
+    if(zon === null){
+      throw new ApiError(httpStatus.NOT_FOUND, "! 🖕oops")
     }
   return Ward.create(wardBody);
 };
 
 const getWardById = async (id, active) => {
-
-  return Ward.findById(id);
+  const ward = await Ward.findById(id);
+  return ward
 };
 
+
 const getAllWard = async ()=>{
-  return Ward.find();
+  return Ward.aggregate([{
+    $lookup: {
+        from: "zones",
+        localField: "zoneId",
+        foreignField: "_id",
+        as: "zoneData"
+    }
+},
+{
+    $unwind: "$zoneData"
+},
+{
+    $lookup: {
+        from: "districts",
+        localField: "district",
+        foreignField: "_id",
+        as: "districtData"
+    }
+},
+{
+  $unwind: "$districtData"
+},
+{
+  $project:{
+    districtName:"$districtData.district",
+    zoneName:"$zoneData.zone",
+    district:1,
+    zoneId:1,
+    ward:1
+
+  }
+}
+
+
+])
 };
 
 const querWard = async (filter, options) => {
