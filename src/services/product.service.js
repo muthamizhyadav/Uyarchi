@@ -68,6 +68,15 @@ console.log(month)
   return Stock.create(values);
 };
 
+const getByBillId = async (billId) =>{
+  const bills = Stock.find({billId})
+  console.log(billId)
+  if(bills === null){
+    throw new ApiError(httpStatus.NOT_FOUND, "InCorrect BillId")
+  }
+  return bills
+}
+
 const createConfirmStock = async (confirmBody) => {
   const { stockId } = confirmBody;
   const stocks = await Stock.findById(stockId);
@@ -376,6 +385,7 @@ module.exports = {
   getProductById,
   getMailWherehoustLoadingExecuteById,
   updateMainWherehouseLoadingExecuteById,
+  getByBillId,
   deleteMainWherehouseLoadingExecuteById,
   getStockBySupplierId,
   updateProductById,

@@ -20,6 +20,11 @@ const createProduct = catchAsync(async (req, res) => {
   
 });
 
+const getStockbyBillId = catchAsync(async (req, res)=>{
+  const bills = await productService.getByBillId(req.params.billId)
+  res.send(bills)
+})
+
 const createStock = catchAsync (async (req, res)=>{
   const { body } =req;
   const stock = await productService.createStock(body);
@@ -299,6 +304,7 @@ module.exports = {
   getStockBySupplierId,
   getMailWherehoustLoadingExecuteById,
   getProducts,
+  getStockbyBillId,
   updateArrivedById,
   updateStockStatusById,
   updateMainWherehouseLoadingExecuteById,

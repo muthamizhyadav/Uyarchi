@@ -18,6 +18,7 @@ router.route('/suppliers/:supplierId').get(productController.getStockBySupplierI
 router.route('/confirmStock').post(productController.createConfirmStock);
 router.route('/confirmStock/all').get(productController.getAllConfirmStock);
 router.route('/stock/:id').put(productController.updateStockStatusById)
+router.route('/stock/bills/:billId').get(productController.getStockbyBillId)
 router.route('/updateStock/:stockId').put(productController.updateStockById);
 router.route('/stock/created').get(productController.getStockByStatusCreated);
 router.route('/stock/raised').get(productController.getStockByStatusRaised);
