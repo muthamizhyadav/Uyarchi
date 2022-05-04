@@ -15,6 +15,9 @@ const zoneSchema = mongoose.Schema({
    districtId:{
        type:String
    },
+   zoneCode:{
+       type:String
+   },
     active:{
         type:Boolean,
         default:true,
