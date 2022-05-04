@@ -59,6 +59,8 @@ const getAllStreet = async ()=>{
     zoneName:"$zoneData.zone",
     // district:"$districtData.district",
     // zoneId:"$zoneData._id",
+    wardNo:"$wardData.wardNo",
+    zoneCode:"$zoneData.zoneCode",
     wardName:"$wardData.ward",
     street:1,
     _id:1

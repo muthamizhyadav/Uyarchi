@@ -47,10 +47,12 @@ const getAllWard = async ()=>{
   $project:{
     districtName:"$districtData.district",
     zoneName:"$zoneData.zone",
+    zoneCode:"$zoneData.zoneCode",
     district:1,
     zoneId:1,
     ward:1,
     wardNo:1
+    
 
   }
 }
