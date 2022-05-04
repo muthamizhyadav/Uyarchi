@@ -49,7 +49,8 @@ const getAllWard = async ()=>{
     zoneName:"$zoneData.zone",
     district:1,
     zoneId:1,
-    ward:1
+    ward:1,
+    wardNo:1
 
   }
 }
