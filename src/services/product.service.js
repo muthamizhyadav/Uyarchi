@@ -245,12 +245,9 @@ const updateConfirmById = async (confirmStockId, updateBody) => {
 };
 
 
-const sendStocktoLoadingExecute = async (id)=>{
+const sendStocktoLoadingExecute = async (id, updatebody)=>{
   let stocks = await getStockBySupplierId(id)
-  stocks = await Stock.findByIdAndUpdate({_id:id}, {loadingExecute:true}, {new:true})
-  if(!stocks.loadingExecute === true){
-    return null
-  }
+  stocks = await Stock.findByIdAndUpdate({_id:id}, updatebody, {new:true})
   return stocks
 }
 

@@ -223,6 +223,14 @@ const deleteBillManage = catchAsync (async (req, res)=>{
 
 const sendStocktoLoadingExecute = catchAsync (async(req, res)=>{
   const stocks = await productService.sendStocktoLoadingExecute(req.params.id, req.body)
+  // const { body } = req;
+  if (req.files) {
+    let path = '';
+    req.files.forEach(function (files, index, arr) {
+      path = "weighbridge/"+files.filename;
+    });
+    stocks.weighbridgeBill = path;
+  }
   res.send(stocks)
 })
 

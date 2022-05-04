@@ -1,6 +1,7 @@
 const express = require('express');
 const productController = require('../../controllers/product.controller');
 const upload = require('../../middlewares/upload');
+const bill = require('../../middlewares/bills')
 const router = express.Router();
 
 router.route('/').post(upload.array('image'), productController.createProduct).get(productController.getProducts);
@@ -24,7 +25,7 @@ router.route('/stock/created').get(productController.getStockByStatusCreated);
 router.route('/stock/raised').get(productController.getStockByStatusRaised);
 router.route('/stock/delivered').get(productController.getStocksByStatusDelivered);
 router.route('/stock/closed').get(productController.getStockByStatusClosed);
-router.route('/sendData/:id').put(productController.sendStocktoLoadingExecute);
+router.route('/sendData/:id').put(bill.array('weighbridgeBill'), productController.sendStocktoLoadingExecute);
 // router.route('/stock/delivered').get(productController.getStocksByStatusDelivered);
 router.route('/stock/loadingExecute').get(productController.getStockByLoadingExecute);
 router.route('/updateQty/:id').put(productController.updateStockQtyById);

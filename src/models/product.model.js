@@ -170,6 +170,19 @@ const stockSchema = mongoose.Schema({
     type:Boolean,
     default:false,
   },
+
+  vehicleType:{
+    type:String
+  },
+  driverName:{
+    type:String,
+  },
+  vehicleNumber:{
+    type:String,
+  },
+  weighbridgeBill:{
+    type:String
+  }
 });
 
 stockSchema.plugin(toJSON);
