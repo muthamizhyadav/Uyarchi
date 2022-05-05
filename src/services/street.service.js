@@ -72,6 +72,67 @@ const getAllStreet = async ()=>{
 }
 
 
+// pagination with Aggregation
+
+const streetPagination = async(id)=>{
+  console.log(id)
+  return Street.aggregate([
+    {
+      $sort:{locality:1}
+    },
+    {
+     
+    $lookup: {
+        from: "zones",
+        localField: "zone",
+        foreignField: "_id",
+        as: "zoneData"
+    }
+},
+{
+    $unwind: "$zoneData"
+},
+{
+    $lookup: {
+        from: "districts",
+        localField: "district",
+        foreignField: "_id",
+        as: "districtData"
+    }
+},
+{
+  $unwind: "$districtData"
+},
+{
+  $lookup:{
+    from:"wards",
+    localField: "wardId",
+    foreignField:"_id",
+    as:"wardData"
+  },
+},
+{
+  $unwind:"$wardData"
+},
+{
+  $project:{
+    districtName:"$districtData.district",
+    zoneName:"$zoneData.zone",
+    // district:"$districtData.district",
+    // zoneId:"$zoneData._id",
+    wardNo:"$wardData.wardNo",
+    zoneCode:"$zoneData.zoneCode",
+    wardName:"$wardData.ward",
+    locality:1,
+    area:1,
+    street:1,
+    _id:1
+  }
+},
+{$skip : 20*id},
+{$limit : 20},
+])
+}
 
 const getStreetByWardId = async(wardId)=>{
   console.log(wardId)
@@ -111,6 +172,7 @@ const getStreetByWardId = async(wardId)=>{
     createStreet,
     getStreetById,
     getAllStreet,
+    streetPagination,
     getStreetByWardId,
     updateStreetById,
     deleteStreetById,

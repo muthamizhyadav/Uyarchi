@@ -52,12 +52,8 @@ const getAllWard = async ()=>{
     zoneId:1,
     ward:1,
     wardNo:1
-    
-
   }
 }
-
-
 ])
 };
 
@@ -73,6 +69,49 @@ const getWardByZoneId = async (zoneId)=>{
   return zone
 }
 
+const wardPagination = async (id)=>{
+  console.log(id)
+  return Ward.aggregate([
+    {$sort:{
+      ward:1
+    }},
+    {
+    $lookup: {
+        from: "zones",
+        localField: "zoneId",
+        foreignField: "_id",
+        as: "zoneData"
+    }
+},
+{
+    $unwind: "$zoneData"
+},
+{
+    $lookup: {
+        from: "districts",
+        localField: "district",
+        foreignField: "_id",
+        as: "districtData"
+    }
+},
+{
+  $unwind: "$districtData"
+},
+{
+  $project:{
+    districtName:"$districtData.district",
+    zoneName:"$zoneData.zone",
+    zoneCode:"$zoneData.zoneCode",
+    district:1,
+    zoneId:1,
+    ward:1,
+    wardNo:1
+  }
+},
+{$skip:20*id},
+{$limit:20},
+])
+}
 
 const querWard = async (filter, options) => {
   return Ward.paginate(filter, options);
@@ -103,4 +142,5 @@ module.exports = {
   getAllWard,
   updatewardById,
   deleteWardById,
+  wardPagination,
 };

@@ -14,6 +14,11 @@ const getAllStreet = catchAsync(async (req,res)=>{
   res.send(street)
 })
 
+const streetPagination = catchAsync(async (req, res)=>{
+  const pagination = await StreetService.streetPagination(req.params.id);
+  res.send(pagination)
+})
+
 const getStreetByWardId = catchAsync(async(req,res)=>{
   const street = await StreetService.getStreetByWardId(req.params.wardId)
   res.send(street)
@@ -42,5 +47,6 @@ const deleteStreet = catchAsync(async (req, res) => {
     updateStreet,
     deleteStreet,
     getStreetByWardId,
+    streetPagination,
     getAllStreet,
   };

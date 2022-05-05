@@ -11,5 +11,7 @@ router.route('/:streetId')
 .put(streetController.updateStreet)
 .delete(streetController.deleteStreet);
 
-router.route('/streetByWard/:wardId').get(streetController.getStreetByWardId)
+router.route('/streetByWard/:wardId').get(streetController.getStreetByWardId);
+
+router.route('/page/:id').get(streetController.streetPagination)
 module.exports = router;

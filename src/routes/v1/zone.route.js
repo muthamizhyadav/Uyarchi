@@ -13,6 +13,6 @@ router.route('/:zoneId')
 .delete(zoneController.deleteZone);
 
 router.route('/zoneByDistrict/:districtId').get(zoneController.getZoneByDistrict)
-
+router.route('/page/:id').get(zoneController.zonePagination)
 
 module.exports = router;

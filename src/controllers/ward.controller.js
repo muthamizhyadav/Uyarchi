@@ -37,6 +37,11 @@ const updateward = catchAsync(async (req, res) => {
   res.send(ward);
 });
 
+const wardPagination = catchAsync(async (req,res)=>{
+  const ward = await wardService.wardPagination(req.params.id)
+  res.send(ward)
+})
+
 const deleteWard = catchAsync(async (req, res) => {
   await wardService.deleteWardById(req.params.wardId);
   res.status(httpStatus.NO_CONTENT).send();
@@ -49,4 +54,5 @@ module.exports = {
   getWardByZoneId,
   updateward,
   deleteWard,
+  wardPagination,
 };

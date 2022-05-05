@@ -12,9 +12,13 @@ const createZone = catchAsync(async (req, res) => {
     res.status(httpStatus.CREATED).send(zone);
 });
 
-const getZones = catchAsync(async (req, res)=>{
-  
+const getZones = catchAsync(async (req, res)=>{  
 })
+
+// const wardPagination = catchAsync (async (req, res)=>{
+//   const ward = await ZoneService.wardPagination(req.params.id);
+//   res.send(ward);
+// })
 
 const getZoneDetailsById = catchAsync(async (req, res) => {
   const zone = await ZoneService.getZoneById(req.params.zoneId);
@@ -37,6 +41,11 @@ const getAllZones = catchAsync (async (req,res)=>{
   res.send(zones)
 })
 
+const zonePagination = catchAsync (async (req, res)=>{
+  const pagination= await ZoneService.zonePagination(req.params.id)
+  res.send(pagination)
+})
+
 const updateZone = catchAsync(async (req, res) => {
   const zone = await ZoneService.updateZoneById(req.params.zoneId, req.body);
   res.send(zone);
@@ -54,4 +63,5 @@ const deleteZone = catchAsync(async (req, res) => {
     getZoneByDistrict,
     updateZone,
     deleteZone,
+    zonePagination,
   };
