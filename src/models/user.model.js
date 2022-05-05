@@ -43,8 +43,8 @@ const userSchema = mongoose.Schema(
       enum: roles,
       default: 'user',
     },
-    OTP:{
-      type:Number
+    OTP: {
+      type: Number,
     },
     isEmailVerified: {
       type: Boolean,

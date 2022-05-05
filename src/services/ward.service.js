@@ -1,117 +1,118 @@
 const httpStatus = require('http-status');
 const { Ward } = require('../models');
-const Zone = require('../models/zone.model')
+const Zone = require('../models/zone.model');
 const ApiError = require('../utils/ApiError');
 
-
 const createWard = async (wardBody) => {
-  const { zone, zoneId} = wardBody
-  console.log(zoneId)
-  let zon = await Zone.findById(zoneId)
-    if(zon === null){
-      throw new ApiError(httpStatus.NOT_FOUND, "! 🖕oops")
-    }
+  const { zone, zoneId } = wardBody;
+  console.log(zoneId);
+  let zon = await Zone.findById(zoneId);
+  if (zon === null) {
+    throw new ApiError(httpStatus.NOT_FOUND, '! 🖕oops');
+  }
   return Ward.create(wardBody);
 };
 
 const getWardById = async (id, active) => {
   const ward = await Ward.findById(id);
-  return ward
+  return ward;
 };
 
-
-const getAllWard = async ()=>{
-  return Ward.aggregate([{
-    $lookup: {
-        from: "zones",
-        localField: "zoneId",
-        foreignField: "_id",
-        as: "zoneData"
-    }
-},
-{
-    $unwind: "$zoneData"
-},
-{
-    $lookup: {
-        from: "districts",
-        localField: "district",
-        foreignField: "_id",
-        as: "districtData"
-    }
-},
-{
-  $unwind: "$districtData"
-},
-{
-  $project:{
-    districtName:"$districtData.district",
-    zoneName:"$zoneData.zone",
-    zoneCode:"$zoneData.zoneCode",
-    district:1,
-    zoneId:1,
-    ward:1,
-    wardNo:1
-  }
-}
-])
-};
-
-const getWardByZoneId = async (zoneId)=>{
-  console.log(zoneId)
-  const zone = await Ward.find({zoneId});
-  console.log(zone)
-  const zones = await Zone.findById(zoneId)
-  console.log(zones)
-  if(!zone === null){
-    throw new ApiError(httpStatus.NOT_FOUND, "Zone Id Is InCorrect")
-  }
-  return zone
-}
-
-const wardPagination = async (id)=>{
-  console.log(id)
+const getAllWard = async () => {
   return Ward.aggregate([
-    {$sort:{
-      ward:1
-    }},
     {
-    $lookup: {
-        from: "zones",
-        localField: "zoneId",
-        foreignField: "_id",
-        as: "zoneData"
-    }
-},
-{
-    $unwind: "$zoneData"
-},
-{
-    $lookup: {
-        from: "districts",
-        localField: "district",
-        foreignField: "_id",
-        as: "districtData"
-    }
-},
-{
-  $unwind: "$districtData"
-},
-{
-  $project:{
-    districtName:"$districtData.district",
-    zoneName:"$zoneData.zone",
-    zoneCode:"$zoneData.zoneCode",
-    district:1,
-    zoneId:1,
-    ward:1,
-    wardNo:1
+      $lookup: {
+        from: 'zones',
+        localField: 'zoneId',
+        foreignField: '_id',
+        as: 'zoneData',
+      },
+    },
+    {
+      $unwind: '$zoneData',
+    },
+    {
+      $lookup: {
+        from: 'districts',
+        localField: 'district',
+        foreignField: '_id',
+        as: 'districtData',
+      },
+    },
+    {
+      $unwind: '$districtData',
+    },
+    {
+      $project: {
+        districtName: '$districtData.district',
+        zoneName: '$zoneData.zone',
+        zoneCode: '$zoneData.zoneCode',
+        district: 1,
+        zoneId: 1,
+        ward: 1,
+        wardNo: 1,
+      },
+    },
+  ]);
+};
+
+const getWardByZoneId = async (zoneId) => {
+  console.log(zoneId);
+  const zone = await Ward.find({ zoneId });
+  console.log(zone);
+  const zones = await Zone.findById(zoneId);
+  console.log(zones);
+  if (!zone === null) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Zone Id Is InCorrect');
   }
-},
-{$skip:20*id},
-{$limit:20},
-])
-}
+  return zone;
+};
+
+const wardPagination = async (id) => {
+  console.log(id);
+  return Ward.aggregate([
+    {
+      $sort: {
+        ward: 1,
+      },
+    },
+    {
+      $lookup: {
+        from: 'zones',
+        localField: 'zoneId',
+        foreignField: '_id',
+        as: 'zoneData',
+      },
+    },
+    {
+      $unwind: '$zoneData',
+    },
+    {
+      $lookup: {
+        from: 'districts',
+        localField: 'district',
+        foreignField: '_id',
+        as: 'districtData',
+      },
+    },
+    {
+      $unwind: '$districtData',
+    },
+    {
+      $project: {
+        districtName: '$districtData.district',
+        zoneName: '$zoneData.zone',
+        zoneCode: '$zoneData.zoneCode',
+        district: 1,
+        zoneId: 1,
+        ward: 1,
+        wardNo: 1,
+      },
+    },
+    { $skip: 20 * id },
+    { $limit: 20 },
+  ]);
+};
 
 const querWard = async (filter, options) => {
   return Ward.paginate(filter, options);

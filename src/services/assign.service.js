@@ -10,8 +10,8 @@ const getAssignById = async (id) => {
   return Assign.findById(id);
 };
 
-const getAllassign = async()=>{
-    return Assign.find();
+const getAllassign = async () => {
+  return Assign.find();
 };
 
 const updateAssignById = async (assignId, updateBody) => {
@@ -19,7 +19,7 @@ const updateAssignById = async (assignId, updateBody) => {
   if (!assign) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Assign not found');
   }
-    assign = await Assign.findByIdAndUpdate({ _id: assignId }, updateBody, { new: true });
+  assign = await Assign.findByIdAndUpdate({ _id: assignId }, updateBody, { new: true });
   return assign;
 };
 const deleteAssignById = async (assignId) => {
@@ -27,13 +27,13 @@ const deleteAssignById = async (assignId) => {
   if (!assign) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Assign not found');
   }
-  await assign.remove()
+  await assign.remove();
   return assign;
 };
 module.exports = {
-    createAssign,
-    getAssignById,
-    getAllassign,
-    updateAssignById,
-    deleteAssignById,
+  createAssign,
+  getAssignById,
+  getAllassign,
+  updateAssignById,
+  deleteAssignById,
 };

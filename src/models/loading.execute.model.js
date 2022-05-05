@@ -3,42 +3,45 @@ const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
 
-const loadingExecuteSchema = mongoose.Schema({
-    _id:{
-        type:String,
-        default:v4,
+const loadingExecuteSchema = mongoose.Schema(
+  {
+    _id: {
+      type: String,
+      default: v4,
     },
-    scvId:{
-        type:String,
-        required:true,
+    scvId: {
+      type: String,
+      required: true,
     },
-    orderId:{
-        type:String,
-        required:true,
+    orderId: {
+      type: String,
+      required: true,
     },
-    session:{
-        type:String,
+    session: {
+      type: String,
     },
-    date:{
-        type:Date,
-        default:Date.now(),
+    date: {
+      type: Date,
+      default: Date.now(),
     },
-    status:{
-        type:String,
-        enum:['Approved', 'Pending', 'Hold', 'Received'],
-        default:'Pending',
+    status: {
+      type: String,
+      enum: ['Approved', 'Pending', 'Hold', 'Received'],
+      default: 'Pending',
     },
-    active:{
-        type:Boolean,
-        default:true,
+    active: {
+      type: Boolean,
+      default: true,
     },
-    archive:{
-        type:Boolean,
-        default:false,
+    archive: {
+      type: Boolean,
+      default: false,
     },
-},{
-    timestamps: { createdAt: 'createdDate',updatedAt: 'updatedDate' } 
-})
+  },
+  {
+    timestamps: { createdAt: 'createdDate', updatedAt: 'updatedDate' },
+  }
+);
 
 loadingExecuteSchema.plugin(toJSON);
 loadingExecuteSchema.plugin(paginate);

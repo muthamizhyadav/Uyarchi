@@ -3,8 +3,8 @@ const app = require('./app');
 const config = require('./config/config');
 const logger = require('./config/logger');
 let server;
-const express =require("express")
-const init=express();
+const express = require('express');
+const init = express();
 
 mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
   logger.info('Connected to MongoDB');

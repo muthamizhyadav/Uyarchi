@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise, ManageBill } = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
 const Supplier = require('../models/supplier.model');
-const ReceivedOrder = require('../models/receivedOrders.model')
+const ReceivedOrder = require('../models/receivedOrders.model');
 
 const createProduct = async (productBody) => {
   let { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime, maxBidAomunt, minBidAmount } =
@@ -20,37 +20,37 @@ const createProduct = async (productBody) => {
   return Product.create(productBody);
 };
 
-const createManageBill = async (manageBillBody) =>{
-  const { billId, supplierId, orderId } = manageBillBody
-  const bill = await BillRaise.findById(billId)
-  if(bill === null){
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid BillId ")
+const createManageBill = async (manageBillBody) => {
+  const { billId, supplierId, orderId } = manageBillBody;
+  const bill = await BillRaise.findById(billId);
+  if (bill === null) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid BillId ');
   }
-  const supplier = await Supplier.findById(supplierId)
-  if(supplier === null){
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid SupplierId")
+  const supplier = await Supplier.findById(supplierId);
+  if (supplier === null) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid SupplierId');
   }
   const order = await ReceivedOrder.findById(orderId);
-  console.log(order)
-  if(order === null){
-    throw new ApiError(httpStatus.BAD_REQUEST, "OrderId Invalid")
+  console.log(order);
+  if (order === null) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'OrderId Invalid');
   }
-  return ManageBill.create(manageBillBody)
-}
+  return ManageBill.create(manageBillBody);
+};
 
 const createStock = async (stockbody) => {
   const { supplierId, product, productName } = stockbody;
-  let pp =product.map((e)=>{
-    return e.product
-  })
-  const first =  Math.floor(1000 + Math.random() * 9000);
-const date = new Date()
-const second =  Math.floor(10 + Math.random() * 99);
-const third =  Math.floor(10 + Math.random() * 99);
-let month=(date.getMonth() < 9 ? '0': '') + (date.getMonth()+1);
-let day=(date.getDate() < 9 ? '0': '') + (date.getDate());
-let billid =first+''+day+''+second+''+month+''+third;
-console.log(month)
+  let pp = product.map((e) => {
+    return e.product;
+  });
+  const first = Math.floor(1000 + Math.random() * 9000);
+  const date = new Date();
+  const second = Math.floor(10 + Math.random() * 99);
+  const third = Math.floor(10 + Math.random() * 99);
+  let month = (date.getMonth() < 9 ? '0' : '') + (date.getMonth() + 1);
+  let day = (date.getDate() < 9 ? '0' : '') + date.getDate();
+  let billid = first + '' + day + '' + second + '' + month + '' + third;
+  console.log(month);
 
   const pros = await Product.findById(pp);
   product.forEach(async (element) => {
@@ -64,18 +64,18 @@ console.log(month)
   });
   let values = {};
   const supp = await Supplier.findById(supplierId);
-  values = { ...stockbody, ...{ supplierName: supp.supplierName, productName: pros.productTitle, billId:billid} };
+  values = { ...stockbody, ...{ supplierName: supp.supplierName, productName: pros.productTitle, billId: billid } };
   return Stock.create(values);
 };
 
-const getByBillId = async (billId) =>{
-  const bills = Stock.find({billId})
-  console.log(billId)
-  if(bills === null){
-    throw new ApiError(httpStatus.NOT_FOUND, "InCorrect BillId")
+const getByBillId = async (billId) => {
+  const bills = Stock.find({ billId });
+  console.log(billId);
+  if (bills === null) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'InCorrect BillId');
   }
-  return bills
-}
+  return bills;
+};
 
 const createConfirmStock = async (confirmBody) => {
   const { stockId } = confirmBody;
@@ -89,13 +89,13 @@ const createConfirmStock = async (confirmBody) => {
 
 const createMainWherehouseLoadingExecute = async (MWLEbody) => {
   const { productId, quantity, wastage } = MWLEbody;
-  let values = {}
-  netWeight = quantity + wastage
+  let values = {};
+  netWeight = quantity + wastage;
   const product = await Product.findById(productId);
   if (product === null) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid Product Id 😞');
   }
-  values ={...MWLEbody, ...{netWeight}}
+  values = { ...MWLEbody, ...{ netWeight } };
   return LoadingExecute.create(values);
 };
 
@@ -116,8 +116,6 @@ const getAllConfirmStack = async () => {
   return ConfirmStock.find();
 };
 
-
-
 const getAllStock = async () => {
   return Stock.find();
 };
@@ -130,19 +128,24 @@ const getStockBySupplierId = async (id) => {
   return await Stock.findById(id);
 };
 
-const getAllienceBySupplierId = async(id)=>{
-  const stock = await Stock.findById(id)
-  let others = {totalPrice:stock.totalPrice, logisticCost:stock.logisticCost, coolieCost:stock.coolieCost, misAllianceCost:stock.misAllianceCost}
-  return others
-}
+const getAllienceBySupplierId = async (id) => {
+  const stock = await Stock.findById(id);
+  let others = {
+    totalPrice: stock.totalPrice,
+    logisticCost: stock.logisticCost,
+    coolieCost: stock.coolieCost,
+    misAllianceCost: stock.misAllianceCost,
+  };
+  return others;
+};
 
 const getProductById = async (id) => {
   return Product.findById(id);
 };
 
-const getManageBill = async(id) =>{
+const getManageBill = async (id) => {
   return ManageBill.findById(id);
-}
+};
 
 const getMailWherehoustLoadingExecuteById = async (id) => {
   return LoadingExecute.findById(id);
@@ -160,26 +163,26 @@ const queryProduct = async (filter, options) => {
   return Product.paginate(filter, options);
 };
 
-const getAllManageBill = async ()=>{
-  return ManageBill.find()
-}
+const getAllManageBill = async () => {
+  return ManageBill.find();
+};
 
 // const getStocksByStatusDelivered = async()=>{
 //   return Stock.find({loadingExecute:true, closeOrder:false})
 // }
 
-const getStockByLoadingExecute = async()=>{
-  return Stock.find({loadingExecute:true, closeOrder:true})
-}
+const getStockByLoadingExecute = async () => {
+  return Stock.find({ loadingExecute: true, closeOrder: true });
+};
 
-const updateManageBill = async (manageBillId, updatebody) =>{
+const updateManageBill = async (manageBillId, updatebody) => {
   let manageBill = await getManageBill(manageBillId);
-  if(!manageBill){
-    throw new ApiError(httpStatus.NOT_FOUND, "ManageBill Not Found")
+  if (!manageBill) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'ManageBill Not Found');
   }
-  manageBill = await ManageBill.findByIdAndUpdate({_id:manageBillId}, updatebody, {new:true})
-  return manageBill
-}
+  manageBill = await ManageBill.findByIdAndUpdate({ _id: manageBillId }, updatebody, { new: true });
+  return manageBill;
+};
 
 const updateMainWherehouseLoadingExecuteById = async (mwLoadingId, updateBody) => {
   let loading = await getMailWherehoustLoadingExecuteById(mwLoadingId);
@@ -217,14 +220,14 @@ const updateArrivedById = async (id) => {
 //   return stock;
 // }
 
-const updateStockQtyById = async(id, updateBody)=>{
+const updateStockQtyById = async (id, updateBody) => {
   let stock = await Stock.findById(id);
-  if(!stock){
-    throw new ApiError(httpStatus.NOT_FOUND, "Stock Not Found");
+  if (!stock) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stock Not Found');
   }
-  stock = await Stock.findByIdAndUpdate({_id:id}, updateBody, {new:true});
+  stock = await Stock.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return stock;
-}
+};
 
 const updateStockStatucById = async (id, updatebody) => {
   let stock = await Stock.findById(id);
@@ -244,37 +247,35 @@ const updateConfirmById = async (confirmStockId, updateBody) => {
   return confirmStock;
 };
 
+const sendStocktoLoadingExecute = async (id, updatebody) => {
+  let stocks = await getStockBySupplierId(id);
+  stocks = await Stock.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  return stocks;
+};
 
-const sendStocktoLoadingExecute = async (id, updatebody)=>{
-  let stocks = await getStockBySupplierId(id)
-  stocks = await Stock.findByIdAndUpdate({_id:id}, updatebody, {new:true})
-  return stocks
-}
-
-const getStockById = async(stockId)=>{
-  const stocks = await Stock.findById(stockId)
-  if(!stocks){
-    throw new ApiError(httpStatus.NOT_FOUND, "Stock NOT Found")
+const getStockById = async (stockId) => {
+  const stocks = await Stock.findById(stockId);
+  if (!stocks) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stock NOT Found');
   }
-  return stocks
-}
+  return stocks;
+};
 
-const  getStockByStatusCreated = async()=>{
-  return Stock.find({status:'Created'})
-}
+const getStockByStatusCreated = async () => {
+  return Stock.find({ status: 'Created' });
+};
 
-const  getStockByStatusRaised = async()=>{
-  return Stock.find({status:'Raised'})
-}
+const getStockByStatusRaised = async () => {
+  return Stock.find({ status: 'Raised' });
+};
 
-const getStockStatusDelivered = async()=>{
-  return Stock.find({status
-    :'Delivered'})
-}
+const getStockStatusDelivered = async () => {
+  return Stock.find({ status: 'Delivered' });
+};
 
-const getStockByStatusClosed = async()=>{
-  return Stock.find({status: 'Closed'})
-}
+const getStockByStatusClosed = async () => {
+  return Stock.find({ status: 'Closed' });
+};
 
 const updateStackById = async (stackId, updateBody) => {
   let stack = await getStockById(stackId);
@@ -285,10 +286,10 @@ const updateStackById = async (stackId, updateBody) => {
   return stack;
 };
 
-const getLoadingExecuteDate = async()=>{
-  const loadings = Stock.find({loadingExecute:true})
-  return loadings
-}
+const getLoadingExecuteDate = async () => {
+  const loadings = Stock.find({ loadingExecute: true });
+  return loadings;
+};
 
 const updateProductById = async (productId, updateBody) => {
   let prod = await getProductById(productId);
@@ -299,8 +300,6 @@ const updateProductById = async (productId, updateBody) => {
   return prod;
 };
 
-
-
 const deleteProductById = async (productId) => {
   const product = await getProductById(productId);
   if (!product) {
@@ -310,13 +309,13 @@ const deleteProductById = async (productId) => {
   return product;
 };
 
-const deleteBillManage = async (manageBillId) =>{
-  const manageBill = await getManageBill(manageBillId)
-  if(!manageBill){
-    throw new ApiError(httpStatus.NOT_FOUND, "manage Bill Not Found")
+const deleteBillManage = async (manageBillId) => {
+  const manageBill = await getManageBill(manageBillId);
+  if (!manageBill) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'manage Bill Not Found');
   }
-    manageBill.active = false, manageBill.archive = true, await manageBill.save()
-}
+  (manageBill.active = false), (manageBill.archive = true), await manageBill.save();
+};
 
 const deleteConfirmStockById = async (confirmStockId) => {
   const confirmStock = await getConfrimById(confirmStockId);
@@ -341,8 +340,6 @@ const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
   }
   (loading.active = false), (loading.archive = true), await loading.save();
 };
-
-
 
 module.exports = {
   createProduct,

@@ -8,8 +8,8 @@ const vendorSchema = mongoose.Schema(
       type: String,
       default: v4,
     },
-    email:{
-      type:String,
+    email: {
+      type: String,
     },
     phone: {
       type: Number,

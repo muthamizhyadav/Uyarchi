@@ -4,7 +4,7 @@ const { toJSON, paginate } = require('./plugins');
 const sloggerSchema = mongoose.Schema({
   _id: {
     type: String,
-    default:v4,
+    default: v4,
   },
   customerType: {
     type: String,

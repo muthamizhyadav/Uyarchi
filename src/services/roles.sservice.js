@@ -2,29 +2,28 @@ const httpStatus = require('http-status');
 const { Roles } = require('../models');
 const ApiError = require('../utils/ApiError');
 
-const createRoles = async(rolesBody) =>{
-    return Roles.create(rolesBody);
-}
+const createRoles = async (rolesBody) => {
+  return Roles.create(rolesBody);
+};
 
-const getAllRoles = async()=>{
-   return Roles.find();
-}
- 
+const getAllRoles = async () => {
+  return Roles.find();
+};
+
 // const queryRoles = async (filter, options) => {
 //   return Roles.paginate(filter, options);
 // };
 
 const getRolesById = async (id) => {
-    const role = Roles.findById(id);
-    if (!role) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Roles  Not Found');
-    }
-    return role;
-  };
+  const role = Roles.findById(id);
+  if (!role) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Roles  Not Found');
+  }
+  return role;
+};
 
 const updateRolesById = async (roleId, updateBody) => {
-
-const  role = await Roles.findByIdAndUpdate({ _id: roleId }, updateBody, { new: true });
+  const role = await Roles.findByIdAndUpdate({ _id: roleId }, updateBody, { new: true });
   return role;
 };
 
@@ -38,9 +37,9 @@ const deleterolesById = async (roleId) => {
 };
 
 module.exports = {
-    createRoles,
-    getAllRoles,
-    getRolesById,
-    updateRolesById,
-    deleterolesById,
+  createRoles,
+  getAllRoles,
+  getRolesById,
+  updateRolesById,
+  deleterolesById,
 };

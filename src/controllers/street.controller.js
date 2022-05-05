@@ -5,24 +5,24 @@ const catchAsync = require('../utils/catchAsync');
 const StreetService = require('../services/street.service');
 
 const createStreet = catchAsync(async (req, res) => {
-    const street = await StreetService.createStreet(req.body);
-    res.status(httpStatus.CREATED).send(street);
+  const street = await StreetService.createStreet(req.body);
+  res.status(httpStatus.CREATED).send(street);
 });
 
-const getAllStreet = catchAsync(async (req,res)=>{
-  const street = await StreetService.getAllStreet()
-  res.send(street)
-})
+const getAllStreet = catchAsync(async (req, res) => {
+  const street = await StreetService.getAllStreet();
+  res.send(street);
+});
 
-const streetPagination = catchAsync(async (req, res)=>{
+const streetPagination = catchAsync(async (req, res) => {
   const pagination = await StreetService.streetPagination(req.params.id);
-  res.send(pagination)
-})
+  res.send(pagination);
+});
 
-const getStreetByWardId = catchAsync(async(req,res)=>{
-  const street = await StreetService.getStreetByWardId(req.params.wardId)
-  res.send(street)
-})
+const getStreetByWardId = catchAsync(async (req, res) => {
+  const street = await StreetService.getStreetByWardId(req.params.wardId);
+  res.send(street);
+});
 
 const getStreetDetailsById = catchAsync(async (req, res) => {
   const street = await StreetService.getStreetById(req.params.streetId);
@@ -41,12 +41,12 @@ const deleteStreet = catchAsync(async (req, res) => {
   await StreetService.deleteStreetById(req.params.streetId);
   res.status(httpStatus.NO_CONTENT).send();
 });
-  module.exports = {
-    createStreet,
-    getStreetDetailsById,
-    updateStreet,
-    deleteStreet,
-    getStreetByWardId,
-    streetPagination,
-    getAllStreet,
-  };
+module.exports = {
+  createStreet,
+  getStreetDetailsById,
+  updateStreet,
+  deleteStreet,
+  getStreetByWardId,
+  streetPagination,
+  getAllStreet,
+};

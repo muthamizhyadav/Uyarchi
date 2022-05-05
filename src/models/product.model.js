@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
 
-
-
 const productSchema = mongoose.Schema({
   _id: {
     type: String,
@@ -76,17 +74,17 @@ const productSchema = mongoose.Schema({
   minBidAmount: {
     type: Number,
   },
-  onlinePrice:{
-    type:Number,
+  onlinePrice: {
+    type: Number,
   },
-  salesmanPrice:{
-    type:Array,
+  salesmanPrice: {
+    type: Array,
   },
-  oldstock:{
-    type:Number
+  oldstock: {
+    type: Number,
   },
-  newstock:{
-    type:Number
+  newstock: {
+    type: Number,
   },
   active: {
     type: Boolean,
@@ -133,56 +131,56 @@ const stockSchema = mongoose.Schema({
   orderId: {
     type: String,
   },
-  productQuantity:{
-    type:Number,
-    default:0,
+  productQuantity: {
+    type: Number,
+    default: 0,
   },
-  wastage:{
-    type:Number,
-    default:0,
+  wastage: {
+    type: Number,
+    default: 0,
   },
-  netKg:{
-    type:Number,
-    default:0,
+  netKg: {
+    type: Number,
+    default: 0,
   },
   arrived: {
     type: Boolean,
     default: false,
   },
-  date:{
-    type:String,
-    default: Date().toString({timeZone: 'IST'})
+  date: {
+    type: String,
+    default: Date().toString({ timeZone: 'IST' }),
   },
-  status:{
-    type:String,
-    enum:['Created','Pending', "Raised", "Delivered", "Closed"],
-    default:'Created',
+  status: {
+    type: String,
+    enum: ['Created', 'Pending', 'Raised', 'Delivered', 'Closed'],
+    default: 'Created',
   },
-  loadingExecute:{
-    type:Boolean,
-    default:false
+  loadingExecute: {
+    type: Boolean,
+    default: false,
   },
-  billId:{
-    type:Number,
-    unique:true
+  billId: {
+    type: Number,
+    unique: true,
   },
-  closeOrder:{
-    type:Boolean,
-    default:false,
+  closeOrder: {
+    type: Boolean,
+    default: false,
   },
 
-  vehicleType:{
-    type:String
+  vehicleType: {
+    type: String,
   },
-  driverName:{
-    type:String,
+  driverName: {
+    type: String,
   },
-  vehicleNumber:{
-    type:String,
+  vehicleNumber: {
+    type: String,
   },
-  weighbridgeBill:{
-    type:String
-  }
+  weighbridgeBill: {
+    type: String,
+  },
 });
 
 stockSchema.plugin(toJSON);
@@ -219,7 +217,7 @@ const ConfirmStock = mongoose.model('ConfirmStock', confirmStock);
 const loadingExecuteSchema = new mongoose.Schema({
   _id: {
     type: String,
-    default:v4
+    default: v4,
   },
   productId: {
     type: String,
@@ -238,13 +236,13 @@ const loadingExecuteSchema = new mongoose.Schema({
     enum: ['Delivered', 'UnDelivered'],
     default: 'UnDelivered',
   },
-  active:{
-    type:Boolean,
-    default:true
+  active: {
+    type: Boolean,
+    default: true,
   },
-  archive:{
-    type:Boolean,
-    default:false
+  archive: {
+    type: Boolean,
+    default: false,
   },
 });
 loadingExecuteSchema.plugin(toJSON);
@@ -252,87 +250,86 @@ loadingExecuteSchema.plugin(paginate);
 const LoadingExecute = mongoose.model('MainWharehouseLoadingExecute', loadingExecuteSchema);
 
 const billRaiseSchema = new mongoose.Schema({
-  _id:{
-    type:String,
-    default:v4,
+  _id: {
+    type: String,
+    default: v4,
   },
-  productId:{
-    type:String,
+  productId: {
+    type: String,
   },
-  pricingInKg:{
-    type:Number,
+  pricingInKg: {
+    type: Number,
   },
-  quantityInKg:{
-    type:Number,
+  quantityInKg: {
+    type: Number,
   },
-  netRate:{
-    type:Number,
+  netRate: {
+    type: Number,
   },
-  status:{
-    type:String,
-    enum:['Deliverd', 'UnDelivered'],
-    default:'UnDelivered',
+  status: {
+    type: String,
+    enum: ['Deliverd', 'UnDelivered'],
+    default: 'UnDelivered',
   },
-  active:{
-    type:Boolean,
-    default:true,
+  active: {
+    type: Boolean,
+    default: true,
   },
-  archive:{
-    type:Boolean,
-    default:false,
+  archive: {
+    type: Boolean,
+    default: false,
   },
-})
+});
 
 billRaiseSchema.plugin(toJSON);
 billRaiseSchema.plugin(paginate);
 
-const BillRaise = mongoose.model("BillRaise", billRaiseSchema);
+const BillRaise = mongoose.model('BillRaise', billRaiseSchema);
 
-const manageBillSchema=new mongoose.Schema({
-  _id:{
-    type:String,
-    default:v4
+const manageBillSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
   },
-  billId:{
-    type:String,
+  billId: {
+    type: String,
   },
-  supplierId:{
-    type:String,
-
+  supplierId: {
+    type: String,
   },
-  orderId:{
-    type:String,
+  orderId: {
+    type: String,
   },
-  orderQuantity:{
-    type:Number,
+  orderQuantity: {
+    type: Number,
   },
-  receivedQuanity:{
-    type:Number,
+  receivedQuanity: {
+    type: Number,
   },
-  amountOriginal:{
-    type:Number,
+  amountOriginal: {
+    type: Number,
   },
-  amountFixed:{
-    type:Number,
+  amountFixed: {
+    type: Number,
   },
-  status:{
-    type:String,
-    enum:['Paid','Pending'],
-    default:'Pending',
+  status: {
+    type: String,
+    enum: ['Paid', 'Pending'],
+    default: 'Pending',
   },
-  active:{
-    type:Boolean,
-    default:true
+  active: {
+    type: Boolean,
+    default: true,
   },
-  archive:{
-    type:Boolean,
-    default:false
+  archive: {
+    type: Boolean,
+    default: false,
   },
-})
+});
 manageBillSchema.plugin(toJSON);
 manageBillSchema.plugin(paginate);
 
-const ManageBill=mongoose.model('manageBill',manageBillSchema)
+const ManageBill = mongoose.model('manageBill', manageBillSchema);
 
 module.exports = {
   Stock,
@@ -340,5 +337,5 @@ module.exports = {
   ConfirmStock,
   LoadingExecute,
   BillRaise,
-  ManageBill, 
+  ManageBill,
 };

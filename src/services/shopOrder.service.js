@@ -1,9 +1,9 @@
 const httpStatus = require('http-status');
 const { ShopOrder } = require('../models');
-const { Product } = require('../models/product.model')
+const { Product } = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
 
-const createshopOrder = async(shopOrderBody) =>{
+const createshopOrder = async (shopOrderBody) => {
   // let { product } = shopOrderBody
   // let productName = product.map((e)=>{
   //   return e.productid
@@ -14,20 +14,19 @@ const createshopOrder = async(shopOrderBody) =>{
   // product.push({productName:pro})
   // console.log(product)
   return ShopOrder.create(shopOrderBody);
-}
+};
 
-const getAllShopOrder = async()=>{
-   return ShopOrder.find();
-}
-
+const getAllShopOrder = async () => {
+  return ShopOrder.find();
+};
 
 const getShopOrderById = async (shopOrderId) => {
-    const shoporder = await ShopOrder.findById(shopOrderId);
-    if (!shoporder) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'shoporder  Not Found');
-    }
-    return shoporder;
-  };
+  const shoporder = await ShopOrder.findById(shopOrderId);
+  if (!shoporder) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'shoporder  Not Found');
+  }
+  return shoporder;
+};
 
 const updateShopOrderById = async (shopOrderId, updateBody) => {
   let shoporder = await getShopOrderById(shopOrderId);
@@ -48,9 +47,9 @@ const deleteShopOrderById = async (shopOrderId) => {
 };
 
 module.exports = {
-    createshopOrder,
-    getAllShopOrder,
-    getShopOrderById,
-    updateShopOrderById,
-    deleteShopOrderById,
+  createshopOrder,
+  getAllShopOrder,
+  getShopOrderById,
+  updateShopOrderById,
+  deleteShopOrderById,
 };

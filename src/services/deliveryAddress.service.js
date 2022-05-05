@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const { DeliveryAddress } = require('../models');
 const ApiError = require('../utils/ApiError');
 
-const createDeliveryAddress  = async (deliveryAddressBody) => {
+const createDeliveryAddress = async (deliveryAddressBody) => {
   return DeliveryAddress.create(deliveryAddressBody);
 };
 
@@ -23,7 +23,7 @@ const updateDeliveryAddressById = async (deliveryAddressId, updateBody) => {
   if (!deliveryAddress) {
     throw new ApiError(httpStatus.NOT_FOUND, 'DeliveryAddress not found');
   }
-  deliveryAddress = await DeliveryAddress.findByIdAndUpdate({ _id:deliveryAddressId }, updateBody, { new: true });
+  deliveryAddress = await DeliveryAddress.findByIdAndUpdate({ _id: deliveryAddressId }, updateBody, { new: true });
   return deliveryAddress;
 };
 

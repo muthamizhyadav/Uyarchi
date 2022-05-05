@@ -12,10 +12,10 @@ const createManageIssues = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(manageIssues);
 });
 
-const getAllManageIssues = catchAsync(async (req, res)=>{
-    const manageIssues = await manageIssuesService.getAllManageIssues(req.params)
-    res.send(manageIssues);
-})
+const getAllManageIssues = catchAsync(async (req, res) => {
+  const manageIssues = await manageIssuesService.getAllManageIssues(req.params);
+  res.send(manageIssues);
+});
 
 const getManageIssuesById = catchAsync(async (req, res) => {
   const manageIssues = await manageIssuesService.getManageIssuesById(req.params.manageIssuesId);

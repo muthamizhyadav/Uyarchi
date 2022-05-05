@@ -9,8 +9,8 @@ const categorySchema = mongoose.Schema({
   categoryName: {
     type: String,
   },
-  categoryImage:{
-    type:String
+  categoryImage: {
+    type: String,
   },
   description: {
     type: String,
@@ -34,14 +34,14 @@ const SubcategorySchema = mongoose.Schema({
     type: String,
     default: v4,
   },
-  parentCategoryId:{
-    type:String,
+  parentCategoryId: {
+    type: String,
   },
   categoryName: {
     type: String,
   },
-  categoryImage:{
-    type:String
+  categoryImage: {
+    type: String,
   },
   description: {
     type: String,
@@ -61,4 +61,4 @@ SubcategorySchema.plugin(paginate);
 
 const Subcategory = mongoose.model('Subcategory', SubcategorySchema);
 
-module.exports = {Category, Subcategory};
+module.exports = { Category, Subcategory };

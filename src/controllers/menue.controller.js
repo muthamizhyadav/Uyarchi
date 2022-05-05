@@ -29,9 +29,9 @@ const deleteMenueById = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 module.exports = {
-    createMenues,
-    getAllMenues,
-    getMenuesById,
-    updateMenuesById,
-    deleteMenueById,
+  createMenues,
+  getAllMenues,
+  getMenuesById,
+  updateMenuesById,
+  deleteMenueById,
 };

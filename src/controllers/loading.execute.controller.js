@@ -12,10 +12,10 @@ const createloadingExecute = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(loadingExecute);
 });
 
-const getAllLoadingExecute = catchAsync(async (req, res)=>{
-    const loadingExecute = await loadingExecuteService.getAllLoadingExecute(req.params)
-    res.send(loadingExecute);
-})
+const getAllLoadingExecute = catchAsync(async (req, res) => {
+  const loadingExecute = await loadingExecuteService.getAllLoadingExecute(req.params);
+  res.send(loadingExecute);
+});
 
 const getloadingExecuteById = catchAsync(async (req, res) => {
   const loadingExecute = await loadingExecuteService.getLoadingExecuteById(req.params.loadingExecuteId);
@@ -36,9 +36,9 @@ const deleteloadingExecuteById = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    createloadingExecute,
-    getAllLoadingExecute,
-    getloadingExecuteById,
-    updateloadingExecuteById,
-    deleteloadingExecuteById,
+  createloadingExecute,
+  getAllLoadingExecute,
+  getloadingExecuteById,
+  updateloadingExecuteById,
+  deleteloadingExecuteById,
 };

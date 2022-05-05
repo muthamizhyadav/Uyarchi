@@ -10,20 +10,18 @@ const createOtherExpenses = catchAsync(async (req, res) => {
   if (req.files) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
-      path = "images/bills/"+files.filename;
+      path = 'images/bills/' + files.filename;
     });
     otherExp.billUpload = path;
   }
   await otherExp.save();
   res.status(httpStatus.CREATED).send(otherExp);
-  
 });
 
-
-const getAllOtherExp = catchAsync(async (req, res)=>{
+const getAllOtherExp = catchAsync(async (req, res) => {
   const otherExp = await OtherExpensesService.getAllOtherExpenses();
-  res.send(otherExp)
-})
+  res.send(otherExp);
+});
 
 const getotherExp = catchAsync(async (req, res) => {
   const otherExp = await OtherExpensesService.getOtherExpById(req.params.otherExpId);
@@ -44,9 +42,9 @@ const deleteOtherExp = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    createOtherExpenses,
-    getAllOtherExp,
-    getotherExp,
-    updateOtherExp,
-    deleteOtherExp,
+  createOtherExpenses,
+  getAllOtherExp,
+  getotherExp,
+  updateOtherExp,
+  deleteOtherExp,
 };

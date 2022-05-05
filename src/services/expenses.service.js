@@ -2,23 +2,23 @@ const httpStatus = require('http-status');
 const { OtherExpenses } = require('../models/expenses.model');
 const ApiError = require('../utils/ApiError');
 
-const createOtherExpenses = async(expBody) =>{
-    return OtherExpenses.create(expBody);
-}
+const createOtherExpenses = async (expBody) => {
+  return OtherExpenses.create(expBody);
+};
 
-const getAllOtherExpenses = async()=>{
-   return OtherExpenses.find();
-}
+const getAllOtherExpenses = async () => {
+  return OtherExpenses.find();
+};
 const getOtherExpById = async (id) => {
-    const otherExp = OtherExpenses.findById(id);
-    if (!otherExp) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'OtherExpenses  Not Found');
-    }
-    return otherExp;
-  };
+  const otherExp = OtherExpenses.findById(id);
+  if (!otherExp) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'OtherExpenses  Not Found');
+  }
+  return otherExp;
+};
 
 const updateOtherExpById = async (otherExpId, updateBody) => {
-  let otherExp = await (otherExpId);
+  let otherExp = await otherExpId;
   if (!otherExp) {
     throw new ApiError(httpStatus.NOT_FOUND, 'OtherExpenses not found');
   }
@@ -35,9 +35,9 @@ const deleteOtherExpById = async (otherExpId) => {
 };
 
 module.exports = {
-    createOtherExpenses,
-    getAllOtherExpenses,
-    getOtherExpById,
-    updateOtherExpById,
-    deleteOtherExpById,
+  createOtherExpenses,
+  getAllOtherExpenses,
+  getOtherExpById,
+  updateOtherExpById,
+  deleteOtherExpById,
 };

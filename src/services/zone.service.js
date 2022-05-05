@@ -5,58 +5,56 @@ const ApiError = require('../utils/ApiError');
 const District = require('../models/district.model');
 
 const createZone = async (zoneBody) => {
-  const { districtId } = zoneBody
+  const { districtId } = zoneBody;
   let dis = await District.findById(districtId);
-  let values = {}
-  values = {...zoneBody, ...{district:dis.district}}
-  if(dis === null){
-    throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
+  let values = {};
+  values = { ...zoneBody, ...{ district: dis.district } };
+  if (dis === null) {
+    throw new ApiError(httpStatus.NO_CONTENT, '!oops 🖕');
   }
-  return Zone.create(values)
+  return Zone.create(values);
 };
 
-const getAllZone = async()=>{
-  return Zone.find()
-} 
+const getAllZone = async () => {
+  return Zone.find();
+};
 
-const zonePagination = async (id)=>{
-  console.log(id)
+const zonePagination = async (id) => {
+  console.log(id);
   return Zone.aggregate([
-    {$sort: {"sqlZoneId": 1}},
+    { $sort: { sqlZoneId: 1 } },
     {
       $lookup: {
-          from: "districts",
-          localField: "districtId",
-          foreignField: "_id",
-          as: "districtData"
-      }
-  },
-  {
-    $unwind: "$districtData"
-  },
-      {
-        $project:{
-          id:1,
-          zone:1,
-          zoneCode:1,
-          districtId:1,
-          district:"$districtData.district"
-        }
+        from: 'districts',
+        localField: 'districtId',
+        foreignField: '_id',
+        as: 'districtData',
       },
-      {$skip:20*id},
-      {$limit:20},
-    
-  ])
-}
+    },
+    {
+      $unwind: '$districtData',
+    },
+    {
+      $project: {
+        id: 1,
+        zone: 1,
+        zoneCode: 1,
+        districtId: 1,
+        district: '$districtData.district',
+      },
+    },
+    { $skip: 20 * id },
+    { $limit: 20 },
+  ]);
+};
 
-
-const getZoneByDistrict = async (districtId)=>{
-  const dis = await Zone.find({districtId})
-  if(dis === null){
-    throw new ApiError(httpStatus.NOT_FOUND, "District Id Is incorrect")
+const getZoneByDistrict = async (districtId) => {
+  const dis = await Zone.find({ districtId });
+  if (dis === null) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'District Id Is incorrect');
   }
-  return dis
-}
+  return dis;
+};
 
 const getZoneById = async (id) => {
   const zone = Zone.findById(id);

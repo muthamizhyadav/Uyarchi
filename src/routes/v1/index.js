@@ -12,24 +12,24 @@ const comboRoute = require('./ProductCombo.route');
 const category = require('./category.route');
 const cartManagement = require('./cartManagement.route');
 const street = require('./street.route');
-const zone = require('./zone.route')
-const district = require('./district.route')
-const deliveryAddress = require('./deliveryAddress.route')
+const zone = require('./zone.route');
+const district = require('./district.route');
+const deliveryAddress = require('./deliveryAddress.route');
 const manageIssues = require('./manageIssues.route');
-const receive =require('./receivedOrderse.route');
+const receive = require('./receivedOrderse.route');
 const scv = require('./scv.route');
-const ward = require('./ward.route')
+const ward = require('./ward.route');
 const manageScvRoute = require('./manageScv.route');
 const warehouseStock = require('./warehouseStock.route');
 const loadingExecuteRoute = require('./loading.execute.route');
-const roleRoute = require('./role.route')
-const menueRoute = require('./menue.route')
-const assignRoute = require('./assign.route')
+const roleRoute = require('./role.route');
+const menueRoute = require('./menue.route');
+const assignRoute = require('./assign.route');
 const supplierRoute = require('./supplier.route');
 const expensesRoute = require('./expenses.route');
 const videoRecorder = require('./video.record');
 const setSalesPriceRoute = require('./setSalesPriceRoute');
-const shopOrderRoute = require('./shopOrder.route')
+const shopOrderRoute = require('./shopOrder.route');
 const router = express.Router();
 
 const defaultRoutes = [
@@ -75,27 +75,27 @@ const defaultRoutes = [
     route: cartManagement,
   },
   {
-    path:'/street',
+    path: '/street',
     route: street,
   },
   {
-    path:'/zone',
+    path: '/zone',
     route: zone,
   },
   {
-    path:'/ward',
-    route:ward,
+    path: '/ward',
+    route: ward,
   },
   {
-    path:'/district',
+    path: '/district',
     route: district,
   },
   {
-    path:'/deliveryAddress',
+    path: '/deliveryAddress',
     route: deliveryAddress,
   },
   {
-    path:'/manageIssues',
+    path: '/manageIssues',
     route: manageIssues,
   },
   {
@@ -108,10 +108,10 @@ const defaultRoutes = [
   },
   {
     path: '/manageScv',
-    route: manageScvRoute
+    route: manageScvRoute,
   },
   {
-    path:'/warehouseStock',
+    path: '/warehouseStock',
     route: warehouseStock,
   },
   {
@@ -120,7 +120,7 @@ const defaultRoutes = [
   },
   {
     path: '/role',
-    route: roleRoute 
+    route: roleRoute,
   },
   {
     path: '/menu',
@@ -128,14 +128,17 @@ const defaultRoutes = [
   },
   {
     path: '/assign',
-    route: assignRoute
-  },{
+    route: assignRoute,
+  },
+  {
     path: '/supplier',
     route: supplierRoute,
-  },{
+  },
+  {
     path: '/expenses',
     route: expensesRoute,
-  },{
+  },
+  {
     path: '/videoRecorder',
     route: videoRecorder,
   },
@@ -147,7 +150,6 @@ const defaultRoutes = [
     path: '/orderShop',
     route: shopOrderRoute,
   },
-  
 ];
 
 const devRoutes = [

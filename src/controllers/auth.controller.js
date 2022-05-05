@@ -6,25 +6,25 @@ const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body, req.params);
   const tokens = await tokenService.generateAuthTokens(user);
   const emails = await emailService.sendEmail(user.email);
-  user.OTP=emails.otp;
-  res.status(httpStatus.CREATED).send({ user, tokens, emails});
-  await user.save()
+  user.OTP = emails.otp;
+  res.status(httpStatus.CREATED).send({ user, tokens, emails });
+  await user.save();
 });
 
 const login = catchAsync(async (req, res) => {
-  const { phoneNumber , password } = req.body;
+  const { phoneNumber, password } = req.body;
   const user = await authService.loginUserWithEmailAndPassword(phoneNumber, password);
   const tokens = await tokenService.generateAuthTokens(user);
   let options = {
-    httpOnly : true,
-  }
-  res.cookie("token", tokens.access.token, options)
-  res.send({ user, tokens })
+    httpOnly: true,
+  };
+  res.cookie('token', tokens.access.token, options);
+  res.send({ user, tokens });
 });
 
 const logout = catchAsync(async (req, res) => {
   await authService.logout(req.body.refreshToken);
-  res.status(httpStatus.NO_CONTENT).send("token");
+  res.status(httpStatus.NO_CONTENT).send('token');
 });
 
 const refreshTokens = catchAsync(async (req, res) => {

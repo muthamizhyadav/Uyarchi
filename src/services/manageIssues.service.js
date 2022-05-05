@@ -12,9 +12,9 @@ const getManageIssuesById = async (id) => {
   }
   return manageIssues;
 };
-const getAllManageIssues = async()=>{
-    return ManageIssues.find();
-}
+const getAllManageIssues = async () => {
+  return ManageIssues.find();
+};
 const queryManageIssues = async (filter, options) => {
   return ManageIssues.paginate(filter, options);
 };
@@ -38,10 +38,10 @@ const deleteManageIssuesById = async (manageIssuesId) => {
 };
 
 module.exports = {
-    createManageIssues,
-    getManageIssuesById,
-    getAllManageIssues,
-    queryManageIssues,
-    updateManageIssuesById,
-    deleteManageIssuesById,
+  createManageIssues,
+  getManageIssuesById,
+  getAllManageIssues,
+  queryManageIssues,
+  updateManageIssuesById,
+  deleteManageIssuesById,
 };
