@@ -18,6 +18,9 @@ const zoneSchema = mongoose.Schema({
    zoneCode:{
        type:String
    },
+   sqlZoneId:{
+       type:Number,
+   },
     active:{
         type:Boolean,
         default:true,

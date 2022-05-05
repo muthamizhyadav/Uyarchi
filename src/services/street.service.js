@@ -21,6 +21,7 @@ const createStreet = async (streetBody) => {
   
 const getAllStreet = async ()=>{
   return Street.aggregate([{
+     $limit : 10 ,
     $lookup: {
         from: "zones",
         localField: "zone",
@@ -69,6 +70,8 @@ const getAllStreet = async ()=>{
 
 ])
 }
+
+
 
 const getStreetByWardId = async(wardId)=>{
   console.log(wardId)

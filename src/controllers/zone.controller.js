@@ -2,12 +2,19 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
+const zoneModel = require('../models/zone.model')
+const Ward = require('../models/ward.model')
+const Street = require('../models/street.model')
 const ZoneService = require('../services/zone.service');
 
 const createZone = catchAsync(async (req, res) => {
     const zone = await ZoneService.createZone(req.body);
     res.status(httpStatus.CREATED).send(zone);
 });
+
+const getZones = catchAsync(async (req, res)=>{
+  
+})
 
 const getZoneDetailsById = catchAsync(async (req, res) => {
   const zone = await ZoneService.getZoneById(req.params.zoneId);
@@ -43,6 +50,7 @@ const deleteZone = catchAsync(async (req, res) => {
     createZone,
     getAllZones,
     getZoneDetailsById,
+    getZones,
     getZoneByDistrict,
     updateZone,
     deleteZone,

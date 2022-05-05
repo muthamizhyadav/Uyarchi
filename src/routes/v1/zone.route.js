@@ -2,6 +2,7 @@ const express = require('express');
 // const customerController = require('../../controllers/customer.controller');
 const zoneController = require('../../controllers/zone.controller')
 const router = express.Router();
+router.route('/import').get(zoneController.getZones)
 router
 .route('/')
 .post(zoneController.createZone).get(zoneController.getAllZones)
@@ -12,5 +13,6 @@ router.route('/:zoneId')
 .delete(zoneController.deleteZone);
 
 router.route('/zoneByDistrict/:districtId').get(zoneController.getZoneByDistrict)
+
 
 module.exports = router;

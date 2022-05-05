@@ -22,6 +22,14 @@ street:{
     type:String,
 
 },
+locality:{
+    type:String,
+
+},
+area:{
+    type:String,
+
+},
 active:{
     type:Boolean,
     default:true,

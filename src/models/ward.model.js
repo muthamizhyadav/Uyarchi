@@ -21,6 +21,9 @@ const wardSchema = mongoose.Schema(
     zoneId:{
       type: String,
     },
+    wardsql:{
+      type:String,
+    },
       wardNo:{
         type:String
       },
