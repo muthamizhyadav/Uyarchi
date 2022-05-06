@@ -32,6 +32,16 @@ const subcreateCategory = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(subcategory);
 });
 
+const getAllCategory = catchAsync(async (req,res)=>{
+  const cate = await categoryService.getAllCategory()
+  res.send(cate)
+})
+
+const getAllSubCategory = catchAsync(async (req,res)=>{
+  const subcate = await categoryService.getAllSubCategory()
+  res.send(subcate)
+})
+
 const getCategoryhDetailsById = catchAsync(async (req, res) => {
   const category = await categoryService.getcategoryById(req.params.categoryId);
   if (!category || category.active === false) {
@@ -71,6 +81,8 @@ const deleteSubCategory = catchAsync(async (req, res) => {
 module.exports = {
   createCategory,
   subcreateCategory,
+  getAllCategory,
+  getAllSubCategory,
   getSubCategoryhDetailsById,
   updatesubCategory,
   deleteSubCategory,

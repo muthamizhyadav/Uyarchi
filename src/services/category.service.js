@@ -6,9 +6,17 @@ const createcategory = async (categoryBody) => {
   return Category.create(categoryBody);
 };
 
+const getAllCategory = async ()=>{
+  return Category.find()
+}
+
 const subCreatecategory = async (subCategoryBody) => {
   return Subcategory.create(subCategoryBody);
 };
+
+const getAllSubCategory = async ()=>{
+  return Subcategory.find()
+}
 
 const getcategoryById = async (id) => {
   const category = Category.findOne({ active: true });
@@ -70,6 +78,8 @@ module.exports = {
   createcategory,
   subCreatecategory,
   getSubcategoryById,
+  getAllSubCategory,
+  getAllCategory,
   updateSubcategoryById,
   deletesubcategoryById,
   getcategoryById,
