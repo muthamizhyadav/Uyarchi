@@ -5,7 +5,7 @@ const subCategory = require('../../middlewares/subCategory');
 const categoryController = require('../../controllers/category.controller');
 const router = express.Router();
 
-router.route('/').post(category.array('categoryImage'), categoryController.createCategory);
+router.route('/').post(category.array('categoryImage'), categoryController.createCategory).get(categoryController.getAllCategory);
 
 router
   .route('/:categoryId')
@@ -13,7 +13,7 @@ router
   .put(categoryController.updateCategory)
   .delete(categoryController.deleteCategory);
 
-router.route('/subCategory').post(subCategory.array('categoryImage'), categoryController.subcreateCategory);
+router.route('/subCategory').post(subCategory.array('categoryImage'), categoryController.subcreateCategory).get(categoryController.getAllSubCategory);
 router
   .route('/subCategory/:categoryId')
   .get(categoryController.getCategoryhDetailsById)
