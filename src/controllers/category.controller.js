@@ -53,7 +53,7 @@ const getCategoryhDetailsById = catchAsync(async (req, res) => {
 
 const getSubCategoryhDetailsById = catchAsync(async (req, res) => {
   const subcategory = await categoryService.getSubcategoryById(req.params.subcategoryId);
-  if (!subcategory || subcategory.active === false) {
+  if (!subcategory) {
     throw new ApiError(httpStatus.NOT_FOUND, 'SubCategory not found');
   }
   res.send(subcategory);
