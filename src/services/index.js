@@ -26,3 +26,4 @@ module.exports.menuesService = require('./menue.service');
 module.exports.supplierService = require('./supplier.service');
 module.exports.setSalesPrice = require('./setSalesPrice');
 module.exports.shopOrderService = require('./shopOrder.service');
+module.exports.manageUser = require('./manageUser.service')

@@ -29,7 +29,8 @@ const supplierRoute = require('./supplier.route');
 const expensesRoute = require('./expenses.route');
 const videoRecorder = require('./video.record');
 const setSalesPriceRoute = require('./setSalesPriceRoute');
-const shopOrderRoute = require('./shopOrder.route')
+const shopOrderRoute = require('./shopOrder.route');
+const manageUserRoute = require('./manageUser.route');
 const router = express.Router();
 
 const defaultRoutes = [
@@ -146,6 +147,10 @@ const defaultRoutes = [
   {
     path: '/orderShop',
     route: shopOrderRoute,
+  },
+  {
+    path: '/manageUser',
+    route: manageUserRoute,
   },
   
 ];
