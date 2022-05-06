@@ -52,9 +52,12 @@ const manageUserSchema = mongoose.Schema({
   addressProofNo:{
     type:String,
   },
-  // addressProofUpload:{
-  //   type:String,
-  // },
+  addressProofUpload:{
+    type:String,
+  },
+  twoWheelerUpload:{
+    type:String,
+  },
   twoWheeler:{
     type:String,
     enum:["Yes","No"],

@@ -12,14 +12,14 @@ const manageIssuesSchema = mongoose.Schema({
   date: {
     type: Date,
   },
-    orderId:{
-      type: String,
+  orderId: {
+    type: String,
   },
-  status:{
-    type:String,
+  status: {
+    type: String,
   },
-  postedBy:{
-    type:String,
+  postedBy: {
+    type: String,
   },
   active: {
     type: Boolean,

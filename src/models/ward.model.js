@@ -18,15 +18,15 @@ const wardSchema = mongoose.Schema(
     ward: {
       type: String,
     },
-    zoneId:{
+    zoneId: {
       type: String,
     },
-    wardsql:{
-      type:String,
+    wardsql: {
+      type: String,
     },
-      wardNo:{
-        type:String
-      },
+    wardNo: {
+      type: String,
+    },
     active: {
       type: Boolean,
       default: true,

@@ -20,14 +20,13 @@ const getAssignbyId = catchAsync(async (req, res) => {
   res.send(assign);
 });
 
-const getAllAssign = catchAsync(async (req, res)=>{
-   const assign = await assignService.getAllassign(req.params)
-   if(!assign){
-       throw new ApiError(httpStatus.NOT_FOUND);
-   }
-   res.send(assign);
+const getAllAssign = catchAsync(async (req, res) => {
+  const assign = await assignService.getAllassign(req.params);
+  if (!assign) {
+    throw new ApiError(httpStatus.NOT_FOUND);
+  }
+  res.send(assign);
 });
-
 
 const updateAssignById = catchAsync(async (req, res) => {
   const assign = await assignService.updateAssignById(req.params.assignId, req.body);
@@ -40,9 +39,9 @@ const deleteAssignById = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    createAssign,
-    getAllAssign,
-    getAssignbyId,
-    updateAssignById,
-    deleteAssignById,
+  createAssign,
+  getAllAssign,
+  getAssignbyId,
+  updateAssignById,
+  deleteAssignById,
 };

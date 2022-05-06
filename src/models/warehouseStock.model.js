@@ -3,35 +3,37 @@ const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
 
-
-const warehouseStockSchema = mongoose.Schema({
-    _id:{
-        type:String,
-        default:v4,
+const warehouseStockSchema = mongoose.Schema(
+  {
+    _id: {
+      type: String,
+      default: v4,
     },
-    product:{
-        type:String,
+    product: {
+      type: String,
     },
-    category:{
-        type:String,
+    category: {
+      type: String,
     },
-    supplier:{
-        type:String
+    supplier: {
+      type: String,
     },
-    inStock:{
-        type:String,
+    inStock: {
+      type: String,
     },
-    active:{
-        type:Boolean,
-        default:true
+    active: {
+      type: Boolean,
+      default: true,
     },
-    archive:{
-        type:Boolean,
-        default:false
+    archive: {
+      type: Boolean,
+      default: false,
     },
-},{
-    timestamps: { createdAt: 'createdDate',updatedAt: 'updatedDate' } 
-})
+  },
+  {
+    timestamps: { createdAt: 'createdDate', updatedAt: 'updatedDate' },
+  }
+);
 
 warehouseStockSchema.plugin(toJSON);
 warehouseStockSchema.plugin(paginate);

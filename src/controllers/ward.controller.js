@@ -16,10 +16,10 @@ const createWard = catchAsync(async (req, res) => {
 //   res.send(result);
 // });
 
-const getWardByZoneId = catchAsync(async(req, res)=>{
-  const dis = await wardService.getWardByZoneId(req.params.zoneId)
-  res.send(dis)
-})
+const getWardByZoneId = catchAsync(async (req, res) => {
+  const dis = await wardService.getWardByZoneId(req.params.zoneId);
+  res.send(dis);
+});
 
 const getward = catchAsync(async (req, res) => {
   const ward = await wardService.getWardById(req.params.wardId);
@@ -28,12 +28,17 @@ const getward = catchAsync(async (req, res) => {
   }
   res.send(ward);
 });
-const getAllWard = catchAsync (async(req, res)=>{
+const getAllWard = catchAsync(async (req, res) => {
   const allWard = await wardService.getAllWard(req.params);
   res.send(allWard);
 });
 const updateward = catchAsync(async (req, res) => {
   const ward = await wardService.updatewardById(req.params.wardId, req.body);
+  res.send(ward);
+});
+
+const wardPagination = catchAsync(async (req, res) => {
+  const ward = await wardService.wardPagination(req.params.id);
   res.send(ward);
 });
 
@@ -49,4 +54,5 @@ module.exports = {
   getWardByZoneId,
   updateward,
   deleteWard,
+  wardPagination,
 };

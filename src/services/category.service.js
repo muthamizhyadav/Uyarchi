@@ -48,7 +48,6 @@ const updateSubcategoryById = async (subcategoryId, updateBody) => {
   return subcate;
 };
 
-
 const deletecategoryById = async (categoryId) => {
   const category = await getcategoryById(categoryId);
   if (!category) {

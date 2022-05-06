@@ -4,16 +4,16 @@ const ApiError = require('../utils/ApiError');
 const scvPurchase = require('../models/scv.Purchase.model');
 
 const createMenues = async (menueBody) => {
-  const { parentMenu } = menueBody
-  let  parentName ;
-  if(parentMenu === "0" || parentMenu ===null){
-    parentName = "none"
-  }else{
+  const { parentMenu } = menueBody;
+  let parentName;
+  if (parentMenu === '0' || parentMenu === null) {
+    parentName = 'none';
+  } else {
     const menu = await Menues.findById(parentMenu);
-    parentName = menu.menuName
+    parentName = menu.menuName;
   }
-  let values = {}
-  values = {...menueBody, ...{parentName:parentName}}
+  let values = {};
+  values = { ...menueBody, ...{ parentName: parentName } };
   return Menues.create(values);
 };
 const getMenuesById = async (id) => {
@@ -24,13 +24,13 @@ const getAllMenues = async () => {
   return Menues.aggregate([
     {
       $lookup: {
-        from: 'menues', 
-        localField: '_id', 
-        foreignField: 'parentMenu', 
-        as: 'child'
-      }
-    }
-  ])
+        from: 'menues',
+        localField: '_id',
+        foreignField: 'parentMenu',
+        as: 'child',
+      },
+    },
+  ]);
 };
 
 const updateMenuesById = async (menueId, updateBody) => {
@@ -51,9 +51,9 @@ const deleteMenueById = async (menueId) => {
 };
 
 module.exports = {
-    createMenues,
-    getAllMenues,
-    getMenuesById,
-    updateMenuesById,
-    deleteMenueById,
+  createMenues,
+  getAllMenues,
+  getMenuesById,
+  updateMenuesById,
+  deleteMenueById,
 };

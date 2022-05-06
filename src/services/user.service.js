@@ -46,8 +46,8 @@ const getUserByEmail = async (email) => {
   return User.findOne({ email });
 };
 
-const getUserByMobile = async (phoneNumber) =>{
-  return User.findOne({phoneNumber})
+const getUserByMobile = async (phoneNumber) => {
+  return User.findOne({ phoneNumber });
 };
 /**
  * Update user by id

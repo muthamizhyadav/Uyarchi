@@ -10,7 +10,7 @@ const createCategory = catchAsync(async (req, res) => {
   if (req.files) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
-      path = "images/category/"+files.filename;
+      path = 'images/category/' + files.filename;
     });
     category.categoryImage = path;
   }
@@ -24,7 +24,7 @@ const subcreateCategory = catchAsync(async (req, res) => {
   if (req.files) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
-      path = "images/subcategory/"+files.filename;
+      path = 'images/subcategory/' + files.filename;
     });
     subcategory.categoryImage = path;
   }
@@ -57,7 +57,6 @@ const updatesubCategory = catchAsync(async (req, res) => {
   const subcategory = await categoryService.updateSubcategoryById(req.params.subcategoryId, req.body);
   res.send(subcategory);
 });
-
 
 const deleteCategory = catchAsync(async (req, res) => {
   await categoryService.deletecategoryById(req.params.categoryId);

@@ -6,19 +6,17 @@ const manageUserService = require('../services/manageUser.service');
 
 const createmanageUserService = catchAsync(async (req, res) => {
   const user = await manageUserService.createManageUser(req.body);
-  console.log(user)
   if (req.files) {
     let path = '';
-    console.log(req.files)
-    req.files.forEach(function (files, index, arr) {
-      path = "images/"+files.filename;
-    });
-    user.idProofUpload = path;
-    // user.addressProofUpload = path;
+      path = "images/proofs/"
+    user.idProofUpload = path+req.files.idProofUpload.map((e)=>{return e.filename})
+    user.addressProofUpload = path+req.files.addressProofUpload.map((e)=>{return e.filename});
+    user.twoWheelerUpload = path+req.files.twoWheelerUpload.map((e)=>{return e.filename});
   }
   res.status(httpStatus.CREATED).send(user);
   await user.save();
 });
+
 
 const getmanageUserServiceById = catchAsync(async (req, res) => {
   const pro = await manageUserService.getManageUserById(req.params.manageUserId);
@@ -37,23 +35,46 @@ const getmanageUserServiceAll = catchAsync(async (req, res) => {
   });
 
 const updatemanageUserService = catchAsync(async (req, res) => {
+
   const pro = await manageUserService.updateManageUserId(req.params.manageUserId, req.body);
-  let filenameempty="";
-  let inter = pro
+  // let filenameempty="";
+  // let filenameempty1="";
+  // let filenameempty2 = "";
+  // let inter = pro
   let path = '';
+    let a = req.files.idProofUpload[0].filename
+    let b = req.files.addressProofUpload[0].filename
+    let c = req.files.twoWheelerUpload[0].filename
+  console.log(a)
+  console.log(b)
+  console.log(c)
   if (req.files) {
-    req.files.forEach(function (files, index, arr) {
-      path = "images/"+files.filename
-      filenameempty=files.filename
-    });
+    let path = '';
+      path = "images/proofs/"
+      let i = 0;
+   pro.idProofUpload = path+a
+   pro.addressProofUpload = path+b
+   pro.twoWheelerUpload = path+c
   }
-  if(filenameempty == ""){
-    pro.idProofUpload = inter.idProofUpload;
-    // pro.addressProofUpload = inter.addressProofUpload;
-  }else{
-//    pro.addressProofUpload = path;
-   pro.idProofUpload = path;
- }
+  // if (req.files) {
+  //     path = "images/proofs/"
+  //     console.log(req.files)
+    // pro.idProofUpload = path+req.files.idProofUpload.map((e)=>{return e.filename})
+    // filenameempty = req.files.idProofUpload.map((e)=>{return e.filename})
+    // pro.addressProofUpload = path+req.files.addressProofUpload.map((e)=>{return e.filename});
+    // filenameempty1 = req.files.addressProofUpload.map((e)=>{return e.filename});
+    // pro.twoWheelerUpload = path+req.files.twoWheelerUpload.map((e)=>{return e.filename});
+    // filenameempty2 = req.files.twoWheelerUpload.map((e)=>{return e.filename});
+  // }
+  // if(filenameempty == ""){
+  //   pro.idProofUpload = inter.idProofUpload;
+  // }
+  // if(filenameempty1 == ""){
+  //   pro.addressProofUpload = inter.addressProofUpload;
+  // }
+  // if(filenameempty2 == ""){
+  //   pro.twoWheelerUpload = inter.twoWheelerUpload;
+  // }
   res.send(pro);
   await pro.save();
 });
@@ -66,7 +87,6 @@ module.exports = {
   createmanageUserService,
   getmanageUserServiceAll,
   getmanageUserServiceById,
-  
   updatemanageUserService,
   deletemanageUserService,
 };

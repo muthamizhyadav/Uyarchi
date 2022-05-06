@@ -28,12 +28,12 @@ const getSCVById = catchAsync(async (req, res) => {
   res.send(scv);
 });
 
-const gertAllSCV = catchAsync(async(req,res)=>{
-    const scv = await scvService.getAllSCV(req.params)
-    if(!scv){
-        throw new ApiError(httpStatus.BAD_REQUEST,"SVC Not Found")
-    }
-     res.send(scv)
+const gertAllSCV = catchAsync(async (req, res) => {
+  const scv = await scvService.getAllSCV(req.params);
+  if (!scv) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'SVC Not Found');
+  }
+  res.send(scv);
 });
 
 const updateSCV = catchAsync(async (req, res) => {
@@ -43,13 +43,13 @@ const updateSCV = catchAsync(async (req, res) => {
 
 const deletescv = catchAsync(async (req, res) => {
   await scvService.deleteSCVById(req.params.scvId);
-  res.status(httpStatus.NO_CONTENT).send()
+  res.status(httpStatus.NO_CONTENT).send();
 });
 
 module.exports = {
-    createSCV,
-    getSCVById,
-    gertAllSCV,
-    updateSCV,
-    deletescv,
+  createSCV,
+  getSCVById,
+  gertAllSCV,
+  updateSCV,
+  deletescv,
 };

@@ -13,8 +13,8 @@ const getSCVById = async (id) => {
   }
   return scv;
 };
-const getAllSCV = async()=>{
-    return SCVPurchase.find();
+const getAllSCV = async () => {
+  return SCVPurchase.find();
 };
 
 const querySCV = async (filter, options) => {
@@ -40,9 +40,9 @@ const deleteSCVById = async (scvId) => {
 };
 
 module.exports = {
-    createSCV,
-    getAllSCV,
-    getSCVById,
-    updateSCVById,
-    deleteSCVById,
+  createSCV,
+  getAllSCV,
+  getSCVById,
+  updateSCVById,
+  deleteSCVById,
 };
