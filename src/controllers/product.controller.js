@@ -225,7 +225,7 @@ const sendStocktoLoadingExecute = catchAsync(async (req, res) => {
   if (req.files) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
-      path = 'weighbridge/' + files.filename;
+      path = 'images/weighbridge/' + files.filename;
     });
     stocks.weighbridgeBill = path;
   }

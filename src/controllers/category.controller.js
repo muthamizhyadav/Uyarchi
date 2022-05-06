@@ -6,6 +6,7 @@ const { categoryService } = require('../services');
 
 const createCategory = catchAsync(async (req, res) => {
   const { body } = req;
+  
   const category = await categoryService.createcategory(body);
   if (req.files) {
     let path = '';

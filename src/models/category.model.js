@@ -37,7 +37,7 @@ const SubcategorySchema = mongoose.Schema({
   parentCategoryId: {
     type: String,
   },
-  categoryName: {
+  subcategoryName: {
     type: String,
   },
   categoryImage: {

@@ -5,19 +5,19 @@ const catchAsync = require('../utils/catchAsync');
 const { adminRegistrationService, tokenService } = require('../services');
 
 const createadminRegistrationService = catchAsync(async (req, res) => {
-  const interviewerRegistration = await adminRegistrationService.createadminRegistration(req.body)
-  res.status(httpStatus.CREATED).send(interviewerRegistration)
+  const adminRegistartion = await adminRegistrationService.createadminRegistration(req.body)
+  res.status(httpStatus.CREATED).send(adminRegistartion)
 });
 
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
-  const interviewerRegistration = await adminRegistrationService.loginadminRegistrationWithEmailAndPassword(email, password);
-  const tokens = await tokenService.generateAuthTokens(interviewerRegistration);
+  const adminRegistartion = await adminRegistrationService.loginadminRegistrationWithEmailAndPassword(email, password);
+  const tokens = await tokenService.generateAuthTokens(adminRegistartion);
   let options = {
     httpOnly : true,
   }
   res.cookie("token", tokens.access.token, options)
-  res.send({ interviewerRegistration, tokens });
+  res.send({ adminRegistartion, tokens });
 });
 
 // const getcustomer = catchAsync(async (req, res) => {

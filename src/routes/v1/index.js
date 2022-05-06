@@ -32,6 +32,7 @@ const setSalesPriceRoute = require('./setSalesPriceRoute');
 const shopOrderRoute = require('./shopOrder.route');
 const manageUserRoute = require('./manageUser.route')
 const adminRegistrationRoute = require('./adminRegistration.route')
+const manageUser = require('./manageUser.route')
 const router = express.Router();
 
 const defaultRoutes = [
@@ -154,12 +155,12 @@ const defaultRoutes = [
   },
   {
     path: '/manageUser',
-    route: manageUserRoute,
+    route: manageUser
   },
   {
-     path:'/adminRegistration',
-     route: adminRegistrationRoute,
-  },
+    path:'/adminRegistration',
+    route: adminRegistrationRoute
+  }
 ];
 
 const devRoutes = [
