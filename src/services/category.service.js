@@ -9,13 +9,33 @@ const createcategory = async (categoryBody) => {
 const getAllCategory = async ()=>{
   return Category.find()
 }
-
 const subCreatecategory = async (subCategoryBody) => {
   return Subcategory.create(subCategoryBody);
 };
 
 const getAllSubCategory = async ()=>{
-  return Subcategory.find()
+    return Subcategory.aggregate([
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'parentCategoryId',
+          foreignField: '_id',
+          as: 'cate',
+        },
+      },
+      {
+        $unwind: '$cate',
+      },
+      {
+        $project: {
+          subcategoryName: 1,
+          id:1,
+          categoryName:'$cate.categoryName',
+          description:1,
+          categoryImage:1
+        },
+      },
+    ])
 }
 
 const getcategoryById = async (id) => {
@@ -27,7 +47,7 @@ const getcategoryById = async (id) => {
 };
 
 const getSubcategoryById = async (subcategoryId) => {
-  const subcategory = Subcategory.findOne({ active: true });
+  const subcategory = Subcategory.findOne({ subcategoryId });
   if (!subcategory) {
     throw new ApiError(httpStatus.NOT_FOUND, 'subCategory Not Found');
   }
