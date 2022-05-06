@@ -30,3 +30,4 @@ module.exports.Supplier = require('./supplier.model');
 module.exports.SetSalesPrice = require('./setSalesPrice');
 module.exports.ShopOrder = require('./shopOrder.model');
 module.exports.ManageUser = require('./manageUser.model')
+module.exports.adminRegistration = require('./adminRegistration.model')

@@ -9,7 +9,7 @@ const createmanageUserService = catchAsync(async (req, res) => {
   if (req.files) {
     let path = '';
       path = "images/proofs/"
-    user.idProofUpload = path+req.files.idProofUpload.map((e)=>{return e.filename})
+    user.idProofUpload = path+req.files.idProofUpload.map((e)=>{return e.filename});
     user.addressProofUpload = path+req.files.addressProofUpload.map((e)=>{return e.filename});
     user.twoWheelerUpload = path+req.files.twoWheelerUpload.map((e)=>{return e.filename});
   }
@@ -45,14 +45,13 @@ const updatemanageUserService = catchAsync(async (req, res) => {
     let a = req.files.idProofUpload[0].filename
     let b = req.files.addressProofUpload[0].filename
     let c = req.files.twoWheelerUpload[0].filename
-  console.log(a)
-  console.log(b)
-  console.log(c)
+    console.log(req.files)
   if (req.files) {
     let path = '';
       path = "images/proofs/"
       let i = 0;
    pro.idProofUpload = path+a
+  //  filenameempty = 
    pro.addressProofUpload = path+b
    pro.twoWheelerUpload = path+c
   }

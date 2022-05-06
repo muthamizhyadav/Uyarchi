@@ -31,6 +31,7 @@ const videoRecorder = require('./video.record');
 const setSalesPriceRoute = require('./setSalesPriceRoute');
 const shopOrderRoute = require('./shopOrder.route');
 const manageUserRoute = require('./manageUser.route')
+const adminRegistrationRoute = require('./adminRegistration.route')
 const router = express.Router();
 
 const defaultRoutes = [
@@ -154,7 +155,11 @@ const defaultRoutes = [
   {
     path: '/manageUser',
     route: manageUserRoute,
-  }
+  },
+  {
+     path:'/adminRegistration',
+     route: adminRegistrationRoute,
+  },
 ];
 
 const devRoutes = [
