@@ -80,11 +80,15 @@ const getByBillId = async (billId) => {
 
 const productAggregationWithShopOrder = async()=>{
  const products = await Product.find()
+ console.log(products.map((e)=>{
+   return e.id
+ }))
  const shopOrders = await ShopOrders.find()
- let ff = shopOrders.product.map((e)=>{
-   return e.productid
- })
- console.log(ff)
+ console.log(shopOrders.map((e)=>{
+    return e.product.map((ee)=>{
+      return ee.productid
+    })
+ }))
 }
 
 const createConfirmStock = async (confirmBody) => {

@@ -9,6 +9,6 @@ router
   .put(shopOrderController.updateshopOrderById)
   .delete(shopOrderController.deleteShopOrderById);
 
-router.route('/product/:id').get(shopOrderController.getProductDetailsByProductId);
+router.route('/product/all').get(shopOrderController.getProductDetailsByProductId);
 
 module.exports = router;

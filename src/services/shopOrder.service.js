@@ -29,14 +29,58 @@ const getShopOrderById = async (shopOrderId) => {
 };
 
 const getProductDetailsByProductId = async (id)=>{
-  const shoporder = await ShopOrder.findById(id)
-  let details = shoporder.product.map((e)=>{
-    return e.productid
-  })
-  console.log(details)
-  const products = await Product.findById(details)
-  console.log(products)
-  return products
+
+ return await ShopOrder.aggregate([
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'product.productid',
+        foreignField: '_id',
+        as: 'products',
+      },
+    },
+    {
+      $unwind: "$products"
+    },
+    {
+      // find a company member, that matches
+      // to a given person
+      $addFields: {
+        matchedMember: {
+          $arrayElemAt: [{
+            $filter: {
+              input: '$products.product',
+              cond: {
+                $eq: ['$$this._id', 'products.productid'],
+              }
+            },
+          }, 0]
+        }
+      }
+    },
+    
+    {
+      $project: {
+        districtName: '$products',
+        product:1
+      },
+    }
+
+  ])
+  // const product = await Product.find({},{'id':1})
+  // let str = []
+
+  
+  // product.forEach(async(e)=>{
+  //   const productid=e._id;
+  // //   console.log(productid)
+  //  const shoporder = await ShopOrder.find({product:{$elemMatch:{productid:productid}, $project:{
+  //    _id:1
+  //  }}})
+  //  console.log(shoporder)
+  // //  str.push(shoporder)
+  // })
+ 
 }
 
 const updateShopOrderById = async (shopOrderId, updateBody) => {
