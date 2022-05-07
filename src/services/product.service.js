@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise, ManageBill } = require('../models/product.model');
+const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise, ManageBill, ShopList} = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
 const Supplier = require('../models/supplier.model');
 const ReceivedOrder = require('../models/receivedOrders.model');
@@ -38,6 +38,15 @@ const createManageBill = async (manageBillBody) => {
   }
   return ManageBill.create(manageBillBody);
 };
+
+const createShopList = async (shopListBody) => {
+  return ShopList.create(shopListBody);
+};
+
+const getAllShopList = async () => {
+  return ShopList.find();
+};
+
 
 const createStock = async (stockbody) => {
   const { supplierId, product, productName } = stockbody;
@@ -397,4 +406,6 @@ module.exports = {
   deleteProductById,
   queryProduct,
   getStockStatusDelivered,
+  createShopList,
+  getAllShopList
 };

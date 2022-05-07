@@ -330,7 +330,26 @@ manageBillSchema.plugin(toJSON);
 manageBillSchema.plugin(paginate);
 
 const ManageBill = mongoose.model('manageBill', manageBillSchema);
+const shopListSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  shopList:{
+    type:String,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+});
 
+
+const ShopList = mongoose.model('shopList', shopListSchema);
 module.exports = {
   Stock,
   Product,
@@ -338,4 +357,5 @@ module.exports = {
   LoadingExecute,
   BillRaise,
   ManageBill,
+  ShopList,
 };

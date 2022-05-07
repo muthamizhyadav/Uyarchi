@@ -51,6 +51,13 @@ const createMainWherehouseLoadingExecute = catchAsync(async (req, res) => {
   await mwloading.save();
 });
 
+const createShopListService = catchAsync(async (req, res) => {
+  const { body } = req;
+  const shop = await productService.createShopList(body);
+  res.status(httpStatus.CREATED).send(shop);
+  await shop.save();
+});
+
 const createConfirmStock = catchAsync(async (req, res) => {
   const { body } = req;
   const confirmStock = await productService.createConfirmStock(body, req.params);
@@ -82,6 +89,11 @@ const getStockById = catchAsync(async (req, res) => {
   // }
   res.send(stock);
 });
+const getShopList = catchAsync(async (req, res) => {
+  const shop = await productService.getAllShopList();
+  res.send(shop);
+});
+
 const getAllManageBill = catchAsync(async (req, res) => {
   const manage = await productService.getAllManageBill();
   res.send(manage);
@@ -147,6 +159,7 @@ const getproduct = catchAsync(async (req, res) => {
   }
   res.send(product);
 });
+
 const getStockBySupplierId = catchAsync(async (req, res) => {
   const stock = await productService.getStockBySupplierId(req.params.supplierId);
   res.send(stock);
@@ -326,4 +339,6 @@ module.exports = {
   deleteMainWherehouseLoadingExecuteById,
   sendStocktoLoadingExecute,
   updatingStatusForDelivered,
+  createShopListService,
+  getShopList
 };

@@ -12,6 +12,8 @@ router
   .put(productController.updateProduct);
 router.route('/shopProducts/getName').get(productController.productAggregationWithShopOrder)
 router.route('/stocks').post(productController.createStock);
+router.route('/shopList').post(productController.createShopListService)
+router.route('/shopList/all').get(productController.getShopList)
 // router.route('/closeorder').post(productController.getbillingexecutive);
 router.route('/stocks/:stockId').put(productController.updateStockById);
 router.route('/stock/all').get(productController.getAllStock);
