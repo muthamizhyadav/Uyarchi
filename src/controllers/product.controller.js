@@ -232,6 +232,11 @@ const sendStocktoLoadingExecute = catchAsync(async (req, res) => {
   res.send(stocks);
 });
 
+const productAggregationWithShopOrder = catchAsync (async (req, res)=>{
+  const products = await productService.productAggregationWithShopOrder();
+  res.send(products)
+})
+
 const getLoadingExecuteDate = catchAsync(async (req, res) => {
   const loading = await productService.getLoadingExecuteDate();
   res.send(loading);
@@ -293,6 +298,7 @@ module.exports = {
   getStockByStatusClosed,
   deleteBillManage,
   getAllBillRaised,
+  productAggregationWithShopOrder,
   getBillRaiseById,
   updateBillRaiseById,
   getLoadingExecuteDate,

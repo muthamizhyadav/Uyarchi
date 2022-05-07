@@ -3,6 +3,7 @@ const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise, ManageBill } = 
 const ApiError = require('../utils/ApiError');
 const Supplier = require('../models/supplier.model');
 const ReceivedOrder = require('../models/receivedOrders.model');
+const ShopOrders = require('../models/shopOrder.model')
 
 const createProduct = async (productBody) => {
   let { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime, maxBidAomunt, minBidAmount } =
@@ -76,6 +77,15 @@ const getByBillId = async (billId) => {
   }
   return bills;
 };
+
+const productAggregationWithShopOrder = async()=>{
+ const products = await Product.find()
+ const shopOrders = await ShopOrders.find()
+ let ff = shopOrders.product.map((e)=>{
+   return e.productid
+ })
+ console.log(ff)
+}
 
 const createConfirmStock = async (confirmBody) => {
   const { stockId } = confirmBody;
@@ -369,6 +379,7 @@ module.exports = {
   getAllConfirmStack,
   getAllMailWherehoustLoadingExecute,
   updateStockQtyById,
+  productAggregationWithShopOrder,
   getConfrimById,
   getStockByLoadingExecute,
   updateArrivedById,

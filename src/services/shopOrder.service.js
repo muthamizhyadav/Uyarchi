@@ -28,6 +28,17 @@ const getShopOrderById = async (shopOrderId) => {
   return shoporder;
 };
 
+const getProductDetailsByProductId = async (id)=>{
+  const shoporder = await ShopOrder.findById(id)
+  let details = shoporder.product.map((e)=>{
+    return e.productid
+  })
+  console.log(details)
+  const products = await Product.findById(details)
+  console.log(products)
+  return products
+}
+
 const updateShopOrderById = async (shopOrderId, updateBody) => {
   let shoporder = await getShopOrderById(shopOrderId);
   if (!shoporder) {
@@ -50,6 +61,7 @@ module.exports = {
   createshopOrder,
   getAllShopOrder,
   getShopOrderById,
+  getProductDetailsByProductId,
   updateShopOrderById,
   deleteShopOrderById,
 };
