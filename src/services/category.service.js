@@ -39,7 +39,7 @@ const getAllSubCategory = async ()=>{
 }
 
 const getcategoryById = async (id) => {
-  const category = Category.findOne({ active: true });
+  const category = Category.findById(id);
   if (!category) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Category Not Found');
   }
@@ -47,7 +47,7 @@ const getcategoryById = async (id) => {
 };
 
 const getSubcategoryById = async (subcategoryId) => {
-  const subcategory = Subcategory.findOne({ subcategoryId });
+  const subcategory = await Subcategory.findById(subcategoryId)
   if (!subcategory) {
     throw new ApiError(httpStatus.NOT_FOUND, 'subCategory Not Found');
   }
@@ -72,7 +72,7 @@ const updateSubcategoryById = async (subcategoryId, updateBody) => {
   if (!subcate) {
     throw new ApiError(httpStatus.NOT_FOUND, 'subcategoryId not found');
   }
-  subcate = await Category.findByIdAndUpdate({ _id: subcategoryId }, updateBody, { new: true });
+  subcate = await Subcategory.findByIdAndUpdate({ _id: subcategoryId }, updateBody, { new: true });
   return subcate;
 };
 
@@ -85,7 +85,7 @@ const deletecategoryById = async (categoryId) => {
   return category;
 };
 
-const deletesubcategoryById = async (categoryId) => {
+const deletesubcategoryById = async (subcategoryId) => {
   const subcategory = await getSubcategoryById(subcategoryId);
   if (!subcategory) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');

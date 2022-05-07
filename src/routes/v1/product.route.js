@@ -10,7 +10,7 @@ router
   .get(productController.getproduct)
   .delete(productController.deleteProduct)
   .put(productController.updateProduct);
-
+router.route('/shopProducts/getName').get(productController.productAggregationWithShopOrder)
 router.route('/stocks').post(productController.createStock);
 // router.route('/closeorder').post(productController.getbillingexecutive);
 router.route('/stocks/:stockId').put(productController.updateStockById);

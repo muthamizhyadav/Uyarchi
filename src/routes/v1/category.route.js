@@ -14,10 +14,12 @@ router
   .delete(categoryController.deleteCategory);
 
 router.route('/sub/category').post(subCategory.array('categoryImage'), categoryController.subcreateCategory).get(categoryController.getAllSubCategory);
-router
-  .route('/subCategory/:categoryId')
-  .get(categoryController.getCategoryhDetailsById)
-  .put(categoryController.updatesubCategory)
-  .delete(categoryController.deleteSubCategory);
-router.route
+// router
+//   .route('/sub/Category/:subcategoryId')
+//   .get(categoryController.getCategoryhDetailsById)
+//   .put(categoryController.updatesubCategory)
+//   .delete(categoryController.deleteSubCategory);
+// router.route
+
+router.route('/sub/:subcategoryId').get(categoryController.getSubCategoryhDetailsById).put(categoryController.updatesubCategory).delete(categoryController.deleteSubCategory)
 module.exports = router;
