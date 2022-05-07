@@ -13,6 +13,29 @@ const createManageUser = async (manageUserBody) => {
     }
     return  Manage;
   };
+
+  // const getManageUserByMobile = async (mobileNumber) => {
+  //   return ManageUser.findOne({ mobileNumber });
+  // };
+
+  const loginManageUserEmailAndPassword = async (mobileNumber,dateOfBirth) => {
+    const interviewerRegistration = await ManageUser.find({mobileNumber:mobileNumber});
+    
+  let dob=interviewerRegistration[0].dateOfBirth.replace(/[^0-9\.]+/g, "")
+  if(interviewerRegistration !=""){
+    if(dob==dateOfBirth){
+    }
+    else{
+      throw new ApiError(httpStatus.NOT_FOUND, 'DOB Not Match');
+    }
+  }
+  else{
+    throw new ApiError(httpStatus.NOT_FOUND, 'Mobile Number Not Registored');
+  }
+
+    return interviewerRegistration;
+  };
+
   const ManageUserAll = async ()=>{
     const Manage = await ManageUser.find({active:true})
     if(!Manage){
@@ -45,5 +68,6 @@ const createManageUser = async (manageUserBody) => {
       ManageUserAll,
       updateManageUserId,
       deleteManageUserById,
+      loginManageUserEmailAndPassword,
   };
   
