@@ -3,7 +3,8 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const manageUserService = require('../services/manageUser.service');
-const {tokenService} = require('../services')
+const {tokenService} = require('../services');
+const { jwt } = require('../config/config');
 
 const createmanageUserService = catchAsync(async (req, res) => {
   const user = await manageUserService.createManageUser(req.body);
@@ -33,6 +34,7 @@ const login = catchAsync(async (req, res) => {
     httpOnly : true,
   }
   res.cookie("token", tokens.access.token, options)
+  jwt.verify(req.cookies['token'],);
   res.send({ interviewerRegistration, tokens });
 });
 

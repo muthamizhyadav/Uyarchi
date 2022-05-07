@@ -3,6 +3,11 @@ const { ManageUser } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const createManageUser = async (manageUserBody) => {
+    const check = await ManageUser.find({mobileNumber:manageUserBody.mobileNumber})
+    console.log(check);
+    if(check != ""){
+      throw new ApiError(httpStatus.NOT_FOUND, 'already register the number');
+    }
     return ManageUser.create(manageUserBody);
   };
   
