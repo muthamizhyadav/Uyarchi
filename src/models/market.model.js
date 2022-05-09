@@ -95,4 +95,5 @@ const ShopsSchema = mongoose.Schema(
 const MarketShops = mongoose.model('marketShops', ShopsSchema);
 module.exports = {
   market,
-  MarketShops};
+  MarketShops
+};

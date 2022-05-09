@@ -9,13 +9,27 @@ const createmarketService = catchAsync(async (req, res) => {
   if (req.files) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
-      path = "images/"+files.filename;
+      path = "images/market/"+files.filename;
     });
     pro.image = path;
   }
   res.status(httpStatus.CREATED).send(pro);
   await pro.save();
 });
+
+const createmarketShopService = catchAsync(async (req, res) => {
+  const pro = await marketService.createMarketShops(req.body);
+  if (req.files) {
+    let path = '';
+    req.files.forEach(function (files, index, arr) {
+      path = "images/marketShop/"+files.filename;
+    });
+    pro.image = path;
+  }
+  res.status(httpStatus.CREATED).send(pro);
+  await pro.save();
+});
+
 
 const getmarketServiceById = catchAsync(async (req, res) => {
   const pro = await marketService.getmarketById(req.params.marketId);
@@ -55,5 +69,6 @@ module.exports = {
   getmarketServiceAll,
   updatemarketService,
   deletemarketService,
-  getmarketServiceById
+  getmarketServiceById,
+  createmarketShopService
 };
