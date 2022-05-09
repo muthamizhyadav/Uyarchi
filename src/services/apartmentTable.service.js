@@ -4,11 +4,11 @@ const manageUser = require('../models/manageUser.model')
 const ApiError = require('../utils/ApiError');
 
 const createApartment = async (apartmentBody) => {
-    const {manageUserId} = apartmentBody;
+    const {Uid} = apartmentBody;
     
-    let ManageUser = await manageUser.findById(manageUserId);
+    let ManageUser = await manageUser.findById(Uid);
     let values = {}
-    values = {...apartmentBody, ...{manageUserId:ManageUser.id}}
+    values = {...apartmentBody, ...{Uid:ManageUser.id}}
     if(ManageUser === null){
       throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
     }
@@ -17,11 +17,11 @@ const createApartment = async (apartmentBody) => {
 };
 
 const createShop = async (shopBody) => {
-    const {manageUserId} = shopBody;
+    const {Uid} = shopBody;
     
-    let ManageUser = await manageUser.findById(manageUserId);
+    let ManageUser = await manageUser.findById(Uid);
     let values = {}
-    values = {...shopBody, ...{manageUserId:ManageUser.id}}
+    values = {...shopBody, ...{Uid:ManageUser.id}}
     if(ManageUser === null){
       throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
     }

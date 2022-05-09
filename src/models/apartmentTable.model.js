@@ -7,31 +7,31 @@ const apartmentSchema = mongoose.Schema({
     type: String,
     default: v4,
   },
-  selectStreet: {
+  Strid: {
     type: String,
   },
-  apartmentName: {
+  AName: {
     type: String,
   },
-  apartmentType: {
+  AType: {
     type: String,
   },
-  numberOfFloors: {
+  AFloor: {
     type: Number,
   },
-  numberOfFlats: {
+  NFlat: {
     type: Number,
   },
-  latitude:{
+  Alat:{
       type:String,
   },
-  landitude:{
+  Along:{
       type:String,
   },
   photoCapture: {
     type: Array,
   },
-  manageUserId:{
+  Uid:{
       type:String,
   },
   active: {
@@ -53,31 +53,31 @@ const shopSchema = mongoose.Schema({
       type: String,
       default: v4,
     },
-    selectStreet: {
+    Strid: {
       type: String,
     },
-    shopType: {
+    SType: {
       type: String,
     },
-    shopName: {
+    SName: {
       type: String,
     },
-    nameOfOwner: {
+    SOwner: {
       type: String,
     },
-    contactNumber: {
+    SCont1: {
       type: Number,
     },
-    latitude:{
+    Slat:{
         type:String,
     },
-    landitude:{
+    Slong:{
         type:String,
     },
     photoCapture: {
       type: Array,
     },
-    manageUserId:{
+    Uid:{
         type:String,
     },
     active: {
