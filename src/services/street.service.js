@@ -19,6 +19,18 @@ const getStreetById = async (id) => {
   return street;
 };
 
+const getWardByStreet = async (wardId) => {
+  const ress = await Street.aggregate([
+    {
+      $match: {
+        $and: [{ wardId: { $eq: wardId } }],
+      },
+    },
+  ]);
+  console.log("Total Street Find : "+ress.length);
+  return ress;
+};
+
 const getAllStreet = async () => {
   return Street.aggregate([
     {
@@ -169,6 +181,7 @@ module.exports = {
   getStreetById,
   getAllStreet,
   streetPagination,
+  getWardByStreet,
   getStreetByWardId,
   updateStreetById,
   deleteStreetById,
