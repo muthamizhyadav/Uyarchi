@@ -54,7 +54,7 @@ const getProductDetailsByProductId = async (id)=>{
                 $eq: ['$$this._id', 'products.productid'],
               }
             },
-          }, 0]
+          }, 1]
         }
       }
     },
