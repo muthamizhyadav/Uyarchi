@@ -33,3 +33,4 @@ module.exports.ManageUser = require('./manageUser.model')
 module.exports.adminRegistration = require('./adminRegistration.model')
 module.exports.market = require('./market.model')
 module.exports.SuperAdmin = require('./superAdmin.model');
+module.exports.ManageBusinessUser = require('./manageBusinessUsers.model');
