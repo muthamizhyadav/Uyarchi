@@ -1,9 +1,14 @@
 const httpStatus = require('http-status');
 const { market } = require('../models');
+const {MarketShops} = require('../models/market.model')
 const ApiError = require('../utils/ApiError');
 
 const createmarket= async (marketBody) => {
   return market.create(marketBody);
+};
+
+const createMarketShops = async (marketShopsBody) => {
+  return MarketShops.create(marketShopsBody);
 };
 
 const getmarketById = async (id) => {
@@ -14,8 +19,20 @@ const getmarketById = async (id) => {
   return mark;
 };
 
+const getMarketShopsById = async (id) => {
+  const mark = MarketShops.findById(id);
+  if (!mark || mark.active === false) {
+    throw new ApiError(httpStatus.NOT_FOUND, ' MarketShops Not Found');
+  }
+  return mark;
+};
+
 const getAllmarket = async () =>{
     return market.find();
+} 
+
+const getAllmarketShops = async () =>{
+  return MarketShops.find();
 } 
 // const querCombo = async (filter, options) => {
 //   return ProductCombo.paginate(filter, options);
@@ -30,10 +47,29 @@ const updatemarketById = async (marketId, updateBody) => {
   return mark;
 };
 
+const updatemarketShopsById = async (marketShopsId, updateBody) => {
+  let mark = await getMarketShopsById(marketShopsId);
+  if (!mark) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'marketShops not found');
+  }
+  mark = await MarketShops.findByIdAndUpdate({ _id: marketShopsId }, updateBody, { new: true });
+  return mark;
+};
+
+
 const deletemarketById = async (marketId) => {
   const mark = await getmarketById(marketId);
   if (!mark) {
     throw new ApiError(httpStatus.NOT_FOUND, 'market not found');
+  }
+  (mark.active = false), (mark.archive = true), await mark.save();
+  return mark;
+};
+
+const deletemarketShopsById = async (marketId) => {
+  const mark = await getMarketShopsById(marketId);
+  if (!mark) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'marketShops not found');
   }
   (mark.active = false), (mark.archive = true), await mark.save();
   return mark;
@@ -44,5 +80,10 @@ module.exports = {
   getmarketById,
   updatemarketById,
   deletemarketById,
-  getAllmarket
+  getAllmarket,
+  deletemarketShopsById,
+  updatemarketShopsById,
+  getAllmarketShops,
+  getMarketShopsById,
+  createMarketShops
 };
