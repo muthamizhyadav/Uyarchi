@@ -33,8 +33,13 @@ const shopOrderRoute = require('./shopOrder.route');
 const manageUserRoute = require('./manageUser.route')
 const adminRegistrationRoute = require('./adminRegistration.route')
 const manageUser = require('./manageUser.route')
+<<<<<<< HEAD
 const marketRoute = require('./market.route')
 const apartmentRoute = require('./apartmentTable.route')
+=======
+const marketRoute = require('./market.route');
+const SuperAdmin = require('./superAdmin.route')
+>>>>>>> fb53a5a63e97214d43f504111962e904401e6f7f
 const router = express.Router();
 
 const defaultRoutes = [
@@ -168,9 +173,15 @@ const defaultRoutes = [
     route:marketRoute,
   },
   {
+<<<<<<< HEAD
     path:'/apartmentandShop',
     route: apartmentRoute
   }
+=======
+    path:'/superAdmin',
+    route:SuperAdmin,
+  },
+>>>>>>> fb53a5a63e97214d43f504111962e904401e6f7f
 ];
 
 const devRoutes = [

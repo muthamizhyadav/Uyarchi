@@ -20,7 +20,6 @@ const createmanageUserService = catchAsync(async (req, res) => {
       if(req.files.twoWheelerUpload !=null){
         user.twoWheelerUpload = path+req.files.twoWheelerUpload.map((e)=>{return e.filename});
       }
-    
   }
   res.status(httpStatus.CREATED).send(user);
   await user.save();

@@ -19,6 +19,11 @@ const streetPagination = catchAsync(async (req, res) => {
   res.send(pagination);
 });
 
+const getStreetByWard = catchAsync(async (req, res)=>{
+  const streetWard = await StreetService.getWardByStreet(req.params.wardId)
+  res.send(streetWard)
+});
+
 const getStreetByWardId = catchAsync(async (req, res) => {
   const street = await StreetService.getStreetByWardId(req.params.wardId);
   res.send(street);
@@ -46,6 +51,7 @@ module.exports = {
   getStreetDetailsById,
   updateStreet,
   deleteStreet,
+  getStreetByWard,
   getStreetByWardId,
   streetPagination,
   getAllStreet,

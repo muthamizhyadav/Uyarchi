@@ -42,26 +42,11 @@ const getProductDetailsByProductId = async (id)=>{
     {
       $unwind: "$products"
     },
-    {
-      // find a company member, that matches
-      // to a given person
-      $addFields: {
-        matchedMember: {
-          $arrayElemAt: [{
-            $filter: {
-              input: '$products.product',
-              cond: {
-                $eq: ['$$this._id', 'products.productid'],
-              }
-            },
-          }, 1]
-        }
-      }
-    },
+    
     
     {
       $project: {
-        districtName: '$products',
+        districtName: {"$eq": ["$_id", "$products.productid"]},
         product:1
       },
     }
