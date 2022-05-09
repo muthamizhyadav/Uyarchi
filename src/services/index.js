@@ -29,3 +29,4 @@ module.exports.shopOrderService = require('./shopOrder.service');
 module.exports.manageUserService = require('./manageUser.service')
 module.exports.adminRegistrationService = require('./adminRegistration.service')
 module.exports.marketService = require('./market.service')
+module.exports.apartmentTableService = require('./apartmentTable.service')

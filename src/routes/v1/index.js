@@ -34,6 +34,7 @@ const manageUserRoute = require('./manageUser.route')
 const adminRegistrationRoute = require('./adminRegistration.route')
 const manageUser = require('./manageUser.route')
 const marketRoute = require('./market.route')
+const apartmentRoute = require('./apartmentTable.route')
 const router = express.Router();
 
 const defaultRoutes = [
@@ -166,6 +167,10 @@ const defaultRoutes = [
     path:'/market',
     route:marketRoute,
   },
+  {
+    path:'/apartmentandShop',
+    route: apartmentRoute
+  }
 ];
 
 const devRoutes = [
