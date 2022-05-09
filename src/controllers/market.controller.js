@@ -13,7 +13,8 @@ const createmarketService = catchAsync(async (req, res) => {
     });
     pro.image = path;
   }
-  res.status(httpStatus.CREATED).send(pro);
+  res.status(httpStatus.CREATED)
+  res.send(pro);
   await pro.save();
 });
 

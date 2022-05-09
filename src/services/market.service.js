@@ -1,18 +1,17 @@
 const httpStatus = require('http-status');
-const { market } = require('../models');
-const {MarketShops} = require('../models/market.model')
+const {Market}  = require('../models');
+const MarketShops = require('../models/market.model')
 const ApiError = require('../utils/ApiError');
 
-const createmarket= async (marketBody) => {
-  return market.create(marketBody);
-};
-
+const  createmarket = async (body)=>{
+  return await Market.create(body)
+}
 const createMarketShops = async (marketShopsBody) => {
   return MarketShops.create(marketShopsBody);
 };
 
 const getmarketById = async (id) => {
-  const mark = market.findById(id);
+  const mark = Market.findById(id);
   if (!mark || mark.active === false) {
     throw new ApiError(httpStatus.NOT_FOUND, ' market Not Found');
   }
@@ -28,7 +27,7 @@ const getMarketShopsById = async (id) => {
 };
 
 const getAllmarket = async () =>{
-    return market.find();
+    return Market.find();
 } 
 
 const getAllmarketShops = async () =>{
@@ -43,7 +42,7 @@ const updatemarketById = async (marketId, updateBody) => {
   if (!mark) {
     throw new ApiError(httpStatus.NOT_FOUND, 'market not found');
   }
-  mark = await market.findByIdAndUpdate({ _id: marketId }, updateBody, { new: true });
+  mark = await Market.findByIdAndUpdate({ _id: marketId }, updateBody, { new: true });
   return mark;
 };
 
