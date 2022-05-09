@@ -33,6 +33,7 @@ const shopOrderRoute = require('./shopOrder.route');
 const manageUserRoute = require('./manageUser.route')
 const adminRegistrationRoute = require('./adminRegistration.route')
 const manageUser = require('./manageUser.route')
+const marketRoute = require('./market.route')
 const router = express.Router();
 
 const defaultRoutes = [
@@ -160,7 +161,11 @@ const defaultRoutes = [
   {
     path:'/adminRegistration',
     route: adminRegistrationRoute
-  }
+  },
+  {
+    path:'/market',
+    route:marketRoute,
+  },
 ];
 
 const devRoutes = [

@@ -25,7 +25,7 @@ const createManageUser = async (manageUserBody) => {
 
   const loginManageUserEmailAndPassword = async (mobileNumber,dateOfBirth) => {
     const interviewerRegistration = await ManageUser.find({mobileNumber:mobileNumber});
-    
+    console.log(interviewerRegistration[0].dateOfBirth)
   let dob=interviewerRegistration[0].dateOfBirth.replace(/[^0-9\.]+/g, "")
   if(interviewerRegistration !=""){
     if(dob==dateOfBirth){

@@ -34,7 +34,7 @@ const login = catchAsync(async (req, res) => {
     httpOnly : true,
   }
   res.cookie("token", tokens.access.token, options)
-  jwt.verify(req.cookies['token'],);
+  // jwt.verify(req.cookies['token'],);
   res.send({ interviewerRegistration, tokens });
 });
 
