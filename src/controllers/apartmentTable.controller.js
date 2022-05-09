@@ -25,7 +25,7 @@ const createshopTableService = catchAsync(async (req, res) => {
     const shop = await apartmentTableService.createShop(req.body);
     if (req.files) {
     //   let path = [];
-    //   console.log(req.files)
+      console.log(req.files)
       req.files.forEach(function (files, index, arr) {
             shop.photoCapture.push("images/shop/"+files.filename)
             // console.log(shop.photoCapture)

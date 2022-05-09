@@ -46,5 +46,53 @@ const marketSchema = mongoose.Schema(
 }
 );
 const market = mongoose.model('market', marketSchema);
-
-module.exports = market;
+const ShopsSchema = mongoose.Schema(
+  {
+    _id: {
+      type: String,
+      default: v4,
+    },
+    MName: {
+      type: String,
+    },
+    SName: {
+      type: String,
+    },
+    SType: {
+      type: String,
+    },
+    SNo: {
+      type: String,
+    },
+    mobile:{
+        type:Number,
+    },
+    ownname:{
+        type:String,
+    },
+    image:{
+        type:String,
+    },
+    ownnum:{
+      type:Number,
+    },
+    mlatitude:{
+      type:String,
+    },
+    mlongitude:{
+      type:String,
+    },
+    active: {
+        type: Boolean,
+        default: true,
+      },
+      archive: {
+        type: Boolean,
+        default: false,
+      },
+}
+);
+const MarketShops = mongoose.model('marketShops', ShopsSchema);
+module.exports = {
+  market,
+  MarketShops};
