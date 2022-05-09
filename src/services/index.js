@@ -28,10 +28,5 @@ module.exports.setSalesPrice = require('./setSalesPrice');
 module.exports.shopOrderService = require('./shopOrder.service');
 module.exports.manageUserService = require('./manageUser.service')
 module.exports.adminRegistrationService = require('./adminRegistration.service')
-<<<<<<< HEAD
-module.exports.marketService = require('./market.service')
-module.exports.apartmentTableService = require('./apartmentTable.service')
-=======
 module.exports.marketService = require('./market.service');
 module.exports.superAdminService = require('./superAdmin.service');
->>>>>>> fb53a5a63e97214d43f504111962e904401e6f7f
