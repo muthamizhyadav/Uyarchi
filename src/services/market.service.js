@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { market } = require('../models');
+const { market } = require('../models/market.model');
 const {MarketShops} = require('../models/market.model')
 const ApiError = require('../utils/ApiError');
 
