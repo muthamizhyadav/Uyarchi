@@ -7,16 +7,45 @@ const supplierSchema = new mongoose.Schema({
     type: String,
     default: v4,
   },
-  supplierName: {
-    type: String,
-    required: true,
+  tradeName:{
+    type:String,
   },
-  mobileNumber: {
-    type: Number,
-    required: true,
+  companytype:{
+    type:String,
+    enum:['Proprictorship', 'LLP','Partnership','Private limited', 'Public limited', 'OPC'],
   },
-  date: {
-    type: Date,
+  primaryContactNumber:{
+    type:String,
+  },
+  secondaryContactName:{
+    type:String,
+  },
+  secondaryContactNumber:{
+    type:String
+  },
+  RegisteredAddress:{
+    type:String,
+  },
+  state:{
+    type:String,
+  },
+  district:{
+    type:String,
+  },
+  gpsLocat:{
+    type:String,
+  },
+  gstNo:{
+    type:String,
+  },
+  email:{
+    type:String,
+  },
+  pinCode:{
+    type:Number,
+  },
+  productDealingWith:{
+    type:String,
   },
 });
 
