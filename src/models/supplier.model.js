@@ -17,6 +17,9 @@ const supplierSchema = new mongoose.Schema({
   primaryContactNumber:{
     type:String,
   },
+  primaryContactName:{
+    type:String
+  },
   secondaryContactName:{
     type:String,
   },
