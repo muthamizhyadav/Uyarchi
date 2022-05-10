@@ -40,13 +40,13 @@ const getBusinessUsersById = catchAsync (async (req, res)=>{
     res.send(busers)
 })
 
-const getAllBusinessUsers = async ()=>{
+const getAllBusinessUsers = catchAsync(async(req,res)=>{
     const busers = await BusinessUsersService.getAllBusinessUsers();
     if(!busers){
         throw new ApiError(httpStatus.NOT_FOUND, "Business Users Not Found");
     }
     res.send(busers)
-}
+})
 
 const updateBusinessUsers = catchAsync(async (req, res)=>{
     const busers = await BusinessUsersService.updateBusinessUsers(req.params.BUId, req.body);

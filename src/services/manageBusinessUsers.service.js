@@ -15,7 +15,9 @@ const getBusinessUsersById = async (BUId) => {
 };
 
 const getAllBusinessUsers = async () => {
-  return ManageBusinessUser.find();
+  const Mbusers = await ManageBusinessUser.find();
+  console.log(Mbusers)
+  return Mbusers
 };
 
 const updateBusinessUsers = async (BUId, updateBody) => {
