@@ -1,5 +1,4 @@
 const httpStatus = require('http-status');
-
 const {Market} = require('../models/market.model');
 const {MarketShops} = require('../models/market.model')
 const manageUser = require('../models/manageUser.model')
