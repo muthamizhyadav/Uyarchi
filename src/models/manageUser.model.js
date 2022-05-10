@@ -62,6 +62,9 @@ const manageUserSchema = mongoose.Schema({
     type:String,
     enum:["Yes","No"],
   },
+  preferredDistrict:{
+    type:String,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -70,7 +73,15 @@ const manageUserSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-});
+  // created: {
+  //   type:Date,
+  //   default: Date.now
+  //   }
+},
+{
+  timestamps: true,
+}
+);
 manageUserSchema.plugin(toJSON);
 manageUserSchema.plugin(paginate);
 const ManageUser = mongoose.model('manageUser', manageUserSchema);
