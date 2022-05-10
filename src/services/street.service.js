@@ -2,6 +2,8 @@ const httpStatus = require('http-status');
 const { Street } = require('../models');
 const ApiError = require('../utils/ApiError');
 const Ward = require('../models/ward.model');
+const ManageUser = require('../models/manageUser.model')
+const Streets = require('../models/street.model');
 
 const createStreet = async (streetBody) => {
   const { wardId } = streetBody;
@@ -18,6 +20,15 @@ const getStreetById = async (id) => {
   const street = Street.findById(id);
   return street;
 };
+
+const  streetAllocation = async(allocationbody)=>{
+  const { userId, arr } = allocationbody
+  arr.forEach(async(e)=>{
+    let  streetId = e
+    await Streets.updateOne({_id:streetId}, {AllocatedUser:userId}, {new:true})
+  })
+  return "Updated..."
+}
 
 const getWardByStreet = async (wardId) => {
   const ress = await Street.aggregate([
@@ -184,6 +195,7 @@ module.exports = {
   getWardByStreet,
   getStreetByWardId,
   updateStreetById,
+  streetAllocation,
   deleteStreetById,
   queryStreet,
 };

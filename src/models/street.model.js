@@ -35,6 +35,9 @@ const streetSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  AllocatedUser:{
+    type:String
+  }
 });
 streetSchema.plugin(toJSON);
 streetSchema.plugin(paginate);

@@ -19,10 +19,6 @@ const createManageUser = async (manageUserBody) => {
     return  Manage;
   };
 
-  // const getManageUserByMobile = async (mobileNumber) => {
-  //   return ManageUser.findOne({ mobileNumber });
-  // };
-
   const loginManageUserEmailAndPassword = async (mobileNumber,dateOfBirth) => {
     const interviewerRegistration = await ManageUser.find({mobileNumber:mobileNumber});
     console.log(interviewerRegistration[0].dateOfBirth)

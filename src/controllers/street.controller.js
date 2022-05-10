@@ -24,6 +24,11 @@ const getStreetByWard = catchAsync(async (req, res)=>{
   res.send(streetWard)
 });
 
+const streetAllocation = catchAsync(async(req,res)=>{
+  const streets = await StreetService.streetAllocation(req.body)
+  res.send(streets)
+})
+
 const getStreetByWardId = catchAsync(async (req, res) => {
   const street = await StreetService.getStreetByWardId(req.params.wardId);
   res.send(street);
@@ -52,6 +57,7 @@ module.exports = {
   updateStreet,
   deleteStreet,
   getStreetByWard,
+  streetAllocation,
   getStreetByWardId,
   streetPagination,
   getAllStreet,
