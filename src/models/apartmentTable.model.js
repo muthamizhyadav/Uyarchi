@@ -17,22 +17,22 @@ const apartmentSchema = mongoose.Schema({
     type: String,
   },
   AFloor: {
-    type: Number,
+    type: String,
   },
   NFlat: {
-    type: Number,
+    type: String,
   },
-  Alat:{
-      type:String,
+  Alat: {
+    type: String,
   },
-  Along:{
-      type:String,
+  Along: {
+    type: String,
   },
   photoCapture: {
     type: Array,
   },
-  Uid:{
-      type:String,
+  Uid: {
+    type: String,
   },
   active: {
     type: Boolean,
@@ -48,55 +48,55 @@ const apartmentSchema = mongoose.Schema({
 // assignSchema.plugin(paginate);
 
 const Apartment = mongoose.model('apartment', apartmentSchema);
-const shopSchema = mongoose.Schema({
-    _id: {
-      type: String,
-      default: v4,
-    },
-    Strid: {
-      type: String,
-    },
-    SType: {
-      type: String,
-    },
-    SName: {
-      type: String,
-    },
-    SOwner: {
-      type: String,
-    },
-    SCont1: {
-      type: Number,
-    },
-    Slat:{
-        type:String,
-    },
-    Slong:{
-        type:String,
-    },
-    photoCapture: {
-      type: Array,
-    },
-    Uid:{
-        type:String,
-    },
-    active: {
-      type: Boolean,
-      default: true,
-    },
-    archive: {
-      type: Boolean,
-      default: false,
-    },
-  });
-  
-  // assignSchema.plugin(toJSON);
-  // assignSchema.plugin(paginate);
-  
-  const Shop = mongoose.model('shop', shopSchema);
-  
 
-module.exports ={
-    Shop,
-    Apartment
-}
+const shopSchema = mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  Strid: {
+    type: String,
+  },
+  SType: {
+    type: String,
+  },
+  SName: {
+    type: String,
+  },
+  SOwner: {
+    type: String,
+  },
+  SCont1: {
+    type: Number,
+  },
+  Slat: {
+    type: String,
+  },
+  Slong: {
+    type: String,
+  },
+  photoCapture: {
+    type: Array,
+  },
+  Uid: {
+    type: String,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+// assignSchema.plugin(toJSON);
+// assignSchema.plugin(paginate);
+
+const Shop = mongoose.model('shop', shopSchema);
+
+module.exports = {
+  Shop,
+  Apartment,
+};
