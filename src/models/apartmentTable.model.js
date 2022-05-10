@@ -96,7 +96,39 @@ const shopSchema = mongoose.Schema({
 
 const Shop = mongoose.model('shop', shopSchema);
 
+const manageUserAttendanceSchema = mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  Alat: {
+    type: String,
+  },
+  Along: {
+    type: String,
+  },
+  photoCapture: {
+    type: String,
+  },
+  Uid: {
+    type: String,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+// assignSchema.plugin(toJSON);
+// assignSchema.plugin(paginate);
+
+const ManageUserAttendance = mongoose.model('manageUserAttendance', manageUserAttendanceSchema);
 module.exports = {
   Shop,
   Apartment,
+  ManageUserAttendance
 };
