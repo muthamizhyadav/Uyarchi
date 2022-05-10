@@ -15,9 +15,25 @@ const getBusinessUsersById = async (BUId) => {
 };
 
 const getAllBusinessUsers = async () => {
-  const Mbusers = await ManageBusinessUser.find();
-  console.log(Mbusers)
-  return Mbusers
+  return ManageBusinessUser.aggregate([
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'roletype',
+        foreignField: '_id',
+        as: 'rolesData',
+      },
+    },
+    {
+      $unwind: '$rolesData',
+    },
+    {
+      $project: {
+        RoleName: '$rolesData.roleName',
+        uname:1,
+      },
+    },
+  ])
 };
 
 const updateBusinessUsers = async (BUId, updateBody) => {
