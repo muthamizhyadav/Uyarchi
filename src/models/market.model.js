@@ -43,7 +43,7 @@ const marketSchema = mongoose.Schema({
     default: false,
   },
 });
-const market = mongoose.model('market', marketSchema);
+const Market = mongoose.model('market', marketSchema);
 const ShopsSchema = mongoose.Schema({
   _id: {
     type: String,
@@ -90,6 +90,6 @@ const ShopsSchema = mongoose.Schema({
 });
 const MarketShops = mongoose.model('marketShops', ShopsSchema);
 module.exports = {
-  market,
+  Market,
   MarketShops,
 };

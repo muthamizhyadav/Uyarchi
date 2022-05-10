@@ -1,10 +1,11 @@
 const httpStatus = require('http-status');
-const {Market}  = require('../models/market.model');
+const {Market} = require('../models/market.model');
 const {MarketShops} = require('../models/market.model')
+
 const ApiError = require('../utils/ApiError');
 
-const  createmarket = async (body)=>{
-  return await Market.create(body)
+const  createmarket = async (marketbody)=>{
+  return  Market.create(marketbody)
 }
 const createMarketShops = async (marketShopsBody) => {
   return MarketShops.create(marketShopsBody);
