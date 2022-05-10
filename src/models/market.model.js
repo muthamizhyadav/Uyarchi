@@ -34,6 +34,9 @@ const marketSchema = mongoose.Schema({
   mlatitude: {
     type: String,
   },
+  Uid:{
+    type:String,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -78,6 +81,9 @@ const ShopsSchema = mongoose.Schema({
   },
   mlongitude: {
     type: String,
+  },
+  Uid:{
+    type:String,
   },
   active: {
     type: Boolean,

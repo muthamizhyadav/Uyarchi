@@ -2,14 +2,33 @@ const httpStatus = require('http-status');
 
 const {Market} = require('../models/market.model');
 const {MarketShops} = require('../models/market.model')
+const manageUser = require('../models/manageUser.model')
 
 const ApiError = require('../utils/ApiError');
 
 const  createmarket = async (marketbody)=>{
-  return  Market.create(marketbody)
+  const {Uid} = marketbody;
+    
+  let ManageUser = await manageUser.findById(Uid);
+  let values = {}
+  values = {...marketbody, ...{Uid:ManageUser.id}}
+  if(ManageUser === null){
+    throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
+  }
+  console.log(values)
+  return Market.create(values)
 }
 const createMarketShops = async (marketShopsBody) => {
-  return MarketShops.create(marketShopsBody);
+  const {Uid} = marketShopsBody;
+    
+  let ManageUser = await manageUser.findById(Uid);
+  let values = {}
+  values = {...marketShopsBody, ...{Uid:ManageUser.id}}
+  if(ManageUser === null){
+    throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
+  }
+  console.log(values)
+  return MarketShops.create(values)
 };
 
 const getmarketById = async (id) => {
