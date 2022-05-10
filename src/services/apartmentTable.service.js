@@ -1,11 +1,11 @@
 const httpStatus = require('http-status');
-const { Apartment, Shop} = require('../models/apartmentTable.model');
+const { Apartment, Shop ,ManageUserAttendance} = require('../models/apartmentTable.model');
 const manageUser = require('../models/manageUser.model')
 const ApiError = require('../utils/ApiError');
 
 const createApartment = async (apartmentBody) => {
     const {Uid} = apartmentBody;
-    
+    console.log(apartmentBody)
     let ManageUser = await manageUser.findById(Uid);
     let values = {}
     values = {...apartmentBody, ...{Uid:ManageUser.id}}
@@ -15,6 +15,19 @@ const createApartment = async (apartmentBody) => {
     console.log(values)
     return Apartment.create(values)
 };
+
+const createManageUserAttendance = async (manageUserAttendanceBody) => {
+  const {Uid} = manageUserAttendanceBody;
+  let ManageUser = await manageUser.findById(Uid);
+  let values = {}
+  values = {...manageUserAttendanceBody, ...{Uid:ManageUser.id}}
+  if(ManageUser === null){
+    throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
+  }
+  console.log(values)
+  return ManageUserAttendance.create(values)
+};
+
 
 const createShop = async (shopBody) => {
     const {Uid} = shopBody;
@@ -95,4 +108,5 @@ module.exports = {
   updateShopById,
   deleteapartmentById,
   deleteShopById,
+  createManageUserAttendance,
 };

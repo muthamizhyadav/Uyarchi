@@ -6,7 +6,7 @@ const apartmentTableService = require('../services/apartmentTable.service');
 
 const createapartmentTableService = catchAsync(async (req, res) => {
     const apart = await apartmentTableService.createApartment(req.body);     
-
+   
     if (req.files) {
         //   let path = [];
         //   console.log(req.files)
@@ -17,12 +17,27 @@ const createapartmentTableService = catchAsync(async (req, res) => {
           });
           
         }
+        console.log(apart)
     res.status(httpStatus.CREATED).send(apart);
     await apart.save();
 });
 
+const createManageUserAttendanceService = catchAsync(async (req, res) => {
+  const Attendance = await apartmentTableService.createManageUserAttendance(req.body);     
+  if (req.files) {
+    let path = '';
+    req.files.forEach(function (files, index, arr) {
+      path = "images/Attendance/"+files.filename
+    });
+    Attendance.photoCapture = path;
+  }
+  res.status(httpStatus.CREATED).send(Attendance);
+  await Attendance.save();
+});
+
 const createshopTableService = catchAsync(async (req, res) => {
     const shop = await apartmentTableService.createShop(req.body);
+    
     if (req.files) {
     //   let path = [];
       console.log(req.files)
@@ -90,15 +105,16 @@ const deleteshop = catchAsync(async (req, res) => {
   });
 
 module.exports = {
-    createapartmentTableService,
-    createshopTableService,
-    getApartmentById,
-    getShopById,
-    updateApartment,
+  createapartmentTableService,
+  createshopTableService,
+  getApartmentById,
+  getShopById,
+  updateApartment,
   updateShop,
   deleteApartment,
   deleteshop,
   getAllShop,
-  getAllApartment
+  getAllApartment,
+  createManageUserAttendanceService
 
 };
