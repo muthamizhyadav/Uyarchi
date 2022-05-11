@@ -15,6 +15,15 @@ const getSupplierById = async (id) => {
   return supplier;
 };
 
+const updateSupplierById = async (supplierId, updateBody) => {
+  let supplier = await getSupplierById(supplierId)
+  if (!supplier) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'supplier not found');
+  }
+  supplier = await Supplier.findByIdAndUpdate({ _id: supplierId }, updateBody, { new: true });
+  return supplier;
+};
+
 //   const deleteSupplierById = async (supplierId) => {
 //     const supplier = await getStreetById(supplierId);
 //     if (!supplier) {
@@ -25,6 +34,7 @@ const getSupplierById = async (id) => {
 //   };
 module.exports = {
   createSupplier,
+  updateSupplierById,
   getAllSupplier,
   getSupplierById,
 };

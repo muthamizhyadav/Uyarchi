@@ -20,8 +20,14 @@ const getSupplierById = catchAsync(async (req, res) => {
   res.send(supplier);
 });
 
+const updateSupplierById = catchAsync(async (req, res) => {
+  const supplier = await supplierService.updateSupplierById(req.params.supplierId, req.body);
+  res.send(supplier);
+});
+
 module.exports = {
   createSupplier,
   getAllSupplier,
+  updateSupplierById,
   getSupplierById,
 };
