@@ -3,12 +3,15 @@ const apartmentController = require('../../controllers/apartmentTable.controller
 const shopImage = require('../../middlewares/shopImage')
 const apartmentImage = require('../../middlewares/apartmentImage')
 const manageUserAttendance = require('../../middlewares/manageUserAttendanceImage')
+// const userValidation = require('../../validations/user.validation');
+
 const router = express.Router();
 
 router.route('/').post(apartmentImage.array('photoCapture'), apartmentController.createapartmentTableService).get(apartmentController.getAllApartment);
 router.route('/shop').post(shopImage.array('photoCapture'),apartmentController.createshopTableService).get(apartmentController.getAllShop)
 router.route('/manageUserAttendance').post(apartmentController.createManageUserAttendanceService)
-
+// router.route('/getAllAttendance').get(validate(userValidation.getUsersAttendance), apartmentController.getManageUserAttendance);
+router.route('/getAllAttendance').get(apartmentController.getmanageUSerAttendanceAll);
 router
   .route('/:apartmentId')
   .get(apartmentController.getApartmentById)

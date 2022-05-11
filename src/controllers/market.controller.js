@@ -40,13 +40,29 @@ const getmarketServiceById = catchAsync(async (req, res) => {
   res.send(pro);
 });
 
+const getmarketShopServiceById = catchAsync(async (req, res) => {
+  const pro = await marketService.getMarketShopsById(req.params.marketShopId);
+  if (!pro || pro.active === false) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'marketShop not found');
+  }
+  res.send(pro);
+});
+
+
 const getmarketServiceAll = catchAsync(async (req, res) => {
-    const manage = await marketService.getAllmarket(req.params);
-    if (!manage) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'marketService Not Available ');
-    }
+  const manage = await marketService.getAllmarket(req.params);
     res.send(manage);
   });
+
+  
+const getmarketShopAll = catchAsync(async (req, res) => {
+  const manage = await marketService.getMarketShops(req.params.marketId);
+  if (!manage) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'marketShop Not Available ');
+  }
+  res.send(manage);
+});
+
 
 const updatemarketService = catchAsync(async (req, res) => {
   const pro = await marketService.updatemarketById(req.params.marketId, req.body);
@@ -66,10 +82,12 @@ const deletemarketService = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 module.exports = {
-    createmarketService,
+  createmarketService,
   getmarketServiceAll,
   updatemarketService,
   deletemarketService,
   getmarketServiceById,
-  createmarketShopService
+  createmarketShopService,
+  getmarketShopAll,
+  getmarketShopServiceById
 };

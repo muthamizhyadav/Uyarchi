@@ -113,6 +113,16 @@ const manageUserAttendanceSchema = mongoose.Schema({
   Uid: {
     type: String,
   },
+  userName:{
+    type:String,
+  },
+  userNo:{
+    type:String,
+  },
+  created: {
+    type:Date,
+    default: Date.now
+    },
   active: {
     type: Boolean,
     default: true,
@@ -123,8 +133,8 @@ const manageUserAttendanceSchema = mongoose.Schema({
   },
 });
 
-// assignSchema.plugin(toJSON);
-// assignSchema.plugin(paginate);
+ manageUserAttendanceSchema.plugin(toJSON);
+ manageUserAttendanceSchema.plugin(paginate);
 
 const ManageUserAttendance = mongoose.model('manageUserAttendance', manageUserAttendanceSchema);
 module.exports = {

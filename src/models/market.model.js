@@ -37,6 +37,16 @@ const marketSchema = mongoose.Schema({
   Uid:{
     type:String,
   },
+  userName:{
+    type:String,
+  },
+  userNo:{
+    type:Number,
+  },
+  created: {
+    type:Date,
+    default: Date.now
+    },
   active: {
     type: Boolean,
     default: true,
