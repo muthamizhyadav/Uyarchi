@@ -43,7 +43,7 @@ const getAllDeAllocatedStreetOnly = async ()=>{
 
 const getaggregationByUserId = async (AllocatedUser)=>{
   const getmanageUser = await Streets.find({$and:[{AllocatedUser:{$eq:AllocatedUser}},{AllocationStatus:{$ne:'DeAllocated'}}]})
-  console.log(getmanageUser)
+  return getmanageUser
 }
 
 const  streetDeAllocation = async(allocationbody)=>{
