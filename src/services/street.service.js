@@ -32,7 +32,7 @@ const  streetAllocation = async(allocationbody)=>{
 }
 
 const getAllocatedStreeOnly = async ()=>{
-  const street = await Streets.find({AllocationStatus:"Allocated"}).count()
+  const street = await Streets.find({AllocationStatus:"Allocated"})
   return street
 }
 
