@@ -27,7 +27,8 @@ const  streetAllocation = async(allocationbody)=>{
     let  streetId = e
     await Streets.updateOne({_id:streetId}, {AllocatedUser:userId}, {new:true})
   })
-  return "Updated..."
+  const users = await ManageUser.findById(userId)
+  return `Street Allocated To : ${users.name}`
 }
 
 const getWardByStreet = async (wardId) => {
