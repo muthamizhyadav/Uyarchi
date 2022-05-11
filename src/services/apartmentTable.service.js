@@ -20,15 +20,19 @@ const createManageUserAttendance = async (manageUserAttendanceBody) => {
   const {Uid} = manageUserAttendanceBody;
   let ManageUser = await manageUser.findById(Uid);
   let values = {}
-  values = {...manageUserAttendanceBody, ...{Uid:ManageUser.id}}
+  values = {...manageUserAttendanceBody, ...{Uid:ManageUser.id,  userName:ManageUser.name, userNo:ManageUser.mobileNumber }}
   if(ManageUser === null){
     throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
   }
   console.log(values)
   return ManageUserAttendance.create(values)
 };
-
-
+// const paginationManageUserAttendance = async (filter, options) => {
+//   return ManageUserAttendance.paginate(filter, options);
+// };
+const getAllManageUSerAttendance = async ()=>{
+  return ManageUserAttendance.find();
+}
 const createShop = async (shopBody) => {
     const {Uid} = shopBody;
     
@@ -109,4 +113,7 @@ module.exports = {
   deleteapartmentById,
   deleteShopById,
   createManageUserAttendance,
+  getAllManageUSerAttendance
+  // paginationManageUserAttendance,
+ 
 };

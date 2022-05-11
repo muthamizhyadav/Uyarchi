@@ -28,6 +28,22 @@ const createManageUserAttendanceService = catchAsync(async (req, res) => {
   await Attendance.save();
 });
 
+// const getManageUserAttendance = catchAsync(async (req, res) => {
+//   const filter = pick(req.query, ['name', 'role']);
+//   const options = pick(req.query, ['sortBy', 'limit', 'page']);
+//   const result = await apartmentTableService.paginationManageUserAttendance(filter, options);
+//   res.send(result);
+// });
+
+const getmanageUSerAttendanceAll = catchAsync(async (req,res) =>{
+  const attend = await apartmentTableService.getAllManageUSerAttendance(req.params);
+  if (!attend) {
+    throw new ApiError(httpStatus.NOT_FOUND);
+  }
+  res.send(attend);
+})
+
+
 const createshopTableService = catchAsync(async (req, res) => {
     const shop = await apartmentTableService.createShop(req.body);
     
@@ -108,6 +124,9 @@ module.exports = {
   deleteshop,
   getAllShop,
   getAllApartment,
-  createManageUserAttendanceService
+  createManageUserAttendanceService,
+  getmanageUSerAttendanceAll
+  // getManageUserAttendance,
+  
 
 };

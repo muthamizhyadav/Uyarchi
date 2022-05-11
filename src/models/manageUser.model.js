@@ -73,14 +73,14 @@ const manageUserSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  // created: {
-  //   type:Date,
-  //   default: Date.now
-  //   }
+  created: {
+    type:Date,
+    default: Date.now
+    }
 },
-{
-  timestamps: true,
-}
+// {
+//   timestamps: true,
+// }
 );
 manageUserSchema.plugin(toJSON);
 manageUserSchema.plugin(paginate);

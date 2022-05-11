@@ -10,13 +10,14 @@ const  createmarket = async (marketbody)=>{
     
   let ManageUser = await manageUser.findById(Uid);
   let values = {}
-  values = {...marketbody, ...{Uid:ManageUser.id}}
+  values = {...marketbody, ...{Uid:ManageUser.id, userName:ManageUser.name, userNo:ManageUser.mobileNumber }}
   if(ManageUser === null){
     throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
   }
   console.log(values)
   return Market.create(values)
 }
+
 const createMarketShops = async (marketShopsBody) => {
   const {Uid} = marketShopsBody;
     
@@ -38,6 +39,16 @@ const getmarketById = async (id) => {
   return mark;
 };
 
+const getMarketShops = async (id) => {
+  console.log(id)
+  const mark = await MarketShops.find({MName:id});
+    console.log(mark)
+  if (!mark || mark.active === false) {
+    throw new ApiError(httpStatus.NOT_FOUND, ' MarketShops Not Found');
+  }
+  return mark;
+};
+
 const getMarketShopsById = async (id) => {
   const mark = MarketShops.findById(id);
   if (!mark || mark.active === false) {
@@ -46,7 +57,8 @@ const getMarketShopsById = async (id) => {
   return mark;
 };
 
-const getAllmarket = async () =>{
+
+const getAllmarket = async () => {
     return Market.find();
 } 
 
@@ -103,6 +115,7 @@ module.exports = {
   deletemarketShopsById,
   updatemarketShopsById,
   getAllmarketShops,
-  getMarketShopsById,
-  createMarketShops
+  createMarketShops,
+  getMarketShops,
+  getMarketShopsById
 };
