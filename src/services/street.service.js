@@ -25,10 +25,20 @@ const  streetAllocation = async(allocationbody)=>{
   const { userId, arr } = allocationbody
   arr.forEach(async(e)=>{
     let  streetId = e
-    await Streets.updateOne({_id:streetId}, {AllocatedUser:userId}, {new:true})
+    await Streets.updateOne({_id:streetId}, {AllocatedUser:userId, AllocationStatus:"Allocated"}, {new:true})
   })
   const users = await ManageUser.findById(userId)
   return `Street Allocated To : ${users.name}`
+}
+
+const  streetDeAllocation = async(allocationbody)=>{
+  const { userId, arr } = allocationbody
+  arr.forEach(async(e)=>{
+    let  streetId = e
+    await Streets.updateOne({_id:streetId}, {DeAllocatedUser:userId, AllocationStatus:"DeAllocated"}, {new:true})
+  })
+  const users = await ManageUser.findById(userId)
+  return `Street DeAllocated To : ${users.name}`
 }
 
 const getWardByStreet = async (wardId) => {
@@ -198,5 +208,6 @@ module.exports = {
   updateStreetById,
   streetAllocation,
   deleteStreetById,
+  streetDeAllocation,
   queryStreet,
 };

@@ -37,6 +37,13 @@ const streetSchema = mongoose.Schema({
   },
   AllocatedUser:{
     type:String
+  },
+  DeAllocatedUser:{
+    type:String,
+  },
+  AllocationStatus:{
+    type:String,
+    enum:['Allocated', 'DeAllocated']
   }
 });
 streetSchema.plugin(toJSON);
