@@ -41,6 +41,11 @@ const getAllDeAllocatedStreetOnly = async ()=>{
   return street
 }
 
+const getaggregationByUserId = async (AllocatedUser)=>{
+  const getmanageUser = await Streets.find({$and:[{AllocatedUser:{$eq:AllocatedUser}},{AllocationStatus:{$ne:'DeAllocated'}}]})
+  return getmanageUser
+}
+
 const  streetDeAllocation = async(allocationbody)=>{
   const { userId, arr } = allocationbody
   arr.forEach(async(e)=>{
@@ -217,6 +222,7 @@ module.exports = {
   getAllocatedStreeOnly,
   getAllDeAllocatedStreetOnly,
   getStreetByWardId,
+  getaggregationByUserId,
   updateStreetById,
   streetAllocation,
   deleteStreetById,
