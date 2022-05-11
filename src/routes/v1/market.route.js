@@ -15,4 +15,5 @@ router
   .put(upload.array('image'),marketController.updatemarketService);
 router.route('/:marketId/marketShopAll').get(marketController.getmarketShopAll)
 router.route('/shop/:marketShopId').get(marketController.getmarketShopServiceById)
+router.route('/shop/:marketShopId').put(marketUpload.array('image'), marketController.updatemarketShopService)
 module.exports = router;

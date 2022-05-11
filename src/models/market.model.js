@@ -43,6 +43,9 @@ const marketSchema = mongoose.Schema({
   userNo:{
     type:Number,
   },
+  status:{
+    type:String,
+  },
   created: {
     type:Date,
     default: Date.now
@@ -92,7 +95,13 @@ const ShopsSchema = mongoose.Schema({
   mlongitude: {
     type: String,
   },
+  pincode:{
+    type:Number,
+  },
   Uid:{
+    type:String,
+  },
+  status:{
     type:String,
   },
   active: {

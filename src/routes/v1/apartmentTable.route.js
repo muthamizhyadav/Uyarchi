@@ -12,6 +12,7 @@ router.route('/shop').post(shopImage.array('photoCapture'),apartmentController.c
 router.route('/manageUserAttendance').post(apartmentController.createManageUserAttendanceService)
 // router.route('/getAllAttendance').get(validate(userValidation.getUsersAttendance), apartmentController.getManageUserAttendance);
 router.route('/getAllAttendance').get(apartmentController.getmanageUSerAttendanceAll);
+router.route('/Search').post(apartmentController.getSearchUser)
 router
   .route('/:apartmentId')
   .get(apartmentController.getApartmentById)

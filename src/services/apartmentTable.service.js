@@ -33,6 +33,17 @@ const createManageUserAttendance = async (manageUserAttendanceBody) => {
 const getAllManageUSerAttendance = async ()=>{
   return ManageUserAttendance.find();
 }
+
+const getSearch = async (manageUserAttendanceBody) =>{
+  console.log(manageUserAttendanceBody)
+  let ManageUser = await manageUser.find({name:manageUserAttendanceBody.name})
+  if(!ManageUser){
+    throw new ApiError(httpStatus.NOT_FOUND, 'ManageUser not found');
+  }
+  return ManageUser;
+}
+
+
 const createShop = async (shopBody) => {
     const {Uid} = shopBody;
     
@@ -113,7 +124,8 @@ module.exports = {
   deleteapartmentById,
   deleteShopById,
   createManageUserAttendance,
-  getAllManageUSerAttendance
+  getAllManageUSerAttendance,
+  getSearch
   // paginationManageUserAttendance,
  
 };

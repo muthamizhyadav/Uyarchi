@@ -10,7 +10,8 @@ const  createmarket = async (marketbody)=>{
     
   let ManageUser = await manageUser.findById(Uid);
   let values = {}
-  values = {...marketbody, ...{Uid:ManageUser.id, userName:ManageUser.name, userNo:ManageUser.mobileNumber }}
+  values = {...marketbody, ...{Uid:ManageUser.id, userName:ManageUser.name, userNo:ManageUser.mobileNumber,
+  status:null}}
   if(ManageUser === null){
     throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
   }
@@ -23,7 +24,7 @@ const createMarketShops = async (marketShopsBody) => {
     
   let ManageUser = await manageUser.findById(Uid);
   let values = {}
-  values = {...marketShopsBody, ...{Uid:ManageUser.id}}
+  values = {...marketShopsBody, ...{Uid:ManageUser.id, status:null}}
   if(ManageUser === null){
     throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
   }
@@ -78,12 +79,12 @@ const updatemarketById = async (marketId, updateBody) => {
   return mark;
 };
 
-const updatemarketShopsById = async (marketShopsId, updateBody) => {
-  let mark = await getMarketShopsById(marketShopsId);
+const updatemarketShopsById = async (marketShopId, updateBody) => {
+  let mark = await getMarketShopsById(marketShopId);
   if (!mark) {
     throw new ApiError(httpStatus.NOT_FOUND, 'marketShops not found');
   }
-  mark = await MarketShops.findByIdAndUpdate({ _id: marketShopsId }, updateBody, { new: true });
+  mark = await MarketShops.findByIdAndUpdate({ _id: marketShopId }, updateBody, { new: true });
   return mark;
 };
 
@@ -97,8 +98,8 @@ const deletemarketById = async (marketId) => {
   return mark;
 };
 
-const deletemarketShopsById = async (marketId) => {
-  const mark = await getMarketShopsById(marketId);
+const deletemarketShopsById = async (marketShopId) => {
+  const mark = await getMarketShopsById(marketShopId);
   if (!mark) {
     throw new ApiError(httpStatus.NOT_FOUND, 'marketShops not found');
   }

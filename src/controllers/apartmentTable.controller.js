@@ -61,6 +61,11 @@ const createshopTableService = catchAsync(async (req, res) => {
     await shop.save();
 });
 
+const getSearchUser = catchAsync(async(req, res)=>{
+  const search = await apartmentTableService.getSearch(req.body);
+  res.send(search);
+})
+
 const getApartmentById = catchAsync(async (req, res) => {
   const apart = await apartmentTableService.getApartmentById(req.params.apartmentId);
   if (!apart || apart.active === false) {
@@ -125,7 +130,8 @@ module.exports = {
   getAllShop,
   getAllApartment,
   createManageUserAttendanceService,
-  getmanageUSerAttendanceAll
+  getmanageUSerAttendanceAll,
+  getSearchUser
   // getManageUserAttendance,
   
 
