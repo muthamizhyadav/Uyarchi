@@ -31,6 +31,16 @@ const  streetAllocation = async(allocationbody)=>{
   return `Street Allocated To : ${users.name}`
 }
 
+const getAllocatedStreeOnly = async ()=>{
+  const street = await Streets.find({AllocationStatus:"Allocated"})
+  return street
+}
+
+const getAllDeAllocatedStreetOnly = async ()=>{
+  const street = await Streets.find({AllocationStatus:"DeAllocated"})
+  return street
+}
+
 const  streetDeAllocation = async(allocationbody)=>{
   const { userId, arr } = allocationbody
   arr.forEach(async(e)=>{
@@ -204,6 +214,8 @@ module.exports = {
   getAllStreet,
   streetPagination,
   getWardByStreet,
+  getAllocatedStreeOnly,
+  getAllDeAllocatedStreetOnly,
   getStreetByWardId,
   updateStreetById,
   streetAllocation,

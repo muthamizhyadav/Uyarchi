@@ -29,6 +29,9 @@ const supplierSchema = new mongoose.Schema({
   RegisteredAddress:{
     type:String,
   },
+  countries:{
+    type:String,
+  },
   state:{
     type:String,
   },
