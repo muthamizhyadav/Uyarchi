@@ -48,7 +48,7 @@ const supplierSchema = new mongoose.Schema({
     type:Number,
   },
   productDealingWith:{
-    type:String,
+    type:Array,
   },
 });
 
