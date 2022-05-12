@@ -92,7 +92,7 @@ const shopSchema = mongoose.Schema({
     default: false,
   },
   baseImage:{
-    type:String,
+    type:Array,
   },
 });
 
@@ -137,7 +137,7 @@ const manageUserAttendanceSchema = mongoose.Schema({
     default: false,
   },
   baseImage:{
-    type:String,
+    type:Array,
   },
 });
 
