@@ -17,11 +17,17 @@ const getAllSupplier = catchAsync(async (req, res) => {
 
 const getSupplierById = catchAsync(async (req, res) => {
   const supplier = await supplierService.getSupplierById(req.params.supplierId);
+  if(!supplier || supplier.active == false){
+    throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not Found");
+  }
   res.send(supplier);
 });
 
 const updateSupplierById = catchAsync(async (req, res) => {
   const supplier = await supplierService.updateSupplierById(req.params.supplierId, req.body);
+  if(!supplier || supplier.active == false){
+    throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not Found")
+  }
   res.send(supplier);
 });
 

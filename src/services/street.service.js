@@ -42,8 +42,44 @@ const getAllDeAllocatedStreetOnly = async ()=>{
 }
 
 const getaggregationByUserId = async (AllocatedUser)=>{
-  const getmanageUser = await Streets.find({$and:[{AllocatedUser:{$eq:AllocatedUser}},{AllocationStatus:{$ne:'DeAllocated'}}]})
-  return getmanageUser
+  return await Streets.aggregate([
+    {
+      $match: {
+        $and: [{ AllocatedUser: { $eq: AllocatedUser }, AllocationStatus:{$ne:"DeAllocated"} }],
+      },
+    },
+    {
+      $lookup:{
+        from: 'wards',
+        localField: 'wardId',
+        foreignField: '_id',
+        as: 'wardData',
+      }
+    },
+    {
+      $unwind:'$wardData'
+    },
+    {
+      $lookup:{
+        from: 'zones',
+        localField: 'zone',
+        foreignField: '_id',
+        as: 'zonesData',
+      }
+    },
+    {
+      $unwind:'$zonesData'
+    },
+    {
+      $project: {
+        wardName:'$wardData.ward',
+        id:1,
+        zoneName:'$zonesData.zone',
+        street:1,
+      },
+    },
+
+  ]);
 }
 
 const  streetDeAllocation = async(allocationbody)=>{

@@ -24,17 +24,19 @@ const updateSupplierById = async (supplierId, updateBody) => {
   return supplier;
 };
 
-//   const deleteSupplierById = async (supplierId) => {
-//     const supplier = await getStreetById(supplierId);
-//     if (!supplier) {
-//       throw new ApiError(httpStatus.NOT_FOUND, 'supplier not found');
-//     }
-//     await street.save()
-//     return street;
-//   };
+const deleteSupplierById = async (supplierId) => {
+  const supplier = await getWardById (supplierId);
+  if (!supplier) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Supplier not found');
+  }
+  (supplier.active = false), (supplier.archive = true), await supplier.save();
+  return supplier;
+};
+
 module.exports = {
   createSupplier,
   updateSupplierById,
   getAllSupplier,
   getSupplierById,
+  deleteSupplierById,
 };
