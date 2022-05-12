@@ -84,6 +84,9 @@ const shopSchema = mongoose.Schema({
   Uid: {
     type: String,
   },
+  fileSource:{
+    type:Array,
+  },
   active: {
     type: Boolean,
     default: true,
