@@ -8,7 +8,7 @@ const createBusinessUsers = async (BUsersbody) => {
   // role = ['Ward admin(WA)', 'Ward loading execute(WLE)', 'Ward delivery execute(WDE)', 'Ward admin Bill execute(WABE)', 'Ward admin Account execute(WAAE)', 'Ward admin Operations execute(WAOPE)']
   // value = {...BUsersbody, ...{role}}
 
-  return ManageBusinessUser.create(value)
+  return ManageBusinessUser.create(BUsersbody)
 };
 
 const getSixRoles = async ()=>{
