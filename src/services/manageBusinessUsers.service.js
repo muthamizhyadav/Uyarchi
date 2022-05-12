@@ -16,7 +16,7 @@ const createSuperAdminwardAssign = async (body)=>{
 }
 
 const gettAllSuperAdminAssign = async ()=>{
-  return awaitSuperAdminAssignWardMember.find()
+  return await SuperAdminAssignWardMember.find()
 }
 
 const getSixRoles = async ()=>{

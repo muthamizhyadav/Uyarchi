@@ -11,7 +11,7 @@ router
     BusinessUsersController.createBusinessUsers
   )
   .get(BusinessUsersController.getAllBusinessUsers);
-
+router.route('/superAdmin/List').get(BusinessUsersController.gettAllSuperAdminAssign)
   router.route('/superAdmin').post(BusinessUsersUpload.fields([{ name: 'idproof' }, { name: 'addsproof' }, { name: 'biodata' }]), BusinessUsersController.createSuperAdminwardAssign)
 router
   .route('/manageBusinessUsers/:BUId')
