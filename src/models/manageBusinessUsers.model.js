@@ -28,6 +28,9 @@ const manageBusinessUsersSchema = new mongoose.Schema({
     type: String,
     default: v4,
   },
+  ward:{
+      type:String
+  },
   uname:{
       type:String,
   },
@@ -82,6 +85,12 @@ const manageBusinessUsersSchema = new mongoose.Schema({
   ifsc:{
       type:String,
   },
+  role:{
+      type:String,
+      enum:['Ward admin(WA)', 'Ward loading execute(WLE)', 'Ward delivery execute(WDE)', 'Ward admin Bill execute(WABE)', 'Ward admin Account execute(WAAE)', 'Ward admin Operations execute(WAOPE)'],
+      default:'Ward admin(WA)', 'Ward loading execute(WLE)', 'Ward delivery execute(WDE)', 'Ward admin Bill execute(WABE)', 'Ward admin Account execute(WAAE)', 'Ward admin Operations execute(WAOPE)',
+  },
+
   active:{
       type:Boolean,
       default:true,
