@@ -15,6 +15,10 @@ const createSuperAdminwardAssign = async (body)=>{
   return await SuperAdminAssignWardMember.create(body)
 }
 
+const gettAllSuperAdminAssign = async ()=>{
+  return awaitSuperAdminAssignWardMember.find()
+}
+
 const getSixRoles = async ()=>{
   const role = await Roles.find({adminWardAssign:true})
   return role
@@ -77,6 +81,7 @@ module.exports = {
     getAllBusinessUsers,
     updateBusinessUsers,
     createSuperAdminwardAssign,
+    gettAllSuperAdminAssign,
     getSixRoles,
     deleteBusinessUsers,
 }

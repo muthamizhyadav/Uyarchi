@@ -42,13 +42,12 @@ const apartmentSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  fileSource:{
-    type:Array,
+  baseImage:{
+    type:String,
   },
+
 });
 
-// assignSchema.plugin(toJSON);
-// assignSchema.plugin(paginate);
 
 const Apartment = mongoose.model('apartment', apartmentSchema);
 
@@ -84,9 +83,6 @@ const shopSchema = mongoose.Schema({
   Uid: {
     type: String,
   },
-  fileSource:{
-    type:Array,
-  },
   active: {
     type: Boolean,
     default: true,
@@ -94,6 +90,9 @@ const shopSchema = mongoose.Schema({
   archive: {
     type: Boolean,
     default: false,
+  },
+  baseImage:{
+    type:String,
   },
 });
 
