@@ -43,7 +43,7 @@ const apartmentSchema = mongoose.Schema({
     default: false,
   },
   baseImage:{
-    type:Array,
+    type:String,
   },
 });
 
@@ -135,7 +135,7 @@ const manageUserAttendanceSchema = mongoose.Schema({
     default: false,
   },
   baseImage:{
-    type:Array,
+    type:String,
   },
 });
 
