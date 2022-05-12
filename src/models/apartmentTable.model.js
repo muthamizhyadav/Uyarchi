@@ -42,6 +42,9 @@ const apartmentSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  baseImage:{
+    type:Array,
+  },
 });
 
 // assignSchema.plugin(toJSON);
@@ -130,6 +133,9 @@ const manageUserAttendanceSchema = mongoose.Schema({
   archive: {
     type: Boolean,
     default: false,
+  },
+  baseImage:{
+    type:Array,
   },
 });
 
