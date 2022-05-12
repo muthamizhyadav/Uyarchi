@@ -35,6 +35,37 @@ const createBusinessUsers = catchAsync(async (req, res) => {
   await businessUsers.save();
 });
 
+const createSuperAdminwardAssign = catchAsync(async (req, res) => {
+    const businessUsers = await BusinessUsersService.createSuperAdminwardAssign(req.body)
+    if (req.files) {
+      let path = '';
+      path = 'images/BusersUpload/';
+      if (req.files.idproof != null) {
+          businessUsers.idproof =
+          path +
+          req.files.idproof.map((e) => {
+            return e.filename;
+          });
+      }
+      if (req.files.addsproof != null) {
+          businessUsers.addsproof =
+          path +
+          req.files.addsproof.map((e) => {
+            return e.filename;
+          });
+      }
+      if (req.files.biodata != null) {
+          businessUsers.biodata =
+          path +
+          req.files.biodata.map((e) => {
+            return e.filename;
+          });
+      }
+    }
+    res.status(httpStatus.CREATED).send(businessUsers);
+    await businessUsers.save();
+  });
+
 const getBusinessUsersById = catchAsync (async (req, res)=>{
     const busers = await BusinessUsersService.getBusinessUsersById(req.params.BUId);
     res.send(busers)
@@ -71,6 +102,7 @@ const deleteBusinessUsers = catchAsync (async (req, res)=>{
 module.exports = {
     createBusinessUsers,
     getBusinessUsersById,
+    createSuperAdminwardAssign,
     getAllBusinessUsers,
     updateBusinessUsers,
     deleteBusinessUsers,

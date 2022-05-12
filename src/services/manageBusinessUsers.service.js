@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { ManageBusinessUser } = require('../models');
+const { ManageBusinessUser, SuperAdminAssignWardMember } = require('../models/manageBusinessUsers.model');
 const ApiError = require('../utils/ApiError');
 const Roles = require('../models/roles.model')
 const createBusinessUsers = async (BUsersbody) => {
@@ -10,6 +10,10 @@ const createBusinessUsers = async (BUsersbody) => {
 
   return ManageBusinessUser.create(BUsersbody)
 };
+
+const createSuperAdminwardAssign = async (body)=>{
+  return await SuperAdminAssignWardMember.create(body)
+}
 
 const getSixRoles = async ()=>{
   const role = await Roles.find({adminWardAssign:true})
@@ -72,6 +76,7 @@ module.exports = {
     getBusinessUsersById,
     getAllBusinessUsers,
     updateBusinessUsers,
+    createSuperAdminwardAssign,
     getSixRoles,
     deleteBusinessUsers,
 }
