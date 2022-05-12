@@ -48,6 +48,11 @@ const getAllBusinessUsers = catchAsync(async(req,res)=>{
     res.send(busers)
 })
 
+const getSixRoles = catchAsync(async (req,res)=>{
+    const busers = await BusinessUsersService.getSixRoles()
+    res.send(busers)
+})
+
 const updateBusinessUsers = catchAsync(async (req, res)=>{
     const busers = await BusinessUsersService.updateBusinessUsers(req.params.BUId, req.body);
     if(!busers){
@@ -68,5 +73,6 @@ module.exports = {
     getBusinessUsersById,
     getAllBusinessUsers,
     updateBusinessUsers,
-    deleteBusinessUsers
+    deleteBusinessUsers,
+    getSixRoles,
 }

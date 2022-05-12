@@ -16,5 +16,5 @@ router
   .put(BusinessUsersUpload.fields([{ name: 'idproof' }, { name: 'addsproof' }, { name: 'biodata' }]), BusinessUsersController.updateBusinessUsers)
   .delete(BusinessUsersController.deleteBusinessUsers)
   .get(BusinessUsersController.getBusinessUsersById)
-
+router.route('/sixRoles').get(BusinessUsersController.getSixRoles)
 module.exports = router;

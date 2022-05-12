@@ -42,8 +42,8 @@ const apartmentSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  baseImage:{
-    type:String,
+  fileSource:{
+    type:Array,
   },
 });
 
@@ -134,8 +134,8 @@ const manageUserAttendanceSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  baseImage:{
-    type:String,
+  fileSource:{
+    type:Array,
   },
 });
 
