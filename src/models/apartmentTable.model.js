@@ -43,7 +43,7 @@ const apartmentSchema = mongoose.Schema({
     default: false,
   },
   baseImage:{
-    type:String,
+    type:Array,
   },
 
 });
