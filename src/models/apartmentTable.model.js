@@ -136,8 +136,8 @@ const manageUserAttendanceSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  fileSource:{
-    type:Array,
+  baseImage:{
+    type:String,
   },
 });
 
