@@ -24,6 +24,9 @@ const rolesSchema = mongoose.Schema({
   menus: {
     type: Array,
   },
+  adminWardAssign:{
+    type:Boolean
+  },
 });
 
 rolesSchema.plugin(toJSON);

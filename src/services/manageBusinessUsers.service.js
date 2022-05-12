@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const { ManageBusinessUser } = require('../models');
 const ApiError = require('../utils/ApiError');
-
+const Roles = require('../models/roles.model')
 const createBusinessUsers = async (BUsersbody) => {
   // let { role } = BUsersbody
   // let value = {}
@@ -12,9 +12,10 @@ const createBusinessUsers = async (BUsersbody) => {
 };
 
 const getSixRoles = async ()=>{
-  let role = ['Ward admin(WA)', 'Ward loading execute(WLE)', 'Ward delivery execute(WDE)', 'Ward admin Bill execute(WABE)', 'Ward admin Account execute(WAAE)', 'Ward admin Operations execute(WAOPE)']
+  const role = await Roles.find({adminWardAssign:true})
   return role
 }
+
 const getBusinessUsersById = async (BUId) => {
   const Busers = await ManageBusinessUser.findById(BUId);
   if (!Busers) {
