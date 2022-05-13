@@ -103,12 +103,35 @@ const getShopById = catchAsync(async (req, res) => {
 
 const updateApartment = catchAsync(async (req, res) => {
   const apart = await apartmentTableService.updateApartmentById(req.params.apartmentId, req.body);
+     if (req.files) {
+        //   let path = [];
+        //   console.log(req.files)
+          req.files.forEach(function (files, index, arr) {
+                apart.photoCapture.push("images/apartment/"+files.filename)
+                // console.log(shop.photoCapture)
+            
+          });
+          
+        }
+    //     console.log(apart)
+    // res.status(httpStatus.CREATED).send(apart);
   res.send(apart);
 });
 
 const updateShop = catchAsync(async (req, res) => {
-    const apart = await apartmentTableService.updateShopById(req.params.shopId, req.body);
-    res.send(apart);
+    const shop = await apartmentTableService.updateShopById(req.params.shopId, req.body);
+        if (req.files) {
+    //   let path = [];
+      console.log(req.files)
+      req.files.forEach(function (files, index, arr) {
+            shop.photoCapture.push("images/shop/"+files.filename)
+            // console.log(shop.photoCapture)
+        
+      });
+      
+    }
+    // res.status(httpStatus.CREATED).send(shop);
+    res.send(shop);
   });
 
 const deleteApartment = catchAsync(async (req, res) => {
