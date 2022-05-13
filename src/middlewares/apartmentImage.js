@@ -3,6 +3,8 @@ const path = require('path');
 const rand = require('random-key')
 
 
+
+
 const storage = multer.diskStorage({
     destination: function(req,res, cb){
        cb(null, path.join(__dirname, '../../public/images/apartment'));
