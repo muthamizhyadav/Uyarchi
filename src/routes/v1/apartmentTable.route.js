@@ -7,6 +7,8 @@ const manageUserAttendance = require('../../middlewares/manageUserAttendanceImag
 
 const router = express.Router();
 
+
+
 router.route('/').post(apartmentController.createapartmentTableService).get(apartmentController.getAllApartment);
 router.route('/shop').post(apartmentController.createshopTableService).get(apartmentController.getAllShop)
 router.route('/manageUserAttendance').post(apartmentController.createManageUserAttendanceService)
