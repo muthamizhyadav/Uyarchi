@@ -118,6 +118,11 @@ const updateApartment = catchAsync(async (req, res) => {
   res.send(apart);
 });
 
+const shopApartmentAggregation = catchAsync (async (req, res)=>{
+  const shopApartment = await apartmentTableService.apartmentAggregation()
+  res.send(shopApartment)
+}) 
+
 const updateShop = catchAsync(async (req, res) => {
     const shop = await apartmentTableService.updateShopById(req.params.shopId, req.body);
         if (req.files) {
@@ -157,6 +162,7 @@ module.exports = {
   getAllApartment,
   createManageUserAttendanceService,
   getmanageUSerAttendanceAll,
+  shopApartmentAggregation,
   getSearchUser
   // getManageUserAttendance,
   
