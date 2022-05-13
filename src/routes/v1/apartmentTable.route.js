@@ -13,7 +13,7 @@ router.route('/').post(apartmentImage.array('photoCapture'),apartmentController.
 router.route('/shop').post(shopImage.array('photoCapture'),apartmentController.createshopTableService).get(apartmentController.getAllShop)
 router.route('/manageUserAttendance').post(apartmentController.createManageUserAttendanceService)
 // router.route('/getAllAttendance').get(validate(userValidation.getUsersAttendance), apartmentController.getManageUserAttendance);
-router.route('/getAllAttendance/:ID/:DATE/:TIME/:PAGE').get(apartmentController.getmanageUSerAttendanceAll);
+router.route('/getAllAttendance/:id/:date/:fromtime/:totime/:page').get(apartmentController.getmanageUSerAttendanceAll);
 router.route('/Search').post(apartmentController.getSearchUser)
 router
   .route('/:apartmentId')
