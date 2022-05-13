@@ -40,6 +40,11 @@ const gettAllSuperAdminAssign = catchAsync (async (req, res)=>{
     res.send(superadmin)
 })
 
+const getSuperAdminAssignById = catchAsync (async (req,res)=>{
+  const superAdmin = await BusinessUsersService.getSuperAdminAssignById(req.params.id)
+  res.send(superAdmin)
+})
+
 const createSuperAdminwardAssign = catchAsync(async (req, res) => {
     const businessUsers = await BusinessUsersService.createSuperAdminwardAssign(req.body)
     if (req.files) {
@@ -112,5 +117,6 @@ module.exports = {
     gettAllSuperAdminAssign,
     updateBusinessUsers,
     deleteBusinessUsers,
+    getSuperAdminAssignById,
     getSixRoles,
 }

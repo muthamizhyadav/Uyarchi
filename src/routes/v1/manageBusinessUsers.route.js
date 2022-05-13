@@ -19,4 +19,7 @@ router
   .delete(BusinessUsersController.deleteBusinessUsers)
   .get(BusinessUsersController.getBusinessUsersById)
 router.route('/sixRoles').get(BusinessUsersController.getSixRoles)
+
+router.route('/superAdmin/:id').get(BusinessUsersController.getSuperAdminAssignById);
+
 module.exports = router;

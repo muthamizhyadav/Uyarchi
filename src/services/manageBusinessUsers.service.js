@@ -19,6 +19,14 @@ const gettAllSuperAdminAssign = async ()=>{
   return await SuperAdminAssignWardMember.find()
 }
 
+const getSuperAdminAssignById = async  (id)=>{
+  const superAdmin = await SuperAdminAssignWardMember.findById(id)
+  if(!superAdmin){
+    throw new ApiError(httpStatus.NOT_FOUND, "Super Admin Ward Assign Not Found")
+  }
+  return superAdmin
+}
+
 const getSixRoles = async ()=>{
   const role = await Roles.find({adminWardAssign:true})
   return role
@@ -80,6 +88,7 @@ module.exports = {
     getBusinessUsersById,
     getAllBusinessUsers,
     updateBusinessUsers,
+    getSuperAdminAssignById,
     createSuperAdminwardAssign,
     gettAllSuperAdminAssign,
     getSixRoles,

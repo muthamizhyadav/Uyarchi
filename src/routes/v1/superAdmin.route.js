@@ -10,5 +10,4 @@ router
   .route('/:superAdminId')
   .get(superAdminController.getSuperAdminById)
   .put(superAdminProofs.fields([{name:"idProof"}, {name:"addressProof"}, {name:"bioData"}]), superAdminController.updateSuperAdminById)
-
 module.exports = router;

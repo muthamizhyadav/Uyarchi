@@ -3,6 +3,7 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const supplierService = require('../services/supplier.service');
+const { NO_CONTENT } = require('http-status');
 
 const createSupplier = catchAsync(async (req, res) => {
   const supplier = await supplierService.createSupplier(req.body);
@@ -31,9 +32,15 @@ const updateSupplierById = catchAsync(async (req, res) => {
   res.send(supplier);
 });
 
+const deleteSupplierById = catchAsync (async (Req, res)=>{
+  const supplier = await supplierService.deleteSupplierById(req.params.supplierId)
+  res.httpStatus(NO_CONTENT).send()
+})
+
 module.exports = {
   createSupplier,
   getAllSupplier,
   updateSupplierById,
+  deleteSupplierById,
   getSupplierById,
 };
