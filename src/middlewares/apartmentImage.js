@@ -1,6 +1,6 @@
 const multer = require('multer');
 const path = require('path');
-
+const rand = require('random-key')
 
 
 const storage = multer.diskStorage({
@@ -9,7 +9,7 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
       let ext = path.extname(file.originalname);
-      cb(null, Date.now() + ext);
+      cb(null, rand.generateBase30(12) + ext);
     },
   });
 
