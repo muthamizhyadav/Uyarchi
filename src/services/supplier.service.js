@@ -36,10 +36,20 @@ const deleteSupplierById = async (supplierId) => {
   return supplier;
 };
 
+const recoverById = async (supplierId)=>{
+  const supplier = await getSupplierById(supplierId);
+  if(!supplier) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Supplier Not Found');
+  }
+  (supplier.active = true), (supplier.archive = false), await supplier.save();
+  return supplier;
+}
+
 module.exports = {
   createSupplier,
   updateSupplierById,
   getAllSupplier,
   getSupplierById,
   deleteSupplierById,
+  recoverById,
 };
