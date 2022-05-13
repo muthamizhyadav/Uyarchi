@@ -8,8 +8,8 @@ const storage = multer.diskStorage({
        cb(null, path.join(__dirname, '../../public/images/apartment'));
     },
     filename: function (req, file, cb) {
-      let ext = path.extname(file.originalname);
-      cb(null,  ext);
+      // let ext = path.extname(file.originalname);
+      cb(null);
     },
   });
 
