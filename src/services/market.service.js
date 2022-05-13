@@ -5,7 +5,7 @@ const manageUser = require('../models/manageUser.model')
 
 const ApiError = require('../utils/ApiError');
 
-const  createmarket = async (marketbody)=>{
+const  createmarket = async (marketbody)=> {
   const {Uid} = marketbody;
     
   let ManageUser = await manageUser.findById(Uid);

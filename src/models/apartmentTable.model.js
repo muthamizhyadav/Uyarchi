@@ -34,6 +34,12 @@ const apartmentSchema = mongoose.Schema({
   Uid: {
     type: String,
   },
+  status:{
+    type:String,
+  },
+  date:{
+    type:String,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -81,6 +87,12 @@ const shopSchema = mongoose.Schema({
   Uid: {
     type: String,
   },
+  status:{
+    type:String,
+  },
+  date:{
+    type:String,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -113,15 +125,15 @@ const manageUserAttendanceSchema = mongoose.Schema({
   Uid: {
     type: String,
   },
-  userName:{
-    type:String,
-  },
-  userNo:{
-    type:String,
-  },
   created: {
     type:Date,
     default: Date.now
+    },
+    date: {
+      type:String,
+      },
+   time: {
+    type:String,
     },
   active: {
     type: Boolean,
