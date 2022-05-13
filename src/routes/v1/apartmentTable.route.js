@@ -17,8 +17,13 @@ router
   .get(apartmentController.getAllShop);
 router.route('/manageUserAttendance').post(apartmentController.createManageUserAttendanceService);
 // router.route('/getAllAttendance').get(validate(userValidation.getUsersAttendance), apartmentController.getManageUserAttendance);
+<<<<<<< HEAD
 router.route('/getAllAttendance/:ID/:DATE/:TIME/:PAGE').get(apartmentController.getmanageUSerAttendanceAll);
 router.route('/Search').post(apartmentController.getSearchUser);
+=======
+router.route('/getAllAttendance/:id/:date/:fromtime/:totime/:page').get(apartmentController.getmanageUSerAttendanceAll);
+router.route('/Search').post(apartmentController.getSearchUser)
+>>>>>>> 5f539413c94fd46ac1d235cbbde08d1acba20331
 router
   .route('/:apartmentId')
   .get(apartmentController.getApartmentById)

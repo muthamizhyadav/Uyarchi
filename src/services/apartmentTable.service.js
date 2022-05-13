@@ -65,28 +65,28 @@ const createManageUserAttendance = async (manageUserAttendanceBody) => {
 // const paginationManageUserAttendance = async (filter, options) => {
 //   return ManageUserAttendance.paginate(filter, options);
 // };
-const getAllManageUSerAttendance = async (id,date,time,page)=>{
+const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
   console.log(page)
   let match;
-  if(id !='null'&&date !='null'&&time !='null'){
-     match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time: { $eq: time }}]
+  if(id !='null'&&date !='null'&&fromtime !='null'&&totime!='null'){
+     match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: fromtime,$lte: totime}}]
   }
-  else if(id !='null'&&date =='null'&&time =='null'){
+  else if(id !='null'&&date =='null'&&fromtime =='null'&&totime =='null'){
      match=[{ Uid: { $eq: id }}]
   }
-  else if(id =='null'&&date !='null'&&time =='null'){
+  else if(id =='null'&&date !='null'&&fromtime =='null'&& totime =='null'){
      match=[{ date: { $eq: date }}]
   }
-  else if(id =='null'&&date =='null'&&time !='null'){
-     match=[{ time: { $eq: time }}]
+  else if(id =='null'&&date =='null'&fromtime !='null'&& totime !='null'){
+     match=[{ time:{ $gte: fromtime,$lte: totime}}]
   }
-  else if(id =='null'&&date !='null'&&time !='null'){
-     match=[{ date: { $eq: date }},{ time: { $eq: time }}]
+  else if(id =='null'&&date !='null'&&fromtime !='null'&& totime != 'null'){
+     match=[{ date: { $eq: date }},{ time:{ $gte: fromtime,$lte: totime}}]
   }
-  else if(id !='null'&&date =='null'&&time !='null'){
-     match=[{ Uid: { $eq: id }},{ time: { $eq: time }}]
+  else if(id !='null'&&date =='null'&&fromtime !='null'&& totime!='null'){
+     match=[{ Uid: { $eq: id }},{ time:{ $gte: fromtime,$lte: totime}}]
   }
-  else if(id !='null'&&date !='null'&&time =='null'){
+  else if(id !='null'&&date !='null'&&fromtime =='null'&&totime == 'null'){
      match=[{ Uid: { $eq: id }},{ date: { $eq: date }}]
   }
   else{

@@ -38,7 +38,8 @@ const createManageUserAttendanceService = catchAsync(async (req, res) => {
 
 const getmanageUSerAttendanceAll = catchAsync(async (req,res) =>{
   console.log(req.params.ID)
-  const attend = await apartmentTableService.getAllManageUSerAttendance(req.params.ID,req.params.DATE,req.params.TIME,req.params.PAGE);
+  const attend = await apartmentTableService.getAllManageUSerAttendance(req.params.id,req.params.date,req.params.fromtime,req.params.totime,req.params.page);
+  console.log(req.params.fromtime)
   if (!attend) {
     throw new ApiError(httpStatus.NOT_FOUND);
   }
