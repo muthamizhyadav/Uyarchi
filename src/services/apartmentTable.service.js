@@ -20,7 +20,7 @@ const createManageUserAttendance = async (manageUserAttendanceBody) => {
   const {Uid} = manageUserAttendanceBody;
   let ManageUser = await manageUser.findById(Uid);
   let values = {}
-  values = {...manageUserAttendanceBody, ...{Uid:ManageUser.id,  userName:ManageUser.name, userNo:ManageUser.mobileNumber }}
+  values = {...manageUserAttendanceBody, ...{Uid:ManageUser.id,}}
   if(ManageUser === null){
     throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
   }
@@ -30,11 +30,76 @@ const createManageUserAttendance = async (manageUserAttendanceBody) => {
 // const paginationManageUserAttendance = async (filter, options) => {
 //   return ManageUserAttendance.paginate(filter, options);
 // };
-const getAllManageUSerAttendance = async ()=>{
-  return ManageUserAttendance.find();
+const getAllManageUSerAttendance = async (id,date,time,page)=>{
+  console.log(page)
+  let match;
+  if(id !='null'&&date !='null'&&time !='null'){
+     match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time: { $eq: time }}]
+  }
+  else if(id !='null'&&date =='null'&&time =='null'){
+     match=[{ Uid: { $eq: id }}]
+  }
+  else if(id =='null'&&date !='null'&&time =='null'){
+     match=[{ date: { $eq: date }}]
+  }
+  else if(id =='null'&&date =='null'&&time !='null'){
+     match=[{ time: { $eq: time }}]
+  }
+  else if(id =='null'&&date !='null'&&time !='null'){
+     match=[{ date: { $eq: date }},{ time: { $eq: time }}]
+  }
+  else if(id !='null'&&date =='null'&&time !='null'){
+     match=[{ Uid: { $eq: id }},{ time: { $eq: time }}]
+  }
+  else if(id !='null'&&date !='null'&&time =='null'){
+     match=[{ Uid: { $eq: id }},{ date: { $eq: date }}]
+  }
+  else{
+    match=[{ Uid: { $ne: null }}]
+  }
+  console.log(match)
+  return ManageUserAttendance.aggregate([
+    {
+      $match: {
+        $and: match,
+      },
+    },
+    {
+      $lookup:{
+        from: 'manageusers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'manageusersdata',
+      }
+    },
+    {
+      $unwind:'$manageusersdata'
+    },
+    {
+      $project: {
+        userName:'$manageusersdata.name',
+        mobileNumber:"$manageusersdata.mobileNumber",
+        id:1,
+        date:1,
+        time:1,
+        Alat:1,
+        Along:1,
+        photoCapture:1,
+        created:1,
+        Uid:1
+
+      },
+    },
+    {
+      $skip:10*parseInt(page)
+    },
+   {
+      $limit:10
+    },
+  ])
 }
 
-const getSearch = async (manageUserAttendanceBody) =>{
+const getSearch = async (manageUserAttendanceBody) => {
   console.log(manageUserAttendanceBody)
   let ManageUser = await manageUser.find({name:manageUserAttendanceBody.name})
   if(!ManageUser){
@@ -67,12 +132,177 @@ const getApartmentById = async (id) => {
   };
 
 const getAllApartment = async () => {
-  return Apartment.find();
+  return Apartment.aggregate([
+    {
+      $lookup:{
+        from: 'manageusers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'manageusersdata',
+      }
+
+    },
+    {
+      $unwind:'$manageusersdata'
+    },
+    {
+      $lookup:{
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streetsdata',
+      }
+    },
+    {
+      $unwind:'$streetsdata'
+    },
+    // {
+    //   $lookup:{
+    //     from: 'zones',
+    //    let:{"zoneNames":"$_id"},
+    //    pipeline:[
+    //      {
+    //        $match:{
+    //          $expr:{
+    //            $eq:["$$streetsdata.zone","$$zoneNames"]
+    //          }
+    //        }
+    //      }
+    //    ],
+    //    as:"zoneName"
+
+    //   }
+    // },
+    // {
+    //   $unwind:'$zoneName'
+    // },
+      {
+      $lookup:{
+        from: 'zones',
+        localField: 'manageusersdata.preferredZone',
+        foreignField: '_id',
+        as: 'zonesData',
+      }
+    },
+    {
+      $unwind:'$zonesData'
+    },
+    {
+      $lookup:{
+        from: 'wards',
+        localField: 'manageusersdata.preferredWard',
+        foreignField: '_id',
+        as: 'wardsData',
+      }
+    },
+    {
+      $unwind:'$wardsData'
+    },
+    {
+      $project: {
+        userName:'$manageusersdata.name',
+        streetName:'$streetsdata.street',
+        // mobileNumber:"$manageusersdata.mobileNumber",
+        id:1,
+        Uid:1,
+        photoCapture:1,
+        AName:1,
+        AType:1,
+        NFlat:1,
+        AFloor:1,
+        Alat:1,
+        Along:1,
+        fileSource:1,
+        zoneName:"$zonesData.zone",
+        wardName:"$wardsData.ward",
+        status:1,
+
+      },
+    },
+  ])
 };
 
 
 const getAllShop = async () => {
-    return Shop.find();
+    return Shop.aggregate([
+      {
+        $lookup:{
+          from: 'manageusers',
+          localField: 'Uid',
+          foreignField: '_id',
+          as: 'manageusersdata',
+        }
+  
+      },
+      {
+        $unwind:'$manageusersdata'
+      },
+      {
+        $lookup:{
+          from: 'streets',
+          localField: 'Strid',
+          foreignField: '_id',
+          as: 'streetsdata',
+        }
+      },
+      {
+        $unwind:'$streetsdata'
+      },
+      {
+        $lookup:{
+          from: 'zones',
+          localField: 'manageusersdata.preferredZone',
+          foreignField: '_id',
+          as: 'zonesData',
+        }
+      },
+      {
+        $unwind:'$zonesData'
+      },
+      {
+        $lookup:{
+          from: 'shoplists',
+          localField: 'SType',
+          foreignField: '_id',
+          as: 'shoplistsdata',
+        }
+      },
+      {
+        $unwind:'$shoplistsdata'
+      },
+      {
+        $lookup:{
+          from: 'wards',
+          localField: 'manageusersdata.preferredWard',
+          foreignField: '_id',
+          as: 'wardsData',
+        }
+      },
+      {
+        $unwind:'$wardsData'
+      },
+      {
+        $project: {
+          userName:'$manageusersdata.name',
+          streetName:'$streetsdata.street',
+          mobileNumber:"$manageusersdata.mobileNumber",
+          id:1,
+          Uid:1,
+          photoCapture:1,
+          SName:1,
+          SType:'$shoplistsdata.shopList',
+          Slat:1,
+          Slong:1,
+          baseImage:1,
+          SOwner:1,
+          SCont1:1,
+          zoneName:"$zonesData.zone",
+          wardName:"$wardsData.ward",
+          status:1
+  
+        },
+      },
+    ]);
   };
 
 
