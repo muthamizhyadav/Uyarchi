@@ -119,7 +119,7 @@ const updateApartment = catchAsync(async (req, res) => {
 });
 
 const updateShop = catchAsync(async (req, res) => {
-    const apart = await apartmentTableService.updateShopById(req.params.shopId, req.body);
+    const shop = await apartmentTableService.updateShopById(req.params.shopId, req.body);
         if (req.files) {
     //   let path = [];
       console.log(req.files)
@@ -131,7 +131,7 @@ const updateShop = catchAsync(async (req, res) => {
       
     }
     // res.status(httpStatus.CREATED).send(shop);
-    res.send(apart);
+    res.send(shop);
   });
 
 const deleteApartment = catchAsync(async (req, res) => {

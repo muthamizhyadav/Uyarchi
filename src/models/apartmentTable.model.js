@@ -143,8 +143,7 @@ const manageUserAttendanceSchema = mongoose.Schema({
     type: String,
   },
   created: {
-    type:Date,
-    default: Date.now
+     type:String,
     },
     date: {
       type:String,

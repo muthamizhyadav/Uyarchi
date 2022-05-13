@@ -22,7 +22,7 @@ router
   .delete(apartmentController.deleteApartment);
 
   router
-  .route('/:shopId')
+  .route('/shop/:shopId')
   .get(apartmentController.getShopById)
   .put(shopImage.array('photoCapture'), apartmentController.updateShop)
   .delete(apartmentController.deleteshop);

@@ -313,7 +313,7 @@ const getAllShop = async () => {
 
 
 const updateApartmentById = async (apartmentId, updateBody) => {
-  let Apart = await getAssignById(apartmentId);
+  let Apart = await getApartmentById(apartmentId);
   if (!Apart) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Apartment not found');
   }
@@ -326,7 +326,7 @@ const updateShopById = async (shopId, updateBody) => {
     if (!Sho) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Shop not found');
     }
-    Sho = await Apartment.findByIdAndUpdate({ _id: shopId }, updateBody, { new: true });
+    Sho = await Shop.findByIdAndUpdate({ _id: shopId }, updateBody, { new: true });
     return Sho;
   };
 
