@@ -14,6 +14,14 @@ const getAllStreet = catchAsync(async (req, res) => {
   res.send(street);
 });
 
+const closedStatus = catchAsync (async (req, res)=>{
+  const street = await StreetService.closedStatus(req.params.streetId, req.body)
+  if(!street){
+    throw new ApiError(httpStatus.NOT_FOUND, "street Not found")
+  }
+  res.send(street)
+})
+
 const getAllocatedStreeOnly = catchAsync(async (req,res)=>{
   const street = await StreetService.getAllocatedStreeOnly();
   res.send(street)
@@ -84,5 +92,6 @@ module.exports = {
   streetPagination,
   getAllStreet,
   getAllocatedStreeOnly,
+  closedStatus,
   getAllDeAllocatedStreetOnly,
 };

@@ -32,9 +32,9 @@ const updateSupplierById = catchAsync(async (req, res) => {
   res.send(supplier);
 });
 
-const deleteSupplierById = catchAsync (async (Req, res)=>{
+const deleteSupplierById = catchAsync (async (req, res)=>{
   const supplier = await supplierService.deleteSupplierById(req.params.supplierId)
-  res.httpStatus(NO_CONTENT).send()
+  res.send()
 })
 
 module.exports = {

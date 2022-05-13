@@ -28,7 +28,7 @@ const updateSupplierById = async (supplierId, updateBody) => {
 };
 
 const deleteSupplierById = async (supplierId) => {
-  const supplier = await getWardById (supplierId);
+  const supplier = await getSupplierById(supplierId);
   if (!supplier) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Supplier not found');
   }

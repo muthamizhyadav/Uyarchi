@@ -16,4 +16,5 @@ router.route('/street/Ward/:wardId').get(streetController.getStreetByWard)
 router.route('/page/:id').get(streetController.streetPagination);
 router.route('/street/Allocation').post(streetController.streetAllocation).get(streetController.getAllocatedStreeOnly)
 router.route('/street/deAllocation').post(streetController.streetDeAllocation).get(streetController.getAllDeAllocatedStreetOnly);
+router.route('/closedStatus/:streetId').put(streetController.closedStatus)
 module.exports = router;
