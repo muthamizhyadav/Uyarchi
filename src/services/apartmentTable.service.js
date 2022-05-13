@@ -219,6 +219,7 @@ const getAllApartment = async () => {
         date:1,
         time:1,
         created:1,
+        streetStatus:'$streetsdata.closed'
 
       },
     },
@@ -226,7 +227,8 @@ const getAllApartment = async () => {
 };
 
 
-const getAllShop = async () => {
+const getAllShop = async () => 
+{
     return Shop.aggregate([
       {
         $lookup:{
