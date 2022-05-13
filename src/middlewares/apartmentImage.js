@@ -12,6 +12,8 @@ const storage = multer.diskStorage({
   },
 });
 
+
+
 const uploadImage = multer({
   storage: storage,
   fileFilter: function (req, file, callback) {

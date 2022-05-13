@@ -10,6 +10,27 @@ const getAllSupplier = async () => {
   return Supplier.find({active : true});
 };
 
+const getAllDisableSupplier = async () =>{
+  return await Supplier.find({ active: { $eq: false } })
+} 
+
+const getDisableSupplierById = async (id) => {
+  const supplier = Supplier.findById(id);
+  if(!supplier || supplier.active === true){
+    throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not  Found OR Suplier Not Disabled")
+  }
+  return supplier;
+};
+
+const updateDisableSupplierById = async (id) => {
+  let supplier = await getDisableSupplierById(id)
+  if (!supplier) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'supplier not found');
+  }
+  supplier = await Supplier.findByIdAndUpdate({ _id:id }, {active: true, archive : false}, { new: true });
+  return supplier;
+};
+
 const getSupplierById = async (id) => {
   const supplier = Supplier.findById(id);
   if(!supplier || supplier.active === false){
@@ -18,8 +39,8 @@ const getSupplierById = async (id) => {
   return supplier;
 };
 
-const updateSupplierById = async (supplierId, updateBody) => {
-  let supplier = await getSupplierById(supplierId)
+const updateSupplierById = async (id, updateBody) => {
+  let supplier = await getSupplierById(id)
   if (!supplier) {
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier not found');
   }
@@ -49,7 +70,10 @@ module.exports = {
   createSupplier,
   updateSupplierById,
   getAllSupplier,
+  updateDisableSupplierById,
   getSupplierById,
+  getDisableSupplierById,
   deleteSupplierById,
   recoverById,
+  getAllDisableSupplier,
 };

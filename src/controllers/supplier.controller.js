@@ -24,6 +24,27 @@ const getSupplierById = catchAsync(async (req, res) => {
   res.send(supplier);
 });
 
+const getDisableSupplierById = catchAsync (async (req, res)=>{
+  const supplier = await supplierService.getDisableSupplierById(req.params.id)
+  if(!supplier){
+    throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not Found")
+  }
+  res.send(supplier)
+})
+
+const getAllDisableSupplier = catchAsync (async (req, res)=>{
+  const supplier = await supplierService.getAllDisableSupplier()
+  res.send(supplier)
+})
+
+const updateDisableSupplierById = catchAsync (async (req, res)=>{
+  const supplier = await supplierService.updateDisableSupplierById(req.params.id, req.body)
+  if(!supplier){
+    throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not Found")
+  }
+  res.send(supplier)
+})
+
 const updateSupplierById = catchAsync(async (req, res) => {
   const supplier = await supplierService.updateSupplierById(req.params.supplierId, req.body);
   if(!supplier || supplier.active == false){
@@ -47,6 +68,9 @@ module.exports = {
   getAllSupplier,
   updateSupplierById,
   recoverById,
+  updateDisableSupplierById,
+  getDisableSupplierById,
+  getAllDisableSupplier,
   deleteSupplierById,
   getSupplierById,
 };

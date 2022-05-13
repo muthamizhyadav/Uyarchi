@@ -19,6 +19,29 @@ const gettAllSuperAdminAssign = async ()=>{
   return await SuperAdminAssignWardMember.find()
 }
 
+
+const superAdminAggregation = async () =>{
+  return await SuperAdminAssignWardMember.aggregate([
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'roletype',
+        foreignField: '_id',
+        as: 'rolesData',
+      },
+    },
+    {
+      $unwind: '$rolesData',
+    },
+    {
+      $project: {
+        RoleName: '$rolesData.roleName',
+        uname:1,
+      },
+    },
+  ])
+}
+
 const getSuperAdminAssignById = async  (id)=>{
   const superAdmin = await SuperAdminAssignWardMember.findById(id)
   if(!superAdmin){
@@ -86,6 +109,7 @@ const deleteBusinessUsers = async (BUId) => {
 module.exports = {
     createBusinessUsers,
     getBusinessUsersById,
+    superAdminAggregation,
     getAllBusinessUsers,
     updateBusinessUsers,
     getSuperAdminAssignById,

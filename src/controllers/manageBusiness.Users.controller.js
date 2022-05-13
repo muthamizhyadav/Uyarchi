@@ -45,6 +45,14 @@ const getSuperAdminAssignById = catchAsync (async (req,res)=>{
   res.send(superAdmin)
 })
 
+const superAdminAggregation = catchAsync (async (req, res)=>{
+  const superAdmin = await  BusinessUsersService.superAdminAggregation();
+  if(!superAdmin){
+    throw new ApiError(httpStatus.NOT_Found, "Assigning Ward Member Not Available")
+  }
+  res.send(superAdmin)
+})
+
 const createSuperAdminwardAssign = catchAsync(async (req, res) => {
     const businessUsers = await BusinessUsersService.createSuperAdminwardAssign(req.body)
     if (req.files) {
@@ -112,6 +120,7 @@ const deleteBusinessUsers = catchAsync (async (req, res)=>{
 module.exports = {
     createBusinessUsers,
     getBusinessUsersById,
+    superAdminAggregation,
     createSuperAdminwardAssign,
     getAllBusinessUsers,
     gettAllSuperAdminAssign,
