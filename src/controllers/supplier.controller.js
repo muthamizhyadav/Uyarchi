@@ -37,10 +37,16 @@ const deleteSupplierById = catchAsync (async (req, res)=>{
   res.send()
 })
 
+const recoverById = catchAsync(async (req,res)=>{
+  const supplier = await supplierService.recoverById(req.params.supplierId)
+  res.send()
+})
+
 module.exports = {
   createSupplier,
   getAllSupplier,
   updateSupplierById,
+  recoverById,
   deleteSupplierById,
   getSupplierById,
 };
