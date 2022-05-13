@@ -21,5 +21,5 @@ router
 router.route('/sixRoles').get(BusinessUsersController.getSixRoles)
 
 router.route('/superAdmin/:id').get(BusinessUsersController.getSuperAdminAssignById);
-
+router.route('/superAdmin').get(BusinessUsersController.superAdminAggregation)
 module.exports = router;
