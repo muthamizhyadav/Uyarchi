@@ -7,18 +7,19 @@ const apartmentTableService = require('../services/apartmentTable.service');
 const createapartmentTableService = catchAsync(async (req, res) => {
     const apart = await apartmentTableService.createApartment(req.body);     
    
-    if (req.files) {
-        //   let path = [];
-        //   console.log(req.files)
-          req.files.forEach(function (files, index, arr) {
-                apart.photoCapture.push("images/apartment/"+files.filename)
-                // console.log(shop.photoCapture)
+    // if (req.files) {
+    //     //   let path = [];
+    //     //   console.log(req.files)
+    //       req.files.forEach(function (files, index, arr) {
+    //             apart.photoCapture.push("images/apartment/"+files.filename)
+    //             // console.log(shop.photoCapture)
             
-          });
+    //       });
           
-        }
-        console.log(apart)
-    res.status(httpStatus.CREATED).send(apart);
+    //     }
+    //     console.log(apart)
+    // res.status(httpStatus.CREATED).send(apart);
+    res.send(apart)
     await apart.save();
 });
 
@@ -47,17 +48,18 @@ const getmanageUSerAttendanceAll = catchAsync(async (req,res) =>{
 const createshopTableService = catchAsync(async (req, res) => {
     const shop = await apartmentTableService.createShop(req.body);
     
-    if (req.files) {
-    //   let path = [];
-      console.log(req.files)
-      req.files.forEach(function (files, index, arr) {
-            shop.photoCapture.push("images/shop/"+files.filename)
-            // console.log(shop.photoCapture)
+    // if (req.files) {
+    // //   let path = [];
+    //   console.log(req.files)
+    //   req.files.forEach(function (files, index, arr) {
+    //         shop.photoCapture.push("images/shop/"+files.filename)
+    //         // console.log(shop.photoCapture)
         
-      });
+    //   });
       
-    }
-    res.status(httpStatus.CREATED).send(shop);
+    // }
+    // res.status(httpStatus.CREATED).send(shop);
+    res.send(shop)
     await shop.save();
 });
 
