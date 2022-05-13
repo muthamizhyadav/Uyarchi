@@ -21,7 +21,7 @@ const apartmentAggregation = async ()=>{
   return Apartment.aggregate([
     {
       $lookup: {
-        from: 'streets',
+        from: 'street',
         localField: 'Strid',
         foreignField: '_id',
         as: 'apartmentData',
@@ -44,11 +44,10 @@ const apartmentAggregation = async ()=>{
     {
       $project: {
         ApartMent:"$apartmentData",
-        ShopDate:"$shopData"
+        // ShopData:"$shopData"
       },
     },
   ])
-
 }
 
 const createManageUserAttendance = async (manageUserAttendanceBody) => {
