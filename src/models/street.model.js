@@ -44,7 +44,10 @@ const streetSchema = mongoose.Schema({
   AllocationStatus:{
     type:String,
     enum:['Allocated', 'DeAllocated']
-  }
+  },
+  closed:{
+    type:String,
+  },
 });
 streetSchema.plugin(toJSON);
 streetSchema.plugin(paginate);

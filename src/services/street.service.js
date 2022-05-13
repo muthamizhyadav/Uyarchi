@@ -111,6 +111,7 @@ const getaggregationByUserId = async (AllocatedUser)=>{
         zoneName:'$zonesData.zone',
         street:1,
         apartMent:'$apartmentData',
+        closed:1,
         shop:'$shopData'
       },
     },
@@ -276,6 +277,16 @@ const updateStreetById = async (streetId, updateBody) => {
   street = await Street.findByIdAndUpdate({ _id: streetId }, updateBody, { new: true });
   return street;
 };
+
+const closedStatus = async (streetId, updatebody)=>{
+  let street = await getStreetById(streetId);
+  if(!street){
+    throw new ApiError(httpStatus.NOT_FOUND, "Street Not Found")
+  }
+  street = await Street.findByIdAndUpdate({_id:streetId}, updatebody, {new:true})
+  return street
+}
+
 const deleteStreetById = async (streetId) => {
   console.log(streetId);
   const street = await getStreetById(streetId);
@@ -297,6 +308,7 @@ module.exports = {
   getaggregationByUserId,
   updateStreetById,
   streetAllocation,
+  closedStatus,
   deleteStreetById,
   streetDeAllocation,
   queryStreet,
