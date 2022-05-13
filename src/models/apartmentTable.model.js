@@ -40,6 +40,12 @@ const apartmentSchema = mongoose.Schema({
   date:{
     type:String,
   },
+  time:{
+    type:String,
+  },
+  created:{
+    type:String,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -93,6 +99,12 @@ const shopSchema = mongoose.Schema({
     type:String,
   },
   date:{
+    type:String,
+  },
+  time:{
+    type:String,
+  },
+  created:{
     type:String,
   },
   active: {
