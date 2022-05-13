@@ -216,6 +216,7 @@ const getAllApartment = async () => {
         zoneName:"$zonesData.zone",
         wardName:"$wardsData.ward",
         status:1,
+        date:1,
 
       },
     },
@@ -298,7 +299,8 @@ const getAllShop = async () => {
           SCont1:1,
           zoneName:"$zonesData.zone",
           wardName:"$wardsData.ward",
-          status:1
+          status:1,
+          date:1,
   
         },
       },
