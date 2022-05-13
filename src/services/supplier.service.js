@@ -7,24 +7,39 @@ const createSupplier = async (supplierBody) => {
 };
 
 const getAllSupplier = async () => {
-  return Supplier.find();
+  return Supplier.find({active : true});
 };
 
 const getSupplierById = async (id) => {
   const supplier = Supplier.findById(id);
+  if(!supplier || supplier.active === false){
+    throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not Found")
+  }
   return supplier;
 };
 
-//   const deleteSupplierById = async (supplierId) => {
-//     const supplier = await getStreetById(supplierId);
-//     if (!supplier) {
-//       throw new ApiError(httpStatus.NOT_FOUND, 'supplier not found');
-//     }
-//     await street.save()
-//     return street;
-//   };
+const updateSupplierById = async (supplierId, updateBody) => {
+  let supplier = await getSupplierById(supplierId)
+  if (!supplier) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'supplier not found');
+  }
+  supplier = await Supplier.findByIdAndUpdate({ _id: supplierId }, updateBody, { new: true });
+  return supplier;
+};
+
+const deleteSupplierById = async (supplierId) => {
+  const supplier = await getWardById (supplierId);
+  if (!supplier) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Supplier not found');
+  }
+  (supplier.active = false), (supplier.archive = true), await supplier.save();
+  return supplier;
+};
+
 module.exports = {
   createSupplier,
+  updateSupplierById,
   getAllSupplier,
   getSupplierById,
+  deleteSupplierById,
 };

@@ -28,73 +28,157 @@ const manageBusinessUsersSchema = new mongoose.Schema({
     type: String,
     default: v4,
   },
-  uname:{
-      type:String,
+  ward: {
+    type: String,
   },
-  email:{
-      type:String,
+  uname: {
+    type: String,
   },
-  phone:{
-      type:Number,
+  email: {
+    type: String,
   },
-  whnumber:{
-      type:Number,
+  phone: {
+    type: Number,
   },
-  lannumber:{
-      type:Number,
+  whnumber: {
+    type: Number,
   },
-  address:{
-      type:String,
+  lannumber: {
+    type: Number,
   },
-  addresslinetwo:{
-      type:String,
+  address: {
+    type: String,
   },
-  pinCode:{
-      type:Number
+  addresslinetwo: {
+    type: String,
   },
-  idproofno:{
-      type:String,
+  pinCode: {
+    type: Number,
   },
-  idproof:{
-      type:String,
+  idproofno: {
+    type: String,
   },
-  addproof:{
-      type:String,
+  idproof: {
+    type: String,
   },
-  addsproof:{
-      type:String,
+  addproof: {
+    type: String,
   },
-  biodata:{
-      type:String,
+  addsproof: {
+    type: String,
   },
-  roletype:{
-      type:String,
+  biodata: {
+    type: String,
   },
-  bankname:{
-      type:String,
+  roletype: {
+    type: String,
   },
-  branch:{
-      type:String,
+  bankname: {
+    type: String,
   },
-  accno:{
-      type:String,
+  branch: {
+    type: String,
   },
-  ifsc:{
-      type:String,
+  accno: {
+    type: String,
   },
-  active:{
-      type:Boolean,
-      default:true,
+  ifsc: {
+    type: String,
   },
-  archive:{
-      type:Boolean,
-      default:false,
+  role: {
+    type: String,
+  },
+
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
   },
 });
-
 
 manageBusinessUsersSchema.plugin(toJSON);
 manageBusinessUsersSchema.plugin(paginate);
 const ManageBusinessUser = mongoose.model('manageBusinessUsers', manageBusinessUsersSchema);
 
-module.exports = ManageBusinessUser;
+const superAdminAssignWardMember = new mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  ward: {
+    type: String,
+    default: ' ',
+  },
+  whnumber: {
+    type: Number,
+    default: null,
+  },
+  uname: {
+    type: String,
+    default: '',
+  },
+  roletype: {
+    type: String,
+    default: null,
+  },
+  pinCode: {
+    type: Number,
+  },
+  lannumber: {
+    type: Number,
+  },
+  ifsc: {
+    type: String,
+    default: '',
+  },
+  idproofno: {
+    type: String,
+  },
+  idproof: {
+    type: String,
+  },
+  email: {
+    type: String,
+    default: '',
+  },
+  branch: {
+    type: String,
+    default: '',
+  },
+  biodata: {
+    type: String,
+    default: '',
+  },
+  bankname: {
+    type: String,
+    default: '',
+  },
+  addsproof: {
+    type: String,
+    default: '',
+  },
+  addresslinetwo: {
+    type: String,
+    default: '',
+  },
+  address: {
+    type: String,
+  },
+  addproof: {
+    type: String,
+    default: '',
+  },
+  accno: {
+    type: String,
+    default: '',
+  },
+});
+
+superAdminAssignWardMember.plugin(toJSON);
+superAdminAssignWardMember.plugin(paginate);
+const SuperAdminAssignWardMember = mongoose.model('SuperAdminwardAssign', superAdminAssignWardMember);
+
+module.exports = { ManageBusinessUser, SuperAdminAssignWardMember };

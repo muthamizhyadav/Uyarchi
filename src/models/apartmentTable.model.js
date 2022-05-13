@@ -48,10 +48,12 @@ const apartmentSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  baseImage:{
+    type:Array,
+  },
+
 });
 
-// assignSchema.plugin(toJSON);
-// assignSchema.plugin(paginate);
 
 const Apartment = mongoose.model('apartment', apartmentSchema);
 
@@ -101,6 +103,9 @@ const shopSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  baseImage:{
+    type:Array,
+  },
 });
 
 // assignSchema.plugin(toJSON);
@@ -142,6 +147,9 @@ const manageUserAttendanceSchema = mongoose.Schema({
   archive: {
     type: Boolean,
     default: false,
+  },
+  baseImage:{
+    type:Array,
   },
 });
 

@@ -53,6 +53,14 @@ const supplierSchema = new mongoose.Schema({
   productDealingWith:{
     type:Array,
   },
+  active:{
+    type:Boolean,
+    default:true
+  },
+  archive:{
+    type:Boolean,
+    default:false
+  }
 });
 
 supplierSchema.plugin(toJSON);

@@ -42,8 +42,80 @@ const getAllDeAllocatedStreetOnly = async ()=>{
 }
 
 const getaggregationByUserId = async (AllocatedUser)=>{
-  const getmanageUser = await Streets.find({$and:[{AllocatedUser:{$eq:AllocatedUser}},{AllocationStatus:{$ne:'DeAllocated'}}]})
-  return getmanageUser
+  return await Streets.aggregate([
+    {
+      $match: {
+        $and: [{ AllocatedUser: { $eq: AllocatedUser }, AllocationStatus:{$ne:"DeAllocated"} }],
+      },
+    },
+    {
+      $lookup:{
+        from: 'wards',
+        localField: 'wardId',
+        foreignField: '_id',
+        as: 'wardData',
+      }
+    },
+    {
+      $unwind:'$wardData'
+    },
+    {
+      $lookup:{
+        from: 'zones',
+        localField: 'zone',
+        foreignField: '_id',
+        as: 'zonesData',
+      }
+    },
+    {
+      $unwind:'$zonesData'
+    },
+    {
+      $lookup:{
+        from: 'shops',
+        let:{'street':'$_id'},
+        
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$$street", "$Strid"],  // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+        ],
+        as: 'shopData',
+      }
+    },
+    {
+      $lookup:{
+        from: 'apartments',
+        let:{'street':'$_id'},
+        
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$$street", "$Strid"],  // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+        ],
+        as: 'apartmentData',
+      }
+    },
+    {
+      $project: {
+        wardName:'$wardData.ward',
+        id:1,
+        zoneName:'$zonesData.zone',
+        street:1,
+        apartMent:'$apartmentData',
+        shop:'$shopData'
+      },
+    },
+
+  ]);
 }
 
 const  streetDeAllocation = async(allocationbody)=>{

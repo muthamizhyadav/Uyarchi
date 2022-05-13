@@ -1,10 +1,36 @@
 const httpStatus = require('http-status');
-const { ManageBusinessUser } = require('../models');
+const { ManageBusinessUser, SuperAdminAssignWardMember } = require('../models/manageBusinessUsers.model');
 const ApiError = require('../utils/ApiError');
-
+const Roles = require('../models/roles.model')
 const createBusinessUsers = async (BUsersbody) => {
-  return ManageBusinessUser.create(BUsersbody);
+  // let { role } = BUsersbody
+  // let value = {}
+  // role = ['Ward admin(WA)', 'Ward loading execute(WLE)', 'Ward delivery execute(WDE)', 'Ward admin Bill execute(WABE)', 'Ward admin Account execute(WAAE)', 'Ward admin Operations execute(WAOPE)']
+  // value = {...BUsersbody, ...{role}}
+
+  return ManageBusinessUser.create(BUsersbody)
 };
+
+const createSuperAdminwardAssign = async (body)=>{
+  return await SuperAdminAssignWardMember.create(body)
+}
+
+const gettAllSuperAdminAssign = async ()=>{
+  return await SuperAdminAssignWardMember.find()
+}
+
+const getSuperAdminAssignById = async  (id)=>{
+  const superAdmin = await SuperAdminAssignWardMember.findById(id)
+  if(!superAdmin){
+    throw new ApiError(httpStatus.NOT_FOUND, "Super Admin Ward Assign Not Found")
+  }
+  return superAdmin
+}
+
+const getSixRoles = async ()=>{
+  const role = await Roles.find({adminWardAssign:true})
+  return role
+}
 
 const getBusinessUsersById = async (BUId) => {
   const Busers = await ManageBusinessUser.findById(BUId);
@@ -62,5 +88,9 @@ module.exports = {
     getBusinessUsersById,
     getAllBusinessUsers,
     updateBusinessUsers,
+    getSuperAdminAssignById,
+    createSuperAdminwardAssign,
+    gettAllSuperAdminAssign,
+    getSixRoles,
     deleteBusinessUsers,
 }
