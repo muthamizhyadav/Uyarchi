@@ -18,6 +18,11 @@ const getAllRoles = catchAsync(async (req, res) => {
   res.send(role);
 });
 
+const mainWarehouseRoles = catchAsync (async (req, res)=>{
+  const role = await RolesService.mainWarehouseRoles();
+  res.send(role)
+})
+
 const getRoleById = catchAsync(async (req, res) => {
   const role = await RolesService.getRolesById(req.params.roleId);
   if (!role) {
@@ -41,6 +46,7 @@ module.exports = {
   createRoles,
   getAllRoles,
   getRoleById,
+  mainWarehouseRoles,
   updateRolesById,
   deletRoleById,
 };
