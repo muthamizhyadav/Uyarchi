@@ -16,6 +16,40 @@ const createApartment = async (apartmentBody) => {
     return Apartment.create(values)
 };
 
+
+const apartmentAggregation = async ()=>{
+  return Apartment.aggregate([
+    {
+      $lookup: {
+        from: 'street',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'apartmentData',
+      },
+    },
+    {
+      $unwind: '$apartmentData',
+    },
+    {
+      $lookup: {
+        from: 'shops',
+        localField: 'Strid',
+        foreignField: 'Strid',
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $project: {
+        ApartMent:"$apartmentData",
+        // ShopData:"$shopData"
+      },
+    },
+  ])
+}
+
 const createManageUserAttendance = async (manageUserAttendanceBody) => {
   const {Uid} = manageUserAttendanceBody;
   let ManageUser = await manageUser.findById(Uid);
@@ -357,6 +391,7 @@ module.exports = {
     getApartmentById,
     getAllApartment,
     getAllShop,
+    apartmentAggregation,
   updateApartmentById,
   updateShopById,
   deleteapartmentById,

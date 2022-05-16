@@ -54,10 +54,6 @@ const apartmentSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  baseImage:{
-    type:Array,
-  },
-
 });
 
 
@@ -114,9 +110,6 @@ const shopSchema = mongoose.Schema({
   archive: {
     type: Boolean,
     default: false,
-  },
-  baseImage:{
-    type:Array,
   },
 });
 

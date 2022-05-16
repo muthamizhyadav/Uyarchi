@@ -39,8 +39,9 @@ const getSupplierById = async (id) => {
   return supplier;
 };
 
-const updateSupplierById = async (id, updateBody) => {
-  let supplier = await getSupplierById(id)
+const updateSupplierById = async (supplierId, updateBody) => {
+  let supplier = await getSupplierById(supplierId)
+  console.log(supplier)
   if (!supplier) {
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier not found');
   }
