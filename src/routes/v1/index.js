@@ -37,7 +37,8 @@ const marketRoute = require('./market.route')
 const apartmentRoute = require('./apartmentTable.route')
 const SuperAdmin = require('./superAdmin.route');
 const BusinessUsers = require('./manageBusinessUsers.route')
-const DistrictListRoute = require('./districtList.route')
+const DistrictListRoute = require('./districtList.route');
+const trendsRoute = require('./trends.router')
 const router = express.Router();
 
 const defaultRoutes = [
@@ -186,6 +187,10 @@ const defaultRoutes = [
     path:'/districtlist',
     route:DistrictListRoute
   },
+  {
+    path:'/trends',
+    route:trendsRoute
+  }
 ];
 
 const devRoutes = [

@@ -198,6 +198,16 @@ const getStockByLoadingExecute = async () => {
   return Stock.find({ loadingExecute: true, closeOrder: true });
 };
 
+const paginationForTrends = async (id)=>{
+  return Product.aggregate([
+    {
+      $sort: { productTitle: 1 },
+    },
+    { $skip: 5 * id },
+    { $limit: 5 },
+  ])
+}
+
 const updateManageBill = async (manageBillId, updatebody) => {
   let manageBill = await getManageBill(manageBillId);
   if (!manageBill) {
@@ -367,6 +377,7 @@ const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
 module.exports = {
   createProduct,
   getStockById,
+  paginationForTrends,
   getAllienceBySupplierId,
   createStock,
   updateStackById,

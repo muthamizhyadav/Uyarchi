@@ -64,5 +64,5 @@ router
   .put(productController.updateManageBill)
   .delete(productController.deleteBillManage);
 router.route('/updateDelivered/:id').put(productController.updatingStatusForDelivered);
-
+router.route('/pagination/product/:id').get(productController.productPaginationForTrends)
 module.exports = router;

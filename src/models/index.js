@@ -34,4 +34,5 @@ module.exports.adminRegistration = require('./adminRegistration.model')
 // module.exports.Market = require('./market.model')
 module.exports.SuperAdmin = require('./superAdmin.model');
 module.exports.ManageBusinessUser = require('./manageBusinessUsers.model');
-module.exports.DistrictList = require('./districtList.model')
+module.exports.DistrictList = require('./districtList.model');
+module.exports.Trends = require('./trends.model')
