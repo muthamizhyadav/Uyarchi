@@ -82,6 +82,14 @@ const getManageBillById = catchAsync(async (req, res) => {
   res.send(manageBill);
 });
 
+const productPaginationForTrends = catchAsync (async (req, res)=>{
+  const product = await productService.paginationForTrends(req.params.id);
+  if(!product){
+    throw new ApiError(httpStatus.NOT_FOUND, "Product Not Found")
+  }
+  res.send(product)
+})
+
 const getStockById = catchAsync(async (req, res) => {
   const stock = await productService.getStockById(req.params.stockId);
   // if(!stock || stock.active === false){
@@ -314,6 +322,7 @@ module.exports = {
   productAggregationWithShopOrder,
   getBillRaiseById,
   updateBillRaiseById,
+  productPaginationForTrends,
   getLoadingExecuteDate,
   deleteBillRaise,
   createMainWherehouseLoadingExecute,
