@@ -53,6 +53,14 @@ const getmanageUserServiceAll = catchAsync(async (req, res) => {
     res.send(manage);
   });
 
+const getAllManageUserTable = catchAsync(async(req, res) =>{
+  const manage = await manageUserService.manageUserAllTable(req.params.id,req.params.districtId,req.params.zoneId,req.params.wardId,req.params.page)
+  if(!manage){
+    throw new ApiError(httpStatus.NOT_FOUND, 'manageUser Not Available ');
+  }
+  res.send(manage);
+})
+
 const updatemanageUserService = catchAsync(async (req, res) => {
 
   const pro = await manageUserService.updateManageUserId(req.params.manageUserId, req.body);
@@ -108,4 +116,5 @@ module.exports = {
   updatemanageUserService,
   deletemanageUserService,
   login,
+  getAllManageUserTable,
 };

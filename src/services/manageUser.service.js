@@ -44,6 +44,111 @@ const createManageUser = async (manageUserBody) => {
     }
     return Manage;
 }
+
+const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
+    let match;
+    if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'){
+       match=[{ _id: { $eq: id }},{ preferredDistrict: { $eq: districtId }},{ preferredZone:{$eq:zoneId}},{ preferredWard:{$eq:wardId}},{active:{$eq:true}}]
+    }
+    else if(id !='null'&&districtId =='null'&&zoneId =='null'&&wardId =='null'){
+       match=[{ _id: { $eq: id }},{active:{$eq:true}}]
+    }
+    else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId =='null'){
+       match=[{ preferredDistrict: { $eq: districtId }},{active:{$eq:true}}]
+    }
+    else if(id =='null'&&districtId =='null'&zoneId !='null'&& wardId =='null'){
+       match=[{ preferredZone:{ $eq: zoneId }},{active:{$eq:true}}]
+    }
+    else if(id =='null'&&districtId =='null'&zoneId !='null'&& wardId =='null'){
+      match=[{ preferredWard:{ $eq: wardId }},{active:{$eq:true}}]
+    }
+    else if(id =='null'&&districtId !='null'&&zoneId !='null'&& wardId != 'null'){
+       match=[{ preferredDistrict: { $eq: districtId }},{ preferredZone:{ $eq: zoneId}},{ preferredWard:{ $eq: wardId}},{active:{$eq:true}}]
+    }
+    else if(id !='null'&&districtId =='null'&&zoneId !='null'&& wardId!='null'){
+       match=[{ _id: { $eq: id }},{ preferredZone:{ $eq:zoneId}},{ preferredWard:{ $eq: wardId}},{active:{$eq:true}}]
+    }
+    else if(id !='null'&&districtId !='null'&&zoneId =='null'&&wardId == 'null'){
+       match=[{ _id: { $eq: id }},{ preferredDistrict: { $eq: districtId }},{active:{$eq:true}}]
+    }
+    else if(id =='null'&&districtId !='null'&&zoneId !='null'&& wardId=='null'){
+      match=[{ preferredDistrict: { $eq: districtId }},{ preferredZone:{ $eq: zoneId}},{active:{$eq:true}}]
+    }
+    else if(id =='null'&&districtId =='null'&&zoneId !='null'&& wardId!='null'){
+      match=[{ preferredZone:{ $eq: zoneId}},{ preferredWard:{ $eq: wardId}},{active:{$eq:true}}]
+    }
+    else if(id !='null'&&districtId =='null'&&zoneId =='null'&& wardId!='null'){
+      match=[{ _id: { $eq: id }},{ preferredWard:{ $eq: wardId}},{active:{$eq:true}}]
+    
+    }else if(id !='null'&&districtId =='null'&&zoneId !='null'&& wardId=='null'){
+      match=[{ _id: { $eq: id }},{ preferredZone:{ $eq: zoneId}},{active:{$eq:true}}]
+    }
+    else{
+      match=[{ _id: { $ne: null }},{active:{$eq:true}}]
+    }
+    console.log(match)
+    return ManageUser.aggregate([
+      {
+        $match: {
+          $and: match,
+        },
+      },
+      {
+        $lookup:{
+          from: 'zones',
+          localField: 'preferredZone',
+          foreignField: '_id',
+          as: 'zonesdata',
+        }
+      },
+      {
+        $unwind:'$zonesdata'
+      },
+      {
+        $lookup:{
+          from: 'wards',
+          localField: 'preferredWard',
+          foreignField: '_id',
+          as: 'wardsdata',
+        }
+      },
+      {
+        $unwind:'$wardsdata'
+      },
+      {
+        $lookup:{
+          from: 'districts',
+          localField: 'preferredDistrict',
+          foreignField: '_id',
+          as: 'districtsdata',
+        }
+      },
+      {
+        $unwind:'$districtsdata'
+      },
+      {
+        $project: {
+          name:1,
+          mobileNumber:1,
+          preferredZone:'$zonesdata.zone',
+          preferredWard:'$wardsdata.ward',
+          created:1,
+          addressProofUpload:1,
+          idProofUpload:1,
+          twoWheelerUpload:1,
+          _id:1,
+          preferredDistrict:'$districtsdata.district',
+  
+        },
+      },
+      {
+        $skip:10*parseInt(page)
+      },
+     {
+        $limit:10
+      },
+    ])
+  }   
   
   const updateManageUserId = async (manageUserId, updateBody) => {
     let Manage = await getManageUserById(manageUserId);
@@ -70,5 +175,6 @@ const createManageUser = async (manageUserBody) => {
       updateManageUserId,
       deleteManageUserById,
       loginManageUserEmailAndPassword,
+      manageUserAllTable,
   };
   

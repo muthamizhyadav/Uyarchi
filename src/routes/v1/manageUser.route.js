@@ -6,8 +6,9 @@ const proof = require('../../middlewares/proof')
 const router = express.Router();
 
 router.route('/').post(uploadImage.fields([{name:"idProofUpload"}, {name:"addressProofUpload"}, {name:"twoWheelerUpload"}]), manageUserController.createmanageUserService);
-router.route('/').get(manageUserController.getmanageUserServiceAll)
+// router.route('/').get(manageUserController.getmanageUserServiceAll)
 router.route('/login').post(manageUserController.login)
+router.route('/:id/:districtId/:zoneId/:wardId/:page').get(manageUserController.getAllManageUserTable)
 router
   .route('/:manageUserId')
   .get(manageUserController.getmanageUserServiceById)

@@ -65,7 +65,7 @@ const ShopsSchema = mongoose.Schema({
     type: String,
     default: v4,
   },
-  MName: {
+  MName:{
     type: String,
   },
   SName: {
