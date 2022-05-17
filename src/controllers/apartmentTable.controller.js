@@ -29,6 +29,12 @@ const createManageUserAttendanceService = catchAsync(async (req, res) => {
   await Attendance.save();
 });
 
+const createManageUserAttendanceAutoService = catchAsync(async (req, res) => {
+  const Attendance = await apartmentTableService.createManageUserAutoAttendance(req.body);     
+  res.status(httpStatus.CREATED).send(Attendance);
+  await Attendance.save();
+});
+
 // const getManageUserAttendance = catchAsync(async (req, res) => {
 //   const filter = pick(req.query, ['name', 'role']);
 //   const options = pick(req.query, ['sortBy', 'limit', 'page']);
@@ -170,7 +176,8 @@ module.exports = {
   getmanageUSerAttendanceAll,
   shopApartmentAggregation,
   getSearchUser,
-  getallShopApartment
+  getallShopApartment,
+  createManageUserAttendanceAutoService
   // getManageUserAttendance,
   
 

@@ -1,7 +1,8 @@
 const httpStatus = require('http-status');
-const { Apartment, Shop ,ManageUserAttendance} = require('../models/apartmentTable.model');
+const { Apartment, Shop ,ManageUserAttendance, ManageUserAttendanceAuto} = require('../models/apartmentTable.model');
 const manageUser = require('../models/manageUser.model')
 const ApiError = require('../utils/ApiError');
+const Street = require('../models/street.model')
 
 const createApartment = async (apartmentBody) => {
     const {Uid} = apartmentBody;
@@ -16,6 +17,17 @@ const createApartment = async (apartmentBody) => {
     return Apartment.create(values)
 };
 
+const createManageUserAutoAttendance = async (manageUserAttendanceAutoBody) => {
+  const {Uid} = manageUserAttendanceAutoBody;
+  let ManageUser = await manageUser.findById(Uid);
+  let values = {}
+  values = {...manageUserAttendanceAutoBody, ...{Uid:ManageUser.id}}
+  if(ManageUser === null){
+    throw new ApiError(httpStatus.NO_CONTENT, "!oops 🖕")
+  }
+  console.log(values)
+  return ManageUserAttendanceAuto.create(values)
+};
 
 const apartmentAggregation = async ()=>{
   return Apartment.aggregate([
@@ -365,109 +377,98 @@ const getAllShop = async () =>
     ]);
   };
 
-  const getAllApartmentAndShop = async()=>{
-      return Shop.aggregate([
-        {
-          $lookup:{
-            from: 'manageusers',
-            localField: 'Uid',
-            foreignField: '_id',
-            as: 'manageusersdata',
-          }
-    
+  const getAllApartmentAndShop = async()=>{ 
+    return await Street.aggregate([
+      {
+        $match: {
+          $or:[{AllocationStatus:{$eq:"Allocated"}}, {AllocationStatus:{$eq:"DeAllocated"}}]
+        }
+        
+      },
+      {
+        $lookup:{
+          from: 'wards',
+          localField: 'wardId',
+          foreignField: '_id',
+          as: 'wardData',
+        }
+      },
+      {
+        $unwind:'$wardData'
+      },
+      {
+        $lookup:{
+          from: 'zones',
+          localField: 'zone',
+          foreignField: '_id',
+          as: 'zonesData',
+        }
+      },
+      {
+        $unwind:'$zonesData'
+      },
+      {
+        $lookup:{
+          from: 'manageusers',
+          localField: 'AllocatedUser',
+          foreignField: '_id',
+          as: 'managedata',
+        }
+      },
+      {
+        $unwind:'$managedata'
+      },
+      {
+        $lookup:{
+          from: 'shops',
+          let:{'street':'$_id'},
+          
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$$street", "$Strid"],  // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+            },
+          ],
+          as: 'shopData',
+        }
+      },
+      {
+        $lookup:{
+          from: 'apartments',
+          let:{'street':'$_id'},
+          
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$$street", "$Strid"],  // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+            },
+          ],
+          as: 'apartmentData',
+        }
+      },
+      {
+        $project: {
+          wardName:'$wardData.ward',
+          id:1,
+          zoneName:'$zonesData.zone',
+          zoneId:'$zonesData.zoneCode',
+          street:1,
+          apartMent:'$apartmentData',
+          closed:1,
+          shop:'$shopData',
+          userName:"$managedata.name"
         },
-        {
-          $unwind:'$manageusersdata'
-        },
-        {
-          $lookup:{
-            from: 'apartments',
-            localField: 'Strid',
-            foreignField: '_id',
-            as: 'apartmentsdata',
-          }
-    
-        },
-        {
-          $unwind:'$apartmentsdata'
-        },
-        {
-          $lookup:{
-            from: 'streets',
-            localField: 'Strid',
-            foreignField: '_id',
-            as: 'streetsdata',
-          }
-        },
-        {
-          $unwind:'$streetsdata'
-        },
-        // {
-        //   $lookup:{
-        //     from: 'zones',
-        //     localField: 'manageusersdata.preferredZone',
-        //     foreignField: '_id',
-        //     as: 'zonesData',
-        //   }
-        // },
-        // {
-        //   $unwind:'$zonesData'
-        // },
-        {
-          $lookup:{
-            from: 'shoplists',
-            localField: 'SType',
-            foreignField: '_id',
-            as: 'shoplistsdata',
-          }
-        },
-        {
-          $unwind:'$shoplistsdata'
-        },
-        // {
-        //   $lookup:{
-        //     from: 'wards',
-        //     localField: 'manageusersdata.preferredWard',
-        //     foreignField: '_id',
-        //     as: 'wardsData',
-        //   }
-        // },
-        // {
-        //   $unwind:'$wardsData'
-        // },
-        {
-          $project: {
-            userName:'$manageusersdata.name',
-            streetName:'$streetsdata.street',
-            id:1,
-            Uid:1,
-            photoCapture:1,
-            SName:1,
-            SType:'$shoplistsdata.shopList',
-            Slat:1,
-            Slong:1,
-            SOwner:1,
-            SCont1:1,
-            status:1,
-            date:1,
-            time:1,
-            created:1,
-            // AId:'$apartmentsdata._id',
-            // AUid:'$apartmentsdata.Uid',
-            // AName:'$apartmentsdata.AName',
-            // AType:'$apartmentsdata.AType',
-            // NFlat:'$apartmentsdata.NFlat',
-            // AFloor:'$apartmentsdata.AFloor',
-            // Alat:'$apartmentsdata.Alat',
-            // Along:'$apartmentsdata.Along',
-            // Adate:'$apartmentsdata.date',
-            // Atime:'$apartmentsdata.time',
-            // Acreated:'$apartmentsdata.created',
-            // Astatus:'$apartmentsdata.status',
-            // Astreet:'$streetsdata.street'
-          },
-        },
-      ]);
+      },
+  
+    ]);
+
+
   }
 
 const updateApartmentById = async (apartmentId, updateBody) => {
@@ -521,7 +522,8 @@ module.exports = {
   createManageUserAttendance,
   getAllManageUSerAttendance,
   getSearch,
-  getAllApartmentAndShop
+  getAllApartmentAndShop,
+  createManageUserAutoAttendance
   // paginationManageUserAttendance,
  
 };

@@ -161,8 +161,50 @@ const manageUserAttendanceSchema = mongoose.Schema({
  manageUserAttendanceSchema.plugin(paginate);
 
 const ManageUserAttendance = mongoose.model('manageUserAttendance', manageUserAttendanceSchema);
+const manageUserAttendanceAutoSchema = mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  Alat: {
+    type: String,
+  },
+  Along: {
+    type: String,
+  },
+  photoCapture: {
+    type: String,
+  },
+  Uid: {
+    type: String,
+  },
+  created: {
+     type:String,
+    },
+    date: {
+      type:String,
+      },
+   time: {
+    type:String,
+    },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+  baseImage:{
+    type:Array,
+  },
+});
+
+
+const ManageUserAttendanceAuto = mongoose.model('manageUserAttendanceAuto', manageUserAttendanceAutoSchema);
 module.exports = {
   Shop,
   Apartment,
-  ManageUserAttendance
+  ManageUserAttendance,
+  ManageUserAttendanceAuto
 };
