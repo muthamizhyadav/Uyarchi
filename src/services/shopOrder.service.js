@@ -1,19 +1,29 @@
 const httpStatus = require('http-status');
-const { ShopOrder } = require('../models');
+const { ShopOrder, ProductorderSchema } = require('../models/shopOrder.model');
 const { Product } = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
 
 const createshopOrder = async (shopOrderBody) => {
-  // let { product } = shopOrderBody
-  // let productName = product.map((e)=>{
-  //   return e.productid
-  // })
+  let createShopOrder = await ShopOrder.create(shopOrderBody);
+    console.log(createShopOrder)
+   let { product ,date,time,shopId} = shopOrderBody
+      product.forEach(async(e)=>{
+        ProductorderSchema.create({
+          orderId:createShopOrder.id,
+          productid:e.productid,  
+          quantity:e.quantity,
+          priceperkg:e.priceperkg,
+          date:date,
+          time:time,
+          customerId:shopId
+        });
+      })
   // const prod = await Product.findById(productName)
   // console.log(prod.productTitle)
   // let pro = productName=prod.productTitle
   // product.push({productName:pro})
   // console.log(product)
-  return ShopOrder.create(shopOrderBody);
+  return createShopOrder;
 };
 
 const getAllShopOrder = async () => {
