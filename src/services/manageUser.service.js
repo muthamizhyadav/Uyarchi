@@ -82,6 +82,8 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
     
     }else if(id !='null'&&districtId =='null'&&zoneId !='null'&& wardId=='null'){
       match=[{ _id: { $eq: id }},{ preferredZone:{ $eq: zoneId}},{active:{$eq:true}}]
+    }else if(id !='null'&&districtId !='null'&&zoneId !='null'&& wardId=='null'){
+      match=[{ _id: { $eq: id }},{ preferredDistrict: { $eq: districtId }},{ preferredZone:{ $eq: zoneId}},{active:{$eq:true}}]
     }
     else{
       match=[{ _id: { $ne: null }},{active:{$eq:true}}]
