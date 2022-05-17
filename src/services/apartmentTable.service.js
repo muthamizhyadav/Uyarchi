@@ -67,7 +67,8 @@ const createManageUserAttendance = async (manageUserAttendanceBody) => {
 const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
   let match;
   if(id !='null'&&date !='null'&&fromtime !='null'&&totime!='null'){
-     match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: fromtime,$lte: totime}},{active:{$eq:true}}]
+     match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: fromtime,$lte: totime}},{active:{$eq:true}}];
+     console.log("k,hyu")
   }
   else if(id !='null'&&date =='null'&&fromtime =='null'&&totime =='null'){
      match=[{ Uid: { $eq: id }},{active:{$eq:true}}]
@@ -76,7 +77,7 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
      match=[{ date: { $eq: date }},{active:{$eq:true}}]
   }
   else if(id =='null'&&date =='null'&fromtime !='null'&& totime !='null'){
-     match=[{ time:{ $gte: fromtime,$lte: totime}},{active:{$eq:true}}]
+     match=[{ time:{ $gte: fromtime}},{ time:{$lte: totime}},{active:{$eq:true}}]
   }
   else if(id =='null'&&date !='null'&&fromtime !='null'&& totime != 'null'){
      match=[{ date: { $eq: date }},{ time:{ $gte: fromtime,$lte: totime}},{active:{$eq:true}}]
@@ -87,7 +88,7 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
   else if(id !='null'&&date !='null'&&fromtime =='null'&&totime == 'null'){
      match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{active:{$eq:true}}]
   }
-  else{
+  else {
     match=[{ Uid: { $ne: null }},{active:{$eq:true}}]
   }
   console.log(match)
@@ -357,12 +358,117 @@ const getAllShop = async () =>
           date:1,
           time:1,
           created:1,
+          streetStatus:'$streetsdata.closed'
   
         },
       },
     ]);
   };
 
+  const getAllApartmentAndShop = async()=>{
+      return Shop.aggregate([
+        {
+          $lookup:{
+            from: 'manageusers',
+            localField: 'Uid',
+            foreignField: '_id',
+            as: 'manageusersdata',
+          }
+    
+        },
+        {
+          $unwind:'$manageusersdata'
+        },
+        {
+          $lookup:{
+            from: 'apartments',
+            localField: 'Strid',
+            foreignField: '_id',
+            as: 'apartmentsdata',
+          }
+    
+        },
+        {
+          $unwind:'$apartmentsdata'
+        },
+        {
+          $lookup:{
+            from: 'streets',
+            localField: 'Strid',
+            foreignField: '_id',
+            as: 'streetsdata',
+          }
+        },
+        {
+          $unwind:'$streetsdata'
+        },
+        // {
+        //   $lookup:{
+        //     from: 'zones',
+        //     localField: 'manageusersdata.preferredZone',
+        //     foreignField: '_id',
+        //     as: 'zonesData',
+        //   }
+        // },
+        // {
+        //   $unwind:'$zonesData'
+        // },
+        {
+          $lookup:{
+            from: 'shoplists',
+            localField: 'SType',
+            foreignField: '_id',
+            as: 'shoplistsdata',
+          }
+        },
+        {
+          $unwind:'$shoplistsdata'
+        },
+        // {
+        //   $lookup:{
+        //     from: 'wards',
+        //     localField: 'manageusersdata.preferredWard',
+        //     foreignField: '_id',
+        //     as: 'wardsData',
+        //   }
+        // },
+        // {
+        //   $unwind:'$wardsData'
+        // },
+        {
+          $project: {
+            userName:'$manageusersdata.name',
+            streetName:'$streetsdata.street',
+            id:1,
+            Uid:1,
+            photoCapture:1,
+            SName:1,
+            SType:'$shoplistsdata.shopList',
+            Slat:1,
+            Slong:1,
+            SOwner:1,
+            SCont1:1,
+            status:1,
+            date:1,
+            time:1,
+            created:1,
+            // AId:'$apartmentsdata._id',
+            // AUid:'$apartmentsdata.Uid',
+            // AName:'$apartmentsdata.AName',
+            // AType:'$apartmentsdata.AType',
+            // NFlat:'$apartmentsdata.NFlat',
+            // AFloor:'$apartmentsdata.AFloor',
+            // Alat:'$apartmentsdata.Alat',
+            // Along:'$apartmentsdata.Along',
+            // Adate:'$apartmentsdata.date',
+            // Atime:'$apartmentsdata.time',
+            // Acreated:'$apartmentsdata.created',
+            // Astatus:'$apartmentsdata.status',
+            // Astreet:'$streetsdata.street'
+          },
+        },
+      ]);
+  }
 
 const updateApartmentById = async (apartmentId, updateBody) => {
   let Apart = await getApartmentById(apartmentId);
@@ -414,7 +520,8 @@ module.exports = {
   deleteShopById,
   createManageUserAttendance,
   getAllManageUSerAttendance,
-  getSearch
+  getSearch,
+  getAllApartmentAndShop
   // paginationManageUserAttendance,
  
 };

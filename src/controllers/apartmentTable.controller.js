@@ -37,16 +37,21 @@ const createManageUserAttendanceService = catchAsync(async (req, res) => {
 // });
 
 const getmanageUSerAttendanceAll = catchAsync(async (req,res) =>{
-  console.log(req.params.ID)
   const attend = await apartmentTableService.getAllManageUSerAttendance(req.params.id,req.params.date,req.params.fromtime,req.params.totime,req.params.page);
-  console.log(req.params.fromtime)
+  console.log(req.params.fromtime,"dfgdd")
   if (!attend) {
     throw new ApiError(httpStatus.NOT_FOUND);
   }
   res.send(attend);
 })
 
-
+const getallShopApartment = catchAsync(async (req,res) =>{
+     const shopApart = await apartmentTableService.getAllApartmentAndShop(req.params);
+     if (!shopApart) {
+      throw new ApiError(httpStatus.NOT_FOUND);
+    }
+    res.send(shopApart);
+})
 const createshopTableService = catchAsync(async (req, res) => {
     const shop = await apartmentTableService.createShop(req.body);
     
@@ -164,7 +169,8 @@ module.exports = {
   createManageUserAttendanceService,
   getmanageUSerAttendanceAll,
   shopApartmentAggregation,
-  getSearchUser
+  getSearchUser,
+  getallShopApartment
   // getManageUserAttendance,
   
 
