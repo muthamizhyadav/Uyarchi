@@ -65,34 +65,32 @@ const createManageUserAttendance = async (manageUserAttendanceBody) => {
 //   return ManageUserAttendance.paginate(filter, options);
 // };
 const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
-  console.log(page)
   let match;
   if(id !='null'&&date !='null'&&fromtime !='null'&&totime!='null'){
-     match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: fromtime,$lte: totime}}]
+     match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: fromtime,$lte: totime}},{active:{$eq:true}}]
   }
   else if(id !='null'&&date =='null'&&fromtime =='null'&&totime =='null'){
-     match=[{ Uid: { $eq: id }}]
+     match=[{ Uid: { $eq: id }},{active:{$eq:true}}]
   }
   else if(id =='null'&&date !='null'&&fromtime =='null'&& totime =='null'){
-     match=[{ date: { $eq: date }}]
+     match=[{ date: { $eq: date }},{active:{$eq:true}}]
   }
   else if(id =='null'&&date =='null'&fromtime !='null'&& totime !='null'){
-     match=[{ time:{ $gte: fromtime,$lte: totime}}]
+     match=[{ time:{ $gte: fromtime,$lte: totime}},{active:{$eq:true}}]
   }
   else if(id =='null'&&date !='null'&&fromtime !='null'&& totime != 'null'){
-     match=[{ date: { $eq: date }},{ time:{ $gte: fromtime,$lte: totime}}]
+     match=[{ date: { $eq: date }},{ time:{ $gte: fromtime,$lte: totime}},{active:{$eq:true}}]
   }
   else if(id !='null'&&date =='null'&&fromtime !='null'&& totime!='null'){
-     match=[{ Uid: { $eq: id }},{ time:{ $gte: fromtime,$lte: totime}}]
+     match=[{ Uid: { $eq: id }},{ time:{ $gte: fromtime,$lte: totime}},{active:{$eq:true}}]
   }
   else if(id !='null'&&date !='null'&&fromtime =='null'&&totime == 'null'){
-     match=[{ Uid: { $eq: id }},{ date: { $eq: date }}]
+     match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{active:{$eq:true}}]
   }
   else{
-    match=[{ Uid: { $ne: null }}]
+    match=[{ Uid: { $ne: null }},{active:{$eq:true}}]
   }
-  console.log(match)
-  return ManageUserAttendance.aggregate([
+  const Attendance= await ManageUserAttendance.aggregate([
     {
       $match: {
         $and: match,
@@ -130,7 +128,24 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
    {
       $limit:10
     },
-  ])
+    { $sort : { date : -1, time: -1 ,_id:-1} }
+    
+  ]);
+  const count=await ManageUserAttendance.aggregate([
+    {
+      $match: {
+        $and: match,
+      },
+    },
+  ]);
+
+  console.log(Attendance)
+
+  return {
+    data:Attendance,
+    count:count.length
+  }
+
 }
 
 const getSearch = async (manageUserAttendanceBody) => {

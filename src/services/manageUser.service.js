@@ -86,8 +86,8 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
     else{
       match=[{ _id: { $ne: null }},{active:{$eq:true}}]
     }
-    console.log(match)
-    return ManageUser.aggregate([
+
+    const user = await ManageUser.aggregate([
       {
         $match: {
           $and: match,
@@ -148,6 +148,20 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
         $limit:10
       },
     ])
+    const count=await ManageUser.aggregate([
+      {
+        $match: {
+          $and: match,
+        },
+      },
+    ]);
+  
+    console.log(Attendance)
+  
+    return {
+      data:user,
+      count:count.length
+    }
   }   
   
   const updateManageUserId = async (manageUserId, updateBody) => {
