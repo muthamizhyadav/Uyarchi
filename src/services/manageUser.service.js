@@ -156,8 +156,6 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
       },
     ]);
   
-    console.log(Attendance)
-  
     return {
       data:user,
       count:count.length

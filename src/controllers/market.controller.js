@@ -54,7 +54,16 @@ const getmarketServiceAll = catchAsync(async (req, res) => {
     res.send(manage);
   });
 
-  
+ 
+const getAllMarketTable = catchAsync(async(req, res) =>{
+  const manage = await marketService.getAllmarketTable(req.params.id,req.params.page)
+  if(!manage){
+    throw new ApiError(httpStatus.NOT_FOUND, 'Market Not Available');
+  }
+  res.send(manage);
+}) 
+
+
 const getmarketShopAll = catchAsync(async (req, res) => {
   const manage = await marketService.getMarketShops(req.params.marketId);
   if (!manage) {
@@ -104,5 +113,6 @@ module.exports = {
   createmarketShopService,
   getmarketShopAll,
   getmarketShopServiceById,
-  updatemarketShopService
+  updatemarketShopService,
+  getAllMarketTable
 };

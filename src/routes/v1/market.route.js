@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.route('/').post(upload.array('image'),marketController.createmarketService).get(marketController.getmarketServiceAll);
 router.route('/marketShop').post(marketUpload.array('image'), marketController.createmarketShopService)
-
+router.route('/:id/:page').get(marketController.getAllMarketTable)
 router
   .route('/:marketId')
   .get(marketController.getmarketServiceById)

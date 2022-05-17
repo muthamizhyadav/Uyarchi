@@ -90,6 +90,7 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
   else{
     match=[{ Uid: { $ne: null }},{active:{$eq:true}}]
   }
+  console.log(match)
   const Attendance= await ManageUserAttendance.aggregate([
     {
       $match: {

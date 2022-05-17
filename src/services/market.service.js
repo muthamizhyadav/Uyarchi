@@ -63,6 +63,40 @@ const getAllmarket = async () => {
     return Market.find();
 } 
 
+const getAllmarketTable = async (id,page) => {
+  let match;
+  if(id !='null'){
+    match=[{ _id: { $eq: id }},{active:{$eq:true}}]
+  }else{
+    match=[{ _id: { $ne: null }},{active:{$eq:true}}]
+  }
+  const mark = await Market.aggregate([
+      {
+        $match: {
+          $and: match
+        },
+      },
+      {
+        $skip:10*parseInt(page)
+      },
+     {
+        $limit:10
+      },
+    ])
+    const count=await Market.aggregate([
+      {
+        $match: {
+          $and: match,
+        },
+      },
+    ]);
+  console.log(mark)
+    return {
+      data:mark,
+      count:count.length
+    }
+  }   
+
 const getAllmarketShops = async () =>{
   return MarketShops.find();
 } 
@@ -118,5 +152,6 @@ module.exports = {
   getAllmarketShops,
   createMarketShops,
   getMarketShops,
-  getMarketShopsById
+  getMarketShopsById,
+  getAllmarketTable
 };
