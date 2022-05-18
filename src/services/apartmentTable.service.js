@@ -39,6 +39,70 @@ const getAllManageUserAutoAttendance = async () => {
   };
 
 
+  const getAllManageUserAutoAttendanceTable = async (id,date,page) => {
+    let match;
+    if(id !='null'&&date !='null'){
+       match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{active:{$eq:true}}];
+    }else if(id != 'null'){
+      match=[{ Uid: { $eq: id }},{active:{$eq:true}}]
+    }else{
+      match=[{ Uid: { $ne: null }},{active:{$eq:true}}]
+    }
+    const user = await ManageUserAttendanceAuto.aggregate([
+      {
+        $match: {
+          $and: match,
+        },
+      },
+      {
+        $lookup:{
+          from: 'manageusers',
+          localField: 'Uid',
+          foreignField: '_id',
+          as: 'manageusersdata',
+        }
+      },
+      {
+        $unwind:'$manageusersdata'
+      },
+      {
+        $project: {
+          userName:'$manageusersdata.name',
+          mobileNumber:"$manageusersdata.mobileNumber",
+          id:1,
+          date:1,
+          time:1,
+          Alat:1,
+          Along:1,
+          photoCapture:1,
+          baseImage:1,
+          created:1,
+          Uid:1
+  
+        },
+      },
+      {
+        $skip:10*parseInt(page)
+      },
+     {
+        $limit:10
+      },
+      // { $sort : { date : -1, time: -1 ,_id:-1} }
+      
+    ]);
+    const count=await ManageUserAttendanceAuto.aggregate([
+      {
+        $match: {
+          $and: match,
+        },
+      },
+    ]);
+    return {
+      data:user,
+      count:count.length
+    } 
+  };
+
 const apartmentAggregation = async ()=>{
   return Apartment.aggregate([
     {
@@ -534,7 +598,8 @@ module.exports = {
   getSearch,
   getAllApartmentAndShop,
   createManageUserAutoAttendance,
-  getAllManageUserAutoAttendance
+  getAllManageUserAutoAttendance,
+  getAllManageUserAutoAttendanceTable
   // paginationManageUserAttendance,
  
 };

@@ -56,6 +56,16 @@ const getmanageUSerAttendanceAll = catchAsync(async (req,res) =>{
   res.send(attend);
 })
 
+
+const getmanageUSerAttendanceAllAutoTable = catchAsync(async (req,res) =>{
+  const attend = await apartmentTableService.getAllManageUserAutoAttendanceTable(req.params.id,req.params.date,req.params.page);
+  if (!attend) {
+    throw new ApiError(httpStatus.NOT_FOUND);
+  }
+  res.send(attend);
+})
+
+
 const getallShopApartment = catchAsync(async (req,res) =>{
      const shopApart = await apartmentTableService.getAllApartmentAndShop(req.params);
      if (!shopApart) {
@@ -183,7 +193,8 @@ module.exports = {
   getSearchUser,
   getallShopApartment,
   createManageUserAttendanceAutoService,
-  getAllmanageUserAttendanceAuto
+  getAllmanageUserAttendanceAuto,
+  getmanageUSerAttendanceAllAutoTable
   // getManageUserAttendance,
   
 

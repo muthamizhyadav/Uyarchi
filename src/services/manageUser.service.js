@@ -48,45 +48,45 @@ const createManageUser = async (manageUserBody) => {
 const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
     let match;
     if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'){
-       match=[{ _id: { $eq: id }},{ preferredDistrict: { $eq: districtId }},{ preferredZone:{$eq:zoneId}},{ preferredWard:{$eq:wardId}},{active:{$eq:true}}]
+       match=[{ _id: { $eq: id }},{ preferredDistrict: { $eq: districtId }},{ preferredZone:{$eq:zoneId}},{ preferredWard:{$eq:wardId}}]
     }
     else if(id !='null'&&districtId =='null'&&zoneId =='null'&&wardId =='null'){
-       match=[{ _id: { $eq: id }},{active:{$eq:true}}]
+       match=[{ _id: { $eq: id }}]
     }
     else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId =='null'){
-       match=[{ preferredDistrict: { $eq: districtId }},{active:{$eq:true}}]
+       match=[{ preferredDistrict: { $eq: districtId }}]
     }
     else if(id =='null'&&districtId =='null'&zoneId !='null'&& wardId =='null'){
-       match=[{ preferredZone:{ $eq: zoneId }},{active:{$eq:true}}]
+       match=[{ preferredZone:{ $eq: zoneId }}]
     }
     else if(id =='null'&&districtId =='null'&zoneId !='null'&& wardId =='null'){
-      match=[{ preferredWard:{ $eq: wardId }},{active:{$eq:true}}]
+      match=[{ preferredWard:{ $eq: wardId }}]
     }
     else if(id =='null'&&districtId !='null'&&zoneId !='null'&& wardId != 'null'){
-       match=[{ preferredDistrict: { $eq: districtId }},{ preferredZone:{ $eq: zoneId}},{ preferredWard:{ $eq: wardId}},{active:{$eq:true}}]
+       match=[{ preferredDistrict: { $eq: districtId }},{ preferredZone:{ $eq: zoneId}},{ preferredWard:{ $eq: wardId}}]
     }
     else if(id !='null'&&districtId =='null'&&zoneId !='null'&& wardId!='null'){
-       match=[{ _id: { $eq: id }},{ preferredZone:{ $eq:zoneId}},{ preferredWard:{ $eq: wardId}},{active:{$eq:true}}]
+       match=[{ _id: { $eq: id }},{ preferredZone:{ $eq:zoneId}},{ preferredWard:{ $eq: wardId}}]
     }
     else if(id !='null'&&districtId !='null'&&zoneId =='null'&&wardId == 'null'){
-       match=[{ _id: { $eq: id }},{ preferredDistrict: { $eq: districtId }},{active:{$eq:true}}]
+       match=[{ _id: { $eq: id }},{ preferredDistrict: { $eq: districtId }}]
     }
     else if(id =='null'&&districtId !='null'&&zoneId !='null'&& wardId=='null'){
-      match=[{ preferredDistrict: { $eq: districtId }},{ preferredZone:{ $eq: zoneId}},{active:{$eq:true}}]
+      match=[{ preferredDistrict: { $eq: districtId }},{ preferredZone:{ $eq: zoneId}}]
     }
     else if(id =='null'&&districtId =='null'&&zoneId !='null'&& wardId!='null'){
-      match=[{ preferredZone:{ $eq: zoneId}},{ preferredWard:{ $eq: wardId}},{active:{$eq:true}}]
+      match=[{ preferredZone:{ $eq: zoneId}},{ preferredWard:{ $eq: wardId}}]
     }
     else if(id !='null'&&districtId =='null'&&zoneId =='null'&& wardId!='null'){
-      match=[{ _id: { $eq: id }},{ preferredWard:{ $eq: wardId}},{active:{$eq:true}}]
+      match=[{ _id: { $eq: id }},{ preferredWard:{ $eq: wardId}}]
     
     }else if(id !='null'&&districtId =='null'&&zoneId !='null'&& wardId=='null'){
-      match=[{ _id: { $eq: id }},{ preferredZone:{ $eq: zoneId}},{active:{$eq:true}}]
+      match=[{ _id: { $eq: id }},{ preferredZone:{ $eq: zoneId}}]
     }else if(id !='null'&&districtId !='null'&&zoneId !='null'&& wardId=='null'){
-      match=[{ _id: { $eq: id }},{ preferredDistrict: { $eq: districtId }},{ preferredZone:{ $eq: zoneId}},{active:{$eq:true}}]
+      match=[{ _id: { $eq: id }},{ preferredDistrict: { $eq: districtId }},{ preferredZone:{ $eq: zoneId}}]
     }
     else{
-      match=[{ _id: { $ne: null }},{active:{$eq:true}}]
+      match=[{ _id: { $ne: null }}]
     }
 
     const user = await ManageUser.aggregate([

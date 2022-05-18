@@ -23,6 +23,7 @@ router.route('/Search').post(apartmentController.getSearchUser);
 router.route('/getAllAttendance/:id/:date/:fromtime/:totime/:page').get(apartmentController.getmanageUSerAttendanceAll);
 router.route('/Search').post(apartmentController.getSearchUser)
 router.route('/manageUserAttendanceAuto').post(apartmentController.createManageUserAttendanceAutoService).get(apartmentController.getAllmanageUserAttendanceAuto)
+router.route('/manageUserAttendanceAuto/table/:id/:date/:page').get(apartmentController.getmanageUSerAttendanceAllAutoTable)
 router
   .route('/:apartmentId')
   .get(apartmentController.getApartmentById)
