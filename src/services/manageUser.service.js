@@ -65,8 +65,18 @@ const createManageUser = async (manageUserBody) => {
           _id:1,
           preferredDistrict:'$districtsdata.district',
           active:1,
-          archive:1
-  
+          archive:1,
+          dateOfBirth:1,
+          gender:1,
+          educationQualification:1,
+          mobileNumber1:1,
+          whatsappNumber:1,
+          address:1,
+          pincode:1,
+          phoneModel:1,
+          idProofNo:1,
+          addressProofNo:1,
+          twoWheeler:1,
         },
       },
 
