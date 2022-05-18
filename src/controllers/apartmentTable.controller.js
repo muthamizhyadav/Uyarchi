@@ -67,7 +67,7 @@ const getmanageUSerAttendanceAllAutoTable = catchAsync(async (req,res) =>{
 
 
 const getallShopApartment = catchAsync(async (req,res) =>{
-     const shopApart = await apartmentTableService.getAllApartmentAndShop(req.params);
+     const shopApart = await apartmentTableService.getAllApartmentAndShop(req.params.page);
      if (!shopApart) {
       throw new ApiError(httpStatus.NOT_FOUND);
     }
