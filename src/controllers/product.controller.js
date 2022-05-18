@@ -82,6 +82,11 @@ const getManageBillById = catchAsync(async (req, res) => {
   res.send(manageBill);
 });
 
+const productDateTimeFilter = catchAsync (async (req,res)=>{
+  const productdate = await productService.productDateTimeFilter(req.params.date, req.params.time);
+  res.send(productdate)
+})
+
 const productPaginationForTrends = catchAsync (async (req, res)=>{
   const product = await productService.paginationForTrends(req.params.id);
   if(!product){
@@ -343,6 +348,7 @@ module.exports = {
   updateMainWherehouseLoadingExecuteById,
   getproduct,
   updateStockById,
+  productDateTimeFilter,
   updateProduct,
   deleteProduct,
   deleteMainWherehouseLoadingExecuteById,

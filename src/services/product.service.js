@@ -100,6 +100,11 @@ const productAggregationWithShopOrder = async()=>{
  }))
 }
 
+const productDateTimeFilter = async (date, time) =>{
+  let value =  "Date : " + date + " Time = " + time
+  return value
+}
+
 const createConfirmStock = async (confirmBody) => {
   const { stockId } = confirmBody;
   const stocks = await Stock.findById(stockId);
@@ -377,6 +382,7 @@ const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
 module.exports = {
   createProduct,
   getStockById,
+  productDateTimeFilter,
   paginationForTrends,
   getAllienceBySupplierId,
   createStock,
