@@ -12,11 +12,65 @@ const createManageUser = async (manageUserBody) => {
   };
   
   const getManageUserById = async (id) => {
-    const  Manage = ManageUser.findById(id);
-    if (!Manage || Manage.active === false) {
-      throw new ApiError(httpStatus.NOT_FOUND, ' ManageUser Not Found');
-    }
-    return  Manage;
+    
+    return ManageUser.aggregate([
+      {
+        $match: {
+          $and:[{ _id: { $eq: id }}],
+        },
+      },
+      {
+        $lookup:{
+          from: 'zones',
+          localField: 'preferredZone',
+          foreignField: '_id',
+          as: 'zonesdata',
+        }
+      },
+      {
+        $unwind:'$zonesdata'
+      },
+      {
+        $lookup:{
+          from: 'wards',
+          localField: 'preferredWard',
+          foreignField: '_id',
+          as: 'wardsdata',
+        }
+      },
+      {
+        $unwind:'$wardsdata'
+      },
+      {
+        $lookup:{
+          from: 'districts',
+          localField: 'preferredDistrict',
+          foreignField: '_id',
+          as: 'districtsdata',
+        }
+      },
+      {
+        $unwind:'$districtsdata'
+      },
+      {
+        $project: {
+          name:1,
+          mobileNumber:1,
+          preferredZone:'$zonesdata.zone',
+          preferredWard:'$wardsdata.ward',
+          created:1,
+          addressProofUpload:1,
+          idProofUpload:1,
+          twoWheelerUpload:1,
+          _id:1,
+          preferredDistrict:'$districtsdata.district',
+          active:1,
+          archive:1
+  
+        },
+      },
+
+    ]);
   };
 
   const loginManageUserEmailAndPassword = async (mobileNumber,dateOfBirth) => {

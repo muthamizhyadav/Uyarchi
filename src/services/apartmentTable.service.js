@@ -452,7 +452,7 @@ const getAllShop = async () =>
   };
 
   const getAllApartmentAndShop = async()=>{ 
-    return await Street.aggregate([
+    const street = await Street.aggregate([
       {
         $match: {
           $or:[{AllocationStatus:{$eq:"Allocated"}}, {AllocationStatus:{$eq:"DeAllocated"}}]
@@ -539,9 +539,18 @@ const getAllShop = async () =>
           userName:"$managedata.name"
         },
       },
-  
+      // {
+      //   $skip:10*parseInt(page)
+      // },
+    //  {
+    //     $limit:40
+    //   },
     ]);
-
+  // return {
+  //   data:street,
+  //   count:street.length
+  // }
+  return street
 
   }
 

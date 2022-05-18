@@ -76,8 +76,17 @@ const manageUserSchema = mongoose.Schema({
   created: {
     type:Date,
     default: Date.now
+    },
+    BaseidProofUpload:{
+      type:String,
+    },
+  BaseaddressProofUpload:{
+      type:String,
+   },
+  BasetwoWheelerUpload:{
+       type:String,
     }
-},
+  }
 // {
 //   timestamps: true,
 // }
