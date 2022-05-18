@@ -80,11 +80,18 @@ const createManageUser = async (manageUserBody) => {
           BasetwoWheelerUpload:1,
           BaseaddressProofUpload:1,
           BaseidProofUpload:1,
+          preferredWardId:'$wardsdata._id'
         },
       },
 
     ]);
   };
+
+  const getManageUserdataById = async (id) => {
+    return ManageUser.findById(id);
+  
+  }
+
 
   const loginManageUserEmailAndPassword = async (mobileNumber,dateOfBirth) => {
     const interviewerRegistration = await ManageUser.find({mobileNumber:mobileNumber});
@@ -212,6 +219,7 @@ console.log(match)
           BasetwoWheelerUpload:1,
           BaseaddressProofUpload:1,
           BaseidProofUpload:1,
+          preferredWardId:'$wardsdata._id'
   
         },
       },
@@ -246,7 +254,7 @@ console.log(match)
   };
   
   const deleteManageUserById = async (manageUserId) => {
-    const Manage = await getManageUserById(manageUserId);
+    const Manage = await getManageUserdataById(manageUserId);
     if (!Manage) {
       throw new ApiError(httpStatus.NOT_FOUND, 'ManageUser not found');
     }
