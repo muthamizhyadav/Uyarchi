@@ -77,6 +77,9 @@ const createManageUser = async (manageUserBody) => {
           idProofNo:1,
           addressProofNo:1,
           twoWheeler:1,
+          BasetwoWheelerUpload:1,
+          BaseaddressProofUpload:1,
+          BaseidProofUpload:1,
         },
       },
 
@@ -205,7 +208,10 @@ console.log(match)
           _id:1,
           preferredDistrict:'$districtsdata.district',
           active:1,
-          archive:1
+          archive:1,
+          BasetwoWheelerUpload:1,
+          BaseaddressProofUpload:1,
+          BaseidProofUpload:1,
   
         },
       },
