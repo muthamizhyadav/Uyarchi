@@ -29,6 +29,11 @@ const createManageUserAttendanceService = catchAsync(async (req, res) => {
   await Attendance.save();
 });
 
+const getAllmanageUserAttendanceAuto = catchAsync(async (req,res)=>{
+  const cate = await apartmentTableService.getAllManageUserAutoAttendance()
+  res.send(cate)
+})
+
 const createManageUserAttendanceAutoService = catchAsync(async (req, res) => {
   const Attendance = await apartmentTableService.createManageUserAutoAttendance(req.body);     
   res.status(httpStatus.CREATED).send(Attendance);
@@ -177,7 +182,8 @@ module.exports = {
   shopApartmentAggregation,
   getSearchUser,
   getallShopApartment,
-  createManageUserAttendanceAutoService
+  createManageUserAttendanceAutoService,
+  getAllmanageUserAttendanceAuto
   // getManageUserAttendance,
   
 

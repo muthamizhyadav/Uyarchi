@@ -29,6 +29,16 @@ const createManageUserAutoAttendance = async (manageUserAttendanceAutoBody) => {
   return ManageUserAttendanceAuto.create(values)
 };
 
+
+const getAllManageUserAutoAttendance = async () => {
+    const user = ManageUserAttendanceAuto.find({ active: true });
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'ManageUserAttendanceAuto Not Found');
+    }
+    return user;
+  };
+
+
 const apartmentAggregation = async ()=>{
   return Apartment.aggregate([
     {
@@ -523,7 +533,8 @@ module.exports = {
   getAllManageUSerAttendance,
   getSearch,
   getAllApartmentAndShop,
-  createManageUserAutoAttendance
+  createManageUserAutoAttendance,
+  getAllManageUserAutoAttendance
   // paginationManageUserAttendance,
  
 };
