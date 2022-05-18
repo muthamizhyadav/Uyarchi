@@ -451,7 +451,7 @@ const getAllShop = async () =>
     ]);
   };
 
-  const getAllApartmentAndShop = async()=>{ 
+  const getAllApartmentAndShop = async(page)=>{ 
     const street = await Street.aggregate([
       {
         $match: {
@@ -539,18 +539,106 @@ const getAllShop = async () =>
           userName:"$managedata.name"
         },
       },
-      // {
-      //   $skip:10*parseInt(page)
-      // },
-    //  {
-    //     $limit:40
-    //   },
+      {
+        $skip:10*parseInt(page)
+      },
+     {
+        $limit:10
+      },
     ]);
-  // return {
-  //   data:street,
-  //   count:street.length
-  // }
-  return street
+    const count =await Street.aggregate([
+      {
+        $match: {
+          $or:[{AllocationStatus:{$eq:"Allocated"}}, {AllocationStatus:{$eq:"DeAllocated"}}]
+        }
+        
+      },
+      {
+        $lookup:{
+          from: 'wards',
+          localField: 'wardId',
+          foreignField: '_id',
+          as: 'wardData',
+        }
+      },
+      {
+        $unwind:'$wardData'
+      },
+      {
+        $lookup:{
+          from: 'zones',
+          localField: 'zone',
+          foreignField: '_id',
+          as: 'zonesData',
+        }
+      },
+      {
+        $unwind:'$zonesData'
+      },
+      {
+        $lookup:{
+          from: 'manageusers',
+          localField: 'AllocatedUser',
+          foreignField: '_id',
+          as: 'managedata',
+        }
+      },
+      {
+        $unwind:'$managedata'
+      },
+      {
+        $lookup:{
+          from: 'shops',
+          let:{'street':'$_id'},
+          
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$$street", "$Strid"],  // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+            },
+          ],
+          as: 'shopData',
+        }
+      },
+      {
+        $lookup:{
+          from: 'apartments',
+          let:{'street':'$_id'},
+          
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$$street", "$Strid"],  // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+            },
+          ],
+          as: 'apartmentData',
+        }
+      },
+      {
+        $project: {
+          wardName:'$wardData.ward',
+          id:1,
+          zoneName:'$zonesData.zone',
+          zoneId:'$zonesData.zoneCode',
+          street:1,
+          apartMent:'$apartmentData',
+          closed:1,
+          shop:'$shopData',
+          userName:"$managedata.name"
+        },
+      },
+    ]);
+  return {
+    data:street,
+    count:count.length
+  }
+  // return street
 
   }
 

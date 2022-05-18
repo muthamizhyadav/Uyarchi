@@ -54,6 +54,9 @@ const apartmentSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  reason:{
+    type:String,
+  },
 });
 
 
@@ -111,6 +114,9 @@ const shopSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  reason:{
+    type:String,
+  }
 });
 
 // assignSchema.plugin(toJSON);

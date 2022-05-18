@@ -58,6 +58,9 @@ const marketSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  reason:{
+    type:String,
+  }
 });
 const Market = mongoose.model('market', marketSchema);
 const ShopsSchema = mongoose.Schema({
@@ -111,6 +114,9 @@ const ShopsSchema = mongoose.Schema({
   archive: {
     type: Boolean,
     default: false,
+  },
+  reason:{
+    type:String,
   },
 });
 const MarketShops = mongoose.model('marketShops', ShopsSchema);
