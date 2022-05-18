@@ -83,7 +83,7 @@ const getManageBillById = catchAsync(async (req, res) => {
 });
 
 const productDateTimeFilter = catchAsync (async (req,res)=>{
-  const productdate = await productService.productDateTimeFilter(req.params.date, req.params.time);
+  const productdate = await productService.productDateTimeFilter(req.params.date);
   res.send(productdate)
 })
 

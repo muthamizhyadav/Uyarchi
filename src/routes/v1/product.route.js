@@ -10,10 +10,10 @@ router
   .get(productController.getproduct)
   .delete(productController.deleteProduct)
   .put(productController.updateProduct);
-router.route('/shopProducts/getName').get(productController.productAggregationWithShopOrder)
+router.route('/shopProducts/getName').get(productController.productAggregationWithShopOrder);
 router.route('/stocks').post(productController.createStock);
-router.route('/shopList').post(productController.createShopListService)
-router.route('/shopList/all').get(productController.getShopList)
+router.route('/shopList').post(productController.createShopListService);
+router.route('/shopList/all').get(productController.getShopList);
 // router.route('/closeorder').post(productController.getbillingexecutive);
 router.route('/stocks/:stockId').put(productController.updateStockById);
 router.route('/stock/all').get(productController.getAllStock);
@@ -65,5 +65,5 @@ router
   .delete(productController.deleteBillManage);
 router.route('/updateDelivered/:id').put(productController.updatingStatusForDelivered);
 router.route('/pagination/product/:id').get(productController.productPaginationForTrends);
-router.route('/product/filter/:date/:time').get(productController.productDateTimeFilter);
+router.route('/product/filter/:date').get(productController.productDateTimeFilter);
 module.exports = router;

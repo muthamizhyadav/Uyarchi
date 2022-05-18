@@ -100,9 +100,67 @@ const productAggregationWithShopOrder = async()=>{
  }))
 }
 
-const productDateTimeFilter = async (date, time) =>{
-  let value =  "Date : " + date + " Time = " + time
-  return value
+const productDateTimeFilter = async (date) =>{
+//   return Product.aggregate([{
+//       $lookup: {
+//         from: 'productorders',
+//         localField: '_id',
+//         foreignField: 'productid',
+//         as: 'productData',
+//       },
+//     },
+//     {
+//       $unwind: '$productData',
+//   },
+//   {
+//     $project: {
+//       _id: 1,
+//       Orders:"$productData",
+//     },
+//   },
+// ])
+
+return Product.aggregate([
+  // {
+  //   $lookup: {
+  //     from: 'productorders',
+  //     localField: '_id',
+  //     foreignField: 'productid',
+  //     as: 'zoneData',
+  //   },
+  // },
+  {
+    $lookup:{
+      from: 'productorders',
+      let:{'productId':'$_id'},
+      
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $eq: ["$$productId", "$productid"],  // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              $eq: [date, "$date"],  // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+            },
+          },
+        },
+      ],
+      as: 'shopData',
+    }
+  },
+
+  {
+    $project: {
+      // orderData: '$zoneData',
+      shop:'$shopData',
+      productTitle:1,
+      oldstock:1,
+      onlinePrice:1,
+      category:1,
+      salesmanPrice:1,
+      _id: 1,
+    },
+  },
+]);
 }
 
 const createConfirmStock = async (confirmBody) => {
