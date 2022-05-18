@@ -88,7 +88,7 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
     else{
       match=[{ _id: { $ne: null }}]
     }
-
+console.log(match)
     const user = await ManageUser.aggregate([
       {
         $match: {
@@ -140,6 +140,8 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
           twoWheelerUpload:1,
           _id:1,
           preferredDistrict:'$districtsdata.district',
+          active:1,
+          archive:1
   
         },
       },
