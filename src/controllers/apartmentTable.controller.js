@@ -11,7 +11,7 @@ const createapartmentTableService = catchAsync(async (req, res) => {
         //   let path = [];
         //   console.log(req.files)
           req.files.forEach(function (files, index, arr) {
-                apart.photoCapture.push("images/apartment/"+files.filename)
+                apart.photoCapture.push("src/Images/attendance/"+files.filename)
                 // console.log(shop.photoCapture)
             
           });
