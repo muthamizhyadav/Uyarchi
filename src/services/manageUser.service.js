@@ -133,7 +133,7 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
     else if(id =='null'&&districtId =='null'&zoneId !='null'&& wardId =='null'){
        match=[{ preferredZone:{ $eq: zoneId }}]
     }
-    else if(id =='null'&&districtId =='null'&zoneId !='null'&& wardId =='null'){
+    else if(id =='null'&&districtId =='null'&zoneId =='null'&& wardId !='null'){
       match=[{ preferredWard:{ $eq: wardId }}]
     }
     else if(id =='null'&&districtId !='null'&&zoneId !='null'&& wardId != 'null'){
@@ -162,7 +162,6 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
     else{
       match=[{ _id: { $ne: null }}]
     }
-console.log(match)
     const user = await ManageUser.aggregate([
       {
         $match: {
@@ -229,6 +228,7 @@ console.log(match)
      {
         $limit:10
       },
+
     ])
     const count=await ManageUser.aggregate([
       {
@@ -242,6 +242,7 @@ console.log(match)
       data:user,
       count:count.length
     }
+
   }   
   
   const updateManageUserId = async (manageUserId, updateBody) => {

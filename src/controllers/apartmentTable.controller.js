@@ -67,7 +67,7 @@ const getmanageUSerAttendanceAllAutoTable = catchAsync(async (req,res) =>{
 
 
 const getallShopApartment = catchAsync(async (req,res) =>{
-     const shopApart = await apartmentTableService.getAllApartmentAndShop(req.params.page);
+     const shopApart = await apartmentTableService.getAllApartmentAndShop(req.params.id,req.params.districtId,req.params.zoneId,req.params.wardId,req.params.streetId,req.params.status);
      if (!shopApart) {
       throw new ApiError(httpStatus.NOT_FOUND);
     }
@@ -104,8 +104,8 @@ const getApartmentById = catchAsync(async (req, res) => {
   res.send(apart);
 });
 
-const getAllApartment= catchAsync(async (req, res) => {
-    const apart = await apartmentTableService.getAllApartment(req.params);
+const getAllApartmentTable= catchAsync(async (req, res) => {
+    const apart = await apartmentTableService.getAllApartment(req.params.id,req.params.districtId,req.params.zoneId,req.params.wardId,req.params.streetId,req.params.status,req.params.page);
     if (!apart) {
       throw new ApiError(httpStatus.NOT_FOUND);
     }
@@ -186,7 +186,7 @@ module.exports = {
   deleteApartment,
   deleteshop,
   getAllShop,
-  getAllApartment,
+  getAllApartmentTable,
   createManageUserAttendanceService,
   getmanageUSerAttendanceAll,
   shopApartmentAggregation,
