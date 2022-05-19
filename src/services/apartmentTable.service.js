@@ -139,7 +139,7 @@ const apartmentAggregation = async ()=>{
 }
 
 const createManageUserAttendance = async (manageUserAttendanceBody) => {
-  const {Uid} = manageUserAttendanceBody;
+  const { Uid } = manageUserAttendanceBody;
   let ManageUser = await manageUser.findById(Uid);
   let values = {}
   values = {...manageUserAttendanceBody, ...{Uid:ManageUser.id,}}

@@ -11,7 +11,7 @@ const createapartmentTableService = catchAsync(async (req, res) => {
         //   let path = [];
         //   console.log(req.files)
           req.files.forEach(function (files, index, arr) {
-                apart.photoCapture.push("images/apartment/"+files.filename)
+                apart.photoCapture.push("images/"+files.filename)
                 // console.log(shop.photoCapture)
             
           });
@@ -24,7 +24,8 @@ const createapartmentTableService = catchAsync(async (req, res) => {
 });
 
 const createManageUserAttendanceService = catchAsync(async (req, res) => {
-  const Attendance = await apartmentTableService.createManageUserAttendance(req.body);     
+  const Attendance = await apartmentTableService.createManageUserAttendance(req.body); 
+    
   res.status(httpStatus.CREATED).send(Attendance);
   await Attendance.save();
 });

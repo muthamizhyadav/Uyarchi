@@ -83,7 +83,7 @@ const getManageBillById = catchAsync(async (req, res) => {
 });
 
 const productDateTimeFilter = catchAsync (async (req,res)=>{
-  const productdate = await productService.productDateTimeFilter(req.params.date, req.params.time);
+  const productdate = await productService.productDateTimeFilter(req.params.date);
   res.send(productdate)
 })
 
@@ -230,6 +230,11 @@ const updateStockStatusById = catchAsync(async (req, res) => {
   res.send(status);
 });
 
+const aggregationWithProductId = catchAsync (async (req, res)=>{
+  const product = await productService.aggregationWithProductId(req.params.id, req.params.date);
+  res.send(product)
+})
+
 const updateStockById = catchAsync(async (req, res) => {
   const stack = await productService.updateStackById(req.params.stockId, req.body);
   res.send(stack);
@@ -352,6 +357,7 @@ module.exports = {
   updateProduct,
   deleteProduct,
   deleteMainWherehouseLoadingExecuteById,
+  aggregationWithProductId,
   sendStocktoLoadingExecute,
   updatingStatusForDelivered,
   createShopListService,

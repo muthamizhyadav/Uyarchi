@@ -38,7 +38,8 @@ const apartmentRoute = require('./apartmentTable.route')
 const SuperAdmin = require('./superAdmin.route');
 const BusinessUsers = require('./manageBusinessUsers.route')
 const DistrictListRoute = require('./districtList.route');
-const trendsRoute = require('./trends.router')
+const trendsRoute = require('./trends.router');
+const websocket = require ('./websocket.js')
 const router = express.Router();
 
 const defaultRoutes = [
@@ -190,7 +191,9 @@ const defaultRoutes = [
   {
     path:'/trends',
     route:trendsRoute
-  }
+  },
+ { path:"websocket",
+  route:websocket}
 ];
 
 const devRoutes = [

@@ -1,9 +1,9 @@
 const httpStatus = require('http-status');
-const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise, ManageBill, ShopList} = require('../models/product.model');
+const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise, ManageBill, ShopList } = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
 const Supplier = require('../models/supplier.model');
 const ReceivedOrder = require('../models/receivedOrders.model');
-const ShopOrders = require('../models/shopOrder.model')
+const ShopOrders = require('../models/shopOrder.model');
 
 const createProduct = async (productBody) => {
   let { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime, maxBidAomunt, minBidAmount } =
@@ -47,7 +47,6 @@ const getAllShopList = async () => {
   return ShopList.find();
 };
 
-
 const createStock = async (stockbody) => {
   const { supplierId, product, productName } = stockbody;
   let pp = product.map((e) => {
@@ -87,23 +86,98 @@ const getByBillId = async (billId) => {
   return bills;
 };
 
-const productAggregationWithShopOrder = async()=>{
- const products = await Product.find()
- console.log(products.map((e)=>{
-   return e.id
- }))
- const shopOrders = await ShopOrders.find()
- console.log(shopOrders.map((e)=>{
-    return e.product.map((ee)=>{
-      return ee.productid
+const productAggregationWithShopOrder = async () => {
+  const products = await Product.find();
+  console.log(
+    products.map((e) => {
+      return e.id;
     })
- }))
-}
+  );
+  const shopOrders = await ShopOrders.find();
+  console.log(
+    shopOrders.map((e) => {
+      return e.product.map((ee) => {
+        return ee.productid;
+      });
+    })
+  );
+};
 
-const productDateTimeFilter = async (date, time) =>{
-  let value =  "Date : " + date + " Time = " + time
-  return value
-}
+const productDateTimeFilter = async (date) => {
+  return Product.aggregate([
+    {
+      $lookup: {
+        from: 'productorders',
+        let: { 'productIds': '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ['$$productIds', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+          {
+            $match: {
+              $expr: {
+                $eq: [date, "$date"],
+              },
+            },
+          },
+        ],
+        as: 'shopData',
+      },
+    },
+   
+    {
+      $project: {
+        // orderData: '$zoneData',
+        productTitle: 1,
+        oldstock: 1,
+        onlinePrice: 1,
+        category: 1,
+        salesmanPrice: 1,
+        _id: 1,
+        orderdata: '$shopData',
+
+      },
+    },
+  ]);
+};
+
+const aggregationWithProductId = async (id, date) => {
+  return Product.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorders',
+        let: { productId: '$_id' },
+        pipeline: [
+          { $match: { productid: id } },
+          { $match: { date: date } },
+          // { $project: { _id: 1, date: { name: "$name", date: "$date" } } },
+       ],
+        as: 'shopData',
+      },
+    },
+    {
+      $project: {
+        // orderData: '$zoneData',
+        shop: '$shopData',
+        productTitle: 1,
+        oldstock: 1,
+        onlinePrice: 1,
+        category: 1,
+        salesmanPrice: 1,
+        _id: 1,
+      },
+    },
+  ]);
+};
 
 const createConfirmStock = async (confirmBody) => {
   const { stockId } = confirmBody;
@@ -203,15 +277,15 @@ const getStockByLoadingExecute = async () => {
   return Stock.find({ loadingExecute: true, closeOrder: true });
 };
 
-const paginationForTrends = async (id)=>{
+const paginationForTrends = async (id) => {
   return Product.aggregate([
     {
       $sort: { productTitle: 1 },
     },
     { $skip: 5 * id },
     { $limit: 5 },
-  ])
-}
+  ]);
+};
 
 const updateManageBill = async (manageBillId, updatebody) => {
   let manageBill = await getManageBill(manageBillId);
@@ -427,6 +501,7 @@ module.exports = {
   deleteProductById,
   queryProduct,
   getStockStatusDelivered,
+  aggregationWithProductId,
   createShopList,
-  getAllShopList
+  getAllShopList,
 };
