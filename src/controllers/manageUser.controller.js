@@ -8,19 +8,19 @@ const { jwt } = require('../config/config');
 
 const createmanageUserService = catchAsync(async (req, res) => {
   const user = await manageUserService.createManageUser(req.body);
-  if (req.files) {
-    let path = '';
-      path = "images/proofs/"
-      if(req.files.idProofUpload !=null){
-        user.idProofUpload = path+req.files.idProofUpload.map((e)=>{return e.filename});
-      }
-      if(req.files.addressProofUpload !=null){
-        user.addressProofUpload = path+req.files.addressProofUpload.map((e)=>{return e.filename});
-      }
-      if(req.files.twoWheelerUpload !=null){
-        user.twoWheelerUpload = path+req.files.twoWheelerUpload.map((e)=>{return e.filename});
-      }
-  }
+  // if (req.files) {
+  //   let path = '';
+  //     path = "images/proofs/"
+  //     if(req.files.idProofUpload !=null){
+  //       user.idProofUpload = path+req.files.idProofUpload.map((e)=>{return e.filename});
+  //     }
+  //     if(req.files.addressProofUpload !=null){
+  //       user.addressProofUpload = path+req.files.addressProofUpload.map((e)=>{return e.filename});
+  //     }
+  //     if(req.files.twoWheelerUpload !=null){
+  //       user.twoWheelerUpload = path+req.files.twoWheelerUpload.map((e)=>{return e.filename});
+  //     }
+  // }
   res.status(httpStatus.CREATED).send(user);
   await user.save();
 });
