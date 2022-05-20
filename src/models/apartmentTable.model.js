@@ -97,6 +97,9 @@ const shopSchema = mongoose.Schema({
   status:{
     type:String,
   },
+  reason:{
+    type:String,
+  },
   date:{
     type:String,
   },
