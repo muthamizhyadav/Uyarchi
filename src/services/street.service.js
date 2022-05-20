@@ -133,7 +133,7 @@ const getWardByStreet = async (wardId) => {
   const ress = await Street.aggregate([
     {
       $match: {
-        $and: [{ wardId: { $eq: wardId }, AllocationStatus: {$eq:"DeAllocated"} }],
+        $and: [{ wardId: { $eq: wardId }, AllocationStatus: {$ne:"DeAllocated"} }],
       },
     },
   ]);
