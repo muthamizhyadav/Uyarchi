@@ -308,6 +308,14 @@ const deleteBillRaise = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const productDealingWithsupplier = catchAsync (async (req, res)=>{
+  const products = await productService.matchproductWithSupplier(req.params.id)
+  if(!products){
+    throw new ApiError(httpStatus.NOT_FOUND, "Products Not Found")
+  }
+  res.send(products)
+})
+
 const getbillingexecutive = catchAsync(async (req, res) => {
   const stock = await productService.getbillingexecutives();
   res.send(stock);
@@ -348,6 +356,7 @@ module.exports = {
   getMailWherehoustLoadingExecuteById,
   getProducts,
   getStockbyBillId,
+  productDealingWithsupplier,
   updateArrivedById,
   updateStockStatusById,
   updateMainWherehouseLoadingExecuteById,

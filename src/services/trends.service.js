@@ -6,11 +6,18 @@ const createTrends = async (trendsbody) => {
   return Trends.create(trendsbody);
 };
 
+
+const trendsPagination = async (id) =>{
+  return Trends.aggregate([{
+      $sort: { Uid: 1 },
+  },
+  { $skip: 5 * id },
+  { $limit: 5 },])
+}
+
 const getAllTrends = async () => {
   return Trends.find({active : true});
 };
-
-
 
 const getTrendsById = async (trendsId) => {
   const trends = await Trends.findById(trendsId)
@@ -41,6 +48,7 @@ const deleteTrendsById = async (trendsId) => {
 
 module.exports={
     createTrends,
+    trendsPagination,
     getAllTrends,
     getTrendsById,
     updateTrendsById,

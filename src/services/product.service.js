@@ -179,6 +179,12 @@ const aggregationWithProductId = async (id, date) => {
   ]);
 };
 
+const  matchproductWithSupplier = async(id)=>{
+  
+
+  return 
+}
+
 const createConfirmStock = async (confirmBody) => {
   const { stockId } = confirmBody;
   const stocks = await Stock.findById(stockId);
@@ -501,6 +507,7 @@ module.exports = {
   deleteProductById,
   queryProduct,
   getStockStatusDelivered,
+  matchproductWithSupplier,
   aggregationWithProductId,
   createShopList,
   getAllShopList,
