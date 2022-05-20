@@ -68,20 +68,20 @@ const updatemanageUserService = catchAsync(async (req, res) => {
   // let filenameempty1="";
   // let filenameempty2 = "";
   // let inter = pro
-  if (req.files) {
-    let path = '';
-      path = "images/proofs/"
-      if(req.files.idProofUpload !=null){
-        pro.idProofUpload = path+req.files.idProofUpload.map((e)=>{return e.filename});
-      }
-      if(req.files.addressProofUpload !=null){
-        pro.addressProofUpload = path+req.files.addressProofUpload.map((e)=>{return e.filename});
-      }
-      if(req.files.twoWheelerUpload !=null){
-        pro.twoWheelerUpload = path+req.files.twoWheelerUpload.map((e)=>{return e.filename});
-      }
+  // if (req.files) {
+  //   let path = '';
+  //     path = "images/proofs/"
+  //     if(req.files.idProofUpload !=null){
+  //       pro.idProofUpload = path+req.files.idProofUpload.map((e)=>{return e.filename});
+  //     }
+  //     if(req.files.addressProofUpload !=null){
+  //       pro.addressProofUpload = path+req.files.addressProofUpload.map((e)=>{return e.filename});
+  //     }
+  //     if(req.files.twoWheelerUpload !=null){
+  //       pro.twoWheelerUpload = path+req.files.twoWheelerUpload.map((e)=>{return e.filename});
+  //     }
     
-  }
+  // }
   // if (req.files) {
   //     path = "images/proofs/"
   //     console.log(req.files)

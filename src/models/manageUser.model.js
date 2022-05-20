@@ -46,18 +46,18 @@ const manageUserSchema = mongoose.Schema({
   idProofNo:{
     type:String,
   },
-  idProofUpload:{
-    type:String,
-  },
+  // idProofUpload:{
+  //   type:String,
+  // },
   addressProofNo:{
     type:String,
   },
-  addressProofUpload:{
-    type:String,
-  },
-  twoWheelerUpload:{
-    type:String,
-  },
+  // addressProofUpload:{
+  //   type:String,
+  // },
+  // twoWheelerUpload:{
+  //   type:String,
+  // },
   twoWheeler:{
     type:String,
     enum:["Yes","No"],
