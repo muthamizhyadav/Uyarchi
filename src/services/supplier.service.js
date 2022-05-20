@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const { Supplier } = require('../models');
-
+const { Product } = require('../models/product.model')
 const createSupplier = async (supplierBody) => {
   return Supplier.create(supplierBody);
 };
@@ -33,9 +33,11 @@ const updateDisableSupplierById = async (id) => {
 
 const getSupplierById = async (id) => {
   const supplier = Supplier.findById(id);
+  console.log(supplier.productDealingWith)
   if(!supplier || supplier.active === false){
     throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not Found")
   }
+
   return supplier;
 };
 
