@@ -31,6 +31,36 @@ const updateDisableSupplierById = async (id) => {
   return supplier;
 };
 
+const productDealingWithsupplier = async(id) =>{
+  return Supplier.aggregate( [
+    { $match: {
+          productDealingWith: {
+            $eq: id
+          }
+        }
+     },
+    {    
+      $lookup:
+      {
+          from: "products",
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$_id", id],  // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+            },
+          ],
+          as: "products"
+      }
+  },
+  {
+    $unwind:"$products"
+  }
+])
+}
+
 const getSupplierById = async (id) => {
   let values = [];
   let supplier = await Supplier.findById(id);
@@ -77,6 +107,7 @@ module.exports = {
   createSupplier,
   updateSupplierById,
   getAllSupplier,
+  productDealingWithsupplier,
   updateDisableSupplierById,
   getSupplierById,
   getDisableSupplierById,

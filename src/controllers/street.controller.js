@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
+const Street = require ('../models/street.model.js')
 const catchAsync = require('../utils/catchAsync');
 const StreetService = require('../services/street.service');
 
@@ -43,8 +44,17 @@ const getStreetByWard = catchAsync(async (req, res)=>{
 });
 
 const streetAllocation = catchAsync(async(req,res)=>{
-  const streets = await StreetService.streetAllocation(req.body)
-  res.send(streets)
+  const { arr, userId } = req.body
+  arr.forEach(async(e)=>{
+    let  streetId = e
+    const streets = await Street.findById(streetId)
+    if(streets.AllocationStatus !== "Allocated"){
+      await Street.updateOne({_id:streetId}, {AllocatedUser:userId, AllocationStatus:"Allocated"}, {new:true})
+      res.status(httpStatus.CREATED).send("Allocated Successfully")
+    }else{
+      res.status(httpStatus.UNAUTHORIZED).send("Already Allocated")
+    }
+  })
 })
 
 const streetDeAllocation = catchAsync(async (req, res)=>{

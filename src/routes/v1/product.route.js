@@ -66,5 +66,6 @@ router
 router.route('/updateDelivered/:id').put(productController.updatingStatusForDelivered);
 router.route('/pagination/product/:id').get(productController.productPaginationForTrends);
 router.route('/product/filter/:date').get(productController.productDateTimeFilter);
-router.route('/prod/:id/:date').get(productController.aggregationWithProductId)
+router.route('/prod/:id/:date').get(productController.aggregationWithProductId);
+router.route('/dealProduct/supplier/:id').get(productController.productDealingWithsupplier);
 module.exports = router;

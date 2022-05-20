@@ -22,6 +22,11 @@ const getTrendsById = catchAsync(async (req, res) => {
   res.send(trends);
 });
 
+const trendsPagination = catchAsync (async (req, res)=>{
+  const trends = await trendsService.trendsPagination(req.params.id)
+  res.send(trends)
+})
+
 const updateTrendsById = catchAsync(async (req, res) => {
   const trends = await trendsService.updateTrendsById(req.params.trendsId, req.body);
   if(!trends || trends.active == false){
@@ -39,6 +44,7 @@ module.exports = {
     createTrends,
     getAllTrends,
     getTrendsById,
+    trendsPagination,
     updateTrendsById,
     deleteTrendsById,
 };

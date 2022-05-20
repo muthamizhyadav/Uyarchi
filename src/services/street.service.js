@@ -23,12 +23,14 @@ const getStreetById = async (id) => {
 
 const  streetAllocation = async(allocationbody)=>{
   const { userId, arr } = allocationbody
-  arr.forEach(async(e)=>{
-    let  streetId = e
-    await Streets.updateOne({_id:streetId}, {AllocatedUser:userId, AllocationStatus:"Allocated"}, {new:true})
-  })
-  const users = await ManageUser.findById(userId)
-  return `Street Allocated To : ${users.name}`
+  // arr.forEach(async(e)=>{
+  //   let  streetId = e
+  //   const streets = await Street.findById(streetId)
+  //   if(streets.AllocationStatus === "Allocated"){
+  //     throw new ApiError(httpStatus.NOT_FOUND, "Street Already Allocated")
+  //   }
+  //    await Streets.updateOne({_id:streetId}, {AllocatedUser:userId, AllocationStatus:"Allocated"}, {new:true})
+  // })
 }
 
 const getAllocatedStreeOnly = async ()=>{
