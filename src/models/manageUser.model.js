@@ -21,6 +21,7 @@ const manageUserSchema = mongoose.Schema({
   },
   mobileNumber:{
     type:Number,
+    unique: true,
   },
   mobileNumber1:{
       type:Number,

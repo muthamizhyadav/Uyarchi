@@ -39,6 +39,7 @@ const getAllManageUserAutoAttendance = async () => {
   };
 
 
+
   const getAllManageUserAutoAttendanceTable = async (id,date,page) => {
     let match;
     if(id !='null'&&date !='null'){
@@ -644,7 +645,7 @@ const getAllShop = async () =>
   const getAllApartmentAndShop = async(id,districtId,zoneId,wardId,streetId,status)=>{ 
     let mat ;
     if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId != 'null'&& status !='null'){
-      mat=[{'manageusersdata._id':{ $eq: id }},{ 'managedata.preferredDistrict': { $eq: districtId }},{ 'managedata.preferredZone':{$eq:zoneId}},{ 'managedata.preferredWard':{$eq:wardId}},{ _id:{$eq:streetId}},{status:{$eq:status}}]
+      mat=[{'manageusersdata._id':{ $eq: id }},{'manageusersdata.preferredDistrict':{ $eq: districtId }},{'manageusersdata.preferredZone':{$eq:zoneId}},{'manageusersdata.preferredWard':{$eq:wardId}},{ _id:{$eq:streetId}},{status:{$eq:status}}]
    }
    else if(id !='null'&&districtId =='null'&&zoneId =='null'&&wardId =='null'&&streetId == 'null'&& status =='null'){
     mat = [{ 'manageusersdata._id': { $eq: id }}]
@@ -674,7 +675,7 @@ const getAllShop = async () =>
      mat=[{  'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]
    }
    else if(id !='null'&&districtId !='null'&&zoneId !='null'&& wardId!='null'&&streetId != 'null'&& status =='null'){
-    mat=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{ _id:{ $eq: streetId}}]
+    mat=[{ 'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{ _id:{ $eq: streetId}}]
    
    }else if(id !='null'&&districtId =='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status =='null'){
      mat=[{  'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]

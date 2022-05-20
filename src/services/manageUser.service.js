@@ -80,7 +80,9 @@ const createManageUser = async (manageUserBody) => {
           BasetwoWheelerUpload:1,
           BaseaddressProofUpload:1,
           BaseidProofUpload:1,
-          preferredWardId:'$wardsdata._id'
+          preferredWardId:'$wardsdata._id',
+          preferredZoneId:'$zonesdata._id',
+          preferredDistrictId:'$districtsdata._id',
         },
       },
 
@@ -117,6 +119,11 @@ const createManageUser = async (manageUserBody) => {
         throw new ApiError(httpStatus.NOT_FOUND, 'Manage not found');
     }
     return Manage;
+}
+
+const ManageUserAllenable = async ()=>{
+  const Manage = await ManageUser.find()
+  return Manage;
 }
 
 const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
@@ -223,13 +230,14 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
         },
       },
       {
-        $skip:10*parseInt(page)
+        $skip:10*page
       },
      {
         $limit:10
       },
 
     ])
+    console.log(user.length)
     const count=await ManageUser.aggregate([
       {
         $match: {
@@ -271,5 +279,6 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
       deleteManageUserById,
       loginManageUserEmailAndPassword,
       manageUserAllTable,
+      ManageUserAllenable
   };
   

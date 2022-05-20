@@ -53,6 +53,14 @@ const getmanageUserServiceAll = catchAsync(async (req, res) => {
     res.send(manage);
   });
 
+  const getmanageUserServiceAllenable = catchAsync(async (req, res) => {
+    const manage = await manageUserService.ManageUserAllenable(req.params);
+    if (!manage) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'manageUser Not Available ');
+    }
+    res.send(manage);
+  });
+
 const getAllManageUserTable = catchAsync(async(req, res) =>{
   const manage = await manageUserService.manageUserAllTable(req.params.id,req.params.districtId,req.params.zoneId,req.params.wardId,req.params.page)
   if(!manage){
@@ -117,4 +125,5 @@ module.exports = {
   deletemanageUserService,
   login,
   getAllManageUserTable,
+  getmanageUserServiceAllenable
 };
