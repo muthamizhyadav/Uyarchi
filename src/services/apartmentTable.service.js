@@ -345,6 +345,7 @@ const getAllApartment = async (id,districtId,zoneId,wardId,streetId,status,page)
 else{
    match=[{ _id: { $ne: null }}]
  }
+ console.log(match)
   const apart = await Apartment.aggregate([
     {
       $lookup:{
