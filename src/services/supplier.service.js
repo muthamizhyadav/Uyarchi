@@ -32,13 +32,17 @@ const updateDisableSupplierById = async (id) => {
 };
 
 const getSupplierById = async (id) => {
-  const supplier = Supplier.findById(id);
-  console.log(supplier.productDealingWith)
-  if(!supplier || supplier.active === false){
-    throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not Found")
-  }
-
-  return supplier;
+  let values = [];
+  let supplier = await Supplier.findById(id);
+    for(let i=0; i<supplier.productDealingWith.length; i++){
+        let ff = await Product.findById(supplier.productDealingWith[i]);
+      values.push(ff)
+    }
+  console.log(values)
+  return {
+    supplier:supplier,
+    products:values
+  };
 };
 
 const updateSupplierById = async (supplierId, updateBody) => {
