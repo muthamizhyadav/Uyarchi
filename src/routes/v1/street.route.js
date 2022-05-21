@@ -11,6 +11,7 @@ router
   .delete(streetController.deleteStreet);
 
 router.route('/streets/:AllocatedUser').get(streetController.getaggregationByUserId)
+router.route('/streets/DeAllocatedUser/:AllocatedUser').get(streetController.getDeAllocationaggregationByUserId)
 router.route('/streetByWard/:wardId').get(streetController.getStreetByWardId);
 router.route('/street/Ward/:wardId').get(streetController.getStreetByWard)
 router.route('/page/:id').get(streetController.streetPagination);
