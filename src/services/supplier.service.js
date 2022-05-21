@@ -16,7 +16,7 @@ const getAllDisableSupplier = async () =>{
 
 const getDisableSupplierById = async (id) => {
   const supplier = Supplier.findById(id);
-  if(!supplier || supplier.active === true){
+  if(!supplier || supplier.active === false){
     throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not  Found OR Suplier Not Disabled")
   }
   return supplier;
@@ -27,7 +27,7 @@ const updateDisableSupplierById = async (id) => {
   if (!supplier) {
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier not found');
   }
-  supplier = await Supplier.findByIdAndUpdate({ _id:id }, {active: true, archive : false}, { new: true });
+  supplier = await Supplier.findByIdAndUpdate({ _id:id }, {active: false, archive : true}, { new: true });
   return supplier;
 };
 
