@@ -47,7 +47,7 @@ const getaggregationByUserId = async (AllocatedUser)=>{
   return await Streets.aggregate([
     {
       $match: {
-        $and: [{ AllocatedUser: { $eq: AllocatedUser }, AllocationStatus:{$ne:"Allocated"} }],
+        $and: [{ AllocatedUser: { $eq: AllocatedUser }, AllocationStatus:{$ne:"DeAllocated"} }],
       },
     },
     {
