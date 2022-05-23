@@ -562,7 +562,7 @@ const getAllShop = async (id,districtId,zoneId,wardId,streetId,status,page) => {
     match=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{$eq:zoneId}},{ 'manageusersdata.preferredWard':{$eq:wardId}},{ Strid:{$eq:streetId}},{status:{$eq:status}}]
  }
  else if(id !='null'&&districtId =='null'&&zoneId =='null'&&wardId =='null'&&streetId == 'null'&& status =='null'){
-    match=[{ _id: { $eq: id }}]
+    match=[{ Uid: { $eq: id }}]
  }
  else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId =='null'&&streetId == 'null'&& status =='null'){
     match=[{ 'manageusersdata.preferredDistrict': { $eq: districtId }}]
