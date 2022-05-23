@@ -438,7 +438,8 @@ else{
         date:1,
         time:1,
         created:1,
-        streetStatus:'$streetsdata.closed'
+        streetStatus:'$streetsdata.closed',
+        reason:1
 
       },
     },
@@ -556,71 +557,150 @@ else{
 };
 
 
-const getAllShop = async () => 
-{
-    return Shop.aggregate([
+const getAllShop = async (id,districtId,zoneId,wardId,streetId,status,page) => {
+  if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId != 'null'&& status !='null'){
+    match=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{$eq:zoneId}},{ 'manageusersdata.preferredWard':{$eq:wardId}},{ Strid:{$eq:streetId}},{status:{$eq:status}}]
+ }
+ else if(id !='null'&&districtId =='null'&&zoneId =='null'&&wardId =='null'&&streetId == 'null'&& status =='null'){
+    match=[{ _id: { $eq: id }}]
+ }
+ else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId =='null'&&streetId == 'null'&& status =='null'){
+    match=[{ 'manageusersdata.preferredDistrict': { $eq: districtId }}]
+ }
+ else if(id =='null'&&districtId =='null'&zoneId !='null'&& wardId =='null'&&streetId == 'null'&& status =='null'){
+    match=[{ 'manageusersdata.preferredZone':{ $eq: zoneId }}]
+ }
+ else if(id =='null'&&districtId =='null'&zoneId =='null'&& wardId !='null'&&streetId == 'null'&& status =='null'){
+   match=[{ 'manageusersdata.preferredWard':{ $eq: wardId }}]
+ }
+ else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId == 'null'&&streetId != 'null'&& status =='null'){
+    match=[{ Strid:{ $eq: streetId}}]
+ }
+ else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
+    match=[{ status:{ $eq: status}}]
+ }
+ else if(id !='null'&&districtId !='null'&&zoneId =='null'&&wardId == 'null'&&streetId == 'null'&& status =='null'){
+    match=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }}]
+ }
+ else if(id !='null'&&districtId !='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status =='null'){
+   match=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]
+ }
+ else if(id !='null'&&districtId !='null'&&zoneId !='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
+   match=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]
+ }
+ else if(id !='null'&&districtId !='null'&&zoneId !='null'&& wardId!='null'&&streetId != 'null'&& status =='null'){
+  match=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{ Strid:{ $eq: streetId}}]
+ 
+ }else if(id !='null'&&districtId =='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status =='null'){
+   match=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]
+ }else if(id !='null'&&districtId =='null'&&zoneId =='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
+   match=[{ Uid: { $eq: id }},{'manageusersdata.preferredWard':{ $eq: wardId}}]
+ }else if(id !='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId != 'null'&& status =='null'){
+  match=[{ Uid: { $eq: id }},{ Strid:{ $eq: streetId}}]
+}else if(id !='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
+  match=[{ Uid: { $eq: id }},{ status:{ $eq: status}}]
+}else if(id =='null'&&districtId !='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status =='null'){
+  match=[{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]
+}else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
+  match=[{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]
+}else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId=='null'&&streetId != 'null'&& status =='null'){
+  match=[{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ Strid:{ $eq: streetId}}]
+}else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
+  match=[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ status:{ $eq: status}}]
+}else if(id !='null'&&districtId=='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status =='null'){
+  match=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]
+}else if(id !='null'&&districtId=='null'&&zoneId =='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
+  match=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]
+}else if(id !='null'&&districtId=='null'&&zoneId =='null'&& wardId=='null'&&streetId != 'null'&& status =='null'){
+  match=[{ Uid: { $eq: id }},{ Strid:{ $eq: streetId}}]
+}else if(id !='null'&&districtId=='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
+  match=[{ Uid: { $eq: id }},{ status:{ $eq: status}}]
+}else if(id =='null'&&districtId=='null'&&zoneId !='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
+  match=[{ 'manageusersdata.preferredZone': { $eq: zoneId }},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]
+}else if(id =='null'&&districtId=='null'&&zoneId !='null'&& wardId=='null'&&streetId != 'null'&& status =='null'){
+  match=[{ 'manageusersdata.preferredZone': { $eq: zoneId }},{ Strid:{ $eq: streetId}}]
+}else if(id =='null'&&districtId=='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
+  match=[{ 'manageusersdata.preferredZone': { $eq: zoneId }},{ status:{ $eq: status}}]
+}else if(id =='null'&&districtId=='null'&&zoneId =='null'&& wardId!='null'&&streetId != 'null'&& status =='null'){
+  match=[{ 'manageusersdata.preferredWard': { $eq: wardId }},{ streetId:{ $eq: streetId}}]
+}else if(id =='null'&&districtId=='null'&&zoneId =='null'&& wardId!='null'&&streetId == 'null'&& status !='null'){
+  match=[{ 'manageusersdata.preferredWard': { $eq: wardId }},{ status:{ $eq: status}}]
+}else if(id =='null'&&districtId=='null'&&zoneId =='null'&& wardId=='null'&&streetId != 'null'&& status !='null'){
+  match=[{ streetId: { $eq: streetId }},{ status:{ $eq: status}}]
+}
+else{
+   match=[{ _id: { $ne: null }}]
+ }
+ console.log(match)
+  const shop = await Shop.aggregate([
+    {
+      $lookup:{
+        from: 'manageusers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'manageusersdata',
+      }
+
+    },
+    {
+      $unwind:'$manageusersdata'
+    },
+    {
+      $lookup:{
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplistsdata',
+      }
+
+    },
+    {
+      $unwind:'$shoplistsdata'
+    },
+    {
+      $lookup:{
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streetsdata',
+      }
+    },
+    {
+      $unwind:'$streetsdata'
+    },
       {
-        $lookup:{
-          from: 'manageusers',
-          localField: 'Uid',
-          foreignField: '_id',
-          as: 'manageusersdata',
-        }
-  
+      $lookup:{
+        from: 'zones',
+        localField: 'manageusersdata.preferredZone',
+        foreignField: '_id',
+        as: 'zonesData',
+      }
+    },
+    {
+      $unwind:'$zonesData'
+    },
+    {
+      $lookup:{
+        from: 'wards',
+        localField: 'manageusersdata.preferredWard',
+        foreignField: '_id',
+        as: 'wardsData',
+      }
+    },
+    {
+      $unwind:'$wardsData'
+    },
+    {
+      $match: {
+        $and: match,
       },
-      {
-        $unwind:'$manageusersdata'
-      },
-      {
-        $lookup:{
-          from: 'streets',
-          localField: 'Strid',
-          foreignField: '_id',
-          as: 'streetsdata',
-        }
-      },
-      {
-        $unwind:'$streetsdata'
-      },
-      {
-        $lookup:{
-          from: 'zones',
-          localField: 'manageusersdata.preferredZone',
-          foreignField: '_id',
-          as: 'zonesData',
-        }
-      },
-      {
-        $unwind:'$zonesData'
-      },
-      {
-        $lookup:{
-          from: 'shoplists',
-          localField: 'SType',
-          foreignField: '_id',
-          as: 'shoplistsdata',
-        }
-      },
-      {
-        $unwind:'$shoplistsdata'
-      },
-      {
-        $lookup:{
-          from: 'wards',
-          localField: 'manageusersdata.preferredWard',
-          foreignField: '_id',
-          as: 'wardsData',
-        }
-      },
-      {
-        $unwind:'$wardsData'
-      },
+    },
       {
         $project: {
           userName:'$manageusersdata.name',
           streetName:'$streetsdata.street',
           mobileNumber:"$manageusersdata.mobileNumber",
-          id:1,
+          _id:1,
           Uid:1,
           photoCapture:1,
           SName:1,
@@ -636,11 +716,114 @@ const getAllShop = async () =>
           date:1,
           time:1,
           created:1,
-          streetStatus:'$streetsdata.closed'
+          streetStatus:'$streetsdata.closed',
+          reason:1
   
         },
       },
+      {
+        $skip:10*page
+      },
+     {
+        $limit:10
+      },
     ]);
+
+    const count = await Shop.aggregate([
+      {
+        $lookup:{
+          from: 'manageusers',
+          localField: 'Uid',
+          foreignField: '_id',
+          as: 'manageusersdata',
+        }
+  
+      },
+      {
+        $unwind:'$manageusersdata'
+      },
+      {
+        $lookup:{
+          from: 'shoplists',
+          localField: 'SType',
+          foreignField: '_id',
+          as: 'shoplistsdata',
+        }
+  
+      },
+      {
+        $unwind:'$shoplistsdata'
+      },
+      {
+        $lookup:{
+          from: 'streets',
+          localField: 'Strid',
+          foreignField: '_id',
+          as: 'streetsdata',
+        }
+      },
+      {
+        $unwind:'$streetsdata'
+      },
+        {
+        $lookup:{
+          from: 'zones',
+          localField: 'manageusersdata.preferredZone',
+          foreignField: '_id',
+          as: 'zonesData',
+        }
+      },
+      {
+        $unwind:'$zonesData'
+      },
+      {
+        $lookup:{
+          from: 'wards',
+          localField: 'manageusersdata.preferredWard',
+          foreignField: '_id',
+          as: 'wardsData',
+        }
+      },
+      {
+        $unwind:'$wardsData'
+      },
+      {
+        $match: {
+          $and: match,
+        },
+      },
+      {
+        $project: {
+          userName:'$manageusersdata.name',
+          streetName:'$streetsdata.street',
+          mobileNumber:"$manageusersdata.mobileNumber",
+          _id:1,
+          Uid:1,
+          photoCapture:1,
+          SName:1,
+          SType:'$shoplistsdata.shopList',
+          Slat:1,
+          Slong:1,
+          baseImage:1,
+          SOwner:1,
+          SCont1:1,
+          zoneName:"$zonesData.zone",
+          wardName:"$wardsData.ward",
+          status:1,
+          date:1,
+          time:1,
+          created:1,
+          streetStatus:'$streetsdata.closed',
+          reason:1
+  
+        },
+      },
+
+ ])
+    return {
+      data:shop,
+      count:count.length
+    }
   };
 
   const getAllApartmentAndShop = async(id,districtId,zoneId,wardId,streetId,status)=>{ 
@@ -798,6 +981,11 @@ const getAllShop = async () =>
           $and: mat,
          }
         },
+        // {
+        //   $match: {
+        //     $and: [{'shopData':{$type: 'array', $ne: []}},{'apartmentData':{$type: 'array', $ne: []}}],
+        //    }
+        //   },
       {
         $project: {
           wardName:'$wardData.ward',
@@ -898,6 +1086,11 @@ const getAllShop = async () =>
           $and: mat,
          }
         },
+        // {
+        //   $match: {
+        //     $and: [{'shopData':{ $ne:null}},{'apartmentData':{ $ne:null}}],
+        //    }
+        //   },
       {
         $project: {
           wardName:'$wardData.ward',

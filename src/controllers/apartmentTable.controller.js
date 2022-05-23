@@ -114,7 +114,7 @@ const getAllApartmentTable= catchAsync(async (req, res) => {
   });
 
   const getAllShop= catchAsync(async (req, res) => {
-    const shop = await apartmentTableService.getAllShop(req.params);
+    const shop = await apartmentTableService.getAllShop(req.params.id,req.params.districtId,req.params.zoneId,req.params.wardId,req.params.streetId,req.params.status,req.params.page);
     if (!shop) {
       throw new ApiError(httpStatus.NOT_FOUND);
     }

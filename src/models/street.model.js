@@ -48,6 +48,15 @@ const streetSchema = mongoose.Schema({
   closed:{
     type:String,
   },
+  reason:{
+    type:String,
+  },
+  status:{
+    type:String,
+  },
+  date:{
+    type:String,
+  }
 });
 streetSchema.plugin(toJSON);
 streetSchema.plugin(paginate);
