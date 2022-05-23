@@ -15,7 +15,7 @@ router.route('/table/:id/:districtId/:zoneId/:wardId/:streetId/:status/:page').g
 router
   .route('/shop')
   .post(shopImage.array('photoCapture'), apartmentController.createshopTableService)
-  .get(apartmentController.getAllShop);
+router.route('/allShop/table/:id/:districtId/:zoneId/:wardId/:streetId/:status/:page').get(apartmentController.getAllShop)
 router.route('/manageUserAttendance').post(apartmentController.createManageUserAttendanceService);
 router.route('/shopAndApartment/same/:id/:districtId/:zoneId/:wardId/:streetId/:status').get(apartmentController.getallShopApartment)
 // router.route('/getAllAttendance').get(validate(userValidation.getUsersAttendance), apartmentController.getManageUserAttendance);
