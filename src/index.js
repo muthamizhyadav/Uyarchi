@@ -5,8 +5,8 @@ const logger = require('./config/logger');
 let server;
 const express = require('express');
 const init = express();
-
-mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
+const MONGODB_URL = "mongodb+srv://uyarchi:dev123@uyarchi.8dt00.mongodb.net/UyarchiDev?retryWrites=true&w=majority"
+mongoose.connect(MONGODB_URL).then(() => {
   logger.info('Connected to MongoDB');
   server = app.listen(config.port, () => {
     logger.info(`Listening to port ${config.port}`);

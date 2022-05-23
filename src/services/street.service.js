@@ -47,7 +47,7 @@ const getaggregationByUserId = async (AllocatedUser)=>{
   return await Streets.aggregate([
     {
       $match: {
-        $and: [{ AllocatedUser: { $eq: AllocatedUser }, AllocationStatus:{$ne:"Allocated"} }],
+        $and: [{ AllocatedUser: { $eq: AllocatedUser }, AllocationStatus:{$ne:"DeAllocated"} }],
       },
     },
     {
@@ -121,14 +121,91 @@ const getaggregationByUserId = async (AllocatedUser)=>{
   ]);
 }
 
+const getDeAllocationaggregationByUserId = async (AllocatedUser)=>{
+  // return await Streets.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [{ AllocatedUser: { $eq: AllocatedUser }, AllocationStatus:{$eq:"DeAllocated"} }],
+  //     },
+  //   },
+  //   {
+  //     $lookup:{
+  //       from: 'wards',
+  //       localField: 'wardId',
+  //       foreignField: '_id',
+  //       as: 'wardData',
+  //     }
+  //   },
+  //   {
+  //     $unwind:'$wardData'
+  //   },
+  //   {
+  //     $lookup:{
+  //       from: 'zones',
+  //       localField: 'zone',
+  //       foreignField: '_id',
+  //       as: 'zonesData',
+  //     }
+  //   },
+  //   {
+  //     $unwind:'$zonesData'
+  //   },
+  //   {
+  //     $lookup:{
+  //       from: 'shops',
+  //       let:{'street':'$_id'},
+        
+  //       pipeline: [
+  //         {
+  //           $match: {
+  //             $expr: {
+  //               $eq: ["$$street", "$Strid"],  // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+  //             },
+  //           },
+  //         },
+  //       ],
+  //       as: 'shopData',
+  //     }
+  //   },
+  //   {
+  //     $lookup:{
+  //       from: 'apartments',
+  //       let:{'street':'$_id'},
+        
+  //       pipeline: [
+  //         {
+  //           $match: {
+  //             $expr: {
+  //               $eq: ["$$street", "$Strid"],  // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+  //             },
+  //           },
+  //         },
+  //       ],
+  //       as: 'apartmentData',
+  //     }
+  //   },
+  //   {
+  //     $project: {
+  //       wardName:'$wardData.ward',
+  //       id:1,
+  //       zoneName:'$zonesData.zone',
+  //       street:1,
+  //       apartMent:'$apartmentData',
+  //       closed:1,
+  //       shop:'$shopData'
+  //     },
+  //   },
+  // ]);
+  console.log(AllocatedUser)
+}
+
 const  streetDeAllocation = async(allocationbody)=>{
   const { userId, arr } = allocationbody
   arr.forEach(async(e)=>{
     let  streetId = e
     await Streets.updateOne({_id:streetId}, {DeAllocatedUser:userId, AllocationStatus:"DeAllocated"}, {new:true})
   })
-  const users = await ManageUser.findById(userId)
-  return `Street DeAllocated To : ${users.name}`
+  return `Street DeAllocated SuccessFully`
 }
 
 const getWardByStreet = async (wardId) => {
@@ -303,6 +380,7 @@ module.exports = {
   getStreetById,
   getAllStreet,
   streetPagination,
+  getDeAllocationaggregationByUserId,
   getWardByStreet,
   getAllocatedStreeOnly,
   getAllDeAllocatedStreetOnly,

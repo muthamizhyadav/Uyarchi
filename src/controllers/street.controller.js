@@ -80,6 +80,11 @@ const getaggregationByUserId = catchAsync (async (req,res)=>{
   res.send(street)
 })
 
+const getDeAllocationaggregationByUserId = catchAsync (async (req,res)=>{
+  const street = await StreetService.getDeAllocationaggregationByUserId(req.params.AllocatedUser);
+  res.send(street)
+})
+
 const updateStreet = catchAsync(async (req, res) => {
   const street = await StreetService.updateStreetById(req.params.streetId, req.body);
   res.send(street);
@@ -98,6 +103,7 @@ module.exports = {
   streetAllocation,
   streetDeAllocation,
   getaggregationByUserId,
+  getDeAllocationaggregationByUserId,
   getStreetByWardId,
   streetPagination,
   getAllStreet,

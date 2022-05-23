@@ -5,6 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const manageUserService = require('../services/manageUser.service');
 const {tokenService} = require('../services');
 const { jwt } = require('../config/config');
+const { NOT_FOUND } = require('http-status');
 
 const createmanageUserService = catchAsync(async (req, res) => {
   const user = await manageUserService.createManageUser(req.body);
@@ -56,7 +57,7 @@ const getmanageUserServiceAll = catchAsync(async (req, res) => {
   const getmanageUserServiceAllenable = catchAsync(async (req, res) => {
     const manage = await manageUserService.ManageUserAllenable(req.params);
     if (!manage) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'manageUser Not Available ');
+      res.status(httpStatus.NOT_FOUND)
     }
     res.send(manage);
   });
