@@ -53,6 +53,9 @@ const streetSchema = mongoose.Schema({
   },
   status:{
     type:String,
+  },
+  date:{
+    type:String,
   }
 });
 streetSchema.plugin(toJSON);
