@@ -30,16 +30,17 @@ const expensesRoute = require('./expenses.route');
 const videoRecorder = require('./video.record');
 const setSalesPriceRoute = require('./setSalesPriceRoute');
 const shopOrderRoute = require('./shopOrder.route');
-const manageUserRoute = require('./manageUser.route')
-const adminRegistrationRoute = require('./adminRegistration.route')
-const manageUser = require('./manageUser.route')
-const marketRoute = require('./market.route')
-const apartmentRoute = require('./apartmentTable.route')
+const manageUserRoute = require('./manageUser.route');
+const adminRegistrationRoute = require('./adminRegistration.route');
+const manageUser = require('./manageUser.route');
+const marketRoute = require('./market.route');
+const apartmentRoute = require('./apartmentTable.route');
 const SuperAdmin = require('./superAdmin.route');
-const BusinessUsers = require('./manageBusinessUsers.route')
+const BusinessUsers = require('./manageBusinessUsers.route');
 const DistrictListRoute = require('./districtList.route');
 const trendsRoute = require('./trends.router');
-const websocket = require ('./websocket.js')
+const websocket = require('./websocket.js');
+const CallStatusRoute = require('./callStatus.route');
 const router = express.Router();
 
 const defaultRoutes = [
@@ -162,38 +163,41 @@ const defaultRoutes = [
   },
   {
     path: '/manageUser',
-    route: manageUser
+    route: manageUser,
   },
   {
-    path:'/adminRegistration',
-    route: adminRegistrationRoute
+    path: '/adminRegistration',
+    route: adminRegistrationRoute,
   },
   {
-    path:'/market',
-    route:marketRoute,
+    path: '/market',
+    route: marketRoute,
   },
   {
-    path:'/apartmentandShop',
+    path: '/apartmentandShop',
     route: apartmentRoute,
   },
   {
-    path:'/superAdmin',
+    path: '/superAdmin',
     route: SuperAdmin,
   },
   {
-    path:'/BusinessUsers',
+    path: '/BusinessUsers',
     route: BusinessUsers,
   },
   {
-    path:'/districtlist',
-    route:DistrictListRoute
+    path: '/districtlist',
+    route: DistrictListRoute,
   },
   {
-    path:'/trends',
-    route:trendsRoute
+    path: '/trends',
+    route: trendsRoute,
   },
- { path:"websocket",
-  route:websocket}
+  { path: '/websocket', route: websocket },
+  {
+    path:'/callStatus',
+    route: CallStatusRoute,
+  }
 ];
 
 const devRoutes = [
