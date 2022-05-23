@@ -56,7 +56,10 @@ const streetSchema = mongoose.Schema({
   },
   date:{
     type:String,
-  }
+  },
+  order:{
+    type:Number,
+  },
 });
 streetSchema.plugin(toJSON);
 streetSchema.plugin(paginate);
