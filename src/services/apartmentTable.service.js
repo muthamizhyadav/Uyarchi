@@ -432,8 +432,8 @@ else{
         Alat:1,
         Along:1,
         fileSource:1,
-        zoneName:"$zonesData",
-        wardName:"$wardsData",
+        zoneName:"$zonesData.zone",
+        wardName:"$wardsData.ward",
         status:1,
         date:1,
         time:1,
@@ -827,8 +827,9 @@ else{
     }
   };
 
-  const getAllApartmentAndShop = async(id,districtId,zoneId,wardId,streetId,status)=>{ 
+  const getAllApartmentAndShop = async(id,districtId,zoneId,wardId,streetId,status,page)=>{ 
     let mat ;
+
     if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId != 'null'&& status !='null'){
       mat=[{'manageusersdata._id':{ $eq: id }},{'manageusersdata.preferredDistrict':{ $eq: districtId }},{'manageusersdata.preferredZone':{$eq:zoneId}},{'manageusersdata.preferredWard':{$eq:wardId}},{ _id:{$eq:streetId}},{status:{$eq:status}}]
    }
@@ -987,6 +988,25 @@ else{
         //     $and: [{'shopData':{$type: 'array', $ne: []}},{'apartmentData':{$type: 'array', $ne: []}}],
         //    }
         //   },
+          //  {
+          //   $match: {
+          //     $and: [{'shopData':{$type: 'array', $eq: []}},{'apartmentData':{$type: 'array', $ne: []}}],
+          //    }
+          //   },
+            // {
+            //   $match: {
+            //     $and: [{'shopData':{$type: 'array', $ne: []}},{'apartmentData':{$type: 'array', $eq: []}}],
+            //    }
+            //   },
+            {
+              $match:{
+            $or : [
+              {$and:[{'shopData':{$type: 'array', $ne: []}},{'apartmentData':{$type: 'array', $ne: []}}]},
+              { $and: [{'shopData':{$type: 'array', $eq: []}},{'apartmentData':{$type: 'array', $ne: []}}]},
+              { $and : [{'shopData':{$type: 'array', $ne: []}},{'apartmentData':{$type: 'array', $eq: []}}] }
+          ]
+        }
+        },
       {
         $project: {
           wardName:'$wardData.ward',
@@ -1001,12 +1021,12 @@ else{
           status:1
         },
       },
-    //   {
-    //     $skip:10*parseInt(page)
-    //   },
-    //  {
-    //     $limit:10
-    //   },
+      {
+        $skip:10*parseInt(page)
+      },
+     {
+        $limit:10
+      },
     ]);
     const count =await Street.aggregate([
       {
@@ -1092,6 +1112,15 @@ else{
         //     $and: [{'shopData':{ $ne:null}},{'apartmentData':{ $ne:null}}],
         //    }
         //   },
+        {
+          $match:{
+        $or : [
+          {$and:[{'shopData':{$type: 'array', $ne: []}},{'apartmentData':{$type: 'array', $ne: []}}]},
+          { $and: [{'shopData':{$type: 'array', $eq: []}},{'apartmentData':{$type: 'array', $ne: []}}]},
+          { $and : [{'shopData':{$type: 'array', $ne: []}},{'apartmentData':{$type: 'array', $eq: []}}] }
+      ]
+    }
+    },
       {
         $project: {
           wardName:'$wardData.ward',

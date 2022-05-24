@@ -17,7 +17,7 @@ router
   .post(shopImage.array('photoCapture'), apartmentController.createshopTableService)
 router.route('/allShop/table/:id/:districtId/:zoneId/:wardId/:streetId/:status/:page').get(apartmentController.getAllShop)
 router.route('/manageUserAttendance').post(apartmentController.createManageUserAttendanceService);
-router.route('/shopAndApartment/same/:id/:districtId/:zoneId/:wardId/:streetId/:status').get(apartmentController.getallShopApartment)
+router.route('/shopAndApartment/same/:id/:districtId/:zoneId/:wardId/:streetId/:status/:page').get(apartmentController.getallShopApartment)
 // router.route('/getAllAttendance').get(validate(userValidation.getUsersAttendance), apartmentController.getManageUserAttendance);
 router.route('/getAllAttendance/:ID/:DATE/:TIME/:PAGE').get(apartmentController.getmanageUSerAttendanceAll);
 router.route('/Search').post(apartmentController.getSearchUser);

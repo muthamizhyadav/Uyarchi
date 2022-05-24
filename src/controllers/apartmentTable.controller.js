@@ -68,7 +68,7 @@ const getmanageUSerAttendanceAllAutoTable = catchAsync(async (req,res) =>{
 
 
 const getallShopApartment = catchAsync(async (req,res) =>{
-     const shopApart = await apartmentTableService.getAllApartmentAndShop(req.params.id,req.params.districtId,req.params.zoneId,req.params.wardId,req.params.streetId,req.params.status);
+     const shopApart = await apartmentTableService.getAllApartmentAndShop(req.params.id,req.params.districtId,req.params.zoneId,req.params.wardId,req.params.streetId,req.params.status,req.params.page);
      if (!shopApart) {
       throw new ApiError(httpStatus.NOT_FOUND);
     }
