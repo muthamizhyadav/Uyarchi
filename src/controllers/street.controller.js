@@ -45,11 +45,12 @@ const getStreetByWard = catchAsync(async (req, res)=>{
 
 const streetAllocation = catchAsync(async(req,res)=>{
   const { arr, userId } = req.body
+  const currDate = Date.now()
   arr.forEach(async(e)=>{
     let  streetId = e
     const streets = await Street.findById(streetId)
     if(streets.AllocationStatus !== "Allocated"){
-      await Street.updateOne({_id:streetId}, {AllocatedUser:userId, AllocationStatus:"Allocated"}, {new:true})
+      await Street.updateOne({_id:streetId}, {AllocatedUser:userId, AllocationStatus:"Allocated", date:currDate}, {new:true})
       res.status(httpStatus.CREATED).send("Allocated Successfully")
     }else{
       res.status(httpStatus.UNAUTHORIZED).send("Already Allocated")

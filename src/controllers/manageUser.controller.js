@@ -46,6 +46,14 @@ const getmanageUserServiceById = catchAsync(async (req, res) => {
   res.send(pro);
 });
 
+const getmanageUserServiceByIdstatus = catchAsync(async (req, res) => {
+  const pro = await manageUserService.getManageUserdataByIdStatus(req.params.id);
+  if (!pro || pro.active === false) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'manageUser not found');
+  }
+  res.send(pro);
+});
+
 const getmanageUserServiceAll = catchAsync(async (req, res) => {
     const manage = await manageUserService.ManageUserAll(req.params);
     if (!manage) {
@@ -126,5 +134,6 @@ module.exports = {
   deletemanageUserService,
   login,
   getAllManageUserTable,
-  getmanageUserServiceAllenable
+  getmanageUserServiceAllenable,
+  getmanageUserServiceByIdstatus
 };

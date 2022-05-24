@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { ManageUser } = require('../models');
 const ApiError = require('../utils/ApiError');
+const {Street} = require('../models');
 
 const createManageUser = async (manageUserBody) => {
     const check = await ManageUser.find({mobileNumber:manageUserBody.mobileNumber})
@@ -94,6 +95,102 @@ const createManageUser = async (manageUserBody) => {
   
   }
 
+ const getManageUserdataByIdStatus = async (id) => {
+  const man =  await ManageUser.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id }}],
+      },
+    },
+    {
+      $lookup:{
+        from: 'streets',
+        localField: '_id',
+        foreignField: 'AllocatedUser',
+        as: 'streetsdata',
+      }
+    },
+    {
+      $unwind:'$streetsdata'
+    },
+    {
+      $lookup:{
+        from: 'zones',
+        localField: 'streetsdata.zone',
+        foreignField: '_id',
+        as: 'zonesdata',
+      }
+    },
+    {
+      $unwind:'$zonesdata'
+    },
+    {
+      $lookup:{
+        from: 'wards',
+        localField: 'streetsdata.wardId',
+        foreignField: '_id',
+        as: 'wardsdata',
+      }
+    },
+    {
+      $unwind:'$wardsdata'
+    },
+    {
+      $lookup:{
+        from: 'districts',
+        localField: 'streetsdata.district',
+        foreignField: '_id',
+        as: 'districtsdata',
+      }
+    },
+    {
+      $unwind:'$districtsdata'
+    },
+    {
+      $project: {
+        name:1,
+        mobileNumber:1,
+        preferredZone:'$zonesdata.zone',
+        preferredWard:'$wardsdata.ward',
+        created:1,
+        addressProofUpload:1,
+        idProofUpload:1,
+        twoWheelerUpload:1,
+        _id:1,
+        preferredDistrict:'$districtsdata.district',
+        active:1,
+        archive:1,
+        BasetwoWheelerUpload:1,
+        BaseaddressProofUpload:1,
+        BaseidProofUpload:1,
+        preferredWardId:'$wardsdata._id',
+        streetData:'$streetsdata'
+
+      },
+    },
+  ])
+  const street = await  Street.find({AllocatedUser:id});
+  // const allocatedStatus = await Street.find({AllocatedUser:id, AllocationStatus:"Allocated"});
+  const closeCount = await Street.find({AllocatedUser:id, closed:"close"});
+  const rejectsCount = await Street.find({AllocatedUser:id, status:"Rejected"});
+  const pendCount = await Street.find({$and:[{AllocatedUser:{ $eq:id}},{status:{$eq:null}}]})
+  const approveCount = await Street.find({AllocatedUser:id, status:"Approved"});
+  const deallocCount = await Street.find({DeAllocatedUser:id});
+  if (!street) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'manageUserAllocate not found');
+  }
+  return{
+  //  data1:street,
+   data:man,
+   allocateCount:street.length,
+  //  allaocatedStatusCount:allocatedStatus.length,
+   closedCount:closeCount.length,
+   rejectCount:rejectsCount.length,
+   aprovedCount:approveCount.length,
+   deAllocatedCount:deallocCount.length,
+   pendingCount:pendCount.length
+  } 
+  }
 
   const loginManageUserEmailAndPassword = async (mobileNumber,dateOfBirth) => {
     const interviewerRegistration = await ManageUser.find({mobileNumber:mobileNumber});
@@ -279,6 +376,7 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
       deleteManageUserById,
       loginManageUserEmailAndPassword,
       manageUserAllTable,
-      ManageUserAllenable
+      ManageUserAllenable,
+      getManageUserdataByIdStatus
   };
   

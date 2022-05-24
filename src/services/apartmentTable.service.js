@@ -393,7 +393,7 @@ else{
       {
       $lookup:{
         from: 'zones',
-        localField: 'manageusersdata.preferredZone',
+        localField: 'streetsdata.zone',
         foreignField: '_id',
         as: 'zonesData',
       }
@@ -404,7 +404,7 @@ else{
     {
       $lookup:{
         from: 'wards',
-        localField: 'manageusersdata.preferredWard',
+        localField: 'streetsdata.wardId',
         foreignField: '_id',
         as: 'wardsData',
       }
@@ -432,8 +432,8 @@ else{
         Alat:1,
         Along:1,
         fileSource:1,
-        zoneName:"$zonesData.zone",
-        wardName:"$wardsData.ward",
+        zoneName:"$zonesData",
+        wardName:"$wardsData",
         status:1,
         date:1,
         time:1,
@@ -717,6 +717,7 @@ else{
           time:1,
           created:1,
           streetStatus:'$streetsdata.closed',
+          streetId:'$streetsdata._id',
           reason:1
   
         },
