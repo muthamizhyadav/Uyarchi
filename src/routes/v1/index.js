@@ -40,6 +40,7 @@ const BusinessUsers = require('./manageBusinessUsers.route');
 const DistrictListRoute = require('./districtList.route');
 const trendsRoute = require('./trends.router');
 const websocket = require('./websocket.js');
+const orderRaisedByMWA = require('./orderRaisedbyMWA.route')
 const CallStatusRoute = require('./callStatus.route');
 const router = express.Router();
 
@@ -47,6 +48,10 @@ const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/orderRaisedbyMWA',
+    route: orderRaisedByMWA,
   },
   {
     path: '/users',

@@ -22,6 +22,18 @@ const callStatusSchema = mongoose.Schema({
   requestAdvancePayment: {
     type: String,
   },
+  productid:{
+    type:String,
+  },
+  supplierid:{
+    type:String,
+  },
+  date:{
+    type:String,
+  },
+  time:{
+    type:String,
+  },
   active: {
     type: Boolean,
     default: true,
