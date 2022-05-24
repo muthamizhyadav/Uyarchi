@@ -26,6 +26,8 @@ const createshopOrder = async (shopOrderBody) => {
   return createShopOrder;
 };
 
+
+
 const getAllShopOrder = async () => {
   return ShopOrder.find();
 };
@@ -62,19 +64,6 @@ const getProductDetailsByProductId = async (id)=>{
     }
 
   ])
-  // const product = await Product.find({},{'id':1})
-  // let str = []
-
-  
-  // product.forEach(async(e)=>{
-  //   const productid=e._id;
-  // //   console.log(productid)
-  //  const shoporder = await ShopOrder.find({product:{$elemMatch:{productid:productid}, $project:{
-  //    _id:1
-  //  }}})
-  //  console.log(shoporder)
-  // //  str.push(shoporder)
-  // })
  
 }
 

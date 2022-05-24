@@ -128,9 +128,18 @@ const productDateTimeFilter = async (date) => {
         as: 'shopData',
       },
     },
-   
+      {
+      $lookup:
+        {
+          from: "callstatuses",
+          localField: "_id",
+          foreignField: "productid",
+          as: "callStatus"
+        },
+      },
     {
       $project: {
+        CallStatus:"$callStatus",
         // orderData: '$zoneData',
         productTitle: 1,
         oldstock: 1,
