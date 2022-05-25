@@ -194,6 +194,79 @@ const createManageUser = async (manageUserBody) => {
     },
 
   ])
+  const count =  await ManageUser.aggregate([
+    {
+      $lookup:{
+        from: 'streets',
+        localField: '_id',
+        foreignField: 'AllocatedUser',
+        as: 'streetsdata',
+      }
+    },
+    {
+      $unwind:'$streetsdata'
+    },
+    {
+      $lookup:{
+        from: 'zones',
+        localField: 'streetsdata.zone',
+        foreignField: '_id',
+        as: 'zonesdata',
+      }
+    },
+    {
+      $unwind:'$zonesdata'
+    },
+    {
+      $lookup:{
+        from: 'wards',
+        localField: 'streetsdata.wardId',
+        foreignField: '_id',
+        as: 'wardsdata',
+      }
+    },
+    {
+      $unwind:'$wardsdata'
+    },
+    {
+      $lookup:{
+        from: 'districts',
+        localField: 'streetsdata.district',
+        foreignField: '_id',
+        as: 'districtsdata',
+      }
+    },
+    {
+      $unwind:'$districtsdata'
+    },
+    {
+      $match: {
+        $and:match,
+      },
+    },
+    {
+      $project: {
+        name:1,
+        mobileNumber:1,
+        preferredZone:'$zonesdata.zone',
+        preferredWard:'$wardsdata.ward',
+        created:1,
+        addressProofUpload:1,
+        idProofUpload:1,
+        twoWheelerUpload:1,
+        _id:1,
+        preferredDistrict:'$districtsdata.district',
+        active:1,
+        archive:1,
+        BasetwoWheelerUpload:1,
+        BaseaddressProofUpload:1,
+        BaseidProofUpload:1,
+        preferredWardId:'$wardsdata._id',
+        streetData:'$streetsdata'
+
+      },
+    },
+  ])
   const street = await  Street.find({AllocatedUser:id});
   // const allocatedStatus = await Street.find({AllocatedUser:id, AllocationStatus:"Allocated"});
   const closeCount = await Street.find({AllocatedUser:id, closed:"close"});
@@ -213,7 +286,8 @@ const createManageUser = async (manageUserBody) => {
    rejectCount:rejectsCount.length,
    aprovedCount:approveCount.length,
    deAllocatedCount:deallocCount.length,
-   pendingCount:pendCount.length
+   pendingCount:pendCount.length,
+   count:count.length
   } 
   }
 

@@ -51,10 +51,44 @@ const getMarketShops = async (id) => {
 };
 
 const getMarketShopsById = async (id) => {
-  const mark = MarketShops.findById(id);
-  if (!mark || mark.active === false) {
-    throw new ApiError(httpStatus.NOT_FOUND, ' MarketShops Not Found');
-  }
+  const mark = MarketShops.aggregate([
+    {
+       $match:{
+         $and:[{_id:{$eq:id}},{active:{$eq:true}}]
+       },
+    },
+    {
+      $lookup:{
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplistsdata',
+      }
+    },
+    {
+      $unwind:'$shoplistsdata'
+    },
+    {
+    $project:{
+      
+        ShopType:'$shoplistsdata.shopList',
+        MName:1,
+        SName:1,
+        SNo:1,
+        mobile:1,
+        ownname:1,
+        ownnum:1,
+        mlatitude:1,
+        mlongitude:1,
+        image:1
+     },
+  },
+
+  ])
+
+  // if (!mark || mark.active === false) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, ' MarketShops Not Found');
+  // }
   return mark;
 };
 
