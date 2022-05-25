@@ -21,7 +21,7 @@ const callStatusSchema = mongoose.Schema({
     type: String,
   },
   callstatus:{
-    type:Array,
+    type:String,
   },
   productid: {
     type: String,
