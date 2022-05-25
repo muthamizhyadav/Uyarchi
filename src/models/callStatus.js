@@ -8,10 +8,10 @@ const callStatusSchema = mongoose.Schema({
     default: v4,
   },
   qtyOffered: {
-    type: String,
+    type: Number,
   },
   strechedUpto: {
-    type: String,
+    type: Number,
   },
   price: {
     type: Number,
