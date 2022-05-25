@@ -7,60 +7,60 @@ const supplierSchema = new mongoose.Schema({
     type: String,
     default: v4,
   },
-  tradeName:{
-    type:String,
+  tradeName: {
+    type: String,
   },
-  companytype:{
-    type:String,
-    enum:['Proprietorship', 'LLP','Patnership','Private Limited', 'Public Limited', 'Others'],
+  companytype: {
+    type: String,
+    enum: ['Proprietorship', 'LLP', 'Patnership', 'Private Limited', 'Public Limited', 'Others'],
   },
-  primaryContactNumber:{
-    type:String,
+  primaryContactNumber: {
+    type: String,
   },
-  primaryContactName:{
-    type:String
+  primaryContactName: {
+    type: String,
   },
-  secondaryContactName:{
-    type:String,
+  secondaryContactName: {
+    type: String,
   },
-  secondaryContactNumber:{
-    type:String
+  secondaryContactNumber: {
+    type: String,
   },
-  RegisteredAddress:{
-    type:String,
+  RegisteredAddress: {
+    type: String,
   },
-  countries:{
-    type:String,
+  countries: {
+    type: String,
   },
-  state:{
-    type:String,
+  state: {
+    type: String,
   },
-  district:{
-    type:String,
+  district: {
+    type: String,
   },
-  gpsLocat:{
-    type:String,
+  gpsLocat: {
+    type: String,
   },
-  gstNo:{
-    type:String,
+  gstNo: {
+    type: String,
   },
-  email:{
-    type:String,
+  email: {
+    type: String,
   },
-  pinCode:{
-    type:Number,
+  pinCode: {
+    type: Number,
   },
-  productDealingWith:{
-    type:Array,
+  productDealingWith: {
+    type: Array,
   },
-  active:{
-    type:Boolean,
-    default:true
+  active: {
+    type: Boolean,
+    default: true,
   },
-  archive:{
-    type:Boolean,
-    default:false
-  }
+  archive: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 supplierSchema.plugin(toJSON);
