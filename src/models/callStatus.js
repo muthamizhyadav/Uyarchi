@@ -5,8 +5,8 @@ const { toJSON, paginate } = require('./plugins');
 const callStatus = mongoose.Schema({
   _id:false,
   accepted:String,
-  declined:String,
-  callBack:String,
+  declined:Object,
+  callBack:Object,
 })
 
 const callStatusSchema = mongoose.Schema({
@@ -31,6 +31,9 @@ const callStatusSchema = mongoose.Schema({
   productid:{
     type:String,
   },
+  noStock:String,
+  pendingBills:String,
+  pastBitter:String,
   supplierid:{
     type:String,
   },
