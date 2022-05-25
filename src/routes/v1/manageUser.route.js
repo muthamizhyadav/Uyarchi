@@ -5,7 +5,7 @@ const proof = require('../../middlewares/proof')
 // const upload = require('../../middlewares/upload')
 const router = express.Router();
 
-router.route('/').post(manageUserController.createmanageUserService);
+router.route('/').post(proof.fields([{ name: 'idProofUpload'}, { name: 'addressProofUpload'},{ name: 'twoWheelerUpload'}]),manageUserController.createmanageUserService);
 router.route('/').get(manageUserController.getmanageUserServiceAll)
 router.route('/login').post(manageUserController.login)
 router.route('/:id/:districtId/:zoneId/:wardId/:page').get(manageUserController.getAllManageUserTable)
@@ -14,7 +14,7 @@ router.route('/manageUserStreet/all/:id/:streetId/:status/:page').get(manageUser
 router
   .route('/:manageUserId')
   .get(manageUserController.getmanageUserServiceById)
-  .put(manageUserController.updatemanageUserService)
+  .put(proof.fields([{ name: 'idProofUpload'}, { name: 'addressProofUpload'},{ name: 'twoWheelerUpload'}]),manageUserController.updatemanageUserService)
   .delete(manageUserController.deletemanageUserService);
 
 module.exports = router;
