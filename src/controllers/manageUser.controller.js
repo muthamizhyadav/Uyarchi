@@ -47,10 +47,10 @@ const getmanageUserServiceById = catchAsync(async (req, res) => {
 });
 
 const getmanageUserServiceByIdstatus = catchAsync(async (req, res) => {
-  const pro = await manageUserService.getManageUserdataByIdStatus(req.params.id);
-  if (!pro || pro.active === false) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'manageUser not found');
-  }
+  const pro = await manageUserService.getManageUserdataByIdStatus(req.params.id,req.params.streetId,req.params.status,req.params.page);
+  // if (!pro || pro.active === false) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'manageUser not found');
+  // }
   res.send(pro);
 });
 

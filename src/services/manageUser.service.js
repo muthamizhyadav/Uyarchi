@@ -95,13 +95,26 @@ const createManageUser = async (manageUserBody) => {
   
   }
 
- const getManageUserdataByIdStatus = async (id) => {
+ const getManageUserdataByIdStatus = async (id,streetId,status,page) => {
+   let match;
+  if(streetId != 'null'&& status !='null'){
+    match=[{'streetsdata._id':{$eq:streetId}},{'streetsdata.status':{$eq:status}},{active:{$eq:true}}]
+ }
+ else if(streetId != 'null'&& status =='null'){
+   match=[{ 'streetsdata._id':{ $eq: streetId }},{active:{$eq:true}}]
+ }
+ else if(streetId == 'null'&& status !='null'){
+    match=[{'streetsdata.status':{ $eq: status}},{active:{$eq:true}}]
+}else{
+   match=[{ _id: { $eq: id }},{active:{$eq:true}}]
+ }
+//  console.log(match)
   const man =  await ManageUser.aggregate([
-    {
-      $match: {
-        $and: [{ _id: { $eq: id }}],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [{ _id: { $eq: id }}],
+    //   },
+    // },
     {
       $lookup:{
         from: 'streets',
@@ -147,6 +160,11 @@ const createManageUser = async (manageUserBody) => {
       $unwind:'$districtsdata'
     },
     {
+      $match: {
+        $and:match,
+      },
+    },
+    {
       $project: {
         name:1,
         mobileNumber:1,
@@ -168,6 +186,13 @@ const createManageUser = async (manageUserBody) => {
 
       },
     },
+    {
+      $skip:10*page
+    },
+   {
+      $limit:10
+    },
+
   ])
   const street = await  Street.find({AllocatedUser:id});
   // const allocatedStatus = await Street.find({AllocatedUser:id, AllocationStatus:"Allocated"});
@@ -176,9 +201,9 @@ const createManageUser = async (manageUserBody) => {
   const pendCount = await Street.find({$and:[{AllocatedUser:{ $eq:id}},{status:{$eq:null}}]})
   const approveCount = await Street.find({AllocatedUser:id, status:"Approved"});
   const deallocCount = await Street.find({DeAllocatedUser:id});
-  if (!street) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'manageUserAllocate not found');
-  }
+  // if (!street) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'manageUserAllocate not found');
+  // }
   return{
   //  data1:street,
    data:man,
