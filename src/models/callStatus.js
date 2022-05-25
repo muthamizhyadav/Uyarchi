@@ -27,6 +27,7 @@ const callStatusSchema = mongoose.Schema({
   requestAdvancePayment: {
     type: String,
   },
+  callstatus:callStatus,
   productid:{
     type:String,
   },
