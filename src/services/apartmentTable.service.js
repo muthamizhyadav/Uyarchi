@@ -182,6 +182,7 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
   }
 
   const Attendance= await ManageUserAttendance.aggregate([
+    { $sort : {date:-1,created:-1}},
     {
       $match: {
         $and: match,
@@ -219,7 +220,7 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
    {
       $limit:10
     },
-    { $sort : { date : -1, time: -1 ,_id:-1} }
+    // { $sort : { date : -1, time: -1 ,_id:-1} }
     
   ]);
   const count=await ManageUserAttendance.aggregate([
