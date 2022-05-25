@@ -2,12 +2,6 @@ const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
 
-const callStatus = mongoose.Schema({
-  _id:false,
-  accepted:String,
-  declined:Object,
-  callBack:Object,
-})
 
 const callStatusSchema = mongoose.Schema({
   _id: {
@@ -27,7 +21,7 @@ const callStatusSchema = mongoose.Schema({
   requestAdvancePayment: {
     type: String,
   },
-  callstatus:callStatus,
+  callstatus:String,
   productid:{
     type:String,
   },
