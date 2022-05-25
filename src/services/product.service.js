@@ -108,7 +108,7 @@ const productDateTimeFilter = async (date) => {
     {
       $lookup: {
         from: 'productorders',
-        let: { 'productIds': '$_id' },
+        let: { productIds: '$_id' },
         pipeline: [
           {
             $match: {
@@ -120,7 +120,7 @@ const productDateTimeFilter = async (date) => {
           {
             $match: {
               $expr: {
-                $eq: [date, "$date"],
+                $eq: [date, '$date'],
               },
             },
           },
@@ -128,18 +128,33 @@ const productDateTimeFilter = async (date) => {
         as: 'shopData',
       },
     },
-      {
-      $lookup:
-        {
-          from: "callstatuses",
-          localField: "_id",
-          foreignField: "productid",
-          as: "callStatus"
-        },
+
+    {
+      $lookup: {
+        from: 'callstatuses',
+        let: { productid: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ['$$productid', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+          {
+            $match: {
+              $expr: {
+                $eq: [date, '$date'],
+              },
+            },
+          },
+        ],
+        as: 'callStatusData',
       },
+    },
     {
       $project: {
-        CallStatus:"$callStatus",
+        CallStatus: '$callStatusData',
         // orderData: '$zoneData',
         productTitle: 1,
         oldstock: 1,
@@ -148,7 +163,6 @@ const productDateTimeFilter = async (date) => {
         salesmanPrice: 1,
         _id: 1,
         orderdata: '$shopData',
-
       },
     },
   ]);
@@ -169,7 +183,7 @@ const aggregationWithProductId = async (id, date) => {
           { $match: { productid: id } },
           { $match: { date: date } },
           // { $project: { _id: 1, date: { name: "$name", date: "$date" } } },
-       ],
+        ],
         as: 'shopData',
       },
     },
@@ -188,11 +202,9 @@ const aggregationWithProductId = async (id, date) => {
   ]);
 };
 
-const  matchproductWithSupplier = async(id)=>{
-  
-
-  return 
-}
+const matchproductWithSupplier = async (id) => {
+  return;
+};
 
 const createConfirmStock = async (confirmBody) => {
   const { stockId } = confirmBody;
