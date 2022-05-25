@@ -50,20 +50,30 @@ const productDealingWithsupplier = async (id, date) => {
                 $eq: ['$_id', id], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
               },
             },
-          },
-            {
-              $match: {
-                $expr: {
-                  $eq: [date, '$date'],
-                },
-              },
-            },
+          }
         ],
         as: 'products',
       },
     },
     {
       $unwind: '$products',
+    },
+    {
+      $lookup: {
+        from: 'callstatuses',
+        localField: '_id',
+        foreignField: 'supplierid',
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ['$date', date], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          }
+        ],
+        as: 'callStatus',
+      },
     },
     
   ]);
