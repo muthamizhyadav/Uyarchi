@@ -54,6 +54,9 @@ const streetSchema = mongoose.Schema({
   status:{
     type:String,
   },
+  closeDate:{
+    type:Date
+  },
   date:{
     type:String,
   },
