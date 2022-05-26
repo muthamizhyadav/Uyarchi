@@ -476,6 +476,7 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
       loginManageUserEmailAndPassword,
       manageUserAllTable,
       ManageUserAllenable,
-      getManageUserdataByIdStatus
+      getManageUserdataByIdStatus,
+      getManageUserdataById
   };
   
