@@ -173,6 +173,9 @@ const productDateTimeFilter = async (date) => {
         },
     },
     {
+      $unwind:"$ShopOrders",
+    },
+    {
       $project: {
         CallStatus: '$callStatusData',
         // orderData: '$zoneData',
