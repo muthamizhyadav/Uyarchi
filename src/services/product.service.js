@@ -128,7 +128,6 @@ const productDateTimeFilter = async (date) => {
         as: 'shopData',
       },
     },
-
     {
       $lookup: {
         from: 'callstatuses',
@@ -153,11 +152,33 @@ const productDateTimeFilter = async (date) => {
       },
     },
     {
+        $lookup: {
+          from: 'shoporders',
+          let: { productid: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$$productid', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+                $match: {
+                  $expr: {
+                    $eq: [date, '$date'],
+                  },
+              },
+            },
+          ],
+          as: 'ShopOrders',
+        },
+    },
+    {
       $project: {
         CallStatus: '$callStatusData',
         // orderData: '$zoneData',
         productTitle: 1,
         oldstock: 1,
+        shopOrder:'$ShopOrders',
         onlinePrice: 1,
         category: 1,
         salesmanPrice: 1,
