@@ -56,6 +56,9 @@ const productDealingWithsupplier = async (id, date) => {
       },
     },
     {
+      $unwind: '$products',
+    },
+    {
       $lookup: {
         from: 'callstatuses',
         localField: '_id',
@@ -71,6 +74,9 @@ const productDealingWithsupplier = async (id, date) => {
         ],
         as: 'callStatus',
       },
+    },
+    {
+      $unwind: '$callStatus',
     },
     
   ]);
