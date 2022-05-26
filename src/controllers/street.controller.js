@@ -63,6 +63,11 @@ const streetDeAllocation = catchAsync(async (req, res)=>{
   res.send(streets)
 })
 
+const streetorder = catchAsync(async (req, res)=>{
+  const streets  = await StreetService.getAllStreetById(req.params.id)
+  res.send(streets)
+})
+
 const getStreetByWardId = catchAsync(async (req, res) => {
   const street = await StreetService.getStreetByWardId(req.params.wardId);
   res.send(street);
@@ -111,4 +116,5 @@ module.exports = {
   getAllocatedStreeOnly,
   closedStatus,
   getAllDeAllocatedStreetOnly,
+  streetorder
 };
