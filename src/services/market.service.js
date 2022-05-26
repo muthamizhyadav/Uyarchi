@@ -42,11 +42,55 @@ const getmarketById = async (id) => {
 
 const getMarketShops = async (id) => {
   console.log(id)
-  const mark = await MarketShops.find({MName:id});
-    console.log(mark)
-  if (!mark || mark.active === false) {
-    throw new ApiError(httpStatus.NOT_FOUND, ' MarketShops Not Found');
-  }
+  // const mark = await MarketShops.find({MName:id});
+  const mark = MarketShops.aggregate([
+    {
+      $match:{
+        $and:[{MName:{$eq:id}},{active:{$eq:true}}]
+      },
+   },
+   {
+    $lookup:{
+      from: 'shoplists',
+      localField: 'SType',
+      foreignField: '_id',
+      as: 'shoplistsdata',
+    }
+  },
+  {
+    $unwind:'$shoplistsdata'
+  },
+  {
+    $lookup:{
+      from: 'markets',
+      localField: 'MName',
+      foreignField: '_id',
+      as: 'marketsdata',
+    }
+  },
+  {
+    $unwind:'$marketsdata'
+  },
+  {
+  $project:{
+    
+      ShopType:'$shoplistsdata.shopList',
+      MName:'$marketsdata.MName',
+      SName:1,
+      SNo:1,
+      mobile:1,
+      ownname:1,
+      ownnum:1,
+      mlatitude:1,
+      mlongitude:1,
+      image:1
+   },
+},
+
+  ])
+  // if (!mark || mark.active === false) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, ' MarketShops Not Found');
+  // }
   return mark;
 };
 
@@ -69,10 +113,21 @@ const getMarketShopsById = async (id) => {
       $unwind:'$shoplistsdata'
     },
     {
+      $lookup:{
+        from: 'markets',
+        localField: 'MName',
+        foreignField: '_id',
+        as: 'marketsdata',
+      }
+    },
+    {
+      $unwind:'$marketsdata'
+    },
+    {
     $project:{
       
         ShopType:'$shoplistsdata.shopList',
-        MName:1,
+        MName:'$marketsdata.MName',
         SName:1,
         SNo:1,
         mobile:1,
