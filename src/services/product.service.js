@@ -218,7 +218,7 @@ const productDateTimeFilter = async (date) => {
   ]);
 };
 
-const aggregationWithProductId = async (id, date) => {
+ const aggregationWithProductId = async (id, date) => {
   return Product.aggregate([
     {
       $match: {
