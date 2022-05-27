@@ -48,7 +48,7 @@ const getAllStreetById = async (id) => {
     { $sort : {order:1} },
     {
       $match: {
-        $and: [{ AllocatedUser: { $eq:id} },{order:{$ne:null}}],
+        $and: [{ AllocatedUser: { $eq:id} },{AllocationStatus:{$ne: 'DeAllocated' }},{order:{$ne:null}}],
       },
     },
     {
@@ -66,6 +66,17 @@ const getaggregationByUserId = async (AllocatedUser) => {
       $match: {
         $and: [{ AllocatedUser: { $eq: AllocatedUser }, AllocationStatus: { $ne: 'DeAllocated' } }],
       },
+    },
+    {
+      $lookup: {
+        from: 'manageusers',
+        localField: 'AllocatedUser',
+        foreignField: '_id',
+        as: 'manageusersData',
+      },
+    },
+    {
+      $unwind: '$manageusersData',
     },
     {
       $lookup: {
@@ -132,6 +143,8 @@ const getaggregationByUserId = async (AllocatedUser) => {
         apartMent: '$apartmentData',
         closed: 1,
         shop: '$shopData',
+        manageUserId:'$manageusersData._id'
+
       },
     },
   ]);
