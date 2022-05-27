@@ -904,6 +904,9 @@ else{
   else if(id =='null'&&districtId!='null'&&zoneId !='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
     mat=[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]
   }
+  else if(districtId!='null'&&zoneId !='null'&& wardId!='null'&&streetId != 'null'&& status =='null'){
+    mat=[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{status:{ $eq: status}}]
+  }
   else{
      mat=[{ _id: { $ne: null }}]
    }
@@ -1023,7 +1026,8 @@ else{
           shop:'$shopData',
           userName:"$manageusersdata.name",
           status:1,
-          manageUserId:"$manageusersdata._id"
+          manageUserId:"$manageusersdata._id",
+
         },
       },
       {
