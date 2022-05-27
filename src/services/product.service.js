@@ -175,15 +175,14 @@ const productDateTimeFilter = async (date) => {
     {
       $project: {
         CallStatus: '$callStatusData',
-        // orderData: '$zoneData',
         productTitle: 1,
         oldstock: 1,
-        shopOrder:'$ShopOrders',
         onlinePrice: 1,
         category: 1,
         salesmanPrice: 1,
         _id: 1,
         orderdata: '$shopData',
+        shopOrder:'$ShopOrders',
       },
     },
   ]);
