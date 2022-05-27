@@ -75,10 +75,6 @@ const productDealingWithsupplier = async (id, date) => {
         as: 'callStatus',
       },
     },
-    {
-      $unwind: '$callStatus',
-    },
-    
   ]);
 };
 
