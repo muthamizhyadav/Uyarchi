@@ -151,6 +151,35 @@ const productDateTimeFilter = async (date) => {
         as: 'callStatusData',
       },
     },
+    // {
+    //     $unwind:"$callStatusData"
+    // },
+    {
+      $lookup: {
+        from: 'status',
+        let: { productid: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ['$$productid', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+          {
+            $match: {
+              $expr: {
+                $eq: [date, '$date'],
+              },
+            },
+          },
+        ],
+        as: 'productstatus',
+      },
+    },
+    // {
+    //     $unwind:"$callStatusData"
+    // },
     {
         $lookup: {
           from: 'shoporders',
@@ -175,6 +204,7 @@ const productDateTimeFilter = async (date) => {
     {
       $project: {
         CallStatus: '$callStatusData',
+        productstatus: '$productstatus',
         productTitle: 1,
         oldstock: 1,
         onlinePrice: 1,
@@ -188,7 +218,7 @@ const productDateTimeFilter = async (date) => {
   ]);
 };
 
-const aggregationWithProductId = async (id, date) => {
+ const aggregationWithProductId = async (id, date) => {
   return Product.aggregate([
     {
       $match: {

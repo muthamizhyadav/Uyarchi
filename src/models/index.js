@@ -37,4 +37,6 @@ module.exports.ManageBusinessUser = require('./manageBusinessUsers.model');
 module.exports.DistrictList = require('./districtList.model');
 module.exports.Trends = require('./trends.model');
 module.exports.CallStatus = require('./callStatus');
-module.exports.orderRaisedbyMWA = require('./orderRaisedbyMWA.model')
+module.exports.orderRaisedbyMWA = require('./orderRaisedbyMWA.model');
+module.exports.Status = require('./status.model');
+

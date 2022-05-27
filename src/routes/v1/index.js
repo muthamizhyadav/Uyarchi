@@ -42,12 +42,17 @@ const trendsRoute = require('./trends.router');
 const websocket = require('./websocket.js');
 const orderRaisedByMWA = require('./orderRaisedbyMWA.route')
 const CallStatusRoute = require('./callStatus.route');
+const statusRoute = require('./status.route');
 const router = express.Router();
 
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/status',
+    route: statusRoute,
   },
   {
     path: '/orderRaisedbyMWA',
