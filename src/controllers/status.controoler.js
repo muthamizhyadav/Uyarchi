@@ -13,11 +13,12 @@ const createStatus = catchAsync(async (req, res) => {
 });
 
 const updateStatusById = catchAsync(async (req, res) => {
-  const status = await supplierService.updateDisableSupplierById(req.params.statusId, req.body);
-  if (!status) {
+  const statuse = await statusService.updatestatusById(req.params.statusId, req.body);
+  console.log(statuse)
+  if (!statuse) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status Not Found');
   }
-  res.send(status);
+  res.send(statuse);
 });
 
 

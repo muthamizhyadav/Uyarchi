@@ -12,7 +12,7 @@ const getStreetById = async (statusId) => {
 };
 
 const updatestatusById = async (statusId, updateBody) => {
-  let status = await getStreetById(statusId);
+  let status = await Status.findById(statusId);
   if (!status) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }

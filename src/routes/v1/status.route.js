@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.route('/').post(statusController.createStatus);
 router
-  .route('/:supplierId')
+  .route('/:statusId')
   .put(statusController.updateStatusById);
 
 module.exports = router;
