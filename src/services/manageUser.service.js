@@ -109,7 +109,7 @@ const createManageUser = async (manageUserBody) => {
    match=[{ _id: { $eq: id }},{active:{$eq:true}}]
  }
 //  console.log(match)
-  const man =  await ManageUser.aggregate([
+  const man =  await ManageUser.aggregate46([
     // {
     //   $match: {
     //     $and: [{ _id: { $eq: id }}],
@@ -267,12 +267,12 @@ const createManageUser = async (manageUserBody) => {
       },
     },
   ])
-  const street = await  Street.find({AllocatedUser:id});
+  const street = await  Street.find({AllocatedUser:id, AllocationStatus: { $ne: "DeAllocated" }});
   // const allocatedStatus = await Street.find({AllocatedUser:id, AllocationStatus:"Allocated"});
-  const closeCount = await Street.find({AllocatedUser:id, closed:"close"});
-  const rejectsCount = await Street.find({AllocatedUser:id, status:"Rejected"});
-  const pendCount = await Street.find({$and:[{AllocatedUser:{ $eq:id}},{status:{$eq:null}}]})
-  const approveCount = await Street.find({AllocatedUser:id, status:"Approved"});
+  const closeCount = await Street.find({AllocatedUser:id, closed:"close", AllocationStatus: { $ne: "DeAllocated" }});
+  const rejectsCount = await Street.find({AllocatedUser:id, status:"Rejected", AllocationStatus: { $ne: "DeAllocated" }});
+  const pendCount = await Street.find({$and:[{AllocatedUser:{ $eq:id}},{status:{$eq:null}},{AllocationStatus:{ $ne: "DeAllocated" }}]})
+  const approveCount = await Street.find({AllocatedUser:id, status:"Approved",AllocationStatus: { $ne: "DeAllocated" }});
   const deallocCount = await Street.find({DeAllocatedUser:id});
   // if (!street) {
   //   throw new ApiError(httpStatus.NOT_FOUND, 'manageUserAllocate not found');

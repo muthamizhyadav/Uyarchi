@@ -265,7 +265,35 @@ const createShop = async (shopBody) => {
   
 
 const getShopById = async (id) => {
-  return Shop.findById(id);
+
+  return Shop.aggregate([
+    {
+    $match:{
+      $and:[{_id:{$eq:id}}]
+    }
+      },
+      {
+        $lookup:{
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplistsData',
+      },
+      },
+      {
+        $unwind:'$shoplistsData'
+      },
+      {
+         $project:{
+           shopType:'$shoplistsData.shopList',
+           SName:1,
+           SOwner:1,
+           SCont1:1,
+           status:1
+         }
+      }
+    
+  ])
 };
 
 const getApartmentById = async (id) => {
@@ -1180,6 +1208,7 @@ else{
           closed:1,
           shop:'$shopData',
           userName:"$manageusersdata.name",
+          closeDate:1
 
         },
       },
