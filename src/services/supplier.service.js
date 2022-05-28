@@ -31,7 +31,7 @@ const updateDisableSupplierById = async (id) => {
   return supplier;
 };
 
-const productDealingWithsupplier = async (id, supplierId, date) => {
+const productDealingWithsupplier = async (id, date) => {
   return Supplier.aggregate([
     {
       $match: {
@@ -86,36 +86,19 @@ const productDealingWithsupplier = async (id, supplierId, date) => {
     },
     {
       $lookup: {
-        from: 'supplier',
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $eq: ['$_id', supplierId], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
-              },
-            },
-          },
-          {
-            $match: {
-              $expr: {
-                $eq: ['$date',date ], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
-              },
-            },
-          },
-        ],
-        as: 'supplierDate',
-      },
-    },
-    {
-      $lookup: {
         from: 'callstatuses',
-        localField: '_id',
-        foreignField: 'supplierid',
         pipeline: [
           {
             $match: {
               $expr: {
                 $eq: ['$date', date], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+          {
+            $match: {
+              $expr: {
+                $eq: ['$productid', id], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
               },
             },
           }
