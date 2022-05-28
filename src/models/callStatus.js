@@ -32,6 +32,12 @@ const callStatusSchema = mongoose.Schema({
   supplierid: {
     type: String,
   },
+  confirmOrder:{
+    type:String,
+  },
+  phApproved:{
+    type:String,
+  },
   date: {
     type: String,
   },
