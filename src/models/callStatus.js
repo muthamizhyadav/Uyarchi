@@ -35,6 +35,9 @@ const callStatusSchema = mongoose.Schema({
   confirmOrder:{
     type:String,
   },
+  phStatus:{
+    type:String,
+  },
   phApproved:{
     type:String,
   },
