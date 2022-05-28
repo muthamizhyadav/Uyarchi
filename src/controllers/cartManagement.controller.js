@@ -6,14 +6,14 @@ const CartManagementService = require('../services/cartManagement.service');
 
 const createCartManagement = catchAsync(async (req, res) => {
   const { body } = req;
+  console.log(body)
   const cart = await CartManagementService.createCartManagement(body);
   if (req.files) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
-      path = path + files.path + ',';
+      path = 'images/cartScv/' + files.filename;
     });
-    path = path.substring(0, path.lastIndexOf(','));
-    cart.image = path;
+    cart.image = path
   }
   res.status(httpStatus.CREATED).send(cart);
   await cart.save();

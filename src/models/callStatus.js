@@ -16,21 +16,42 @@ const callStatusSchema = mongoose.Schema({
   price: {
     type: Number,
   },
+  confirmprice: {
+    type: Number,
+  },
   status: String,
   requestAdvancePayment: {
     type: String,
   },
-  callstatus:{
-    type:Object,
+  callstatus: {
+    type: String,
   },
-  callDetail:{
-    type:String,
+  confirmcallstatus: {
+    type: String,
+  },
+  callDetail: {
+    type: String,
+  },
+  confirmcallDetail: {
+    type: String,
   },
   productid: {
     type: String,
   },
   supplierid: {
     type: String,
+  },
+  confirmOrder: {
+    type: Number,
+  },
+  phStatus: {
+    type: String,
+  },
+  phreason: {
+    type: String,
+  },
+  phApproved: {
+    type: Number,
   },
   date: {
     type: String,

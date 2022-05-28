@@ -5,38 +5,31 @@ const catchAsync = require('../utils/catchAsync');
 const apartmentTableService = require('../services/apartmentTable.service');
 
 const createapartmentTableService = catchAsync(async (req, res) => {
-    const apart = await apartmentTableService.createApartment(req.body);     
-   
-    if (req.files) {
-        //   let path = [];
-        //   console.log(req.files)
-          req.files.forEach(function (files, index, arr) {
-                apart.photoCapture.push("images/apartment/"+files.filename)
-                // console.log(shop.photoCapture)
-            
-          });
-          
-        }
-        console.log(apart)
-    // res.status(httpStatus.CREATED).send(apart);
-    res.send(apart)
-    await apart.save();
+  const apart = await apartmentTableService.createApartment(req.body);
+  if (req.files) {
+    req.files.forEach(function (files, index, arr) {
+      apart.photoCapture.push('images/apartment/' + files.filename);
+    });
+  }
+  console.log(apart);
+  res.send(apart);
+  await apart.save();
 });
 
 const createManageUserAttendanceService = catchAsync(async (req, res) => {
-  const Attendance = await apartmentTableService.createManageUserAttendance(req.body); 
-    
+  const Attendance = await apartmentTableService.createManageUserAttendance(req.body);
+
   res.status(httpStatus.CREATED).send(Attendance);
   await Attendance.save();
 });
 
-const getAllmanageUserAttendanceAuto = catchAsync(async (req,res)=>{
-  const cate = await apartmentTableService.getAllManageUserAutoAttendance()
-  res.send(cate)
-})
+const getAllmanageUserAttendanceAuto = catchAsync(async (req, res) => {
+  const cate = await apartmentTableService.getAllManageUserAutoAttendance();
+  res.send(cate);
+});
 
 const createManageUserAttendanceAutoService = catchAsync(async (req, res) => {
-  const Attendance = await apartmentTableService.createManageUserAutoAttendance(req.body);     
+  const Attendance = await apartmentTableService.createManageUserAutoAttendance(req.body);
   res.status(httpStatus.CREATED).send(Attendance);
   await Attendance.save();
 });
@@ -48,54 +41,68 @@ const createManageUserAttendanceAutoService = catchAsync(async (req, res) => {
 //   res.send(result);
 // });
 
-const getmanageUSerAttendanceAll = catchAsync(async (req,res) =>{
-  const attend = await apartmentTableService.getAllManageUSerAttendance(req.params.id,req.params.date,req.params.fromtime,req.params.totime,req.params.page);
-  console.log(req.params.fromtime,"dfgdd")
+const getmanageUSerAttendanceAll = catchAsync(async (req, res) => {
+  const attend = await apartmentTableService.getAllManageUSerAttendance(
+    req.params.id,
+    req.params.date,
+    req.params.fromtime,
+    req.params.totime,
+    req.params.page
+  );
+  console.log(req.params.fromtime, 'dfgdd');
   if (!attend) {
     throw new ApiError(httpStatus.NOT_FOUND);
   }
   res.send(attend);
-})
-
-
-const getmanageUSerAttendanceAllAutoTable = catchAsync(async (req,res) =>{
-  const attend = await apartmentTableService.getAllManageUserAutoAttendanceTable(req.params.id,req.params.date,req.params.page);
-  if (!attend) {
-    throw new ApiError(httpStatus.NOT_FOUND);
-  }
-  res.send(attend);
-})
-
-
-const getallShopApartment = catchAsync(async (req,res) =>{
-     const shopApart = await apartmentTableService.getAllApartmentAndShop(req.params.id,req.params.districtId,req.params.zoneId,req.params.wardId,req.params.streetId,req.params.status,req.params.page);
-     if (!shopApart) {
-      throw new ApiError(httpStatus.NOT_FOUND);
-    }
-    res.send(shopApart);
-})
-const createshopTableService = catchAsync(async (req, res) => {
-    const shop = await apartmentTableService.createShop(req.body);
-    
-    if (req.files) {
-    //   let path = [];
-      console.log(req.files)
-      req.files.forEach(function (files, index, arr) {
-            shop.photoCapture.push("images/shop/"+files.filename)
-            // console.log(shop.photoCapture)
-        
-      });
-      
-    }
-    // res.status(httpStatus.CREATED).send(shop);
-    res.send(shop)
-    await shop.save();
 });
 
-const getSearchUser = catchAsync(async(req, res)=>{
+const getmanageUSerAttendanceAllAutoTable = catchAsync(async (req, res) => {
+  const attend = await apartmentTableService.getAllManageUserAutoAttendanceTable(
+    req.params.id,
+    req.params.date,
+    req.params.page
+  );
+  if (!attend) {
+    throw new ApiError(httpStatus.NOT_FOUND);
+  }
+  res.send(attend);
+});
+
+const getallShopApartment = catchAsync(async (req, res) => {
+  const shopApart = await apartmentTableService.getAllApartmentAndShop(
+    req.params.id,
+    req.params.districtId,
+    req.params.zoneId,
+    req.params.wardId,
+    req.params.streetId,
+    req.params.status,
+    req.params.page
+  );
+  if (!shopApart) {
+    throw new ApiError(httpStatus.NOT_FOUND);
+  }
+  res.send(shopApart);
+});
+const createshopTableService = catchAsync(async (req, res) => {
+  const shop = await apartmentTableService.createShop(req.body);
+
+  if (req.files) {
+    //   let path = [];
+    console.log(req.files);
+    req.files.forEach(function (files, index, arr) {
+      shop.photoCapture.push('images/shop/' + files.filename);
+      // console.log(shop.photoCapture)
+    });
+  }
+  // res.status(httpStatus.CREATED).send(shop);
+  res.send(shop);
+  await shop.save();
+});
+
+const getSearchUser = catchAsync(async (req, res) => {
   const search = await apartmentTableService.getSearch(req.body);
   res.send(search);
-})
+});
 
 const getApartmentById = catchAsync(async (req, res) => {
   const apart = await apartmentTableService.getApartmentById(req.params.apartmentId);
@@ -105,67 +112,79 @@ const getApartmentById = catchAsync(async (req, res) => {
   res.send(apart);
 });
 
-const getAllApartmentTable= catchAsync(async (req, res) => {
-    const apart = await apartmentTableService.getAllApartment(req.params.id,req.params.districtId,req.params.zoneId,req.params.wardId,req.params.streetId,req.params.status,req.params.page);
-    if (!apart) {
-      throw new ApiError(httpStatus.NOT_FOUND);
-    }
-    res.send(apart);
-  });
-
-  const getAllShop= catchAsync(async (req, res) => {
-    const shop = await apartmentTableService.getAllShop(req.params.id,req.params.districtId,req.params.zoneId,req.params.wardId,req.params.streetId,req.params.status,req.params.page);
-    if (!shop) {
-      throw new ApiError(httpStatus.NOT_FOUND);
-    }
-    res.send(shop);
-  });
-
-const getShopById = catchAsync(async (req, res) => {
-    const shop = await apartmentTableService.getShopById(req.params.shopId);
-    if (!shop || shop.active === false) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'shop not found');
-    }
-    res.send(shop);
-  });
-
-const updateApartment = catchAsync(async (req, res) => {
-  const apart = await apartmentTableService.updateApartmentById(req.params.apartmentId, req.body);
-     if (req.files) {
-        //   let path = [];
-        //   console.log(req.files)
-          req.files.forEach(function (files, index, arr) {
-                apart.photoCapture.push("images/apartment/"+files.filename)
-                // console.log(shop.photoCapture)
-            
-          });
-          
-        }
-    //     console.log(apart)
-    // res.status(httpStatus.CREATED).send(apart);
+const getAllApartmentTable = catchAsync(async (req, res) => {
+  const apart = await apartmentTableService.getAllApartment(
+    req.params.id,
+    req.params.districtId,
+    req.params.zoneId,
+    req.params.wardId,
+    req.params.streetId,
+    req.params.status,
+    req.params.page
+  );
+  if (!apart) {
+    throw new ApiError(httpStatus.NOT_FOUND);
+  }
   res.send(apart);
 });
 
-const shopApartmentAggregation = catchAsync (async (req, res)=>{
-  const shopApartment = await apartmentTableService.apartmentAggregation()
-  res.send(shopApartment)
-}) 
+const getAllShop = catchAsync(async (req, res) => {
+  const shop = await apartmentTableService.getAllShop(
+    req.params.id,
+    req.params.districtId,
+    req.params.zoneId,
+    req.params.wardId,
+    req.params.streetId,
+    req.params.status,
+    req.params.page
+  );
+  if (!shop) {
+    throw new ApiError(httpStatus.NOT_FOUND);
+  }
+  res.send(shop);
+});
+
+const getShopById = catchAsync(async (req, res) => {
+  const shop = await apartmentTableService.getShopById(req.params.shopId);
+  if (!shop || shop.active === false) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'shop not found');
+  }
+  res.send(shop);
+});
+
+const updateApartment = catchAsync(async (req, res) => {
+  const apart = await apartmentTableService.updateApartmentById(req.params.apartmentId, req.body);
+  if (req.files) {
+    //   let path = [];
+    //   console.log(req.files)
+    req.files.forEach(function (files, index, arr) {
+      apart.photoCapture.push('images/apartment/' + files.filename);
+      // console.log(shop.photoCapture)
+    });
+  }
+  //     console.log(apart)
+  // res.status(httpStatus.CREATED).send(apart);
+  res.send(apart);
+});
+
+const shopApartmentAggregation = catchAsync(async (req, res) => {
+  const shopApartment = await apartmentTableService.apartmentAggregation();
+  res.send(shopApartment);
+});
 
 const updateShop = catchAsync(async (req, res) => {
-    const shop = await apartmentTableService.updateShopById(req.params.shopId, req.body);
-        if (req.files) {
+  const shop = await apartmentTableService.updateShopById(req.params.shopId, req.body);
+  if (req.files) {
     //   let path = [];
-      console.log(req.files)
-      req.files.forEach(function (files, index, arr) {
-            shop.photoCapture.push("images/shop/"+files.filename)
-            // console.log(shop.photoCapture)
-        
-      });
-      
-    }
-    // res.status(httpStatus.CREATED).send(shop);
-    res.send(shop);
-  });
+    console.log(req.files);
+    req.files.forEach(function (files, index, arr) {
+      shop.photoCapture.push('images/shop/' + files.filename);
+      // console.log(shop.photoCapture)
+    });
+  }
+  // res.status(httpStatus.CREATED).send(shop);
+  res.send(shop);
+});
 
 const deleteApartment = catchAsync(async (req, res) => {
   await apartmentTableService.deleteapartmentById(req.params.apartmentId);
@@ -173,9 +192,9 @@ const deleteApartment = catchAsync(async (req, res) => {
 });
 
 const deleteshop = catchAsync(async (req, res) => {
-    await apartmentTableService.deleteShopById(req.params.shopId);
-    res.status(httpStatus.NO_CONTENT).send();
-  });
+  await apartmentTableService.deleteShopById(req.params.shopId);
+  res.status(httpStatus.NO_CONTENT).send();
+});
 
 module.exports = {
   createapartmentTableService,
@@ -195,8 +214,6 @@ module.exports = {
   getallShopApartment,
   createManageUserAttendanceAutoService,
   getAllmanageUserAttendanceAuto,
-  getmanageUSerAttendanceAllAutoTable
+  getmanageUSerAttendanceAllAutoTable,
   // getManageUserAttendance,
-  
-
 };

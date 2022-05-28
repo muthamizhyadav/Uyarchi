@@ -45,18 +45,18 @@ const getAllDeAllocatedStreetOnly = async () => {
 
 const getAllStreetById = async (id) => {
   return await Streets.aggregate([
-    { $sort : {order:1} },
+    { $sort: { order: 1 } },
     {
       $match: {
-        $and: [{ AllocatedUser: { $eq:id} },{AllocationStatus:{$ne: 'DeAllocated' }},{order:{$ne:null}}],
+        $and: [{ AllocatedUser: { $eq: id } }, { AllocationStatus: { $ne: 'DeAllocated' } }, { order: { $ne: null } }],
       },
     },
     {
-      $project:{
-        street:1,
-        order:1
-      }
-    }
+      $project: {
+        street: 1,
+        order: 1,
+      },
+    },
   ]);
 };
 
@@ -104,7 +104,6 @@ const getaggregationByUserId = async (AllocatedUser) => {
       $lookup: {
         from: 'shops',
         let: { street: '$_id' },
-
         pipeline: [
           {
             $match: {
@@ -143,8 +142,7 @@ const getaggregationByUserId = async (AllocatedUser) => {
         apartMent: '$apartmentData',
         closed: 1,
         shop: '$shopData',
-        manageUserId:'$manageusersData._id'
-
+        manageUserId: '$manageusersData._id',
       },
     },
   ]);
