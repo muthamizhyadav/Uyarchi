@@ -42,7 +42,7 @@ const callStatusSchema = mongoose.Schema({
     type: String,
   },
   confirmOrder: {
-    type: String,
+    type: Number,
   },
   phStatus: {
     type: String,
