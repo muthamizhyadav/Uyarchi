@@ -302,7 +302,8 @@ const getApartmentById = async (id) => {
 
 const getAllApartment = async (id,districtId,zoneId,wardId,streetId,status,page) => {
   let match;
-  if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId != 'null'&& status !='null'){
+  let check = 'Pending';
+if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId != 'null'&& status !='null'){
     match=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{$eq:zoneId}},{ 'manageusersdata.preferredWard':{$eq:wardId}},{ Strid:{$eq:streetId}},{status:{$eq:status}}]
  }
  else if(id !='null'&&districtId =='null'&&zoneId =='null'&&wardId =='null'&&streetId == 'null'&& status =='null'){
@@ -320,9 +321,9 @@ const getAllApartment = async (id,districtId,zoneId,wardId,streetId,status,page)
  else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId == 'null'&&streetId != 'null'&& status =='null'){
     match=[{ Strid:{ $eq: streetId}}]
  }
- else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
-    match=[{ status:{ $eq: status}}]
- }
+//  else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
+//     match=[{ status:{ $eq: status}}]
+//  }
  else if(id !='null'&&districtId !='null'&&zoneId =='null'&&wardId == 'null'&&streetId == 'null'&& status =='null'){
     match=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }}]
  }
@@ -395,6 +396,11 @@ else if(id =='null'&&districtId!='null'&&zoneId !='null'&& wardId!='null'&&stree
 }
 else if(id == 'null'&&districtId!='null'&&zoneId !='null'&& wardId!='null'&&streetId != 'null'&& status =='null'){
   match=[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{ Strid: { $eq: streetId }}]
+}
+ else if(id =='null'&&districtId =='null'&&zoneId =='null'&&wardId=='null'&&streetId == 'null'&& status == check){
+  match =[{status:{$ne:'Approved'}},{status:{$ne:'Rejected'}},{status:{$eq:""}}]
+}else if(id =='null'&&districtId =='null'&&zoneId =='null'&&wardId=='null'&&streetId == 'null'&& status != 'null'){
+  match =[{status:{$eq:status}}]
 }
 else{
    match=[{ _id: { $ne: null }}]
@@ -552,7 +558,7 @@ else{
       {
       $lookup:{
         from: 'zones',
-        localField: 'manageusersdata.preferredZone',
+        localField: 'streetsdata.zone',
         foreignField: '_id',
         as: 'zonesData',
       }
@@ -563,7 +569,7 @@ else{
     {
       $lookup:{
         from: 'wards',
-        localField: 'manageusersdata.preferredWard',
+        localField: 'streetsdata.wardId',
         foreignField: '_id',
         as: 'wardsData',
       }
@@ -597,11 +603,12 @@ else{
         date:1,
         time:1,
         created:1,
-        streetStatus:'$streetsdata.closed'
+        streetStatus:'$streetsdata.closed',
+        reason:1
 
       },
     },
-  ]);
+  ])
 
   return {
     data:apart,
@@ -614,6 +621,7 @@ else{
 
 const getAllShop = async (id,districtId,zoneId,wardId,streetId,status,page) => {
   let match;
+  let check = 'Pending';
   if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId != 'null'&& status !='null'){
     match=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{$eq:zoneId}},{ 'manageusersdata.preferredWard':{$eq:wardId}},{ Strid:{$eq:streetId}},{status:{$eq:status}}]
  }
@@ -632,8 +640,8 @@ const getAllShop = async (id,districtId,zoneId,wardId,streetId,status,page) => {
  else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId == 'null'&&streetId != 'null'&& status =='null'){
     match=[{ Strid:{ $eq: streetId}}]
  }
- else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
-    match=[{ status:{ $eq: status}}]
+ else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status == check){
+    match =[{status:{$ne:'Approved'}},{status:{$ne:'Rejected'}},{status:{$eq:""}}]
  }
  else if(id !='null'&&districtId !='null'&&zoneId =='null'&&wardId == 'null'&&streetId == 'null'&& status =='null'){
     match=[{ Uid: { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }}]
@@ -689,6 +697,8 @@ else if(id =='null'&&districtId!='null'&&zoneId !='null'&& wardId!='null'&&stree
 }
 else if(id == 'null'&&districtId!='null'&&zoneId !='null'&& wardId!='null'&&streetId != 'null'&& status =='null'){
   match=[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{ Strid: { $eq: streetId }}]
+}else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status != 'null'){
+  match =[{status:{$eq:status}}]
 }
 else{
    match=[{ _id: { $ne: null }}]
