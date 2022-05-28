@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
-const { Street, Status } = require('../models');
+const { Street } = require('../models');
+const Status = require('../models/status.model')
 const ApiError = require('../utils/ApiError');
 
 const createStatus = async (streetBody) => {
@@ -12,7 +13,8 @@ const getStreetById = async (statusId) => {
 };
 
 const updatestatusById = async (statusId, updateBody) => {
-  let status = await Status.findById(statusId);
+  let status = await getStreetById(statusId)
+  console.log(status)
   if (!status) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
@@ -34,4 +36,4 @@ module.exports = {
   getStreetById,
   deletestatusById,
   updatestatusById,
-};
+}
