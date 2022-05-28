@@ -38,6 +38,9 @@ const callStatusSchema = mongoose.Schema({
   phStatus:{
     type:String,
   },
+  phreason:{
+    type:String,
+  },
   phApproved:{
     type:String,
   },
