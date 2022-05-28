@@ -87,6 +87,8 @@ const productDealingWithsupplier = async (id, date) => {
     {
       $lookup: {
         from: 'callstatuses',
+        localField: '_id',
+        foreignField: 'supplierid',
         pipeline: [
           {
             $match: {
