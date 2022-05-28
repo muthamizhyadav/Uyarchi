@@ -25,7 +25,7 @@ const getSupplierById = catchAsync(async (req, res) => {
 });
 
 const productDealingWithsupplier = catchAsync (async (req, res)=>{
-  const products = await supplierService.productDealingWithsupplier(req.params.id, req.params.date)
+  const products = await supplierService.productDealingWithsupplier(req.params.id, req.params.supplierId, req.params.date)
   res.send(products)
 })
 
