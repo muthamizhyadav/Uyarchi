@@ -3,6 +3,7 @@ const { Apartment, Shop ,ManageUserAttendance, ManageUserAttendanceAuto} = requi
 const manageUser = require('../models/manageUser.model')
 const ApiError = require('../utils/ApiError');
 const Street = require('../models/street.model')
+const {Market} = require('../models/market.model')
 
 const createApartment = async (apartmentBody) => {
     const {Uid} = apartmentBody;
@@ -38,7 +39,119 @@ const getAllManageUserAutoAttendance = async () => {
     return user;
   };
 
+const AllCount = async ()=>{
+   const userCount = await manageUser.find({active:true});
+   const street = await Street.aggregate([
+     
+    {
+      $match: {
+        $or:[{AllocationStatus:{$eq:"Allocated"}}, {AllocationStatus:{$eq:"DeAllocated"}}]
+       }
+      },
+    {
+      $lookup:{
+        from: 'wards',
+        localField: 'wardId',
+        foreignField: '_id',
+        as: 'wardData',
+      }
+    },
+    {
+      $unwind:'$wardData'
+    },
+    {
+      $lookup:{
+        from: 'zones',
+        localField: 'zone',
+        foreignField: '_id',
+        as: 'zonesData',
+      }
+    },
+    {
+      $unwind:'$zonesData'
+    },
+    {
+      $lookup:{
+        from: 'manageusers',
+        localField: 'AllocatedUser',
+        foreignField: '_id',
+        as: 'manageusersdata',
+      }
+    },
+    {
+      $unwind:'$manageusersdata'
+    },
+    {
+      $lookup:{
+        from: 'shops',
+        let:{'street':'$_id'},
+        
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$$street", "$Strid"],  // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+        ],
+        as: 'shopData',
+      }
+    },
+    {
+      $lookup:{
+        from: 'apartments',
+        let:{'street':'$_id'},
+        
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$$street", "$Strid"],  // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+        ],
+        as: 'apartmentData',
+      }
+    },
+            {
+            $match:{
+          $or : [
+            {$and:[{'shopData':{$type: 'array', $ne: []}},{'apartmentData':{$type: 'array', $ne: []}}]},
+            {$and:[{'shopData':{$type: 'array', $eq: []}},{'apartmentData':{$type: 'array', $ne: []}}]},
+            {$and:[{'shopData':{$type: 'array', $ne: []}},{'apartmentData':{$type: 'array', $eq: []}}]}
+        ]
+      }
+      },
+    {
+      $project: {
+        wardName:'$wardData.ward',
+        id:1,
+        zoneName:'$zonesData.zone',
+        zoneId:'$zonesData.zoneCode',
+        street:1,
+        apartMent:'$apartmentData',
+        closed:1,
+        shop:'$shopData',
+        userName:"$manageusersdata.name",
+        status:1,
+        manageUserId:"$manageusersdata._id",
 
+      },
+    },
+  ]);
+  const apartmentCount = await Apartment.find({active:true});
+  const shopCount = await Shop.find({active:true});
+  const market = await Market.find({active:true});
+  return{
+    userCount:userCount.length,
+    streetCount:street.length,
+    apartmentCount:apartmentCount.length,
+    shopCount:shopCount.length,
+    marketCount:market.length
+  }
+}
 
   const getAllManageUserAutoAttendanceTable = async (id,date,page) => {
     let match;
@@ -900,8 +1013,7 @@ else{
   };
 
   const getAllApartmentAndShop = async(id,districtId,zoneId,wardId,streetId,status,page)=>{ 
-    let mat ;
-    // let check = "partialPending"; 
+    let mat ; 
     if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId != 'null'&& status !='null'){
       mat=[{'manageusersdata._id':{ $eq: id }},{'manageusersdata.preferredDistrict':{ $eq: districtId }},{'manageusersdata.preferredZone':{$eq:zoneId}},{'manageusersdata.preferredWard':{$eq:wardId}},{ _id:{$eq:streetId}},{status:{$eq:status}}]
    }
@@ -920,16 +1032,26 @@ else{
    else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId == 'null'&&streetId != 'null'&& status =='null'){
       mat=[{ _id:{ $eq: streetId}}]
    }
-   else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
-  //   mat={
-  //     $or:[
-  //     {$and:[{'partialPending':{$eq:status}},{'shopData.status':{$eq:""}},{'apartmentData.status':{$ne:""}}]},
-  //     {$and:[{'partialPending':{$eq:status}},{'shopData.status':{$ne:""}},{'apartmentData.status':{$eq:""}}]},
-  //   ]
-  //  }
-  mat =[{status:{$eq:status}}]
-  } else if(id !='null'&&districtId !='null'&&zoneId =='null'&&wardId == 'null'&&streetId == 'null'&& status =='null'){
-      mat=[{  'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }}]
+   else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status =='partialPending'){
+    // mat={$or:[{'shopData':{$elemMatch:{'shopData.status':{$eq:""}}}},{'apartmentData':{$elemMatch:{'apartmentData.status':{$eq:""}}}}]}
+  // mat =[{status:{$eq:status}}]
+     mat={$or:[{'shopData':{$elemMatch:{'status':""}}},{'apartmentData':{$elemMatch:{'status':""}}}]}
+  } 
+  else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status =='userPending'){
+  mat={$and:[
+       {$and:[{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$elemMatch:{'status':{$eq:""}}}}]},
+       {$and:[{'shopData':{$elemMatch:{'status':{$ne:"Approved"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Approved"}}}},{'shopData':{$elemMatch:{'status':{$ne:"Rejected"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Rejected"}}}}]},
+      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:"Rejected"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Rejected"}}}}]},
+      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:"Rejected"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Approved"}}}}]},
+      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:"Approved"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Rejected"}}}}]},
+      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:""}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Rejected"}}}}]},
+      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:"Rejected"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:""}}}}]},
+      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:"Approved"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:""}}}}]},
+      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:""}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Approved"}}}}]}
+       ]}
+  }
+  else if(id !='null'&&districtId !='null'&&zoneId =='null'&&wardId == 'null'&&streetId == 'null'&& status =='null'){
+      mat=[{'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }}]
    }
    else if(id !='null'&&districtId !='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status =='null'){
      mat=[{  'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]
@@ -983,6 +1105,9 @@ else{
   else if(id == 'null'&&districtId!='null'&&zoneId !='null'&& wardId!='null'&&streetId != 'null'&& status =='null'){
     mat=[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{ _id: { $eq: streetId }}]
   }
+  else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status != 'null'){
+  mat =[{status:{$eq:status}}]
+  } 
   else{
      mat=[{ _id: { $ne: null }}]
    }
@@ -1085,11 +1210,14 @@ else{
               $match:{
             $or : [
               {$and:[{'shopData':{$type: 'array', $ne: []}},{'apartmentData':{$type: 'array', $ne: []}}]},
-              { $and: [{'shopData':{$type: 'array', $eq: []}},{'apartmentData':{$type: 'array', $ne: []}}]},
-              { $and : [{'shopData':{$type: 'array', $ne: []}},{'apartmentData':{$type: 'array', $eq: []}}]}
+              {$and:[{'shopData':{$type: 'array', $eq: []}},{'apartmentData':{$type: 'array', $ne: []}}]},
+              {$and:[{'shopData':{$type: 'array', $ne: []}},{'apartmentData':{$type: 'array', $eq: []}}]}
           ]
         }
         },
+        // {
+        //   $match:mat
+        // },
       {
         $project: {
           wardName:'$wardData.ward',
@@ -1207,6 +1335,9 @@ else{
       ]
     }
     },
+    // {
+    //   $match:mat
+    // },
       {
         $project: {
           wardName:'$wardData.ward',
@@ -1285,7 +1416,8 @@ module.exports = {
   getAllApartmentAndShop,
   createManageUserAutoAttendance,
   getAllManageUserAutoAttendance,
-  getAllManageUserAutoAttendanceTable
+  getAllManageUserAutoAttendanceTable,
+  AllCount
   // paginationManageUserAttendance,
  
 };

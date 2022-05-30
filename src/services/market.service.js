@@ -147,7 +147,6 @@ const getMarketShopsById = async (id) => {
   return mark;
 };
 
-
 const getAllmarket = async () => {
     return Market.find();
 } 
