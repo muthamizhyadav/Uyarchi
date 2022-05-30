@@ -37,4 +37,5 @@ router
   .put(shopImage.array('photoCapture'), apartmentController.updateShop)
   .delete(apartmentController.deleteshop);
 router.route('/apartment/aggregation').get(apartmentController.shopApartmentAggregation);
+router.route('/allDataCount/all').get(apartmentController.getAllCount)
 module.exports = router;

@@ -118,9 +118,6 @@ const ShopsSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  reason:{
-    type:String,
-  },
 });
 const MarketShops = mongoose.model('marketShops', ShopsSchema);
 module.exports = {

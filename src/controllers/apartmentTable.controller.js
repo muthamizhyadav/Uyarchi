@@ -22,6 +22,10 @@ const createManageUserAttendanceService = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(Attendance);
   await Attendance.save();
 });
+const getAllCount = catchAsync(async (req,res)=>{
+  const user = await apartmentTableService.AllCount()
+  res.send(user)
+})
 
 const getAllmanageUserAttendanceAuto = catchAsync(async (req, res) => {
   const cate = await apartmentTableService.getAllManageUserAutoAttendance();
@@ -215,5 +219,6 @@ module.exports = {
   createManageUserAttendanceAutoService,
   getAllmanageUserAttendanceAuto,
   getmanageUSerAttendanceAllAutoTable,
+  getAllCount
   // getManageUserAttendance,
 };

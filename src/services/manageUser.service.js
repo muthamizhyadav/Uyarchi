@@ -109,7 +109,7 @@ const createManageUser = async (manageUserBody) => {
    match=[{ _id: { $eq: id }},{active:{$eq:true}}]
  }
 //  console.log(match)
-  const man =  await ManageUser.aggregate46([
+  const man =  await ManageUser.aggregate([
     // {
     //   $match: {
     //     $and: [{ _id: { $eq: id }}],
