@@ -21,6 +21,22 @@ const getStreetById = async (id) => {
   return street;
 };
 
+const updates = async () => {
+  // const street = await Street.find().limit(10000).skip(39999);
+  // let count=0;
+  // street.forEach(async (e) => {
+  //   let wardId = e.wardId;
+  //   let oo = await Ward.findById(wardId);
+  //   // console.log(oo.zoneId, e.zone);
+  //     await Street.findByIdAndUpdate({ _id: e._id }, { zone: oo.zoneId ,AllocatedUser:'',AllocationStatus:'',DeAllocatedUser:''}, { new: true });
+  //     count+=1;
+  //     console.log(count+"new")
+   
+  // });
+  // await console.log(street.length);
+  return "Mooditu poda";
+}; 
+
 const streetAllocation = async (allocationbody) => {
   const { userId, arr } = allocationbody;
   // arr.forEach(async(e)=>{
@@ -236,10 +252,20 @@ const streetDeAllocation = async (allocationbody) => {
 };
 
 const getWardByStreet = async (wardId, status) => {
+  console.log(status)
+  let match;
+  if(status !="null"){
+    match=[{ wardId: { $eq: wardId }, AllocationStatus: { $eq: status } }];
+    console.log("hai")
+  }
+  else{
+    match=[{ wardId: { $eq: wardId },  AllocationStatus: { $ne: 'Allocated' } }];
+    console.log("hello")
+  }
   const ress = await Street.aggregate([
     {
       $match: {
-        $and: [{ wardId: { $eq: wardId }, AllocationStatus: { $eq:  status}}],
+        $and: match,
       },
     },
   ]);
@@ -407,6 +433,7 @@ module.exports = {
   getStreetById,
   getAllStreet,
   streetPagination,
+  updates,
   getDeAllocationaggregationByUserId,
   getWardByStreet,
   getAllocatedStreeOnly,

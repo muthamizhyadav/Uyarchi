@@ -10,6 +10,7 @@ router
   .put(streetController.updateStreet)
   .delete(streetController.deleteStreet);
 
+router.route('/updates/new').get(streetController.updates)
 router.route('/streets/:AllocatedUser').get(streetController.getaggregationByUserId)
 router.route('/streets/DeAllocatedUser/:AllocatedUser').get(streetController.getDeAllocationaggregationByUserId)
 router.route('/streetByWard/:wardId').get(streetController.getStreetByWardId);

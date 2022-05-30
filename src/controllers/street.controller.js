@@ -10,6 +10,11 @@ const createStreet = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(street);
 });
 
+const updates = catchAsync(async (req, res) => {
+  const street = await StreetService.updates();
+  res.send(street);
+});
+
 const getAllStreet = catchAsync(async (req, res) => {
   const street = await StreetService.getAllStreet();
   res.send(street);
@@ -114,6 +119,7 @@ module.exports = {
   getaggregationByUserId,
   getDeAllocationaggregationByUserId,
   getStreetByWardId,
+  updates,
   streetPagination,
   getAllStreet,
   getAllocatedStreeOnly,
