@@ -256,11 +256,9 @@ const getWardByStreet = async (wardId, status) => {
   let match;
   if(status !="null"){
     match=[{ wardId: { $eq: wardId }, AllocationStatus: { $eq: status } }];
-    console.log("hai")
   }
   else{
     match=[{ wardId: { $eq: wardId },  AllocationStatus: { $ne: 'Allocated' } }];
-    console.log("hello")
   }
   const ress = await Street.aggregate([
     {
