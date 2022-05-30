@@ -13,7 +13,7 @@ router
 router.route('/streets/:AllocatedUser').get(streetController.getaggregationByUserId)
 router.route('/streets/DeAllocatedUser/:AllocatedUser').get(streetController.getDeAllocationaggregationByUserId)
 router.route('/streetByWard/:wardId').get(streetController.getStreetByWardId);
-router.route('/street/Ward/:wardId').get(streetController.getStreetByWard)
+router.route('/street/Ward/:wardId/:status').get(streetController.getStreetByWard)
 router.route('/page/:id').get(streetController.streetPagination);
 router.route('/street/Allocation').post(streetController.streetAllocation).get(streetController.getAllocatedStreeOnly)
 router.route('/street/deAllocation').post(streetController.streetDeAllocation).get(streetController.getAllDeAllocatedStreetOnly);

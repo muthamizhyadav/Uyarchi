@@ -39,7 +39,7 @@ const streetPagination = catchAsync(async (req, res) => {
 });
 
 const getStreetByWard = catchAsync(async (req, res) => {
-  const streetWard = await StreetService.getWardByStreet(req.params.wardId);
+  const streetWard = await StreetService.getWardByStreet(req.params.wardId, req.params.status);
   res.send(streetWard);
 });
 
