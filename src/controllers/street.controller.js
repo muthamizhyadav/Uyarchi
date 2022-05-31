@@ -53,17 +53,16 @@ const streetAllocation = catchAsync(async (req, res) => {
   arr.forEach(async (e) => {
     let streetId = e;
     const streets = await Street.findById(streetId);
-    if (streets.AllocationStatus !== 'Allocated') {
       await Street.updateOne(
         { _id: streetId },
         { AllocatedUser: userId, AllocationStatus: 'Allocated', date: date },
         { new: true }
       );
-      res.status(httpStatus.CREATED).send('Allocated Successfully');
-    } else {
-      res.status(httpStatus.UNAUTHORIZED).send('Already Allocated');
-    }
+      // res.status(httpStatus.CREATED).send('Allocated Successfully');
+   
   });
+
+      res.status(httpStatus.CREATED).send('Allocated Successfully');
 });
 
 const streetDeAllocation = catchAsync(async (req, res) => {
