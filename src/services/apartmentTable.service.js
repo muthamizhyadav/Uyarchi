@@ -1231,6 +1231,7 @@ else{
           userName:"$manageusersdata.name",
           status:1,
           manageUserId:"$manageusersdata._id",
+          closeDate:1
 
         },
       },

@@ -22,19 +22,20 @@ const getStreetById = async (id) => {
 };
 
 const updates = async () => {
-  // const street = await Street.find().limit(10000).skip(39999);
+  // const street = await Street.find({closed:"close"})
   // let count=0;
   // street.forEach(async (e) => {
   //   let wardId = e.wardId;
   //   let oo = await Ward.findById(wardId);
   //   // console.log(oo.zoneId, e.zone);
-  //     await Street.findByIdAndUpdate({ _id: e._id }, { zone: oo.zoneId ,AllocatedUser:'',AllocationStatus:'',DeAllocatedUser:''}, { new: true });
+  //     await Street.findByIdAndUpdate({ _id: e._id }, {closed:""}, { new: true });
   //     count+=1;
   //     console.log(count+"new")
    
   // });
   // await console.log(street.length);
-  return "Mooditu poda";
+  // return street;
+  return "poda panni";
 }; 
 
 const streetAllocation = async (allocationbody) => {
