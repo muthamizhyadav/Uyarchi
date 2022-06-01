@@ -23,7 +23,7 @@ const getAllStreet = catchAsync(async (req, res) => {
 const closedStatus = catchAsync(async (req, res) => {
   const street = await StreetService.closedStatus(req.params.streetId, req.body);
   if (!street) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'street Not found');
+    // throw new ApiError(httpStatus.NOT_FOUND, 'street Not found');
   }
   res.send(street);
 });
@@ -83,7 +83,7 @@ const getStreetByWardId = catchAsync(async (req, res) => {
 const getStreetDetailsById = catchAsync(async (req, res) => {
   const street = await StreetService.getStreetById(req.params.streetId);
   if (!street || street.active === false) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Street_Details not found');
+    // throw new ApiError(httpStatus.NOT_FOUND, 'Street_Details not found');
   }
   res.send(street);
 });
