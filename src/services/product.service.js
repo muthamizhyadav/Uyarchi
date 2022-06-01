@@ -339,7 +339,7 @@ const getAllBillRaised = async () => {
 };
 
 const queryProduct = async (filter, options) => {
-  return Product.paginate(filter, options);
+  return Product.find();
 };
 
 const getAllManageBill = async () => {
