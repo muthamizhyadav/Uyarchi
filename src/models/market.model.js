@@ -60,6 +60,9 @@ const marketSchema = mongoose.Schema({
   },
   reason:{
     type:String,
+  },
+  Strid:{
+    type:String,
   }
 });
 const Market = mongoose.model('market', marketSchema);
