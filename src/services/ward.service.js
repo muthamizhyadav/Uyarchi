@@ -58,13 +58,13 @@ const getAllWard = async () => {
 
 const getWardByZoneId = async (zoneId) => {
   console.log(zoneId);
-  const zone = await Ward.find({ zoneId });
-  console.log(zone);
-  const zones = await Zone.findById(zoneId);
-  console.log(zones);
-  if (!zone === null) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Zone Id Is InCorrect');
-  }
+  const zone = await Ward.aggregate([
+    {
+      $match:{
+        $and:[{zoneId:{$eq:zoneId}}]
+      }
+    }
+  ]);
   return zone;
 };
 

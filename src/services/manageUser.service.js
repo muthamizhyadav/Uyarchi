@@ -5,7 +5,7 @@ const {Street} = require('../models');
 
 const createManageUser = async (manageUserBody) => {
     const check = await ManageUser.find({mobileNumber:manageUserBody.mobileNumber})
-    console.log(check);
+  
     if(check != ""){
       throw new ApiError(httpStatus.NOT_FOUND, 'already register the number');
     }
@@ -476,7 +476,11 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,page) =>{
   }   
   
   const updateManageUserId = async (manageUserId, updateBody) => {
+    let match = /^[a-zA-Z0-9]+$/
     let Manage = await getManageUserById(manageUserId);
+    if(!match.test(updateBody.idProofNo)||!match.test(updateBody.addressProofNo)){
+      throw new ApiError(httpStatus.NOT_FOUND, 'invalid ProofNo');
+    }
     if (!Manage) {
       throw new ApiError(httpStatus.NOT_FOUND, 'ManageUser not found');
     }
