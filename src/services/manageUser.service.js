@@ -54,11 +54,37 @@ const createManageUser = async (manageUserBody) => {
         $unwind:'$districtsdata'
       },
       {
+        $lookup:{
+          from: 'districts',
+          pipeline:[],
+          as: 'districtsdataAll'
+        }
+      },
+      {
+        $lookup:{
+          from: 'zones',
+          localField: 'preferredDistrict',
+          foreignField: 'districtId',
+          as: 'zonedataAll'
+        }
+      },
+      {
+        $lookup:{
+          from: 'wards',
+          localField: 'preferredZone',
+          foreignField: 'zoneId',
+          as: 'warddataAll'
+        }
+      },
+      {
         $project: {
           name:1,
           mobileNumber:1,
           preferredZone:'$zonesdata.zone',
           preferredWard:'$wardsdata.ward',
+          districtsdataAll:"$districtsdataAll",
+          zonedataAll:"$zonedataAll",
+          warddataAll:"$warddataAll",
           created:1,
           addressProofUpload:1,
           idProofUpload:1,

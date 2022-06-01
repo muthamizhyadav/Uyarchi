@@ -22,6 +22,8 @@ const createManageUserAttendanceService = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(Attendance);
   await Attendance.save();
 });
+
+
 const getAllCount = catchAsync(async (req,res)=>{
   const user = await apartmentTableService.AllCount()
   res.send(user)
@@ -71,6 +73,14 @@ const getmanageUSerAttendanceAllAutoTable = catchAsync(async (req, res) => {
   }
   res.send(attend);
 });
+
+const getAttendanceLong = catchAsync(async(req,res)=>{
+ const atten = await apartmentTableService.attendancelat(req.params.id,req.params.date1,req.params.date2);
+ if (!atten) {
+  throw new ApiError(httpStatus.NOT_FOUND);
+}
+res.send(atten);
+})
 
 const getallShopApartment = catchAsync(async (req, res) => {
   const shopApart = await apartmentTableService.getAllApartmentAndShop(
@@ -219,6 +229,7 @@ module.exports = {
   createManageUserAttendanceAutoService,
   getAllmanageUserAttendanceAuto,
   getmanageUSerAttendanceAllAutoTable,
-  getAllCount
+  getAllCount,
+  getAttendanceLong
   // getManageUserAttendance,
 };

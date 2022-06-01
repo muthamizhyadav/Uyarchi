@@ -263,6 +263,31 @@ const createManageUserAttendance = async (manageUserAttendanceBody) => {
   console.log(values)
   return ManageUserAttendance.create(values)
 };
+
+const attendancelat = async (id,date1,date2) => {
+  let match;
+  if(id != 'null'&&date1 != 'null'&& date2 != 'null'){
+      match = [{Uid:{$eq:id}},{dateIso:{$gte:date1,$lte:date2}}]
+  }
+  else{
+    match = [{Uid:{$eq:id}}]
+  }
+  console.log(match)
+   return ManageUserAttendance.aggregate([
+                {
+                  $match:{
+                    $and:match
+                  }
+                },
+                {
+                   $project:{
+                     
+                      Alat:1,
+                      Along:1
+                   }
+                }
+               ])
+}
 // const paginationManageUserAttendance = async (filter, options) => {
 //   return ManageUserAttendance.paginate(filter, options);
 // };
@@ -1418,7 +1443,9 @@ module.exports = {
   createManageUserAutoAttendance,
   getAllManageUserAutoAttendance,
   getAllManageUserAutoAttendanceTable,
-  AllCount
+  AllCount,
+  attendancelat 
+
   // paginationManageUserAttendance,
  
 };
