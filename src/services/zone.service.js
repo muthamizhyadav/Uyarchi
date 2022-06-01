@@ -49,10 +49,26 @@ const zonePagination = async (id) => {
 };
 
 const getZoneByDistrict = async (districtId) => {
-  const dis = await Zone.find({ districtId });
-  if (dis === null) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'District Id Is incorrect');
-  }
+  const dis = await Zone.aggregate([
+    {
+      $match:{
+        $and:[{districtId:{$eq:districtId}}]
+      }
+    },
+    {
+      $project:{
+        zone:1,
+        districtId:1,
+        zoneCode:1,
+        sqlZoneId:1,
+        _id:1
+      }
+    }
+
+  ]);
+  // if (dis === null) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'District Id Is incorrect');
+  // }
   return dis;
 };
 

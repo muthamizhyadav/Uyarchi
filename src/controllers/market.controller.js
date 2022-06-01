@@ -65,7 +65,7 @@ const getAllMarketTable = catchAsync(async(req, res) =>{
 
 
 const getmarketShopAll = catchAsync(async (req, res) => {
-  const manage = await marketService.getMarketShops(req.params.marketId);
+  const manage = await marketService.getMarketShops(req.params.marketId, req.params.page);
   if (!manage) {
     throw new ApiError(httpStatus.NOT_FOUND, 'marketShop Not Available ');
   }
