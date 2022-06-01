@@ -63,7 +63,7 @@ const createManageUser = async (manageUserBody) => {
       {
         $lookup:{
           from: 'zones',
-          localField: 'preferredDistrict ',
+          localField: 'preferredDistrict',
           foreignField: 'districtId',
           as: 'zonedataAll'
         }
