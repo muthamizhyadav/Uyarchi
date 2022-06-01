@@ -93,6 +93,10 @@ const deletesubcategoryById = async (subcategoryId) => {
   (subcategory.active = false), (subcategory.archive = true), await subcategory.save();
   return subcategory;
 };
+const getsubcategoryusemain=async(subid)=>{
+  const subcategory = await Subcategory.find({parentCategoryId:subid})
+  return subcategory;
+}
 
 module.exports = {
   createcategory,
@@ -106,4 +110,5 @@ module.exports = {
   updatecategoryById,
   deletecategoryById,
   querycategory,
+  getsubcategoryusemain
 };

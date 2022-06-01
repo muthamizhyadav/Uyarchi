@@ -22,4 +22,5 @@ router.route('/sub/category').post(subCategory.array('categoryImage'), categoryC
 // router.route
 
 router.route('/sub/:subcategoryId').get(categoryController.getSubCategoryhDetailsById).put(categoryController.updatesubCategory).delete(categoryController.deleteSubCategory)
+router.route('/subcat/main/:id').get(categoryController.getsubcategoryusemain)
 module.exports = router;

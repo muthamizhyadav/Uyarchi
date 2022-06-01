@@ -19,6 +19,11 @@ const createCategory = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(category);
 });
 
+const getsubcategoryusemain =catchAsync(async(req,res)=>{
+  const subcategory = await categoryService.getsubcategoryusemain(req.params.id);
+  res.send(subcategory)
+})
+
 const subcreateCategory = catchAsync(async (req, res) => {
   const { body } = req;
   const subcategory = await categoryService.subCreatecategory(body);
@@ -90,4 +95,5 @@ module.exports = {
   getCategoryhDetailsById,
   updateCategory,
   deleteCategory,
+  getsubcategoryusemain
 };
