@@ -7,11 +7,11 @@ const marketService = require('../services/market.service');
 const createmarketService = catchAsync(async (req, res) => {
   const pro = await marketService.createmarket(req.body);
   if (req.files) {
-    let path = '';
+    //   let path = [];
     req.files.forEach(function (files, index, arr) {
-      path = "images/market/"+files.filename;
+      pro.image.push('images/market/' + files.filename);
+      // console.log(shop.photoCapture)
     });
-    pro.image = path;
   }
   res.status(httpStatus.CREATED)
   res.send(pro);
@@ -21,11 +21,12 @@ const createmarketService = catchAsync(async (req, res) => {
 const createmarketShopService = catchAsync(async (req, res) => {
   const pro = await marketService.createMarketShops(req.body);
   if (req.files) {
-    let path = '';
+    //   let path = [];
+    console.log(req.files);
     req.files.forEach(function (files, index, arr) {
-      path = "images/marketShop/"+files.filename;
+      pro.image.push('images/marketShop/' + files.filename);
+      // console.log(shop.photoCapture)
     });
-    pro.image = path;
   }
   res.status(httpStatus.CREATED).send(pro);
   await pro.save();
@@ -76,27 +77,31 @@ const getmarketShopAll = catchAsync(async (req, res) => {
 const updatemarketService = catchAsync(async (req, res) => {
   const pro = await marketService.updatemarketById(req.params.marketId, req.body);
   if (req.files) {
-    let path = '';
+    //   let path = [];
+    console.log(req.files);
     req.files.forEach(function (files, index, arr) {
-      path = "images/"+files.filename;
+      pro.image.push('images/market/' + files.filename);
+      // console.log(shop.photoCapture)
     });
-    pro.image = path;
   }
+  // await pro.save();
   res.send(pro)
-  await pro.save();
+ 
 });
 
 const updatemarketShopService = catchAsync(async (req, res) => {
   const pro = await marketService.updatemarketShopsById(req.params.marketShopId, req.body);
   if (req.files) {
-    let path = '';
+    //   let path = [];
+    console.log(req.files);
     req.files.forEach(function (files, index, arr) {
-      path = "images/"+files.filename;
+      pro.image.push('images/marketShop/' + files.filename);
+      // console.log(shop.photoCapture)
     });
-    pro.image = path;
   }
+  // await pro.save();
   res.send(pro)
-  await pro.save();
+  
 });
 
 

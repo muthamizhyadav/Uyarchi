@@ -26,7 +26,7 @@ const marketSchema = mongoose.Schema({
     type: String,
   },
   image: {
-    type: String,
+    type: Array,
   },
   mlongitude: {
     type: String,
@@ -90,7 +90,7 @@ const ShopsSchema = mongoose.Schema({
     type: String,
   },
   image: {
-    type: String,
+    type: Array,
   },
   ownnum: {
     type: Number,

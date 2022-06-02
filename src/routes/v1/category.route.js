@@ -10,7 +10,7 @@ router.route('/').post(category.array('categoryImage'), categoryController.creat
 router
   .route('/:categoryId')
   .get(categoryController.getCategoryhDetailsById)
-  .put(categoryController.updateCategory)
+  .put(category.array('categoryImage'),categoryController.updateCategory)
   .delete(categoryController.deleteCategory);
 
 router.route('/sub/category').post(subCategory.array('categoryImage'), categoryController.subcreateCategory).get(categoryController.getAllSubCategory);
@@ -21,6 +21,6 @@ router.route('/sub/category').post(subCategory.array('categoryImage'), categoryC
 //   .delete(categoryController.deleteSubCategory);
 // router.route
 
-router.route('/sub/:subcategoryId').get(categoryController.getSubCategoryhDetailsById).put(categoryController.updatesubCategory).delete(categoryController.deleteSubCategory)
+router.route('/sub/:subcategoryId').get(categoryController.getSubCategoryhDetailsById).put(subCategory.array('categoryImage'),categoryController.updatesubCategory).delete(categoryController.deleteSubCategory)
 router.route('/subcat/main/:id').get(categoryController.getsubcategoryusemain)
 module.exports = router;

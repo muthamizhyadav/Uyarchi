@@ -66,11 +66,27 @@ const getSubCategoryhDetailsById = catchAsync(async (req, res) => {
 
 const updateCategory = catchAsync(async (req, res) => {
   const category = await categoryService.updatecategoryById(req.params.categoryId, req.body);
+  if (req.files) {
+    let path = '';
+    req.files.forEach(function (files, index, arr) {
+      path = 'images/category/' + files.filename;
+    });
+    category.categoryImage = path;
+  }
+  await category.save();
   res.send(category);
 });
 
 const updatesubCategory = catchAsync(async (req, res) => {
   const subcategory = await categoryService.updateSubcategoryById(req.params.subcategoryId, req.body);
+  if (req.files) {
+    let path = '';
+    req.files.forEach(function (files, index, arr) {
+      path = 'images/subcategory/' + files.filename;
+    });
+    subcategory.categoryImage = path;
+  }
+  await subcategory.save();
   res.send(subcategory);
 });
 
