@@ -6,36 +6,36 @@ const createcategory = async (categoryBody) => {
   return Category.create(categoryBody);
 };
 
-const getAllCategory = async ()=>{
+const getAllCategory = async () => {
   return Category.find()
 }
 const subCreatecategory = async (subCategoryBody) => {
   return Subcategory.create(subCategoryBody);
 };
 
-const getAllSubCategory = async ()=>{
-    return Subcategory.aggregate([
-      {
-        $lookup: {
-          from: 'categories',
-          localField: 'parentCategoryId',
-          foreignField: '_id',
-          as: 'cate',
-        },
+const getAllSubCategory = async () => {
+  return Subcategory.aggregate([
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'parentCategoryId',
+        foreignField: '_id',
+        as: 'cate',
       },
-      {
-        $unwind: '$cate',
+    },
+    {
+      $unwind: '$cate',
+    },
+    {
+      $project: {
+        subcategoryName: 1,
+        id: 1,
+        categoryName: '$cate.categoryName',
+        description: 1,
+        categoryImage: 1
       },
-      {
-        $project: {
-          subcategoryName: 1,
-          id:1,
-          categoryName:'$cate.categoryName',
-          description:1,
-          categoryImage:1
-        },
-      },
-    ])
+    },
+  ])
 }
 
 const getcategoryById = async (id) => {
@@ -93,8 +93,13 @@ const deletesubcategoryById = async (subcategoryId) => {
   (subcategory.active = false), (subcategory.archive = true), await subcategory.save();
   return subcategory;
 };
-const getsubcategoryusemain=async(subid)=>{
-  const subcategory = await Subcategory.find({parentCategoryId:subid})
+const getsubcategoryusemain = async (subid) => {
+  // const subcategory = await Subcategory.find({parentCategoryId:subid})
+  const subcategory = await Subcategory.aggregate([
+    {
+      $match: { $and: [{ parentCategoryId: { $eq: subid } }], },
+    }
+  ])
   return subcategory;
 }
 

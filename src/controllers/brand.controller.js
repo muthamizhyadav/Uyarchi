@@ -32,9 +32,9 @@ const getbrand = catchAsync(async (req, res) => {
 
 const getBrandServicebyId = catchAsync(async (req, res) => {
     const business = await brand.getBrandById(req.params.brandId);
-    if (!business || !business.active === true) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Brand not found');
-    }
+    // if (!business || !business.active === true) {
+    //   throw new ApiError(httpStatus.NOT_FOUND, 'Brand not found');
+    // }
     res.send(business);
   });
 
