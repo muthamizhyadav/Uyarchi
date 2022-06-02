@@ -13,6 +13,11 @@ const createCallStatus = catchAsync(async (req, res) => {
 });
 
 
+const getCallStatusId = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.getAllConfirmStatus(req.params.id)
+  res.send(callStatus);
+});
+
 const getCallStatusbyId = catchAsync(async (req, res) => {
   const callStatus = await CallStatusService.getCallStatusById(req.params.id)
   if (!callStatus || !callStatus.active === true) {
@@ -36,4 +41,5 @@ module.exports = {
     getCallStatusbyId,
     updateCallStatusById,
     deleteBusinessById,
+    getCallStatusId
 };
