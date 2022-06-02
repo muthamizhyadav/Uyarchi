@@ -19,6 +19,14 @@ const brandSchema = mongoose.Schema({
   image: {
     type:String,
   },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 brandSchema.plugin(toJSON);

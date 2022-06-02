@@ -29,7 +29,31 @@ const getbrand = catchAsync(async (req, res) => {
     res.status(httpStatus.CREATED).send(brands);
 })
 
+
+const getBrandServicebyId = catchAsync(async (req, res) => {
+    const business = await brand.getBrandById(req.params.brandId);
+    if (!business || !business.active === true) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Brand not found');
+    }
+    res.send(business);
+  });
+
+  const updateShop = catchAsync(async (req, res) => {
+    const brands = await brand.updateBrandById(req.params.brandId, req.body);
+    if (req.files) {
+        let path = '';
+        req.files.forEach(function (files, index, arr) {
+            path = 'images/brands/' + files.filename;
+        });
+        brands.image = path;
+    }
+    res.send(brands);
+  });
+
+
 module.exports = {
     createbrand,
-    getbrand
+    getbrand,
+    getBrandServicebyId,
+    updateShop
 }
