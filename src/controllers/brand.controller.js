@@ -48,6 +48,7 @@ const getBrandServicebyId = catchAsync(async (req, res) => {
         brands.image = path;
     }
     res.send(brands);
+    await brands.save();
   });
 
 
