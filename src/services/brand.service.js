@@ -42,11 +42,11 @@ const getbrand = async () => {
 
 const getBrandById = async (id) => {
     console.log(id)
-    return brand.aggregate([
+    const brands = await brand.aggregate([
         {
             $match: {
-                $and:[{ _id: { $eq: id }}],
-              },
+                $and: [{ _id: { $eq: id } }],
+            },
         },
         {
             $lookup: {
@@ -63,19 +63,14 @@ const getBrandById = async (id) => {
                 as: 'subcategorydata',
             },
         },
-        {
-            $project: {
-                _id: 1,
-                brandname: 1,
-                subcategoryall: "$subcategorydata",
-                categoryall: "$categorydata",
-                image: 1,
-                subcategory:1,
-                category:1,
-                active:1
-            }
-        }
+
     ])
+    if (brands.length == 0) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'brand not found');
+    }
+    
+    return brands[0];
+
 };
 
 const updateBrandById = async (brandId, updateBody) => {
