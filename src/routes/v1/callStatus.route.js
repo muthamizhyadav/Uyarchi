@@ -3,7 +3,7 @@ const CallStatusController = require('../../controllers/callStatus.controller');
 const router = express.Router();
 
 router.route('/').post(CallStatusController.createCallStatus);
-
+router.route('/confirmcallstatus/:id').get(CallStatusController.getCallStatusId)
 router
   .route('/:id')
   .get(CallStatusController.getCallStatusbyId)
