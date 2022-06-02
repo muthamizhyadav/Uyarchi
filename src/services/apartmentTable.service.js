@@ -267,7 +267,7 @@ const createManageUserAttendance = async (manageUserAttendanceBody) => {
 const attendancelat = async (id,date1,date2) => {
   let match;
   if(id != 'null'&&date1 != 'null'&& date2 != 'null'){
-      match = [{Uid:{$eq:id}},{dateIso:{$gte:date1,$lte:date2}}]
+      match = [{Uid:{$eq:id}},{dateIso:{$gte:date1,$lt:date2}}]
   }
   else{
     match = [{Uid:{$eq:id}}]

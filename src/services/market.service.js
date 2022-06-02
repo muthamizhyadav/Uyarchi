@@ -33,20 +33,54 @@ const createMarketShops = async (marketShopsBody) => {
 };
 
 const getmarketById = async (id) => {
-  const mark = Market.findById(id);
-  if (!mark || mark.active === false) {
-    throw new ApiError(httpStatus.NOT_FOUND, ' market Not Found');
-  }
+  const mark = Market.aggregate([
+      {
+        $match:{
+          $and:[{_id:{$eq:id}}]
+        }
+      },
+      {
+        $lookup:{
+          from: 'streets',
+          localField: 'Strid',
+          foreignField: '_id',
+          as: 'streetsdata',
+        }
+      },
+      {
+        $unwind:'$streetsdata'
+      },
+      {
+        $project:{
+          street:'$streetsdata.street',
+          MName:1,
+          locality:1,
+          pincode:1,
+          LandMark:1,
+          Strid:1,
+          Uid:1,
+          mlongitude:1,
+          mlatitude:1,
+          userName:1,
+          userNo:1,
+          status:1,
+          image:1,
+          created:1
+        }
+      }
+  ]);
+  // if (!mark || mark.active === false) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, ' market Not Found');
+  // }
   return mark;
 };
 
-const getMarketShops = async (id,page) => {
-  console.log(id)
+const getMarketShops = async (marketId,page) => {
   // const mark = await MarketShops.find({MName:id});
-  const mark = MarketShops.aggregate([
+  const mark = await  MarketShops.aggregate([
     {
       $match:{
-        $and:[{MName:{$eq:id}},{active:{$eq:true}}]
+        $and:[{MName:{$eq:marketId}},{active:{$eq:true}}]
       },
    },
    {
@@ -107,10 +141,10 @@ const getMarketShops = async (id,page) => {
   $limit:10
 },
   ])
-  const count = MarketShops.aggregate([
+  const count = await MarketShops.aggregate([
     {
       $match:{
-        $and:[{MName:{$eq:id}},{active:{$eq:true}}]
+        $and:[{MName:{$eq:marketId}},{active:{$eq:true}}]
       },
    },
 //    {
