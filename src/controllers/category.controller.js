@@ -6,7 +6,7 @@ const { categoryService } = require('../services');
 
 const createCategory = catchAsync(async (req, res) => {
   const { body } = req;
-  
+
   const category = await categoryService.createcategory(body);
   if (req.files) {
     let path = '';
@@ -19,7 +19,7 @@ const createCategory = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(category);
 });
 
-const getsubcategoryusemain =catchAsync(async(req,res)=>{
+const getsubcategoryusemain = catchAsync(async (req, res) => {
   const subcategory = await categoryService.getsubcategoryusemain(req.params.id);
   res.send(subcategory)
 })
@@ -38,12 +38,12 @@ const subcreateCategory = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(subcategory);
 });
 
-const getAllCategory = catchAsync(async (req,res)=>{
+const getAllCategory = catchAsync(async (req, res) => {
   const cate = await categoryService.getAllCategory()
   res.send(cate)
 })
 
-const getAllSubCategory = catchAsync(async (req,res)=>{
+const getAllSubCategory = catchAsync(async (req, res) => {
   const subcate = await categoryService.getAllSubCategory()
   res.send(subcate)
 })
@@ -66,7 +66,7 @@ const getSubCategoryhDetailsById = catchAsync(async (req, res) => {
 
 const updateCategory = catchAsync(async (req, res) => {
   const category = await categoryService.updatecategoryById(req.params.categoryId, req.body);
-  if (req.files) {
+  if (req.files.length != 0) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
       path = 'images/category/' + files.filename;
@@ -79,7 +79,7 @@ const updateCategory = catchAsync(async (req, res) => {
 
 const updatesubCategory = catchAsync(async (req, res) => {
   const subcategory = await categoryService.updateSubcategoryById(req.params.subcategoryId, req.body);
-  if (req.files) {
+  if (req.files.length != 0) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
       path = 'images/subcategory/' + files.filename;

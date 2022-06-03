@@ -45,7 +45,7 @@ const getBrandServicebyId = catchAsync(async (req, res) => {
 
   const updateShop = catchAsync(async (req, res) => {
     const brands = await brand.updateBrandById(req.params.brandId, req.body);
-    if (req.files) {
+    if (req.files.length != 0) {
         let path = '';
         req.files.forEach(function (files, index, arr) {
             path = 'images/brands/' + files.filename;
