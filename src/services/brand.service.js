@@ -10,7 +10,8 @@ const getbrand = async () => {
     {
       $lookup: {
         from: 'categories',
-        pipeline: [],
+        localField: 'category',
+        foreignField: '_id',
         as: 'categorydata',
       },
     },
@@ -20,8 +21,8 @@ const getbrand = async () => {
     {
       $lookup: {
         from: 'subcategories',
-        localField: 'category',
-        foreignField: 'parentCategoryId',
+        localField: 'subcategory',
+        foreignField: '_id',
         as: 'subcategorydata',
       },
     },
