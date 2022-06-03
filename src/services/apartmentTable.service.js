@@ -1037,7 +1037,8 @@ else{
     }
   };
 
-  const getAllApartmentAndShop = async(id,districtId,zoneId,wardId,streetId,status,page)=>{ 
+  const getAllApartmentAndShop = async(id,districtId,zoneId,wardId,streetId,status,
+    )=>{ 
     let mat ; 
     if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId != 'null'&& status !='null'){
       mat=[{'manageusersdata._id':{ $eq: id }},{'manageusersdata.preferredDistrict':{ $eq: districtId }},{'manageusersdata.preferredZone':{$eq:zoneId}},{'manageusersdata.preferredWard':{$eq:wardId}},{ _id:{$eq:streetId}},{status:{$eq:status}}]

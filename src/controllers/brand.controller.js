@@ -30,6 +30,11 @@ const getbrand = catchAsync(async (req, res) => {
 })
 
 
+const getcategorySubCategories = catchAsync (async (req, res)=>{
+    const brands = await brand.getcategorySubCategories(req.params.categoryId, req.params.subcategoryId)
+    res.send(brands)
+})
+
 const getBrandServicebyId = catchAsync(async (req, res) => {
     const business = await brand.getBrandById(req.params.brandId);
     // if (!business || !business.active === true) {
@@ -55,6 +60,7 @@ const getBrandServicebyId = catchAsync(async (req, res) => {
 module.exports = {
     createbrand,
     getbrand,
+    getcategorySubCategories,
     getBrandServicebyId,
     updateShop
 }
