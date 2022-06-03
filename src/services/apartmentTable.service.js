@@ -1037,7 +1037,7 @@ else{
     }
   };
 
-  const getAllApartmentAndShop = async(id,districtId,zoneId,wardId,streetId,status,
+  const getAllApartmentAndShop = async(id,districtId,zoneId,wardId,streetId,status,page
     )=>{ 
     let mat ; 
     if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId != 'null'&& status !='null'){
