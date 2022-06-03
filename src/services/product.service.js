@@ -3,7 +3,6 @@ const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise, ManageBill, Sho
 const ApiError = require('../utils/ApiError');
 const Supplier = require('../models/supplier.model');
 const ReceivedOrder = require('../models/receivedOrders.model');
-const callStatus = require('../models/callStatus')
 const ShopOrders = require('../models/shopOrder.model');
 
 const createProduct = async (productBody) => {
@@ -182,25 +181,25 @@ const productDateTimeFilter = async (date) => {
     //     $unwind:"$callStatusData"
     // },
     {
-        $lookup: {
-          from: 'shoporders',
-          let: { productid: '$_id' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $eq: ['$$productid', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
-                },
-              },
-                $match: {
-                  $expr: {
-                    $eq: [date, '$date'],
-                  },
+      $lookup: {
+        from: 'shoporders',
+        let: { productid: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ['$$productid', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
               },
             },
-          ],
-          as: 'ShopOrders',
-        },
+            $match: {
+              $expr: {
+                $eq: [date, '$date'],
+              },
+            },
+          },
+        ],
+        as: 'ShopOrders',
+      },
     },
     {
       $project: {
@@ -213,13 +212,13 @@ const productDateTimeFilter = async (date) => {
         salesmanPrice: 1,
         _id: 1,
         orderdata: '$shopData',
-        shopOrder:'$ShopOrders',
+        shopOrder: '$ShopOrders',
       },
     },
   ]);
 };
 
- const aggregationWithProductId = async (id, date) => {
+const aggregationWithProductId = async (id, date) => {
   return Product.aggregate([
     {
       $match: {

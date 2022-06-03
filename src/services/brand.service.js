@@ -5,7 +5,6 @@ const createbrand = async (brandBody) => {
 };
 
 const getbrand = async () => {
-  // return brand.find()
   return brand.aggregate([
     {
       $lookup: {
@@ -84,7 +83,7 @@ const getcategorySubCategories = async (categoryId, subcategoryId) => {
       },
     },
   ]);
-  return brands
+  return brands;
 };
 
 const updateBrandById = async (brandId, updateBody) => {

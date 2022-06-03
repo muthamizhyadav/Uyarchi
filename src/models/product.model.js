@@ -7,6 +7,15 @@ const productSchema = mongoose.Schema({
     type: String,
     default: v4,
   },
+  SubCatId:{
+    type:String,
+  },
+  brandStatus:{
+    type:String,
+  },
+  Brand:{
+    type:String,
+  },
   productTitle: {
     type: String,
   },
