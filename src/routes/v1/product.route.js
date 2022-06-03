@@ -10,7 +10,8 @@ router
   .get(productController.getproduct)
   .delete(productController.deleteProduct)
   .put(upload.array('image'),productController.updateProduct);
-router.route('/shopProducts/getName').get(productController.productAggregationWithShopOrder);
+router.route('/getProduct/aggregation/:id').get(productController.getProductByIdWithAggregation)
+  router.route('/shopProducts/getName').get(productController.productAggregationWithShopOrder);
 router.route('/stocks').post(productController.createStock);
 router.route('/shopList').post(productController.createShopListService);
 router.route('/shopList/all').get(productController.getShopList);

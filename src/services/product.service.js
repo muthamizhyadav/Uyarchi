@@ -322,6 +322,32 @@ const getProductById = async (id) => {
   return Product.findById(id);
 };
 
+const getProductByIdWithAggregation = async (id) => {
+  const product = await Product.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'subcategories',
+        localField: 'SubCatId',
+        foreignField: '_id',
+        as: 'subcategorydata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'brands',
+        localField: 'Brand',
+        foreignField: '_id',
+        as: 'brandData',
+      },
+    },
+  ]);
+};
+
 const getManageBill = async (id) => {
   return ManageBill.findById(id);
 };
@@ -555,6 +581,7 @@ module.exports = {
   getBillRaiseById,
   // updatingStatusForDelivered,
   updateBillRaiseById,
+  getProductByIdWithAggregation,
   deleteBillRaise,
   createMainWherehouseLoadingExecute,
   getAllConfirmStack,

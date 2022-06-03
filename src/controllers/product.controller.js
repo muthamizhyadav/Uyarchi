@@ -173,6 +173,11 @@ const getproduct = catchAsync(async (req, res) => {
   res.send(product);
 });
 
+const getProductByIdWithAggregation = catchAsync(async (req, res)=>{
+  const product = await productService.aggregationWithProductId(req.params.id);
+  res.send(product)
+})
+
 const getStockBySupplierId = catchAsync(async (req, res) => {
   const stock = await productService.getStockBySupplierId(req.params.supplierId);
   res.send(stock);
@@ -377,6 +382,7 @@ module.exports = {
   aggregationWithProductId,
   sendStocktoLoadingExecute,
   updatingStatusForDelivered,
+  getProductByIdWithAggregation,
   createShopListService,
   getShopList
 };
