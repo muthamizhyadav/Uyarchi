@@ -9,7 +9,7 @@ router
   .route('/:productId')
   .get(productController.getproduct)
   .delete(productController.deleteProduct)
-  .put(productController.updateProduct);
+  .put(upload.array('image'),productController.updateProduct);
 router.route('/shopProducts/getName').get(productController.productAggregationWithShopOrder);
 router.route('/stocks').post(productController.createStock);
 router.route('/shopList').post(productController.createShopListService);
