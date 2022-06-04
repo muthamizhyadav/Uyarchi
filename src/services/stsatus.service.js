@@ -35,6 +35,14 @@ const getApprovedProductDateWise = async (date) => {
     {
       $unwind: '$productData',
     },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'productid',
+        foreignField: 'productDealingWith',
+        as: 'supplierData',
+      },
+    },
   ]);
 };
 
