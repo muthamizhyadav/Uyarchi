@@ -323,7 +323,7 @@ const getProductById = async (id) => {
 };
 
 const getProductByIdWithAggregation = async (id) => {
-  console.log(id)
+  console.log(id);
   const product = await Product.aggregate([
     {
       $match: {
@@ -347,7 +347,7 @@ const getProductByIdWithAggregation = async (id) => {
       },
     },
   ]);
-  return product
+  return product;
 };
 
 const getManageBill = async (id) => {
@@ -554,7 +554,7 @@ const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
   (loading.active = false), (loading.archive = true), await loading.save();
 };
 const productaggregateById = async (page) => {
-const product= await Product.aggregate([
+  const product = await Product.aggregate([
     {
       $lookup: {
         from: 'categories',
@@ -581,14 +581,14 @@ const product= await Product.aggregate([
     },
     { $skip: 10 * page },
     { $limit: 10 },
-  ])
-  const total=await Product.find();
+  ]);
+  const total = await Product.find().count();
 
   return {
-    product:product,
-    total:total.length
-  }
-}
+    value: product,
+    total: total,
+  };
+};
 module.exports = {
   createProduct,
   getStockById,
@@ -642,5 +642,5 @@ module.exports = {
   aggregationWithProductId,
   createShopList,
   getAllShopList,
-  productaggregateById
+  productaggregateById,
 };
