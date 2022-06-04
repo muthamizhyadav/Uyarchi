@@ -110,15 +110,59 @@ const productDealingWithsupplier = async (id, date) => {
   ]);
 };
 
-const getSupplierWithApprovedstatus = async (id) => {
+const getSupplierWithApprovedstatus = async (date) => {
   return Supplier.aggregate([
     {
-      $match: {
-        productDealingWith: {
-          $eq: id,
-        },
+      $lookup: {
+        from: 'callstatuses',
+        localField: '_id',
+        foreignField: 'supplierid',
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ['$date', date], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+
+            // $group: { _id: null, sum: { $sum: '$phApproved' } },
+          },
+          {
+            $lookup: {
+              from: 'status',
+              localField: 'productid',
+              foreignField: 'productid',
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $eq: ['$date', date], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                    },
+                  },
+                  $match: {
+                    $expr: {
+                      $eq: ['$status', 'Approved'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                    },
+                  },
+                },
+              ],
+              as: 'status',
+            },
+          },
+          {
+            $unwind: '$status',
+          },
+        ],
+        as: 'callstatusData',
       },
     },
+    // {
+    //   $set: {
+    //     callstatusDatass: { $arrayElemAt: ["$callstatusData.confirmOrder", 0] }
+    //   }
+    // }
+    // { $unwind: '$callstatusData' },
+    //  { $unwind: { path: "$callstatusData", preserveNullAndEmptyArrays: false } },
   ]);
 };
 

@@ -11,7 +11,7 @@ const createSupplier = catchAsync(async (req, res) => {
 });
 
 const getSupplierWithApprovedstatus = catchAsync (async (req, res)=>{
-  const supplier = await supplierService.getSupplierWithApprovedstatus(req.params.id)
+  const supplier = await supplierService.getSupplierWithApprovedstatus(req.params.date)
   res.send(supplier)
 })
 
