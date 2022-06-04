@@ -34,7 +34,7 @@ router.route('/stock/loadingExecute').get(productController.getStockByLoadingExe
 router.route('/updateQty/:id').put(productController.updateStockQtyById);
 router.route('/loadingExecute/all').get(productController.getLoadingExecuteDate);
 router.route('/allience/:id').get(productController.getAllienceBySupplierId);
-router.route('/getall/product/aggregateById').get(productController.productaggregateById);
+router.route('/getall/product/aggregateById/:page').get(productController.productaggregateById);
 router
   .route('/confirmStock/:confirmStockId')
   .get(productController.getconfirmStockById)
