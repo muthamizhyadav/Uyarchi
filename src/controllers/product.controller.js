@@ -338,7 +338,7 @@ const getbillingexecutive = catchAsync(async (req, res) => {
 });
 const productaggregateById=catchAsync(async (req, res) => {
   console.log("sdfsdfsd")
-  const product = await productService.productaggregateById();
+  const product = await productService.productaggregateById(req.params.page);
   res.send(product);
 });
 module.exports = {

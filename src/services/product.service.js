@@ -563,8 +563,8 @@ const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
   }
   (loading.active = false), (loading.archive = true), await loading.save();
 };
-const productaggregateById = async () => {
-  return await Product.aggregate([
+const productaggregateById = async (page) => {
+const product= await Product.aggregate([
     {
       $lookup: {
         from: 'categories',
@@ -589,7 +589,15 @@ const productaggregateById = async () => {
         as: 'brandName',
       },
     },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ])
+  const total=await Product.find();
+
+  return {
+    product:product,
+    total:total.length
+  }
 }
 module.exports = {
   createProduct,
