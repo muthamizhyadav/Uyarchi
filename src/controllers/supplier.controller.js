@@ -10,6 +10,11 @@ const createSupplier = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(supplier);
 });
 
+const getSupplierWithApprovedstatus = catchAsync (async (req, res)=>{
+  const supplier = await supplierService.getSupplierWithApprovedstatus(req.params.id)
+  res.send(supplier)
+})
+
 const getAllSupplier = catchAsync(async (req, res) => {
   const supplier = await supplierService.getAllSupplier();
   res.status(httpStatus.OK);
@@ -78,5 +83,6 @@ module.exports = {
   getDisableSupplierById,
   getAllDisableSupplier,
   deleteSupplierById,
+  getSupplierWithApprovedstatus,
   getSupplierById,
 };

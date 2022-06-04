@@ -8,4 +8,5 @@ router.route('/enable/:supplierId').put(supplierController.recoverById);
 router.route('/disable/All').get(supplierController.getAllDisableSupplier)
 router.route('/disable/:id').get(supplierController.getDisableSupplierById).put(supplierController.updateDisableSupplierById)
 router.route('/products/dealing/:id/:date').get(supplierController.productDealingWithsupplier);
+router.route('/dealing/:id').get(supplierController.getSupplierWithApprovedstatus)
 module.exports = router;
