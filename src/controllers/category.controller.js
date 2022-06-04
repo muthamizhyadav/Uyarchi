@@ -8,7 +8,7 @@ const createCategory = catchAsync(async (req, res) => {
   const { body } = req;
 
   const category = await categoryService.createcategory(body);
-  if (req.files) {
+  if (req.files.length != 0) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
       path = 'images/category/' + files.filename;
@@ -27,7 +27,7 @@ const getsubcategoryusemain = catchAsync(async (req, res) => {
 const subcreateCategory = catchAsync(async (req, res) => {
   const { body } = req;
   const subcategory = await categoryService.subCreatecategory(body);
-  if (req.files) {
+  if (req.files.length != 0) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
       path = 'images/subcategory/' + files.filename;

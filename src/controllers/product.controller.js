@@ -8,7 +8,7 @@ const { Stock } = require('../models/product.model');
 const createProduct = catchAsync(async (req, res) => {
   const { body } = req;
   const product = await productService.createProduct(body);
-  if (req.files) {
+  if (req.files.length != 0) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
       path = 'images/' + files.filename;
@@ -193,7 +193,7 @@ const getAllienceBySupplierId = catchAsync(async (req, res) => {
 
 const updateProduct = catchAsync(async (req, res) => {
   const product = await productService.updateProductById(req.params.productId, req.body);
-  if (req.files) {
+  if (req.files.length != 0) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
       path = 'images/' + files.filename;
@@ -269,7 +269,7 @@ const deleteBillManage = catchAsync(async (req, res) => {
 const sendStocktoLoadingExecute = catchAsync(async (req, res) => {
   const stocks = await productService.sendStocktoLoadingExecute(req.params.id, req.body);
   // const { body } = req;
-  if (req.files) {
+  if (req.files.length != 0) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
       path = 'images/weighbridge/' + files.filename;
