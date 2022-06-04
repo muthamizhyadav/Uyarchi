@@ -323,6 +323,7 @@ const getProductById = async (id) => {
 };
 
 const getProductByIdWithAggregation = async (id) => {
+  console.log(id)
   const product = await Product.aggregate([
     {
       $match: {
@@ -332,20 +333,27 @@ const getProductByIdWithAggregation = async (id) => {
     {
       $lookup: {
         from: 'subcategories',
-        localField: 'SubCatId',
-        foreignField: '_id',
+        localField: 'category',
+        foreignField: 'parentCategoryId',
         as: 'subcategorydata',
       },
     },
     {
       $lookup: {
         from: 'brands',
-        localField: 'Brand',
-        foreignField: '_id',
+        localField: 'SubCatId',
+        foreignField: 'subcategory',
         as: 'brandData',
       },
     },
+    // {
+    //   $project:{
+    //     sucCategory:"$subcategories",
+    //     brandData:"$brandData"
+    //   }
+    // }
   ]);
+  return product
 };
 
 const getManageBill = async (id) => {

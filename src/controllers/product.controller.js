@@ -174,7 +174,10 @@ const getproduct = catchAsync(async (req, res) => {
 });
 
 const getProductByIdWithAggregation = catchAsync(async (req, res)=>{
-  const product = await productService.aggregationWithProductId(req.params.id);
+  const product = await productService.getProductByIdWithAggregation(req.params.id);
+if(!product){
+  throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+}
   res.send(product)
 })
 
