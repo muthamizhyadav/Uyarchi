@@ -336,6 +336,11 @@ const getbillingexecutive = catchAsync(async (req, res) => {
   const stock = await productService.getbillingexecutives();
   res.send(stock);
 });
+const productaggregateById=catchAsync(async (req, res) => {
+  console.log("sdfsdfsd")
+  const product = await productService.productaggregateById();
+  res.send(product);
+});
 module.exports = {
   createProduct,
   getAllienceBySupplierId,
@@ -387,5 +392,6 @@ module.exports = {
   updatingStatusForDelivered,
   getProductByIdWithAggregation,
   createShopListService,
-  getShopList
+  getShopList,
+  productaggregateById
 };

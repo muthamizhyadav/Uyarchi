@@ -563,7 +563,34 @@ const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
   }
   (loading.active = false), (loading.archive = true), await loading.save();
 };
-
+const productaggregateById = async () => {
+  return await Product.aggregate([
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'catName',
+      },
+    },
+    {
+      $lookup: {
+        from: 'subcategories',
+        localField: 'SubCatId',
+        foreignField: '_id',
+        as: 'subcatName',
+      },
+    },
+    {
+      $lookup: {
+        from: 'brands',
+        localField: 'Brand',
+        foreignField: '_id',
+        as: 'brandName',
+      },
+    },
+  ])
+}
 module.exports = {
   createProduct,
   getStockById,
@@ -617,4 +644,5 @@ module.exports = {
   aggregationWithProductId,
   createShopList,
   getAllShopList,
+  productaggregateById
 };
