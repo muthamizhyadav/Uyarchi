@@ -7,8 +7,8 @@ const createcategory = async (categoryBody) => {
 };
 
 const getAllCategory = async () => {
-  return Category.find()
-}
+  return Category.find();
+};
 const subCreatecategory = async (subCategoryBody) => {
   return Subcategory.create(subCategoryBody);
 };
@@ -32,11 +32,11 @@ const getAllSubCategory = async () => {
         id: 1,
         categoryName: '$cate.categoryName',
         description: 1,
-        categoryImage: 1
+        categoryImage: 1,
       },
     },
-  ])
-}
+  ]);
+};
 
 const getcategoryById = async (id) => {
   const category = Category.findById(id);
@@ -47,7 +47,7 @@ const getcategoryById = async (id) => {
 };
 
 const getSubcategoryById = async (subcategoryId) => {
-  const subcategory = await Subcategory.findById(subcategoryId)
+  const subcategory = await Subcategory.findById(subcategoryId);
   if (!subcategory) {
     throw new ApiError(httpStatus.NOT_FOUND, 'subCategory Not Found');
   }
@@ -85,6 +85,56 @@ const deletecategoryById = async (categoryId) => {
   return category;
 };
 
+const categoryPagination = async (page) => {
+  const cat = await Category.aggregate([
+    {
+      $sort: { _id: 1 },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await Category.find().count();
+  return {
+    total: total,
+    value: cat,
+  };
+};
+
+const subcategoryPagination = async (page) => {
+  const subCat = await Subcategory.aggregate([
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'parentCategoryId',
+        foreignField: '_id',
+        as: 'cate',
+      },
+    },
+    {
+      $unwind: '$cate',
+    },
+    {
+      $project: {
+        subcategoryName: 1,
+        id: 1,
+        categoryName: '$cate.categoryName',
+        description: 1,
+        categoryImage: 1,
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await Subcategory.find().count();
+  return {
+    value: subCat,
+    total: total,
+  };
+};
+
 const deletesubcategoryById = async (subcategoryId) => {
   const subcategory = await getSubcategoryById(subcategoryId);
   if (!subcategory) {
@@ -97,11 +147,11 @@ const getsubcategoryusemain = async (subid) => {
   // const subcategory = await Subcategory.find({parentCategoryId:subid})
   const subcategory = await Subcategory.aggregate([
     {
-      $match: { $and: [{ parentCategoryId: { $eq: subid } }], },
-    }
-  ])
+      $match: { $and: [{ parentCategoryId: { $eq: subid } }] },
+    },
+  ]);
   return subcategory;
-}
+};
 
 module.exports = {
   createcategory,
@@ -115,5 +165,7 @@ module.exports = {
   updatecategoryById,
   deletecategoryById,
   querycategory,
-  getsubcategoryusemain
+  categoryPagination,
+  subcategoryPagination,
+  getsubcategoryusemain,
 };

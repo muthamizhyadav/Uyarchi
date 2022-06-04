@@ -19,10 +19,19 @@ const createCategory = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(category);
 });
 
+const categoryPagination = catchAsync(async (req, res) => {
+  const category = await categoryService.categoryPagination(req.params.page);
+  res.send(category);
+});
+const subcategoryPagination = catchAsync(async (req, res) => {
+  const category = await categoryService.subcategoryPagination(req.params.page);
+  res.send(category);
+});
+
 const getsubcategoryusemain = catchAsync(async (req, res) => {
   const subcategory = await categoryService.getsubcategoryusemain(req.params.id);
-  res.send(subcategory)
-})
+  res.send(subcategory);
+});
 
 const subcreateCategory = catchAsync(async (req, res) => {
   const { body } = req;
@@ -39,14 +48,14 @@ const subcreateCategory = catchAsync(async (req, res) => {
 });
 
 const getAllCategory = catchAsync(async (req, res) => {
-  const cate = await categoryService.getAllCategory()
-  res.send(cate)
-})
+  const cate = await categoryService.getAllCategory();
+  res.send(cate);
+});
 
 const getAllSubCategory = catchAsync(async (req, res) => {
-  const subcate = await categoryService.getAllSubCategory()
-  res.send(subcate)
-})
+  const subcate = await categoryService.getAllSubCategory();
+  res.send(subcate);
+});
 
 const getCategoryhDetailsById = catchAsync(async (req, res) => {
   const category = await categoryService.getcategoryById(req.params.categoryId);
@@ -109,7 +118,9 @@ module.exports = {
   updatesubCategory,
   deleteSubCategory,
   getCategoryhDetailsById,
+  categoryPagination,
   updateCategory,
+  subcategoryPagination,
   deleteCategory,
-  getsubcategoryusemain
+  getsubcategoryusemain,
 };

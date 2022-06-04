@@ -346,12 +346,6 @@ const getProductByIdWithAggregation = async (id) => {
         as: 'brandData',
       },
     },
-    // {
-    //   $project:{
-    //     sucCategory:"$subcategories",
-    //     brandData:"$brandData"
-    //   }
-    // }
   ]);
   return product
 };
@@ -379,10 +373,6 @@ const queryProduct = async (filter, options) => {
 const getAllManageBill = async () => {
   return ManageBill.find();
 };
-
-// const getStocksByStatusDelivered = async()=>{
-//   return Stock.find({loadingExecute:true, closeOrder:false})
-// }
 
 const getStockByLoadingExecute = async () => {
   return Stock.find({ loadingExecute: true, closeOrder: true });
