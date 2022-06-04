@@ -178,7 +178,7 @@ const getProductByIdWithAggregation = catchAsync(async (req, res)=>{
 if(!product){
   throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
 }
-  res.send(product)
+  res.send(product[0])
 })
 
 const getStockBySupplierId = catchAsync(async (req, res) => {
