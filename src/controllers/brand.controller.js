@@ -8,7 +8,7 @@ const createbrand = catchAsync(async (req, res) => {
     const { body } = req;
     console.log(body)
     const brands = await brand.createbrand(body);
-    if (req.files) {
+    if (req.files.length != 0) {
         let path = '';
         req.files.forEach(function (files, index, arr) {
             path = 'images/brands/' + files.filename;
