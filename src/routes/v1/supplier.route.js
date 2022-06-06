@@ -16,5 +16,5 @@ router
   .put(supplierController.updateDisableSupplierById);
 router.route('/products/dealing/:id/:date').get(supplierController.productDealingWithsupplier);
 router.route('/dealing/:date').get(supplierController.getSupplierWithApprovedstatus);
-router.route('/product/supplier/:supplierId').get(supplierController.getproductsWithSupplierId);
+router.route('/product/supplier/:supplierId/:date').get(supplierController.getproductsWithSupplierId);
 module.exports = router;

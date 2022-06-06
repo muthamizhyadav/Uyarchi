@@ -43,7 +43,7 @@ const getDisableSupplierById = catchAsync (async (req, res)=>{
 })
 
 const getproductsWithSupplierId = catchAsync (async (req, res)=>{
-  const supplier = await supplierService.getproductsWithSupplierId(req.params.supplierId)
+  const supplier = await supplierService.getproductsWithSupplierId(req.params.supplierId, req.params.date)
   res.send(supplier)
 })
 
