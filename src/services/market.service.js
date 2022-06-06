@@ -83,7 +83,8 @@ const getMarketShops = async (id) => {
       ownnum:1,
       mlatitude:1,
       mlongitude:1,
-      image:1
+      image:1,
+      status:1
    },
 },
 

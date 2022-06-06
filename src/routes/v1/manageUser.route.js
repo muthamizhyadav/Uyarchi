@@ -8,7 +8,7 @@ const router = express.Router();
 router.route('/').post(proof.fields([{ name: 'idProofUpload'}, { name: 'addressProofUpload'},{ name: 'twoWheelerUpload'}]),manageUserController.createmanageUserService);
 router.route('/').get(manageUserController.getmanageUserServiceAll)
 router.route('/login').post(manageUserController.login)
-router.route('/:id/:districtId/:zoneId/:wardId/:page').get(manageUserController.getAllManageUserTable)
+router.route('/:id/:districtId/:zoneId/:wardId/:status/:page').get(manageUserController.getAllManageUserTable)
 router.route('/manageUserAllData/all').get(manageUserController.getmanageUserServiceAllenable)
 router.route('/manageUserStreet/all/:id/:streetId/:status/:page').get(manageUserController.getmanageUserServiceByIdstatus)
 router
