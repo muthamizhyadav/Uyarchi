@@ -78,6 +78,9 @@ const manageUserSchema = mongoose.Schema({
     type:Date,
     default: Date.now
     },
+    allocated:{
+      type:String,
+    },
   //   BaseidProofUpload:{
   //     type:Array,
   //   },
