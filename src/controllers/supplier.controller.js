@@ -42,6 +42,11 @@ const getDisableSupplierById = catchAsync (async (req, res)=>{
   res.send(supplier)
 })
 
+const getproductsWithSupplierId = catchAsync (async (req, res)=>{
+  const supplier = await supplierService.getproductsWithSupplierId(req.params.supplierId)
+  res.send(supplier)
+})
+
 const getAllDisableSupplier = catchAsync (async (req, res)=>{
   const supplier = await supplierService.getAllDisableSupplier()
   res.send(supplier)
@@ -82,6 +87,7 @@ module.exports = {
   updateDisableSupplierById,
   getDisableSupplierById,
   getAllDisableSupplier,
+  getproductsWithSupplierId,
   deleteSupplierById,
   getSupplierWithApprovedstatus,
   getSupplierById,

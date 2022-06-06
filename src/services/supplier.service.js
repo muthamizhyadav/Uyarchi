@@ -22,6 +22,18 @@ const getDisableSupplierById = async (id) => {
   return supplier;
 };
 
+const getproductsWithSupplierId = async (supplierId) => {
+  let supplier = await Supplier.findById(supplierId);
+  let product = [];
+  let productsId = supplier.productDealingWith;
+  console.log(productsId.length);
+  for (let i = 0; i <= productsId.length; i++) {
+    let products = await Product.findById(productsId[i]);
+    product.push(products);
+  }
+  return product  
+};
+
 const updateDisableSupplierById = async (id) => {
   let supplier = await getDisableSupplierById(id);
   if (!supplier) {
@@ -212,5 +224,6 @@ module.exports = {
   getDisableSupplierById,
   deleteSupplierById,
   recoverById,
+  getproductsWithSupplierId,
   getAllDisableSupplier,
 };
