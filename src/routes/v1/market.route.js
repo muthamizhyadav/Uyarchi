@@ -13,7 +13,7 @@ router
   .get(marketController.getmarketServiceById)
   .delete(marketController.deletemarketService)
   .put(upload.array('image'),marketController.updatemarketService);
-router.route('/:marketId/marketShopAll/all').get(marketController.getmarketShopAll)
+router.route('/shopsAll/all/all/:marketId/:page').get(marketController.getmarketShopAll)
 router.route('/shop/:marketShopId/one').get(marketController.getmarketShopServiceById)
 router.route('/shop/:marketShopId').put(marketUpload.array('image'), marketController.updatemarketShopService)
 module.exports = router;

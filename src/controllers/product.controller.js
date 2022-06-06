@@ -8,7 +8,7 @@ const { Stock } = require('../models/product.model');
 const createProduct = catchAsync(async (req, res) => {
   const { body } = req;
   const product = await productService.createProduct(body);
-  if (req.files) {
+  if (req.files.length != 0) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
       path = 'images/' + files.filename;
@@ -173,6 +173,14 @@ const getproduct = catchAsync(async (req, res) => {
   res.send(product);
 });
 
+const getProductByIdWithAggregation = catchAsync(async (req, res)=>{
+  const product = await productService.getProductByIdWithAggregation(req.params.id);
+if(!product){
+  throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+}
+  res.send(product[0])
+})
+
 const getStockBySupplierId = catchAsync(async (req, res) => {
   const stock = await productService.getStockBySupplierId(req.params.supplierId);
   res.send(stock);
@@ -185,7 +193,15 @@ const getAllienceBySupplierId = catchAsync(async (req, res) => {
 
 const updateProduct = catchAsync(async (req, res) => {
   const product = await productService.updateProductById(req.params.productId, req.body);
-  res.json(product);
+  if (req.files.length != 0) {
+    let path = '';
+    req.files.forEach(function (files, index, arr) {
+      path = 'images/' + files.filename;
+    });
+    product.image = path;
+  }
+  await product.save()
+  res.send(product);
   console.log(product);
 });
 
@@ -253,7 +269,7 @@ const deleteBillManage = catchAsync(async (req, res) => {
 const sendStocktoLoadingExecute = catchAsync(async (req, res) => {
   const stocks = await productService.sendStocktoLoadingExecute(req.params.id, req.body);
   // const { body } = req;
-  if (req.files) {
+  if (req.files.length != 0) {
     let path = '';
     req.files.forEach(function (files, index, arr) {
       path = 'images/weighbridge/' + files.filename;
@@ -320,6 +336,11 @@ const getbillingexecutive = catchAsync(async (req, res) => {
   const stock = await productService.getbillingexecutives();
   res.send(stock);
 });
+const productaggregateById=catchAsync(async (req, res) => {
+  console.log("sdfsdfsd")
+  const product = await productService.productaggregateById(req.params.page);
+  res.send(product);
+});
 module.exports = {
   createProduct,
   getAllienceBySupplierId,
@@ -369,6 +390,8 @@ module.exports = {
   aggregationWithProductId,
   sendStocktoLoadingExecute,
   updatingStatusForDelivered,
+  getProductByIdWithAggregation,
   createShopListService,
-  getShopList
+  getShopList,
+  productaggregateById
 };

@@ -10,6 +10,11 @@ const createSupplier = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(supplier);
 });
 
+const getSupplierWithApprovedstatus = catchAsync (async (req, res)=>{
+  const supplier = await supplierService.getSupplierWithApprovedstatus(req.params.date)
+  res.send(supplier)
+})
+
 const getAllSupplier = catchAsync(async (req, res) => {
   const supplier = await supplierService.getAllSupplier();
   res.status(httpStatus.OK);
@@ -34,6 +39,11 @@ const getDisableSupplierById = catchAsync (async (req, res)=>{
   if(!supplier){
     throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not Found")
   }
+  res.send(supplier)
+})
+
+const getproductsWithSupplierId = catchAsync (async (req, res)=>{
+  const supplier = await supplierService.getproductsWithSupplierId(req.params.supplierId)
   res.send(supplier)
 })
 
@@ -77,6 +87,8 @@ module.exports = {
   updateDisableSupplierById,
   getDisableSupplierById,
   getAllDisableSupplier,
+  getproductsWithSupplierId,
   deleteSupplierById,
+  getSupplierWithApprovedstatus,
   getSupplierById,
 };

@@ -263,6 +263,31 @@ const createManageUserAttendance = async (manageUserAttendanceBody) => {
   console.log(values)
   return ManageUserAttendance.create(values)
 };
+
+const attendancelat = async (id,date1,date2) => {
+  let match;
+  if(id != 'null'&&date1 != 'null'&& date2 != 'null'){
+      match = [{Uid:{$eq:id}},{dateIso:{$gte:date1,$lt:date2}}]
+  }
+  else{
+    match = [{Uid:{$eq:id}}]
+  }
+  console.log(match)
+   return ManageUserAttendance.aggregate([
+                {
+                  $match:{
+                    $and:match
+                  }
+                },
+                {
+                   $project:{
+                     
+                      Alat:1,
+                      Along:1
+                   }
+                }
+               ])
+}
 // const paginationManageUserAttendance = async (filter, options) => {
 //   return ManageUserAttendance.paginate(filter, options);
 // };
@@ -1069,7 +1094,8 @@ else{
     }
   };
 
-  const getAllApartmentAndShop = async(id,districtId,zoneId,wardId,streetId,status,page)=>{ 
+  const getAllApartmentAndShop = async(id,districtId,zoneId,wardId,streetId,status,page
+    )=>{ 
     let mat ; 
     if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId != 'null'&& status !='null'){
       mat=[{'manageusersdata._id':{ $eq: id }},{'manageusersdata.preferredDistrict':{ $eq: districtId }},{'manageusersdata.preferredZone':{$eq:zoneId}},{'manageusersdata.preferredWard':{$eq:wardId}},{ _id:{$eq:streetId}},{status:{$eq:status}}]
@@ -1288,6 +1314,7 @@ else{
           userName:"$manageusersdata.name",
           status:1,
           manageUserId:"$manageusersdata._id",
+          closeDate:1
 
         },
       },
@@ -1474,7 +1501,9 @@ module.exports = {
   createManageUserAutoAttendance,
   getAllManageUserAutoAttendance,
   getAllManageUserAutoAttendanceTable,
-  AllCount
+  AllCount,
+  attendancelat 
+
   // paginationManageUserAttendance,
  
 };

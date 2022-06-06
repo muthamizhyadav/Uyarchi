@@ -5,7 +5,7 @@ const {Street} = require('../models');
 
 const createManageUser = async (manageUserBody) => {
     const check = await ManageUser.find({mobileNumber:manageUserBody.mobileNumber})
-    console.log(check);
+  
     if(check != ""){
       throw new ApiError(httpStatus.NOT_FOUND, 'already register the number');
     }
@@ -54,11 +54,37 @@ const createManageUser = async (manageUserBody) => {
         $unwind:'$districtsdata'
       },
       {
+        $lookup:{
+          from: 'districts',
+          pipeline:[],
+          as: 'districtsdataAll'
+        }
+      },
+      {
+        $lookup:{
+          from: 'zones',
+          localField: 'preferredDistrict',
+          foreignField: 'districtId',
+          as: 'zonedataAll'
+        }
+      },
+      {
+        $lookup:{
+          from: 'wards',
+          localField: 'preferredZone',
+          foreignField: 'zoneId',
+          as: 'warddataAll'
+        }
+      },
+      {
         $project: {
           name:1,
           mobileNumber:1,
           preferredZone:'$zonesdata.zone',
           preferredWard:'$wardsdata.ward',
+          districtsdataAll:"$districtsdataAll",
+          zonedataAll:"$zonedataAll",
+          warddataAll:"$warddataAll",
           created:1,
           addressProofUpload:1,
           idProofUpload:1,
@@ -588,7 +614,11 @@ const manageUserAllTable = async (id,districtId,zoneId,wardId,status,page) =>{
   }   
   
   const updateManageUserId = async (manageUserId, updateBody) => {
+    let match = /^[a-zA-Z0-9]+$/
     let Manage = await getManageUserById(manageUserId);
+    if(!match.test(updateBody.idProofNo)||!match.test(updateBody.addressProofNo)){
+      throw new ApiError(httpStatus.NOT_FOUND, 'invalid ProofNo');
+    }
     if (!Manage) {
       throw new ApiError(httpStatus.NOT_FOUND, 'ManageUser not found');
     }

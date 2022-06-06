@@ -9,7 +9,8 @@ router
   .route('/:productId')
   .get(productController.getproduct)
   .delete(productController.deleteProduct)
-  .put(productController.updateProduct);
+  .put(upload.array('image'), productController.updateProduct);
+router.route('/getProduct/products/:id').get(productController.getProductByIdWithAggregation);
 router.route('/shopProducts/getName').get(productController.productAggregationWithShopOrder);
 router.route('/stocks').post(productController.createStock);
 router.route('/shopList').post(productController.createShopListService);
@@ -33,6 +34,7 @@ router.route('/stock/loadingExecute').get(productController.getStockByLoadingExe
 router.route('/updateQty/:id').put(productController.updateStockQtyById);
 router.route('/loadingExecute/all').get(productController.getLoadingExecuteDate);
 router.route('/allience/:id').get(productController.getAllienceBySupplierId);
+router.route('/getall/product/aggregateById/:page').get(productController.productaggregateById);
 router
   .route('/confirmStock/:confirmStockId')
   .get(productController.getconfirmStockById)

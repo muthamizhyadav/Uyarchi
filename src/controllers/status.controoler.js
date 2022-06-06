@@ -12,6 +12,14 @@ const createStatus = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(status);
 });
 
+const getApprovedProductDateWise = catchAsync(async (req,res)=>{
+  const status = await statusService.getApprovedProductDateWise(req.params.date);
+  if(!status){
+    throw new ApiError(httpStatus.NOT_FOUND, 'status Not Found');
+  }
+  res.send(status)
+})
+
 const updateStatusById = catchAsync(async (req, res) => {
   const statuse = await statusService.updatestatusById(req.params.statusId, req.body);
   if (!statuse) {
@@ -24,4 +32,5 @@ const updateStatusById = catchAsync(async (req, res) => {
 module.exports = {
   updateStatusById,
   createStatus,
+  getApprovedProductDateWise,
 };

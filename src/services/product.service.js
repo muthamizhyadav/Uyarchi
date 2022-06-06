@@ -181,25 +181,25 @@ const productDateTimeFilter = async (date) => {
     //     $unwind:"$callStatusData"
     // },
     {
-        $lookup: {
-          from: 'shoporders',
-          let: { productid: '$_id' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $eq: ['$$productid', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
-                },
-              },
-                $match: {
-                  $expr: {
-                    $eq: [date, '$date'],
-                  },
+      $lookup: {
+        from: 'shoporders',
+        let: { productid: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ['$$productid', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
               },
             },
-          ],
-          as: 'ShopOrders',
-        },
+            $match: {
+              $expr: {
+                $eq: [date, '$date'],
+              },
+            },
+          },
+        ],
+        as: 'ShopOrders',
+      },
     },
     {
       $project: {
@@ -212,13 +212,13 @@ const productDateTimeFilter = async (date) => {
         salesmanPrice: 1,
         _id: 1,
         orderdata: '$shopData',
-        shopOrder:'$ShopOrders',
+        shopOrder: '$ShopOrders',
       },
     },
   ]);
 };
 
- const aggregationWithProductId = async (id, date) => {
+const aggregationWithProductId = async (id, date) => {
   return Product.aggregate([
     {
       $match: {
@@ -322,6 +322,34 @@ const getProductById = async (id) => {
   return Product.findById(id);
 };
 
+const getProductByIdWithAggregation = async (id) => {
+  console.log(id);
+  const product = await Product.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'subcategories',
+        localField: 'category',
+        foreignField: 'parentCategoryId',
+        as: 'subcategorydata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'brands',
+        localField: 'SubCatId',
+        foreignField: 'subcategory',
+        as: 'brandData',
+      },
+    },
+  ]);
+  return product;
+};
+
 const getManageBill = async (id) => {
   return ManageBill.findById(id);
 };
@@ -339,16 +367,12 @@ const getAllBillRaised = async () => {
 };
 
 const queryProduct = async (filter, options) => {
-  return Product.paginate(filter, options);
+  return Product.find();
 };
 
 const getAllManageBill = async () => {
   return ManageBill.find();
 };
-
-// const getStocksByStatusDelivered = async()=>{
-//   return Stock.find({loadingExecute:true, closeOrder:false})
-// }
 
 const getStockByLoadingExecute = async () => {
   return Stock.find({ loadingExecute: true, closeOrder: true });
@@ -529,7 +553,42 @@ const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
   }
   (loading.active = false), (loading.archive = true), await loading.save();
 };
+const productaggregateById = async (page) => {
+  const product = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'catName',
+      },
+    },
+    {
+      $lookup: {
+        from: 'subcategories',
+        localField: 'SubCatId',
+        foreignField: '_id',
+        as: 'subcatName',
+      },
+    },
+    {
+      $lookup: {
+        from: 'brands',
+        localField: 'Brand',
+        foreignField: '_id',
+        as: 'brandName',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  const total = await Product.find().count();
 
+  return {
+    value: product,
+    total: total,
+  };
+};
 module.exports = {
   createProduct,
   getStockById,
@@ -555,6 +614,7 @@ module.exports = {
   getBillRaiseById,
   // updatingStatusForDelivered,
   updateBillRaiseById,
+  getProductByIdWithAggregation,
   deleteBillRaise,
   createMainWherehouseLoadingExecute,
   getAllConfirmStack,
@@ -582,4 +642,5 @@ module.exports = {
   aggregationWithProductId,
   createShopList,
   getAllShopList,
+  productaggregateById,
 };

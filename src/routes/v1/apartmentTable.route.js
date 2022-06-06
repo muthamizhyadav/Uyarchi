@@ -38,4 +38,5 @@ router
   .delete(apartmentController.deleteshop);
 router.route('/apartment/aggregation').get(apartmentController.shopApartmentAggregation);
 router.route('/allDataCount/all').get(apartmentController.getAllCount)
+router.route('/attendance/lat/long/:id/:date1/:date2').get(apartmentController.getAttendanceLong)
 module.exports = router;

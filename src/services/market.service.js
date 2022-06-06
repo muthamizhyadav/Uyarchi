@@ -33,22 +33,67 @@ const createMarketShops = async (marketShopsBody) => {
 };
 
 const getmarketById = async (id) => {
-  const mark = Market.findById(id);
-  if (!mark || mark.active === false) {
-    throw new ApiError(httpStatus.NOT_FOUND, ' market Not Found');
-  }
+  const mark = Market.aggregate([
+      {
+        $match:{
+          $and:[{_id:{$eq:id}}]
+        }
+      },
+      {
+        $lookup:{
+          from: 'streets',
+          localField: 'Strid',
+          foreignField: '_id',
+          as: 'streetsdata',
+        }
+      },
+      {
+        $unwind:'$streetsdata'
+      },
+      {
+        $project:{
+          street:'$streetsdata.street',
+          MName:1,
+          locality:1,
+          pincode:1,
+          LandMark:1,
+          Strid:1,
+          Uid:1,
+          mlongitude:1,
+          mlatitude:1,
+          userName:1,
+          userNo:1,
+          status:1,
+          image:1,
+          created:1
+        }
+      }
+  ]);
+  // if (!mark || mark.active === false) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, ' market Not Found');
+  // }
   return mark;
 };
 
-const getMarketShops = async (id) => {
-  console.log(id)
+const getMarketShops = async (marketId,page) => {
   // const mark = await MarketShops.find({MName:id});
-  const mark = MarketShops.aggregate([
+  const mark = await  MarketShops.aggregate([
     {
       $match:{
-        $and:[{MName:{$eq:id}},{active:{$eq:true}}]
+        $and:[{MName:{$eq:marketId}},{active:{$eq:true}}]
       },
    },
+   {
+    $lookup:{
+      from: 'manageusers',
+      localField: 'Uid',
+      foreignField: '_id',
+      as: 'manageusersdata',
+    }
+  },
+  {
+    $unwind:'$manageusersdata'
+  },
    {
     $lookup:{
       from: 'shoplists',
@@ -73,26 +118,92 @@ const getMarketShops = async (id) => {
   },
   {
   $project:{
-    
-      ShopType:'$shoplistsdata.shopList',
+     ShopType:'$shoplistsdata.shopList',
       MName:'$marketsdata.MName',
       SName:1,
       SNo:1,
+      Stype:1,
       mobile:1,
       ownname:1,
       ownnum:1,
       mlatitude:1,
       mlongitude:1,
       image:1,
-      status:1
+      status:1,
+      reason:1,
+      userName:'$manageusersdata.name'
    },
 },
-
+{
+  $skip:10*parseInt(page)
+},
+{
+  $limit:10
+},
   ])
-  // if (!mark || mark.active === false) {
-  //   throw new ApiError(httpStatus.NOT_FOUND, ' MarketShops Not Found');
-  // }
-  return mark;
+  const count = await MarketShops.aggregate([
+    {
+      $match:{
+        $and:[{MName:{$eq:marketId}},{active:{$eq:true}}]
+      },
+   },
+//    {
+//     $lookup:{
+//       from: 'manageusers',
+//       localField: 'Uid',
+//       foreignField: '_id',
+//       as: 'manageusersdata',
+//     }
+//   },
+//   {
+//     $unwind:'$manageusersdata'
+//   },
+//    {
+//     $lookup:{
+//       from: 'shoplists',
+//       localField: 'SType',
+//       foreignField: '_id',
+//       as: 'shoplistsdata',
+//     }
+//   },
+//   {
+//     $unwind:'$shoplistsdata'
+//   },
+//   {
+//     $lookup:{
+//       from: 'markets',
+//       localField: 'MName',
+//       foreignField: '_id',
+//       as: 'marketsdata',
+//     }
+//   },
+//   {
+//     $unwind:'$marketsdata'
+//   },
+//   {
+//   $project:{
+    
+//       ShopType:'$shoplistsdata.shopList',
+//       MName:'$marketsdata.MName',
+//       SName:1,
+//       SNo:1,
+//       mobile:1,
+//       ownname:1,
+//       ownnum:1,
+//       mlatitude:1,
+//       mlongitude:1,
+//       image:1,
+//       status:1,
+//       reason:1,
+//       userName:'$manageusersdata.name'
+//    },
+// },
+])
+
+  return{
+    data:mark,
+    count:count.length
+    } 
 };
 
 const getMarketShopsById = async (id) => {
@@ -136,7 +247,9 @@ const getMarketShopsById = async (id) => {
         ownnum:1,
         mlatitude:1,
         mlongitude:1,
-        image:1
+        image:1,
+        status:1,
+        reason:1
      },
   },
 
@@ -149,7 +262,49 @@ const getMarketShopsById = async (id) => {
 };
 
 const getAllmarket = async () => {
-    return Market.find();
+    return Market.aggregate([
+      // {
+      //   $lookup:{
+      //     from: 'manageusers',
+      //     localField: 'Uid',
+      //     foreignField: '_id',
+      //     as: 'manageusersdata',
+      //   }
+      // },
+      // {
+      //   $unwind:'$manageusersdata'
+      // },
+      {
+        $lookup:{
+          from: 'streets',
+          localField: 'Strid',
+          foreignField: '_id',
+          as: 'streetsdata',
+        }
+      },
+      {
+        $unwind:'$streetsdata'
+      },
+      {
+        $project:{
+          _id:1,
+          MName:1,
+          locality:1,
+          pincode:1,
+          LandMark:1,
+          Strid:1,
+          Uid:1,
+          mlongitude:1,
+          mlatitude:1,
+          userName:1,
+          userNo:1,
+          status:1,
+          created:1,
+          image:1,
+          street:'$streetsdata.street'
+       },
+      },
+    ]);
 } 
 
 const getAllmarketTable = async (id,page) => {

@@ -22,6 +22,18 @@ const getDisableSupplierById = async (id) => {
   return supplier;
 };
 
+const getproductsWithSupplierId = async (supplierId) => {
+  let supplier = await Supplier.findById(supplierId);
+  let product = [];
+  let productsId = supplier.productDealingWith;
+  console.log(productsId.length);
+  for (let i = 0; i <= productsId.length; i++) {
+    let products = await Product.findById(productsId[i]);
+    product.push(products);
+  }
+  return product  
+};
+
 const updateDisableSupplierById = async (id) => {
   let supplier = await getDisableSupplierById(id);
   if (!supplier) {
@@ -50,7 +62,7 @@ const productDealingWithsupplier = async (id, date) => {
                 $eq: ['$_id', id], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
               },
             },
-          }
+          },
         ],
         as: 'products',
       },
@@ -65,18 +77,17 @@ const productDealingWithsupplier = async (id, date) => {
           {
             $match: {
               $expr: {
-                $eq: ['$productid',id ], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                $eq: ['$productid', id], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
               },
             },
           },
           {
             $match: {
               $expr: {
-                $eq: ['$date',date ], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                $eq: ['$date', date], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
               },
             },
           },
-         
         ],
         as: 'productstatus',
       },
@@ -103,12 +114,60 @@ const productDealingWithsupplier = async (id, date) => {
                 $eq: ['$productid', id], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
               },
             },
-          }
+          },
         ],
         as: 'callStatus',
       },
     },
-  
+  ]);
+};
+
+const getSupplierWithApprovedstatus = async (date) => {
+  return Supplier.aggregate([
+    {
+      $lookup: {
+        from: 'callstatuses',
+        localField: '_id',
+        foreignField: 'supplierid',
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ['$date', date], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+
+          {
+            $lookup: {
+              from: 'status',
+              localField: 'productid',
+              foreignField: 'productid',
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $eq: ['$date', date], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                    },
+                  },
+                  $match: {
+                    $expr: {
+                      $eq: ['$status', 'Approved'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                    },
+                  },
+                },
+              ],
+              as: 'status',
+            },
+          },
+          {
+            $unwind: '$status',
+          },
+        ],
+        as: 'callstatusData',
+        // totalAmount: { $sum: '$phApproved' }
+      },
+    },
   ]);
 };
 
@@ -158,11 +217,13 @@ module.exports = {
   createSupplier,
   updateSupplierById,
   getAllSupplier,
+  getSupplierWithApprovedstatus,
   productDealingWithsupplier,
   updateDisableSupplierById,
   getSupplierById,
   getDisableSupplierById,
   deleteSupplierById,
   recoverById,
+  getproductsWithSupplierId,
   getAllDisableSupplier,
 };

@@ -10,6 +10,11 @@ const createStreet = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(street);
 });
 
+const updates = catchAsync(async (req, res) => {
+  const street = await StreetService.updates();
+  res.send(street);
+});
+
 const getAllStreet = catchAsync(async (req, res) => {
   const street = await StreetService.getAllStreet();
   res.send(street);
@@ -18,7 +23,7 @@ const getAllStreet = catchAsync(async (req, res) => {
 const closedStatus = catchAsync(async (req, res) => {
   const street = await StreetService.closedStatus(req.params.streetId, req.body);
   if (!street) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'street Not found');
+    // throw new ApiError(httpStatus.NOT_FOUND, 'street Not found');
   }
   res.send(street);
 });
@@ -39,7 +44,7 @@ const streetPagination = catchAsync(async (req, res) => {
 });
 
 const getStreetByWard = catchAsync(async (req, res) => {
-  const streetWard = await StreetService.getWardByStreet(req.params.wardId);
+  const streetWard = await StreetService.getWardByStreet(req.params.wardId, req.params.status);
   res.send(streetWard);
 });
 
@@ -48,17 +53,16 @@ const streetAllocation = catchAsync(async (req, res) => {
   arr.forEach(async (e) => {
     let streetId = e;
     const streets = await Street.findById(streetId);
-    if (streets.AllocationStatus !== 'Allocated') {
       await Street.updateOne(
         { _id: streetId },
         { AllocatedUser: userId, AllocationStatus: 'Allocated', date: date },
         { new: true }
       );
-      res.status(httpStatus.CREATED).send('Allocated Successfully');
-    } else {
-      res.status(httpStatus.UNAUTHORIZED).send('Already Allocated');
-    }
+      // res.status(httpStatus.CREATED).send('Allocated Successfully');
+   
   });
+
+      res.status(httpStatus.CREATED).send('Allocated Successfully');
 });
 
 const streetDeAllocation = catchAsync(async (req, res) => {
@@ -79,7 +83,7 @@ const getStreetByWardId = catchAsync(async (req, res) => {
 const getStreetDetailsById = catchAsync(async (req, res) => {
   const street = await StreetService.getStreetById(req.params.streetId);
   if (!street || street.active === false) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Street_Details not found');
+    // throw new ApiError(httpStatus.NOT_FOUND, 'Street_Details not found');
   }
   res.send(street);
 });
@@ -114,6 +118,7 @@ module.exports = {
   getaggregationByUserId,
   getDeAllocationaggregationByUserId,
   getStreetByWardId,
+  updates,
   streetPagination,
   getAllStreet,
   getAllocatedStreeOnly,

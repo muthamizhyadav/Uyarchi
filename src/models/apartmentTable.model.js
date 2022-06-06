@@ -164,6 +164,10 @@ const manageUserAttendanceSchema = mongoose.Schema({
   baseImage:{
     type:Array,
   },
+  dateIso: {
+    type: Date,
+    default: Date.now(),
+  }
 });
 
  manageUserAttendanceSchema.plugin(toJSON);
