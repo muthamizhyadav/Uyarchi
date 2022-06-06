@@ -110,6 +110,7 @@ const createManageUser = async (manageUserBody) => {
           preferredWardId:'$wardsdata._id',
           preferredZoneId:'$zonesdata._id',
           preferredDistrictId:'$districtsdata._id',
+          // allocated:1,
         },
       },
 

@@ -558,6 +558,12 @@ else if(id =='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&stree
 else if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId == 'null'&& status != 'null'){
   match=[{ Uid: { $eq: id }},{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{status:{$eq:status}}]
 }
+else if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId=='null'&&streetId == 'null'&& status != 'null'){
+  match=[{ Uid: { $eq: id }},{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{status:{$eq:status}}]
+}
+else if(id =='null'&&districtId !='null'&&zoneId !='null'&&wardId=='null'&&streetId == 'null'&& status != 'null'){
+  match=[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{status:{$eq:status}}]
+}
 else{
    match=[{ _id: { $ne: null }}]
  }
@@ -894,6 +900,12 @@ else if(id =='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&stree
 }
 else if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId == 'null'&& status != 'null'){
   match=[{ Uid: { $eq: id }},{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{status:{$eq:status}}]
+}
+else if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId=='null'&&streetId == 'null'&& status != 'null'){
+  match=[{ Uid: { $eq: id }},{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{status:{$eq:status}}]
+}
+else if(id =='null'&&districtId !='null'&&zoneId !='null'&&wardId=='null'&&streetId == 'null'&& status != 'null'){
+  match=[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{status:{$eq:status}}]
 }
 else{
    match=[{ _id: { $ne: null }}]
