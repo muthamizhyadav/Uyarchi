@@ -124,9 +124,8 @@ const getSupplierWithApprovedstatus = async (date) => {
                 $eq: ['$date', date], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
               },
             },
-
-            // $group: { _id: null, sum: { $sum: '$phApproved' } },
           },
+
           {
             $lookup: {
               from: 'status',
@@ -154,15 +153,9 @@ const getSupplierWithApprovedstatus = async (date) => {
           },
         ],
         as: 'callstatusData',
+        // totalAmount: { $sum: '$phApproved' }
       },
     },
-    // {
-    //   $set: {
-    //     callstatusDatass: { $arrayElemAt: ["$callstatusData.confirmOrder", 0] }
-    //   }
-    // }
-    // { $unwind: '$callstatusData' },
-    //  { $unwind: { path: "$callstatusData", preserveNullAndEmptyArrays: false } },
   ]);
 };
 

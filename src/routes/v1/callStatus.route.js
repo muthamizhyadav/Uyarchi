@@ -9,5 +9,5 @@ router
   .get(CallStatusController.getCallStatusbyId)
   .put(CallStatusController.updateCallStatusById)
   .delete(CallStatusController.deleteBusinessById);
-
+router.route('/phApproved/total').get(CallStatusController.totalAggregation)
 module.exports = router;
