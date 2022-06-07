@@ -27,21 +27,23 @@ const getproductsWithSupplierId = async (supplierId, date) => {
   let supplier = await Supplier.findById(supplierId);
   let product = [];
   let soproductid = [];
+  let soproduct = [];
   let productsId = supplier.productDealingWith;
   let productorders = await ProductorderSchema.find({ date: date });
   let productid = productorders.forEach((e) => {
     soproductid.push(e.productid);
   });
-  console.log(soproductid);
   for (let i = 0; i <= productsId.length; i++) {
     for (let j = 0; j <= soproductid.length; j++) {
       if (productsId[i] == soproductid[j]) {
         let products = await Product.findById(productsId[i]);
+        let soproducts = await ProductorderSchema.find({ productid: soproductid[j] });
         product.push(products);
+        soproduct.push(soproducts);
       }
     }
   }
-  return product;
+  return { product: product, SoProduct: soproduct };
 };
 
 const updateDisableSupplierById = async (id) => {
