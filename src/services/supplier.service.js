@@ -43,7 +43,7 @@ const getproductsWithSupplierId = async (supplierId, date) => {
       }
     }
   }
-  return [ product, soproduct ]
+  return {product:product, soproduct:soproduct}
 };
 
 const updateDisableSupplierById = async (id) => {
