@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const { Supplier } = require('../models');
 const { Product } = require('../models/product.model');
+const { ProductorderSchema } = require('../models/shopOrder.model');
 const createSupplier = async (supplierBody) => {
   return Supplier.create(supplierBody);
 };
@@ -22,16 +23,27 @@ const getDisableSupplierById = async (id) => {
   return supplier;
 };
 
-const getproductsWithSupplierId = async (supplierId) => {
+const getproductsWithSupplierId = async (supplierId, date) => {
   let supplier = await Supplier.findById(supplierId);
   let product = [];
+  let soproductid = [];
+  let soproduct = [];
   let productsId = supplier.productDealingWith;
-  console.log(productsId.length);
+  let productorders = await ProductorderSchema.find({ date: date });
+  let productid = productorders.forEach((e) => {
+    soproductid.push(e.productid);
+  });
   for (let i = 0; i <= productsId.length; i++) {
-    let products = await Product.findById(productsId[i]);
-    product.push(products);
+    for (let j = 0; j <= soproductid.length; j++) {
+      if (productsId[i] == soproductid[j]) {
+        let products = await Product.findById(productsId[i]);
+        let soproducts = await ProductorderSchema.find({ productid: soproductid[j], date: { $eq: date } });
+        product.push(products);
+        soproduct.push(soproducts);
+      }
+    }
   }
-  return product  
+  return {product:product, soproduct:soproduct}
 };
 
 const updateDisableSupplierById = async (id) => {

@@ -13,7 +13,7 @@ const getCallStatusById = async (id) => {
 const totalAggregation = async () => {
   return CallStatus.aggregate([{ $group: { _id: null, TotalPhApproved: { $sum: '$phApproved' } } }]);
 };
-
+ 
 const getAllConfirmStatus = async (id) => {
   return await CallStatus.aggregate([
     {
