@@ -1170,23 +1170,21 @@ else{
       mat=[{ _id:{ $eq: streetId}}]
    }
    else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status =='partialPending'){
-    // mat={$or:[{'shopData':{$elemMatch:{'shopData.status':{$eq:""}}}},{'apartmentData':{$elemMatch:{'apartmentData.status':{$eq:""}}}}]}
-  // mat =[{status:{$eq:status}}]
-     mat={$or:[{'shopData':{$elemMatch:{'status':""}}},{'apartmentData':{$elemMatch:{'status':""}}}]}
+     mat={$or:[{$and:[{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$elemMatch:{'status':{$ne:""}}}},{status:{$eq:""}}]},
+     {$and:[{'shopData':{$elemMatch:{'status':{$ne:""}}}},{'apartmentData':{$elemMatch:{'status':{$eq:""}}}},{status:{$eq:""}}]},
+     {$and:[{'shopData':{$elemMatch:{'status':{$ne:""}}}},{'apartmentData':{$type: 'array', $eq: []}},{status:{$eq:""}}]},
+     {$and:[{'apartmentData':{$elemMatch:{'status':{$ne:""}}}},{'shopData':{$type: 'array', $eq: []}},{status:{$eq:""}}]}
+    ]}
   } 
-  else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status =='userPending'){
-  mat={$and:[
-       {$and:[{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$elemMatch:{'status':{$eq:""}}}}]},
-       {$and:[{'shopData':{$elemMatch:{'status':{$ne:"Approved"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Approved"}}}},{'shopData':{$elemMatch:{'status':{$ne:"Rejected"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Rejected"}}}}]},
-      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:"Rejected"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Rejected"}}}}]},
-      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:"Rejected"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Approved"}}}}]},
-      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:"Approved"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Rejected"}}}}]},
-      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:""}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Rejected"}}}}]},
-      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:"Rejected"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:""}}}}]},
-      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:"Approved"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:""}}}}]},
-      //  {$and:[{'shopData':{$elemMatch:{'status':{$ne:""}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Approved"}}}}]}
-       ]}
+  else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status =='fullyPending'){
+  mat ={$or:[{$and:[{closed:{$eq:"close"}},{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$type: 'array', $eq: []}}]},
+      //  {$and:[{closed:{$eq:"close"}},{'apartmentData':{$elemMatch:{'status':{$eq:""}}}},{'shopData':{$type: 'array', $eq: []}}]},
+        {$and:[{closed:{$eq:"close"}},{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$elemMatch:{'status':{$eq:""}}}}]}
+  ]}
   }
+  else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status =='userPending'){
+    mat ={$or:[{$and:[{closed:{$eq:null}}]}]}
+    }
   else if(id !='null'&&districtId !='null'&&zoneId =='null'&&wardId == 'null'&&streetId == 'null'&& status =='null'){
       mat=[{'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }}]
    }
@@ -1323,11 +1321,11 @@ else{
           as: 'apartmentData',
         }
       },
-      {
-        $match: {
-          $and: mat,
-         }
-        },
+      // {
+      //   $match: {
+      //     $and: mat,
+      //    }
+      //   },
         // {
         //   $match: {
         //     $and: [{'shopData':{$type: 'array', $ne: []}},{'apartmentData':{$type: 'array', $ne: []}}],
@@ -1352,9 +1350,9 @@ else{
           ]
         }
         },
-        // {
-        //   $match:mat
-        // },
+        {
+          $match:mat
+        },
       {
         $project: {
           wardName:'$wardData.ward',
@@ -1454,11 +1452,11 @@ else{
           as: 'apartmentData',
         }
       },
-      {
-        $match: {
-          $and: mat,
-         }
-        },
+      // {
+      //   $match: {
+      //     $and: mat,
+      //    }
+      //   },
         // {
         //   $match: {
         //     $and: [{'shopData':{ $ne:null}},{'apartmentData':{ $ne:null}}],
@@ -1473,9 +1471,9 @@ else{
       ]
     }
     },
-    // {
-    //   $match:mat
-    // },
+    {
+      $match:mat
+    },
       {
         $project: {
           wardName:'$wardData.ward',
