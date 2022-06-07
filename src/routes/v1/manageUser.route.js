@@ -10,7 +10,7 @@ router.route('/').get(manageUserController.getmanageUserServiceAll)
 router.route('/login').post(manageUserController.login)
 router.route('/:id/:districtId/:zoneId/:wardId/:status/:page').get(manageUserController.getAllManageUserTable)
 router.route('/manageUserAllData/all').get(manageUserController.getmanageUserServiceAllenable)
-router.route('/manageUserStreet/all/:id/:streetId/:status/:page').get(manageUserController.getmanageUserServiceByIdstatus)
+router.route('/manageUserStreet/all/count/:id/:streetId/:status/:page').get(manageUserController.getmanageUserServiceByIdstatus)
 router
   .route('/:manageUserId')
   .get(manageUserController.getmanageUserServiceById)
