@@ -4,6 +4,7 @@ const ApiError = require('../utils/ApiError');
 const Ward = require('../models/ward.model');
 const ManageUser = require('../models/manageUser.model');
 const Streets = require('../models/street.model');
+const {Apartment,Shop} = require('../models/apartmentTable.model')
 
 const createStreet = async (streetBody) => {
   const { wardId } = streetBody;
@@ -245,8 +246,20 @@ const getDeAllocationaggregationByUserId = async (AllocatedUser) => {
 
 const streetDeAllocation = async (allocationbody) => {
   const { userId, arr } = allocationbody;
+  for(let i=0;i<arr.length;i++){
+    const check = await Apartment.find({Strid:arr[0]})
+    console.log(check)
+    const check1 = await Shop.find({Strid:arr[0]})
+    if(check.length != 0){
+      throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Street Already allocated Apartment');
+    }
+    if(check1.length != 0){
+      throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Street Already allocated Shop');
+    }
+  }
   arr.forEach(async (e) => {
     let streetId = e;
+
     await Streets.updateOne({ _id: streetId }, { DeAllocatedUser: userId, AllocationStatus: 'DeAllocated' }, { new: true });
   });
   return `Street DeAllocated SuccessFully`;
