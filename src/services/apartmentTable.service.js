@@ -1152,22 +1152,22 @@ else{
     )=>{ 
     let mat ; 
     if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId != 'null'&& status !='null'){
-      mat=[{'manageusersdata._id':{ $eq: id }},{'manageusersdata.preferredDistrict':{ $eq: districtId }},{'manageusersdata.preferredZone':{$eq:zoneId}},{'manageusersdata.preferredWard':{$eq:wardId}},{ _id:{$eq:streetId}},{status:{$eq:status}}]
+      mat={$and:[{'manageusersdata._id':{ $eq: id }},{'manageusersdata.preferredDistrict':{ $eq: districtId }},{'manageusersdata.preferredZone':{$eq:zoneId}},{'manageusersdata.preferredWard':{$eq:wardId}},{ _id:{$eq:streetId}},{status:{$eq:status}}]}
    }
    else if(id !='null'&&districtId =='null'&&zoneId =='null'&&wardId =='null'&&streetId == 'null'&& status =='null'){
-    mat = [{ 'manageusersdata._id': { $eq: id }}]
+    mat = {$and:[{ 'manageusersdata._id': { $eq: id }}]}
    }
    else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId =='null'&&streetId == 'null'&& status =='null'){
-      mat=[{ 'manageusersdata.preferredDistrict': { $eq: districtId }}]
+      mat={$and:[{ 'manageusersdata.preferredDistrict': { $eq: districtId }}]}
    }
    else if(id =='null'&&districtId =='null'&zoneId !='null'&& wardId =='null'&&streetId == 'null'&& status =='null'){
-      mat=[{ 'manageusersdata.preferredZone':{ $eq: zoneId }}]
+      mat={$and:[{ 'manageusersdata.preferredZone':{ $eq: zoneId }}]}
    }
    else if(id =='null'&&districtId =='null'&zoneId =='null'&& wardId !='null'&&streetId == 'null'&& status =='null'){
-     mat=[{ 'manageusersdata.preferredWard':{ $eq: wardId }}]
+     mat={$and:[{ 'manageusersdata.preferredWard':{ $eq: wardId }}]}
    }
    else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId == 'null'&&streetId != 'null'&& status =='null'){
-      mat=[{ _id:{ $eq: streetId}}]
+      mat={$and:[{ _id:{ $eq: streetId}}]}
    }
    else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status =='partialPending'){
      mat={$or:[{$and:[{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$elemMatch:{'status':{$ne:""}}}},{status:{$eq:""}}]},
@@ -1186,65 +1186,65 @@ else{
     mat ={$or:[{$and:[{closed:{$eq:null}}]}]}
     }
   else if(id !='null'&&districtId !='null'&&zoneId =='null'&&wardId == 'null'&&streetId == 'null'&& status =='null'){
-      mat=[{'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }}]
+      mat={$and:[{'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }}]}
    }
    else if(id !='null'&&districtId !='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status =='null'){
-     mat=[{  'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]
+     mat={$and:[{  'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]}
    }
    else if(id !='null'&&districtId !='null'&&zoneId !='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
-     mat=[{  'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]
+     mat={$and:[{  'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]}
    }
    else if(id !='null'&&districtId !='null'&&zoneId !='null'&& wardId!='null'&&streetId != 'null'&& status =='null'){
-    mat=[{ 'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{ _id:{ $eq: streetId}}]
+    mat={$and:[{ 'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{ _id:{ $eq: streetId}}]}
    
    }else if(id !='null'&&districtId =='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status =='null'){
-     mat=[{  'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]
+     mat={$and:[{  'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]}
    }else if(id !='null'&&districtId =='null'&&zoneId =='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
-     mat=[{'manageusersdata._id': { $eq: id }},{'manageusersdata.preferredWard':{ $eq: wardId}}]
+     mat={$and:[{'manageusersdata._id': { $eq: id }},{'manageusersdata.preferredWard':{ $eq: wardId}}]}
    }else if(id !='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId != 'null'&& status =='null'){
-    mat=[{'manageusersdata._id': { $eq: id }},{_id:{ $eq: streetId}}]
+    mat={$and:[{'manageusersdata._id': { $eq: id }},{_id:{ $eq: streetId}}]}
   }else if(id !='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
-    mat=[{'manageusersdata._id': { $eq: id }},{ status:{ $eq: status}}]
+    mat={$and:[{'manageusersdata._id': { $eq: id }},{ status:{ $eq: status}}]}
   }else if(id =='null'&&districtId !='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status =='null'){
-    mat=[{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]
+    mat={$and:[{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]}
   }else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
-    mat=[{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]
+    mat={$and:[{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]}
   }else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId=='null'&&streetId != 'null'&& status =='null'){
-    mat=[{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ _id:{ $eq: streetId}}]
+    mat={$and:[{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ _id:{ $eq: streetId}}]}
   }else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
-    mat=[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ status:{ $eq: status}}]
+    mat={$and:[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ status:{ $eq: status}}]}
   }else if(id !='null'&&districtId=='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status =='null'){
-    mat=[{'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]
+    mat={$and:[{'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]}
   }else if(id !='null'&&districtId=='null'&&zoneId =='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
-    mat=[{'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]
+    mat={$and:[{'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]}
   }else if(id !='null'&&districtId=='null'&&zoneId =='null'&& wardId=='null'&&streetId != 'null'&& status =='null'){
-    mat=[{'manageusersdata._id': { $eq: id }},{ _id:{ $eq: streetId}}]
+    mat={$and:[{'manageusersdata._id': { $eq: id }},{ _id:{ $eq: streetId}}]}
   }else if(id !='null'&&districtId=='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
-    mat=[{ 'manageusersdata._id': { $eq: id }},{ status:{ $eq: status}}]
+    mat={$and:[{ 'manageusersdata._id': { $eq: id }},{ status:{ $eq: status}}]}
   }else if(id =='null'&&districtId=='null'&&zoneId !='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
-    mat=[{ 'manageusersdata.preferredZone': { $eq: zoneId }},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]
+    mat={$and:[{ 'manageusersdata.preferredZone': { $eq: zoneId }},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]}
   }else if(id =='null'&&districtId=='null'&&zoneId !='null'&& wardId=='null'&&streetId != 'null'&& status =='null'){
-    mat=[{ 'manageusersdata.preferredZone': { $eq: zoneId }},{ _id:{ $eq: streetId}}]
+    mat={$and:[{ 'manageusersdata.preferredZone': { $eq: zoneId }},{ _id:{ $eq: streetId}}]}
   }else if(id =='null'&&districtId=='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
-    mat=[{ 'manageusersdata.preferredZone': { $eq: zoneId }},{ status:{ $eq: status}}]
+    mat={$and:[{ 'manageusersdata.preferredZone': { $eq: zoneId }},{ status:{ $eq: status}}]}
   }else if(id =='null'&&districtId=='null'&&zoneId =='null'&& wardId!='null'&&streetId != 'null'&& status =='null'){
-    mat=[{ 'manageusersdata.preferredWard': { $eq: wardId }},{ _id:{ $eq: streetId}}]
+    mat={$and:[{ 'manageusersdata.preferredWard': { $eq: wardId }},{ _id:{ $eq: streetId}}]}
   }else if(id =='null'&&districtId=='null'&&zoneId =='null'&& wardId!='null'&&streetId == 'null'&& status !='null'){
-    mat=[{ 'manageusersdata.preferredWard': { $eq: wardId }},{ status:{ $eq: status}}]
+    mat={$and:[{ 'manageusersdata.preferredWard': { $eq: wardId }},{ status:{ $eq: status}}]}
   }else if(id =='null'&&districtId=='null'&&zoneId =='null'&& wardId=='null'&&streetId != 'null'&& status !='null'){
-    mat=[{ _id: { $eq: streetId }},{ status:{ $eq: status}}]
+    mat={$and:[{ _id: { $eq: streetId }},{ status:{ $eq: status}}]}
   }
   else if(id =='null'&&districtId!='null'&&zoneId !='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
-    mat=[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]
+    mat={$annd:[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]}
   }
   else if(id == 'null'&&districtId!='null'&&zoneId !='null'&& wardId!='null'&&streetId != 'null'&& status =='null'){
-    mat=[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{ _id: { $eq: streetId }}]
+    mat={$and:[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{ _id: { $eq: streetId }}]}
   }
   else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status != 'null'){
-  mat =[{status:{$eq:status}}]
+  mat ={$and:[{status:{$eq:status}}]}
   } 
   else{
-     mat=[{ _id: { $ne: null }}]
+     mat={$and:[{ _id: { $ne: null }}]}
    }
    console.log(mat)
     const street = await Street.aggregate([
