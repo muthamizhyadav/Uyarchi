@@ -45,6 +45,11 @@ const getSuperAdminAssignById = catchAsync (async (req,res)=>{
   res.send(superAdmin)
 })
 
+const getScvRole = catchAsync(async (req, res)=>{
+  const role = await BusinessUsersService.getScvRole()
+  res.send(role)
+})
+
 const superAdminAggregation = catchAsync (async (req, res)=>{
   const superAdmin = await  BusinessUsersService.superAdminAggregation();
   if(!superAdmin){
@@ -126,6 +131,7 @@ module.exports = {
     gettAllSuperAdminAssign,
     updateBusinessUsers,
     deleteBusinessUsers,
+    getScvRole,
     getSuperAdminAssignById,
     getSixRoles,
 }
