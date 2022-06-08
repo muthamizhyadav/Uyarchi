@@ -16,7 +16,7 @@ const createSuperAdminwardAssign = async (body)=>{
 }
 
 const gettAllSuperAdminAssign = async ()=>{
-  return await SuperAdminAssignWardMember.find()
+  return await SuperAdminAssignWardMember.find({roletype:"Street Cart Vendor"})
 }
 
 
