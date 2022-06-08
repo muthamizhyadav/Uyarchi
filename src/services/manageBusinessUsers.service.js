@@ -56,6 +56,7 @@ const getSixRoles = async () => {
 
 const getScvRole = async () => {
   const role = await Roles.find({ description: 'SCV' });
+  return role;
 };
 const getBusinessUsersById = async (BUId) => {
   const Busers = await ManageBusinessUser.findById(BUId);
