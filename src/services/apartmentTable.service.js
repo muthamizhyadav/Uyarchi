@@ -1177,10 +1177,19 @@ else{
     ]}
   } 
   else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status =='fullyPending'){
-  mat ={$or:[{$and:[{closed:{$eq:"close"}},{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$type: 'array', $eq: []}}]},
-      //  {$and:[{closed:{$eq:"close"}},{'apartmentData':{$elemMatch:{'status':{$eq:""}}}},{'shopData':{$type: 'array', $eq: []}}]},
-        {$and:[{closed:{$eq:"close"}},{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$elemMatch:{'status':{$eq:""}}}}]}
-  ]}
+    console.log("hi")
+    mat ={
+      $or:[
+        {$and:[{closed:{$eq:"close"}},{'$apartmentData':{$elemMatch:{'status':{$eq:""}}}}]},
+        // {$and:[{closed:{$eq:"close"}},{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$type: 'array', $eq: []}},{status:{$eq:""}}]},
+
+      ]
+    }
+  // mat ={$or:[{$and:[{closed:{$eq:"close"}},{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$type: 'array', $eq: []}},{status:{$eq:""}}]},
+  //  {$and:[{closed:{$eq:"close"}},{'shopData':{$type: 'array', $eq: []}},{'apartmentData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Rejected"}}}},{status:{$eq:""}}]}
+  //     //  {$and:[{closed:{$eq:"close"}},{'apartmentData':{$elemMatch:{'status':{$eq:""}}}},{'shopData':{$type: 'array', $eq: []}}]},
+  //       // {$and:[{closed:{$eq:"close"}},{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$elemMatch:{'status':{$eq:""}}}},{'shopData':{$elemMatch:{'status':{$ne:"Approved"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Approved"}}}},{'shopData':{$elemMatch:{'status':{$ne:"Rejected"}}}},{'apartmentData':{$elemMatch:{'status':{$ne:"Rejected"}}}},{status:{$eq:""}}]}
+  // ]}
   }
   else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status =='userPending'){
     mat ={$or:[{$and:[{closed:{$eq:null}}]}]}
@@ -1504,6 +1513,78 @@ const updateApartmentById = async (apartmentId, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Apartment not found');
   }
   Apart = await Apartment.findByIdAndUpdate({ _id: apartmentId }, updateBody, { new: true });
+  console.log(Apart.Strid)
+    let app= await Street.aggregate([
+        {
+
+            $match: {
+              $and: [{ _id: { $eq: Apart.Strid }, closed: { $eq: 'close' } }],
+            }
+        },
+        {
+          $lookup: {
+            from: 'shops',
+            let: { street: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ['$$street', '$Strid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                  },
+                },
+              },
+              {
+                $match: {
+                  $expr: {
+                    $eq: ['', '$status'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                  },
+                },
+              },
+            ],
+            as: 'shopData',
+          },
+        },
+        {
+          $lookup: {
+            from: 'apartments',
+            let: { street: '$_id' },
+    
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ['$$street', '$Strid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                  },
+                },
+              },
+              {
+                $match: {
+                  $expr: {
+                    $eq: ['', '$status'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                  },
+                },
+              },
+            ],
+            as: 'apartmentData',
+          },
+        },
+        
+      ])
+      console.log(app)
+     let filter='';
+      if(app.length !=0){
+          if(app[0].shopData.length==0 &&app[0].apartmentData.length==0  ){
+            filter="completed"
+          }
+          else if(app[0].shopData.length !=0  || app[0].apartmentData.length !=0  ){
+
+            filter="partialpending";
+          }
+      }
+      console.log(Apart.Strid)
+      if(filter !=""){
+        await Street.findByIdAndUpdate( {_id:Apart.Strid},{filter:filter}, { new: true })
+      }
   return Apart;
 };
 
@@ -1513,6 +1594,77 @@ const updateShopById = async (shopId, updateBody) => {
       throw new ApiError(httpStatus.NOT_FOUND, 'Shop not found');
     }
     Sho = await Shop.findByIdAndUpdate({ _id: shopId }, updateBody, { new: true });
+    let app= await Street.aggregate([
+      {
+
+          $match: {
+            $and: [{ _id: { $eq: Sho.Strid }, closed: { $eq: 'close' } }],
+          }
+      },
+      {
+        $lookup: {
+          from: 'shops',
+          let: { street: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$$street', '$Strid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+            },
+            {
+              $match: {
+                $expr: {
+                  $eq: ['', '$status'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+            },
+          ],
+          as: 'shopData',
+        },
+      },
+      {
+        $lookup: {
+          from: 'apartments',
+          let: { street: '$_id' },
+  
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$$street', '$Strid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+            },
+            {
+              $match: {
+                $expr: {
+                  $eq: ['', '$status'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+            },
+          ],
+          as: 'apartmentData',
+        },
+      },
+      
+    ])
+    console.log(app)
+   let filter='';
+    if(app.length !=0){
+        if(app[0].shopData.length==0 &&app[0].apartmentData.length==0  ){
+          filter="completed"
+        }
+        else if(app[0].shopData.length !=0  || app[0].apartmentData.length !=0  ){
+
+          filter="partialpending";
+        }
+    }
+    // console.log(Apart.Strid)
+    if(filter !=""){
+      await Street.findByIdAndUpdate( {_id:Sho.Strid},{filter:filter}, { new: true })
+    }
     return Sho;
   };
 
