@@ -38,7 +38,10 @@ const productSchema = mongoose.Schema({
     type: String,
     enum: ['yes', 'no'],
   },
-
+  description:{ 
+    type:String,
+    default:'',
+   },
   enquiry: {
     type: String,
     enum: ['yes', 'no'],
