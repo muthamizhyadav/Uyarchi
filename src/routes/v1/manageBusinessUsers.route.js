@@ -30,4 +30,5 @@ router.route('/sixRoles').get(BusinessUsersController.getSixRoles);
 
 router.route('/superAdmin/:id').get(BusinessUsersController.getSuperAdminAssignById);
 router.route('/superAdmin').get(BusinessUsersController.superAdminAggregation);
+router.route('/role/scv').get(BusinessUsersController.getScvRole)
 module.exports = router;
