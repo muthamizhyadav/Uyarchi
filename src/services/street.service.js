@@ -251,10 +251,10 @@ const streetDeAllocation = async (allocationbody) => {
     console.log(check)
     const check1 = await Shop.find({Strid:arr[0]})
     if(check.length != 0){
-      throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Street Already allocated Apartment');
+      throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Street Already allocated Apartment or Shop');
     }
     if(check1.length != 0){
-      throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Street Already allocated Shop');
+      throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Street Already allocated Apartment or Shop');
     }
   }
   arr.forEach(async (e) => {
