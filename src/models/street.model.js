@@ -63,6 +63,9 @@ const streetSchema = mongoose.Schema({
   order:{
     type:Number,
   },
+  filter:{
+    type:String,
+  }
 });
 streetSchema.plugin(toJSON);
 streetSchema.plugin(paginate);

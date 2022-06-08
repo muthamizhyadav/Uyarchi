@@ -21,7 +21,11 @@ const getAllStreet = catchAsync(async (req, res) => {
 });
 
 const closedStatus = catchAsync(async (req, res) => {
-  const street = await StreetService.closedStatus(req.params.streetId, req.body);
+
+  const street = await StreetService.closedStatus(req.params.streetId, {
+    ...req.body,
+    ...{ filter: 'fullypending' },
+  });
   if (!street) {
     // throw new ApiError(httpStatus.NOT_FOUND, 'street Not found');
   }
@@ -53,16 +57,15 @@ const streetAllocation = catchAsync(async (req, res) => {
   arr.forEach(async (e) => {
     let streetId = e;
     const streets = await Street.findById(streetId);
-      await Street.updateOne(
-        { _id: streetId },
-        { AllocatedUser: userId, AllocationStatus: 'Allocated', date: date },
-        { new: true }
-      );
-      // res.status(httpStatus.CREATED).send('Allocated Successfully');
-   
+    await Street.updateOne(
+      { _id: streetId },
+      { AllocatedUser: userId, AllocationStatus: 'Allocated', date: date, filter: 'userpending' },
+      { new: true }
+    );
+    // res.status(httpStatus.CREATED).send('Allocated Successfully');
   });
 
-      res.status(httpStatus.CREATED).send('Allocated Successfully');
+  res.status(httpStatus.CREATED).send('Allocated Successfully');
 });
 
 const streetDeAllocation = catchAsync(async (req, res) => {

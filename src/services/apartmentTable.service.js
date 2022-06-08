@@ -1148,8 +1148,7 @@ else{
     }
   };
 
-  const getAllApartmentAndShop = async(id,districtId,zoneId,wardId,streetId,status,page
-    )=>{ 
+  const getAllApartmentAndShop = async(id,districtId,zoneId,wardId,streetId,status,page)=>{ 
     let mat ; 
     if(id !='null'&&districtId !='null'&&zoneId !='null'&&wardId!='null'&&streetId != 'null'&& status !='null'){
       mat={$and:[{'manageusersdata._id':{ $eq: id }},{'manageusersdata.preferredDistrict':{ $eq: districtId }},{'manageusersdata.preferredZone':{$eq:zoneId}},{'manageusersdata.preferredWard':{$eq:wardId}},{ _id:{$eq:streetId}},{status:{$eq:status}}]}
@@ -1169,22 +1168,10 @@ else{
    else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId == 'null'&&streetId != 'null'&& status =='null'){
       mat={$and:[{ _id:{ $eq: streetId}}]}
    }
-   else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status =='partialPending'){
-     mat={$or:[{$and:[{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$elemMatch:{'status':{$ne:""}}}},{status:{$eq:""}}]},
-     {$and:[{'shopData':{$elemMatch:{'status':{$ne:""}}}},{'apartmentData':{$elemMatch:{'status':{$eq:""}}}},{status:{$eq:""}}]},
-     {$and:[{'shopData':{$elemMatch:{'status':{$ne:""}}}},{'apartmentData':{$type: 'array', $eq: []}},{status:{$eq:""}}]},
-     {$and:[{'apartmentData':{$elemMatch:{'status':{$ne:""}}}},{'shopData':{$type: 'array', $eq: []}},{status:{$eq:""}}]}
-    ]}
-  } 
-  else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status =='fullyPending'){
-  mat ={$or:[{$and:[{closed:{$eq:"close"}},{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$type: 'array', $eq: []}}]},
-      //  {$and:[{closed:{$eq:"close"}},{'apartmentData':{$elemMatch:{'status':{$eq:""}}}},{'shopData':{$type: 'array', $eq: []}}]},
-        {$and:[{closed:{$eq:"close"}},{'shopData':{$elemMatch:{'status':{$eq:""}}}},{'apartmentData':{$elemMatch:{'status':{$eq:""}}}}]}
-  ]}
+   else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
+     console.log(status)
+    mat={$and:[{ filter:{ $eq: status}}]}
   }
-  else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status =='userPending'){
-    mat ={$or:[{$and:[{closed:{$eq:null}}]}]}
-    }
   else if(id !='null'&&districtId !='null'&&zoneId =='null'&&wardId == 'null'&&streetId == 'null'&& status =='null'){
       mat={$and:[{'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredDistrict': { $eq: districtId }}]}
    }
@@ -1204,7 +1191,7 @@ else{
    }else if(id !='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId != 'null'&& status =='null'){
     mat={$and:[{'manageusersdata._id': { $eq: id }},{_id:{ $eq: streetId}}]}
   }else if(id !='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
-    mat={$and:[{'manageusersdata._id': { $eq: id }},{ status:{ $eq: status}}]}
+    mat={$and:[{'manageusersdata._id': { $eq: id }},{ filter:{ $eq: status}}]}
   }else if(id =='null'&&districtId !='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status =='null'){
     mat={$and:[{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]}
   }else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
@@ -1212,7 +1199,7 @@ else{
   }else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId=='null'&&streetId != 'null'&& status =='null'){
     mat={$and:[{ 'manageusersdata.preferredDistrict': { $eq: districtId }},{ _id:{ $eq: streetId}}]}
   }else if(id =='null'&&districtId !='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
-    mat={$and:[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ status:{ $eq: status}}]}
+    mat={$and:[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ filter:{ $eq: status}}]}
   }else if(id !='null'&&districtId=='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status =='null'){
     mat={$and:[{'manageusersdata._id': { $eq: id }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}}]}
   }else if(id !='null'&&districtId=='null'&&zoneId =='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
@@ -1220,28 +1207,28 @@ else{
   }else if(id !='null'&&districtId=='null'&&zoneId =='null'&& wardId=='null'&&streetId != 'null'&& status =='null'){
     mat={$and:[{'manageusersdata._id': { $eq: id }},{ _id:{ $eq: streetId}}]}
   }else if(id !='null'&&districtId=='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
-    mat={$and:[{ 'manageusersdata._id': { $eq: id }},{ status:{ $eq: status}}]}
+    mat={$and:[{ 'manageusersdata._id': { $eq: id }},{ filter:{ $eq: status}}]}
   }else if(id =='null'&&districtId=='null'&&zoneId !='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
     mat={$and:[{ 'manageusersdata.preferredZone': { $eq: zoneId }},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]}
   }else if(id =='null'&&districtId=='null'&&zoneId !='null'&& wardId=='null'&&streetId != 'null'&& status =='null'){
     mat={$and:[{ 'manageusersdata.preferredZone': { $eq: zoneId }},{ _id:{ $eq: streetId}}]}
   }else if(id =='null'&&districtId=='null'&&zoneId !='null'&& wardId=='null'&&streetId == 'null'&& status !='null'){
-    mat={$and:[{ 'manageusersdata.preferredZone': { $eq: zoneId }},{ status:{ $eq: status}}]}
+    mat={$and:[{ 'manageusersdata.preferredZone': { $eq: zoneId }},{ filter:{ $eq: status}}]}
   }else if(id =='null'&&districtId=='null'&&zoneId =='null'&& wardId!='null'&&streetId != 'null'&& status =='null'){
     mat={$and:[{ 'manageusersdata.preferredWard': { $eq: wardId }},{ _id:{ $eq: streetId}}]}
   }else if(id =='null'&&districtId=='null'&&zoneId =='null'&& wardId!='null'&&streetId == 'null'&& status !='null'){
-    mat={$and:[{ 'manageusersdata.preferredWard': { $eq: wardId }},{ status:{ $eq: status}}]}
+    mat={$and:[{ 'manageusersdata.preferredWard': { $eq: wardId }},{ filter:{ $eq: status}}]}
   }else if(id =='null'&&districtId=='null'&&zoneId =='null'&& wardId=='null'&&streetId != 'null'&& status !='null'){
-    mat={$and:[{ _id: { $eq: streetId }},{ status:{ $eq: status}}]}
+    mat={$and:[{ _id: { $eq: streetId }},{ filter:{ $eq: status}}]}
   }
   else if(id =='null'&&districtId!='null'&&zoneId !='null'&& wardId!='null'&&streetId == 'null'&& status =='null'){
-    mat={$annd:[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]}
+    mat={$and:[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}}]}
   }
   else if(id == 'null'&&districtId!='null'&&zoneId !='null'&& wardId!='null'&&streetId != 'null'&& status =='null'){
     mat={$and:[{'manageusersdata.preferredDistrict': { $eq: districtId }},{ 'manageusersdata.preferredZone':{ $eq: zoneId}},{ 'manageusersdata.preferredWard':{ $eq: wardId}},{ _id: { $eq: streetId }}]}
   }
   else if(id =='null'&&districtId =='null'&&zoneId =='null'&& wardId=='null'&&streetId == 'null'&& status != 'null'){
-  mat ={$and:[{status:{$eq:status}}]}
+  mat ={$and:[{filter:{$eq:status}}]}
   } 
   else{
      mat={$and:[{ _id: { $ne: null }}]}
@@ -1366,7 +1353,8 @@ else{
           userName:"$manageusersdata.name",
           status:1,
           manageUserId:"$manageusersdata._id",
-          closeDate:1
+          closeDate:1,
+          filter:1,
 
         },
       },
@@ -1504,6 +1492,78 @@ const updateApartmentById = async (apartmentId, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Apartment not found');
   }
   Apart = await Apartment.findByIdAndUpdate({ _id: apartmentId }, updateBody, { new: true });
+  console.log(Apart.Strid)
+    let app= await Street.aggregate([
+        {
+
+            $match: {
+              $and: [{ _id: { $eq: Apart.Strid }, closed: { $eq: 'close' } }],
+            }
+        },
+        {
+          $lookup: {
+            from: 'shops',
+            let: { street: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ['$$street', '$Strid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                  },
+                },
+              },
+              {
+                $match: {
+                  $expr: {
+                    $eq: ['', '$status'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                  },
+                },
+              },
+            ],
+            as: 'shopData',
+          },
+        },
+        {
+          $lookup: {
+            from: 'apartments',
+            let: { street: '$_id' },
+    
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ['$$street', '$Strid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                  },
+                },
+              },
+              {
+                $match: {
+                  $expr: {
+                    $eq: ['', '$status'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                  },
+                },
+              },
+            ],
+            as: 'apartmentData',
+          },
+        },
+        
+      ])
+      console.log(app)
+     let filter='';
+      if(app.length !=0){
+          if(app[0].shopData.length==0 &&app[0].apartmentData.length==0  ){
+            filter="completed"
+          }
+          else if(app[0].shopData.length !=0  || app[0].apartmentData.length !=0  ){
+
+            filter="partialpending";
+          }
+      }
+      console.log(Apart.Strid)
+      if(filter !=""){
+        await Street.findByIdAndUpdate( {_id:Apart.Strid},{filter:filter}, { new: true })
+      }
   return Apart;
 };
 
@@ -1513,6 +1573,77 @@ const updateShopById = async (shopId, updateBody) => {
       throw new ApiError(httpStatus.NOT_FOUND, 'Shop not found');
     }
     Sho = await Shop.findByIdAndUpdate({ _id: shopId }, updateBody, { new: true });
+    let app= await Street.aggregate([
+      {
+
+          $match: {
+            $and: [{ _id: { $eq: Sho.Strid }, closed: { $eq: 'close' } }],
+          }
+      },
+      {
+        $lookup: {
+          from: 'shops',
+          let: { street: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$$street', '$Strid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+            },
+            {
+              $match: {
+                $expr: {
+                  $eq: ['', '$status'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+            },
+          ],
+          as: 'shopData',
+        },
+      },
+      {
+        $lookup: {
+          from: 'apartments',
+          let: { street: '$_id' },
+  
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$$street', '$Strid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+            },
+            {
+              $match: {
+                $expr: {
+                  $eq: ['', '$status'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+            },
+          ],
+          as: 'apartmentData',
+        },
+      },
+      
+    ])
+    console.log(app)
+   let filter='';
+    if(app.length !=0){
+        if(app[0].shopData.length==0 &&app[0].apartmentData.length==0  ){
+          filter="completed"
+        }
+        else if(app[0].shopData.length !=0  || app[0].apartmentData.length !=0  ){
+
+          filter="partialpending";
+        }
+    }
+    // console.log(Apart.Strid)
+    if(filter !=""){
+      await Street.findByIdAndUpdate( {_id:Sho.Strid},{filter:filter}, { new: true })
+    }
     return Sho;
   };
 
