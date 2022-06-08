@@ -45,7 +45,7 @@ const getSuperAdminAssignById = catchAsync (async (req,res)=>{
   res.send(superAdmin)
 })
 
-const getScvRole = CatchAsync(async (req, res)=>{
+const getScvRole = catchAsync(async (req, res)=>{
   const role = await BusinessUsersService.getScvRole()
   res.send(role)
 })
