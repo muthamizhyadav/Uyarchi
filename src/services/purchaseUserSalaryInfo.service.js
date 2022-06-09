@@ -29,7 +29,7 @@ const updateUserSalaryInfoById = async (id, updatebody) => {
 };
 
 const updateUserSalaryStatus = async (id) => {
-  const usersalaryInfo = await getUsersalaryInfoById(id);
+  let usersalaryInfo = await getUsersalaryInfoById(id);
   if (!usersalaryInfo) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User Not Found');
   }
