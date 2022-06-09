@@ -38,7 +38,7 @@ const getproductsWithSupplierId = async (supplierId, date) => {
     for (let j = 0; j <= soproductid.length; j++) {
       if (productsId[i] == soproductid[j]) {
         let products = await Product.findById(productsId[i]);
-        let soproducts = await CallStatus.find({ productid: soproductid[j], date: { $eq: date } });
+        let soproducts = await CallStatus.find({ productid: productsId[i], date: { $eq: date } });
         product.push(products);
         soproduct.push(soproducts);
       }
