@@ -3,6 +3,7 @@ const ApiError = require('../utils/ApiError');
 const { Supplier } = require('../models');
 const { Product } = require('../models/product.model');
 const { ProductorderSchema } = require('../models/shopOrder.model');
+const CallStatus = require('../models/callStatus')
 const createSupplier = async (supplierBody) => {
   return Supplier.create(supplierBody);
 };
@@ -29,7 +30,7 @@ const getproductsWithSupplierId = async (supplierId, date) => {
   let soproductid = [];
   let soproduct = [];
   let productsId = supplier.productDealingWith;
-  let productorders = await ProductorderSchema.find({ date: date });
+  let productorders = await CallStatus.find({ date: date });
   let productid = productorders.forEach((e) => {
     soproductid.push(e.productid);
   });
@@ -37,18 +38,18 @@ const getproductsWithSupplierId = async (supplierId, date) => {
     for (let j = 0; j <= soproductid.length; j++) {
       if (productsId[i] == soproductid[j]) {
         let products = await Product.findById(productsId[i]);
-        let soproducts = await ProductorderSchema.find({ productid: soproductid[j], date: { $eq: date } });
+        let soproducts = await CallStatus.find({ productid: soproductid[j], date: { $eq: date } });
         product.push(products);
         soproduct.push(soproducts);
       }
     }
   }
   return {product:product, soproduct:soproduct}
-};
+};  
 
-const updateDisableSupplierById = async (id) => {
+const updateDisableSupplierById = async  (id) => {                                        
   let supplier = await getDisableSupplierById(id);
-  if (!supplier) {
+  if (!supplier) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier not found');
   }
   supplier = await Supplier.findByIdAndUpdate({ _id: id }, { active: false, archive: true }, { new: true });
@@ -62,7 +63,7 @@ const productDealingWithsupplier = async (id, date) => {
         productDealingWith: {
           $eq: id,
         },
-      },
+      }, 
     },
     {
       $lookup: {

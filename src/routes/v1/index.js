@@ -40,16 +40,18 @@ const BusinessUsers = require('./manageBusinessUsers.route');
 const DistrictListRoute = require('./districtList.route');
 const trendsRoute = require('./trends.router');
 const websocket = require('./websocket.js');
-const orderRaisedByMWA = require('./orderRaisedbyMWA.route')
+const orderRaisedByMWA = require('./orderRaisedbyMWA.route');
 const CallStatusRoute = require('./callStatus.route');
 const statusRoute = require('./status.route');
 const router = express.Router();
-const brand = require("./brand.route")
+const PuserRoute = require('./purchaseUserSalary.route');
+const brand = require('./brand.route');
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
   },
+  { path: '/PUserSalaryInfo', route: PuserRoute },
   {
     path: '/status',
     route: statusRoute,
@@ -211,7 +213,7 @@ const defaultRoutes = [
   {
     path: '/brand',
     route: brand,
-  }
+  },
 ];
 
 const devRoutes = [

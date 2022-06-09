@@ -15,6 +15,10 @@ const createSuperAdminwardAssign = async (body) => {
   return await SuperAdminAssignWardMember.create(body);
 };
 
+const getAllUSers = async () =>{
+  return await SuperAdminAssignWardMember.find()
+}
+
 const gettAllSuperAdminAssign = async () => {
   return await SuperAdminAssignWardMember.find({ roletype: 'Street Cart Vendor' });
 };
@@ -118,6 +122,7 @@ module.exports = {
   getSuperAdminAssignById,
   createSuperAdminwardAssign,
   getScvRole,
+  getAllUSers,
   gettAllSuperAdminAssign,
   getSixRoles,
   deleteBusinessUsers,
