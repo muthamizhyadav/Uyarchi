@@ -165,7 +165,7 @@ const manageUserAttendanceSchema = mongoose.Schema({
     type:Array,
   },
   dateIso: {
-    type: Date,
+    type: String,
     default: Date.now(),
   }
 });
