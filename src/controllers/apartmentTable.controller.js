@@ -74,6 +74,24 @@ const getmanageUSerAttendanceAllAutoTable = catchAsync(async (req, res) => {
   res.send(attend);
 });
 
+const getApartmentUserAndStreet = catchAsync(async (req, res) => {
+
+  const apart = await apartmentTableService.getApartmentUserStreet(req.params.id,req.params.streetId);
+  if (!apart) {
+    throw new ApiError(httpStatus.NOT_FOUND);
+  }
+  res.send(apart);
+});
+
+const getShopUserAndStreet = catchAsync(async (req, res) => {
+  
+  const shop = await apartmentTableService.getShopUserStreet(req.params.id,req.params.streetId);
+  if (!shop) {
+    throw new ApiError(httpStatus.NOT_FOUND);
+  }
+  res.send(shop);
+});
+
 const getAttendanceLong = catchAsync(async(req,res)=>{
  const atten = await apartmentTableService.attendancelat(req.params.id,req.params.date1,req.params.date2);
  if (!atten) {
@@ -230,6 +248,8 @@ module.exports = {
   getAllmanageUserAttendanceAuto,
   getmanageUSerAttendanceAllAutoTable,
   getAllCount,
-  getAttendanceLong
+  getAttendanceLong,
+  getApartmentUserAndStreet,
+  getShopUserAndStreet
   // getManageUserAttendance,
 };

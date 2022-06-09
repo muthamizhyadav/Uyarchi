@@ -246,23 +246,42 @@ const getDeAllocationaggregationByUserId = async (AllocatedUser) => {
 
 const streetDeAllocation = async (allocationbody) => {
   const { userId, arr } = allocationbody;
+  let array = []
+  // for(let i=0;i<arr.length;i++){
+  //   const check = await Apartment.find({Strid:arr[0]})
+  //   const check1 = await Shop.find({Strid:arr[0]})
+  //   if(check.length != 0){
+  //     throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Street Already allocated Apartment or Shop');
+  //   }
+  //   if(check1.length != 0){
+  //     throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Street Already allocated Apartment or Shop');
+  //   }
+  // }
   for(let i=0;i<arr.length;i++){
-    const check = await Apartment.find({Strid:arr[0]})
-    console.log(check)
-    const check1 = await Shop.find({Strid:arr[0]})
-    if(check.length != 0){
-      throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Street Already allocated Apartment or Shop');
-    }
-    if(check1.length != 0){
-      throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Street Already allocated Apartment or Shop');
-    }
-  }
+       const check = await Apartment.find({Strid:arr[i]})
+       const check1 = await Shop.find({Strid:arr[i]})
+       if(check.length != 0){
+           const street = await Street.find({_id:check[0].Strid})
+           array.push(street[0].street)
+       }
+       if(check1.length !=0){
+        const street = await Street.find({_id:check1[0].Strid})
+        array.push(street[0].street)
+       }
+      }
+if(array != 0){
+   return {
+       data: [...new Set(array)],
+       errorMessage:'Already allocated Apartment or Shop'
+   } 
+}else{
   arr.forEach(async (e) => {
     let streetId = e;
 
     await Streets.updateOne({ _id: streetId }, { DeAllocatedUser: userId, AllocationStatus: 'DeAllocated' }, { new: true });
   });
   return `Street DeAllocated SuccessFully`;
+}
 };
 
 const getWardByStreet = async (wardId, status) => {
