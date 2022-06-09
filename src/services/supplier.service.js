@@ -44,11 +44,11 @@ const getproductsWithSupplierId = async (supplierId, date) => {
     }
   }
   return {product:product, soproduct:soproduct}
-};
+};  
 
-const updateDisableSupplierById = async (id) => {
+const updateDisableSupplierById = async  (id) => {                                        
   let supplier = await getDisableSupplierById(id);
-  if (!supplier) {
+  if (!supplier) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier not found');
   }
   supplier = await Supplier.findByIdAndUpdate({ _id: id }, { active: false, archive: true }, { new: true });
@@ -62,7 +62,7 @@ const productDealingWithsupplier = async (id, date) => {
         productDealingWith: {
           $eq: id,
         },
-      },
+      }, 
     },
     {
       $lookup: {
