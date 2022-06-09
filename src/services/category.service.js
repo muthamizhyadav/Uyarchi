@@ -67,16 +67,18 @@ const updatecategoryById = async (categoryId, updateBody) => {
   return cate;
 };
 
-const getproductWithCategory = async () =>{
-  return await Category.aggregate([{
-    $lookup: {
-      from: 'products',
-      localField: '_id',
-      foreignField: 'category',
-      as: 'categoryData',
+const getproductWithCategory = async () => {
+  return await Category.aggregate([
+    {
+      $lookup: {
+        from: 'products',
+        localField: '_id',
+        foreignField: 'category',
+        as: 'categoryData',
+      },
     },
-  }])
-}
+  ]);
+};
 
 const updateSubcategoryById = async (subcategoryId, updateBody) => {
   let subcate = await getSubcategoryById(subcategoryId);
