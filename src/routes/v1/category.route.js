@@ -35,4 +35,5 @@ router
 router.route('/subcat/main/:id').get(categoryController.getsubcategoryusemain);
 router.route('/category/pagination/:page').get(categoryController.categoryPagination);
 router.route('/subcategory/pagination/:page').get(categoryController.subcategoryPagination);
+router.route('/product/category').get(categoryController.getproductWithCategory)
 module.exports = router;

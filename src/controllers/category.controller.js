@@ -28,6 +28,11 @@ const subcategoryPagination = catchAsync(async (req, res) => {
   res.send(category);
 });
 
+const getproductWithCategory = catchAsync(async (req, res) => {
+  const category = await categoryService.getproductWithCategory();
+  res.send(category);
+});
+
 const getsubcategoryusemain = catchAsync(async (req, res) => {
   const subcategory = await categoryService.getsubcategoryusemain(req.params.id);
   res.send(subcategory);
@@ -117,6 +122,7 @@ module.exports = {
   getSubCategoryhDetailsById,
   updatesubCategory,
   deleteSubCategory,
+  getproductWithCategory,
   getCategoryhDetailsById,
   categoryPagination,
   updateCategory,
