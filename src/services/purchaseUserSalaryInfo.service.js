@@ -8,7 +8,14 @@ const createUserSalary = async (userBody) => {
 };
 
 const getAllUserSalaryInfo = async () => {
-  return await PUserSalary.find({active:{$eq:true}});
+  return await PUserSalary.aggregate([{
+        $lookup: {
+          from: 'superadminwardassigns',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'userData',
+        },
+  }])
 };
 
 const getUsersalaryInfoById = async (id) => {
