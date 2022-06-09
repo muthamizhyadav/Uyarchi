@@ -348,7 +348,8 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
         Along:1,
         photoCapture:1,
         created:1,
-        Uid:1
+        Uid:1,
+        dateIso:1,
 
       },
     },
