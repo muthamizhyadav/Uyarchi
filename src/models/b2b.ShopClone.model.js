@@ -10,6 +10,9 @@ const shopSchema = mongoose.Schema({
   Strid: {
     type: String,
   },
+  Wardid:{
+    type:String,
+  },
   SType: {
     type: String,
   },
