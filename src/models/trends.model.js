@@ -19,6 +19,9 @@ const trendsSchema = new mongoose.Schema({
     product:{
         type:Array
     },
+    date:{
+        type:String,
+    },
     active:{
         type:Boolean,
         default:true,
