@@ -22,6 +22,9 @@ const setTrendsValueSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    date: {
+      type: String,
+    },
     archive: {
       type: Boolean,
       default: false,
