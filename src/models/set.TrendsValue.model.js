@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
 const moment = require('moment')
-let datenow = moment(new Date()).format("DD-MM-YYYY hh:mm A");
+let datenow = moment.utc(new Date()).format("DD-MM-YYYY hh:mm A");
 console.log(datenow)
 
 const setTrendsValueSchema = new mongoose.Schema(
