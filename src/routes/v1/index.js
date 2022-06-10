@@ -47,6 +47,7 @@ const router = express.Router();
 const PuserRoute = require('./purchaseUserSalary.route');
 const brand = require('./brand.route');
 const b2bShopClone = require('./b2b.ShopClone.route');
+const supplierBuyerRoute = require('./supplierBuyer.route')
 const defaultRoutes = [
   {
     path: '/auth',
@@ -218,6 +219,10 @@ const defaultRoutes = [
   {
     path: '/brand',
     route: brand,
+  },
+  {
+    path:'/supplierBuyer',
+    route: supplierBuyerRoute,
   },
 ];
 
