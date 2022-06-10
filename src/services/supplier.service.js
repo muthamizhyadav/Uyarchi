@@ -7,7 +7,6 @@ const CallStatus = require('../models/callStatus')
 const createSupplier = async (supplierBody) => {
   return Supplier.create(supplierBody);
 };
-
 const getAllSupplier = async () => {
   return Supplier.find({ active: true });
 };

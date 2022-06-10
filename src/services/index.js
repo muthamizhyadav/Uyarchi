@@ -31,3 +31,4 @@ module.exports.adminRegistrationService = require('./adminRegistration.service')
 module.exports.marketService = require('./market.service')
 module.exports.apartmentTableService = require('./apartmentTable.service')
 module.exports.superAdminService = require('./superAdmin.service');
+module.exports.supplierBuyerService = require('./supplierBuyer.service')

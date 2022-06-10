@@ -1,0 +1,46 @@
+const httpStatus = require('http-status');
+const ApiError = require('../utils/ApiError');
+const { SupplierBuyer } = require('../models');
+
+const createSupplierBuyer = async (supplierBuyerBody) => {
+    return SupplierBuyer.create(supplierBuyerBody);
+  };
+  
+  const getAllSupplierBuyer = async () => {
+    return SupplierBuyer.find({ active: true });
+  };
+
+  const getSupplierBuyerById = async (id) => {
+    const supplier = SupplierBuyer.findById(id);
+    if (!supplier || supplier.active === false) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'SupplierBuyer Not Found');
+    }
+    return supplier;
+  };
+
+  const updateSupplierBuyerById = async (supplierBuyerId, updateBody) => {
+    let supplier = await getSupplierBuyerById(supplierBuyerId);
+    if (!supplier) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'supplierBuyer not found');
+    }
+    supplier = await SupplierBuyer.findByIdAndUpdate({ _id: supplierBuyerId }, updateBody, { new: true });
+    return supplier;
+  };
+  
+  const deleteSupplierBuyerById = async (supplierBuyerId) => {
+    const supplier = await getSupplierBuyerById(supplierBuyerId);
+    if (!supplier) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'SupplierBuyer not found');
+    }
+    (supplier.active = false), (supplier.archive = true), await supplier.save();
+    return supplier;
+  };
+
+
+module.exports = {
+    createSupplierBuyer,
+    getAllSupplierBuyer,
+    getSupplierBuyerById,
+    updateSupplierBuyerById,
+    deleteSupplierBuyerById
+ };

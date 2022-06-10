@@ -48,7 +48,7 @@ const PuserRoute = require('./purchaseUserSalary.route');
 const brand = require('./brand.route');
 const B2BUsers = require('./B2Busers.route');
 const b2bShopClone = require('./b2b.ShopClone.route');
-const setTrendsValue = require('./set.TrendsValue.route');
+const supplierBuyerRoute = require('./supplierBuyer.route')
 const defaultRoutes = [
   {
     path: '/auth',
@@ -228,6 +228,10 @@ const defaultRoutes = [
   {
     path: '/brand',
     route: brand,
+  },
+  {
+    path:'/supplierBuyer',
+    route: supplierBuyerRoute,
   },
 ];
 
