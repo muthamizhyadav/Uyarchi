@@ -46,11 +46,21 @@ const statusRoute = require('./status.route');
 const router = express.Router();
 const PuserRoute = require('./purchaseUserSalary.route');
 const brand = require('./brand.route');
+const B2BUsers = require('./B2Busers.route');
 const b2bShopClone = require('./b2b.ShopClone.route');
+const setTrendsValue = require('./set.TrendsValue.route');
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/b2bUsers',
+    route: B2BUsers,
+  },
+  {
+    path: '/setTrendsValue',
+    route: setTrendsValue,
   },
   { path: '/PUserSalaryInfo', route: PuserRoute },
   {

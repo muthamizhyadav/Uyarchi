@@ -3,26 +3,6 @@ const { v4 } = require('uuid');
 const { email } = require('../config/config');
 const { toJSON, paginate } = require('./plugins');
 
-// const variables = {
-//   uname,
-//   email,
-//   phone,
-//   whnumber,
-//   lannumber,
-//   address,
-//   addresslinetwo,
-//   pinCode,
-//   idproofno,
-//   idproof,
-//   addproof,
-//   addsproof, //image
-//   biodata,
-//   roletype,
-//   bankname,
-//   branch,
-//   accno,
-//   ifsc,
-// };
 const manageBusinessUsersSchema = new mongoose.Schema({
   _id: {
     type: String,

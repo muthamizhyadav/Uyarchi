@@ -3,7 +3,7 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const b2bCloneService = require('../services/b2b.ShopClone.service');
-
+const token = require('../services/token.service');
 const createB2bShopClone = catchAsync(async (req, res) => {
   const shop = await b2bCloneService.createB2bShopClone(req.body);
   if (req.files) {
@@ -17,6 +17,7 @@ const createB2bShopClone = catchAsync(async (req, res) => {
 });
 
 const getAllB2BshopClone = catchAsync(async (req, res) => {
+  console.log(req.userRole);
   const shop = await b2bCloneService.getAllB2BshopClone();
   res.send(shop);
 });

@@ -6,7 +6,7 @@ const userService = require('./user.service');
 const { Token } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
-
+const b2busers = require('../models/B2Busers.model');
 /**
  * Generate token
  * @param {ObjectId} userId
@@ -15,9 +15,10 @@ const { tokenTypes } = require('../config/tokens');
  * @param {string} [secret]
  * @returns {string}
  */
-const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
+const generateToken = (userId, userRole, expires, type, secret = config.jwt.secret) => {
   const payload = {
-    sub: userId,
+    _id: userId,
+    userRole: userRole,
     iat: moment().unix(),
     exp: expires.unix(),
     type,
@@ -34,10 +35,11 @@ const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
  * @param {boolean} [blacklisted]
  * @returns {Promise<Token>}
  */
-const saveToken = async (token, userId, expires, type, blacklisted = false) => {
+const saveToken = async (token, userId, userRole, expires, type, blacklisted = false) => {
   const tokenDoc = await Token.create({
     token,
     user: userId,
+    userRole: userRole,
     expires: expires.toDate(),
     type,
     blacklisted,
@@ -51,13 +53,21 @@ const saveToken = async (token, userId, expires, type, blacklisted = false) => {
  * @param {string} type
  * @returns {Promise<Token>}
  */
-const verifyToken = async (token, type) => {
+const verifyToken = async (token) => {
   const payload = jwt.verify(token, config.jwt.secret);
-  const tokenDoc = await Token.findOne({ token, type, user: payload.sub, blacklisted: false });
-  if (!tokenDoc) {
-    throw new Error('Token not found');
-  }
-  return tokenDoc;
+  console.log(payload)
+  // const tokenDoc = await Token.findOne({ token, type , user: payload._id, blacklisted: false });
+  // console.log(payload._id)
+  // if (!tokenDoc) {
+  //   return "hello"
+  // }
+  const userss = await b2busers.findOne({ _id: payload._id });
+console.log(userss)
+if (!userss) {
+  return false;
+
+}
+  return true;
 };
 
 /**
@@ -67,10 +77,10 @@ const verifyToken = async (token, type) => {
  */
 const generateAuthTokens = async (user) => {
   const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
-  const accessToken = generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS);
+  const accessToken = generateToken(user.id, user.userRole, accessTokenExpires, tokenTypes.ACCESS);
   const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  const refreshToken = generateToken(user.id, refreshTokenExpires, tokenTypes.REFRESH);
-  await saveToken(refreshToken, user.id, refreshTokenExpires, tokenTypes.REFRESH);
+  const refreshToken = generateToken(user.id, user.userRole, refreshTokenExpires, tokenTypes.REFRESH);
+  await saveToken(refreshToken, user.id, user.userRole, refreshTokenExpires, tokenTypes.REFRESH);
 
   return {
     access: {

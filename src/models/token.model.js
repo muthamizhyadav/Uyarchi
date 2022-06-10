@@ -11,7 +11,7 @@ const tokenSchema = mongoose.Schema(
     },
     user: {
       type: String,
-      ref: 'User',
+      ref: 'b2busers',
       required: true,
     },
     type: {
