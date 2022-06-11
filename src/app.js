@@ -16,7 +16,7 @@ const ApiError = require('./utils/ApiError');
 const cookieparser = require('cookie-parser');
 const app = express();
 
-app.use(cookieparser());
+app.use(cookieparser("tokens"));
 
 app.use(express.static('public'));
 
