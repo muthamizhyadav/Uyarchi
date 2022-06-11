@@ -8,7 +8,7 @@ const tokenService = require('../services/token.service');
 const config = require('../config/config');
 const b2busers = require('../models/B2Busers.model');
 const authorization = async (req, res, next) => {
-  const token = req.cookies.tokens;
+  const token = req.headers.auth;
   console.log(req.headers.auth)
   console.log(req.headers['auth'])
   if (!token) {
