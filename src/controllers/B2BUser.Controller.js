@@ -18,7 +18,7 @@ const B2bUsersLogin = catchAsync(async (req, res) => {
   const users = await b2bUsersService.B2bUsersLogin(req.body);
   const tokens = await tokenService.generateAuthTokens(users);
   let options = {
-    httpOnly: false,
+    httpOnly: true,
   };
   res.cookie('tokens',tokens.access.token, options);
 //   res.clearCookie("tokens");
