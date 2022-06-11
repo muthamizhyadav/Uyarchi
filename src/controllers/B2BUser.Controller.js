@@ -21,6 +21,7 @@ const B2bUsersLogin = catchAsync(async (req, res) => {
     httpOnly: true,
     // expires: new Date(Date.now() + 100000000),
     maxAge: 24 * 60 * 60 * 1000,
+    signed:true
   };
   console.log(options);
   res.cookie('tokens', tokens.access.token, options);
