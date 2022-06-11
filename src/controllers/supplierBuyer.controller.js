@@ -21,7 +21,7 @@ const createSupplierService = catchAsync(async (req, res) => {
 
   const getSupplierBuyerByIdService = catchAsync(async (req, res) => {
     const supplier = await supplierBuyerService.getSupplierBuyerById(req.params.supplierBuyerId);
-    if(!supplier || supplier.active == false){
+    if(!supplier){
       throw new ApiError(httpStatus.NOT_FOUND, "SupplierBuyer Not Found");
     }
     res.send(supplier);

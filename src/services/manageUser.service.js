@@ -125,43 +125,43 @@ const createManageUser = async (manageUserBody) => {
  const getManageUserdataByIdStatus = async (id,streetId,status,page) => {
    let match;
   if(streetId != 'null'&& status =='Approved'){
-    match={$and:[{'streetsdata._id':{$eq:streetId}},{'streetsdata.filter':{$eq:'Approved'}},{active:{$eq:true}}]}
+    match={$and:[{'streetsdata.AllocatedUser': { $eq: id }},{'streetsdata.AllocationStatus':{ $ne: "DeAllocated" }},{'streetsdata._id':{$eq:streetId}},{'streetsdata.filter':{$eq:'Approved'}},{active:{$eq:true}}]}
  }
- if(streetId == 'null'&& status =='Approved'){
-  match={$and:[{'streetsdata.filter':{$eq:'Approved'}},{active:{$eq:true}}]}
+ else if(streetId == 'null'&& status =='Approved'){
+  match={$and:[{'streetsdata.AllocatedUser': { $eq: id }},{'streetsdata.AllocationStatus':{ $ne: "DeAllocated" }},{'streetsdata.filter':{$eq:'Approved'}},{active:{$eq:true}}]}
 }
  else if(streetId != 'null'&& status =='Rejected'){
-  match={$and:[{'streetsdata._id':{$eq:streetId}},{'streetsdata.filter':{$eq:'Rejected'}},{active:{$eq:true}}]}
+  match={$and:[{'streetsdata.AllocatedUser': { $eq: id }},{'streetsdata._id':{$eq:streetId}},{'streetsdata.AllocationStatus':{ $ne: "DeAllocated" }},{'streetsdata.filter':{$eq:'Rejected'}},{active:{$eq:true}}]}
 }
 else if(streetId == 'null'&& status =='Rejected'){
-  match={$and:[{'streetsdata.filter':{$eq:'Rejected'}},{active:{$eq:true}}]}
+  match={$and:[{'streetsdata.AllocatedUser': { $eq: id }},{'streetsdata.AllocationStatus':{ $ne: "DeAllocated" }},{'streetsdata.filter':{$eq:'Rejected'}},{active:{$eq:true}}]}
 }
 else if(streetId != 'null'&& status =='Pending'){
   match={$or:[
-    {$and:[{'streetsdata._id':{$eq:streetId}},{'streetsdata.closed':{$eq:'close' }},{'streetsdata.filter':{$ne:'Approved'}},{'streetsdata.filter':{$ne:'Rejected'}},{'streetsdata.filter':{$eq:'fullypending'}},{active:{$eq:true}}]},
-    {$and:[{'streetsdata._id':{$eq:streetId}},{'streetsdata.closed':{$eq:'close' }},{'streetsdata.filter':{$ne:'Approved'}},{'streetsdata.filter':{$ne:'Rejected'}},{'streetsdata.filter':{$eq:'partialpending'}},{active:{$eq:true}}]},
+    {$and:[{'streetsdata.AllocatedUser': { $eq: id }},{'streetsdata._id':{$eq:streetId}},{'streetsdata.closed':{$eq:'close' }},{'streetsdata.filter':{$ne:'Approved'}},{'streetsdata.filter':{$ne:'Rejected'}},{'streetsdata.filter':{$eq:'fullypending'}},{active:{$eq:true}}]},
+    {$and:[{'streetsdata.AllocatedUser': { $eq: id }},{'streetsdata._id':{$eq:streetId}},{'streetsdata.closed':{$eq:'close' }},{'streetsdata.filter':{$ne:'Approved'}},{'streetsdata.filter':{$ne:'Rejected'}},{'streetsdata.filter':{$eq:'partialpending'}},{active:{$eq:true}}]},
  ]}
 }
 else if(streetId == 'null'&& status =='Pending'){
   match={$or:[
-    {$and:[{'streetsdata.closed':{$eq:'close' }},{'streetsdata.filter':{$ne:'Approved'}},{'streetsdata.filter':{$ne:'Rejected'}},{'streetsdata.filter':{$eq:'fullypending'}},{active:{$eq:true}}]},
-    {$and:[{'streetsdata.closed':{$eq:'close' }},{'streetsdata.filter':{$ne:'Approved'}},{'streetsdata.filter':{$ne:'Rejected'}},{'streetsdata.filter':{$eq:'partialpending'}},{active:{$eq:true}}]},
+    {$and:[{'streetsdata.AllocatedUser': { $eq: id }},{'streetsdata.closed':{$eq:'close' }},{'streetsdata.filter':{$ne:'Approved'}},{'streetsdata.filter':{$ne:'Rejected'}},{'streetsdata.filter':{$eq:'fullypending'}},{active:{$eq:true}}]},
+    {$and:[{'streetsdata.AllocatedUser': { $eq: id }},{'streetsdata.closed':{$eq:'close' }},{'streetsdata.filter':{$ne:'Approved'}},{'streetsdata.filter':{$ne:'Rejected'}},{'streetsdata.filter':{$eq:'partialpending'}},{active:{$eq:true}}]},
  ]}
 }
-else if(streetId != 'null'&& status =='De-Allocated'){
-  match={$and:[{'streetsdata._id':{$eq:streetId}},{'streetsdata.AllocationStatus':{$eq:'De-Allocated'}},{'streetsdata.closed':{$eq:null }},{active:{$eq:true}}]}
+else if(streetId != 'null'&& status =='DeAllocated'){
+  match={$and:[{'streetsdata.DeAllocatedUser': { $eq: id }},{'streetsdata._id':{$eq:streetId}},{'streetsdata.AllocationStatus':{$eq:'DeAllocated'}},{'streetsdata.closed':{$eq:null }},{active:{$eq:true}}]}
 }
-else if(streetId == 'null'&& status =='De-Allocated'){
-  match={$and:[{'streetsdata.AllocationStatus':{$eq:'De-Allocated'}},{'streetsdata.closed':{$eq:null }},{active:{$eq:true}}]}
+else if(streetId == 'null'&& status =='DeAllocated'){
+  match={$and:[{'streetsdata.DeAllocatedUser': { $eq: id }},{'streetsdata.AllocationStatus':{$eq:'DeAllocated'}},{'streetsdata.closed':{$eq:null }},{active:{$eq:true}}]}
 }
 else if(streetId != 'null'&& status =='Closed'){
-  match={$and:[{'streetsdata._id':{$eq:streetId}},{'streetsdata.AllocationStatus':{$eq:'Allocated'}},{'streetsdata.closed':{$eq:'close' }},{active:{$eq:true}}]}
+  match={$and:[{'streetsdata.AllocatedUser': { $eq: id }},{'streetsdata._id':{$eq:streetId}},{'streetsdata.filter':{$ne:'Approved'}},{'streetsdata.filter':{$eq:'userpending'}},{'streetsdata.filter':{$ne:'Rejected'}},{'streetsdata.AllocationStatus':{$eq:'Allocated'}},{'streetsdata.closed':{$eq:null}},{active:{$eq:true}}]}
 }
 else if(streetId == 'null'&& status =='Closed'){
-  match={$and:[{'streetsdata.AllocationStatus':{$eq:'Allocated'}},{'streetsdata.closed':{$eq:'close' }},{active:{$eq:true}}]}
+  match={$and:[{'streetsdata.AllocatedUser': { $eq: id }},{'streetsdata.AllocationStatus':{$eq:'Allocated'}},{'streetsdata.filter':{$ne:'Approved'}},{'streetsdata.filter':{$eq:'userpending'}},{'streetsdata.filter':{$ne:'Rejected'}},{'streetsdata.closed':{$eq:null}},{active:{$eq:true}}]}
 }
  else if(streetId != 'null'&& status =='null'){
-   match={$and:[{ 'streetsdata._id':{ $eq: streetId }},{active:{$eq:true}}]}
+   match={$and:[{'streetsdata.AllocatedUser': { $eq: id }},{ 'streetsdata._id':{ $eq: streetId }},{active:{$eq:true}}]}
  }
  else{
    match={$and:[{ _id: { $eq: id }},{active:{$eq:true}}]}
@@ -328,7 +328,6 @@ else if(streetId == 'null'&& status =='Closed'){
   const pendCount = await Street.find({$and:[{AllocatedUser:{ $eq:id}},{closed:{$eq:'close'}},{filter:{$ne:'Approved'}},{filter:{$ne:'Rejected'}},{AllocationStatus:{ $ne: "DeAllocated" }}]})
   const approveCount = await Street.find({AllocatedUser:id, filter:"Approved",AllocationStatus: { $ne: "DeAllocated" }});
   const deallocCount = await Street.find({DeAllocatedUser:id});
-  console.log(pendCount)
   // if (!street) {
   //   throw new ApiError(httpStatus.NOT_FOUND, 'manageUserAllocate not found');
   // }
