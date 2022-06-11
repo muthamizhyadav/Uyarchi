@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const pick = require('../utils/pick');
-const { tokenTypes } = require('../config/tokens')
+const { tokenTypes } = require('../config/tokens');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const b2bUsersService = require('../services/B2BUsers.service');
@@ -19,19 +19,20 @@ const B2bUsersLogin = catchAsync(async (req, res) => {
   const tokens = await tokenService.generateAuthTokens(users);
   let options = {
     httpOnly: true,
-    expires: new Date(Date.now()+100000000) 
+    // expires: new Date(Date.now() + 100000000),
+    maxAge: 24 * 60 * 60 * 1000,
   };
-  console.log(options)
-  res.cookie('tokens',tokens.access.token, options);
+  console.log(options);
+  res.cookie('tokens', tokens.access.token, options);
 
-// res.send("hello")
-//   res.clearCookie("tokens");
+  // res.send("hello")
+  //   res.clearCookie("tokens");
   res.send({ users, tokens });
 });
 
 const B2bUsersLogout = catchAsync(async (req, res) => {
-  res.clearCookie("tokens");
-  res.clearCookie("login");
+  res.clearCookie('tokens');
+  res.clearCookie('login');
   res.send();
 });
 
