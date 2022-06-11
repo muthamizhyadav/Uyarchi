@@ -15,6 +15,8 @@ const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 const cookieparser = require('cookie-parser');
 const app = express();
+
+
 app.use(express.static('public'));
 
 if (config.env !== 'test') {
@@ -39,8 +41,13 @@ app.use(mongoSanitize());
 app.use(compression());
 
 // enable cors
-app.use(cors());
-app.options('*', cors());
+const corsconfig ={
+  credentials:true,
+  origin:"*",
+}
+app.use(cors(corsconfig));
+// app.options('*', cors());
+app.use(cookieparser());
 
 // jwt authentication
 app.use(passport.initialize());
@@ -50,7 +57,6 @@ passport.use('jwt', jwtStrategy);
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
-app.use(cookieparser());
 // v1 api routes
 app.use('/v1', routes);
 

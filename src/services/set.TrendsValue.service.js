@@ -16,6 +16,30 @@ const getSetTrendsValueById = async (id) => {
   return trends;
 };
 
+const getProductDetailsByProductId = async () => {
+  return SetTrendsValue.aggregate([
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'ProductsData',
+      },
+    },
+    // {
+    //   $project: {
+    //     ProductDetails:'$productsData',
+    //   }
+    // }
+
+
+
+
+
+    
+  ]);
+};
+
 const updateTrendsValueById = async (id, updateBody) => {
   let trends = await getSetTrendsValueById(id);
   if (!trends) {
@@ -40,4 +64,5 @@ module.exports = {
   getSetTrendsValueById,
   updateTrendsValueById,
   deleteTrendsSetValue,
+  getProductDetailsByProductId,
 };
