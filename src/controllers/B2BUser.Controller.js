@@ -27,7 +27,6 @@ const B2bUsersLogin = catchAsync(async (req, res) => {
 });
 
 const B2bUsersLogout = catchAsync(async (req, res) => {
-  const tokens = await tokenService.generateAuthTokens();
   res.clearCookie("tokens");
   res.send();
 });
