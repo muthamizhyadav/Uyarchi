@@ -11,11 +11,20 @@ const morgan = require('./config/morgan');
 const { jwtStrategy } = require('./config/passport');
 const { authLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
+const session = require('express-session')
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 const cookieparser = require('cookie-parser');
 const app = express();
 
+
+// app.use(session( { secret:'hello world',
+// store:SessionStore,
+// resave:false,
+// cookie:{
+// secure:false,
+// httpOnly:false // by default it's boolean value true }
+// }}));
 
 app.use(express.static('public'));
 

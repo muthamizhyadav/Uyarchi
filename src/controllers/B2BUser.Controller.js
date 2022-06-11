@@ -24,6 +24,7 @@ const B2bUsersLogin = catchAsync(async (req, res) => {
   };
   console.log(options);
   res.cookie('tokens', tokens.access.token, options).send({ users, tokens });
+  
   // res.cookie('khgk jh', "ujtryfy tfytfyth", options);
 
   // res.send("hello")

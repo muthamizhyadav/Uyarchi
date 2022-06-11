@@ -9,7 +9,7 @@ const config = require('../config/config');
 const b2busers = require('../models/B2Busers.model');
 const authorization = async (req, res, next) => {
   const token = req.cookies.tokens;
-  console.log(req)
+  console.log(req.headers)
   if (!token) {
     return res.send(httpStatus.UNAUTHORIZED, 'user must be LoggedIn....');
   }
