@@ -9,5 +9,5 @@ router
   .get(setTrendsController.getSetTrendsById)
   .put(setTrendsController.updateSetSalesPriceById)
   .delete(setTrendsController.deleteTrendsSetValue);
-
+router.route('/products/details').get(setTrendsController.getProductDetailsByProductId);
 module.exports = router;

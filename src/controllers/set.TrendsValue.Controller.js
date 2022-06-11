@@ -18,6 +18,11 @@ const getSetTrendsById = catchAsync(async (req, res) => {
   res.send(trends);
 });
 
+const getProductDetailsByProductId = catchAsync(async (req, res) => {
+  const product = await setTrendsServive.getProductDetailsByProductId();
+  res.send(product);
+});
+
 const updateSetSalesPriceById = catchAsync(async (req, res) => {
   const trends = await setTrendsServive.updateTrendsValueById(req.params.id, req.body);
   res.send(trends);
@@ -32,6 +37,7 @@ module.exports = {
   createSetTrends,
   getAllSetTrends,
   getSetTrendsById,
+  getProductDetailsByProductId,
   updateSetSalesPriceById,
   deleteTrendsSetValue,
 };
