@@ -15,6 +15,9 @@ const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 const cookieparser = require('cookie-parser');
 const app = express();
+
+app.use(cookieparser());
+
 app.use(express.static('public'));
 
 if (config.env !== 'test') {
@@ -50,7 +53,6 @@ passport.use('jwt', jwtStrategy);
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
-app.use(cookieparser());
 // v1 api routes
 app.use('/v1', routes);
 
