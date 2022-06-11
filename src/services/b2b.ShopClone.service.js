@@ -4,6 +4,7 @@ const ApiError = require('../utils/ApiError');
 
 const createB2bShopClone = async (shopBody) => {
   const shop = await B2BShop.create(shopBody);
+  console.log(shop)
   return shop;
 };
 
