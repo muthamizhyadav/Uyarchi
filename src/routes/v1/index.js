@@ -47,13 +47,18 @@ const router = express.Router();
 const PuserRoute = require('./purchaseUserSalary.route');
 const brand = require('./brand.route');
 const B2BUsers = require('./B2Busers.route');
-const setTrendsValue = require('./set.TrendsValue.route')
+const verifyRoute = require('./verify.authentication.route');
+const setTrendsValue = require('./set.TrendsValue.route');
 const b2bShopClone = require('./b2b.ShopClone.route');
-const supplierBuyerRoute = require('./supplierBuyer.route')
+const supplierBuyerRoute = require('./supplierBuyer.route');
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/verify',
+    route: verifyRoute,
   },
   {
     path: '/b2bUsers',
@@ -231,7 +236,7 @@ const defaultRoutes = [
     route: brand,
   },
   {
-    path:'/supplierBuyer',
+    path: '/supplierBuyer',
     route: supplierBuyerRoute,
   },
 ];
