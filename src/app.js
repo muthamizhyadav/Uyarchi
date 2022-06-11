@@ -44,7 +44,7 @@ app.use(compression());
 // enable cors
 const corsconfig ={
   credentials:true,
-  origin:["http://localhost:4200","*"],
+  origin:"*",
 }
 app.use(cors(corsconfig));
 // app.options('*', cors());
