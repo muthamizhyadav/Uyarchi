@@ -16,7 +16,6 @@ const ApiError = require('./utils/ApiError');
 const cookieparser = require('cookie-parser');
 const app = express();
 
-app.use(cookieparser("tokens"));
 
 app.use(express.static('public'));
 
@@ -48,6 +47,7 @@ const corsconfig ={
 }
 app.use(cors(corsconfig));
 // app.options('*', cors());
+app.use(cookieparser());
 
 // jwt authentication
 app.use(passport.initialize());
