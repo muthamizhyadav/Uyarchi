@@ -1,8 +1,8 @@
 const express = require('express');
 const supplierBuyerController = require('../../controllers/supplierBuyer.controller');
 const router = express.Router();
-router.route('/').post(supplierBuyerController.createSupplierService).get(supplierBuyerController.getAllSupplierBuyerService);
-
+router.route('/').post(supplierBuyerController.createSupplierService).get(supplierBuyerController.getAllSupplierBuyerService)
+router.route('/allData').get(supplierBuyerController.getAllSupplierBuyerDeleteService)
 router
   .route('/:supplierBuyerId')
   .get(supplierBuyerController.getSupplierBuyerByIdService)
