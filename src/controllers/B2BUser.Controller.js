@@ -15,19 +15,20 @@ const createB2bUsers = catchAsync(async (req, res) => {
 });
 
 const B2bUsersLogin = catchAsync(async (req, res) => {
-  const users = await b2bUsersService.B2bUsersLogin(req.body);
+  const users = await b2bUsersService.B2bUsersLogin(req.params.phoneNumber, req.params.password);
   const tokens = await tokenService.generateAuthTokens(users);
   // let options = {
   //   httpOnly: true,
   // };
   res.cookie('tokens',tokens.access.token);
+  // res.cookie('login',"jygtnjhnyfhtbdtrgdgf");
 //   res.clearCookie("tokens");
-  console.log(req.cookies.tokens)
   res.send({ users, tokens });
 });
 
 const B2bUsersLogout = catchAsync(async (req, res) => {
   res.clearCookie("tokens");
+  res.clearCookie("login");
   res.send();
 });
 

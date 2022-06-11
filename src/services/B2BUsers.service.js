@@ -9,8 +9,7 @@ const createUser = async (userBody) => {
   return b2bUsers.create(userBody);
 };
 
-const B2bUsersLogin = async (userBody) => {
-  const { phoneNumber, password } = userBody;
+const B2bUsersLogin = async (phoneNumber, password) => {
   let userName = await b2bUsers.findOne({ phoneNumber: phoneNumber });
   if (!userName) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Phone Number Not Registered');
