@@ -16,7 +16,7 @@ const createSupplierBuyer = async (supplierBuyerBody) => {
 
   const getSupplierBuyerById = async (id) => {
     const supplier = SupplierBuyer.findById(id);
-    if (!supplier || supplier.active === false) {
+    if (!supplier) {
       throw new ApiError(httpStatus.NOT_FOUND, 'SupplierBuyer Not Found');
     }
     return supplier;
