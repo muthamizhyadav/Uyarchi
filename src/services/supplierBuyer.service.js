@@ -10,6 +10,10 @@ const createSupplierBuyer = async (supplierBuyerBody) => {
     return SupplierBuyer.find({ active: true });
   };
 
+  const getAllSupplierBuyerDelete = async () => {
+    return SupplierBuyer.find();
+  };
+
   const getSupplierBuyerById = async (id) => {
     const supplier = SupplierBuyer.findById(id);
     if (!supplier || supplier.active === false) {
@@ -42,5 +46,6 @@ module.exports = {
     getAllSupplierBuyer,
     getSupplierBuyerById,
     updateSupplierBuyerById,
-    deleteSupplierBuyerById
+    deleteSupplierBuyerById,
+    getAllSupplierBuyerDelete
  };
