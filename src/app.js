@@ -54,8 +54,8 @@ const corsconfig ={
   credentials:true,
   origin:"*",
 }
-app.use(cors(corsconfig));
-// app.options('*', cors());
+app.use(cors());
+app.options('*', cors());
 app.use(cookieparser());
 
 // jwt authentication
