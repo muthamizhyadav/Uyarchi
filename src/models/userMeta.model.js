@@ -26,6 +26,6 @@ const usermetaSchema = new mongoose.Schema({
     }
   });
   
-  const metaUsers = mongoose.model('MetaUser',usermetaSchema );
+  const metaUsers = mongoose.model('mUsers',usermetaSchema );
 
   module.exports = metaUsers

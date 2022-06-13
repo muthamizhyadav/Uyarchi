@@ -51,6 +51,7 @@ const verifyRoute = require('./verify.authentication.route');
 const setTrendsValue = require('./set.TrendsValue.route');
 const b2bShopClone = require('./b2b.ShopClone.route');
 const supplierBuyerRoute = require('./supplierBuyer.route');
+const metaUserRoute = require('./meta.users.route');
 const defaultRoutes = [
   {
     path: '/auth',
@@ -59,6 +60,10 @@ const defaultRoutes = [
   {
     path: '/verify',
     route: verifyRoute,
+  },
+  {
+    path: '/metaUser',
+    route: metaUserRoute,
   },
   {
     path: '/b2bUsers',
