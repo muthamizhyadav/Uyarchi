@@ -22,13 +22,13 @@ router
 
 router
   .route('/attendance/create')
-  .post( AttendanceImage.array('photoCapture'), b2bShopCloneController.creatAttendanceClone)
-  .get( b2bShopCloneController.getAlAttendanceClone);
+  .post( authorization,AttendanceImage.array('photoCapture'), b2bShopCloneController.creatAttendanceClone)
+  .get( authorization,b2bShopCloneController.getAlAttendanceClone);
 
 router
   .route('/attendance/:id')
-  .get( b2bShopCloneController.getAttendanceById)
-  .put( b2bShopCloneController.updateAttendanceById)
-  .delete( b2bShopCloneController.deleteAttendanceById);
+  .get(authorization, b2bShopCloneController.getAttendanceById)
+  .put( authorization,b2bShopCloneController.updateAttendanceById)
+  .delete(authorization, b2bShopCloneController.deleteAttendanceById);
 
 module.exports = router;

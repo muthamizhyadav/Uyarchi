@@ -3,6 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 const { v4 } = require('uuid');
+
 const B2BusersSchema = mongoose.Schema(
   {
     _id: {
@@ -95,4 +96,30 @@ B2BusersSchema.pre('save', async function (next) {
  */
 const Users = mongoose.model('B2BUsers', B2BusersSchema);
 
-module.exports = Users;
+const usermetaSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  user_id: {
+    type: String,
+  },
+  metaKey: {
+    type: String,
+  },
+  metavalue: {
+    type: String,
+  },
+  active:{
+    type: Boolean,
+    default:true,
+  },
+  archive:{
+    type:Boolean,
+    default:false
+  }
+});
+
+const metaUsers = mongoose.model('MetaUsers',usermetaSchema );
+
+module.exports = { Users, metaUsers };
