@@ -8,7 +8,9 @@ router.post('/login', b2bUsersController.B2bUsersLogin);
 router.get('/logout', b2bUsersController.B2bUsersLogout);
 
 router.post('/user/login', b2bUsersController.B2bUsersAdminLogin);
-router.route('/metauser/create').post(b2bUsersController.createmetauser).get(b2bUsersController.getAllMetaUser);
+
+// metaUser Route
+router.route('/metauser/user/metauser').post(b2bUsersController.createmetauser).get(b2bUsersController.getAllMetaUser);
 router
   .route('/metauser/:id')
   .get(b2bUsersController.getusermetaDataById)
