@@ -1,33 +1,35 @@
 const httpStatus = require('http-status');
-const B2BShop = require('../models/b2b.ShopClone.model');
+const { Shop, AttendanceClone } = require('../models/b2b.ShopClone.model');
 const ApiError = require('../utils/ApiError');
 
-const createB2bShopClone = async (shopBody) => {
-  const shop = await B2BShop.create(shopBody);
-  console.log(shop)
+// Shop Clone Serive
+
+const createShopClone = async (shopBody) => {
+  const shop = await Shop.create(shopBody);
+  console.log(shop);
   return shop;
 };
 
-const getAllB2BshopClone = async () => {
-  return B2BShop.find();
+const getAllShopClone = async () => {
+  return Shop.find();
 };
 
-const getB2BShopById = async (id) => {
-  const shop = await B2BShop.findById(id);
+const getShopById = async (id) => {
+  const shop = await Shop.findById(id);
   return shop;
 };
 
-const updateB2BShopById = async (id, updateBody) => {
-  const shop = await getB2BShopById(id);
+const updateShopById = async (id, updateBody) => {
+  let shop = await getShopById(id);
   if (!shop) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Shop Not found');
   }
-  shop = await B2BShop.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  shop = await Shop.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return shop;
 };
 
-const deleteB2BShopById = async (id) => {
-  const shop = await getB2BShopById(id);
+const deleteShopById = async (id) => {
+  let shop = await getShopById(id);
   if (!shop) {
     throw new ApiError(httpStatus.NOT_FOUNDm, 'Shop Not Found');
   }
@@ -36,10 +38,52 @@ const deleteB2BShopById = async (id) => {
   return shop;
 };
 
+// Attendance Clone Service
+
+const createAttendanceClone = async (shopBody) => {
+  const attendance = await AttendanceClone.create(shopBody);
+  console.log(attendance);
+  return attendance;
+};
+
+const getAllAttendanceClone = async () => {
+  return AttendanceClone.find();
+};
+
+const getAttendanceById = async (id) => {
+  const attendance = await AttendanceClone.findById(id);
+  return attendance;
+};
+
+const updateAttendanceById = async (id, updateBody) => {
+  let attendance = await getAttendanceById(id);
+  if (!attendance) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop Not found');
+  }
+  attendance = await AttendanceClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return attendance;
+};
+
+const deleteAttendanceById = async (id) => {
+  let attendance = await getAttendanceById(id);
+  if (!attendance) {
+    throw new ApiError(httpStatus.NOT_FOUNDm, 'attendance Not Found');
+  }
+  (attendance.active = false), (attendance.archive = true);
+  await attendance.save();
+  return attendance;
+};
+
 module.exports = {
-  createB2bShopClone,
-  getAllB2BshopClone,
-  getB2BShopById,
-  updateB2BShopById,
-  deleteB2BShopById,
+  createShopClone,
+  getAllShopClone,
+  getShopById,
+  updateShopById,
+  deleteShopById,
+  // Attendace exports
+  createAttendanceClone,
+  getAllAttendanceClone,
+  getAttendanceById,
+  updateAttendanceById,
+  deleteAttendanceById,
 };

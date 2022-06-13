@@ -4,6 +4,9 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const b2bCloneService = require('../services/b2b.ShopClone.service');
 const token = require('../services/token.service');
+
+// shop Clone Controller
+
 const createB2bShopClone = catchAsync(async (req, res) => {
   const shop = await b2bCloneService.createB2bShopClone(req.body);
   if (req.files) {
@@ -48,10 +51,62 @@ const deleteB2BShopById = catchAsync(async (req, res) => {
   res.send();
 });
 
+// Attendance Controller
+
+const creatAttendanceClone = catchAsync(async (req, res) => {
+  const attendance = await b2bCloneService.createAttendanceClone(req.body);
+  console.log(req.files)
+  if (req.files) {
+    req.files.forEach(function (files, index, arr) {
+      attendance.photoCapture.push('images/attandanceClone/' + files.filename);
+    });
+  }
+  res.send(attendance);
+  await attendance.save();
+});
+
+const getAlAttendanceClone = catchAsync(async (req, res) => {
+  const attendance = await b2bCloneService.getAllAttendanceClone();
+  res.send(attendance);
+});
+
+const getAttendanceById = catchAsync(async (req, res) => {
+  const attendance = await b2bCloneService.getAttendanceById(req.params.id);
+  if (!attendance) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop not Found');
+  }
+  res.send(attendance);
+});
+
+const updateAttendanceById = catchAsync(async (req, res) => {
+  const attendance = await b2bCloneService.updateAttendanceById(req.params.id, req.params.body);
+  if (req.files) {
+    req.files.forEach(function (files, index, arr) {
+      attendance.photoCapture.push('images/shopClone/' + files.filename);
+    });
+  }
+  res.send(attendance);
+});
+
+const deleteAttendanceById = catchAsync(async (req, res) => {
+  const attendance = await b2bCloneService.deleteAttendanceById(req.params.id);
+  if (!attendance) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'attendance not Found');
+  }
+  res.send();
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
   getB2BShopById,
   updateB2BShopById,
   deleteB2BShopById,
+
+  //Attendance Controller exports
+  creatAttendanceClone,
+  getAlAttendanceClone,
+  getAttendanceById,
+  updateAttendanceById,
+  deleteAttendanceById,
 };
