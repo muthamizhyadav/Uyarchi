@@ -29,7 +29,7 @@ const getproductsWithSupplierId = async (supplierId, date) => {
   let soproductid = [];
   let soproduct = [];
   let productsId = supplier.productDealingWith;
-  let productorders = await CallStatus.find({ date: date });
+  let productorders = await CallStatus.find({ date: date, supplierid: { $eq: supplierId } });
   let productid = productorders.forEach((e) => {
     soproductid.push(e.productid);
   });
