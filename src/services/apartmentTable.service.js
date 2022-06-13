@@ -38,7 +38,10 @@ const getAllManageUserAutoAttendance = async () => {
     }
     return user;
   };
-
+const getAllAttendance = async () =>{
+  const user = await ManageUserAttendance.find({active:true});
+  return user;
+}
 const AllCount = async ()=>{
    const userCount = await manageUser.find({active:true});
    const street = await Street.aggregate([
@@ -2117,6 +2120,7 @@ module.exports = {
   getAllManageUSerAttendance,
   getSearch,
   getAllApartmentAndShop,
+  getAllAttendance,
   createManageUserAutoAttendance,
   getAllManageUserAutoAttendance,
   getAllManageUserAutoAttendanceTable,

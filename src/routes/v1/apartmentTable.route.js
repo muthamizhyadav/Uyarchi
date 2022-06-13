@@ -41,4 +41,5 @@ router.route('/allDataCount/all').get(apartmentController.getAllCount)
 router.route('/attendance/lat/long/:id/:date1/:date2').get(apartmentController.getAttendanceLong)
 router.route('/apartment/streetIdAll/IdAndStreet/uid/:id/:streetId').get(apartmentController.getApartmentUserAndStreet)
 router.route('/shop/streetIdAll/IdAndStreet/uid/:id/:streetId').get(apartmentController.getShopUserAndStreet)
+router.route('/attendance/Allattendance').get(apartmentController.getAllAttendance);
 module.exports = router;

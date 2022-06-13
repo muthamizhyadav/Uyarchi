@@ -74,6 +74,12 @@ const getmanageUSerAttendanceAllAutoTable = catchAsync(async (req, res) => {
   res.send(attend);
 });
 
+const getAllAttendance = catchAsync(async (req, res)=>{
+  const attendance = await apartmentTableService.getAllAttendance();
+  console.log(attendance)
+  res.send(attendance)
+})
+
 const getApartmentUserAndStreet = catchAsync(async (req, res) => {
 
   const apart = await apartmentTableService.getApartmentUserStreet(req.params.id,req.params.streetId);
@@ -236,6 +242,7 @@ module.exports = {
   updateApartment,
   updateShop,
   deleteApartment,
+  getAllAttendance,
   deleteshop,
   getAllShop,
   getAllApartmentTable,
