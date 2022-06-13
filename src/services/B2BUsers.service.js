@@ -42,6 +42,7 @@ const B2bUsersAdminLogin = async (userBody) => {
 
 const createMetaUsers = async (userBody) => {
   const metausers = await metaUsers.create(userBody);
+  console.log(metausers)
   return metausers;
 };
 

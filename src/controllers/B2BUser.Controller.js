@@ -58,8 +58,9 @@ const B2bUsersLogout = catchAsync(async (req, res) => {
 
 // meta user controller
 
-const createmetauser = catchAsync(async (req, res) => {
+const createMetaUSers = catchAsync(async (req, res) => {
   const metauser = await b2bUsersService.createMetaUsers(req.body);
+  console.log(metauser);
   res.send(metauser);
 });
 
@@ -87,7 +88,7 @@ module.exports = {
   B2bUsersLogout,
   B2bUsersLogin,
   B2bUsersAdminLogin,
-  createmetauser,
+  createMetaUSers,
   getusermetaDataById,
   getAllMetaUser,
   updateMetaUsers,
