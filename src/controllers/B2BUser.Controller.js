@@ -15,7 +15,7 @@ const createB2bUsers = catchAsync(async (req, res) => {
 });
 
 const B2bUsersLogin = catchAsync(async (req, res) => {
-  const users = await b2bUsersService.B2bUsersLogin(req.body);
+  const users = await b2bUsersService.UsersLogin(req.body);
   const tokens = await tokenService.generateAuthTokens(users);
   let options = {
     httpOnly: true,
@@ -60,7 +60,8 @@ const B2bUsersLogout = catchAsync(async (req, res) => {
 
 const createMetaUSers = catchAsync(async (req, res) => {
   const metauser = await b2bUsersService.createMetaUsers(req.body);
-  console.log(metauser);
+  // console.log(metauser);
+  console.log("working......")
   res.send(metauser);
 });
 

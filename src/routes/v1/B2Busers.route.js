@@ -7,10 +7,10 @@ router.post('/', b2bUsersController.createB2bUsers);
 router.post('/login', b2bUsersController.B2bUsersLogin);
 router.get('/logout', b2bUsersController.B2bUsersLogout);
 
-router.post('/user/login', b2bUsersController.B2bUsersAdminLogin);
+router.post('/shopOrder/login', b2bUsersController.B2bUsersAdminLogin);
 
 // metaUser Route
-router.route('/meta/user').post(b2bUsersController.createMetaUSers).get(b2bUsersController.getAllMetaUser);
+router.route('/meta/user').post(b2bUsersController.createMetaUSers)
 router
   .route('/metauser/:id')
   .get(b2bUsersController.getusermetaDataById)

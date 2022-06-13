@@ -1,12 +1,10 @@
 const httpStatus = require('http-status');
-const { Users, metaUsers } = require('../models/B2Busers.model');
+const { Users } = require('../models/B2Busers.model');
+const metaUsers = require('../models/userMeta.model');
 const { listeners } = require('../models/supplier.model');
 const ApiError = require('../utils/ApiError');
 
 const createUser = async (userBody) => {
-  // if (await Users.isEmailTaken(userBody.email)) {
-  //   throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
-  // }
   return Users.create(userBody);
 };
 
@@ -41,9 +39,9 @@ const B2bUsersAdminLogin = async (userBody) => {
 };
 
 const createMetaUsers = async (userBody) => {
-  const metausers = await metaUsers.create(userBody);
-  console.log(metausers)
-  return metausers;
+  const user = await metaUsers.create(userBody);
+
+  return user;
 };
 
 const getAllmetaUsers = async () => {
