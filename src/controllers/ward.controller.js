@@ -3,6 +3,7 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const wardService = require('../services/ward.service');
+const metaModel = require('../models/userMeta.model');
 
 const createWard = catchAsync(async (req, res) => {
   const ward = await wardService.createWard(req.body);
@@ -18,6 +19,15 @@ const createWard = catchAsync(async (req, res) => {
 
 const getWardByZoneId = catchAsync(async (req, res) => {
   const dis = await wardService.getWardByZoneId(req.params.zoneId);
+  res.send(dis);
+});
+
+const getmetaData = catchAsync(async (req, res) => {
+  let zoneId = await metaModel.findOne({ user_id: req.userId, metaKey: 'zone' });
+  if (!zoneId) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Zone Not FOund');
+  }
+  const dis = await wardService.getWardByZoneId(zoneId.metavalue);
   res.send(dis);
 });
 
@@ -55,4 +65,5 @@ module.exports = {
   updateward,
   deleteWard,
   wardPagination,
+  getmetaData,
 };
