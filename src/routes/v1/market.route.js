@@ -24,6 +24,7 @@ router.route('/shop/:marketShopId').put(marketUpload.array('image'), marketContr
 // market Clone
 
 router.route('/marketClone').post(authorization,marketImage.array('image'), marketController.createmarketCloneService);
+router.route('/marketClone/all/clone').get(authorizationmarketController.getmarketCloneAll);
 router.route('/marketClone/getOne/:id')
   .get(marketController.getmarketCloneById)
   .put(marketController.updatemarketClone)
