@@ -3,6 +3,7 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const marketService = require('../services/market.service');
+const { Market ,MarketClone} = require('../models/market.model');
 
 const createmarketService = catchAsync(async (req, res) => {
   const pro = await marketService.createmarket(req.body);
@@ -17,6 +18,56 @@ const createmarketService = catchAsync(async (req, res) => {
   res.send(pro);
   await pro.save();
 });
+
+const createmarketCloneService = catchAsync(async (req, res) => {
+  // req.body.(req.userId)
+  const pro = await marketService.createmarketClone(req.body);
+  const userId=req.userId;
+  if(pro){
+    await MarketClone.findByIdAndUpdate({_id:pro.id},{Uid:userId},{new:true}) 
+  }
+  if (req.files) {
+    //   let path = [];
+    req.files.forEach(function (files, index, arr) {
+      pro.image.push('images/marketClone/' + files.filename);
+      // console.log(shop.photoCapture)
+    });
+  }
+  res.status(httpStatus.CREATED)
+  res.send(pro);
+  await pro.save();
+});
+
+
+const getmarketCloneById = catchAsync(async (req, res) => {
+  const pro = await marketService.getmarketcloneById(req.params.id);
+  if (!pro || pro.active === false) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'market not found');
+  }
+  res.send(pro);
+});
+
+const getmarketCloneAll = catchAsync(async (req, res) => {
+  const manage = await marketService.getAllmarketClone();
+  console.log(manage)
+    res.send(manage);
+  });
+
+
+  const updatemarketClone = catchAsync(async (req, res) => {
+    const pro = await marketService.updatemarketCloneById(req.params.id, req.body);
+    if (req.files) {
+      //   let path = [];
+      console.log(req.files);
+      req.files.forEach(function (files, index, arr) {
+        pro.image.push('images/marketClone/' + files.filename);
+        // console.log(shop.photoCapture)
+      });
+    }
+    // await pro.save();
+    res.send(pro)
+   
+  });
 
 const createmarketShopService = catchAsync(async (req, res) => {
   const pro = await marketService.createMarketShops(req.body);
@@ -119,5 +170,9 @@ module.exports = {
   getmarketShopAll,
   getmarketShopServiceById,
   updatemarketShopService,
-  getAllMarketTable
+  getAllMarketTable,
+  createmarketCloneService,
+  getmarketCloneById,
+  getmarketCloneAll,
+  updatemarketClone,
 };
