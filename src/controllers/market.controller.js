@@ -80,7 +80,7 @@ const updatemarketShopClone = catchAsync(async (req, res) => {
       // console.log(shop.photoCapture)
     });
   }
-  // await pro.save();
+  await pro.save();
   res.send(pro);
 });
 
