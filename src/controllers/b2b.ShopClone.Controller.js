@@ -8,7 +8,7 @@ const token = require('../services/token.service');
 // shop Clone Controller
 
 const createB2bShopClone = catchAsync(async (req, res) => {
-  const shop = await b2bCloneService.createB2bShopClone(req.body);
+  const shop = await b2bCloneService.createShopClone (req.body);
   if (req.files) {
     console.log(req.files);
     req.files.forEach(function (files, index, arr) {
