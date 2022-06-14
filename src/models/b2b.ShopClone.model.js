@@ -25,7 +25,7 @@ const shopSchema = mongoose.Schema({
     type: String,
   },
   SCont1: {
-    type: Number,
+    type: String,
   },
   Slat: {
     type: String,
