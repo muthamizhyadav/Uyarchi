@@ -10,7 +10,7 @@ const createSupplierService = catchAsync(async (req, res) => {
 });
 
 const createSupplierBuyerwithType = catchAsync (async (req, res)=>{
-  const supplier = await supplierBuyerService.createSupplierBuyerwithType(req.body)
+  const supplier = await supplierBuyerService.createSupplierBuyerwithType(req.params.type)
   res.send(supplier)
 })
 

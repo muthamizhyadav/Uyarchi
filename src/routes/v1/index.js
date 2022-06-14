@@ -59,7 +59,7 @@ const defaultRoutes = [
     route: authRoute,
   },
   {
-    path:'/postorder',
+    path:'/postorder/:type',
     route:postOrderRoute,
   },
   {

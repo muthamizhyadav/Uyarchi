@@ -10,8 +10,7 @@ const getAllSupplierBuyer = async () => {
   return SupplierBuyer.find({ active: true });
 };
 
-const createSupplierBuyerwithType = async (body) => {
-  const { type } = body;
+const createSupplierBuyerwithType = async (type) => {
   let values;
   if (type == 'Supplier') {
     values = await SupplierBuyer.find({ type: 'Supplier' });
