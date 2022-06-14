@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const { Market } = require('../models/market.model');
-const { MarketShops, MarketClone } = require('../models/market.model');
+const { MarketShops, MarketClone, MarketShopsClone } = require('../models/market.model');
 const manageUser = require('../models/manageUser.model');
 
 const ApiError = require('../utils/ApiError');
@@ -26,6 +26,30 @@ const createmarketClone = async (body) => {
   return marketclone;
 };
 
+const createmarketShopClone = async (body) => {
+  const marketShopclone = await MarketShopsClone.create(body);
+  return marketShopclone;
+};
+
+const getAllmarketShopClone = async () => {
+  let marketShop = await MarketShopsClone.find();
+  return marketShop
+};
+
+const getmarketShopcloneById = async (id) => {
+  const marketShop = await MarketShopsClone.findById(id);
+  return marketShop;
+};
+
+const updatemarketShopCloneById = async (id, updateBody) => {
+  let marketShopclone = await MarketShopsClone.findById(id);
+  if (!marketShopclone) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'marketShopclone Not Found');
+  }
+  marketShopclone = await MarketShopsClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return marketShopclone;
+};
+
 const getAllmarketClone = async () => {
   let market = await MarketClone.find();
   console.log(market)
@@ -42,7 +66,6 @@ const updatemarketCloneById = async (id, updateBody) => {
   if (!marketclone) {
     throw new ApiError(httpStatus.NOT_FOUND, 'market Clone Not Found');
   }
-
   marketclone = await MarketClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return marketclone;
 };
@@ -436,4 +459,8 @@ module.exports = {
   getMarketShops,
   getMarketShopsById,
   getAllmarketTable,
+  createmarketShopClone,
+  getAllmarketShopClone,
+  getmarketShopcloneById,
+  updatemarketShopCloneById,
 };
