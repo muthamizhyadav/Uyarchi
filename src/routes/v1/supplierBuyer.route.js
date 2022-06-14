@@ -9,4 +9,6 @@ router
   .put(supplierBuyerController.updateSupplierBuyerByIdService)
   .delete(supplierBuyerController.deleteSupplierBuyerByIdService);
 
+router.route('/type/getName').get(supplierBuyerController.createSupplierBuyerwithType)
+
 module.exports = router;
