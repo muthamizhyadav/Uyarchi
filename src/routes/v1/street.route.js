@@ -20,4 +20,5 @@ router.route('/street/Allocation').post(streetController.streetAllocation).get(s
 router.route('/street/deAllocation').post(streetController.streetDeAllocation).get(streetController.getAllDeAllocatedStreetOnly);
 router.route('/closedStatus/:streetId').put(streetController.closedStatus)
 router.route('/:id/order/street').get(streetController.streetorder)
+router.route('/getall/wardid/:wardId').get(streetController.getStreetByWardId)
 module.exports = router;

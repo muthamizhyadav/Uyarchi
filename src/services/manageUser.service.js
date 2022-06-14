@@ -184,6 +184,17 @@ const getManageUserdataByIdStatus = async (id, streetId, status, page) => {
             { active: { $eq: true } },
           ],
         },
+        {
+          $and: [
+            { 'streetsdata.AllocatedUser': { $eq: id } },
+            { 'streetsdata._id': { $eq: streetId } },
+            { 'streetsdata.closed': { $eq: 'close' } },
+            { 'streetsdata.filter': { $ne: 'Approved' } },
+            { 'streetsdata.filter': { $ne: 'Rejected' } },
+            { 'streetsdata.filter': { $eq: 'completed' } },
+            { active: { $eq: true } },
+          ],
+        },
       ],
     };
   } else if (streetId == 'null' && status == 'Pending') {
@@ -206,6 +217,16 @@ const getManageUserdataByIdStatus = async (id, streetId, status, page) => {
             { 'streetsdata.filter': { $ne: 'Approved' } },
             { 'streetsdata.filter': { $ne: 'Rejected' } },
             { 'streetsdata.filter': { $eq: 'partialpending' } },
+            { active: { $eq: true } },
+          ],
+        },
+        {
+          $and: [
+            { 'streetsdata.AllocatedUser': { $eq: id } },
+            { 'streetsdata.closed': { $eq: 'close' } },
+            { 'streetsdata.filter': { $ne: 'Approved' } },
+            { 'streetsdata.filter': { $ne: 'Rejected' } },
+            { 'streetsdata.filter': { $eq: 'completed' } },
             { active: { $eq: true } },
           ],
         },

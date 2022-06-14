@@ -491,11 +491,13 @@ const getStockByStatusClosed = async () => {
 };
 
 const updateStackById = async (stackId, updateBody) => {
-  let stack = await getStockById(stackId);
+  console.log(stackId)
+  let stack = await Stock.findOne({supplierId:stackId});
+  console.log(stack)
   if (!stack) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'stack not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'stacks not found');
   }
-  stack = await Stock.findByIdAndUpdate({ _id: stackId }, updateBody, { new: true });
+  stack = await Stock.findOneAndUpdate({ supplierId: stackId }, updateBody, { new: true });
   return stack;
 };
 

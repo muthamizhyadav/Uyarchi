@@ -10,6 +10,11 @@ const createShopClone = async (shopBody) => {
   return shop;
 };
 
+const filterShopwithNameAndContact = async (key) => {
+  const shop = await Shop.find({ $or: [{ SName: { $regex: key } }, { SCont1: { $regex: key } }] });
+  return shop;
+};
+
 const getAllShopClone = async () => {
   return Shop.find();
 };
@@ -80,6 +85,7 @@ module.exports = {
   getShopById,
   updateShopById,
   deleteShopById,
+  filterShopwithNameAndContact,
   // Attendace exports
   createAttendanceClone,
   getAllAttendanceClone,

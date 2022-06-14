@@ -4,7 +4,7 @@ const ApiError = require('../utils/ApiError');
 const Ward = require('../models/ward.model');
 const ManageUser = require('../models/manageUser.model');
 const Streets = require('../models/street.model');
-const {Apartment,Shop} = require('../models/apartmentTable.model')
+const { Apartment, Shop } = require('../models/apartmentTable.model');
 
 const createStreet = async (streetBody) => {
   const { wardId } = streetBody;
@@ -32,12 +32,12 @@ const updates = async () => {
   //     await Street.findByIdAndUpdate({ _id: e._id }, {closed:""}, { new: true });
   //     count+=1;
   //     console.log(count+"new")
-   
+
   // });
   // await console.log(street.length);
   // return street;
-  return "poda panni    dfsd";
-}; 
+  return 'poda panni    dfsd';
+};
 
 const streetAllocation = async (allocationbody) => {
   const { userId, arr } = allocationbody;
@@ -246,7 +246,7 @@ const getDeAllocationaggregationByUserId = async (AllocatedUser) => {
 
 const streetDeAllocation = async (allocationbody) => {
   const { userId, arr } = allocationbody;
-  let array = []
+  let array = [];
   // for(let i=0;i<arr.length;i++){
   //   const check = await Apartment.find({Strid:arr[0]})
   //   const check1 = await Shop.find({Strid:arr[0]})
@@ -257,41 +257,59 @@ const streetDeAllocation = async (allocationbody) => {
   //     throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Street Already allocated Apartment or Shop');
   //   }
   // }
-  for(let i=0;i<arr.length;i++){
-       const check = await Apartment.find({Strid:arr[i]})
-       const check1 = await Shop.find({Strid:arr[i]})
-       if(check.length != 0){
-           const street = await Street.find({_id:check[0].Strid})
-           array.push(street[0].street)
-       }
-       if(check1.length !=0){
-        const street = await Street.find({_id:check1[0].Strid})
-        array.push(street[0].street)
-       }
-      }
-if(array != 0){
-   return {
-       data: [...new Set(array)],
-       errorMessage:'Already allocated Apartment or Shop'
-   } 
-}else{
-  arr.forEach(async (e) => {
-    let streetId = e;
+  for (let i = 0; i < arr.length; i++) {
+    const check = await Apartment.find({ Strid: arr[i] });
+    const check1 = await Shop.find({ Strid: arr[i] });
+    if (check.length != 0) {
+      const street = await Street.find({ _id: check[0].Strid });
+      array.push(street[0].street);
+    }
+    if (check1.length != 0) {
+      const street = await Street.find({ _id: check1[0].Strid });
+      array.push(street[0].street);
+    }
+  }
+  if (array != 0) {
+    return {
+      data: [...new Set(array)],
+      errorMessage: 'Already allocated Apartment or Shop',
+    };
+  } else {
+    arr.forEach(async (e) => {
+      let streetId = e;
 
-    await Streets.updateOne({ _id: streetId }, { DeAllocatedUser: userId, AllocationStatus: 'DeAllocated' }, { new: true });
-  });
-  return `Street DeAllocated SuccessFully`;
-}
+      await Streets.updateOne(
+        { _id: streetId },
+        { DeAllocatedUser: userId, AllocationStatus: 'DeAllocated' },
+        { new: true }
+      );
+    });
+    return `Street DeAllocated SuccessFully`;
+  }
+};
+
+const getwardBystreetAngular = async (wardId) => {
+  let match;
+  if (wardId != 'null') {
+    match = [{ wardId: { $eq: wardId } }];
+  }
+  const ress = await Street.aggregate([
+    {
+      $match: {
+        $and: match,
+      },
+    },
+  ]);
+  return ress;
 };
 
 const getWardByStreet = async (wardId, status) => {
-  console.log(status)
+  console.log(status);
   let match;
-  if(status !="null"){
-    match=[{ wardId: { $eq: wardId }, AllocationStatus: { $eq: status } }];
-  }
-  else{
-    match=[{ wardId: { $eq: wardId },  AllocationStatus: { $ne: 'Allocated' } }];
+  if (status != 'null') {
+    match = [{ wardId: { $eq: wardId }, AllocationStatus: { $eq: status } }];
+  } else {
+    match = [{ wardId: { $eq: wardId }, AllocationStatus: { $ne: 'Allocated' } }];
   }
   const ress = await Street.aggregate([
     {
@@ -476,6 +494,7 @@ module.exports = {
   closedStatus,
   deleteStreetById,
   streetDeAllocation,
+  getwardBystreetAngular,
   queryStreet,
   getAllStreetById,
 };
