@@ -4,14 +4,14 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const b2bCloneService = require('../services/b2b.ShopClone.service');
 const token = require('../services/token.service');
-
+const {Shop} = require('../models/b2b.ShopClone.model')
 // shop Clone Controller
 
 const createB2bShopClone = catchAsync(async (req, res) => {
   const shop = await b2bCloneService.createShopClone(req.body);
   const userId=req.userId;
   if(shop){
-    await MarketClone.findByIdAndUpdate({_id:shop.id},{Uid:userId},{new:true}) 
+    await Shop.findByIdAndUpdate({_id:shop.id},{Uid:userId},{new:true}) 
   }
   if (req.files) {
     console.log(req.files);

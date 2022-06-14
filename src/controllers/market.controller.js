@@ -20,9 +20,9 @@ const createmarketService = catchAsync(async (req, res) => {
 });
 
 const createmarketCloneService = catchAsync(async (req, res) => {
-const userId=req.userId;
   // req.body.(req.userId)
   const pro = await marketService.createmarketClone(req.body);
+  const userId=req.userId;
   if(pro){
     await MarketClone.findByIdAndUpdate({_id:pro.id},{Uid:userId},{new:true}) 
   }
