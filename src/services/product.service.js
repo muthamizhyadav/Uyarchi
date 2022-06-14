@@ -495,7 +495,7 @@ const updateStackById = async (stackId, updateBody) => {
   if (!stack) {
     throw new ApiError(httpStatus.NOT_FOUND, 'stack not found');
   }
-  stack = await Stock.findByIdAndUpdate({ _id: stackId }, updateBody, { new: true });
+  stack = await Stock.findByIdAndUpdate({ supplierId: stackId }, updateBody, { new: true });
   return stack;
 };
 

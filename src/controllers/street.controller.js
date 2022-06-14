@@ -83,6 +83,7 @@ const getStreetByWardId = catchAsync(async (req, res) => {
   res.send(street);
 });
 
+
 const getStreetDetailsById = catchAsync(async (req, res) => {
   const street = await StreetService.getStreetById(req.params.streetId);
   if (!street || street.active === false) {
