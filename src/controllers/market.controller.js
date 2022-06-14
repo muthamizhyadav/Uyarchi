@@ -18,6 +18,51 @@ const createmarketService = catchAsync(async (req, res) => {
   await pro.save();
 });
 
+const createmarketCloneService = catchAsync(async (req, res) => {
+  const pro = await marketService.createmarketClone(req.body);
+  if (req.files) {
+    //   let path = [];
+    req.files.forEach(function (files, index, arr) {
+      pro.image.push('images/marketClone/' + files.filename);
+      // console.log(shop.photoCapture)
+    });
+  }
+  res.status(httpStatus.CREATED)
+  res.send(pro);
+  await pro.save();
+});
+
+
+const getmarketCloneById = catchAsync(async (req, res) => {
+  const pro = await marketService.getmarketcloneById(req.params.id);
+  if (!pro || pro.active === false) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'market not found');
+  }
+  res.send(pro);
+});
+
+const getmarketCloneAll = catchAsync(async (req, res) => {
+  const manage = await marketService.getAllmarketClone();
+  console.log(manage)
+    res.send(manage);
+  });
+
+
+  const updatemarketClone = catchAsync(async (req, res) => {
+    const pro = await marketService.updatemarketCloneById(req.params.id, req.body);
+    if (req.files) {
+      //   let path = [];
+      console.log(req.files);
+      req.files.forEach(function (files, index, arr) {
+        pro.image.push('images/marketClone/' + files.filename);
+        // console.log(shop.photoCapture)
+      });
+    }
+    // await pro.save();
+    res.send(pro)
+   
+  });
+
 const createmarketShopService = catchAsync(async (req, res) => {
   const pro = await marketService.createMarketShops(req.body);
   if (req.files) {
@@ -119,5 +164,9 @@ module.exports = {
   getmarketShopAll,
   getmarketShopServiceById,
   updatemarketShopService,
-  getAllMarketTable
+  getAllMarketTable,
+  createmarketCloneService,
+  getmarketCloneById,
+  getmarketCloneAll,
+  updatemarketClone,
 };

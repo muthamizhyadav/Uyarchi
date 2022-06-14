@@ -34,22 +34,22 @@ const marketSchema = mongoose.Schema({
   mlatitude: {
     type: String,
   },
-  Uid:{
-    type:String,
+  Uid: {
+    type: String,
   },
-  userName:{
-    type:String,
+  userName: {
+    type: String,
   },
-  userNo:{
-    type:Number,
+  userNo: {
+    type: Number,
   },
-  status:{
-    type:String,
+  status: {
+    type: String,
   },
   created: {
-    type:Date,
-    default: Date.now
-    },
+    type: Date,
+    default: Date.now,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -58,20 +58,92 @@ const marketSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  reason:{
-    type:String,
+  reason: {
+    type: String,
   },
-  Strid:{
-    type:String,
-  }
+  Strid: {
+    type: String,
+  },
 });
 const Market = mongoose.model('market', marketSchema);
+
+// market Clone
+
+const marketCloneSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  MName: {
+    type: String,
+  },
+  wardid: {
+    type: String,
+  },
+  locality: {
+    type: String,
+  },
+  Address1: {
+    type: String,
+  },
+  Address2: {
+    type: String,
+  },
+  pincode: {
+    type: Number,
+  },
+  LandMark: {
+    type: String,
+  },
+  image: {
+    type: Array,
+  },
+  mlongitude: {
+    type: String,
+  },
+  mlatitude: {
+    type: String,
+  },
+  Uid: {
+    type: String,
+  },
+  userName: {
+    type: String,
+  },
+  userNo: {
+    type: Number,
+  },
+  status: {
+    type: String,
+  },
+  created: {
+    type: Date,
+    default: Date.now,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+  reason: {
+    type: String,
+  },
+  Strid: {
+    type: String,
+  },
+});
+
+const MarketClone = mongoose.model('marketClone', marketCloneSchema);
+
 const ShopsSchema = mongoose.Schema({
   _id: {
     type: String,
     default: v4,
   },
-  MName:{
+  MName: {
     type: String,
   },
   SName: {
@@ -101,17 +173,17 @@ const ShopsSchema = mongoose.Schema({
   mlongitude: {
     type: String,
   },
-  pincode:{
-    type:Number,
+  pincode: {
+    type: Number,
   },
-  Uid:{
-    type:String,
+  Uid: {
+    type: String,
   },
-  status:{
-    type:String,
+  status: {
+    type: String,
   },
-  reason:{
-    type:String,
+  reason: {
+    type: String,
   },
   active: {
     type: Boolean,
@@ -126,4 +198,5 @@ const MarketShops = mongoose.model('marketShops', ShopsSchema);
 module.exports = {
   Market,
   MarketShops,
+  MarketClone,
 };
