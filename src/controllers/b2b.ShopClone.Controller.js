@@ -8,7 +8,7 @@ const token = require('../services/token.service');
 // shop Clone Controller
 
 const createB2bShopClone = catchAsync(async (req, res) => {
-  const shop = await b2bCloneService.createShopClone (req.body);
+  const shop = await b2bCloneService.createShopClone(req.body);
   if (req.files) {
     console.log(req.files);
     req.files.forEach(function (files, index, arr) {
@@ -17,6 +17,11 @@ const createB2bShopClone = catchAsync(async (req, res) => {
   }
   res.send(shop);
   await shop.save();
+});
+
+const filterShopwithNameAndContact = catchAsync(async (req, res) => {
+  const shop = await b2bCloneService.filterShopwithNameAndContact(req.params.key);
+  res.send(shop);
 });
 
 const getAllB2BshopClone = catchAsync(async (req, res) => {
@@ -55,7 +60,7 @@ const deleteB2BShopById = catchAsync(async (req, res) => {
 
 const creatAttendanceClone = catchAsync(async (req, res) => {
   const attendance = await b2bCloneService.createAttendanceClone(req.body);
-  console.log(req.files)
+  console.log(req.files);
   if (req.files) {
     req.files.forEach(function (files, index, arr) {
       attendance.photoCapture.push('images/attandanceClone/' + files.filename);
@@ -102,7 +107,7 @@ module.exports = {
   getB2BShopById,
   updateB2BShopById,
   deleteB2BShopById,
-
+  filterShopwithNameAndContact,
   //Attendance Controller exports
   creatAttendanceClone,
   getAlAttendanceClone,

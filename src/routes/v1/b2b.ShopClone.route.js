@@ -6,7 +6,7 @@ const authorization = require('../../controllers/tokenVerify.controller');
 const router = express.Router();
 
 // Shop Clone
-
+router.get('/filter/shopName/Contact/:key', b2bShopCloneController.filterShopwithNameAndContact)
 router
   .route('/')
   .post(authorization, b2bCloneshopImage.array('photoCapture'), b2bShopCloneController.createB2bShopClone)
