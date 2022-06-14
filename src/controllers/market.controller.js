@@ -3,6 +3,7 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const marketService = require('../services/market.service');
+const { Market ,MarketClone} = require('../models/market.model');
 
 const createmarketService = catchAsync(async (req, res) => {
   const pro = await marketService.createmarket(req.body);
@@ -19,7 +20,12 @@ const createmarketService = catchAsync(async (req, res) => {
 });
 
 const createmarketCloneService = catchAsync(async (req, res) => {
+const userId=req.userId;
+  // req.body.(req.userId)
   const pro = await marketService.createmarketClone(req.body);
+  if(pro){
+    await MarketClone.findByIdAndUpdate({_id:pro.id},{Uid:userId},{new:true}) 
+  }
   if (req.files) {
     //   let path = [];
     req.files.forEach(function (files, index, arr) {

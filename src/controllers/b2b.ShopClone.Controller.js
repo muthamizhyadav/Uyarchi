@@ -9,6 +9,10 @@ const token = require('../services/token.service');
 
 const createB2bShopClone = catchAsync(async (req, res) => {
   const shop = await b2bCloneService.createShopClone(req.body);
+  const userId=req.userId;
+  if(shop){
+    await MarketClone.findByIdAndUpdate({_id:shop.id},{Uid:userId},{new:true}) 
+  }
   if (req.files) {
     console.log(req.files);
     req.files.forEach(function (files, index, arr) {
