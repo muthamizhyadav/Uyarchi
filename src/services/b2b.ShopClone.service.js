@@ -11,7 +11,7 @@ const createShopClone = async (shopBody) => {
 };
 
 const filterShopwithNameAndContact = async (key) => {
-  const shop = await Shop.find({ $or: [{ SName: { $regex: key } }] });
+  const shop = await Shop.find({ $or: [{ SName: { $regex: key } }, { SCont1: { $regex: key } }] });
   return shop;
 };
 
