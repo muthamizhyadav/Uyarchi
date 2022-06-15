@@ -140,7 +140,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         Slat:1,
         Slong:1,
         created:1,
-        SOwner:1,
+        mobile:1,
         SCont1,
         date:1,
       },
