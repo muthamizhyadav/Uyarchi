@@ -77,7 +77,7 @@ const marketCloneSchema = new mongoose.Schema({
   MName: {
     type: String,
   },
-  wardid: {
+  Wardid: {
     type: String,
   },
   locality: {
@@ -195,8 +195,70 @@ const ShopsSchema = mongoose.Schema({
   },
 });
 const MarketShops = mongoose.model('marketShops', ShopsSchema);
+
+// marketShopClone
+
+const ShopsCloneSchema = mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  MName: {
+    type: String,
+  },
+  SName: {
+    type: String,
+  },
+  SType: {
+    type: String,
+  },
+  SNo: {
+    type: String,
+  },
+  mobile: {
+    type: Number,
+  },
+  ownname: {
+    type: String,
+  },
+  image: {
+    type: Array,
+  },
+  ownnum: {
+    type: Number,
+  },
+  mlatitude: {
+    type: String,
+  },
+  mlongitude: {
+    type: String,
+  },
+  pincode: {
+    type: Number,
+  },
+  Uid: {
+    type: String,
+  },
+  status: {
+    type: String,
+  },
+  reason: {
+    type: String,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+});
+const MarketShopsClone = mongoose.model('marketShopsClone', ShopsCloneSchema);
+
 module.exports = {
   Market,
   MarketShops,
   MarketClone,
+  MarketShopsClone,
 };

@@ -1,6 +1,7 @@
 const express = require('express');
 const productController = require('../../controllers/product.controller');
 const upload = require('../../middlewares/upload');
+const stockImage = require('../../middlewares/stock')
 const bill = require('../../middlewares/bills');
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router
   .put(upload.array('image'), productController.updateProduct);
 router.route('/getProduct/products/:id').get(productController.getProductByIdWithAggregation);
 router.route('/shopProducts/getName').get(productController.productAggregationWithShopOrder);
-router.route('/stocks').post(productController.createStock);
+router.route('/stocks').post(stockImage.array('weighbridgeBill'), productController.createStock);
 router.route('/shopList').post(productController.createShopListService);
 router.route('/shopList/all').get(productController.getShopList);
 // router.route('/closeorder').post(productController.getbillingexecutive);

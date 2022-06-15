@@ -33,6 +33,9 @@ const ShopOrderPriceSchema = new mongoose.Schema({
   status: {
     type: String,
   },
+  Uid:{
+    type:String,
+  },
   active: {
     type: Boolean,
     default: true,

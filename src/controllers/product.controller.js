@@ -27,6 +27,12 @@ const getStockbyBillId = catchAsync(async (req, res) => {
 const createStock = catchAsync(async (req, res) => {
   const { body } = req;
   const stock = await productService.createStock(body);
+  if (req.files) {
+    console.log(req.files);
+    req.files.forEach(function (files, index, arr) {
+      stock.weighbridgeBill.push('images/shopClone/' + files.filename);
+    });
+  }
   await stock.save();
   res.status(httpStatus.CREATED).send(stock);
 });

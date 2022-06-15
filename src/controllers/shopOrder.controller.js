@@ -4,17 +4,24 @@ const catchAsync = require('../utils/catchAsync');
 const { shopOrderService } = require('../services');
 
 const createshopOrder = catchAsync(async (req, res) => {
-  const shopOrder = await shopOrderService.createshopOrder(req.body);
+  let userid = req.userId
+  const shopOrder = await shopOrderService.createshopOrder(req.body, userid);
   if (!shopOrder) {
     throw new ApiError(httpStatus.NOT_FOUND, 'shopOrder Not Fount.');
   }
   res.status(httpStatus.CREATED).send(shopOrder);
 });
 
-const getProductDetailsByProductId = catchAsync(async (req, res)=>{
-  const shopOrder = await shopOrderService.getProductDetailsByProductId(req.params.id)
-  res.send(shopOrder)
-})
+const getShopNameWithPagination = catchAsync(async (req, res) => {
+  let user = req.userId
+  const shopOrder = await shopOrderService.getShopNameWithPagination(req.params.page,user);
+  res.send(shopOrder);
+});
+
+const getProductDetailsByProductId = catchAsync(async (req, res) => {
+  const shopOrder = await shopOrderService.getProductDetailsByProductId(req.params.id);
+  res.send(shopOrder);
+});
 
 const getAllShopOrder = catchAsync(async (req, res) => {
   const shoporder = await shopOrderService.getAllShopOrder();
@@ -43,6 +50,7 @@ module.exports = {
   createshopOrder,
   getAllShopOrder,
   getShopOrderById,
+  getShopNameWithPagination,
   updateshopOrderById,
   getProductDetailsByProductId,
   deleteShopOrderById,

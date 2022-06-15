@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const { Shop, AttendanceClone } = require('../models/b2b.ShopClone.model');
+const { MarketShopsClone } = require('../models/market.model')
 const ApiError = require('../utils/ApiError');
 
 // Shop Clone Serive
@@ -11,12 +12,112 @@ const createShopClone = async (shopBody) => {
 };
 
 const filterShopwithNameAndContact = async (key) => {
+  const market = await MarketShopsClone.find()
+  console.log(market.SName)
   const shop = await Shop.find({ $or: [{ SName: { $regex: key } }, { SCont1: { $regex: key } }] });
   return shop;
 };
 
 const getAllShopClone = async () => {
   return Shop.find();
+};
+
+const getshopWardStreetNamesWithAggregation = async (page) => {
+  return Shop.aggregate([
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $project: {
+              name:1
+            }
+          }
+      ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $project: {
+              ward:1
+            }
+          }
+      ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline:[
+            {
+              $project: {
+                street:1
+              }
+            }
+        ],
+        as: 'StreetData',
+      
+      }
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      
+      }
+    },
+    {
+      $unwind:'$shoptype'
+    },
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street:"$StreetData.street",
+        ward:"$WardData.ward",
+        username:"$UsersData.name",
+        shoptype:"$shoptype.shopList",
+        photoCapture:1,
+        SName:1,
+        Slat:1,
+        Slong:1,
+        created:1,
+        date:1,
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
 };
 
 const getShopById = async (id) => {
@@ -90,6 +191,7 @@ module.exports = {
   createAttendanceClone,
   getAllAttendanceClone,
   getAttendanceById,
+  getshopWardStreetNamesWithAggregation,
   updateAttendanceById,
   deleteAttendanceById,
 };

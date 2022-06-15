@@ -60,12 +60,17 @@ const defaultRoutes = [
     route: authRoute,
   },
   {
+<<<<<<< HEAD
     path: '/postorder',
     route: postOrderRoute,
   },
   {
     path:'/generalEnquiry',
     route: generalEnquiryRoute
+=======
+    path:'/postorder',
+    route:postOrderRoute,
+>>>>>>> ce6cd7119a7aa9afa8f1a82c245e0390f1d37c80
   },
   {
     path: '/verify',

@@ -2,6 +2,7 @@ const express = require('express');
 const marketController = require('../../controllers/market.controller');
 const upload = require('../../middlewares/marketImage');
 const marketImage = require('../../middlewares/marketClone');
+const marketShopClone = require('../../middlewares/marketShopClone');
 const marketUpload = require('../../middlewares/marketShopImage');
 const authorization = require('../../controllers/tokenVerify.controller');
 const router = express.Router();
@@ -23,11 +24,22 @@ router.route('/shop/:marketShopId').put(marketUpload.array('image'), marketContr
 
 // market Clone
 
-router.route('/marketClone').post(authorization,marketImage.array('image'), marketController.createmarketCloneService);
+router.route('/marketClone').post(authorization, marketImage.array('image'), marketController.createmarketCloneService);
 router.route('/marketClone/all/clone').get(marketController.getmarketCloneAll);
-router.route('/marketClone/getOne/:id')
+router
+  .route('/marketClone/getOne/:id')
   .get(marketController.getmarketCloneById)
   .put(marketController.updatemarketClone)
   .delete(marketController.updatemarketClone);
 
+// marketShop Clone
+
+router
+  .route('/market/shop/clone')
+  .post(authorization, marketShopClone.array('image'), marketController.createmarketShopCloneService)
+  .get(authorization, marketController.getmarketShopCloneAll);
+router
+  .route('/market/shop/clone/:id')
+  .get(marketController.getmarketShopCloneById)
+  .put(marketShopClone.array('image'), marketController.updatemarketShopClone);
 module.exports = router;
