@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const { Shop, AttendanceClone } = require('../models/b2b.ShopClone.model');
+const { MarketShopsClone } = require('../models/market.model')
 const ApiError = require('../utils/ApiError');
 
 // Shop Clone Serive
@@ -11,6 +12,8 @@ const createShopClone = async (shopBody) => {
 };
 
 const filterShopwithNameAndContact = async (key) => {
+  const market = await MarketShopsClone.find()
+  console.log(market.SName)
   const shop = await Shop.find({ $or: [{ SName: { $regex: key } }, { SCont1: { $regex: key } }] });
   return shop;
 };
@@ -108,6 +111,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         SName:1,
         Slat:1,
         Slong:1,
+        created:1,
       },
     },
     { $skip: 10 * page },
