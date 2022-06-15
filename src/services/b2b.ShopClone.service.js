@@ -19,7 +19,48 @@ const getAllShopClone = async () => {
   return Shop.find();
 };
 
-
+const getshopWardStreetNamesWithAggregation = async () => {
+  return Shop.aggregate([
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData'
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData'
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData'
+    },
+    {
+      $project: {
+        
+      }
+    }
+  ]);
+};
 
 const getShopById = async (id) => {
   const shop = await Shop.findById(id);

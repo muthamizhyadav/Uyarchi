@@ -24,6 +24,7 @@ const createshopOrder = async (shopOrderBody, userid) => {
 };
 
 const getShopNameWithPagination = async (page, userId) => {
+  console.log(userId)
   return ShopOrder.aggregate([
     {
       $match: {
