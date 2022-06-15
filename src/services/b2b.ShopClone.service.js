@@ -112,6 +112,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         Slat:1,
         Slong:1,
         created:1,
+        date:1,
       },
     },
     { $skip: 10 * page },
