@@ -97,6 +97,7 @@ const getMarketCloneWithAggregation = async (page) => {
         mlongitude:1,
         mlatitude:1,
         created:1,
+        image:1,
       },
     },
     { $skip: 10 * page },
