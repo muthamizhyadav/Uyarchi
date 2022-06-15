@@ -26,39 +26,90 @@ const getshopWardStreetNamesWithAggregation = async () => {
         from: 'b2busers',
         localField: 'Uid',
         foreignField: '_id',
+        pipeline:[
+          {
+            $project: {
+              name:1
+            }
+          }
+      ],
         as: 'UsersData',
       },
     },
     {
-      $unwind: '$UsersData'
+      $unwind: '$UsersData',
     },
     {
       $lookup: {
         from: 'wards',
         localField: 'Wardid',
         foreignField: '_id',
+        pipeline:[
+          {
+            $project: {
+              ward:1
+            }
+          }
+      ],
         as: 'WardData',
       },
     },
     {
-      $unwind: '$WardData'
+      $unwind: '$WardData',
     },
     {
       $lookup: {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
+        pipeline:[
+            {
+              $project: {
+                street:1
+              }
+            }
+        ],
         as: 'StreetData',
-      },
+      
+      }
     },
     {
-      $unwind: '$StreetData'
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      
+      }
+    },
+    {
+      $unwind:'$shoptype'
     },
     {
       $project: {
-        
-      }
-    }
+        // _id:1,
+        // created:1,
+        street:"$StreetData.street",
+        ward:"$WardData.ward",
+        username:"$UsersData.name",
+        shoptype:"$shoptype.shopList",
+        photoCapture:1,
+        SName:1,
+        Slat:1,
+        Slong:1,
+      },
+    },
   ]);
 };
 
@@ -133,6 +184,7 @@ module.exports = {
   createAttendanceClone,
   getAllAttendanceClone,
   getAttendanceById,
+  getshopWardStreetNamesWithAggregation,
   updateAttendanceById,
   deleteAttendanceById,
 };
