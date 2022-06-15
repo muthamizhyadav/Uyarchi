@@ -8,6 +8,10 @@ const createUser = async (userBody) => {
   return Users.create(userBody);
 };
 
+const getAllUsers = async() =>{
+  return Users.find();
+}
+
 const UsersLogin = async (userBody) => {
   const { phoneNumber, password } = userBody;
   let userName = await Users.findOne({ phoneNumber: phoneNumber });
@@ -78,6 +82,7 @@ module.exports = {
   B2bUsersAdminLogin,
   createMetaUsers,
   updateMetaUsers,
+  getAllUsers,
   deleteMetaUser,
   getAllmetaUsers,
   getusermetaDataById,

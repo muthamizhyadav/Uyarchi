@@ -56,12 +56,17 @@ const B2bUsersLogout = catchAsync(async (req, res) => {
   res.send();
 });
 
+const getAllUsers = catchAsync(async (req, res) => {
+  const user = await b2bUsersService.getAllUsers();
+  res.send(user);
+});
+
 // meta user controller
 
 const createMetaUSers = catchAsync(async (req, res) => {
   const metauser = await b2bUsersService.createMetaUsers(req.body);
   // console.log(metauser);
-  console.log("working......")
+  console.log('working......');
   res.send(metauser);
 });
 
@@ -90,6 +95,7 @@ module.exports = {
   B2bUsersLogin,
   B2bUsersAdminLogin,
   createMetaUSers,
+  getAllUsers,
   getusermetaDataById,
   getAllMetaUser,
   updateMetaUsers,

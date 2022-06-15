@@ -10,10 +10,15 @@ const createSupplier = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(supplier);
 });
 
-const getSupplierWithApprovedstatus = catchAsync (async (req, res)=>{
-  const supplier = await supplierService.getSupplierWithApprovedstatus(req.params.date)
-  res.send(supplier)
-})
+const getproductfromCallStatus = catchAsync(async (req, res) => {
+  const getproduct = await supplierService.getproductfromCallStatus(req.params.date);
+  res.send(getproduct);
+});
+
+const getSupplierWithApprovedstatus = catchAsync(async (req, res) => {
+  const supplier = await supplierService.getSupplierWithApprovedstatus(req.params.date);
+  res.send(supplier);
+});
 
 const getAllSupplier = catchAsync(async (req, res) => {
   const supplier = await supplierService.getAllSupplier();
@@ -23,63 +28,64 @@ const getAllSupplier = catchAsync(async (req, res) => {
 
 const getSupplierById = catchAsync(async (req, res) => {
   const supplier = await supplierService.getSupplierById(req.params.supplierId);
-  if(!supplier || supplier.active == false){
-    throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not Found");
+  if (!supplier || supplier.active == false) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Supplier Not Found');
   }
   res.send(supplier);
 });
 
-const productDealingWithsupplier = catchAsync (async (req, res)=>{
-  const products = await supplierService.productDealingWithsupplier(req.params.id, req.params.date)
-  res.send(products)
-})
+const productDealingWithsupplier = catchAsync(async (req, res) => {
+  const products = await supplierService.productDealingWithsupplier(req.params.id, req.params.date);
+  res.send(products);
+});
 
-const getDisableSupplierById = catchAsync (async (req, res)=>{
-  const supplier = await supplierService.getDisableSupplierById(req.params.id)
-  if(!supplier){
-    throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not Found")
+const getDisableSupplierById = catchAsync(async (req, res) => {
+  const supplier = await supplierService.getDisableSupplierById(req.params.id);
+  if (!supplier) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Supplier Not Found');
   }
-  res.send(supplier)
-})
+  res.send(supplier);
+});
 
-const getproductsWithSupplierId = catchAsync (async (req, res)=>{
-  const supplier = await supplierService.getproductsWithSupplierId(req.params.supplierId, req.params.date)
-  res.send(supplier)
-})
+const getproductsWithSupplierId = catchAsync(async (req, res) => {
+  const supplier = await supplierService.getproductsWithSupplierId(req.params.supplierId, req.params.date);
+  res.send(supplier);
+});
 
-const getAllDisableSupplier = catchAsync (async (req, res)=>{
-  const supplier = await supplierService.getAllDisableSupplier()
-  res.send(supplier)
-})
+const getAllDisableSupplier = catchAsync(async (req, res) => {
+  const supplier = await supplierService.getAllDisableSupplier();
+  res.send(supplier);
+});
 
-const updateDisableSupplierById = catchAsync (async (req, res)=>{
-  const supplier = await supplierService.updateDisableSupplierById(req.params.id, req.body)
-  if(!supplier){
-    throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not Found")
+const updateDisableSupplierById = catchAsync(async (req, res) => {
+  const supplier = await supplierService.updateDisableSupplierById(req.params.id, req.body);
+  if (!supplier) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Supplier Not Found');
   }
-  res.send(supplier)
-})
+  res.send(supplier);
+});
 
 const updateSupplierById = catchAsync(async (req, res) => {
   const supplier = await supplierService.updateSupplierById(req.params.supplierId, req.body);
-  if(!supplier || supplier.active == false){
-    throw new ApiError(httpStatus.NOT_FOUND, "Supplier Not Found")
+  if (!supplier || supplier.active == false) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Supplier Not Found');
   }
   res.send(supplier);
 });
 
-const deleteSupplierById = catchAsync (async (req, res)=>{
-  const supplier = await supplierService.deleteSupplierById(req.params.supplierId)
-  res.send()
-})
+const deleteSupplierById = catchAsync(async (req, res) => {
+  const supplier = await supplierService.deleteSupplierById(req.params.supplierId);
+  res.send();
+});
 
-const recoverById = catchAsync(async (req,res)=>{
-  const supplier = await supplierService.recoverById(req.params.supplierId)
-  res.send(supplier)
-})
+const recoverById = catchAsync(async (req, res) => {
+  const supplier = await supplierService.recoverById(req.params.supplierId);
+  res.send(supplier);
+});
 
 module.exports = {
   createSupplier,
+  getproductfromCallStatus,
   getAllSupplier,
   updateSupplierById,
   productDealingWithsupplier,
