@@ -77,7 +77,7 @@ const marketCloneSchema = new mongoose.Schema({
   MName: {
     type: String,
   },
-  wardid: {
+  Wardid: {
     type: String,
   },
   locality: {
