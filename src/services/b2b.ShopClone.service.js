@@ -12,10 +12,38 @@ const createShopClone = async (shopBody) => {
 };
 
 const filterShopwithNameAndContact = async (key) => {
-  const market = await MarketShopsClone.find()
-  console.log(market.SName)
-  const shop = await Shop.find({ $or: [{ SName: { $regex: key } }, { SCont1: { $regex: key } }] });
-  return shop;
+  // const shop = await Shop.find({ $or: [{ SName: { $regex: key } }, { SCont1: { $regex: key } }] });
+  // const marketClone = await MarketShopsClone.find({ $or: [{ SName: { $regex: key } }, { mobile: { $regex: key } },{ ownnum: { $regex: key } }] });
+  const marketClone = await MarketShopsClone.aggregate([
+    {$match : 
+    {
+      $or: 
+      [
+        {SName : {$regex: key}},
+        {mobile: {$regex: key}},
+        {ownnum: {$regex: key}},
+      ]
+    }
+   },
+  ])
+  const shop = await Shop.aggregate([
+    {$match : 
+    {
+      $or: 
+      [
+        {SName : {$regex: key}},
+        {mobile: {$regex: key}},
+        
+      ]
+    }
+   },
+   
+
+  ])
+  const returns= marketClone.concat(shop);
+
+
+  return returns;
 };
 
 const getAllShopClone = async () => {
@@ -112,6 +140,8 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         Slat:1,
         Slong:1,
         created:1,
+        SOwner:1,
+        SCont1,
         date:1,
       },
     },

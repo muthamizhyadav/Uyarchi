@@ -216,7 +216,7 @@ const ShopsCloneSchema = mongoose.Schema({
     type: String,
   },
   mobile: {
-    type: Number,
+    type: String,
   },
   ownname: {
     type: String,
@@ -225,7 +225,7 @@ const ShopsCloneSchema = mongoose.Schema({
     type: Array,
   },
   ownnum: {
-    type: Number,
+    type: String,
   },
   mlatitude: {
     type: String,

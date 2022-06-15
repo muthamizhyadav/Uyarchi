@@ -24,7 +24,7 @@ const shopSchema = mongoose.Schema({
   SOwner: {
     type: String,
   },
-  SCont1: {
+  mobile: {
     type: String,
   },
   Slat: {
