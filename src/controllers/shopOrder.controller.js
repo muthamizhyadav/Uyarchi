@@ -4,7 +4,8 @@ const catchAsync = require('../utils/catchAsync');
 const { shopOrderService } = require('../services');
 
 const createshopOrder = catchAsync(async (req, res) => {
-  const shopOrder = await shopOrderService.createshopOrder(req.body);
+  let userid = req.userId;
+  const shopOrder = await shopOrderService.createshopOrder(req.body, userid);
   if (!shopOrder) {
     throw new ApiError(httpStatus.NOT_FOUND, 'shopOrder Not Fount.');
   }
@@ -12,7 +13,8 @@ const createshopOrder = catchAsync(async (req, res) => {
 });
 
 const getShopNameWithPagination = catchAsync(async (req, res) => {
-  const shopOrder = await shopOrderService.getShopNameWithPagination(req.params.page);
+  let user = req.userId;
+  const shopOrder = await shopOrderService.getShopNameWithPagination(req.params.page, req.params.user);
   res.send(shopOrder);
 });
 

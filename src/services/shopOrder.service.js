@@ -3,8 +3,10 @@ const { ShopOrder, ProductorderSchema } = require('../models/shopOrder.model');
 const { Product } = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
 
-const createshopOrder = async (shopOrderBody) => {
-  let createShopOrder = await ShopOrder.create(shopOrderBody);
+const createshopOrder = async (shopOrderBody, userid) => {
+  let body={...shopOrderBody, ...{Uid:userid}};
+  console.log(body)
+  let createShopOrder = await ShopOrder.create(body);
   console.log(createShopOrder);
   let { product, date, time, shopId } = shopOrderBody;
   product.forEach(async (e) => {
@@ -21,8 +23,13 @@ const createshopOrder = async (shopOrderBody) => {
   return createShopOrder;
 };
 
-const getShopNameWithPagination = async (page) => {
+const getShopNameWithPagination = async (page, userId) => {
   return ShopOrder.aggregate([
+    {
+      $match: {
+        $and: [{ Uid: { $eq: userId } }],
+      },
+    },
     {
       $lookup: {
         from: 'b2bshopclones',
@@ -31,6 +38,7 @@ const getShopNameWithPagination = async (page) => {
         as: 'shopData',
       },
     },
+    //b2busers
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
