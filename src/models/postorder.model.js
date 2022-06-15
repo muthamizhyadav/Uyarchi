@@ -61,12 +61,9 @@ const postOrderSchema = new mongoose.Schema({
   paymentmode: {
     type: String,
   },
-  supplierid: {
-    type: String,
-  },
-  buyerid: {
-    type: String,
-  },
+  date :{
+    type : String,
+  }
 });
 postOrderSchema.plugin(toJSON);
 postOrderSchema.plugin(paginate);
