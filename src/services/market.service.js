@@ -48,6 +48,14 @@ const updatemarketShopCloneById = async (id, updateBody) => {
   return marketShopclone;
 };
 
+const getMarketShopsbyMarketId = async (id) => {
+  const marketShop = await MarketShopsClone.find({MName:id});
+  if (!marketShop) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'MarketShop Not Found');
+  }
+  return marketShop;
+};
+
 const getMarketCloneWithAggregation = async (page) => {
   return MarketClone.aggregate([
     {
@@ -89,14 +97,14 @@ const getMarketCloneWithAggregation = async (page) => {
         userData: '$userData.name',
         streetData: '$streetData.street',
         wardDate: '$wardData.ward',
-        MName:1,
-        locality:1,
-        LandMark:1,
-        mlongitude:1,
-        mlatitude:1,
-        created:1,
-        pincode:1,
-        image:1,
+        MName: 1,
+        locality: 1,
+        LandMark: 1,
+        mlongitude: 1,
+        mlatitude: 1,
+        created: 1,
+        pincode: 1,
+        image: 1,
       },
     },
     { $skip: 10 * page },
@@ -104,7 +112,7 @@ const getMarketCloneWithAggregation = async (page) => {
   ]);
 };
 
-const getmarketShopCloneWithAggregation = async(page)=>{
+const getmarketShopCloneWithAggregation = async (page) => {
   return MarketShopsClone.aggregate([
     {
       $lookup: {
@@ -130,24 +138,23 @@ const getmarketShopCloneWithAggregation = async(page)=>{
     },
 
     {
-      $project:{
-        userData:'$userData.name',
-        shopName:'$shopData.shopList',
-        mobile:1,
-        ownname:1,
-        ownnum:1,
-        mlatitude:1,
-        mlongitude:1,
-        SName:1,
-        image:1,
-        SNo:1,
-
-      }
+      $project: {
+        userData: '$userData.name',
+        shopName: '$shopData.shopList',
+        mobile: 1,
+        ownname: 1,
+        ownnum: 1,
+        mlatitude: 1,
+        mlongitude: 1,
+        SName: 1,
+        image: 1,
+        SNo: 1,
+      },
     },
     { $skip: 10 * page },
     { $limit: 10 },
-  ])
-}
+  ]);
+};
 
 const getAllmarketClone = async () => {
   let market = await MarketClone.find();
@@ -541,6 +548,7 @@ const deletemarketShopsById = async (marketShopId) => {
 
 module.exports = {
   createmarket,
+  getMarketShopsbyMarketId,
   getMarketCloneWithAggregation,
   createmarketClone,
   getmarketcloneById,

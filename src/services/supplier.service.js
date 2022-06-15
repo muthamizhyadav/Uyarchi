@@ -47,6 +47,12 @@ const getproductsWithSupplierId = async (supplierId, date) => {
   return {product:product, soproduct:soproduct}
 };  
 
+const getproductfromCallStatus = async (date) =>{
+  return Supplier.aggregate([{
+    
+  }])
+}
+
 const updateDisableSupplierById = async  (id) => {                                        
   let supplier = await getDisableSupplierById(id);
   if (!supplier) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        

@@ -89,6 +89,11 @@ const getMarketCloneWithAggregation = catchAsync(async (req, res) => {
   res.send(market);
 });
 
+const getMarketShopsbyMarketId = catchAsync(async (req, res) => {
+  const marketShop = await marketService.getMarketShopsbyMarketId(req.params.id);
+  res.send(marketShop);
+});
+
 const getmarketShopCloneWithAggregation = catchAsync(async (req, res) => {
   const market = await marketService.getmarketShopCloneWithAggregation(req.params.page);
   res.send(market);
@@ -223,6 +228,7 @@ module.exports = {
   updatemarketClone,
   createmarketShopCloneService,
   getmarketShopCloneAll,
+  getMarketShopsbyMarketId,
   getMarketCloneWithAggregation,
   getmarketShopCloneById,
   updatemarketShopClone,

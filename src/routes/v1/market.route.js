@@ -35,7 +35,7 @@ router.route('/marketClone/aggregation/:page').get(marketController.getMarketClo
 router.route('/marketShopClone/aggregation/Shop/:page').get(marketController.getmarketShopCloneWithAggregation)
 
 // marketShop Clone
-
+router.route('/marketShop/WithMarketId/:id').get(marketController.getMarketShopsbyMarketId)
 router
   .route('/market/shop/clone')
   .post(authorization, marketShopClone.array('image'), marketController.createmarketShopCloneService)
