@@ -3,7 +3,8 @@ const b2bUsersController = require('../../controllers/B2BUser.Controller');
 const router = express.Router();
 const cookieparser = require('cookie-parser');
 
-router.post('/', b2bUsersController.createB2bUsers).get(b2bUsersController.getAllUsers);
+router.post('/', b2bUsersController.createB2bUsers)
+router.get('/All',b2bUsersController.getAllUsers)
 router.post('/login', b2bUsersController.B2bUsersLogin);
 router.get('/logout', b2bUsersController.B2bUsersLogout);
 
