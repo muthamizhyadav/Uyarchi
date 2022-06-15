@@ -1,8 +1,8 @@
 const express = require('express');
-const postConroller = require('../../controllers/postorder.controller');
+const postController = require('../../controllers/postorder.controller');
 const router = express.Router();
 
-router.route('/').post(postConroller.createpostorder).get(postConroller.getallPostOrder);
+router.route('/').post(postController.createpostorder).get(postController.getallPostOrder);
 
-router.route('/:id').get(postConroller.getPostOrderById).put(postConroller.updatePostorderById);
+router.route('/:id').get(postController.getPostOrderById).put(postController.updatePostorderById);
 module.exports = router;

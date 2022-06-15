@@ -52,15 +52,20 @@ const setTrendsValue = require('./set.TrendsValue.route');
 const b2bShopClone = require('./b2b.ShopClone.route');
 const supplierBuyerRoute = require('./supplierBuyer.route');
 const metaUserRoute = require('./meta.users.route');
-const postOrderRoute=require('./postorder.route')
+const postOrderRoute = require('./postorder.route');
+const generalEnquiryRoute = require('./generalEnquiry.route');
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
   },
   {
-    path:'/postorder/:type',
-    route:postOrderRoute,
+    path: '/postorder',
+    route: postOrderRoute,
+  },
+  {
+    path:'/generalEnquiry',
+    route: generalEnquiryRoute
   },
   {
     path: '/verify',
