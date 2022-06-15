@@ -118,16 +118,29 @@ const getmarketShopCloneWithAggregation = async(page)=>{
     {
       $unwind: '$userData',
     },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
 
     {
       $project:{
         userData:'$userData.name',
+        shopName:'$shopData.shopList',
         mobile:1,
         ownname:1,
         ownnum:1,
         mlatitude:1,
         mlongitude:1,
         SName:1,
+        image:1,
         SNo:1,
 
       }
