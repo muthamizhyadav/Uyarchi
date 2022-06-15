@@ -84,6 +84,16 @@ const updatemarketShopClone = catchAsync(async (req, res) => {
   res.send(pro);
 });
 
+const getMarketCloneWithAggregation = catchAsync(async (req, res) => {
+  const market = await marketService.getMarketCloneWithAggregation(req.params.page);
+  res.send(market);
+});
+
+const getmarketShopCloneWithAggregation = catchAsync(async (req, res) => {
+  const market = await marketService.getmarketShopCloneWithAggregation(req.params.page);
+  res.send(market);
+});
+
 const getmarketCloneById = catchAsync(async (req, res) => {
   const pro = await marketService.getmarketcloneById(req.params.id);
   if (!pro || pro.active === false) {
@@ -207,11 +217,13 @@ module.exports = {
   updatemarketShopService,
   getAllMarketTable,
   createmarketCloneService,
+  getmarketShopCloneWithAggregation,
   getmarketCloneById,
   getmarketCloneAll,
   updatemarketClone,
   createmarketShopCloneService,
   getmarketShopCloneAll,
+  getMarketCloneWithAggregation,
   getmarketShopCloneById,
   updatemarketShopClone,
 };
