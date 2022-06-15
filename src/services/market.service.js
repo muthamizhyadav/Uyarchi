@@ -2,12 +2,10 @@ const httpStatus = require('http-status');
 const { Market } = require('../models/market.model');
 const { MarketShops, MarketClone, MarketShopsClone } = require('../models/market.model');
 const manageUser = require('../models/manageUser.model');
-
 const ApiError = require('../utils/ApiError');
 
 const createmarket = async (marketbody) => {
   const { Uid } = marketbody;
-
   let ManageUser = await manageUser.findById(Uid);
   let values = {};
   values = {
@@ -97,6 +95,7 @@ const getMarketCloneWithAggregation = async (page) => {
         mlongitude:1,
         mlatitude:1,
         created:1,
+        pincode:1,
         image:1,
       },
     },
