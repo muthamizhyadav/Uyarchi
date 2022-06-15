@@ -49,7 +49,7 @@ const updatemarketShopCloneById = async (id, updateBody) => {
 };
 
 const getMarketShopsbyMarketId = async (id) => {
-  const marketShop = await MarketShopsClone.find({MName:id});
+  const marketShop = await MarketShopsClone.find({ MName: id });
   if (!marketShop) {
     throw new ApiError(httpStatus.NOT_FOUND, 'MarketShop Not Found');
   }
@@ -57,7 +57,7 @@ const getMarketShopsbyMarketId = async (id) => {
 };
 
 const getMarketCloneWithAggregation = async (page) => {
-  return MarketClone.aggregate([
+  let aggre = await MarketClone.aggregate([
     {
       $lookup: {
         from: 'wards',
@@ -110,10 +110,16 @@ const getMarketCloneWithAggregation = async (page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
+  let total = await MarketClone.find().count();
+  console.log(total)
+  return {
+    value: aggre,
+    total: total,
+  };
 };
 
 const getmarketShopCloneWithAggregation = async (page) => {
-  return MarketShopsClone.aggregate([
+  let aggre = await MarketShopsClone.aggregate([
     {
       $lookup: {
         from: 'b2busers',
@@ -154,6 +160,11 @@ const getmarketShopCloneWithAggregation = async (page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
+  let total = await MarketShopsClone.find().count()
+  return {
+    value:aggre,
+    total:total,
+  }
 };
 
 const getAllmarketClone = async () => {
