@@ -56,21 +56,34 @@ const getproductfromCallStatus = async (date) => {
     {
       $lookup: {
         from: 'callstatuses',
-        let: { supplierid: '$_id'},
+        let: { supplierid: '$_id' },
         pipeline: [
-          { $match:
-            { $expr:
-               { $and:
-                  [
-                    { $eq: [ '$$supplierid',  '$supplierid' ] },
-                  ]
-               }
-            }
-         },
+          { $match: { $expr: { $and: [{ $eq: ['$$supplierid', '$supplierid'] }] } } },
           { $match: { date: date } },
-       ],
-       as: "data",
-       
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'productData',
+            },
+          },
+          {
+            $unwind: '$productData',
+          },
+          {
+            $project: {
+              productName: '$productData.productTitle',
+              qtyOffered: 1,
+              strechedUpto: 1,
+              price: 1,
+              date: 1,
+              callstatus: 1,
+              status: 1,
+            },
+          },
+        ],
+        as: 'Supplierdata',
       },
     },
   ]);
