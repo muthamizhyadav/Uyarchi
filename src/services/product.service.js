@@ -46,12 +46,8 @@ const createShopList = async (shopListBody) => {
 const getAllShopList = async () => {
   return ShopList.find();
 };
-
 const createStock = async (stockbody) => {
   const { supplierId, product, productName } = stockbody;
-  let pp = product.map((e) => {
-    return e.product;
-  });
   const first = Math.floor(1000 + Math.random() * 9000);
   const date = new Date();
   const second = Math.floor(10 + Math.random() * 99);
@@ -60,8 +56,6 @@ const createStock = async (stockbody) => {
   let day = (date.getDate() < 9 ? '0' : '') + date.getDate();
   let billid = first + '' + day + '' + second + '' + month + '' + third;
   console.log(month);
-
-  const pros = await Product.findById(pp);
   product.forEach(async (element) => {
     const productId = element.product;
     const pro = await Product.findById(productId);
@@ -73,7 +67,7 @@ const createStock = async (stockbody) => {
   });
   let values = {};
   const supp = await Supplier.findById(supplierId);
-  values = { ...stockbody, ...{ supplierName: supp.supplierName, productName: pros.productTitle, billId: billid } };
+  values = { ...stockbody, ...{ supplierName: supp.supplierName, billId: billid } };
   return Stock.create(values);
 };
 

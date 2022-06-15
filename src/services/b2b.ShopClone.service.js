@@ -19,6 +19,8 @@ const getAllShopClone = async () => {
   return Shop.find();
 };
 
+
+
 const getShopById = async (id) => {
   const shop = await Shop.findById(id);
   return shop;
