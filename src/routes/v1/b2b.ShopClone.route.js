@@ -11,7 +11,7 @@ router
   .route('/')
   .post(authorization, b2bCloneshopImage.array('photoCapture'), b2bShopCloneController.createB2bShopClone)
   .get(authorization, b2bShopCloneController.getAllB2BshopClone);
-router.route('/aggregation/Names').get(b2bShopCloneController.getshopWardStreetNamesWithAggregation)
+router.route('/aggregation/Names/:page').get(b2bShopCloneController.getshopWardStreetNamesWithAggregation)
 router
   .route('/:id')
   .get(b2bShopCloneController.getB2BShopById)

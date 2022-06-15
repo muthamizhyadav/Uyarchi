@@ -19,7 +19,7 @@ const getAllShopClone = async () => {
   return Shop.find();
 };
 
-const getshopWardStreetNamesWithAggregation = async () => {
+const getshopWardStreetNamesWithAggregation = async (page) => {
   return Shop.aggregate([
     {
       $lookup: {
@@ -110,6 +110,8 @@ const getshopWardStreetNamesWithAggregation = async () => {
         Slong:1,
       },
     },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
 };
 
