@@ -5,28 +5,36 @@ const ApiError = require('../utils/ApiError');
 
 const createshopOrder = async (shopOrderBody) => {
   let createShopOrder = await ShopOrder.create(shopOrderBody);
-    console.log(createShopOrder)
-   let { product ,date,time,shopId} = shopOrderBody
-      product.forEach(async(e)=>{
-        ProductorderSchema.create({
-          orderId:createShopOrder.id,
-          productid:e.productid,  
-          quantity:e.quantity,
-          priceperkg:e.priceperkg,
-          date:date,
-          time:time,
-          customerId:shopId
-        });
-      })
-  // const prod = await Product.findById(productName)
-  // console.log(prod.productTitle)
-  // let pro = productName=prod.productTitle
-  // product.push({productName:pro})
-  // console.log(product)
+  console.log(createShopOrder);
+  let { product, date, time, shopId } = shopOrderBody;
+  product.forEach(async (e) => {
+    ProductorderSchema.create({
+      orderId: createShopOrder.id,
+      productid: e.productid,
+      quantity: e.quantity,
+      priceperkg: e.priceperkg,
+      date: date,
+      time: time,
+      customerId: shopId,
+    });
+  });
   return createShopOrder;
 };
 
-
+const getShopNameWithPagination = async (page) => {
+  return ShopOrder.aggregate([
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+};
 
 const getAllShopOrder = async () => {
   return ShopOrder.find();
@@ -40,9 +48,8 @@ const getShopOrderById = async (shopOrderId) => {
   return shoporder;
 };
 
-const getProductDetailsByProductId = async (id)=>{
-
- return await ShopOrder.aggregate([
+const getProductDetailsByProductId = async (id) => {
+  return await ShopOrder.aggregate([
     {
       $lookup: {
         from: 'products',
@@ -52,20 +59,17 @@ const getProductDetailsByProductId = async (id)=>{
       },
     },
     {
-      $unwind: "$products"
+      $unwind: '$products',
     },
-    
-    
+
     {
       $project: {
-        districtName: {"$eq": ["$_id", "$products.productid"]},
-        product:1
+        districtName: { $eq: ['$_id', '$products.productid'] },
+        product: 1,
       },
-    }
-
-  ])
- 
-}
+    },
+  ]);
+};
 
 const updateShopOrderById = async (shopOrderId, updateBody) => {
   let shoporder = await getShopOrderById(shopOrderId);
@@ -91,5 +95,6 @@ module.exports = {
   getShopOrderById,
   getProductDetailsByProductId,
   updateShopOrderById,
+  getShopNameWithPagination,
   deleteShopOrderById,
 };

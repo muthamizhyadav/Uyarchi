@@ -11,10 +11,15 @@ const createshopOrder = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(shopOrder);
 });
 
-const getProductDetailsByProductId = catchAsync(async (req, res)=>{
-  const shopOrder = await shopOrderService.getProductDetailsByProductId(req.params.id)
-  res.send(shopOrder)
-})
+const getShopNameWithPagination = catchAsync(async (req, res) => {
+  const shopOrder = await shopOrderService.getShopNameWithPagination(req.params.page);
+  res.send(shopOrder);
+});
+
+const getProductDetailsByProductId = catchAsync(async (req, res) => {
+  const shopOrder = await shopOrderService.getProductDetailsByProductId(req.params.id);
+  res.send(shopOrder);
+});
 
 const getAllShopOrder = catchAsync(async (req, res) => {
   const shoporder = await shopOrderService.getAllShopOrder();
@@ -43,6 +48,7 @@ module.exports = {
   createshopOrder,
   getAllShopOrder,
   getShopOrderById,
+  getShopNameWithPagination,
   updateshopOrderById,
   getProductDetailsByProductId,
   deleteShopOrderById,

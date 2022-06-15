@@ -10,5 +10,5 @@ router
   .delete(shopOrderController.deleteShopOrderById);
 
 router.route('/product/all').get(shopOrderController.getProductDetailsByProductId);
-
+router.route('/shopdata/pagination/:page').get(shopOrderController.getShopNameWithPagination);
 module.exports = router;
