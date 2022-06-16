@@ -68,8 +68,13 @@ const getAllConfirmStatus = async (id) => {
   ]);
 };
 
-const getProductAndSupplierDetails = async (page) => {
+const getProductAndSupplierDetails = async (date, page) => {
   let details = await CallStatus.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }],
+      },
+    },
     {
       $lookup: {
         from: 'products',
@@ -90,7 +95,7 @@ const getProductAndSupplierDetails = async (page) => {
       },
     },
     {
-      $unwind:'$supplierData',
+      $unwind: '$supplierData',
     },
     {
       $project: {
@@ -102,7 +107,7 @@ const getProductAndSupplierDetails = async (page) => {
     { $limit: 10 },
   ]);
 
-  let total = await CallStatus.find().count();
+  let total = await CallStatus.find({ date: { $eq: date } }).count();
   return {
     value: details,
     total: total,

@@ -13,7 +13,7 @@ const createCallStatus = catchAsync(async (req, res) => {
 });
 
 const getProductAndSupplierDetails = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getProductAndSupplierDetails(req.params.page);
+  const callStatus = await CallStatusService.getProductAndSupplierDetails(req.params.date, req.params.page);
   res.send(callStatus);
 });
 

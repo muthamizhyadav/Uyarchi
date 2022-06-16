@@ -10,5 +10,5 @@ router
   .put(CallStatusController.updateCallStatusById)
   .delete(CallStatusController.deleteBusinessById);
 router.route('/phApproved/total').get(CallStatusController.totalAggregation);
-router.route('/getSuppplier/getproduct/details/:page').get(CallStatusController.getProductAndSupplierDetails);
+router.route('/getSuppplier/getproduct/details/:date/:page').get(CallStatusController.getProductAndSupplierDetails);
 module.exports = router;
