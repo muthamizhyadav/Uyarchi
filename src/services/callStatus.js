@@ -138,7 +138,7 @@ const getProductAndSupplierDetails = async (date, page) => {
   let details = await CallStatus.aggregate([
     {
       $match: {
-        $and: [{ date: { $eq: date } }, { stockStatus: { $ne: 'Acknowledged' } }],
+        $and: [{ date: { $eq: date } }],
       },
     },
     {
@@ -187,7 +187,7 @@ const getProductAndSupplierDetails = async (date, page) => {
     { $limit: 10 },
   ]);
 
-  let total = await CallStatus.find({ date: { $eq: date } }, { confirmcallstatus: { $eq: 'Accepted' } }).count();
+  let total = await CallStatus.find({ date: { $eq: date } }).count();
   return {
     value: details,
     total: total,
