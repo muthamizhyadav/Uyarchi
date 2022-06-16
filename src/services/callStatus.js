@@ -80,6 +80,55 @@ const getAcknowledgedData = async (date, page) => {
   };
 };
 
+const getAcknowledgedDataforLE = async (date, page) => {
+  let values = await CallStatus.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }, { stockStatus: { $eq: 'Acknowledged' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'productsdata',
+      },
+    },
+    {
+      $unwind: '$productsdata',
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        as: 'suppliersdata',
+      },
+    },
+    {
+      $unwind: '$suppliersdata',
+    },
+    {
+      $project: {
+        productName: '$productsdata.productTitle',
+        SupplierName: '$suppliersdata.primaryContactName',
+        vehicleNumber: 1,
+        weighbridgeBill: 1,
+        date: 1,
+        stockStatus: 1,
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await CallStatus.find({ date: { $eq: date } }, { stockStatus: { $eq: 'Acknowledged' } }).count();
+  return {
+    value: values,
+    total: total,
+  };
+};
+
 const getAllConfirmStatus = async (id) => {
   return await CallStatus.aggregate([
     {
@@ -181,7 +230,7 @@ const getProductAndSupplierDetails = async (date, page) => {
         confirmcallDetail: 1,
         confirmcallstatus: 1,
         confirmprice: 1,
-        stockStatus:1,
+        stockStatus: 1,
       },
     },
     { $skip: 10 * page },
@@ -232,5 +281,6 @@ module.exports = {
   getProductAndSupplierDetails,
   totalAggregation,
   getAllConfirmStatus,
+  getAcknowledgedDataforLE,
   getAcknowledgedData,
 };

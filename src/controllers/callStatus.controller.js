@@ -72,6 +72,11 @@ const getDataByVehicleNumber = catchAsync(async (req, res) => {
   res.send(callStatus);
 });
 
+const getAcknowledgedDataforLE = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.getAcknowledgedDataforLE(req.params.date, req.params.page);
+  res.send(callStatus);
+});
+
 module.exports = {
   createCallStatus,
   getProductAndSupplierDetails,
@@ -83,4 +88,5 @@ module.exports = {
   AddVehicleDetailsInCallStatus,
   getCallStatusId,
   getAcknowledgedData,
+  getAcknowledgedDataforLE,
 };
