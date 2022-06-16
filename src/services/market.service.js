@@ -49,11 +49,53 @@ const updatemarketShopCloneById = async (id, updateBody) => {
 };
 
 const getMarketShopsbyMarketId = async (id) => {
-  const marketShop = await MarketShopsClone.find({ MName: id });
-  if (!marketShop) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'MarketShop Not Found');
-  }
-  return marketShop;
+  return MarketShopsClone.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'UserData',
+      },
+    },
+    {
+      $unwind: '$UserData',
+    },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'ShopData',
+      },
+    },
+    {
+      $unwind: '$ShopData',
+    },
+    {
+      $lookup: {
+        from: 'marketclones',
+        localField: 'MName',
+        foreignField: '_id',
+        as: 'marketData',
+      },
+    },
+    {
+      $unwind: '$marketData',
+    },
+    {
+      $project:{
+        userName:'$UserData.name',
+        marketName:'$marketData.MName',
+        shopName:'$ShopData.shopList',
+      }
+    }
+  ]);
 };
 
 const getMarketCloneWithAggregation = async (page) => {
@@ -111,7 +153,7 @@ const getMarketCloneWithAggregation = async (page) => {
     { $limit: 10 },
   ]);
   let total = await MarketClone.find().count();
-  console.log(total)
+  console.log(total);
   return {
     value: aggre,
     total: total,
@@ -160,11 +202,11 @@ const getmarketShopCloneWithAggregation = async (page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await MarketShopsClone.find().count()
+  let total = await MarketShopsClone.find().count();
   return {
-    value:aggre,
-    total:total,
-  }
+    value: aggre,
+    total: total,
+  };
 };
 
 const getAllmarketClone = async () => {
