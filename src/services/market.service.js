@@ -52,7 +52,7 @@ const getMarketShopsbyMarketId = async (id, page) => {
   let values = await MarketShopsClone.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: MName } }],
+        $and: [{ MName: { $eq: id } }],
       },
     },
     {
