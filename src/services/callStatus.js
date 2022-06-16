@@ -72,7 +72,7 @@ const getProductAndSupplierDetails = async (date, page) => {
   let details = await CallStatus.aggregate([
     {
       $match: {
-        $and: [{ date: { $eq: date } }, { stockStatus: { $eq: 'Acknowledged' } }],
+        $and: [{ date: { $eq: date } }, { stockStatus: { $ne: 'Acknowledged' } }],
       },
     },
     {
