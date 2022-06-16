@@ -72,7 +72,7 @@ const getProductAndSupplierDetails = async (date, page) => {
   let details = await CallStatus.aggregate([
     {
       $match: {
-        $and: [{ date: { $eq: date } }],
+        $and: [{ date: { $eq: date } }, { stockStatus: { $eq: 'Acknowledged' } }],
       },
     },
     {
@@ -106,22 +106,22 @@ const getProductAndSupplierDetails = async (date, page) => {
         strechedUpto: 1,
         price: 1,
         callstatus: 1,
-        confirmcallstatus:1,
+        confirmcallstatus: 1,
         time: 1,
-        phApproved:1,
-        phStatus:1,
-        phreason:1,
-        confirmOrder:1,
-        confirmcallDetail:1,
-        confirmcallstatus:1,
-        confirmprice:1,
+        phApproved: 1,
+        phStatus: 1,
+        phreason: 1,
+        confirmOrder: 1,
+        confirmcallDetail: 1,
+        confirmcallstatus: 1,
+        confirmprice: 1,
       },
     },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
 
-  let total = await CallStatus.find({ date: { $eq: date } },{ confirmcallstatus: { $eq: "Accepted" } } ).count();
+  let total = await CallStatus.find({ date: { $eq: date } }, { confirmcallstatus: { $eq: 'Accepted' } }).count();
   return {
     value: details,
     total: total,
@@ -137,15 +137,14 @@ const updateCallStatusById = async (id, updateBody) => {
   return callstatus;
 };
 
-const AddVehicleDetailsInCallStatus = async(id, updateBody) =>{
-  let callstatus = await CallStatus.findById(id)
-  console.log(callstatus.stockStatus)
-  if(!callstatus || callstatus.stockStatus == "Acknowledged"){
-    throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus Not Found or Already Acknowledged')
+const AddVehicleDetailsInCallStatus = async (id, updateBody) => {
+  let callstatus = await CallStatus.findById(id);
+  if (!callstatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus Not Found');
   }
-  callstatus = await CallStatus.findByIdAndUpdate({ _id:id }, updateBody, { new: true });
+  callstatus = await CallStatus.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return callstatus;
-}
+};
 
 const deleteCallStatusById = async (id) => {
   const callstatus = await getCallStatusById(id);
