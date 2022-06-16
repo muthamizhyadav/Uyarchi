@@ -63,6 +63,15 @@ const deleteBusinessById = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const getDataByVehicleNumber = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.getDataByVehicleNumber(
+    req.params.vehicleNumber,
+    req.params.date,
+    req.params.page
+  );
+  res.send(callStatus);
+});
+
 module.exports = {
   createCallStatus,
   getProductAndSupplierDetails,
@@ -70,6 +79,7 @@ module.exports = {
   updateCallStatusById,
   totalAggregation,
   deleteBusinessById,
+  getDataByVehicleNumber,
   AddVehicleDetailsInCallStatus,
   getCallStatusId,
   getAcknowledgedData,

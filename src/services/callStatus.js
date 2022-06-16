@@ -24,7 +24,7 @@ const getDataByVehicleNumber = async (vehicleNumber, date, page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await CallStatus.find().count();
+  let total = await CallStatus.find({ vehicleNumber: { $eq: vehicleNumber } }).count();
   return {
     value: values,
     total: total,
@@ -41,7 +41,7 @@ const getAcknowledgedData = async (date, page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await CallStatus.find().count();
+  let total = await CallStatus.find({ stockStatus: { $eq: 'Acknowledged' } }).count();
   return {
     value: values,
     total: total,
