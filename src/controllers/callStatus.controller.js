@@ -40,6 +40,11 @@ const AddVehicleDetailsInCallStatus = catchAsync(async (req, res) => {
   res.send(callStatus);
 });
 
+const getAcknowledgedData = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.getAcknowledgedData(req.params.date, req.params.page);
+  res.send(callStatus);
+});
+
 const getCallStatusbyId = catchAsync(async (req, res) => {
   const callStatus = await CallStatusService.getCallStatusById(req.params.id);
   if (!callStatus || !callStatus.active === true) {
@@ -67,4 +72,5 @@ module.exports = {
   deleteBusinessById,
   AddVehicleDetailsInCallStatus,
   getCallStatusId,
+  getAcknowledgedData,
 };

@@ -12,4 +12,5 @@ router
 router.route('/phApproved/total').get(CallStatusController.totalAggregation);
 router.route('/getSuppplier/getproduct/details/:date/:page').get(CallStatusController.getProductAndSupplierDetails);
 router.route('/addVehicleDetails/:id').put(stockImage.array('weighbridgeBill'), CallStatusController.AddVehicleDetailsInCallStatus)
+router.route('/getAcknowledgedData/:date/:page').get(CallStatusController.getAcknowledgedData)
 module.exports = router;

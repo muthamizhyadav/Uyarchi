@@ -14,6 +14,23 @@ const totalAggregation = async () => {
   return CallStatus.aggregate([{ $group: { _id: null, TotalPhApproved: { $sum: '$phApproved' } } }]);
 };
 
+const getAcknowledgedData = async (date, page) => {
+  let values = await CallStatus.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }, { stockStatus: { $eq: 'Acknowledged' } }],
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await CallStatus.find().count();
+  return {
+    value :values,
+    total: total
+  }
+};
+
 const getAllConfirmStatus = async (id) => {
   return await CallStatus.aggregate([
     {
@@ -164,4 +181,5 @@ module.exports = {
   getProductAndSupplierDetails,
   totalAggregation,
   getAllConfirmStatus,
+  getAcknowledgedData,
 };
