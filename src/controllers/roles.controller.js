@@ -18,10 +18,10 @@ const getAllRoles = catchAsync(async (req, res) => {
   res.send(role);
 });
 
-const mainWarehouseRoles = catchAsync (async (req, res)=>{
+const mainWarehouseRoles = catchAsync(async (req, res) => {
   const role = await RolesService.mainWarehouseRoles();
-  res.send(role)
-})
+  res.send(role);
+});
 
 const getRoleById = catchAsync(async (req, res) => {
   const role = await RolesService.getRolesById(req.params.roleId);
@@ -40,7 +40,6 @@ const getusermenus = catchAsync(async (req, res) => {
   res.send(role);
 });
 
-
 const updateRolesById = catchAsync(async (req, res) => {
   const role = await RolesService.updateRolesById(req.params.roleId, req.body);
   res.send(role);
@@ -58,5 +57,5 @@ module.exports = {
   mainWarehouseRoles,
   updateRolesById,
   deletRoleById,
-  getusermenus
+  getusermenus,
 };

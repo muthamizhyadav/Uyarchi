@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const { Shop, AttendanceClone } = require('../models/b2b.ShopClone.model');
-const { MarketShopsClone } = require('../models/market.model')
+const { MarketShopsClone } = require('../models/market.model');
 const ApiError = require('../utils/ApiError');
 
 // Shop Clone Serive
@@ -15,33 +15,20 @@ const filterShopwithNameAndContact = async (key) => {
   // const shop = await Shop.find({ $or: [{ SName: { $regex: key } }, { SCont1: { $regex: key } }] });
   // const marketClone = await MarketShopsClone.find({ $or: [{ SName: { $regex: key } }, { mobile: { $regex: key } },{ ownnum: { $regex: key } }] });
   const marketClone = await MarketShopsClone.aggregate([
-    {$match : 
     {
-      $or: 
-      [
-        {SName : {$regex: key}},
-        {mobile: {$regex: key}},
-        {ownnum: {$regex: key}},
-      ]
-    }
-   },
-  ])
+      $match: {
+        $or: [{ SName: { $regex: key } }, { mobile: { $regex: key } }, { ownnum: { $regex: key } }],
+      },
+    },
+  ]);
   const shop = await Shop.aggregate([
-    {$match : 
     {
-      $or: 
-      [
-        {SName : {$regex: key}},
-        {mobile: {$regex: key}},
-        
-      ]
-    }
-   },
-   
-
-  ])
-  const returns= marketClone.concat(shop);
-
+      $match: {
+        $or: [{ SName: { $regex: key } }, { mobile: { $regex: key } }],
+      },
+    },
+  ]);
+  const returns = marketClone.concat(shop);
 
   return returns;
 };
@@ -51,19 +38,19 @@ const getAllShopClone = async () => {
 };
 
 const getshopWardStreetNamesWithAggregation = async (page) => {
-  return Shop.aggregate([
+  let values = await Shop.aggregate([
     {
       $lookup: {
         from: 'b2busers',
         localField: 'Uid',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $project: {
-              name:1
-            }
-          }
-      ],
+              name: 1,
+            },
+          },
+        ],
         as: 'UsersData',
       },
     },
@@ -75,13 +62,13 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         from: 'wards',
         localField: 'Wardid',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $project: {
-              ward:1
-            }
-          }
-      ],
+              ward: 1,
+            },
+          },
+        ],
         as: 'WardData',
       },
     },
@@ -93,16 +80,15 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
-        pipeline:[
-            {
-              $project: {
-                street:1
-              }
-            }
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+            },
+          },
         ],
         as: 'StreetData',
-      
-      }
+      },
     },
     {
       $unwind: '$StreetData',
@@ -121,34 +107,38 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         //     }
         // ],
         as: 'shoptype',
-      
-      }
+      },
     },
     {
-      $unwind:'$shoptype'
+      $unwind: '$shoptype',
     },
     {
       $project: {
         // _id:1,
         // created:1,
-        street:"$StreetData.street",
-        ward:"$WardData.ward",
-        username:"$UsersData.name",
-        shoptype:"$shoptype.shopList",
-        photoCapture:1,
-        SName:1,
-        Slat:1,
-        Slong:1,
-        created:1,
-        SOwner:1,
-        
-        mobile:1,
-        date:1,
+        street: '$StreetData.street',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: '$shoptype.shopList',
+        photoCapture: 1,
+        SName: 1,
+        Slat: 1,
+        Slong: 1,
+        created: 1,
+        SOwner: 1,
+
+        mobile: 1,
+        date: 1,
       },
     },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
+  let total = await Shop.find().count();
+  return {
+    values: values,
+    total: total,
+  };
 };
 
 const getShopById = async (id) => {
