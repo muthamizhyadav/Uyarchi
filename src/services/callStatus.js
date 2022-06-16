@@ -106,6 +106,7 @@ const getProductAndSupplierDetails = async (date, page) => {
         strechedUpto: 1,
         price: 1,
         callstatus: 1,
+        confirmcallstatus:1,
         time: 1,
       },
     },
@@ -113,7 +114,7 @@ const getProductAndSupplierDetails = async (date, page) => {
     { $limit: 10 },
   ]);
 
-  let total = await CallStatus.find({ date: { $eq: date } }).count();
+  let total = await CallStatus.find({ date: { $eq: date } },{ confirmcallstatus: { $eq: "Accepted" } } ).count();
   return {
     value: details,
     total: total,
