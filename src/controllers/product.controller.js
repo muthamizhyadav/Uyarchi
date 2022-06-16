@@ -19,21 +19,16 @@ const createProduct = catchAsync(async (req, res) => {
     let path = '';
     path = 'images/';
     if (req.files.image != null) {
-      product.image =
-        path +
-        req.files.image.map((e) => {
-          return e.filename;
-        });
-    }
-  if (req.files.galleryImages != null) {
-    product.galleryImages =
-      path +
-      req.files.galleryImages.map((e) => {
-        return e.filename;
-      });
-  }
-}
 
+      product.image = path + req.files.image[0].filename;
+    }
+
+    if (req.files.galleryImages != null) {
+      req.files.galleryImages.forEach((e) => {
+        product.galleryImages.push(path + e.filename);
+      });
+    }
+  }
   await product.save();
   res.status(httpStatus.CREATED).send(product);
 });
@@ -216,24 +211,19 @@ const updateProduct = catchAsync(async (req, res) => {
     let path = '';
     path = 'images/';
     if (req.files.image != null) {
-      product.image =
-        path +
-        req.files.image.map((e) => {
-          return e.filename;
-        });
+
+      product.image = path + req.files.image[0].filename;
     }
- 
-  if (req.files.galleryImages != null) {
-    product.galleryImages =
-      path +
-      req.files.galleryImages.map((e) => {
-        return e.filename;
+
+    if (req.files.galleryImages != null) {
+      product.galleryImages=[]
+      req.files.galleryImages.forEach((e) => {
+        product.galleryImages.push(path + e.filename);
       });
+    }
   }
-}
   await product.save();
   res.send(product);
-  console.log(product);
 });
 
 const updatingStatusForDelivered = catchAsync(async (req, res) => {
