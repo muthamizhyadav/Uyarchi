@@ -27,6 +27,19 @@ const totalAggregation = catchAsync(async (req, res) => {
   res.send(callstatus);
 });
 
+const AddVehicleDetailsInCallStatus = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.AddVehicleDetailsInCallStatus(req.params.id, req.body);
+  if (req.files.length != 0) {
+    let path = '';
+    req.files.forEach(function (files, index, arr) {
+      path = 'images/stock/' + files.filename;
+    });
+    callStatus.weighbridgeBill = path;
+  }
+  await callStatus.save();
+  res.send(callStatus);
+});
+
 const getCallStatusbyId = catchAsync(async (req, res) => {
   const callStatus = await CallStatusService.getCallStatusById(req.params.id);
   if (!callStatus || !callStatus.active === true) {
@@ -52,5 +65,6 @@ module.exports = {
   updateCallStatusById,
   totalAggregation,
   deleteBusinessById,
+  AddVehicleDetailsInCallStatus,
   getCallStatusId,
 };

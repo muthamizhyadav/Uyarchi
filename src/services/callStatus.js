@@ -108,6 +108,13 @@ const getProductAndSupplierDetails = async (date, page) => {
         callstatus: 1,
         confirmcallstatus:1,
         time: 1,
+        phApproved:1,
+        phStatus:1,
+        phreason:1,
+        confirmOrder:1,
+        confirmcallDetail:1,
+        confirmcallstatus:1,
+        confirmprice:1,
       },
     },
     { $skip: 10 * page },
@@ -130,6 +137,15 @@ const updateCallStatusById = async (id, updateBody) => {
   return callstatus;
 };
 
+const AddVehicleDetailsInCallStatus = async(id, updateBody) =>{
+  let callstatus = await CallStatus.findById(id)
+  if(!callstatus){
+    throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus Not Found')
+  }
+  callstatus = await CallStatus.findByIdAndUpdate({ _id:id }, updateBody, { new: true });
+  return callstatus;
+}
+
 const deleteCallStatusById = async (id) => {
   const callstatus = await getCallStatusById(id);
   if (!callstatus) {
@@ -143,6 +159,7 @@ module.exports = {
   createCallStatus,
   getCallStatusById,
   updateCallStatusById,
+  AddVehicleDetailsInCallStatus,
   deleteCallStatusById,
   getProductAndSupplierDetails,
   totalAggregation,

@@ -59,8 +59,24 @@ const callStatusSchema = mongoose.Schema({
   time: {
     type: String,
   },
-  stockStatus:{
-    type:String,
+  stockStatus: {
+    type: String,
+  },
+  vehicleType: {
+    type: String,
+    default: '',
+  },
+  vehicleNumber: {
+    type: String,
+    default: '',
+  },
+  driverName: {
+    type: String,
+    default: '',
+  },
+  weighbridgeBill: {
+    type: String,
+    default: '',
   },
   active: {
     type: Boolean,
