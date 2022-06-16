@@ -59,6 +59,9 @@ const callStatusSchema = mongoose.Schema({
   time: {
     type: String,
   },
+  stockStatus:{
+    type:String,
+  },
   active: {
     type: Boolean,
     default: true,
