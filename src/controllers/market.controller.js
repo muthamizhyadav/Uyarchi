@@ -90,7 +90,7 @@ const getMarketCloneWithAggregation = catchAsync(async (req, res) => {
 });
 
 const getMarketShopsbyMarketId = catchAsync(async (req, res) => {
-  const marketShop = await marketService.getMarketShopsbyMarketId(req.params.id);
+  const marketShop = await marketService.getMarketShopsbyMarketId(req.params.id, req.params.page);
   res.send(marketShop);
 });
 

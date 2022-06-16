@@ -48,8 +48,8 @@ const updatemarketShopCloneById = async (id, updateBody) => {
   return marketShopclone;
 };
 
-const getMarketShopsbyMarketId = async (id) => {
-  return MarketShopsClone.aggregate([
+const getMarketShopsbyMarketId = async (id, page) => {
+  let values = await MarketShopsClone.aggregate([
     {
       $match: {
         $and: [{ _id: { $eq: id } }],
@@ -89,13 +89,28 @@ const getMarketShopsbyMarketId = async (id) => {
       $unwind: '$marketData',
     },
     {
-      $project:{
-        userName:'$UserData.name',
-        marketName:'$marketData.MName',
-        shopName:'$ShopData.shopList',
-      }
-    }
+      $project: {
+        userName: '$UserData.name',
+        marketName: '$marketData.MName',
+        shopName: '$ShopData.shopList',
+        image: 1,
+        SName: 1,
+        SNo: 1,
+        mobile: 1,
+        ownname: 1,
+        ownnum: 1,
+        mlatitude: 1,
+        mlongitude: 1,
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
+  let total = await MarketShopsClone.find().count();
+  return {
+    values:values,
+    total: total
+  }
 };
 
 const getMarketCloneWithAggregation = async (page) => {
