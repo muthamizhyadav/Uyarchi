@@ -174,6 +174,14 @@ const stockSchema = mongoose.Schema({
     type: String,
     default: '',
   },
+  incomingQuantity:{
+    type:Number,
+    default:0,
+  },
+  incomingWastage:{
+    type:Number,
+    default:0,
+  },
   arrived: {
     type: Boolean,
     default: false,
