@@ -29,12 +29,14 @@ const totalAggregation = catchAsync(async (req, res) => {
 
 const AddVehicleDetailsInCallStatus = catchAsync(async (req, res) => {
   const callStatus = await CallStatusService.AddVehicleDetailsInCallStatus(req.params.id, req.body);
-  if (req.files.length != 0) {
-    let path = '';
-    req.files.forEach(function (files, index, arr) {
-      path = 'images/stock/' + files.filename;
-    });
-    callStatus.weighbridgeBill = path;
+  if (req.files != null) {
+    if (req.files.length != 0) {
+      let path = '';
+      req.files.forEach(function (files, index, arr) {
+        path = 'images/stock/' + files.filename;
+      });
+      callStatus.weighbridgeBill = path;
+    }
   }
   await callStatus.save();
   res.send(callStatus);
