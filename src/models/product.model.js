@@ -34,6 +34,9 @@ const productSchema = mongoose.Schema({
   image: {
     type: String,
   },
+  gallery: {
+    type: Array,
+  },
   subscrption: {
     type: String,
     enum: ['yes', 'no'],

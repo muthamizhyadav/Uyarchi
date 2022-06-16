@@ -139,8 +139,9 @@ const updateCallStatusById = async (id, updateBody) => {
 
 const AddVehicleDetailsInCallStatus = async(id, updateBody) =>{
   let callstatus = await CallStatus.findById(id)
-  if(!callstatus){
-    throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus Not Found')
+  console.log(callstatus.stockStatus)
+  if(!callstatus || callstatus.stockStatus == "Acknowledged"){
+    throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus Not Found or Already Acknowledged')
   }
   callstatus = await CallStatus.findByIdAndUpdate({ _id:id }, updateBody, { new: true });
   return callstatus;
