@@ -31,6 +31,15 @@ const getRoleById = catchAsync(async (req, res) => {
 
   res.send(role);
 });
+const getusermenus = catchAsync(async (req, res) => {
+  const role = await RolesService.getRolesById(req.userRole);
+  if (!role) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Roles Not Found');
+  }
+
+  res.send(role);
+});
+
 
 const updateRolesById = catchAsync(async (req, res) => {
   const role = await RolesService.updateRolesById(req.params.roleId, req.body);
@@ -49,4 +58,5 @@ module.exports = {
   mainWarehouseRoles,
   updateRolesById,
   deletRoleById,
+  getusermenus
 };
