@@ -101,6 +101,12 @@ const getProductAndSupplierDetails = async (date, page) => {
       $project: {
         supplierName: '$supplierData.primaryContactName',
         productTitle: '$productsdata.productTitle',
+        date: 1,
+        qtyOffered: 1,
+        strechedUpto: 1,
+        price: 1,
+        callstatus: 1,
+        time: 1,
       },
     },
     { $skip: 10 * page },
