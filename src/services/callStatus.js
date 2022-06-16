@@ -35,13 +35,45 @@ const getAcknowledgedData = async (date, page) => {
   let values = await CallStatus.aggregate([
     {
       $match: {
-        $and: [{ date: { $eq: date } }, { stockStatus: { $eq: 'Acknowledged' } }],
+        $and: [{ date: { $eq: date } },],
       },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'productsdata',
+      },
+    },
+    {
+      $unwind: '$productsdata',
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        as: 'suppliersdata',
+      },
+    },
+    {
+      $unwind: '$suppliersdata',
+    },
+    {
+      $project:{
+        productName:'$productsdata.productTitle',
+        SupplierName:'$suppliersdata.primaryContactName',
+        vehicleNumber:1,
+        weighbridgeBill:1,
+        date:1,
+        stockStatus:1
+      }
     },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await CallStatus.find({ stockStatus: { $eq: 'Acknowledged' } }).count();
+  let total = await CallStatus.find({ date: { $eq: date } }).count();
   return {
     value: values,
     total: total,
