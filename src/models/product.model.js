@@ -34,7 +34,7 @@ const productSchema = mongoose.Schema({
   image: {
     type: String,
   },
-  gallery: {
+  galleryImages: {
     type: Array,
   },
   subscrption: {

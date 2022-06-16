@@ -8,13 +8,32 @@ const { Stock } = require('../models/product.model');
 const createProduct = catchAsync(async (req, res) => {
   const { body } = req;
   const product = await productService.createProduct(body);
-  if (req.files.length != 0) {
+  // if (req.files.length != 0) {
+  //   let path = '';
+  //   req.files.forEach(function (files, index, arr) {
+  //     path = 'images/' + files.filename;
+  //   });
+  //   product.image = path;
+  // }
+  if (req.files) {
     let path = '';
-    req.files.forEach(function (files, index, arr) {
-      path = 'images/' + files.filename;
-    });
-    product.image = path;
+    path = 'images/';
+    if (req.files.image != null) {
+      product.image =
+        path +
+        req.files.image.map((e) => {
+          return e.filename;
+        });
+    }
+  if (req.files.galleryImages != null) {
+    product.galleryImages =
+      path +
+      req.files.galleryImages.map((e) => {
+        return e.filename;
+      });
   }
+}
+
   await product.save();
   res.status(httpStatus.CREATED).send(product);
 });
@@ -193,13 +212,25 @@ const getAllienceBySupplierId = catchAsync(async (req, res) => {
 
 const updateProduct = catchAsync(async (req, res) => {
   const product = await productService.updateProductById(req.params.productId, req.body);
-  if (req.files.length != 0) {
+  if (req.files) {
     let path = '';
-    req.files.forEach(function (files, index, arr) {
-      path = 'images/' + files.filename;
-    });
-    product.image = path;
+    path = 'images/';
+    if (req.files.image != null) {
+      product.image =
+        path +
+        req.files.image.map((e) => {
+          return e.filename;
+        });
+    }
+ 
+  if (req.files.galleryImages != null) {
+    product.galleryImages =
+      path +
+      req.files.galleryImages.map((e) => {
+        return e.filename;
+      });
   }
+}
   await product.save();
   res.send(product);
   console.log(product);

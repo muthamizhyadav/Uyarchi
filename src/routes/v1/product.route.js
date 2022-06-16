@@ -5,12 +5,12 @@ const stockImage = require('../../middlewares/stock')
 const bill = require('../../middlewares/bills');
 const router = express.Router();
 
-router.route('/').post(upload.array('image'), productController.createProduct).get(productController.getProducts);
+router.route('/').post(upload.fields([{ name: 'image' }, { name: 'galleryImages' }]), productController.createProduct).get(productController.getProducts);
 router
   .route('/:productId')
   .get(productController.getproduct)
   .delete(productController.deleteProduct)
-  .put(upload.array('image'), productController.updateProduct);
+  .put(upload.fields([{ name: 'image' }, { name: 'galleryImages' }]), productController.updateProduct);
 router.route('/getProduct/products/:id').get(productController.getProductByIdWithAggregation);
 router.route('/shopProducts/getName').get(productController.productAggregationWithShopOrder);
 router.route('/stocks').post(stockImage.array('weighbridgeBill'), productController.createStock);
