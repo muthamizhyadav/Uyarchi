@@ -13,7 +13,7 @@ const getCallStatusById = async (id) => {
 const totalAggregation = async () => {
   return CallStatus.aggregate([{ $group: { _id: null, TotalPhApproved: { $sum: '$phApproved' } } }]);
 };
- 
+
 const getAllConfirmStatus = async (id) => {
   return await CallStatus.aggregate([
     {
@@ -68,6 +68,47 @@ const getAllConfirmStatus = async (id) => {
   ]);
 };
 
+const getProductAndSupplierDetails = async (page) => {
+  let details = await CallStatus.aggregate([
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'productsdata',
+      },
+    },
+    {
+      $unwind: '$productsdata',
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        as: 'supplierData',
+      },
+    },
+    {
+      $unwind:'$supplierData',
+    },
+    {
+      $project: {
+        supplierName: '$supplierData.primaryContactName',
+        productTitle: '$productsdata.productTitle',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+
+  let total = await CallStatus.find().count();
+  return {
+    value: details,
+    total: total,
+  };
+};
+
 const updateCallStatusById = async (id, updateBody) => {
   let callstatus = await getCallStatusById(id);
   if (!callstatus) {
@@ -91,6 +132,7 @@ module.exports = {
   getCallStatusById,
   updateCallStatusById,
   deleteCallStatusById,
+  getProductAndSupplierDetails,
   totalAggregation,
   getAllConfirmStatus,
 };

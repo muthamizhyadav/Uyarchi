@@ -12,6 +12,11 @@ const createCallStatus = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(callStatus);
 });
 
+const getProductAndSupplierDetails = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.getProductAndSupplierDetails(req.params.page);
+  res.send(callStatus);
+});
+
 const getCallStatusId = catchAsync(async (req, res) => {
   const callStatus = await CallStatusService.getAllConfirmStatus(req.params.id);
   res.send(callStatus);
@@ -42,6 +47,7 @@ const deleteBusinessById = catchAsync(async (req, res) => {
 
 module.exports = {
   createCallStatus,
+  getProductAndSupplierDetails,
   getCallStatusbyId,
   updateCallStatusById,
   totalAggregation,
