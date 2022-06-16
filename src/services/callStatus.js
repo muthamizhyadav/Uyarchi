@@ -35,7 +35,7 @@ const getAcknowledgedData = async (date, page) => {
   let values = await CallStatus.aggregate([
     {
       $match: {
-        $and: [{ date: { $eq: date } },],
+        $and: [{ date: { $eq: date } }],
       },
     },
     {
@@ -61,14 +61,14 @@ const getAcknowledgedData = async (date, page) => {
       $unwind: '$suppliersdata',
     },
     {
-      $project:{
-        productName:'$productsdata.productTitle',
-        SupplierName:'$suppliersdata.primaryContactName',
-        vehicleNumber:1,
-        weighbridgeBill:1,
-        date:1,
-        stockStatus:1
-      }
+      $project: {
+        productName: '$productsdata.productTitle',
+        SupplierName: '$suppliersdata.primaryContactName',
+        vehicleNumber: 1,
+        weighbridgeBill: 1,
+        date: 1,
+        stockStatus: 1,
+      },
     },
     { $skip: 10 * page },
     { $limit: 10 },
