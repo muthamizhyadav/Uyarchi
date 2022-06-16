@@ -181,6 +181,7 @@ const getProductAndSupplierDetails = async (date, page) => {
         confirmcallDetail: 1,
         confirmcallstatus: 1,
         confirmprice: 1,
+        stockStatus:1,
       },
     },
     { $skip: 10 * page },
