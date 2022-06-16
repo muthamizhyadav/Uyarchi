@@ -21,6 +21,15 @@ const createProduct = async (productBody) => {
   return Product.create(productBody);
 };
 
+const updateStockById = async (id, updateBody) => {
+  let stock = await Stock.findById(id);
+  if (!stock) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stock Not Found');
+  }
+  stock = await Stock.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return stock;
+};
+
 const createManageBill = async (manageBillBody) => {
   const { billId, supplierId, orderId } = manageBillBody;
   const bill = await BillRaise.findById(billId);
@@ -485,9 +494,9 @@ const getStockByStatusClosed = async () => {
 };
 
 const updateStackById = async (stackId, updateBody) => {
-  console.log(stackId)
-  let stack = await Stock.findOne({supplierId:stackId});
-  console.log(stack)
+  console.log(stackId);
+  let stack = await Stock.findOne({ supplierId: stackId });
+  console.log(stack);
   if (!stack) {
     throw new ApiError(httpStatus.NOT_FOUND, 'stacks not found');
   }
@@ -639,4 +648,5 @@ module.exports = {
   createShopList,
   getAllShopList,
   productaggregateById,
+  updateStockById,
 };

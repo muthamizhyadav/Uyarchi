@@ -27,12 +27,6 @@ const getStockbyBillId = catchAsync(async (req, res) => {
 const createStock = catchAsync(async (req, res) => {
   const { body } = req;
   const stock = await productService.createStock(body);
-  if (req.files) {
-    console.log(req.files);
-    req.files.forEach(function (files, index, arr) {
-      stock.weighbridgeBill.push('images/shopClone/' + files.filename);
-    });
-  }
   await stock.save();
   res.status(httpStatus.CREATED).send(stock);
 });
@@ -88,18 +82,18 @@ const getManageBillById = catchAsync(async (req, res) => {
   res.send(manageBill);
 });
 
-const productDateTimeFilter = catchAsync (async (req,res)=>{
+const productDateTimeFilter = catchAsync(async (req, res) => {
   const productdate = await productService.productDateTimeFilter(req.params.date);
-  res.send(productdate)
-})
+  res.send(productdate);
+});
 
-const productPaginationForTrends = catchAsync (async (req, res)=>{
+const productPaginationForTrends = catchAsync(async (req, res) => {
   const product = await productService.paginationForTrends(req.params.id);
-  if(!product){
-    throw new ApiError(httpStatus.NOT_FOUND, "Product Not Found")
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Product Not Found');
   }
-  res.send(product)
-})
+  res.send(product);
+});
 
 const getStockById = catchAsync(async (req, res) => {
   const stock = await productService.getStockById(req.params.stockId);
@@ -179,13 +173,13 @@ const getproduct = catchAsync(async (req, res) => {
   res.send(product);
 });
 
-const getProductByIdWithAggregation = catchAsync(async (req, res)=>{
+const getProductByIdWithAggregation = catchAsync(async (req, res) => {
   const product = await productService.getProductByIdWithAggregation(req.params.id);
-if(!product){
-  throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
-}
-  res.send(product[0])
-})
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+  }
+  res.send(product[0]);
+});
 
 const getStockBySupplierId = catchAsync(async (req, res) => {
   const stock = await productService.getStockBySupplierId(req.params.supplierId);
@@ -206,7 +200,7 @@ const updateProduct = catchAsync(async (req, res) => {
     });
     product.image = path;
   }
-  await product.save()
+  await product.save();
   res.send(product);
   console.log(product);
 });
@@ -252,10 +246,10 @@ const updateStockStatusById = catchAsync(async (req, res) => {
   res.send(status);
 });
 
-const aggregationWithProductId = catchAsync (async (req, res)=>{
+const aggregationWithProductId = catchAsync(async (req, res) => {
   const product = await productService.aggregationWithProductId(req.params.id, req.params.date);
-  res.send(product)
-})
+  res.send(product);
+});
 
 const updateStockById = catchAsync(async (req, res) => {
   const stack = await productService.updateStackById(req.params.stockId, req.body);
@@ -285,10 +279,10 @@ const sendStocktoLoadingExecute = catchAsync(async (req, res) => {
   res.send(stocks);
 });
 
-const productAggregationWithShopOrder = catchAsync (async (req, res)=>{
+const productAggregationWithShopOrder = catchAsync(async (req, res) => {
   const products = await productService.productAggregationWithShopOrder();
-  res.send(products)
-})
+  res.send(products);
+});
 
 const getLoadingExecuteDate = catchAsync(async (req, res) => {
   const loading = await productService.getLoadingExecuteDate();
@@ -330,23 +324,37 @@ const deleteBillRaise = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-const productDealingWithsupplier = catchAsync (async (req, res)=>{
-  const products = await productService.matchproductWithSupplier(req.params.id)
-  if(!products){
-    throw new ApiError(httpStatus.NOT_FOUND, "Products Not Found")
+const productDealingWithsupplier = catchAsync(async (req, res) => {
+  const products = await productService.matchproductWithSupplier(req.params.id);
+  if (!products) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Products Not Found');
   }
-  res.send(products)
-})
+  res.send(products);
+});
 
 const getbillingexecutive = catchAsync(async (req, res) => {
   const stock = await productService.getbillingexecutives();
   res.send(stock);
 });
-const productaggregateById=catchAsync(async (req, res) => {
-  console.log("sdfsdfsd")
+const productaggregateById = catchAsync(async (req, res) => {
+  console.log('sdfsdfsd');
   const product = await productService.productaggregateById(req.params.page);
   res.send(product);
 });
+
+const updatesStockById = catchAsync(async (req, res) => {
+  const stock = await productService.updateStockById(req.params.id, req.body);
+  if (req.files.length != 0) {
+    let path = '';
+    req.files.forEach(function (files, index, arr) {
+      path = 'images/stock/' + files.filename;
+    });
+    stock.weighbridgeBill = path;
+  }
+  await stock.save();
+  res.send(stock);
+});
+
 module.exports = {
   createProduct,
   getAllienceBySupplierId,
@@ -399,5 +407,6 @@ module.exports = {
   getProductByIdWithAggregation,
   createShopListService,
   getShopList,
-  productaggregateById
+  productaggregateById,
+  updatesStockById,
 };

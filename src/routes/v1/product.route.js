@@ -14,6 +14,7 @@ router
 router.route('/getProduct/products/:id').get(productController.getProductByIdWithAggregation);
 router.route('/shopProducts/getName').get(productController.productAggregationWithShopOrder);
 router.route('/stocks').post(stockImage.array('weighbridgeBill'), productController.createStock);
+router.route('/stocks/update/vehicles/:id').put(stockImage.array('weighbridgeBill'), productController.updatesStockById)
 router.route('/shopList').post(productController.createShopListService);
 router.route('/shopList/all').get(productController.getShopList);
 // router.route('/closeorder').post(productController.getbillingexecutive);

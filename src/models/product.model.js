@@ -7,14 +7,14 @@ const productSchema = mongoose.Schema({
     type: String,
     default: v4,
   },
-  SubCatId:{
-    type:String,
+  SubCatId: {
+    type: String,
   },
-  brandStatus:{
-    type:String,
+  brandStatus: {
+    type: String,
   },
-  Brand:{
-    type:String,
+  Brand: {
+    type: String,
   },
   productTitle: {
     type: String,
@@ -38,10 +38,10 @@ const productSchema = mongoose.Schema({
     type: String,
     enum: ['yes', 'no'],
   },
-  description:{ 
-    type:String,
-    default:'',
-   },
+  description: {
+    type: String,
+    default: '',
+  },
   enquiry: {
     type: String,
     enum: ['yes', 'no'],
@@ -155,6 +155,22 @@ const stockSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
+  vehicleType: {
+    type: String,
+    default: '',
+  },
+  vehicleNumber: {
+    type: String,
+    default: '',
+  },
+  driverName: {
+    type: String,
+    default: '',
+  },
+  weighbridgeBill: {
+    type: String,
+    default: '',
+  },
   arrived: {
     type: Boolean,
     default: false,
@@ -165,7 +181,7 @@ const stockSchema = mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Created', 'Pending', 'Raised', 'Delivered', 'Closed'],
+    enum: ['Created', 'Pending', 'Rised', 'Delivered', 'Closed'],
     default: 'Created',
   },
   loadingExecute: {
@@ -347,8 +363,8 @@ const shopListSchema = new mongoose.Schema({
     type: String,
     default: v4,
   },
-  shopList:{
-    type:String,
+  shopList: {
+    type: String,
   },
   active: {
     type: Boolean,
@@ -359,7 +375,6 @@ const shopListSchema = new mongoose.Schema({
     default: false,
   },
 });
-
 
 const ShopList = mongoose.model('shopList', shopListSchema);
 module.exports = {
