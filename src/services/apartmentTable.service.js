@@ -4,6 +4,7 @@ const manageUser = require('../models/manageUser.model')
 const ApiError = require('../utils/ApiError');
 const Street = require('../models/street.model')
 const {Market} = require('../models/market.model')
+const axios = require('axios')
 
 const createApartment = async (apartmentBody) => {
     const {Uid} = apartmentBody;
@@ -38,10 +39,29 @@ const getAllManageUserAutoAttendance = async () => {
     }
     return user;
   };
+
 const getAllAttendance = async () =>{
   const user = await ManageUserAttendance.find({active:true});
   return user;
 }
+
+const groupMap = async (from,to,id) => {
+
+  let response = await axios.get(
+   `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${from}&destinations=${to}&key=${id}`
+ )
+// console.log(response.data)
+return response.data
+}
+
+const latitudeMap = async (location,radius,type,keyword,id) => {
+    let response = await axios.get(
+      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location}&radius=${radius}&&type=${type}&keyword=${keyword}&key=${id}`
+    )
+
+    return response.data
+}
+
 const AllCount = async ()=>{
    const userCount = await manageUser.find({active:true});
    const street = await Street.aggregate([
@@ -298,7 +318,6 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
   let match;
   if(id !='null'&&date !='null'&&fromtime !='null'&&totime!='null'){
      match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: fromtime,$lte: totime}},{active:{$eq:true}}];
-     console.log("k,hyu")
   }
   else if(id !='null'&&date =='null'&&fromtime =='null'&&totime =='null'){
      match=[{ Uid: { $eq: id }},{active:{$eq:true}}]
@@ -321,9 +340,9 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
   else {
     match=[{ Uid: { $ne: null }},{active:{$eq:true}}]
   }
-
+ console.log(match)
   const Attendance= await ManageUserAttendance.aggregate([
-    { $sort : {date:-1,created:-1}},
+    { $sort : {date:-1,time:-1}},
     {
       $match: {
         $and: match,
@@ -2127,7 +2146,9 @@ module.exports = {
   AllCount,
   attendancelat,
   getApartmentUserStreet,
-  getShopUserStreet
+  getShopUserStreet,
+  groupMap,
+  latitudeMap
 
   // paginationManageUserAttendance,
  

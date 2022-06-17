@@ -42,4 +42,6 @@ router.route('/attendance/lat/long/:id/:date1/:date2').get(apartmentController.g
 router.route('/apartment/streetIdAll/IdAndStreet/uid/:id/:streetId').get(apartmentController.getApartmentUserAndStreet)
 router.route('/shop/streetIdAll/IdAndStreet/uid/:id/:streetId').get(apartmentController.getShopUserAndStreet)
 router.route('/attendance/Allattendance').get(apartmentController.getAllAttendance);
+router.route('/groupmap/:from/:to/:id').get(apartmentController.groupMapService);
+router.route('/locationmap/:location/:radius/:type/:keyword/:id').get(apartmentController.locationMapService)
 module.exports = router;

@@ -29,6 +29,20 @@ const getAllCount = catchAsync(async (req,res)=>{
   res.send(user)
 })
 
+// thirdPartyApis
+
+const groupMapService = catchAsync(async (req,res)=>{
+  const user = await apartmentTableService.groupMap(req.params.from, req.params.to, req.params.id)
+  res.send(user)
+})
+
+const locationMapService = catchAsync(async (req,res)=>{
+  const user = await apartmentTableService.latitudeMap(req.params.location, req.params.radius, req.params.type, req.params.keyword, req.params.id)
+  res.send(user)
+})
+
+// thirdPartyApis
+
 const getAllmanageUserAttendanceAuto = catchAsync(async (req, res) => {
   const cate = await apartmentTableService.getAllManageUserAutoAttendance();
   res.send(cate);
@@ -257,6 +271,8 @@ module.exports = {
   getAllCount,
   getAttendanceLong,
   getApartmentUserAndStreet,
-  getShopUserAndStreet
+  getShopUserAndStreet,
+  groupMapService,
+  locationMapService
   // getManageUserAttendance,
 };
