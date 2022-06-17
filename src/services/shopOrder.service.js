@@ -28,7 +28,7 @@ const createshopOrderClone = async (body, userid) => {
   console.log(body);
   let createShopOrderClone = await ShopOrderClone.create(bod);
   console.log(createShopOrderClone);
-  let { product, date, time, shopId } = bod;
+  let { product, date, time, shopId } = body;
   product.forEach(async (e) => {
     ProductorderSchema.create({
       orderId: createShopOrderClone.id,

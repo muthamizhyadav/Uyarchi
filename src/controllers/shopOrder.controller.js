@@ -13,7 +13,8 @@ const createshopOrder = catchAsync(async (req, res) => {
 });
 
 const createshopOrderClone = catchAsync(async (req, res) => {
-  const shopOrderClone = await shopOrderService.createshopOrderClone(req.body);
+  let userid = req.userId;
+  const shopOrderClone = await shopOrderService.createshopOrderClone(req.body, userid);
   res.send(shopOrderClone);
 });
 
