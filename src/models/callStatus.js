@@ -61,6 +61,7 @@ const callStatusSchema = mongoose.Schema({
   },
   stockStatus: {
     type: String,
+    default:'Pending'
   },
   driverNumber:{
     type:Number,

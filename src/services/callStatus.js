@@ -65,9 +65,9 @@ const getAcknowledgedData = async (date, page) => {
         productName: '$productsdata.productTitle',
         SupplierName: '$suppliersdata.primaryContactName',
         vehicleNumber: 1,
-        driverName:1,
-        vehicleType:1,
-        driverNumber:1,
+        driverName: 1,
+        vehicleType: 1,
+        driverNumber: 1,
         weighbridgeBill: 1,
         date: 1,
         stockStatus: 1,
@@ -118,8 +118,8 @@ const getAcknowledgedDataforLE = async (date, page) => {
         SupplierName: '$suppliersdata.primaryContactName',
         vehicleNumber: 1,
         driverName: 1,
-        vehicleType:1,
-        vehicleNumber:1,
+        vehicleType: 1,
+        vehicleNumber: 1,
         weighbridgeBill: 1,
         date: 1,
         stockStatus: 1,
@@ -128,14 +128,14 @@ const getAcknowledgedDataforLE = async (date, page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await CallStatus.find({ stockStatus: { $eq: 'Pending' } }).count();
+  let total = await CallStatus.find({ stockStatus: { $ne: 'Pending' } }).count();
   return {
     value: values,
     total: total,
   };
 };
 
-const getOnlyLoadedData  = async (date, page) =>{
+const getOnlyLoadedData = async (date, page) => {
   let values = await CallStatus.aggregate([
     {
       $match: {
@@ -170,8 +170,8 @@ const getOnlyLoadedData  = async (date, page) =>{
         SupplierName: '$suppliersdata.primaryContactName',
         vehicleNumber: 1,
         driverName: 1,
-        vehicleType:1,
-        vehicleNumber:1,
+        vehicleType: 1,
+        vehicleNumber: 1,
         weighbridgeBill: 1,
         date: 1,
         stockStatus: 1,
@@ -185,7 +185,7 @@ const getOnlyLoadedData  = async (date, page) =>{
     value: values,
     total: total,
   };
-}
+};
 
 const getAllConfirmStatus = async (id) => {
   return await CallStatus.aggregate([
