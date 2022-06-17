@@ -144,7 +144,15 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
-        as: 'shopSData',
+        as: 'shopData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'marketshopsclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
       },
     },
     //b2busers
