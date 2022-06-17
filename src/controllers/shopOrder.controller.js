@@ -71,6 +71,13 @@ const getShopNameWithPagination = catchAsync(async (req, res) => {
   res.send(shopOrder);
 });
 
+const getShopNameCloneWithPagination = catchAsync(async (req, res) => {
+  let user = req.userId;
+  console.log(user)
+  const shopOrder = await shopOrderService.getShopNameCloneWithPagination(req.params.page, user);
+  res.send(shopOrder);
+});
+
 const getProductDetailsByProductId = catchAsync(async (req, res) => {
   const shopOrder = await shopOrderService.getProductDetailsByProductId(req.params.id);
   res.send(shopOrder);
@@ -116,7 +123,7 @@ module.exports = {
   deleteShopOrderCloneById,
 
   // productOrderClone
-
+  getShopNameCloneWithPagination,
   createsPrductOrderClone,
   getAllProductOrderClone,
   getProductOrderCloneById,

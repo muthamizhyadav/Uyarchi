@@ -14,7 +14,7 @@ router.route('/product/all').get(shopOrderController.getProductDetailsByProductI
 router.route('/shopdata/pagination/:page').get(authorization, shopOrderController.getShopNameWithPagination);
 
 // shopOrderClone Router
-
+router.route('/shopOrderClone/pagination/shops/:page').get(authorization, shopOrderController.getShopNameCloneWithPagination)
 router.route('/ShopOrderClone').post(authorization, shopOrderController.createshopOrderClone);
 router.route('/ShopOrderClone/All').get(shopOrderController.getAllShopOrderClone);
 router

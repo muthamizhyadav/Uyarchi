@@ -132,6 +132,32 @@ const getShopNameWithPagination = async (page, userId) => {
   ]);
 };
 
+const getShopNameCloneWithPagination = async (page, userId) => {
+  let value = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ Uid: { $eq: userId } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopSData',
+      },
+    },
+    //b2busers
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await ShopOrderClone.findById().count();
+  return {
+    value: value,
+    total: total,
+  };
+};
+
 const getAllShopOrder = async () => {
   return ShopOrder.find();
 };
@@ -198,7 +224,7 @@ module.exports = {
   updateShopOrderCloneById,
   getShopOrderCloneById,
   deleteShopOrderCloneById,
-
+  getShopNameCloneWithPagination,
   createshopOrder,
   getAllShopOrder,
   getShopOrderById,
