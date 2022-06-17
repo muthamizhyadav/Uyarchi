@@ -64,7 +64,7 @@ const callStatusSchema = mongoose.Schema({
     default:'Pending'
   },
   modified:{
-    type:boolean,
+    type:Boolean,
     default:false,
   },
   driverNumber:{
