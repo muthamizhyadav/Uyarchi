@@ -151,7 +151,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await ShopOrderClone.findById().count();
+  let total = await ShopOrderClone.find().count();
   return {
     value: value,
     total: total,
@@ -218,7 +218,6 @@ module.exports = {
   updateProductOrderCloneById,
   deleteProductOrderClone,
   // shopOrderClone
-
   createshopOrderClone,
   getAllShopOrderClone,
   updateShopOrderCloneById,
