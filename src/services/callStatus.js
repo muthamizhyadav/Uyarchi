@@ -245,7 +245,7 @@ const getProductAndSupplierDetails = async (date, page) => {
   let details = await CallStatus.aggregate([
     {
       $match: {
-        $and: [{ date: { $eq: date } }],
+        $and: [{ date: { $eq: date } }, { confirmcallstatus: { $eq: 'Accepted' } }],
       },
     },
     {
