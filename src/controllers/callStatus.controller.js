@@ -47,6 +47,11 @@ const getAcknowledgedData = catchAsync(async (req, res) => {
   res.send(callStatus);
 });
 
+const getOnlyLoadedData = catchAsync(async (req, res) => {
+  const callstatus = await CallStatusService.getOnlyLoadedData(req.params.date, req.params.page);
+  res.send(callstatus);
+});
+
 const getCallStatusbyId = catchAsync(async (req, res) => {
   const callStatus = await CallStatusService.getCallStatusById(req.params.id);
   if (!callStatus || !callStatus.active === true) {
@@ -90,5 +95,6 @@ module.exports = {
   AddVehicleDetailsInCallStatus,
   getCallStatusId,
   getAcknowledgedData,
+  getOnlyLoadedData,
   getAcknowledgedDataforLE,
 };
