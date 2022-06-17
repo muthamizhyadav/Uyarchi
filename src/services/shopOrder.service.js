@@ -1,11 +1,11 @@
 const httpStatus = require('http-status');
-const { ShopOrder, ProductorderSchema } = require('../models/shopOrder.model');
+const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone } = require('../models/shopOrder.model');
 const { Product } = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
 
 const createshopOrder = async (shopOrderBody, userid) => {
-  let body={...shopOrderBody, ...{Uid:userid}};
-  console.log(body)
+  let body = { ...shopOrderBody, ...{ Uid: userid } };
+  console.log(body);
   let createShopOrder = await ShopOrder.create(body);
   console.log(createShopOrder);
   let { product, date, time, shopId } = shopOrderBody;
@@ -23,8 +23,95 @@ const createshopOrder = async (shopOrderBody, userid) => {
   return createShopOrder;
 };
 
+const createshopOrderClone = async (body, userid) => {
+  let bod = { ...body, ...{ Uid: userid } };
+  console.log(body);
+  let createShopOrderClone = await ShopOrderClone.create(bod);
+  console.log(createShopOrderClone);
+  let { product, date, time, shopId } = body;
+  product.forEach(async (e) => {
+    ProductorderClone.create({
+      orderId: createShopOrderClone.id,
+      productid: e.productid,
+      quantity: e.quantity,
+      priceperkg: e.priceperkg,
+      date: date,
+      time: time,
+      customerId: shopId,
+    });
+  });
+  return createShopOrderClone;
+};
+
+const getAllShopOrderClone = async () => {
+  return await ShopOrderClone.find();
+};
+
+const getShopOrderCloneById = async (id) => {
+  const shoporderClone = await ShopOrderClone.findById(id);
+  if (!shoporderClone) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'ShopOrderClone Not Found');
+  }
+
+  return shoporderClone;
+};
+
+const updateShopOrderCloneById = async (id, updatebody) => {
+  let shoporderClone = await ShopOrderClone.findById(id);
+  if (!shoporderClone) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'ShopOrderClone Not Found');
+  }
+  shoporderClone = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  return shoporderClone;
+};
+
+const deleteShopOrderCloneById = async (id) => {
+  let shoporderClone = await ShopOrderClone.findById(id);
+  if (!shoporderClone) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'ShopOrderClone Not Found');
+  }
+  (shoporderClone.active = false), (shoporderClone.archive = true);
+  await shoporderClone.save();
+};
+
+const createProductOrderClone = async (body) => {
+  const productorderClone = await ProductorderClone.create(body);
+  return productorderClone;
+};
+
+const getAllProductOrderClone = async () => {
+  return await ProductorderClone.find();
+};
+
+const getProductOrderCloneById = async (id) => {
+  const productorderClone = await ProductorderClone.findById(id);
+  if (!productorderClone) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'ProductOrderClone not found');
+  }
+  return productorderClone;
+};
+
+const updateProductOrderCloneById = async (id, updateBody) => {
+  let productorderClone = await ProductorderClone.findById(id);
+  if (!productorderClone) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'ProductOrderClone not found');
+  }
+  productorderClone = await ProductorderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+
+  return productorderClone;
+};
+
+const deleteProductOrderClone = async (id) => {
+  let productorderClone = await ProductorderClone.findById(id);
+  if (!productorderClone) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'ProductOrderClone not found');
+  }
+  (productorderClone.active = false), (productorderClone.archive = true);
+  await productorderClone.save();
+};
+
 const getShopNameWithPagination = async (page, userId) => {
-  console.log(userId)
+  console.log(userId);
   return ShopOrder.aggregate([
     {
       $match: {
@@ -45,7 +132,39 @@ const getShopNameWithPagination = async (page, userId) => {
   ]);
 };
 
-
+const getShopNameCloneWithPagination = async (page, userId) => {
+  let value = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ Uid: { $eq: userId } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'marketshopsclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'marketshopData',
+      },
+    },
+    //b2busers
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await ShopOrderClone.find({ Uid: { $eq: userId } }).count();
+  return {
+    value: value,
+    total: total,
+  };
+};
 
 const getAllShopOrder = async () => {
   return ShopOrder.find();
@@ -101,6 +220,18 @@ const deleteShopOrderById = async (shopOrderId) => {
 };
 
 module.exports = {
+  createProductOrderClone,
+  getAllProductOrderClone,
+  getProductOrderCloneById,
+  updateProductOrderCloneById,
+  deleteProductOrderClone,
+  // shopOrderClone
+  createshopOrderClone,
+  getAllShopOrderClone,
+  updateShopOrderCloneById,
+  getShopOrderCloneById,
+  deleteShopOrderCloneById,
+  getShopNameCloneWithPagination,
   createshopOrder,
   getAllShopOrder,
   getShopOrderById,
