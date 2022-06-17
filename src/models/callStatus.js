@@ -84,6 +84,12 @@ const callStatusSchema = mongoose.Schema({
     type: String,
     default: '',
   },
+  incomingQuantity:{
+    type:Number,
+  },
+  incomingWastage:{
+    type:Number,
+  },
   driverName: {
     type: String,
     default: '',
