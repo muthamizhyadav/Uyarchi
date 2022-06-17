@@ -15,11 +15,11 @@ router.route('/shopdata/pagination/:page').get(authorization, shopOrderControlle
 
 // shopOrderClone Router
 
-router.route('/ShopOrderClone').post(shopOrderController.createshopOrderClone);
+router.route('/ShopOrderClone').post(authorization, shopOrderController.createshopOrderClone);
 router.route('/ShopOrderClone/All').get(shopOrderController.getAllShopOrderClone);
 router
   .route('/shopOrderClone/:id')
-  .get(shopOrderController.getShopOrderCloneById)
+  .get(authorization, shopOrderController.getShopOrderCloneById)
   .put(shopOrderController.updateShopOrderCloneById)
   .delete(shopOrderController.deleteShopOrderCloneById);
 

@@ -30,7 +30,7 @@ const createshopOrderClone = async (body, userid) => {
   console.log(createShopOrderClone);
   let { product, date, time, shopId } = body;
   product.forEach(async (e) => {
-    ProductorderSchema.create({
+    ProductorderClone.create({
       orderId: createShopOrderClone.id,
       productid: e.productid,
       quantity: e.quantity,
