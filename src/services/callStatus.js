@@ -70,6 +70,8 @@ const getAcknowledgedData = async (date, page) => {
         driverNumber: 1,
         weighbridgeBill: 1,
         date: 1,
+        confirmcallstatus:1,
+        incomingWastage:1,
         stockStatus: 1,
       },
     },
@@ -123,6 +125,8 @@ const getAcknowledgedDataforLE = async (date, page) => {
         vehicleNumber: 1,
         weighbridgeBill: 1,
         date: 1,
+        confirmcallstatus:1,
+        incomingWastage:1,
         stockStatus: 1,
       },
     },
@@ -179,7 +183,9 @@ const getOnlyLoadedData = async (date, page) => {
         stockStatus: 1,
         confirmOrder:1,
         confirmcallDetail:1,
+        incomingQuantity:1,
         confirmcallstatus:1,
+        incomingWastage:1,
         confirmprice:1,
         phApproved:1,
       },
@@ -292,8 +298,12 @@ const getProductAndSupplierDetails = async (date, page) => {
         phStatus: 1,
         phreason: 1,
         confirmOrder: 1,
+        confirmcallstatus:1,
+        incomingWastage:1,
         confirmcallDetail: 1,
         confirmcallstatus: 1,
+        confirmcallstatus:1,
+        incomingWastage:1,
         confirmprice: 1,
         stockStatus: 1,
       },
@@ -302,7 +312,7 @@ const getProductAndSupplierDetails = async (date, page) => {
     { $limit: 10 },
   ]);
 
-  let total = await CallStatus.find({ date: { $eq: date } }).count();
+  let total = await CallStatus.find({ confirmcallstatus: { $eq: 'Accepted' } }).count();
   return {
     value: details,
     total: total,
