@@ -19,7 +19,6 @@ const createProduct = catchAsync(async (req, res) => {
     let path = '';
     path = 'images/';
     if (req.files.image != null) {
-
       product.image = path + req.files.image[0].filename;
     }
 
@@ -31,6 +30,12 @@ const createProduct = catchAsync(async (req, res) => {
   }
   await product.save();
   res.status(httpStatus.CREATED).send(product);
+});
+
+const setTrendsValueforProduct = catchAsync(async (req, res) => {
+  const product = await productService.setTrendsValueforProduct(req.params.id, req.body);
+  await product.save()
+  res.send(product);
 });
 
 const getStockbyBillId = catchAsync(async (req, res) => {
@@ -211,12 +216,11 @@ const updateProduct = catchAsync(async (req, res) => {
     let path = '';
     path = 'images/';
     if (req.files.image != null) {
-
       product.image = path + req.files.image[0].filename;
     }
 
     if (req.files.galleryImages != null) {
-      product.galleryImages=[]
+      product.galleryImages = [];
       req.files.galleryImages.forEach((e) => {
         product.galleryImages.push(path + e.filename);
       });
@@ -427,6 +431,7 @@ module.exports = {
   updatingStatusForDelivered,
   getProductByIdWithAggregation,
   createShopListService,
+  setTrendsValueforProduct,
   getShopList,
   productaggregateById,
   updatesStockById,

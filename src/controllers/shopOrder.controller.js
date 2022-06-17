@@ -4,7 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const { shopOrderService } = require('../services');
 
 const createshopOrder = catchAsync(async (req, res) => {
-  let userid = req.userId
+  let userid = req.userId;
   const shopOrder = await shopOrderService.createshopOrder(req.body, userid);
   if (!shopOrder) {
     throw new ApiError(httpStatus.NOT_FOUND, 'shopOrder Not Fount.');
@@ -12,9 +12,61 @@ const createshopOrder = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(shopOrder);
 });
 
+const createshopOrderClone = catchAsync(async (req, res) => {
+  const shopOrderClone = await shopOrderService.createshopOrderClone(req.body);
+  res.send(shopOrderClone);
+});
+
+const getAllShopOrderClone = catchAsync(async (req, res) => {
+  const shopOrderClone = await shopOrderService.getAllShopOrderClone();
+  res.send(shopOrderClone);
+});
+
+const getShopOrderCloneById = catchAsync(async (req, res) => {
+  const shopOrderClone = await shopOrderService.getShopOrderCloneById(req.params.id);
+  res.send(shopOrderClone);
+});
+
+const updateShopOrderCloneById = catchAsync(async (req, res) => {
+  const shopOrderClone = await shopOrderService.updateShopOrderCloneById(req.params.id, req.body);
+  res.send(shopOrderClone);
+});
+
+const deleteShopOrderCloneById = catchAsync(async (req, res) => {
+  const shopOrderClone = await shopOrderService.deleteShopOrderCloneById(req.params.id);
+  res.send(shopOrderClone);
+});
+
+// productOrderClone Controller
+
+const createsPrductOrderClone = catchAsync(async (req, res) => {
+  const productOrderClone = await shopOrderService.createProductOrderClone(req.body);
+  res.send(productOrderClone);
+});
+
+const getAllProductOrderClone = catchAsync(async (req, res) => {
+  const productOrderClone = await shopOrderService.getAllProductOrderClone();
+  res.send(productOrderClone);
+});
+
+const getProductOrderCloneById = catchAsync(async (req, res) => {
+  const productOrderClone = await shopOrderService.getProductOrderCloneById(req.params.id);
+  res.send(productOrderClone);
+});
+
+const updateProductOrderCloneById = catchAsync(async (req, res) => {
+  const productOrderClone = await shopOrderService.updateProductOrderCloneById(req.params.id, req.body);
+  res.send(productOrderClone);
+});
+
+const deleteProductOrderCloneById = catchAsync(async (req, res) => {
+  const productOrderClone = await shopOrderService.deleteProductOrderClone(req.params.id);
+  res.send(productOrderClone);
+});
+
 const getShopNameWithPagination = catchAsync(async (req, res) => {
-  let user = req.userId
-  const shopOrder = await shopOrderService.getShopNameWithPagination(req.params.page,user);
+  let user = req.userId;
+  const shopOrder = await shopOrderService.getShopNameWithPagination(req.params.page, user);
   res.send(shopOrder);
 });
 
@@ -54,4 +106,19 @@ module.exports = {
   updateshopOrderById,
   getProductDetailsByProductId,
   deleteShopOrderById,
+
+  // shopOrderClone Controllers
+  createshopOrderClone,
+  getAllShopOrderClone,
+  getShopOrderCloneById,
+  updateShopOrderCloneById,
+  deleteShopOrderCloneById,
+
+  // productOrderClone
+
+  createsPrductOrderClone,
+  getAllProductOrderClone,
+  getProductOrderCloneById,
+  updateProductOrderCloneById,
+  deleteProductOrderCloneById,
 };

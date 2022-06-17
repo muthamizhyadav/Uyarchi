@@ -4,6 +4,9 @@ const ApiError = require('../utils/ApiError');
 const Supplier = require('../models/supplier.model');
 const ReceivedOrder = require('../models/receivedOrders.model');
 const ShopOrders = require('../models/shopOrder.model');
+const moment = require('moment');
+
+let datenow = moment(new Date()).format('DD-MM-YYYY');
 
 const createProduct = async (productBody) => {
   let { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime, maxBidAomunt, minBidAmount } =
@@ -28,6 +31,17 @@ const updateStockById = async (id, updateBody) => {
   }
   stock = await Stock.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return stock;
+};
+
+const setTrendsValueforProduct = async (id, updateBody) => {
+  let product = await Product.findById(id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found ');
+  }
+  product = await Product.findByIdAndUpdate({ _id: id },updateBody, { new: true });
+  product = await Product.findByIdAndUpdate({ _id: id }, { $set: { setTrendsDate: datenow } },{ new: true });
+  console.log(product);
+  return product;
 };
 
 const createManageBill = async (manageBillBody) => {
@@ -649,4 +663,5 @@ module.exports = {
   getAllShopList,
   productaggregateById,
   updateStockById,
+  setTrendsValueforProduct,
 };

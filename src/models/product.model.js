@@ -41,6 +41,15 @@ const productSchema = mongoose.Schema({
     type: String,
     enum: ['yes', 'no'],
   },
+  TrendspreferredQuantity: {
+    type: Number,
+  },
+  TrendspreferredUnit: {
+    type: String,
+  },
+  setTrendsDate:{
+    type:String,
+  },
   description: {
     type: String,
     default: '',
@@ -174,13 +183,13 @@ const stockSchema = mongoose.Schema({
     type: String,
     default: '',
   },
-  incomingQuantity:{
-    type:Number,
-    default:0,
+  incomingQuantity: {
+    type: Number,
+    default: 0,
   },
-  incomingWastage:{
-    type:Number,
-    default:0,
+  incomingWastage: {
+    type: Number,
+    default: 0,
   },
   arrived: {
     type: Boolean,
