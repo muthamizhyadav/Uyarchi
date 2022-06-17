@@ -23,9 +23,24 @@ const createshopOrder = async (shopOrderBody, userid) => {
   return createShopOrder;
 };
 
-const createshopOrderClone = async (body) => {
-  const shoporderCLone = await ShopOrderClone.create(body);
-  return shoporderCLone;
+const createshopOrderClone = async (body, userid) => {
+  let bod = { ...body, ...{ Uid: userid } };
+  console.log(body);
+  let createShopOrderClone = await ShopOrderClone.create(bod);
+  console.log(createShopOrderClone);
+  let { product, date, time, shopId } = bod;
+  product.forEach(async (e) => {
+    ProductorderSchema.create({
+      orderId: createShopOrderClone.id,
+      productid: e.productid,
+      quantity: e.quantity,
+      priceperkg: e.priceperkg,
+      date: date,
+      time: time,
+      customerId: shopId,
+    });
+  });
+  return createShopOrderClone;
 };
 
 const getAllShopOrderClone = async () => {
