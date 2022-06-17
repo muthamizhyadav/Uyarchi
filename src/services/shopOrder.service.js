@@ -152,7 +152,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         from: 'marketshopsclones',
         localField: 'shopId',
         foreignField: '_id',
-        as: 'shopData',
+        as: 'marketshopData',
       },
     },
     //b2busers
