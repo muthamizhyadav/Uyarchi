@@ -334,9 +334,11 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
   }
   else if(id !='null'&&date =='null'&&fromtime =='null'&&totime =='null'){
      match=[{ Uid: { $eq: id }},{active:{$eq:true}}]
+   
   }
   else if(id =='null'&&date !='null'&&fromtime =='null'&& totime =='null'){
      match=[{ date: { $eq: date }},{active:{$eq:true}}]
+     console.log("df")
   }
   else if(id =='null'&&date =='null'&fromtime !='null'&& totime !='null'){
     //  match=[{ time:{ $gte: from}},{ time:{$lte: to}},{active:{$eq:true}}]
@@ -358,6 +360,7 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
   }
  console.log(match)
   const Attendance= await ManageUserAttendance.aggregate([
+    {$sort:{date:-1,time:-1}},
     {
       $match: {
         $and: match,
@@ -396,9 +399,9 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
    {
       $limit:10
     },
-    // { $sort : { date : -1, time: -1 ,_id:-1} }
+    // { $sort : { time : -1} }
     
-  ]).sort({time:-1,date:-1});
+  ]);
   const count=await ManageUserAttendance.aggregate([
     {
       $match: {
