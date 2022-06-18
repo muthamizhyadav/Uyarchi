@@ -60,8 +60,9 @@ const createManageUserAttendanceAutoService = catchAsync(async (req, res) => {
 //   const result = await apartmentTableService.paginationManageUserAttendance(filter, options);
 //   res.send(result);
 // });
-
 const getmanageUSerAttendanceAll = catchAsync(async (req, res) => {
+  console.log(req.params.totime)
+
   const attend = await apartmentTableService.getAllManageUSerAttendance(
     req.params.id,
     req.params.date,

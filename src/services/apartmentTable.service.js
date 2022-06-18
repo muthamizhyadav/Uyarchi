@@ -316,8 +316,21 @@ const attendancelat = async (id,date1,date2) => {
 // };
 const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
   let match;
+  let to;
+  let from;
+  if(parseInt(fromtime) <= parseInt(totime) ){
+    to=parseInt(fromtime);
+    from=parseInt(totime);
+  }
+  else{
+    to=parseInt(totime);
+    from=parseInt(fromtime);
+  }
+  console.log("les",from)
+  console.log("ge",to)
   if(id !='null'&&date !='null'&&fromtime !='null'&&totime!='null'){
-     match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: fromtime,$lte: totime}},{active:{$eq:true}}];
+    //  match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: from,$lte: to}},{active:{$eq:true}}];
+     match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: to}},{ time:{ $lte: from}},{active:{$eq:true}}];
   }
   else if(id !='null'&&date =='null'&&fromtime =='null'&&totime =='null'){
      match=[{ Uid: { $eq: id }},{active:{$eq:true}}]
@@ -326,13 +339,16 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
      match=[{ date: { $eq: date }},{active:{$eq:true}}]
   }
   else if(id =='null'&&date =='null'&fromtime !='null'&& totime !='null'){
-     match=[{ time:{ $gte: fromtime}},{ time:{$lte: totime}},{active:{$eq:true}}]
+    //  match=[{ time:{ $gte: from}},{ time:{$lte: to}},{active:{$eq:true}}]
+     match=[{ time:{ $gte: to}},{ time:{ $lte: from}},{active:{$eq:true}}]
   }
   else if(id =='null'&&date !='null'&&fromtime !='null'&& totime != 'null'){
-     match=[{ date: { $eq: date }},{ time:{ $gte: fromtime,$lte: totime}},{active:{$eq:true}}]
+    //  match=[{ date: { $eq: date }},{ time:{$lte: to ,$gte: from}},{active:{$eq:true}}]
+     match=[{ date: { $eq: date }},{ time:{ $gte: to}},{ time:{ $lte: from}},{active:{$eq:true}}]
   }
   else if(id !='null'&&date =='null'&&fromtime !='null'&& totime!='null'){
-     match=[{ Uid: { $eq: id }},{ time:{ $gte: fromtime,$lte: totime}},{active:{$eq:true}}]
+    //  match=[{ Uid: { $eq: id }},{ time:{$lte: to, $gte: from}},{active:{$eq:true}}]
+     match=[{ Uid: { $eq: id }},{ time:{ $gte: to}},{ time:{ $lte: from}},{active:{$eq:true}}]
   }
   else if(id !='null'&&date !='null'&&fromtime =='null'&&totime == 'null'){
      match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{active:{$eq:true}}]
@@ -342,7 +358,6 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
   }
  console.log(match)
   const Attendance= await ManageUserAttendance.aggregate([
-    { $sort : {date:-1,time:-1}},
     {
       $match: {
         $and: match,
@@ -383,7 +398,7 @@ const getAllManageUSerAttendance = async (id,date,fromtime,totime,page)=>{
     },
     // { $sort : { date : -1, time: -1 ,_id:-1} }
     
-  ]);
+  ]).sort({time:-1,date:-1});
   const count=await ManageUserAttendance.aggregate([
     {
       $match: {
