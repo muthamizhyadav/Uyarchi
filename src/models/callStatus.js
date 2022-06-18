@@ -61,6 +61,11 @@ const callStatusSchema = mongoose.Schema({
   },
   stockStatus: {
     type: String,
+    default:'Pending'
+  },
+  modified:{
+    type:Boolean,
+    default:false,
   },
   driverNumber:{
     type:Number,
@@ -78,6 +83,12 @@ const callStatusSchema = mongoose.Schema({
   vehicleNumber: {
     type: String,
     default: '',
+  },
+  incomingQuantity:{
+    type:Number,
+  },
+  incomingWastage:{
+    type:Number,
   },
   driverName: {
     type: String,
