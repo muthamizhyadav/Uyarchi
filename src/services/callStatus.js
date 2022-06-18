@@ -148,6 +148,12 @@ const getOnlyLoadedData = async (date, page) => {
       },
     },
     {
+      $match: {
+        $and: [{ date: { $eq: date } }, { stockStatus: { $eq: 'Confirmed' } }],
+      },
+    },
+
+    {
       $lookup: {
         from: 'products',
         localField: 'productid',
