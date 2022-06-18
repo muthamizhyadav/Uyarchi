@@ -41,6 +41,6 @@ const setTrendsValueSchema = new mongoose.Schema(
 );
 setTrendsValueSchema.plugin(toJSON);
 setTrendsValueSchema.plugin(paginate);
-const SetTrends = mongoose.model('SetTrendValue', setTrendsValueSchema);
+const SetTrends = mongoose.model('TrendValues', setTrendsValueSchema);
 
 module.exports = SetTrends;

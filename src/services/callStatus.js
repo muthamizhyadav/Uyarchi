@@ -31,6 +31,68 @@ const getDataByVehicleNumber = async (vehicleNumber, date, page) => {
   };
 };
 
+
+const getConfirmedStockStatus = async (date, page) =>{
+  let values = await CallStatus.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }],
+      },
+    },
+    {
+      $match: {
+        stockStatus: {
+          $in: ['Confirmed', 'Billed'],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'productsdata',
+      },
+    },
+    {
+      $unwind: '$productsdata',
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        as: 'suppliersdata',
+      },
+    },
+    {
+      $unwind: '$suppliersdata',
+    },
+    {
+      $project: {
+        productName: '$productsdata.productTitle',
+        SupplierName: '$suppliersdata.primaryContactName',
+        vehicleNumber: 1,
+        driverName: 1,
+        vehicleType: 1,
+        driverNumber: 1,
+        weighbridgeBill: 1,
+        date: 1,
+        confirmcallstatus: 1,
+        incomingWastage: 1,
+        stockStatus: 1,
+      },
+      },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ])
+  let total = await CallStatus.find({$and:[{stockStatus:"Confirmed"}, {date:date}]}).count();
+  return {
+    value : values,
+    total: total,
+  }
+}
+
 const getAcknowledgedData = async (date, page) => {
   let values = await CallStatus.aggregate([
     {
@@ -355,6 +417,7 @@ const deleteCallStatusById = async (id) => {
 
 module.exports = {
   createCallStatus,
+  getConfirmedStockStatus,
   getCallStatusById,
   getDataByVehicleNumber,
   updateCallStatusById,
