@@ -198,7 +198,7 @@ const manageUserAttendanceAutoSchema = mongoose.Schema({
       type:String,
       },
    time: {
-    type:String,
+    type:Number,
     },
   active: {
     type: Boolean,
