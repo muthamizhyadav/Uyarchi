@@ -43,17 +43,53 @@ const createshopOrderClone = async (body, userid) => {
   return createShopOrderClone;
 };
 
-const getAllShopOrderClone = async () => {
-  return await ShopOrderClone.find();
+const getAllShopOrderClone = async (date, page) => {
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $unwind: '$productOrderdata',
+    },
+
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+
+  let total = await ShopOrderClone.find().count();
+  return { values: values, total: total };
 };
 
 const getShopOrderCloneById = async (id) => {
-  const shoporderClone = await ShopOrderClone.findById(id);
-  if (!shoporderClone) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'ShopOrderClone Not Found');
-  }
-
-  return shoporderClone;
+  let Values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $unwind: '$productOrderdata',
+    },
+  ]);
+  return Values;
 };
 
 const updateShopOrderCloneById = async (id, updatebody) => {
@@ -166,7 +202,9 @@ const getShopNameCloneWithPagination = async (page, userId) => {
   };
 };
 
-const getAllShopOrder = async () => {
+const getAllShopOrder = async (UserRole) => {
+  let value;
+  if (UserRole == '') console.log(UserRole);
   return ShopOrder.find();
 };
 
@@ -225,7 +263,9 @@ module.exports = {
   getProductOrderCloneById,
   updateProductOrderCloneById,
   deleteProductOrderClone,
+
   // shopOrderClone
+
   createshopOrderClone,
   getAllShopOrderClone,
   updateShopOrderCloneById,

@@ -87,6 +87,9 @@ const callStatusSchema = mongoose.Schema({
   incomingQuantity:{
     type:Number,
   },
+  confirmprice:{
+    type:String,
+  },
   incomingWastage:{
     type:Number,
   },

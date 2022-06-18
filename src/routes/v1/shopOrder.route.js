@@ -3,7 +3,7 @@ const router = express.Router();
 const shopOrderController = require('../../controllers/shopOrder.controller');
 const authorization = require('../../controllers/tokenVerify.controller');
 
-router.route('/').post(authorization, shopOrderController.createshopOrder).get(shopOrderController.getAllShopOrder);
+router.route('/').post(authorization, shopOrderController.createshopOrder).get(authorization, shopOrderController.getAllShopOrder);
 router
   .route('/:shopOrderId')
   .get(shopOrderController.getShopOrderById)
@@ -14,9 +14,11 @@ router.route('/product/all').get(shopOrderController.getProductDetailsByProductI
 router.route('/shopdata/pagination/:page').get(authorization, shopOrderController.getShopNameWithPagination);
 
 // shopOrderClone Router
-router.route('/shopOrderClone/pagination/shops/:page').get(authorization, shopOrderController.getShopNameCloneWithPagination)
+router
+  .route('/shopOrderClone/pagination/shops/:page')
+  .get(authorization, shopOrderController.getShopNameCloneWithPagination);
 router.route('/ShopOrderClone').post(authorization, shopOrderController.createshopOrderClone);
-router.route('/ShopOrderClone/All').get(shopOrderController.getAllShopOrderClone);
+router.route('/ShopOrderClone/All/:date/:page').get(authorization, shopOrderController.getAllShopOrderClone);
 router
   .route('/shopOrderClone/:id')
   .get(authorization, shopOrderController.getShopOrderCloneById)

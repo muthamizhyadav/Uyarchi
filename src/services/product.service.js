@@ -400,8 +400,8 @@ const paginationForTrends = async (id) => {
     {
       $sort: { productTitle: 1 },
     },
-    { $skip: 5 * id },
-    { $limit: 5 },
+    { $skip: 10 * id },
+    { $limit: 10 },
   ]);
 };
 

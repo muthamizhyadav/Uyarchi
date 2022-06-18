@@ -19,7 +19,7 @@ const createshopOrderClone = catchAsync(async (req, res) => {
 });
 
 const getAllShopOrderClone = catchAsync(async (req, res) => {
-  const shopOrderClone = await shopOrderService.getAllShopOrderClone();
+  const shopOrderClone = await shopOrderService.getAllShopOrderClone(req.params.date, req.params.page);
   res.send(shopOrderClone);
 });
 
@@ -84,7 +84,9 @@ const getProductDetailsByProductId = catchAsync(async (req, res) => {
 });
 
 const getAllShopOrder = catchAsync(async (req, res) => {
-  const shoporder = await shopOrderService.getAllShopOrder();
+  let UserRole = req.userRole
+  console.log(UserRole)
+  const shoporder = await shopOrderService.getAllShopOrder(UserRole);
   res.send(shoporder);
 });
 
