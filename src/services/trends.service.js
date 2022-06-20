@@ -3,36 +3,34 @@ const ApiError = require('../utils/ApiError');
 const { Trends } = require('../models');
 
 const createTrends = async (trendsbody) => {
-  console.log(trendsbody.product);
-  trendsbody.product.forEach((e) => {
-    (ProductName = e.PName), (productid = e.Pid), (preferredUnit = e.Unit), (weight = e.Weight), (rate = e.Rate);
-  });
-  return Trends.create(trendsbody);
+  const trends = await Trends.create(trendsbody);
+  return trends;
 };
 
-
-const trendsPagination = async (id) =>{
-  return Trends.aggregate([{
+const trendsPagination = async (id) => {
+  return Trends.aggregate([
+    {
       $sort: { Uid: 1 },
-  },
-  { $skip: 5 * id },
-  { $limit: 5 },])
-}
+    },
+    { $skip: 5 * id },
+    { $limit: 5 },
+  ]);
+};
 
 const getAllTrends = async () => {
-  return Trends.find({active : true});
+  return Trends.find({ active: true });
 };
 
 const getTrendsById = async (trendsId) => {
-  const trends = await Trends.findById(trendsId)
-  if(!trends || trends.active === false){
-    throw new ApiError(httpStatus.NOT_FOUND, "Trends Not Found")
+  const trends = await Trends.findById(trendsId);
+  if (!trends || trends.active === false) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Trends Not Found');
   }
   return trends;
 };
 
 const updateTrendsById = async (trendsId, updateBody) => {
-  let trends = await getTrendsById(trendsId)
+  let trends = await getTrendsById(trendsId);
   if (!trends) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Trends not found');
   }
@@ -41,7 +39,7 @@ const updateTrendsById = async (trendsId, updateBody) => {
 };
 
 const deleteTrendsById = async (trendsId) => {
-  const trends = await getTrendsById(trendsId)
+  const trends = await getTrendsById(trendsId);
   if (!trends) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Trends not found');
   }
@@ -49,12 +47,11 @@ const deleteTrendsById = async (trendsId) => {
   return trends;
 };
 
-
-module.exports={
-    createTrends,
-    trendsPagination,
-    getAllTrends,
-    getTrendsById,
-    updateTrendsById,
-    deleteTrendsById
-}
+module.exports = {
+  createTrends,
+  trendsPagination,
+  getAllTrends,
+  getTrendsById,
+  updateTrendsById,
+  deleteTrendsById,
+};
