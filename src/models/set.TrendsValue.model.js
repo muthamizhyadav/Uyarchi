@@ -20,7 +20,21 @@ const setTrendsValueSchema = new mongoose.Schema(
     },
     preferredUnit: {
       type: String,
-      enum: ['Kg', 'Gm', 'Bundle'],
+    },
+    weight:{
+      type:String,
+    },
+    rate:{
+      type: String,
+    },
+    ProductName:{
+      type:String,
+    },
+    streetid:{
+      type:String,
+    },
+    shopid:{
+      type:String,
     },
     active: {
       type: Boolean,
