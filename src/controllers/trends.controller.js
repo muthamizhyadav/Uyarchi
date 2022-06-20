@@ -17,7 +17,11 @@ const createTrends = catchAsync(async (req, res) => {
       orderId:trends._id,
       shopId:req.body.shopid,
       steetId:req.body.street,
-      UserId:req.body.Uid
+      UserId:req.body.Uid,
+      date:req.body.date,
+      time:req.body.time,
+      fulldate:req.body.fulldate,
+      created:req.body.created,
     }
 
     await Trendproduct.create(row)

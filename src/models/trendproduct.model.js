@@ -23,7 +23,7 @@ const trendsSchema = new mongoose.Schema({
     type: String,
   },
   Rate: {
-    type: String,
+    type: Number,
   },
   productName: {
     type: String,
@@ -39,6 +39,12 @@ const trendsSchema = new mongoose.Schema({
   },
   time: {
     type: String,
+  },
+  fulldate:{
+    type:String,
+  },
+  created: {
+    type:String,
   },
   active: {
     type: Boolean,
