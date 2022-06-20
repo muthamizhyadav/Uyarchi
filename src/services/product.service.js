@@ -402,7 +402,6 @@ const paginationForTrends = async (id) => {
         TrendspreferredQuantity:{$ne:null}
       },
     },
-    { $sample: { size: 1 } },
     {
       $sort: { productTitle: 1 },
     },
