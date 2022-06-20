@@ -39,6 +39,7 @@ const getStreetsByWardIdAndProducts = async (page) => {
     {
       $unwind: '$productData',
     },
+
     {
       $project: {
         WardData: '$wardDataData',
@@ -47,19 +48,22 @@ const getStreetsByWardIdAndProducts = async (page) => {
         Rate: 1,
       },
     },
-    {
-      $group: {
-        _id:null,
-        AvgRate: { $avg: '$Rate' },
-        MaxRate: { $max: '$Rate' },
-        minRate:{$min:'$Rate'},
-      },
-    },
+
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
+  let cal = await TrendProduct.aggregate([
+    {
+      $group: {
+        _id: null,
+        AvgRate: { $avg: '$Rate' },
+        MaxRate: { $max: '$Rate' },
+        minRate: { $min: '$Rate' },
+      },
+    },
+  ]);
   let total = await TrendProduct.find().count();
-  return { total: total, values: values };
+  return { total: total, values: values, cal:cal };
 };
 
 module.exports = {
