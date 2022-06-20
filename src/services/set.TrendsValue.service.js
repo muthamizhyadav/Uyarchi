@@ -3,14 +3,12 @@ const { SetTrendsValue } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const createSetTrendsValue = async (trendsbody) => {
-  const { product } = trendsbody;
-  product.forEach((e)=>{
-    e.PName =  ProductName,
-    e.Pid = productid,
-    e.Unit = preferredUnit,
-    e.Weight = weight,
-    e.Rate = rate
-  });
+  // console.log(trendsbody)
+  // const { product } = trendsbody;
+  // // console.log(product);
+  // product.forEach((e) => {
+  //   (ProductName = e.PName), (productid = e.Pid), (preferredUnit = e.Unit), (weight = e.Weight), (rate = e.Rate);
+  // });
   const trends = await SetTrendsValue.create(trendsbody);
   return trends;
 };
@@ -39,12 +37,6 @@ const getProductDetailsByProductId = async () => {
     //     ProductDetails:'$productsData',
     //   }
     // }
-
-
-
-
-
-    
   ]);
 };
 

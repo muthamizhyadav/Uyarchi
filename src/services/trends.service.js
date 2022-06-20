@@ -3,6 +3,10 @@ const ApiError = require('../utils/ApiError');
 const { Trends } = require('../models');
 
 const createTrends = async (trendsbody) => {
+  console.log(trendsbody.product);
+  trendsbody.product.forEach((e) => {
+    (ProductName = e.PName), (productid = e.Pid), (preferredUnit = e.Unit), (weight = e.Weight), (rate = e.Rate);
+  });
   return Trends.create(trendsbody);
 };
 
