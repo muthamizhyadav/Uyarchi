@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const { Users } = require('../models/B2Busers.model');
 const metaUsers = require('../models/userMeta.model');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const ApiError = require('../utils/ApiError');
 
 const createUser = async (userBody) => {
