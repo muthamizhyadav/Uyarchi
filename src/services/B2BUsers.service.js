@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const { Users } = require('../models/B2Busers.model');
 const metaUsers = require('../models/userMeta.model');
-const { listeners } = require('../models/supplier.model');
+const bcrypt = require('bcrypt');
 const ApiError = require('../utils/ApiError');
 
 const createUser = async (userBody) => {
@@ -76,7 +76,19 @@ const getForMyAccount = async (userId) => {
       },
     },
   ]);
-  return values
+  return values;
+};
+
+const changePassword = async (userId, body) => {
+  let user = await Users.findById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'user Not Found');
+  }
+  const salt = await bcrypt.genSalt(10);
+  let { password } = body;
+  password = await bcrypt.hash(password, salt);
+  user = await Users.findByIdAndUpdate({ _id: userId }, { password: password }, { new: true });
+  return user;
 };
 
 const getAllmetaUsers = async () => {
@@ -116,6 +128,7 @@ module.exports = {
   getAllUsers,
   deleteMetaUser,
   getAllmetaUsers,
+  changePassword,
   getusermetaDataById,
   getForMyAccount,
 };

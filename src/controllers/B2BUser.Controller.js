@@ -87,7 +87,7 @@ const updateMetaUsers = catchAsync(async (req, res) => {
 
 const getForMyAccount = catchAsync(async (req, res) => {
   let userId = req.userId;
-  console.log(userId)
+  console.log(userId);
   const users = await b2bUsersService.getForMyAccount(userId);
   res.send(users);
 });
@@ -97,8 +97,15 @@ const deleteMetaUser = catchAsync(async (req, res) => {
   res.send();
 });
 
+const changePassword = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const users = await b2bUsersService.changePassword(userId, req.body);
+  res.send(users);
+});
+
 module.exports = {
   createB2bUsers,
+  changePassword,
   B2bUsersLogout,
   B2bUsersLogin,
   B2bUsersAdminLogin,
