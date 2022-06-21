@@ -5,7 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const TrendProductService = require('../services/trend.product.service');
 
 const getStreetsByWardIdAndProducts = catchAsync(async (req, res) => {
-  const trendProduct = await TrendProductService.getStreetsByWardIdAndProducts(req.params.page);
+  const trendProduct = await TrendProductService.getStreetsByWardIdAndProducts(req.params.date, req.params.page);
   res.send(trendProduct);
 });
 

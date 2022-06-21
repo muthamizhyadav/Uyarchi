@@ -31,8 +31,7 @@ const getDataByVehicleNumber = async (vehicleNumber, date, page) => {
   };
 };
 
-
-const getConfirmedStockStatus = async (date, page) =>{
+const getConfirmedStockStatus = async (date, page) => {
   let values = await CallStatus.aggregate([
     {
       $match: {
@@ -82,16 +81,16 @@ const getConfirmedStockStatus = async (date, page) =>{
         incomingWastage: 1,
         stockStatus: 1,
       },
-      },
+    },
     { $skip: 10 * page },
     { $limit: 10 },
-  ])
-  let total = await CallStatus.find({$and:[{stockStatus:"Confirmed"}, {date:date}]}).count();
+  ]);
+  let total = await CallStatus.find({ $and: [{ stockStatus: 'Confirmed' }, { date: date }] }).count();
   return {
-    value : values,
+    value: values,
     total: total,
-  }
-}
+  };
+};
 
 const getAcknowledgedData = async (date, page) => {
   let values = await CallStatus.aggregate([

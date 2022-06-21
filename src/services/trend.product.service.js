@@ -2,8 +2,24 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const TrendProduct = require('../models/trendproduct.model');
 
-const getStreetsByWardIdAndProducts = async (page) => {
+const getStreetsByWardIdAndProducts = async (date, page) => {
   let values = await TrendProduct.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productId',
+        foreignField: '_id',
+        as: 'ProductData',
+      },
+    },
+    {
+      $unwind: '$ProductData'
+    },
     {
       $lookup: {
         from: 'streets',
@@ -63,7 +79,7 @@ const getStreetsByWardIdAndProducts = async (page) => {
     },
   ]);
   let total = await TrendProduct.find().count();
-  return { total: total, values: values, cal:cal };
+  return { total: total, values: values, cal: cal };
 };
 
 module.exports = {
