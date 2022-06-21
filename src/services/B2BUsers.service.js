@@ -8,9 +8,9 @@ const createUser = async (userBody) => {
   return Users.create(userBody);
 };
 
-const getAllUsers = async() =>{
+const getAllUsers = async () => {
   return Users.find();
-}
+};
 
 const UsersLogin = async (userBody) => {
   const { phoneNumber, password } = userBody;
@@ -46,6 +46,37 @@ const createMetaUsers = async (userBody) => {
   const user = await metaUsers.create(userBody);
 
   return user;
+};
+
+const getForMyAccount = async (userId) => {
+  let values = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: userId } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'userRole',
+        foreignField: '_id',
+        as: 'RoleData',
+      },
+    },
+    {
+      $unwind: '$RoleData',
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        email: 1,
+        phoneNumber: 1,
+        roleName: '$RoleData.roleName',
+      },
+    },
+  ]);
+  return values
 };
 
 const getAllmetaUsers = async () => {
@@ -86,4 +117,5 @@ module.exports = {
   deleteMetaUser,
   getAllmetaUsers,
   getusermetaDataById,
+  getForMyAccount,
 };

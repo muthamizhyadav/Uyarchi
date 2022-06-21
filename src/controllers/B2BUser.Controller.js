@@ -5,6 +5,7 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const b2bUsersService = require('../services/B2BUsers.service');
 const tokenService = require('../services/token.service');
+const { Console } = require('winston/lib/winston/transports');
 const createB2bUsers = catchAsync(async (req, res) => {
   const users = await b2bUsersService.createUser(req.body);
   if (!users) {
@@ -84,6 +85,13 @@ const updateMetaUsers = catchAsync(async (req, res) => {
   res.send(users);
 });
 
+const getForMyAccount = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  console.log(userId)
+  const users = await b2bUsersService.getForMyAccount(userId);
+  res.send(users);
+});
+
 const deleteMetaUser = catchAsync(async (req, res) => {
   const users = await b2bUsersService.deleteMetaUser(req.params.id);
   res.send();
@@ -100,4 +108,5 @@ module.exports = {
   getAllMetaUser,
   updateMetaUsers,
   deleteMetaUser,
+  getForMyAccount,
 };
