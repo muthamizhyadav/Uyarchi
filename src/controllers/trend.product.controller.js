@@ -7,6 +7,7 @@ const TrendProductService = require('../services/trend.product.service');
 const getStreetsByWardIdAndProducts = catchAsync(async (req, res) => {
   const trendProduct = await TrendProductService.getStreetsByWardIdAndProducts(
     req.params.wardId,
+    req.params.street,
     req.params.date,
     req.params.page
   );

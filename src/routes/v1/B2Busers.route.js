@@ -1,7 +1,6 @@
 const express = require('express');
 const b2bUsersController = require('../../controllers/B2BUser.Controller');
 const router = express.Router();
-const cookieparser = require('cookie-parser');
 const authorization = require('../../controllers/tokenVerify.controller');
 
 router.post('/', b2bUsersController.createB2bUsers);

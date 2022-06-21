@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
-const moment = require('moment')
+const moment = require('moment');
 
-let datenow = moment(new Date()).format("DD-MM-YYYY");
-console.log(datenow)
+let datenow = moment(new Date()).format('DD-MM-YYYY');
+console.log(datenow);
 
 const setTrendsValueSchema = new mongoose.Schema(
   {
@@ -21,20 +21,20 @@ const setTrendsValueSchema = new mongoose.Schema(
     preferredUnit: {
       type: String,
     },
-    weight:{
-      type:String,
-    },
-    rate:{
+    weight: {
       type: String,
     },
-    ProductName:{
-      type:String,
+    rate: {
+      type: String,
     },
-    streetid:{
-      type:String,
+    ProductName: {
+      type: String,
     },
-    shopid:{
-      type:String,
+    streetid: {
+      type: String,
+    },
+    shopid: {
+      type: String,
     },
     active: {
       type: Boolean,
@@ -42,7 +42,7 @@ const setTrendsValueSchema = new mongoose.Schema(
     },
     date: {
       type: String,
-      default:datenow,
+      default: datenow,
     },
     archive: {
       type: Boolean,
