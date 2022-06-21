@@ -2,12 +2,29 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const TrendProduct = require('../models/trendproduct.model');
 
-const getStreetsByWardIdAndProducts = async (date, page) => {
+const getStreetsByWardIdAndProducts = async (wardId, date, page) => {
+  console.log(wardId);
+  let match;
+  if (wardId != 'null') {
+    match = [{ 'streetsdata.wardId': { $eq: wardId } }];
+    console.log('dfwfd');
+  }
   let values = await TrendProduct.aggregate([
     {
       $match: {
         $and: [{ date: { $eq: date } }],
       },
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'steetId',
+        foreignField: '_id',
+        as: 'streetsdata',
+      },
+    },
+    {
+      $unwind: '$streetsdata',
     },
     {
       $lookup: {
@@ -18,23 +35,13 @@ const getStreetsByWardIdAndProducts = async (date, page) => {
       },
     },
     {
-      $unwind: '$ProductData'
+      $unwind: '$ProductData',
     },
-    {
-      $lookup: {
-        from: 'streets',
-        localField: 'steetId',
-        foreignField: '_id',
-        as: 'streetData',
-      },
-    },
-    {
-      $unwind: '$streetData',
-    },
+
     {
       $lookup: {
         from: 'wards',
-        localField: 'streetData.wardId',
+        localField: 'streetsdata.wardId',
         foreignField: '_id',
         as: 'wardDataData',
       },
@@ -42,27 +49,32 @@ const getStreetsByWardIdAndProducts = async (date, page) => {
     {
       $unwind: '$wardDataData',
     },
+
     // product details Lookup
+    // {
+    //   $lookup: {
+    //     from: 'products',
+    //     localField: 'productId',
+    //     foreignField: '_id',
+    //     as: 'productData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$productData',
+    // },
 
     {
-      $lookup: {
-        from: 'products',
-        localField: 'productId',
-        foreignField: '_id',
-        as: 'productData',
+      $match: {
+        $and: match,
       },
-    },
-    {
-      $unwind: '$productData',
     },
 
     {
       $project: {
-        WardData: '$wardDataData',
-        streetData: '$streetData',
-        productData: '$productData',
-        
         Rate: 1,
+        WardData: '$wardDataData',
+        streetData: '$streetsdata',
+        productData: '$ProductData',
       },
     },
 
@@ -79,8 +91,8 @@ const getStreetsByWardIdAndProducts = async (date, page) => {
       },
     },
   ]);
-  let total = await TrendProduct.find().count();
-  return { total: total, values: values, cal: cal };
+  let total = await TrendProduct.find({ date: date }).count();
+  return { values: values, total: total, cal: cal };
 };
 
 module.exports = {
