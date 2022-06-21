@@ -385,8 +385,7 @@ const getProductAndSupplierDetails = async (date, page) => {
     value: details,
     total: total,
   };
-};
-
+};  
 const updateCallStatusById = async (id, updateBody) => {
   let callstatus = await getCallStatusById(id);
   if (!callstatus) {

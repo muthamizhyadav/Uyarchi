@@ -54,15 +54,20 @@ const supplierBuyerRoute = require('./supplierBuyer.route');
 const metaUserRoute = require('./meta.users.route');
 const postOrderRoute = require('./postorder.route');
 const generalEnquiryRoute = require('./generalEnquiry.route');
-const trendProductRoute = require('./trend.product.route')
+const trendProductRoute = require('./trend.product.route');
+const manageExpenseRoute = require('./manage.expenses.route');
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
   },
   {
-    path:'/trendProduct',
-    route:trendProductRoute
+    path: '/manageExpenses',
+    route: manageExpenseRoute,
+  },
+  {
+    path: '/trendProduct',
+    route: trendProductRoute,
   },
   {
     path: '/postorder',
