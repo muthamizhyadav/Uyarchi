@@ -61,20 +61,20 @@ const callStatusSchema = mongoose.Schema({
   },
   stockStatus: {
     type: String,
-    default:'Pending'
+    default: 'Pending',
   },
-  modified:{
-    type:Boolean,
-    default:false,
+  modified: {
+    type: Boolean,
+    default: false,
   },
-  driverNumber:{
-    type:Number,
+  driverNumber: {
+    type: Number,
   },
-  weighBridgeEmpty:{
-    type:String,
+  weighBridgeEmpty: {
+    type: String,
   },
-  weighBridgeLoadedProduct:{
-    type:String,
+  weighBridgeLoadedProduct: {
+    type: String,
   },
   vehicleType: {
     type: String,
@@ -84,14 +84,20 @@ const callStatusSchema = mongoose.Schema({
     type: String,
     default: '',
   },
-  incomingQuantity:{
-    type:Number,
+  incomingQuantity: {
+    type: Number,
   },
-  confirmprice:{
-    type:Number,
+  confirmprice: {
+    type: Number,
   },
-  incomingWastage:{
-    type:Number,
+  incomingWastage: {
+    type: Number,
+  },
+  mislianeousCost: {
+    type: Number,
+  },
+  others: {
+    type: Number,
   },
   driverName: {
     type: String,
