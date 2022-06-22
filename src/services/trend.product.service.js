@@ -9,7 +9,6 @@ const getStreetsByWardIdAndProducts = async (wardId, street, date, page) => {
   let match;
   if (street != 'null') {
     match = { steetId: street };
-    //  { $expr: { $and: [{ $eq: [date, date] }, { $eq: [steetId, street] }] } };
   } else {
     match = { date: date };
   }
@@ -151,47 +150,15 @@ const getProductByProductIdFromTrendProduct = async (productId, date) => {
     {
       $project: {
         shopName: '$shopData.SName',
+        shopId:'$shopData._id',
         streetName: '$streetData.street',
         Rate: 1,
         lowestPrice: { $min: '$Rate' },
         highestPrice: { $max: '$Rate' },
-        productName: 1,
       },
     },
   ]);
-  return value;
-};
-
-const getShopsAndCalculationByProductId = async (productId, date) => {
-  let value = await trends.aggregate([
-    {
-      pipeline: [
-        { $match: { date: date } },
-        { $match: { productId: productId } },
-        {
-          $lookup: {
-            from: 'shops',
-            localField: 'shopId',
-            foreignField: '_id',
-            as: 'shopdata',
-          },
-        },
-        {
-          $unwind: '$shopdata',
-        },
-        {
-          $group: {
-            // _id: null,
-            // averageQuantity: { $avg: '$Rate' },
-            // minprice: { $min: '$Rate' },
-            // maxprice: { $max: '$Rate' },
-            _id: null,
-            myCount: { $sum: 1 },
-          },
-        },
-      ],
-    },
-  ]);
+  return { value: value, total: value.length };
 };
 
 module.exports = {
