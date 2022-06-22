@@ -118,7 +118,21 @@ const getStreetsByWardIdAndProducts = async (wardId, street, date, page) => {
   return { values: values, total: total.length };
 };
 
-const getProductByProductIdFromTrendProduct = async (productId, date) => {
+const getProductByProductIdFromTrendProduct = async (wardId, street, productId, date) => {
+  let match;
+  if (street != 'null') {
+    match = { steetId: street };
+  } else {
+    match = { date: date };
+  }
+  let wardmatch;
+
+  if (wardId != 'null') {
+    wardmatch = { wardId: wardId };
+  } else {
+    wardmatch = { active: true };
+  }
+  console.log(match);
   let value = await TrendProduct.aggregate([
     {
       $match: {
@@ -142,6 +156,7 @@ const getProductByProductIdFromTrendProduct = async (productId, date) => {
         localField: 'steetId',
         foreignField: '_id',
         as: 'streetData',
+        pipeline: [{ $match: wardmatch }],
       },
     },
     {
@@ -150,7 +165,7 @@ const getProductByProductIdFromTrendProduct = async (productId, date) => {
     {
       $project: {
         shopName: '$shopData.SName',
-        shopId:'$shopData._id',
+        shopId: '$shopData._id',
         streetName: '$streetData.street',
         Rate: 1,
         lowestPrice: { $min: '$Rate' },

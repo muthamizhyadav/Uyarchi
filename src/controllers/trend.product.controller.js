@@ -16,6 +16,8 @@ const getStreetsByWardIdAndProducts = catchAsync(async (req, res) => {
 
 const getProductByProductIdFromTrendProduct = catchAsync(async (req, res) => {
   const trendProduct = await TrendProductService.getProductByProductIdFromTrendProduct(
+    req.params.wardId,
+    req.params.street,
     req.params.productId,
     req.params.date
   );
