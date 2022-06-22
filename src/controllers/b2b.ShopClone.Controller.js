@@ -69,6 +69,7 @@ const deleteB2BShopById = catchAsync(async (req, res) => {
 
 const creatAttendanceClone = catchAsync(async (req, res) => {
   const attendance = await b2bCloneService.createAttendanceClone(req.body);
+  attendance.Uid=req.userId;
   console.log(req.files);
   if (req.files) {
     req.files.forEach(function (files, index, arr) {
