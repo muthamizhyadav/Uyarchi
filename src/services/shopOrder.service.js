@@ -71,24 +71,7 @@ const getAllShopOrderClone = async (date, page) => {
 };
 
 const getShopOrderCloneById = async (id) => {
-  let Values = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [{ _id: { $eq: id } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'orderId',
-        as: 'productOrderdata',
-      },
-    },
-    {
-      $unwind: '$productOrderdata',
-    },
-  ]);
+  let Values = await ShopOrderClone.findOne({_id:id})
   return Values;
 };
 
