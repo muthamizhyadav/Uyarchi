@@ -24,7 +24,7 @@ router
   .route('/attendance/create')
   .post(authorization, AttendanceImage.array('photoCapture'), b2bShopCloneController.creatAttendanceClone)
   .get(authorization, b2bShopCloneController.getAlAttendanceClone);
-router.route('/attendanceClone/Admin').get(b2bShopCloneController.getAlAttendanceClone);
+router.route('/attendanceClone/Admin/:id/:date/:fromtime/:totime/:page').get(b2bShopCloneController.getAlAttendanceClone);
 router
   .route('/attendance/:id')
   .get(authorization, b2bShopCloneController.getAttendanceById)

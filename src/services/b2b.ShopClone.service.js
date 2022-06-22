@@ -173,8 +173,58 @@ const createAttendanceClone = async (shopBody) => {
   return attendance;
 };
 
-const getAllAttendanceClone = async () => {
-  return AttendanceClone.aggregate([
+const getAllAttendanceClone = async (id,date,fromtime,totime,page) => {
+  let match;
+  let to;
+  let from;
+  if(parseInt(fromtime) <= parseInt(totime) ){
+    to=parseInt(fromtime);
+    from=parseInt(totime);
+  }
+  else{
+    to=parseInt(totime);
+    from=parseInt(fromtime);
+  }
+  console.log("les",from)
+  console.log("ge",to)
+  if(id !='null'&&date !='null'&&fromtime !='null'&&totime!='null'){
+    //  match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: from,$lte: to}},{active:{$eq:true}}];
+     match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: to}},{ time:{ $lte: from}},{active:{$eq:true}}];
+  }
+  else if(id !='null'&&date =='null'&&fromtime =='null'&&totime =='null'){
+     match=[{ Uid: { $eq: id }},{active:{$eq:true}}]
+   
+  }
+  else if(id =='null'&&date !='null'&&fromtime =='null'&& totime =='null'){
+     match=[{ date: { $eq: date }},{active:{$eq:true}}]
+     console.log("df")
+  }
+  else if(id =='null'&&date =='null'&fromtime !='null'&& totime !='null'){
+    //  match=[{ time:{ $gte: from}},{ time:{$lte: to}},{active:{$eq:true}}]
+     match=[{ time:{ $gte: to}},{ time:{ $lte: from}},{active:{$eq:true}}]
+  }
+  else if(id =='null'&&date !='null'&&fromtime !='null'&& totime != 'null'){
+    //  match=[{ date: { $eq: date }},{ time:{$lte: to ,$gte: from}},{active:{$eq:true}}]
+     match=[{ date: { $eq: date }},{ time:{ $gte: to}},{ time:{ $lte: from}},{active:{$eq:true}}]
+  }
+  else if(id !='null'&&date =='null'&&fromtime !='null'&& totime!='null'){
+    //  match=[{ Uid: { $eq: id }},{ time:{$lte: to, $gte: from}},{active:{$eq:true}}]
+     match=[{ Uid: { $eq: id }},{ time:{ $gte: to}},{ time:{ $lte: from}},{active:{$eq:true}}]
+  }
+  else if(id !='null'&&date !='null'&&fromtime =='null'&&totime == 'null'){
+     match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{active:{$eq:true}}]
+  }
+  else {
+    match=[{ Uid: { $ne: null }},{active:{$eq:true}}]
+  }
+ console.log(match)
+  const data = await AttendanceClone.aggregate([
+    {$sort:{date:-1,time:-1}},
+    {
+      $match: {
+        $and: match,
+      },
+    },
     {
       $lookup:
         {
@@ -204,6 +254,19 @@ const getAllAttendanceClone = async () => {
     }
    }
   ])
+  const count=await AttendanceClone.aggregate([
+    {
+      $match: {
+        $and: match,
+      },
+    },
+  ]);
+
+
+  return {
+    data:data,
+    count:count.length
+  }
 };
 
 const getAttendanceById = async (id) => {

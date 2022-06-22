@@ -81,7 +81,7 @@ const creatAttendanceClone = catchAsync(async (req, res) => {
 });
 
 const getAlAttendanceClone = catchAsync(async (req, res) => {
-  const attendance = await b2bCloneService.getAllAttendanceClone();
+  const attendance = await b2bCloneService.getAllAttendanceClone(req.params.id,req.params.date,req.params.fromtime,req.params.totime,req.params.page);
   res.send(attendance);
 });
 
