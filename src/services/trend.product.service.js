@@ -215,6 +215,18 @@ const getStreetsByWardIdAndProducts = async (wardId, street, date, page) => {
 //   return { values: values, total: total, cal: cal };
 // };
 
+const getProductByProductIdFromTrendProduct = async (productId, date) => {
+  let value = await TrendProduct.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }, { productId: { $eq: productId } }],
+      },
+    },
+  ]);
+  return value;
+};
+
 module.exports = {
   getStreetsByWardIdAndProducts,
+  getProductByProductIdFromTrendProduct,
 };
