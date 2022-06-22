@@ -121,9 +121,9 @@ const getStreetsByWardIdAndProducts = async (wardId, street, date, page) => {
 const getProductByProductIdFromTrendProduct = async (wardId, street, productId, date) => {
   let match;
   if (street != 'null') {
-    match = { steetId: street };
+    match = { steetId: { $eq: street } }
   } else {
-    match = { date: date };
+    match = { date: { $eq: date } };
   }
   let wardmatch;
 
@@ -137,6 +137,11 @@ const getProductByProductIdFromTrendProduct = async (wardId, street, productId, 
     {
       $match: {
         $and: [{ date: { $eq: date } }, { productId: { $eq: productId } }],
+      },
+    },
+    {
+      $match: {
+        $and: [match],
       },
     },
     {
