@@ -38,8 +38,8 @@ const setTrendsValueforProduct = async (id, updateBody) => {
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found ');
   }
-  product = await Product.findByIdAndUpdate({ _id: id },updateBody, { new: true });
-  product = await Product.findByIdAndUpdate({ _id: id }, { $set: { setTrendsDate: datenow } },{ new: true });
+  product = await Product.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  product = await Product.findByIdAndUpdate({ _id: id }, { $set: { setTrendsDate: datenow } }, { new: true });
   console.log(product);
   return product;
 };
@@ -397,6 +397,11 @@ const getStockByLoadingExecute = async () => {
 
 const paginationForTrends = async (id) => {
   return Product.aggregate([
+    {
+      $match: {
+        TrendspreferredQuantity:{$ne:null}
+      },
+    },
     {
       $sort: { productTitle: 1 },
     },

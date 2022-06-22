@@ -16,7 +16,25 @@ const trendsSchema = new mongoose.Schema({
     Uid:{
         type:String,
     },
-    product:{
+    productid: {
+        type: String,
+      },
+      preferredQuantity: {
+        type: Number,
+      },
+      preferredUnit: {
+        type: String,
+      },
+      weight:{
+        type:String,
+      },
+      rate:{
+        type: String,
+      },
+      ProductName:{
+        type:String,
+      },
+     product:{
         type:Array
     },
     date:{

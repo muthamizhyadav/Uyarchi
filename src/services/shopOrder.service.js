@@ -79,15 +79,22 @@ const getShopOrderCloneById = async (id) => {
     },
     {
       $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'orderId',
-        as: 'productOrderdata',
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
       },
     },
     {
-      $unwind: '$productOrderdata',
+      $lookup: {
+        from: 'marketshopsclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'marketshopData',
+      },
     },
+ 
+    // .marketshopsclones
   ]);
   return Values;
 };

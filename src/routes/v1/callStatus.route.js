@@ -2,7 +2,8 @@ const express = require('express');
 const CallStatusController = require('../../controllers/callStatus.controller');
 const router = express.Router();
 const stockImage = require('../../middlewares/stock');
-const { getAcknowledgedData } = require('../../services/callStatus');
+
+router.route('/getConfirmed/stock/:date/:page').get(CallStatusController.getConfirmedStockStatus)
 router.route('/').post(CallStatusController.createCallStatus);
 router.route('/confirmcallstatus/:id').get(CallStatusController.getCallStatusId);
 router

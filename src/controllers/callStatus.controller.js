@@ -52,6 +52,11 @@ const getOnlyLoadedData = catchAsync(async (req, res) => {
   res.send(callstatus);
 });
 
+const getConfirmedStockStatus = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.getConfirmedStockStatus(req.params.date, req.params.page);
+  res.send(callStatus);
+});
+
 const getCallStatusbyId = catchAsync(async (req, res) => {
   const callStatus = await CallStatusService.getCallStatusById(req.params.id);
   if (!callStatus || !callStatus.active === true) {
@@ -96,5 +101,6 @@ module.exports = {
   getCallStatusId,
   getAcknowledgedData,
   getOnlyLoadedData,
+  getConfirmedStockStatus,
   getAcknowledgedDataforLE,
 };

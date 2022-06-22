@@ -114,6 +114,15 @@ const wardPagination = async (id) => {
   ]);
 };
 
+const getAllWardsForManageTrends = async () =>{
+  return await Ward.aggregate([{
+      $sort: {
+        ward: 1,
+    }
+  }])
+
+
+}
 const querWard = async (filter, options) => {
   return Ward.paginate(filter, options);
 };
@@ -144,4 +153,5 @@ module.exports = {
   updatewardById,
   deleteWardById,
   wardPagination,
+  getAllWardsForManageTrends
 };

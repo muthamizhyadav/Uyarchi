@@ -10,6 +10,11 @@ const createWard = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(ward);
 });
 
+const getAllWardsForManageTrends = catchAsync(async (req, res) => {
+  const ward = await wardService.getAllWardsForManageTrends();
+  res.send(ward);
+});
+
 // const getProducts = catchAsync(async (req, res) => {
 //   const filter = pick(req.query, ['productTitle', 'unit']);
 //   const options = pick(req.query, ['sortBy', 'limit', 'page']);
@@ -64,6 +69,7 @@ module.exports = {
   getWardByZoneId,
   updateward,
   deleteWard,
+  getAllWardsForManageTrends,
   wardPagination,
   getmetaData,
 };

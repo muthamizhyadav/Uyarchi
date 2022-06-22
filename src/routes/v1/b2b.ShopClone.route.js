@@ -6,12 +6,12 @@ const authorization = require('../../controllers/tokenVerify.controller');
 const router = express.Router();
 
 // Shop Clone
-router.get('/filter/shopName/Contact/:key', b2bShopCloneController.filterShopwithNameAndContact)
+router.get('/filter/shopName/Contact/:key', b2bShopCloneController.filterShopwithNameAndContact);
 router
   .route('/')
   .post(authorization, b2bCloneshopImage.array('photoCapture'), b2bShopCloneController.createB2bShopClone)
   .get(authorization, b2bShopCloneController.getAllB2BshopClone);
-router.route('/aggregation/Names/:page').get(b2bShopCloneController.getshopWardStreetNamesWithAggregation)
+router.route('/aggregation/Names/:page').get(b2bShopCloneController.getshopWardStreetNamesWithAggregation);
 router
   .route('/:id')
   .get(b2bShopCloneController.getB2BShopById)
@@ -22,13 +22,13 @@ router
 
 router
   .route('/attendance/create')
-  .post( authorization,AttendanceImage.array('photoCapture'), b2bShopCloneController.creatAttendanceClone)
-  .get( authorization,b2bShopCloneController.getAlAttendanceClone);
-
+  .post(authorization, AttendanceImage.array('photoCapture'), b2bShopCloneController.creatAttendanceClone)
+  .get(authorization, b2bShopCloneController.getAlAttendanceClone);
+router.route('/attendanceClone/Admin').get(b2bShopCloneController.getAlAttendanceClone);
 router
   .route('/attendance/:id')
   .get(authorization, b2bShopCloneController.getAttendanceById)
-  .put( authorization,b2bShopCloneController.updateAttendanceById)
+  .put(authorization, b2bShopCloneController.updateAttendanceById)
   .delete(authorization, b2bShopCloneController.deleteAttendanceById);
 
 module.exports = router;

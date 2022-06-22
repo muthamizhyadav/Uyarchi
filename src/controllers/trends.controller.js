@@ -3,9 +3,29 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const trendsService = require('../services/trends.service');
-
+const { request } = require('websocket');
+const Trendproduct=require("../models/trendproduct.model")
 const createTrends = catchAsync(async (req, res) => {
   const trends = await trendsService.createTrends(req.body);
+  req.body.product.forEach(async(e)=>{
+    let row={
+      productId:e.Pid,
+      productName:e.PName,
+      Unit:e.Unit,
+      Rate:e.Rate,
+      Weight:e.Weight,
+      orderId:trends._id,
+      shopId:req.body.shopid,
+      steetId:req.body.street,
+      UserId:req.body.Uid,
+      date:req.body.date,
+      time:req.body.time,
+      fulldate:req.body.fulldate,
+      created:req.body.created,
+    }
+
+    await Trendproduct.create(row)
+  })
   res.status(httpStatus.CREATED).send(trends);
 });
 

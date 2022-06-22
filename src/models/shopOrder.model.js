@@ -118,11 +118,11 @@ const productorderSchema = new mongoose.Schema({
   customerId: {
     type: String,
   },
-  modifyquantity:{
-    type:Number,
+  modifyquantity: {
+    type: Number,
   },
-  modifypriceperkg:{
-    type:Number
+  modifypriceperkg: {
+    type: Number,
   },
   date: {
     type: String,
@@ -164,11 +164,11 @@ const productorderCloneSchema = new mongoose.Schema({
   customerId: {
     type: String,
   },
-  modifyquantity:{
-    type:Number,
+  modifyquantity: {
+    type: Number,
   },
-  modifypriceperkg:{
-    type:Number
+  modifypriceperkg: {
+    type: Number,
   },
   date: {
     type: String,

@@ -25,7 +25,10 @@ const getAllShopOrderClone = catchAsync(async (req, res) => {
 
 const getShopOrderCloneById = catchAsync(async (req, res) => {
   const shopOrderClone = await shopOrderService.getShopOrderCloneById(req.params.id);
-  res.send(shopOrderClone);
+  if (!shopOrderClone) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  res.send(shopOrderClone[0]);
 });
 
 const updateShopOrderCloneById = catchAsync(async (req, res) => {
@@ -73,7 +76,7 @@ const getShopNameWithPagination = catchAsync(async (req, res) => {
 
 const getShopNameCloneWithPagination = catchAsync(async (req, res) => {
   let user = req.userId;
-  console.log(user)
+  console.log(user);
   const shopOrder = await shopOrderService.getShopNameCloneWithPagination(req.params.page, user);
   res.send(shopOrder);
 });
@@ -84,8 +87,8 @@ const getProductDetailsByProductId = catchAsync(async (req, res) => {
 });
 
 const getAllShopOrder = catchAsync(async (req, res) => {
-  let UserRole = req.userRole
-  console.log(UserRole)
+  let UserRole = req.userRole;
+  console.log(UserRole);
   const shoporder = await shopOrderService.getAllShopOrder(UserRole);
   res.send(shoporder);
 });
