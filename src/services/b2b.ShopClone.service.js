@@ -174,7 +174,36 @@ const createAttendanceClone = async (shopBody) => {
 };
 
 const getAllAttendanceClone = async () => {
-  return AttendanceClone.find();
+  return AttendanceClone.aggregate([
+    {
+      $lookup:
+        {
+          from:"b2busers",
+          localField:"Uid",
+          foreignField:"_id",
+          as:"b2busersData"
+        }
+   },
+   { $unwind:"$b2busersData"},
+
+   {
+    $project:{
+        _id:1,
+         photoCapture:1,
+         active:1,
+         true:1,
+         archive:1,
+         false:1,
+         Alat:1,
+         Along:1,
+         date:1,
+         time:1,
+         created:1,
+         userName:"$b2busersData.name",
+         phoneNumber:"$b2busersData.phoneNumber",
+    }
+   }
+  ])
 };
 
 const getAttendanceById = async (id) => {
