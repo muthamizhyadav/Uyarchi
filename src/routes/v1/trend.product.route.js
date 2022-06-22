@@ -5,5 +5,8 @@ const router = express.Router();
 router
   .route('/getStreetByWardIdAndProducts/:wardId/:street/:date/:page')
   .get(TrendProductController.getStreetsByWardIdAndProducts);
-router.route('/getProduct/:wardId/:street/:productId/:date').get(TrendProductController.getProductByProductIdFromTrendProduct);
+router
+  .route('/getProduct/:wardId/:street/:productId/:date')
+  .get(TrendProductController.getProductByProductIdFromTrendProduct);
+router.route('/getproductsingle/:wardId/:street/:productId/:date').get(TrendProductController.getProductCalculation);
 module.exports = router;

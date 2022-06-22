@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const TrendProduct = require('../models/trendproduct.model');
 const { Product } = require('../models/product.model');
+const { Shop } = require('../models/apartmentTable.model');
 
 const getStreetsByWardIdAndProducts = async (wardId, street, date, page) => {
   console.log(date, 'sdfsa');
@@ -121,7 +122,7 @@ const getStreetsByWardIdAndProducts = async (wardId, street, date, page) => {
 const getProductByProductIdFromTrendProduct = async (wardId, street, productId, date) => {
   let match;
   if (street != 'null') {
-    match = { steetId: { $eq: street } }
+    match = { steetId: { $eq: street } };
   } else {
     match = { date: date };
   }
@@ -140,10 +141,9 @@ const getProductByProductIdFromTrendProduct = async (wardId, street, productId, 
       },
     },
     {
-      $match: match
+      $match: match,
     },
 
-    
     {
       $lookup: {
         from: 'shops',
@@ -184,17 +184,80 @@ const getProductByProductIdFromTrendProduct = async (wardId, street, productId, 
         shopId: '$shopData._id',
         streetName: '$streetData.street',
         Rate: 1,
-        username:"$userData.name"
+        username: '$userData.name',
       },
     },
- 
-
-    
   ]);
   return { value: value, total: value.length };
+};
+
+const getProductCalculation = async (wardId, street, productId, date) => {
+  let match;
+  if (street != 'null') {
+    match = { steetId: { $eq: street } };
+  } else {
+    match = { date: date };
+  }
+  let wardmatch;
+
+  if (wardId != 'null') {
+    wardmatch = { wardId: wardId };
+  } else {
+    wardmatch = { active: true };
+  }
+  let value = await TrendProduct.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }, { productId: { $eq: productId } }],
+      },
+    },
+    {
+      $match: match,
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'steetId',
+        foreignField: '_id',
+        as: 'streetData',
+        pipeline: [{ $match: wardmatch }],
+      },
+    },
+    {
+      $unwind: '$streetData',
+    },
+    {
+      $lookup: {
+        from: 'shops',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopdateData',
+      },
+    },
+  ]);
+  let shopss=[{date:'dsf'}]
+  if (street == 'null') {
+     shopss = await Shop.aggregate([
+      {
+        $lookup: {
+          from: 'trendproducts',
+          localField: '_id',
+          foreignField: 'shopId',
+          as: 'TrendProductdata',
+          pipeline: [{ $match: { date: date } },{ $match: { productId: productId } },{$match:wardmatch}],
+        },
+      },
+      {
+        $unwind: '$TrendProductdata',
+      },
+    ]);
+  }
+
+  return { totalshops: value.length, totalStreet: shopss.length };
 };
 
 module.exports = {
   getStreetsByWardIdAndProducts,
   getProductByProductIdFromTrendProduct,
+  getProductCalculation,
 };

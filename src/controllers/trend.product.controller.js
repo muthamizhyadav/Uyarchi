@@ -24,4 +24,14 @@ const getProductByProductIdFromTrendProduct = catchAsync(async (req, res) => {
   res.send(trendProduct);
 });
 
-module.exports = { getStreetsByWardIdAndProducts, getProductByProductIdFromTrendProduct };
+const getProductCalculation = catchAsync(async (req, res) => {
+  const trendProduct = await TrendProductService.getProductCalculation(
+    req.params.wardId,
+    req.params.street,
+    req.params.productId,
+    req.params.date
+  );
+  res.send(trendProduct);
+});
+
+module.exports = { getStreetsByWardIdAndProducts, getProductByProductIdFromTrendProduct, getProductCalculation };
