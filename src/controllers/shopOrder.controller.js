@@ -25,7 +25,10 @@ const getAllShopOrderClone = catchAsync(async (req, res) => {
 
 const getShopOrderCloneById = catchAsync(async (req, res) => {
   const shopOrderClone = await shopOrderService.getShopOrderCloneById(req.params.id);
-  res.send(shopOrderClone);
+  if (!shopOrderClone) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  res.send(shopOrderClone[0]);
 });
 
 const updateShopOrderCloneById = catchAsync(async (req, res) => {

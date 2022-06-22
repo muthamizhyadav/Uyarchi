@@ -71,7 +71,31 @@ const getAllShopOrderClone = async (date, page) => {
 };
 
 const getShopOrderCloneById = async (id) => {
-  let Values = await ShopOrderClone.findOne({_id:id})
+  let Values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'marketshopsclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'marketshopData',
+      },
+    },
+ 
+    // .marketshopsclones
+  ]);
   return Values;
 };
 
