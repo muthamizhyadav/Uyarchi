@@ -119,102 +119,6 @@ const getStreetsByWardIdAndProducts = async (wardId, street, date, page) => {
   return { values: values, total: total.length };
 };
 
-// const getStreetsByWardIdAndProducts = async (wardId, date, page) => {
-//   console.log(wardId);
-//   let match;
-//   if (wardId != 'null') {
-//     match = [{ 'streetsdata.wardId': { $eq: wardId } }];
-//     console.log('dfwfd');
-//   }
-//   let values = await TrendProduct.aggregate([
-//     {
-//       $match: {
-//         $and: [{ date: { $eq: date } }],
-//       },
-//     },
-//     {
-//       $lookup: {
-//         from: 'streets',
-//         localField: 'steetId',
-//         foreignField: '_id',
-//         as: 'streetsdata',
-//       },
-//     },
-//     {
-//       $unwind: '$streetsdata',
-//     },
-//     {
-//       $lookup: {
-//         from: 'products',
-//         localField: 'productId',
-//         foreignField: '_id',
-//         as: 'ProductData',
-//       },
-//     },
-//     {
-//       $unwind: '$ProductData',
-//     },
-
-//     {
-//       $lookup: {
-//         from: 'wards',
-//         localField: 'streetsdata.wardId',
-//         foreignField: '_id',
-//         as: 'wardDataData',
-//       },
-//     },
-//     {
-//       $unwind: '$wardDataData',
-//     },
-
-//     // product details Lookup
-//     // {
-//     //   $lookup: {
-//     //     from: 'products',
-//     //     localField: 'productId',
-//     //     foreignField: '_id',
-//     //     as: 'productData',
-//     //   },
-//     // },
-//     // {
-//     //   $unwind: '$productData',
-//     // },
-
-//     {
-//       $match: {
-//         $and: match,
-//       },
-//     },
-
-//     {
-//       $project: {
-//         Rate: 1,
-//         AvgRate:{ $avg: "$Rate"},
-//         MaxRate:{ $max: "$Rate"},
-//         MinRate:{ $min: "$Rate"},
-//         WardData: '$wardDataData',
-//         streetData: '$streetsdata',
-//         productData: '$ProductData',
-//       },
-//     },
-
-//     { $skip: 10 * page },
-//     { $limit: 10 },
-//   ]);
-//   let cal = await TrendProduct.aggregate([
-//     {
-//       $group: {
-//         _id: null,
-//         AvgRate: { $avg: '$Rate' },
-//         MaxRate: { $max: '$Rate' },
-//         minRate: { $min: '$Rate' },
-//       },
-//     },
-//   ]);
-//   let total = await TrendProduct.find({ date: date }).count();
-//   return { values: values, total: total, cal: cal };
-// };
-
 const getProductByProductIdFromTrendProduct = async (productId, date) => {
   let value = await TrendProduct.aggregate([
     {
@@ -222,6 +126,36 @@ const getProductByProductIdFromTrendProduct = async (productId, date) => {
         $and: [{ date: { $eq: date } }, { productId: { $eq: productId } }],
       },
     },
+    {
+      $lookup: {
+        from: 'shops',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'steetId',
+        foreignField: '_id',
+        as: 'streetData',
+      },
+    },
+    {
+      $unwind: '$streetData',
+    },
+    {
+      $project:{
+        shopName:'$shopData.SName',
+        streetName:'$streetData.street',
+        Rate:1,
+        productName:1,
+      }
+    }
   ]);
   return value;
 };
