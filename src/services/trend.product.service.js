@@ -123,7 +123,7 @@ const getProductByProductIdFromTrendProduct = async (wardId, street, productId, 
   if (street != 'null') {
     match = { steetId: { $eq: street } }
   } else {
-    match = { date: { $eq: date } };
+    match = { date: date };
   }
   let wardmatch;
 
@@ -140,10 +140,10 @@ const getProductByProductIdFromTrendProduct = async (wardId, street, productId, 
       },
     },
     {
-      $match: {
-        $and: [match],
-      },
+      $match: match
     },
+
+    
     {
       $lookup: {
         from: 'shops',
@@ -168,15 +168,28 @@ const getProductByProductIdFromTrendProduct = async (wardId, street, productId, 
       $unwind: '$streetData',
     },
     {
+      $lookup: {
+        from: 'manageusers',
+        localField: 'UserId',
+        foreignField: '_id',
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
       $project: {
         shopName: '$shopData.SName',
         shopId: '$shopData._id',
         streetName: '$streetData.street',
         Rate: 1,
-        lowestPrice: { $min: '$Rate' },
-        highestPrice: { $max: '$Rate' },
+        username:"$userData.name"
       },
     },
+ 
+
+    
   ]);
   return { value: value, total: value.length };
 };
