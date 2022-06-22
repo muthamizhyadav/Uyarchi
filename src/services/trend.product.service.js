@@ -149,15 +149,49 @@ const getProductByProductIdFromTrendProduct = async (productId, date) => {
       $unwind: '$streetData',
     },
     {
-      $project:{
-        shopName:'$shopData.SName',
-        streetName:'$streetData.street',
-        Rate:1,
-        productName:1,
-      }
-    }
+      $project: {
+        shopName: '$shopData.SName',
+        streetName: '$streetData.street',
+        Rate: 1,
+        lowestPrice: { $min: '$Rate' },
+        highestPrice: { $max: '$Rate' },
+        productName: 1,
+      },
+    },
   ]);
   return value;
+};
+
+const getShopsAndCalculationByProductId = async (productId, date) => {
+  let value = await trends.aggregate([
+    {
+      pipeline: [
+        { $match: { date: date } },
+        { $match: { productId: productId } },
+        {
+          $lookup: {
+            from: 'shops',
+            localField: 'shopId',
+            foreignField: '_id',
+            as: 'shopdata',
+          },
+        },
+        {
+          $unwind: '$shopdata',
+        },
+        {
+          $group: {
+            // _id: null,
+            // averageQuantity: { $avg: '$Rate' },
+            // minprice: { $min: '$Rate' },
+            // maxprice: { $max: '$Rate' },
+            _id: null,
+            myCount: { $sum: 1 },
+          },
+        },
+      ],
+    },
+  ]);
 };
 
 module.exports = {
