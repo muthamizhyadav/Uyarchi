@@ -44,7 +44,7 @@ const trendsSchema = new mongoose.Schema({
     type: Number,
   },
   created: {
-    type: Number,
+    type: String,
   },
   active: {
     type: Boolean,
