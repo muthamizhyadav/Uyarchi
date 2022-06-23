@@ -79,6 +79,11 @@ const getForMyAccount = async (userId) => {
   return values;
 };
 
+const getsalesExecuteRolesUsers = async () => {
+  let users = await Users.find({ userRole: "fb0dd028-c608-4caa-a7a9-b700389a098d" })
+  return users
+}
+
 const changePassword = async (userId, body) => {
   let user = await Users.findById(userId);
   if (!user) {
@@ -131,4 +136,5 @@ module.exports = {
   changePassword,
   getusermetaDataById,
   getForMyAccount,
+  getsalesExecuteRolesUsers,
 };

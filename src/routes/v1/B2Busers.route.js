@@ -18,4 +18,5 @@ router
   .put(b2bUsersController.updateMetaUsers)
   .delete(b2bUsersController.deleteMetaUser);
 router.route('/changePassword').put(authorization, b2bUsersController.changePassword);
+router.route('/getusers/salesExecute').get(b2bUsersController.getsalesExecuteRolesUsers)
 module.exports = router;
