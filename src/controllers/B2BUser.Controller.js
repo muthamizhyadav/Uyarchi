@@ -33,6 +33,11 @@ const B2bUsersLogin = catchAsync(async (req, res) => {
   res.send({ users, tokens });
 });
 
+const getsalesExecuteRolesUsers = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.getsalesExecuteRolesUsers()
+  res.send(users)
+})
+
 const B2bUsersAdminLogin = catchAsync(async (req, res) => {
   const users = await b2bUsersService.B2bUsersAdminLogin(req.body);
   const tokens = await tokenService.generateAuthTokens(users);
@@ -105,6 +110,7 @@ const changePassword = catchAsync(async (req, res) => {
 
 module.exports = {
   createB2bUsers,
+  getsalesExecuteRolesUsers,
   changePassword,
   B2bUsersLogout,
   B2bUsersLogin,
