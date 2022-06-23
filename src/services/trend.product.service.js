@@ -266,9 +266,14 @@ const updateTrendsById = async (id, body) => {
   return trendproduct;
 };
 
+const getShopsByIdFromTrends = async(id)=>{
+  return "triggerd"
+}
+
 module.exports = {
   getStreetsByWardIdAndProducts,
   getProductByProductIdFromTrendProduct,
   getProductCalculation,
   updateTrendsById,
+  getShopsByIdFromTrends,
 };

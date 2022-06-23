@@ -39,9 +39,15 @@ const updateTrendsById = catchAsync(async (req, res) => {
   res.send(trendProduct);
 });
 
+const getShopsByIdFromTrends = catchAsync(async (req, res) => {
+  const trends = await TrendProductService.getShopsByIdFromTrends(req.params.id);
+  res.send(trends);
+});
+
 module.exports = {
   getStreetsByWardIdAndProducts,
   getProductByProductIdFromTrendProduct,
   getProductCalculation,
   updateTrendsById,
+  getShopsByIdFromTrends,
 };

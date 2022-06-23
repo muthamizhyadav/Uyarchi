@@ -34,6 +34,8 @@ const updateTrendsById = async (trendsId, updateBody) => {
   if (!trends) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Trends not found');
   }
+  console.log(trends);
+  
   trends = await Trends.findByIdAndUpdate({ _id: trendsId }, updateBody, { new: true });
   return trends;
 };
