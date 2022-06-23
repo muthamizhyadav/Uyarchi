@@ -8,5 +8,5 @@ router
   .put(trendsController.updateTrendsById)
   .delete(trendsController.deleteTrendsById);
 router.route('/pagination/:id').get(trendsController.trendsPagination);
-router.route('/updateProduct/FromTrends/:id').get(trendsController.updateProductFromTrends);
+router.route('/updateProduct/FromTrends/:id').put(trendsController.updateProductFromTrends);
 module.exports = router;
