@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const TrendProduct = require('../models/trendproduct.model');
+const Trends = require('../models/trends.model');
 const { Product } = require('../models/product.model');
 const { Shop } = require('../models/apartmentTable.model');
 const moment = require('moment');
@@ -274,8 +275,26 @@ const getShopsByIdFromTrends = async (id) => {
       minute: 'numeric',
     },
     formatter = new Intl.DateTimeFormat([], options);
-    var dt = moment(formatter.format(new Date()), ["h:mm A"]).format("HHmm");
-    console.log(dt)
+  var dt = moment(formatter.format(new Date()), ['h:mm A']).format('HHmm');
+  let match = [{ active: { $eq: true } }];
+  if (600 < dt && 1000 > dt) {
+    console.log('1');
+    match = [{ shopid: { $eq: id } }, { time: { $gte: 600 } }, { time: { $lte: 1000 } }];
+  }
+  if (1100 < dt && 1400 > dt) {
+    match = [{ shopid: { $eq: id } }, { time: { $gte: 1100 } }, { time: { $lte: 1400 } }];
+  }
+  if (1500 < dt && 1800 > dt) {
+    match = [{ shopid: { $eq: id } }, { time: { $gte: 1500 } }, { time: { $lte: 1800 } }];
+  }
+  let values = await Trends.aggregate([
+    {
+      $match: {
+        $and: match,
+      },
+    },
+  ]);
+  return values;
 };
 module.exports = {
   getStreetsByWardIdAndProducts,
