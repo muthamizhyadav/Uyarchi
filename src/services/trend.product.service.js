@@ -3,6 +3,7 @@ const ApiError = require('../utils/ApiError');
 const TrendProduct = require('../models/trendproduct.model');
 const { Product } = require('../models/product.model');
 const { Shop } = require('../models/apartmentTable.model');
+const moment = require('moment');
 
 const getStreetsByWardIdAndProducts = async (wardId, street, date, page) => {
   console.log(date, 'sdfsa');
@@ -269,18 +270,12 @@ const updateTrendsById = async (id, body) => {
 const getShopsByIdFromTrends = async (id) => {
   let options = {
       timeZone: 'asia/kolkata',
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
       hour: 'numeric',
       minute: 'numeric',
-      second: 'numeric',
     },
     formatter = new Intl.DateTimeFormat([], options);
-
-  console.log(formatter.format(new Date()));
+    var dt = moment(formatter.format(new Date()), ["h:mm A"]).format("HHmm");
 };
-
 module.exports = {
   getStreetsByWardIdAndProducts,
   getProductByProductIdFromTrendProduct,
