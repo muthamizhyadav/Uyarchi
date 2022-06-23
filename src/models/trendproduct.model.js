@@ -31,20 +31,20 @@ const trendsSchema = new mongoose.Schema({
   Unit: {
     type: String,
   },
-  orderId:{
+  orderId: {
     type: String,
   },
   date: {
     type: String,
   },
   time: {
+    type: Number,
+  },
+  fulldate: {
     type: String,
   },
-  fulldate:{
-    type:String,
-  },
   created: {
-    type:String,
+    type: String,
   },
   active: {
     type: Boolean,

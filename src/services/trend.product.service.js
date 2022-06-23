@@ -235,16 +235,16 @@ const getProductCalculation = async (wardId, street, productId, date) => {
       },
     },
   ]);
-  let shopss=[{date:'dsf'}]
+  let shopss = [{ date: 'dsf' }];
   if (street == 'null') {
-     shopss = await Shop.aggregate([
+    shopss = await Shop.aggregate([
       {
         $lookup: {
           from: 'trendproducts',
           localField: '_id',
           foreignField: 'shopId',
           as: 'TrendProductdata',
-          pipeline: [{ $match: { date: date } },{ $match: { productId: productId } },{$match:wardmatch}],
+          pipeline: [{ $match: { date: date } }, { $match: { productId: productId } }, { $match: wardmatch }],
         },
       },
       {
@@ -256,8 +256,20 @@ const getProductCalculation = async (wardId, street, productId, date) => {
   return { totalshops: value.length, totalStreet: shopss.length };
 };
 
+const updateTrendsById = async (id, body) => {
+  let trendproduct = await TrendProduct.findById(id);
+  if (!trendproduct) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  
+  console.log(trendproduct);
+  trendproduct = await TrendProduct.findByIdAndUpdate({ _id: id }, body, { new: true });
+  return trendproduct;
+};
+
 module.exports = {
   getStreetsByWardIdAndProducts,
   getProductByProductIdFromTrendProduct,
   getProductCalculation,
+  updateTrendsById,
 };
