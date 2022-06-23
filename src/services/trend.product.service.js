@@ -275,6 +275,7 @@ const getShopsByIdFromTrends = async (id) => {
     },
     formatter = new Intl.DateTimeFormat([], options);
     var dt = moment(formatter.format(new Date()), ["h:mm A"]).format("HHmm");
+    console.log(dt)
 };
 module.exports = {
   getStreetsByWardIdAndProducts,
