@@ -266,16 +266,20 @@ const updateTrendsById = async (id, body) => {
   return trendproduct;
 };
 
-const getShopsByIdFromTrends = async(id)=>{
-  const date = new Date();
+const getShopsByIdFromTrends = async (id) => {
+  let options = {
+      timeZone: 'asia/kolkata',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    },
+    formatter = new Intl.DateTimeFormat([], options);
 
-  // 👇️ 1/27/2022, 13:18:22
-  console.log(
-    date.toLocaleString('en-IN', {
-      hour12: false,
-    }),
-  );
-}
+  console.log(formatter.format(new Date()));
+};
 
 module.exports = {
   getStreetsByWardIdAndProducts,
