@@ -27,6 +27,36 @@ const createTrends = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(trends);
 });
 
+const updateProductFromTrends = catchAsync(async (req, res) => {
+  const trends = await trendsService.updateProductFromTrends(req.params.id,req.body);
+  console.log(trends)
+  req.body.product.forEach(async (e) => {
+    let row = {
+      productId: e.Pid,
+      productName: e.PName,
+      Unit: e.Unit,
+      Rate: e.Rate,
+      Weight: e.Weight,
+      orderId:req.params.id,
+      shopId: trends.shopid,
+      steetId: trends.street,
+      UserId:trends.Uid,
+      date: trends.date,
+      time: trends.time,
+      fulldate: trends.fulldate,
+      created: trends.created,
+    };
+    let oldid = await Trendproduct.findOne({ orderId: req.params.id, productId: e.Pid });
+    if (oldid) {
+      await Trendproduct.findOneAndUpdate({ _id: oldid._id }, { Rate: e.Rate }, { new: true });
+    } else {
+      await Trendproduct.create(row);
+    }
+  });
+
+  res.send(trends);
+});
+
 const getAllTrends = catchAsync(async (req, res) => {
   const trends = await trendsService.getAllTrends();
   res.send(supplier);
@@ -63,6 +93,7 @@ module.exports = {
   getAllTrends,
   getTrendsById,
   trendsPagination,
+  updateProductFromTrends,
   updateTrendsById,
   deleteTrendsById,
 };

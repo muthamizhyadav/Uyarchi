@@ -35,7 +35,7 @@ const updateTrendsById = async (trendsId, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Trends not found');
   }
   console.log(trends);
-  
+
   trends = await Trends.findByIdAndUpdate({ _id: trendsId }, updateBody, { new: true });
   return trends;
 };
@@ -49,11 +49,16 @@ const deleteTrendsById = async (trendsId) => {
   return trends;
 };
 
+const updateProductFromTrends = async (id,updateBody) =>{
+  return  await Trends.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+}
+
 module.exports = {
   createTrends,
   trendsPagination,
   getAllTrends,
   getTrendsById,
+  updateProductFromTrends,
   updateTrendsById,
   deleteTrendsById,
 };

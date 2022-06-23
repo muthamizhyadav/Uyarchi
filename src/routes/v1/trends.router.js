@@ -7,6 +7,6 @@ router
   .get(trendsController.getTrendsById)
   .put(trendsController.updateTrendsById)
   .delete(trendsController.deleteTrendsById);
-router.route('/pagination/:id').get(trendsController.trendsPagination)
-
-module.exports = router
+router.route('/pagination/:id').get(trendsController.trendsPagination);
+router.route('/updateProduct/FromTrends/:id').get(trendsController.updateProductFromTrends);
+module.exports = router;
