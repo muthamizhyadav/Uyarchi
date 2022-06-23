@@ -267,7 +267,14 @@ const updateTrendsById = async (id, body) => {
 };
 
 const getShopsByIdFromTrends = async(id)=>{
-  return "triggerd"
+  const date = new Date();
+
+  // 👇️ 1/27/2022, 13:18:22
+  console.log(
+    date.toLocaleString('en-IN', {
+      hour12: false,
+    }),
+  );
 }
 
 module.exports = {
