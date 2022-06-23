@@ -41,10 +41,10 @@ const trendsSchema = new mongoose.Schema({
     type: Number,
   },
   fulldate: {
-    type: String,
+    type: Number,
   },
   created: {
-    type: String,
+    type: Number,
   },
   active: {
     type: Boolean,
