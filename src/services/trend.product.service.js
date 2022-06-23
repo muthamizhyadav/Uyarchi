@@ -257,11 +257,10 @@ const getProductCalculation = async (wardId, street, productId, date) => {
 };
 
 const updateTrendsById = async (id, body) => {
-  let trendproduct = await TrendProduct.findById(id);
+  let trendproduct = await TrendProduct.findOne({});
   if (!trendproduct) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
   }
-  
   console.log(trendproduct);
   trendproduct = await TrendProduct.findByIdAndUpdate({ _id: id }, body, { new: true });
   return trendproduct;
