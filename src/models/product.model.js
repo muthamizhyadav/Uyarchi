@@ -41,6 +41,12 @@ const productSchema = mongoose.Schema({
     type: String,
     enum: ['yes', 'no'],
   },
+  GST_Number: {
+    type:Number,
+  },
+  HSN_Code:{
+    type:String,
+  },
   TrendspreferredQuantity: {
     type: Number,
   },
