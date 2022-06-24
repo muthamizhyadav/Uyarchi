@@ -6,15 +6,21 @@ const createHsn = async () => {
   return 'poi Vera vela iruntha paru';
 };
 
-const getAllHsn = async (page) => {
+const getAllHsn = async (key) => {
+  let text = await key.toUpperCase();
+  console.log(text)
   return HSN.aggregate([
     {
       $sort: {
         HSN_Description: 1,
       },
     },
-    { $skip: 20 * page },
-    { $limit: 20 },
+    {
+      $match: {
+        $or: [{ HSN_Description: { $regex: text } }],
+      },
+    },
+    { $limit: 500 },
   ]);
 };
 

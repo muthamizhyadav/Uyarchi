@@ -5,7 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const hsnService = require('../services/hsn.service');
 
 const getAllHsn = catchAsync(async (req, res) => {
-  const hsn = await hsnService.getAllHsn(req.params.page);
+  const hsn = await hsnService.getAllHsn(req.params.key);
   res.send(hsn);
 });
 
