@@ -363,6 +363,14 @@ const getProductByIdWithAggregation = async (id) => {
         as: 'brandData',
       },
     },
+    {
+      $lookup: {
+        from: 'hsns',
+        localField: 'HSN_Code',
+        foreignField: '_id',
+        as: 'hsnData',
+      },
+    },
   ]);
   return product;
 };
@@ -601,6 +609,14 @@ const productaggregateById = async (page) => {
         localField: 'Brand',
         foreignField: '_id',
         as: 'brandName',
+      },
+    },
+    {
+      $lookup: {
+        from: 'hsns',
+        localField: 'HSN_Code',
+        foreignField: '_id',
+        as: 'hsnData',
       },
     },
     { $skip: 10 * page },
