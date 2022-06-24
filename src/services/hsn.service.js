@@ -8,7 +8,7 @@ const createHsn = async () => {
 
 const getAllHsn = async (key) => {
   let text = await key.toUpperCase();
-  console.log(text)
+//   console.log(text)
   return HSN.aggregate([
     {
       $sort: {
