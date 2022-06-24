@@ -84,6 +84,9 @@ const callStatusSchema = mongoose.Schema({
     type: String,
     default: '',
   },
+  billId:{
+    type:String,
+  },
   incomingQuantity: {
     type: Number,
   },

@@ -385,13 +385,14 @@ const getProductAndSupplierDetails = async (date, page) => {
     value: details,
     total: total,
   };
-};  
+};
 const updateCallStatusById = async (id, updateBody) => {
   let callstatus = await getCallStatusById(id);
   if (!callstatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus  not found');
   }
   callstatus = await CallStatus.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  callstatus = await CallStatus.updateOne({ _id: id }, {}, { new: true });
   return callstatus;
 };
 
