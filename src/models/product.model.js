@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
-const uniqueId = require('uniqid')
-let hh = uniqueId.time()
-console.log(`B${hh}`);
+
+
 const productSchema = mongoose.Schema({
   _id: {
     type: String,
