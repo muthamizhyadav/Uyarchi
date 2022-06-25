@@ -30,7 +30,6 @@ const expensesRoute = require('./expenses.route');
 const videoRecorder = require('./video.record');
 const setSalesPriceRoute = require('./setSalesPriceRoute');
 const shopOrderRoute = require('./shopOrder.route');
-const manageUserRoute = require('./manageUser.route');
 const adminRegistrationRoute = require('./adminRegistration.route');
 const manageUser = require('./manageUser.route');
 const marketRoute = require('./market.route');
@@ -57,6 +56,8 @@ const generalEnquiryRoute = require('./generalEnquiry.route');
 const trendProductRoute = require('./trend.product.route');
 const hsnRoute = require('./hsn.route');
 const manageExpenseRoute = require('./manage.expenses.route');
+const TrendsCloneRoute = require('./trendsClone.route');
+const TrendProductCloneRoute = require('./trendsProduct.clone.route');
 const defaultRoutes = [
   {
     path: '/auth',
@@ -75,6 +76,10 @@ const defaultRoutes = [
     route: trendProductRoute,
   },
   {
+    path: '/trendProductClone',
+    route: TrendProductCloneRoute,
+  },
+  {
     path: '/postorder',
     route: postOrderRoute,
   },
@@ -90,6 +95,10 @@ const defaultRoutes = [
   {
     path: '/metaUser',
     route: metaUserRoute,
+  },
+  {
+    path: '/trendsClone',
+    route: TrendsCloneRoute,
   },
   {
     path: '/b2bUsers',
