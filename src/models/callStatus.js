@@ -44,6 +44,15 @@ const callStatusSchema = mongoose.Schema({
   confirmOrder: {
     type: Number,
   },
+  logisticsCost:{
+    type:Number,
+  },
+  mislianeousCost:{
+    type: Number,
+  },
+  others:{
+    type: Number,
+  },
   phStatus: {
     type: String,
   },
@@ -84,11 +93,15 @@ const callStatusSchema = mongoose.Schema({
     type: String,
     default: '',
   },
-  billId:{
-    type:String,
+  billId: {
+    type: String,
   },
   incomingQuantity: {
     type: Number,
+  },
+  billStatus: {
+    type: String,
+    default: 'Pending',
   },
   confirmprice: {
     type: Number,
