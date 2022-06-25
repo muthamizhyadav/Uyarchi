@@ -10,8 +10,14 @@ const B2BUsersSalaryInfoSchema = new mongoose.Schema({
         type: String,
         default: v4,
     },
-    roleId: {
+    userRole: {
         type: String,
+    },
+    empId:{
+        type: String,
+    },
+    Type:{
+        type:String,
     },
     userId: {
         type: String,
@@ -23,7 +29,7 @@ const B2BUsersSalaryInfoSchema = new mongoose.Schema({
         type: String,
         default: "Active"
     },
-    activ: {
+    active: {
         type: Boolean,
         default: true,
     },
