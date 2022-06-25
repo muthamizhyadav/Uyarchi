@@ -4,6 +4,7 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const trendsCloneService = require('../services/trends.clone.service');
 const TrendproductClone = require('../models/trendsProduct.clocne.model');
+
 const createTrends = catchAsync(async (req, res) => {
   const trends = await trendsCloneService.createTrendsClone(req.body);
   req.body.product.forEach(async (e) => {
