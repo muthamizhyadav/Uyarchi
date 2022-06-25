@@ -97,6 +97,13 @@ const changePassword = catchAsync(async (req, res) => {
   const users = await b2bUsersService.changePassword(userId, req.body);
   res.send(users);
 });
+const updatemetadata= catchAsync(async (req, res) => {
+  const users = await b2bUsersService.updatemetadata(req.body);
+  res.send(users);
+});
+
+
+
 
 module.exports = {
   createB2bUsers,
@@ -112,4 +119,5 @@ module.exports = {
   updateMetaUsers,
   deleteMetaUser,
   getForMyAccount,
+  updatemetadata
 };

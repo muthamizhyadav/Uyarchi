@@ -9,7 +9,50 @@ const createUser = async (userBody) => {
 };
 
 const getAllUsers = async () => {
-  return Users.find();
+
+  return Users.aggregate([
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'userRole',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              roleName: 1
+            }
+          }
+        ],
+        as: 'RoleData',
+      },
+    },
+    {
+      $unwind: '$RoleData',
+    },
+    {
+      $lookup: {
+        from: 'musers',
+        localField: '_id',
+        foreignField: 'user_id',
+        as: 'metadatas',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        name:1,
+        email:1,
+        phoneNumber:1,
+        createdAt:1,
+        userrole: "$RoleData.roleName",
+        metavalue:"$metadatas"
+      }
+    }
+
+  ])
+
+
+
 };
 
 const UsersLogin = async (userBody) => {
@@ -125,6 +168,27 @@ const deleteMetaUser = async (id) => {
   (metauser.active = false), (metauser.archive = true), await metauser.save();
 };
 
+const updatemetadata = async (updateBody) => {
+
+  updateBody.metavalue.forEach(async (e) => {
+    console.log(e.key)
+    const metauser = await metaUsers.findOne({ user_id: updateBody.userId, metaKey: e.key });
+    let update = {
+      user_id: updateBody.userId,
+      metaKey: e.key,
+      metavalue: e.value
+    }
+    if (metauser) {
+      await metaUsers.findByIdAndUpdate({ _id: metauser.id }, update, { new: true });
+    }
+    else {
+      await metaUsers.create(update)
+    }
+  })
+  return "success";
+};
+
+
 module.exports = {
   createUser,
   UsersLogin,
@@ -138,4 +202,5 @@ module.exports = {
   getusermetaDataById,
   getForMyAccount,
   getsalesExecuteRolesUsers,
+  updatemetadata
 };
