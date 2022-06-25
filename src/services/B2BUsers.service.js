@@ -40,21 +40,17 @@ const getAllUsers = async () => {
     {
       $project: {
         _id: 1,
-        name:1,
-        email:1,
-        phoneNumber:1,
-        createdAt:1,
+        name: 1,
+        email: 1,
+        phoneNumber: 1,
+        createdAt: 1,
         userrole: "$RoleData.roleName",
-        metavalue:"$metadatas"
+        metavalue: "$metadatas"
       }
     }
 
   ])
-
-
-
 };
-
 const UsersLogin = async (userBody) => {
   const { phoneNumber, password } = userBody;
   let userName = await Users.findOne({ phoneNumber: phoneNumber });
@@ -69,8 +65,6 @@ const UsersLogin = async (userBody) => {
   }
   return userName;
 };
-
-
 const B2bUsersAdminLogin = async (userBody) => {
   const { phoneNumber, password } = userBody;
   let userName = await Users.findOne({ phoneNumber: phoneNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });

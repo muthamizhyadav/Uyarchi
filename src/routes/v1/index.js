@@ -57,10 +57,15 @@ const generalEnquiryRoute = require('./generalEnquiry.route');
 const trendProductRoute = require('./trend.product.route');
 const hsnRoute = require('./hsn.route');
 const manageExpenseRoute = require('./manage.expenses.route');
+const b2bUSerSalaryRoute = require('./b2bUser.Salary.route')
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path:'/b2bUserSalary',
+    route:b2bUSerSalaryRoute,
   },
   {
     path: '/hsn',
