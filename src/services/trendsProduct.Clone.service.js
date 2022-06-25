@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const TrendProductClone = require('../models/trendsProduct.clocne.model');
-const Trends = require('../models/trends.model');
+const Trends = require('../models/trendsClone.model');
 const { Product } = require('../models/product.model');
 const { Shop } = require('../models/apartmentTable.model');
 const moment = require('moment');
