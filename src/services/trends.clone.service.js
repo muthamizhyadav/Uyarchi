@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-const TrendsClone = require('../models/TrendsClone.model');
+const TrendsClone = require('../models/trendsClone.model');
 
 const createTrendsClone = async (body) => {
   const trendsClone = await TrendsClone.create(body);
