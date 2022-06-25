@@ -8,7 +8,7 @@ const createMetaUSers = async (body) => {
 };
 
 const getmetaUserById = async (id) => {
-  const users = await metaUser.findOne({user_id:id});
+  const users = await metaUser.find({user_id:id});
   return users;
 };
 
