@@ -44,13 +44,13 @@ const callStatusSchema = mongoose.Schema({
   confirmOrder: {
     type: Number,
   },
-  logisticsCost:{
-    type:Number,
-  },
-  mislianeousCost:{
+  logisticsCost: {
     type: Number,
   },
-  others:{
+  mislianeousCost: {
+    type: Number,
+  },
+  others: {
     type: Number,
   },
   phStatus: {
