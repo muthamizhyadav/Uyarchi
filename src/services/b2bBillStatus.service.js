@@ -44,4 +44,14 @@ const createB2bBillStatus = async (body) => {
   return creations;
 };
 
+const getDataForAccountExecutive = async (date, page) => {
+  let values = await b2bBillStatus.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }],
+      },
+    },
+  ]);
+};
+
 module.exports = { createB2bBillStatus };
