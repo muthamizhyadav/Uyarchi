@@ -33,6 +33,7 @@ const createB2bSalaryInfo = catchAsync(async (req, res) => {
     salaryInfo = await b2busersalaryController.createB2bSalaryInfo(req.body);
   }
   salaryInfo.empId = employeId;
+  await salaryInfo.save();
   res.status(httpStatus.CREATED).send(salaryInfo);
 });
 
