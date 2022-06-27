@@ -7,6 +7,7 @@ let currentDate = moment().format('DD-MM-YYYY');
 
 const createB2bBillStatus = async (body) => {
   let billcount = await b2bBillStatus.find({ date: currentDate }).count();
+  console.log(billcount)
   let center = '';
   if (billcount < 9) {
     center = '000000';
@@ -28,8 +29,11 @@ const createB2bBillStatus = async (body) => {
   }
   let total = billcount + 1;
   let billid = center + total;
-  let value = { ...body, ...{ BillId: billid } };
-  const { callStatusId, supplierid, date } = body;
+
+  const { callStatusId, supplierid, date, mislianeousCost, logisticsCost, others } = body;
+  let totalExpense = mislianeousCost + logisticsCost + others;
+  let round = Math.round(totalExpense);
+  let value = { ...body, ...{ BillId: billid, totalExpenseAmount: round } };
   let callstatus = await CallStatus.findOne({ supplierid: supplierid, date: date });
   if (!callstatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus Id Required');

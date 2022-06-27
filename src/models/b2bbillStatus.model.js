@@ -35,6 +35,13 @@ const b2bBillStatusSchema = new mongoose.Schema({
     type: String,
     default: 'Pending',
   },
+  totalExpenseAmount:{
+    type:Number,
+  },
+  PendingExpenseAmount:{
+    type:Number,
+    default:0,
+  },
   BillId: {
     type: String,
   },
