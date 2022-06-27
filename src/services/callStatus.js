@@ -392,8 +392,8 @@ const updateCallStatusById = async (id, updateBody, billid) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus  not found');
   }
   callstatus = await CallStatus.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-  console.log(callstatus)
-  callstatus = await CallStatus.updateOne({ _id: id }, { billId: billid }, { new: true });
+  callstatus = await CallStatus.findByIdAndUpdate({ _id: id }, { billId: billid }, { new: true });
+  console.log(callstatus);
   return callstatus;
 };
 

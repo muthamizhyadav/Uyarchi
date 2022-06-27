@@ -5,7 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const CallStatusService = require('../services/callStatus');
 const CallStatus = require('../models/callStatus');
 const moment = require('moment');
-const year = moment().year();
+const corrundDate = moment().format('DD-MM-YYYY');
 
 const createCallStatus = catchAsync(async (req, res) => {
   const callStatus = await CallStatusService.createCallStatus(req.body);
@@ -69,12 +69,33 @@ const getCallStatusbyId = catchAsync(async (req, res) => {
 });
 
 const updateCallStatusById = catchAsync(async (req, res) => {
-  const billcount = await CallStatus.find({ billId: 'Billed' }).count();
+  const billcount = await CallStatus.find({ billStatus: 'Billed', date:corrundDate}).count();
   const statusCheck = await CallStatus.findOne({ _id: req.params.id });
   if (statusCheck.billStatus == 'Billed') {
     throw new ApiError(httpStatus.CONFLICT, 'Already Billed');
   }
-  let billid = `B${year}00${billcount + 1}`;
+  let center = '';
+  if (billcount < 9) {
+    center = '000000';
+  }
+  if (billcount < 99 && billcount >= 9) {
+    center = '00000';
+  }
+  if (billcount < 999 && billcount >= 99) {
+    center = '0000';
+  }
+  if (billcount < 9999 && billcount >= 999) {
+    center = '000';
+  }
+  if (billcount < 99999 && billcount >= 9999) {
+    center = '00';
+  }
+  if (billcount < 999999 && billcount >= 99999) {
+    center = '0';
+  }
+ let total = billcount+1
+  let billid = center + total;
+
   const callStatus = await CallStatusService.updateCallStatusById(req.params.id, req.body, billid);
   res.send(callStatus);
 });
