@@ -16,7 +16,7 @@ router.route('/phApproved/total').get(CallStatusController.totalAggregation);
 router.route('/getAcknowledgedData/loadingExecute/:date/:page').get(CallStatusController.getAcknowledgedDataforLE);
 router.route('/getSuppplier/getproduct/details/:date/:page').get(CallStatusController.getProductAndSupplierDetails);
 router
-  .route('/addVehicleDetails/:id')
+  .route('/update/addVehicleDetails/:id')
   .put(stockImage.array('weighbridgeBill'), CallStatusController.AddVehicleDetailsInCallStatus);
 router.route('/getAcknowledgedData/:date/:page').get(CallStatusController.getAcknowledgedData);
 router.route('/getDataByVehicleNumber/:vehicleNumber/:date/:page').get(CallStatusController.getDataByVehicleNumber);

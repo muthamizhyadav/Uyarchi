@@ -44,14 +44,37 @@ const createB2bBillStatus = async (body) => {
   return creations;
 };
 
-const getDataForAccountExecutive = async (date, page) => {
+const getDataForAccountExecutive = async (page) => {
   let values = await b2bBillStatus.aggregate([
     {
-      $match: {
-        $and: [{ date: { $eq: date } }],
+      $lookup: {
+        from: 'supplier',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'supplierdata',
       },
     },
+    {
+      $unwind: '$supplierdata',
+    },
+    {
+      $project: {
+        supplierName: '$supplierData.primaryContactName',
+        supplierId: 1,
+        _id: 1,
+        BillId: 1,
+        date: 1,
+        callStatusId: 1,
+        paymentStatus: 1,
+        totalExpenseAmount: 1,
+        PendingExpenseAmount: 1,
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
+  let total = await b2bBillStatus.find().count();
+  return { values: values, total: total };
 };
 
-module.exports = { createB2bBillStatus };
+module.exports = { createB2bBillStatus, getDataForAccountExecutive };

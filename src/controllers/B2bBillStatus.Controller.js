@@ -8,4 +8,9 @@ const createB2bBillStatus = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(billStatus);
 });
 
-module.exports = { createB2bBillStatus };
+const getDataForAccountExecutive = catchAsync(async (req, res) => {
+  const billStatus = await b2bBillStatusService.getDataForAccountExecutive(req.params.page);
+  res.send(billStatus);
+});
+
+module.exports = { createB2bBillStatus, getDataForAccountExecutive };
