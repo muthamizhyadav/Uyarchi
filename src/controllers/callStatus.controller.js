@@ -3,6 +3,9 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const CallStatusService = require('../services/callStatus');
+const CallStatus = require('../models/callStatus');
+const moment = require('moment');
+const year = moment().year();
 
 const createCallStatus = catchAsync(async (req, res) => {
   const callStatus = await CallStatusService.createCallStatus(req.body);
@@ -66,7 +69,13 @@ const getCallStatusbyId = catchAsync(async (req, res) => {
 });
 
 const updateCallStatusById = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.updateCallStatusById(req.params.id, req.body);
+  const billcount = await CallStatus.find({ billId: 'Billed' }).count();
+  const statusCheck = await CallStatus.findOne({ _id: req.params.id });
+  if (statusCheck.billStatus == 'Billed') {
+    throw new ApiError(httpStatus.CONFLICT, 'Already Billed');
+  }
+  let billid = `B${year}00${billcount + 1}`;
+  const callStatus = await CallStatusService.updateCallStatusById(req.params.id, req.body, billid);
   res.send(callStatus);
 });
 

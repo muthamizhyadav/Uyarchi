@@ -15,26 +15,20 @@ const createB2bSalaryInfo = catchAsync(async (req, res) => {
     .count();
   if (salary < 9) {
     center = '0000';
-    console.log('1');
   }
   if (salary < 99 && salary >= 9) {
     center = '000';
-    console.log('2');
   }
   if (salary < 999 && salary >= 99) {
     center = '00';
-    console.log('3');
   }
   if (salary < 9999 && salary >= 999) {
     center = '0';
     console.log('4');
   }
-  console.log(salary);
   let total = salary + 1;
-
   let employeId = id + center + total;
   let salaryInfo;
-  console.log(employeId);
   let userId = req.userId;
   let userRole = req.userRole;
   if (employeId != '') {
