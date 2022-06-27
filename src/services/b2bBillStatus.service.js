@@ -30,11 +30,11 @@ const createB2bBillStatus = async (body) => {
   let total = billcount + 1;
   let billid = center + total;
 
-  const { callStatusId, supplierid, date, mislianeousCost, logisticsCost, others } = body;
+  const { callStatusId, supplierId, date, mislianeousCost, logisticsCost, others } = body;
   let totalExpense = mislianeousCost + logisticsCost + others;
   let round = Math.round(totalExpense);
   let value = { ...body, ...{ BillId: billid, totalExpenseAmount: round } };
-  let callstatus = await CallStatus.findOne({ supplierid: supplierid, date: date });
+  let callstatus = await CallStatus.findOne({ supplierid: supplierId, date: currentDate });
   if (!callstatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus Id Required');
   }
