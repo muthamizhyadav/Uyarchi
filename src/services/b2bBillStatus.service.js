@@ -48,7 +48,7 @@ const getDataForAccountExecutive = async (page) => {
   let values = await b2bBillStatus.aggregate([
     {
       $lookup: {
-        from: 'supplier',
+        from: 'suppliers',
         localField: 'supplierId',
         foreignField: '_id',
         as: 'supplierdata',
@@ -59,7 +59,7 @@ const getDataForAccountExecutive = async (page) => {
     },
     {
       $project: {
-        supplierName: '$supplierData.primaryContactName',
+        supplierName: '$supplierdata.primaryContactName',
         supplierId: 1,
         _id: 1,
         BillId: 1,
