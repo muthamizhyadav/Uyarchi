@@ -9,7 +9,7 @@ router.route('/confirmcallstatus/:id').get(CallStatusController.getCallStatusId)
 router
   .route('/:id')
   .get(CallStatusController.getCallStatusbyId)
-  // .put(CallStatusController.updateCallStatusById)
+  .put(CallStatusController.updateCallStatusById)
   .delete(CallStatusController.deleteBusinessById);
 router.route('/:id/:date').put(CallStatusController.updateCallStatusById)
 router.route('/phApproved/total').get(CallStatusController.totalAggregation);

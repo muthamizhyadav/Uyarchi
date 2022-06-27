@@ -69,34 +69,7 @@ const getCallStatusbyId = catchAsync(async (req, res) => {
 });
 
 const updateCallStatusById = catchAsync(async (req, res) => {
-  const billcount = await CallStatus.find({ billStatus: 'Billed', date: req.params.date }).count();
-  const statusCheck = await CallStatus.findOne({ vehicleNumber: req.params.id });
-  if (!statusCheck.billStatus === 'Pending') {
-    throw new ApiError(httpStatus.CONFLICT, 'Already Billed');
-  }
-  let center = '';
-  if (billcount < 9) {
-    center = '000000';
-  }
-  if (billcount < 99 && billcount >= 9) {
-    center = '00000';
-  }
-  if (billcount < 999 && billcount >= 99) {
-    center = '0000';
-  }
-  if (billcount < 9999 && billcount >= 999) {
-    center = '000';
-  }
-  if (billcount < 99999 && billcount >= 9999) {
-    center = '00';
-  }
-  if (billcount < 999999 && billcount >= 99999) {
-    center = '0';
-  }
-  let total = billcount + 1;
-  let billid = center + total;
-
-  const callStatus = await CallStatusService.updateCallStatusById(req.params.id, req.params.date, req.body, billid);
+  const callStatus = await CallStatusService.updateCallStatusById(req.params.id, req.body)
   res.send(callStatus);
 });
 

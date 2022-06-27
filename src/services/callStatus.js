@@ -74,7 +74,7 @@ const getConfirmedStockStatus = async (date, page) => {
         vehicleNumber: 1,
         driverName: 1,
         vehicleType: 1,
-        supplierid:1,
+        supplierid: 1,
         driverNumber: 1,
         weighbridgeBill: 1,
         date: 1,
@@ -419,31 +419,12 @@ const getBilledDataForAccountExecute = async (date) => {
   return value;
 };
 
-const updateCallStatusById = async (id, date, updateBody, billid) => {
-  let callstatus = await CallStatus.findOne({ vehicleNumber: id, date: date });
+const updateCallStatusById = async (id, updateBody) => {
+  let callstatus = await CallStatus.findById(id);
   if (!callstatus) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus  not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus Not Found');
   }
-  let log = updateBody.logisticsCost;
-  let miss = updateBody.mislianeousCost;
-  let other = updateBody.others;
-  let total = log + miss + other;
-  let totalCost = Math.round(total);
-  callstatus = await CallStatus.updateMany(
-    { vehicleNumber: id },
-    {
-      $set: {
-        billStatus: updateBody.billStatus,
-        logisticsCost: updateBody.logisticsCost,
-        mislianeousCost: updateBody.mislianeousCost,
-        others: updateBody.others,
-        totalExpenseAmount: totalCost,
-        billId:billid,
-      },
-    },
-    { new: true }
-  );
-  
+  callstatus = await CallStatus.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return callstatus;
 };
 
