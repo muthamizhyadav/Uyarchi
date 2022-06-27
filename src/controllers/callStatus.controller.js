@@ -69,9 +69,9 @@ const getCallStatusbyId = catchAsync(async (req, res) => {
 });
 
 const updateCallStatusById = catchAsync(async (req, res) => {
-  const billcount = await CallStatus.find({ billStatus: 'Billed', date: corrundDate }).count();
-  const statusCheck = await CallStatus.findOne({ _id: req.params.id });
-  if (statusCheck.billStatus == 'Billed') {
+  const billcount = await CallStatus.find({ billStatus: 'Billed', date: req.params.date }).count();
+  const statusCheck = await CallStatus.findOne({ vehicleNumber: req.params.id });
+  if (!statusCheck.billStatus === 'Pending') {
     throw new ApiError(httpStatus.CONFLICT, 'Already Billed');
   }
   let center = '';
@@ -95,14 +95,19 @@ const updateCallStatusById = catchAsync(async (req, res) => {
   }
   let total = billcount + 1;
   let billid = center + total;
- 
-  const callStatus = await CallStatusService.updateCallStatusById(req.params.id, req.body, billid);
+
+  const callStatus = await CallStatusService.updateCallStatusById(req.params.id, req.params.date, req.body, billid);
   res.send(callStatus);
 });
 
 const deleteBusinessById = catchAsync(async (req, res) => {
   await CallStatusService.deleteCallStatusById(req.params.id);
   res.status(httpStatus.NO_CONTENT).send();
+});
+
+const getBilledDataForAccountExecute = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.getBilledDataForAccountExecute(req.params.date);
+  res.Status(httpStatus.OK).send(callStatus);
 });
 
 const getDataByVehicleNumber = catchAsync(async (req, res) => {
@@ -133,4 +138,5 @@ module.exports = {
   getOnlyLoadedData,
   getConfirmedStockStatus,
   getAcknowledgedDataforLE,
+  getBilledDataForAccountExecute,
 };

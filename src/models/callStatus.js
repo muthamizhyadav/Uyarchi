@@ -109,6 +109,11 @@ const callStatusSchema = mongoose.Schema({
   incomingWastage: {
     type: Number,
   },
+  PaymentStatus: {
+    type: String,
+    enum: ['Pending', 'H.Paid', 'Paid'],
+    default: 'Pending',
+  },
   mislianeousCost: {
     type: Number,
   },
@@ -122,6 +127,13 @@ const callStatusSchema = mongoose.Schema({
   weighbridgeBill: {
     type: String,
     default: '',
+  },
+  totalExpenseAmount:{
+    type:Number
+  },
+  pendindExpenseAmount:{
+    type:Number,
+    default:0,
   },
   active: {
     type: Boolean,

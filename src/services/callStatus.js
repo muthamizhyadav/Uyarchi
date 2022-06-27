@@ -74,6 +74,7 @@ const getConfirmedStockStatus = async (date, page) => {
         vehicleNumber: 1,
         driverName: 1,
         vehicleType: 1,
+        supplierid:1,
         driverNumber: 1,
         weighbridgeBill: 1,
         date: 1,
@@ -379,21 +380,70 @@ const getProductAndSupplierDetails = async (date, page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-
   let total = await CallStatus.find({ confirmcallstatus: { $eq: 'Accepted' } }).count();
   return {
     value: details,
     total: total,
   };
 };
-const updateCallStatusById = async (id, updateBody, billid) => {
-  let callstatus = await getCallStatusById(id);
+
+const getBilledDataForAccountExecute = async (date) => {
+  let value = await CallStatus.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }, { confirmcallstatus: { $eq: 'Billed' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        as: 'supplierData',
+      },
+    },
+    {
+      $unwind: '$supplierData',
+    },
+    {
+      $project: {
+        supplierName: '$supplierData.primaryContactName',
+        date: 1,
+        billId: 1,
+        _id: 1,
+        supplierid: 1,
+        PaymentStatus: 1,
+      },
+    },
+  ]);
+  return value;
+};
+
+const updateCallStatusById = async (id, date, updateBody, billid) => {
+  let callstatus = await CallStatus.findOne({ vehicleNumber: id, date: date });
   if (!callstatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus  not found');
   }
-  callstatus = await CallStatus.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-  callstatus = await CallStatus.findByIdAndUpdate({ _id: id }, { billId: billid }, { new: true });
-  console.log(callstatus);
+  let log = updateBody.logisticsCost;
+  let miss = updateBody.mislianeousCost;
+  let other = updateBody.others;
+  let total = log + miss + other;
+  let totalCost = Math.round(total);
+  callstatus = await CallStatus.updateMany(
+    { vehicleNumber: id },
+    {
+      $set: {
+        billStatus: updateBody.billStatus,
+        logisticsCost: updateBody.logisticsCost,
+        mislianeousCost: updateBody.mislianeousCost,
+        others: updateBody.others,
+        totalExpenseAmount: totalCost,
+        billId:billid,
+      },
+    },
+    { new: true }
+  );
+  
   return callstatus;
 };
 
@@ -429,4 +479,5 @@ module.exports = {
   getAllConfirmStatus,
   getAcknowledgedDataforLE,
   getAcknowledgedData,
+  getBilledDataForAccountExecute,
 };
