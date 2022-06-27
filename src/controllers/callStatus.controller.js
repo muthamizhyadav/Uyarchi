@@ -69,7 +69,7 @@ const getCallStatusbyId = catchAsync(async (req, res) => {
 });
 
 const updateCallStatusById = catchAsync(async (req, res) => {
-  const billcount = await CallStatus.find({ billStatus: 'Billed', date:corrundDate}).count();
+  const billcount = await CallStatus.find({ billStatus: 'Billed', date: corrundDate }).count();
   const statusCheck = await CallStatus.findOne({ _id: req.params.id });
   if (statusCheck.billStatus == 'Billed') {
     throw new ApiError(httpStatus.CONFLICT, 'Already Billed');
@@ -93,9 +93,9 @@ const updateCallStatusById = catchAsync(async (req, res) => {
   if (billcount < 999999 && billcount >= 99999) {
     center = '0';
   }
- let total = billcount+1
+  let total = billcount + 1;
   let billid = center + total;
-
+ 
   const callStatus = await CallStatusService.updateCallStatusById(req.params.id, req.body, billid);
   res.send(callStatus);
 });
