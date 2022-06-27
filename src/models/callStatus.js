@@ -139,6 +139,9 @@ const callStatusSchema = mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  B2bBillId:{
+    type:String,
+  },
   archive: {
     type: Boolean,
     default: false,

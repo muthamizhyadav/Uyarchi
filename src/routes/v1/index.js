@@ -56,17 +56,22 @@ const generalEnquiryRoute = require('./generalEnquiry.route');
 const trendProductRoute = require('./trend.product.route');
 const hsnRoute = require('./hsn.route');
 const manageExpenseRoute = require('./manage.expenses.route');
-const b2bUSerSalaryRoute = require('./b2bUser.Salary.route')
+const b2bUSerSalaryRoute = require('./b2bUser.Salary.route');
 const TrendsCloneRoute = require('./trendsClone.route');
 const TrendProductCloneRoute = require('./trendsProduct.clone.route');
+const B2bBillStatus = require('./b2bBillStatus.Route');
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
   },
   {
-    path:'/b2bUserSalary',
-    route:b2bUSerSalaryRoute,
+    path: '/B2bBillStatus',
+    route: B2bBillStatus,
+  },
+  {
+    path: '/b2bUserSalary',
+    route: b2bUSerSalaryRoute,
   },
   {
     path: '/hsn',
