@@ -29,10 +29,8 @@ const createB2bSalaryInfo = catchAsync(async (req, res) => {
   let total = salary + 1;
   let employeId = id + center + total;
   let salaryInfo;
-  let userId = req.userId;
-  let userRole = req.userRole;
   if (employeId != '') {
-    salaryInfo = await b2busersalaryController.createB2bSalaryInfo(userId, userRole, req.body);
+    salaryInfo = await b2busersalaryController.createB2bSalaryInfo(req.body);
   }
   salaryInfo.empId = employeId;
   res.status(httpStatus.CREATED).send(salaryInfo);

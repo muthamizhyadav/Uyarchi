@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { Users } = require('../models/B2Busers.model');
 const metaUsers = require('../models/userMeta.model');
+const Role = require('../models/roles.model')
 const bcrypt = require('bcryptjs');
 const ApiError = require('../utils/ApiError');
 
@@ -8,8 +9,17 @@ const createUser = async (userBody) => {
   return Users.create(userBody);
 };
 
-const getAllUsers = async () => {
+const getUsersById = async (id) => {
+  let user = await Users.findById(id);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Users Not Found');
+  }
+  let role = await Role.findOne({_id:user.userRole})
 
+  return {userData:user, RoleData:role};
+};
+
+const getAllUsers = async () => {
   return Users.aggregate([
     {
       $lookup: {
@@ -19,9 +29,9 @@ const getAllUsers = async () => {
         pipeline: [
           {
             $project: {
-              roleName: 1
-            }
-          }
+              roleName: 1,
+            },
+          },
         ],
         as: 'RoleData',
       },
@@ -44,12 +54,11 @@ const getAllUsers = async () => {
         email: 1,
         phoneNumber: 1,
         createdAt: 1,
-        userrole: "$RoleData.roleName",
-        metavalue: "$metadatas"
-      }
-    }
-
-  ])
+        userrole: '$RoleData.roleName',
+        metavalue: '$metadatas',
+      },
+    },
+  ]);
 };
 const UsersLogin = async (userBody) => {
   const { phoneNumber, password } = userBody;
@@ -118,9 +127,9 @@ const getForMyAccount = async (userId) => {
 };
 
 const getsalesExecuteRolesUsers = async () => {
-  let users = await Users.find({ userRole: "fb0dd028-c608-4caa-a7a9-b700389a098d" })
-  return users
-}
+  let users = await Users.find({ userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
+  return users;
+};
 
 const changePassword = async (userId, body) => {
   let user = await Users.findById(userId);
@@ -163,25 +172,22 @@ const deleteMetaUser = async (id) => {
 };
 
 const updatemetadata = async (updateBody) => {
-
   updateBody.metavalue.forEach(async (e) => {
-    console.log(e.key)
+    console.log(e.key);
     const metauser = await metaUsers.findOne({ user_id: updateBody.userId, metaKey: e.key });
     let update = {
       user_id: updateBody.userId,
       metaKey: e.key,
-      metavalue: e.value
-    }
+      metavalue: e.value,
+    };
     if (metauser) {
       await metaUsers.findByIdAndUpdate({ _id: metauser.id }, update, { new: true });
+    } else {
+      await metaUsers.create(update);
     }
-    else {
-      await metaUsers.create(update)
-    }
-  })
-  return "success";
+  });
+  return 'success';
 };
-
 
 module.exports = {
   createUser,
@@ -193,8 +199,9 @@ module.exports = {
   deleteMetaUser,
   getAllmetaUsers,
   changePassword,
+  getUsersById,
   getusermetaDataById,
   getForMyAccount,
   getsalesExecuteRolesUsers,
-  updatemetadata
+  updatemetadata,
 };

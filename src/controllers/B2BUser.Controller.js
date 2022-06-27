@@ -31,6 +31,11 @@ const getsalesExecuteRolesUsers = catchAsync(async (req, res) => {
   res.send(users);
 });
 
+const getUsersById = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.getUsersById(req.params.id);
+  res.send(users);
+});
+
 const B2bUsersAdminLogin = catchAsync(async (req, res) => {
   const users = await b2bUsersService.B2bUsersAdminLogin(req.body);
   const tokens = await tokenService.generateAuthTokens(users);
@@ -97,13 +102,10 @@ const changePassword = catchAsync(async (req, res) => {
   const users = await b2bUsersService.changePassword(userId, req.body);
   res.send(users);
 });
-const updatemetadata= catchAsync(async (req, res) => {
+const updatemetadata = catchAsync(async (req, res) => {
   const users = await b2bUsersService.updatemetadata(req.body);
   res.send(users);
 });
-
-
-
 
 module.exports = {
   createB2bUsers,
@@ -119,5 +121,6 @@ module.exports = {
   updateMetaUsers,
   deleteMetaUser,
   getForMyAccount,
-  updatemetadata
+  getUsersById,
+  updatemetadata,
 };
