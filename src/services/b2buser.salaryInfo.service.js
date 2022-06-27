@@ -39,6 +39,7 @@ const getAllDataWithAggregation = async (page) => {
         salary: 1,
         userStatus: 1,
         Type: 1,
+        empId:1,
         role: '$RoleData.roleName',
         userName: '$UserDatadata.name',
       },
