@@ -3,10 +3,7 @@ const B2bUserSalaryInfo = require('../models/b2buserSalaryInfo.model');
 const ApiError = require('../utils/ApiError');
 
 const createB2bSalaryInfo = async (body) => {
-  const { salaryInfo, userRole, userId } = body;
-  let values = {};
-  values = { ...salaryInfo, ...{ userRole: userRole, userId: userId } };
-  let creation = await B2bUserSalaryInfo.create(values);
+  let creation = await B2bUserSalaryInfo.create(body);
   return creation;
 };
 
