@@ -88,7 +88,9 @@ const ManageDeliveryExpenseBillEntry = async (id, updateBody) => {
   let payamt = updateBody.payAmount;
   if (updateBody.mislianeousCost) {
     let cal = b2bbillstatus.mislianeousCost - updateBody.mislianeousCost;
+    let totalupd = b2bbillstatus.PendingExpenseAmount - updateBody.mislianeousCost;
     b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { mislianeousCost: cal }, { new: true });
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { PendingExpenseAmount: totalupd }, { new: true });
     b2bbillstatus = await b2bBillStatus.findByIdAndUpdate(
       { _id: id },
       { payAmount: updateBody.mislianeousCost },
@@ -97,9 +99,9 @@ const ManageDeliveryExpenseBillEntry = async (id, updateBody) => {
   }
   if (updateBody.logisticsCost) {
     let cal = b2bbillstatus.logisticsCost - updateBody.logisticsCost;
-    let totalupd = b2bbillstatus.totalExpenseAmount - cal;
+    let totalupd = b2bbillstatus.PendingExpenseAmount - updateBody.logisticsCost;
     b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { logisticsCost: cal }, { new: true });
-    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { totalExpenseAmount: totalupd }, { new: true });
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { PendingExpenseAmount: totalupd }, { new: true });
     b2bbillstatus = await b2bBillStatus.findByIdAndUpdate(
       { _id: id },
       { payAmount: updateBody.logisticsCost },
@@ -108,16 +110,21 @@ const ManageDeliveryExpenseBillEntry = async (id, updateBody) => {
   }
   if (updateBody.others) {
     let cal = b2bbillstatus.others - updateBody.others;
+    let totalupd = b2bbillstatus.PendingExpenseAmount - updateBody.others;
     b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { others: cal }, { new: true });
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { PendingExpenseAmount: totalupd }, { new: true });
     b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { payAmount: updateBody.others }, { new: true });
   }
   if (updateBody.All) {
     let cal = b2bbillstatus.totalExpenseAmount - updateBody.All;
-    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { totalExpenseAmount: cal }, { new: true });
+    let totalupd = b2bbillstatus.PendingExpenseAmount - updateBody.All;
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { others: cal }, { new: true });
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { PendingExpenseAmount: totalupd }, { new: true });
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { paymentStatus: 'Paid' }, { new: true });
     b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { payAmount: updateBody.All }, { new: true });
   }
   let payAmountCal = b2bbillstatus.payAmount;
-  let existTotal = b2bbillstatus.totalExpenseAmount;
+  let existTotal = b2bbillstatus.PendingExpenseAmount;
   let totalamt = payAmountCal - existTotal;
 
   if (totalamt == 0) {
@@ -136,7 +143,7 @@ const ManageDeliveryExpenseBillEntry = async (id, updateBody) => {
   // if (cal == total) {
   //   b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { paymentStatus: 'Pending' }, { new: true });
   // }
-  b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  // b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
 
   // b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, {}, { new: true });
   return b2bbillstatus;
