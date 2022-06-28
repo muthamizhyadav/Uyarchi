@@ -82,7 +82,7 @@ const getBillstatusById = async (id) => {
   if (!billStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
   }
-  return b2bBillStatus;
+  return billStatus;
 };
 
 const ManageDeliveryExpenseBillEntry = async (id, updateBody) => {
