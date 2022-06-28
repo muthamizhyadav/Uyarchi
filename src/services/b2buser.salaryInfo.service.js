@@ -39,7 +39,7 @@ const getAllDataWithAggregation = async (page) => {
         salary: 1,
         userStatus: 1,
         Type: 1,
-        empId:1,
+        empId: 1,
         role: '$RoleData.roleName',
         userName: '$UserDatadata.name',
       },
@@ -49,7 +49,16 @@ const getAllDataWithAggregation = async (page) => {
   return { values: values, total: total };
 };
 
+const updateuserStatus = async (id) => {
+  let b2buserSalary = await B2bUserSalaryInfo.findById(id);
+  if (!b2buserSalary) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'B2bUserSalaryInfo Not Found');
+  }
+  b2buserSalary = await B2bUserSalaryInfo.findByIdAndUpdate({ _id: id }, { userStatus: 'Passive' }, { new: true });
+};
+
 module.exports = {
   createB2bSalaryInfo,
   getAllDataWithAggregation,
+  updateuserStatus,
 };

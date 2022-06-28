@@ -33,8 +33,8 @@ const createB2bBillStatus = async (body) => {
   const { callStatusId, supplierId, date, mislianeousCost, logisticsCost, others, vehicleNumber } = body;
   let totalExpense = mislianeousCost + logisticsCost + others;
   let round = Math.round(totalExpense);
-  let value = { ...body, ...{ BillId: billid, totalExpenseAmount: round } };
-  let callstatus = await CallStatus.find({vehicleNumber: vehicleNumber, date: date });
+  let value = { ...body, ...{ BillId: billid, totalExpenseAmount: round, PendingExpenseAmount: round } };
+  let callstatus = await CallStatus.find({ vehicleNumber: vehicleNumber, date: date });
   let creations = await b2bBillStatus.create(value);
   callstatus = await CallStatus.updateMany(
     { vehicleNumber: vehicleNumber, date: date },
@@ -78,4 +78,68 @@ const getDataForAccountExecutive = async (page) => {
   return { values: values, total: total };
 };
 
-module.exports = { createB2bBillStatus, getDataForAccountExecutive };
+const ManageDeliveryExpenseBillEntry = async (id, updateBody) => {
+  let b2bbillstatus = await b2bBillStatus.findById(id);
+  if (!b2bbillstatus || b2bbillstatus == null) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'b2bBillStatus Not Found');
+  }
+  // let pending = b2bbillstatus.PendingExpenseAmount;
+  let total = b2bbillstatus.totalExpenseAmount;
+  let payamt = updateBody.payAmount;
+  if (updateBody.mislianeousCost) {
+    let cal = b2bbillstatus.mislianeousCost - updateBody.mislianeousCost;
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { mislianeousCost: cal }, { new: true });
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate(
+      { _id: id },
+      { payAmount: updateBody.mislianeousCost },
+      { new: true }
+    );
+  }
+  if (updateBody.logisticsCost) {
+    let cal = b2bbillstatus.logisticsCost - updateBody.logisticsCost;
+    let totalupd = b2bbillstatus.totalExpenseAmount - cal;
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { logisticsCost: cal }, { new: true });
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { totalExpenseAmount: totalupd }, { new: true });
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate(
+      { _id: id },
+      { payAmount: updateBody.logisticsCost },
+      { new: true }
+    );
+  }
+  if (updateBody.others) {
+    let cal = b2bbillstatus.others - updateBody.others;
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { others: cal }, { new: true });
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { payAmount: updateBody.others }, { new: true });
+  }
+  if (updateBody.All) {
+    let cal = b2bbillstatus.totalExpenseAmount - updateBody.All;
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { totalExpenseAmount: cal }, { new: true });
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { payAmount: updateBody.All }, { new: true });
+  }
+  let payAmountCal = b2bbillstatus.payAmount;
+  let existTotal = b2bbillstatus.totalExpenseAmount;
+  let totalamt = payAmountCal - existTotal;
+
+  if (totalamt == 0) {
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { paymentStatus: 'Paid' }, { new: true });
+  }
+  if (!totalamt == 0) {
+    b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { paymentStatus: 'H.Paid' }, { new: true });
+  }
+  // if (cal === 0) {
+  //   b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { paymentStatus: 'Paid' }, { new: true });
+  // }
+  // if (cal !== 0) {
+  //   b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { PendingExpenseAmount: cal }, { new: true });
+  //   b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { paymentStatus: 'H Paid' }, { new: true });
+  // }
+  // if (cal == total) {
+  //   b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { paymentStatus: 'Pending' }, { new: true });
+  // }
+  b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+
+  // b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, {}, { new: true });
+  return b2bbillstatus;
+};
+
+module.exports = { createB2bBillStatus, getDataForAccountExecutive, ManageDeliveryExpenseBillEntry };

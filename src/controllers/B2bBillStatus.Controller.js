@@ -13,4 +13,9 @@ const getDataForAccountExecutive = catchAsync(async (req, res) => {
   res.send(billStatus);
 });
 
-module.exports = { createB2bBillStatus, getDataForAccountExecutive };
+const ManageDeliveryExpenseBillEntry = catchAsync(async (req, res) => {
+  const billStatus = await b2bBillStatusService.ManageDeliveryExpenseBillEntry(req.params.id, req.body);
+  res.status(httpStatus.CREATED).send(billStatus);
+});
+
+module.exports = { createB2bBillStatus, getDataForAccountExecutive, ManageDeliveryExpenseBillEntry };

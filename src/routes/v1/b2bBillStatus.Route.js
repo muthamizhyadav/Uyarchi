@@ -3,5 +3,6 @@ const b2bbillStatusController = require('../../controllers/B2bBillStatus.Control
 const router = express.Router();
 
 router.route('/').post(b2bbillStatusController.createB2bBillStatus);
-router.route('/:page').get(b2bbillStatusController.getDataForAccountExecutive)
+router.route('/:page').get(b2bbillStatusController.getDataForAccountExecutive);
+router.route('/:id').put(b2bbillStatusController.ManageDeliveryExpenseBillEntry);
 module.exports = router;
