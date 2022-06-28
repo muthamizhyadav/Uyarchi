@@ -55,6 +55,7 @@ const updateuserStatus = async (id) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'B2bUserSalaryInfo Not Found');
   }
   b2buserSalary = await B2bUserSalaryInfo.findByIdAndUpdate({ _id: id }, { userStatus: 'Passive' }, { new: true });
+  return b2buserSalary;
 };
 
 module.exports = {

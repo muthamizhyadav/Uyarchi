@@ -42,7 +42,13 @@ const getAllDataWithAggregation = catchAsync(async (req, res) => {
   res.send(salaryInfo);
 });
 
+const updateuserStatus = catchAsync(async (req, res) => {
+  const salaryInfo = await b2busersalaryController.updateuserStatus(req.params.id);
+  res.send(salaryInfo);
+});
+
 module.exports = {
   createB2bSalaryInfo,
   getAllDataWithAggregation,
+  updateuserStatus,
 };
