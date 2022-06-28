@@ -30,7 +30,7 @@ const createB2bBillStatus = async (body) => {
   let total = billcount + 1;
   let billid = center + total;
 
-  const { callStatusId, supplierId, date, mislianeousCost, logisticsCost, others } = body;
+  const { callStatusId, supplierId, date, mislianeousCost, logisticsCost, others, vehicleNumber } = body;
   let totalExpense = mislianeousCost + logisticsCost + others;
   let round = Math.round(totalExpense);
   let value = { ...body, ...{ BillId: billid, totalExpenseAmount: round } };
@@ -38,9 +38,13 @@ const createB2bBillStatus = async (body) => {
   if (!callstatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus Id Required');
   }
-  callstatus = await CallStatus.findByIdAndUpdate({ _id: callStatusId }, { stockStatus: 'Billed' }, { new: true });
+  callstatus = await CallStatus.findByIdAndUpdate(
+    { vehicleNumber: vehicleNumber, date: date },
+    { $set: { B2bBillId: creations.id, stockStatus: 'Billed', BillStatus: 'Billed',  } },
+    { new: true }
+  );
   let creations = await b2bBillStatus.create(value);
-  callstatus = await CallStatus.findByIdAndUpdate({ _id: callStatusId }, { B2bBillId: creations.id }, { new: true });
+  // callstatus = await CallStatus.findByIdAndUpdate({ _id: callStatusId }, { B2bBillId: creations.id }, { new: true });
   return creations;
 };
 

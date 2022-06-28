@@ -120,8 +120,12 @@ const callStatusSchema = mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  B2bBillId:{
-    type:String,
+  B2bBillId: {
+    type: String,
+  },
+  BillStatus: {
+    type: String,
+    default: 'Pending',
   },
   archive: {
     type: Boolean,
