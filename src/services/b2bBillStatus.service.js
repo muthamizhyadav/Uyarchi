@@ -41,7 +41,6 @@ const createB2bBillStatus = async (body) => {
     { $set: { B2bBillId: creations.id, stockStatus: 'Billed', BillStatus: 'Billed' } },
     { new: true }
   );
-  // callstatus = await CallStatus.findByIdAndUpdate({ _id: callStatusId }, { B2bBillId: creations.id }, { new: true });
   return creations;
 };
 
@@ -76,6 +75,14 @@ const getDataForAccountExecutive = async (page) => {
   ]);
   let total = await b2bBillStatus.find().count();
   return { values: values, total: total };
+};
+
+const getBillstatusById = async (id) => {
+  let billStatus = await b2bBillStatus.findById(id);
+  if (!billStatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  return b2bBillStatus;
 };
 
 const ManageDeliveryExpenseBillEntry = async (id, updateBody) => {
@@ -133,20 +140,39 @@ const ManageDeliveryExpenseBillEntry = async (id, updateBody) => {
   if (!totalamt == 0) {
     b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { paymentStatus: 'H.Paid' }, { new: true });
   }
-  // if (cal === 0) {
-  //   b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { paymentStatus: 'Paid' }, { new: true });
-  // }
-  // if (cal !== 0) {
-  //   b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { PendingExpenseAmount: cal }, { new: true });
-  //   b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { paymentStatus: 'H Paid' }, { new: true });
-  // }
-  // if (cal == total) {
-  //   b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, { paymentStatus: 'Pending' }, { new: true });
-  // }
-  // b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-
-  // b2bbillstatus = await b2bBillStatus.findByIdAndUpdate({ _id: id }, {}, { new: true });
   return b2bbillstatus;
 };
 
-module.exports = { createB2bBillStatus, getDataForAccountExecutive, ManageDeliveryExpenseBillEntry };
+const getBilledDataForSupplierBills = async (date, page) => {
+  let values = await b2bBillStatus.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'callstatuses',
+        localField: 'callStatusId',
+        foreignField: '_id',
+        as: 'callstatusData',
+      },
+    },
+    {
+      $unwind: '$callstatusData',
+    },
+    {},
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await CallStatus.find({ date: { $eq: date }, stockStatus: { $eq: 'Billed' } }).count();
+  return { values: values, total: total };
+};
+
+module.exports = {
+  createB2bBillStatus,
+  getDataForAccountExecutive,
+  ManageDeliveryExpenseBillEntry,
+  getBilledDataForSupplierBills,
+  getBillstatusById,
+};

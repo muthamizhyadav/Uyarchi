@@ -18,4 +18,20 @@ const ManageDeliveryExpenseBillEntry = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(billStatus);
 });
 
-module.exports = { createB2bBillStatus, getDataForAccountExecutive, ManageDeliveryExpenseBillEntry };
+const getBilledDataForSupplierBills = catchAsync(async (req, res) => {
+  const billStatus = await b2bBillStatusService.getBilledDataForSupplierBills(req.params.date, req.params.page);
+  res.send(billStatus);
+});
+
+const getBillstatusById = catchAsync(async (req, res) => {
+  const billStatus = await b2bBillStatusService.getBillstatusById(req.params.id);
+  res.send(billStatus);
+});
+
+module.exports = {
+  createB2bBillStatus,
+  getDataForAccountExecutive,
+  ManageDeliveryExpenseBillEntry,
+  getBilledDataForSupplierBills,
+  getBillstatusById,
+};
