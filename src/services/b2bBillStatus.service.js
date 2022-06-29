@@ -146,15 +146,18 @@ const ManageDeliveryExpenseBillEntry = async (id, updateBody) => {
 const getBilledDataForSupplierBills = async (date, page) => {
   let values = await b2bBillStatus.aggregate([
     {
-      $match: {
-        $and: [{ date: { $eq: date } }],
-      },
-    },
-    {
       $lookup: {
         from: 'callstatuses',
-        localField: 'callStatusId',
-        foreignField: '_id',
+        let: { confirmPrice: '$confirmprice', stockStatus: '$stockStatus' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [{ $gt: ['$confirmprice', 0] }, { $eq: ['$stockStatus', 'Billed'] }],
+              },
+            },
+          },
+        ],
         as: 'callstatusData',
       },
     },
@@ -170,13 +173,16 @@ const getBilledDataForSupplierBills = async (date, page) => {
       },
     },
     {
-      $unwind:'$supplierData'
+      $unwind: '$supplierData',
     },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await CallStatus.find({ date: { $eq: date }, stockStatus: { $eq: 'Billed' } }).count();
-  return { values: values, total: total };
+  let call = [];
+  for (let i = 0; i < values.length; i++) {
+    if (values[i].callstatusData) call.push(values[i].callstatusData);
+  }
+  return { values: values, total: call.length, count: call.length };
 };
 
 module.exports = {
