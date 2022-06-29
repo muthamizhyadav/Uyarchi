@@ -161,7 +161,17 @@ const getBilledDataForSupplierBills = async (date, page) => {
     {
       $unwind: '$callstatusData',
     },
-    {},
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'callstatusData.supplierid',
+        foreignField: '_id',
+        as: 'supplierData',
+      },
+    },
+    {
+      $unwind:'$supplierData'
+    },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);

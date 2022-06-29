@@ -112,6 +112,9 @@ const callStatusSchema = mongoose.Schema({
     type: String,
     default: '',
   },
+  totalConfirmPrice: {
+    type: Number,
+  },
   weighbridgeBill: {
     type: String,
     default: '',
