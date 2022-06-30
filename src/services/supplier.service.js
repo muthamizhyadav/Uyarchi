@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const { Supplier } = require('../models');
-const { Product} = require('../models/product.model');
+const { Product } = require('../models/product.model');
 const { ProductorderSchema } = require('../models/shopOrder.model');
 const CallStatus = require('../models/callStatus');
 const createSupplier = async (supplierBody) => {
@@ -89,9 +89,51 @@ const getproductfromCallStatus = async (date) => {
   ]);
 };
 
-const getSupplierAmountDetailsForSupplierBills = async() =>{
-  let values = await Sup 
-}
+const getSupplierAmountDetailsForSupplierBills = async (page) => {
+  let values = await Supplier.aggregate([
+    {
+      // $lookup: {
+      //   from: 'callstatuses',
+      //   let: { confirmPrice: '$confirmprice', stockStatus: '$stockStatus' },
+      //   pipeline: [
+      //     {
+      //       $match: {
+      //         $expr: {
+      //           $and: [{ $gt: ['$confirmprice', 0] }, { $eq: ['$stockStatus', 'Billed'] }],
+      //         },
+      //       },
+      //     },
+      //   ],
+      //   as: 'callstatusData',
+      // },
+      $lookup: {
+        from: 'callstatuses',
+        localField: '_id',
+        foreignField: 'supplierid',
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [{ $gt: ['$PendingTotalConfirmedAmt', 0] }, { $eq: ['$stockStatus', 'Billed'] }],
+              },
+            },
+          },
+        ],
+        as: 'callstatusData',
+      },
+    },
+    {
+      $project: {
+        TotalPendingAmt: { $sum: '$callstatusData.PendingTotalConfirmedAmt' },
+        TotalPendingBills: { $size: '$callstatusData.PendingTotalConfirmedAmt' },
+        supplierid: '$callstatusData.supplierid',
+        primaryContactName: 1,
+        _id: 1,
+      },
+    },
+  ]);
+  return values;
+};
 
 const updateDisableSupplierById = async (id) => {
   let supplier = await getDisableSupplierById(id);
@@ -286,4 +328,5 @@ module.exports = {
   recoverById,
   getproductsWithSupplierId,
   getAllDisableSupplier,
+  getSupplierAmountDetailsForSupplierBills,
 };

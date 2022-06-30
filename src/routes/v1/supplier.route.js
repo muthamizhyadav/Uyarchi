@@ -17,5 +17,6 @@ router
 router.route('/products/dealing/:id/:date').get(supplierController.productDealingWithsupplier);
 router.route('/dealing/:date').get(supplierController.getSupplierWithApprovedstatus);
 router.route('/product/supplier/:supplierId/:date').get(supplierController.getproductsWithSupplierId);
-router.route('/products/aggregate/:date').get(supplierController.getproductfromCallStatus)
+router.route('/products/aggregate/:date').get(supplierController.getproductfromCallStatus);
+router.route('/supplierPendingAmounts/:page').get(supplierController.getSupplierAmountDetailsForSupplierBills);
 module.exports = router;
