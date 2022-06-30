@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const { CallStatus } = require('../models');
+const Supplier = require('../models/supplier.model');
 const ApiError = require('../utils/ApiError');
 
 const createCallStatus = async (callStatusBody) => {
@@ -434,6 +435,11 @@ const AddVehicleDetailsInCallStatus = async (id, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus Not Found');
   }
   callstatus = await CallStatus.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  callstatus = await CallStatus.findByIdAndUpdate(
+    { _id: id },
+    { PendingTotalConfirmedAmt: updateBody.totalConfirmPrice },
+    { new: true }
+  );
   return callstatus;
 };
 

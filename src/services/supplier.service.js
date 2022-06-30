@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const { Supplier } = require('../models');
-const { Product } = require('../models/product.model');
+const { Product} = require('../models/product.model');
 const { ProductorderSchema } = require('../models/shopOrder.model');
 const CallStatus = require('../models/callStatus');
 const createSupplier = async (supplierBody) => {
@@ -88,6 +88,10 @@ const getproductfromCallStatus = async (date) => {
     },
   ]);
 };
+
+const getSupplierAmountDetailsForSupplierBills = async() =>{
+  let values = await Sup 
+}
 
 const updateDisableSupplierById = async (id) => {
   let supplier = await getDisableSupplierById(id);

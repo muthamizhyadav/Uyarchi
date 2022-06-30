@@ -115,6 +115,14 @@ const callStatusSchema = mongoose.Schema({
   totalConfirmPrice: {
     type: Number,
   },
+  lastConfirmPaidAmt: {
+    type: Number,
+    default: 0,
+  },
+  PendingTotalConfirmedAmt: {
+    type: Number,
+    default: 0,
+  },
   weighbridgeBill: {
     type: String,
     default: '',
