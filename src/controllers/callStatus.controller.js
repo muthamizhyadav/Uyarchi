@@ -29,7 +29,12 @@ const getCallStatusbyId = catchAsync(async (req, res) => {
 });
 
 const updateCallStatusById = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.updateCallStatusById(req.params.id, req.body)
+  const callStatus = await CallStatusService.updateCallStatusById(req.params.id, req.body);
+  res.send(callStatus);
+});
+
+const getDataWithSupplierId = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.getDataWithSupplierId(req.params.id, req.params.page);
   res.send(callStatus);
 });
 
@@ -38,12 +43,11 @@ const deleteBusinessById = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-
-
 module.exports = {
   createCallStatus,
   getProductAndSupplierDetails,
   getCallStatusbyId,
   updateCallStatusById,
   deleteBusinessById,
+  getDataWithSupplierId
 };

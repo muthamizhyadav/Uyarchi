@@ -73,6 +73,35 @@ const getProductAndSupplierDetails = async (page) => {
   };
 };
 
+const getDataWithSupplierId = async (id, page) => {
+  let values = await CallStatus.aggregate([
+    {
+      $match: {
+        $and: [
+          { supplierid: { $eq: id } },
+          { StockReceived: { $eq: 'Pending' } },
+          { confirmcallstatus: { $eq: 'Accepted' } },
+        ],
+      },
+    },
+    { $limit: 10 },
+    { $skip: 10 * page },
+  ]);
+  let total = await CallStatus.aggregate([
+    {
+      $match: {
+        $and: [
+          { supplierid: { $eq: id } },
+          { StockReceived: { $eq: 'Pending' } },
+          { confirmcallstatus: { $eq: 'Accepted' } },
+        ],
+      },
+    },
+  ]);
+  let getSupplier = await Supplier.findById(id);
+  return { values: values, total: total.length, supplier: getSupplier };
+};
+
 const updateCallStatusById = async (id, updateBody) => {
   let callstatus = await CallStatus.findById(id);
   if (!callstatus) {
@@ -97,4 +126,5 @@ module.exports = {
   updateCallStatusById,
   deleteCallStatusById,
   getProductAndSupplierDetails,
+  getDataWithSupplierId,
 };

@@ -11,4 +11,5 @@ router
   .delete(CallStatusController.deleteBusinessById);
 router.route('/:id/:date').put(CallStatusController.updateCallStatusById);
 router.route('/getSuppplier/getproduct/details/:page').get(CallStatusController.getProductAndSupplierDetails);
+router.route('/getDataWithSupplierId/:id/:page').get(CallStatusController.getDataWithSupplierId);
 module.exports = router;
