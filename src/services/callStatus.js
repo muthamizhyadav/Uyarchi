@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const { CallStatus } = require('../models');
 const Supplier = require('../models/supplier.model');
 const ApiError = require('../utils/ApiError');
-
+const { Product } = require('../models/product.model');
 const createCallStatus = async (callStatusBody) => {
   return CallStatus.create(callStatusBody);
 };
@@ -82,6 +82,43 @@ const getDataWithSupplierId = async (id, page) => {
           { StockReceived: { $eq: 'Pending' } },
           { confirmcallstatus: { $eq: 'Accepted' } },
         ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'ProductData',
+      },
+    },
+    {
+      $unwind: '$ProductData',
+    },
+    {
+      $project: {
+        _id: 1,
+        active: 1,
+        StockReceived: 1,
+        qtyOffered: 1,
+        strechedUpto: 1,
+        price: 1,
+        status: 1,
+        requestAdvancePayment: 1,
+        callstatus: 1,
+        callDetail: 1,
+        productid: 1,
+        supplierid: 1,
+        date: 1,
+        time: 1,
+        phApproved: 1,
+        phStatus: 1,
+        phreason: 1,
+        confirmOrder: 1,
+        confirmcallDetail: 1,
+        confirmcallstatus: 1,
+        confirmprice: 1,
+        productTitle: '$ProductData.productTitle',
       },
     },
     { $limit: 10 },

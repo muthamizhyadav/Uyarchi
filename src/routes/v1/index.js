@@ -60,6 +60,8 @@ const b2bUSerSalaryRoute = require('./b2bUser.Salary.route');
 const TrendsCloneRoute = require('./trendsClone.route');
 const TrendProductCloneRoute = require('./trendsProduct.clone.route');
 const B2bBillStatus = require('./b2bBillStatus.Route');
+const ReceivedProduct = require('./receivedProduct.route');
+
 const defaultRoutes = [
   {
     path: '/auth',
@@ -76,6 +78,10 @@ const defaultRoutes = [
   {
     path: '/hsn',
     route: hsnRoute,
+  },
+  {
+    path: '/receivedOrders',
+    route: ReceivedProduct,
   },
   {
     path: '/manageExpenses',
