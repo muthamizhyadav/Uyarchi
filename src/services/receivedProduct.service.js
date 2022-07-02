@@ -7,11 +7,11 @@ const createReceivedProduct = async (body) => {
   return Rproduct;
 };
 
-const getAllWithPagination = async (page) => {
+const getAllWithPagination = async (page, status) => {
   let value = await ReceivedProduct.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: 'Acknowledged' } }],
+        $and: [{ status: { $eq: status } }],
       },
     },
     {
@@ -65,7 +65,7 @@ const getAllWithPagination = async (page) => {
   let total = await ReceivedProduct.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: 'Acknowledged' } }],
+        $and: [{ status: { $eq: status } }],
       },
     },
     {

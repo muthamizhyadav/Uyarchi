@@ -27,10 +27,13 @@ const createReceivedProduct = catchAsync(async (req, res) => {
 });
 
 const getAllWithPagination = catchAsync(async (req, res) => {
-  let receivedProduct = await ReceivedProductService.getAllWithPagination(req.params.page);
+  let receivedProduct = await ReceivedProductService.getAllWithPagination(req.params.page, 'Acknowledged');
   res.send(receivedProduct);
 });
-
+const getAllWithPagination_loaded = catchAsync(async (req, res) => {
+  let receivedProduct = await ReceivedProductService.getAllWithPagination(req.params.page, 'Loaded');
+  res.send(receivedProduct);
+});
 const updateReceivedProduct = catchAsync(async (req, res) => {
   let receivedProduct = await ReceivedProductService.updateReceivedProduct(req.params.id, req.body);
   res.send(receivedProduct);
@@ -46,4 +49,5 @@ module.exports = {
   getAllWithPagination,
   updateReceivedProduct,
   deleteReceivedOrdersById,
+  getAllWithPagination_loaded,
 };
