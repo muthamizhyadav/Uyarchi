@@ -88,6 +88,10 @@ const getSupplierAmountDetailsForSupplierBills = catchAsync(async (req, res) => 
   res.send(supplier);
 });
 
+const getSupplierPaymentDetailsBySupplierId = catchAsync(async (req, res) => {
+  const supplier = await supplierService.getSupplierPaymentDetailsBySupplierId(req.params.id);
+  res.send(supplier);
+});
 module.exports = {
   createSupplier,
   getproductfromCallStatus,
@@ -102,5 +106,6 @@ module.exports = {
   deleteSupplierById,
   getSupplierWithApprovedstatus,
   getSupplierById,
-  getSupplierAmountDetailsForSupplierBills
+  getSupplierAmountDetailsForSupplierBills,
+  getSupplierPaymentDetailsBySupplierId,
 };
