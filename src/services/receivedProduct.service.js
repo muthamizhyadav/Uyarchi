@@ -96,7 +96,12 @@ const getAllWithPagination = async (page) => {
 };
 
 const updateReceivedProduct = async (id, updateBody) => {
-  return 'update';
+  let receivedProduct = await ReceivedProduct.findById(id);
+  if (!receivedProduct) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not FOund');
+  }
+  receivedProduct = await ReceivedProduct.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return receivedProduct;
 };
 
 const deleteReceivedProduct = async (id) => {
