@@ -7,6 +7,40 @@ const receivedProducrSchema = new mongoose.Schema({
     type: String,
     default: v4,
   },
+  callstatus: {
+    type: Array,
+  },
+  date: {
+    type: String,
+  },
+  driverName: {
+    type: String,
+  },
+  driverNumber: {
+    type: String,
+  },
+  status: {
+    type: String,
+    default: 'Acknowledged',
+  },
+  supplierId: {
+    type: String,
+  },
+  time: {
+    type: String,
+  },
+  vehicleNumber: {
+    type: String,
+  },
+  vehicleType: {
+    type: String,
+  },
+  weighBridgeEmpty: {
+    type: String,
+  },
+  weighBridgeLoadedProduct: {
+    type: String,
+  },
 });
 
 const ReceivedProduct = mongoose.model('ReceivedProduct', receivedProducrSchema);

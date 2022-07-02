@@ -3,9 +3,26 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const ReceivedProductService = require('../services/receivedProduct.service');
-
+const ReceivedStock = require('../models/receivedStock.model');
+const CallStatus = require('../models/callStatus');
 const createReceivedProduct = catchAsync(async (req, res) => {
   let receivedProduct = await ReceivedProductService.createReceivedProduct(req.body);
+  if (receivedProduct) {
+    req.body.callstatus.forEach(async (e) => {
+      let callstatus = await CallStatus.findById(e.callstatusid);
+      const row = {
+        callstatusId: e.callstatusid,
+        supplierId: req.body.supplierId,
+        productId: callstatus.productid,
+        date: req.body.date,
+        time: req.body.time,
+        groupId: receivedProduct.id,
+        status: 'Acknowledged',
+      };
+      await ReceivedStock.create(row);
+      await CallStatus.findByIdAndUpdate({ _id: e.callstatusid }, { StockReceived: 'Received' }, { new: true });
+    });
+  }
   res.send(receivedProduct);
 });
 

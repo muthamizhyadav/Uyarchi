@@ -4,7 +4,8 @@ const ApiError = require('../utils/ApiError');
 const ReceivedProduct = require('../models/receivedProduct.model');
 
 const createReceivedProduct = async (body) => {
-  return 'hello';
+  let Rproduct = await ReceivedProduct.create(body);
+  return Rproduct;
 };
 
 const getAllWithPagination = async (page) => {

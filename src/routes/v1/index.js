@@ -80,7 +80,7 @@ const defaultRoutes = [
     route: hsnRoute,
   },
   {
-    path: '/receivedOrders',
+    path: '/receivedProduct',
     route: ReceivedProduct,
   },
   {
