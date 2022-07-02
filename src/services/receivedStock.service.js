@@ -29,10 +29,21 @@ const getDataById = async (id) => {
         time: 1,
         status: 1,
         productName: '$productsData.productTitle',
+        incomingWastage: 1,
+        incomingQuantity: 1,
       },
     },
   ]);
   return values;
 };
 
-module.exports = { getDataById };
+const updateReceivedStockById = async (id, updateBody) => {
+  let receivedStock = await ReceivedStock.findById(id);
+  if (!receivedStock) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  receivedStock = await ReceivedStock.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return receivedStock;
+};
+
+module.exports = { getDataById, updateReceivedStockById };

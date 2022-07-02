@@ -39,6 +39,12 @@ const receivedStockSchema = new mongoose.Schema({
   orderId: {
     type: String,
   },
+  incomingQuantity: {
+    type: Number,
+  },
+  incomingWastage: {
+    type: Number,
+  },
 });
 
 const ReceivedStock = mongoose.model('receivedStock', receivedStockSchema);

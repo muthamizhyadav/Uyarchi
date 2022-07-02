@@ -9,4 +9,9 @@ const getDataById = catchAsync(async (req, res) => {
   res.send(receivedStock);
 });
 
-module.exports = { getDataById };
+const updateReceivedStockById = catchAsync(async (req, res) => {
+  const receivedStock = await ReceivedStockService.updateReceivedStockById(req.params.id, req.body);
+  res.send(receivedStock);
+});
+
+module.exports = { getDataById, updateReceivedStockById };
