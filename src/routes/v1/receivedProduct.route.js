@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.route('/').post(receivedProductController.createReceivedProduct);
 
-router.route('getAll/:page').get(receivedProductController.getAllWithPagination);
+router.route('/getAll/:page').get(receivedProductController.getAllWithPagination);
 router
   .route('/:id')
   .put(receivedProductController.updateReceivedProduct)
