@@ -2,7 +2,6 @@ const httpStatus = require('http-status');
 const { ReceivedOrders } = require('../models');
 const ApiError = require('../utils/ApiError');
 const ReceivedProduct = require('../models/receivedProduct.model');
-const ReceivedStock = require('../models/receivedStock.model');
 const createReceivedProduct = async (body) => {
   let Rproduct = await ReceivedProduct.create(body);
   return Rproduct;
@@ -52,6 +51,7 @@ const getAllWithPagination = async (page) => {
         date: 1,
         time: 1,
         supplierName: '$supplierData.primaryContactName',
+        supplierContact: '$supplierData.primaryContactNumber',
         Count: '$ReceivedData.Count',
       },
     },

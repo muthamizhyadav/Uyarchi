@@ -61,6 +61,7 @@ const TrendsCloneRoute = require('./trendsClone.route');
 const TrendProductCloneRoute = require('./trendsProduct.clone.route');
 const B2bBillStatus = require('./b2bBillStatus.Route');
 const ReceivedProduct = require('./receivedProduct.route');
+const ReceivedStock = require('./receivedStock.Route');
 
 const defaultRoutes = [
   {
@@ -70,6 +71,10 @@ const defaultRoutes = [
   {
     path: '/B2bBillStatus',
     route: B2bBillStatus,
+  },
+  {
+    path: '/receivedStock',
+    route: ReceivedStock,
   },
   {
     path: '/b2bUserSalary',
