@@ -16,47 +16,7 @@ const createCallStatus = catchAsync(async (req, res) => {
 });
 
 const getProductAndSupplierDetails = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getProductAndSupplierDetails(req.params.date, req.params.page);
-  res.send(callStatus);
-});
-
-const getCallStatusId = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getAllConfirmStatus(req.params.id);
-  res.send(callStatus);
-});
-
-const totalAggregation = catchAsync(async (req, res) => {
-  const callstatus = await CallStatusService.totalAggregation();
-  res.send(callstatus);
-});
-
-const AddVehicleDetailsInCallStatus = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.AddVehicleDetailsInCallStatus(req.params.id, req.body);
-  if (req.files != null) {
-    if (req.files.length != 0) {
-      let path = '';
-      req.files.forEach(function (files, index, arr) {
-        path = 'images/stock/' + files.filename;
-      });
-      callStatus.weighbridgeBill = path;
-    }
-  }
-  await callStatus.save();
-  res.send(callStatus);
-});
-
-const getAcknowledgedData = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getAcknowledgedData(req.params.date, req.params.page);
-  res.send(callStatus);
-});
-
-const getOnlyLoadedData = catchAsync(async (req, res) => {
-  const callstatus = await CallStatusService.getOnlyLoadedData(req.params.date, req.params.page);
-  res.send(callstatus);
-});
-
-const getConfirmedStockStatus = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getConfirmedStockStatus(req.params.date, req.params.page);
+  const callStatus = await CallStatusService.getProductAndSupplierDetails(req.params.page);
   res.send(callStatus);
 });
 
@@ -78,38 +38,12 @@ const deleteBusinessById = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-const getBilledDataForAccountExecute = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getBilledDataForAccountExecute(req.params.date);
-  res.Status(httpStatus.OK).send(callStatus);
-});
 
-const getDataByVehicleNumber = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getDataByVehicleNumber(
-    req.params.vehicleNumber,
-    req.params.date,
-    req.params.page
-  );
-  res.send(callStatus);
-});
-
-const getAcknowledgedDataforLE = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getAcknowledgedDataforLE(req.params.date, req.params.page);
-  res.send(callStatus);
-});
 
 module.exports = {
   createCallStatus,
   getProductAndSupplierDetails,
   getCallStatusbyId,
   updateCallStatusById,
-  totalAggregation,
   deleteBusinessById,
-  getDataByVehicleNumber,
-  AddVehicleDetailsInCallStatus,
-  getCallStatusId,
-  getAcknowledgedData,
-  getOnlyLoadedData,
-  getConfirmedStockStatus,
-  getAcknowledgedDataforLE,
-  getBilledDataForAccountExecute,
 };
