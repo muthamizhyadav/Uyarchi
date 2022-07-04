@@ -30,10 +30,17 @@ const getAllWithPagination = catchAsync(async (req, res) => {
   let receivedProduct = await ReceivedProductService.getAllWithPagination(req.params.page, 'Acknowledged');
   res.send(receivedProduct);
 });
+
 const getAllWithPagination_loaded = catchAsync(async (req, res) => {
   let receivedProduct = await ReceivedProductService.getAllWithPagination(req.params.page, 'Loaded');
   res.send(receivedProduct);
 });
+
+const getAllWithPagination_billed = catchAsync(async (req, res) => {
+  let receivedProduct = await ReceivedProductService.getAllWithPagination(req.params.page, 'Billed');
+  res.send(receivedProduct);
+});
+
 const updateReceivedProduct = catchAsync(async (req, res) => {
   let receivedProduct = await ReceivedProductService.updateReceivedProduct(req.params.id, req.body);
   res.send(receivedProduct);
@@ -45,7 +52,7 @@ const deleteReceivedOrdersById = catchAsync(async (req, res) => {
 });
 
 const BillNumber = catchAsync(async (req, res) => {
-  const receivedProduct = await ReceivedProductService.BillNumber(req.params.id);
+  const receivedProduct = await ReceivedProductService.BillNumber(req.params.id,req.body);
   res.send(receivedProduct);
 });
 
@@ -56,4 +63,5 @@ module.exports = {
   deleteReceivedOrdersById,
   getAllWithPagination_loaded,
   BillNumber,
+  getAllWithPagination_billed,
 };

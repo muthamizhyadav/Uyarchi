@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const { ReceivedOrders } = require('../models');
 const ApiError = require('../utils/ApiError');
 const ReceivedProduct = require('../models/receivedProduct.model');
+const transportbill = require('../models/transportbill.model');
 const moment = require('moment');
 
 const createReceivedProduct = async (body) => {
@@ -115,7 +116,7 @@ const deleteReceivedProduct = async (id) => {
   await receivedProduct.save();
 };
 
-const BillNumber = async (id) => {
+const BillNumber = async (id, bodydata) => {
   let LoadedProduct = await ReceivedProduct.findById(id);
   if (!LoadedProduct) {
     throw new ApiError(httpStatus.NOT_FOUND, 'ReceivedProduct Not Found');
@@ -153,6 +154,30 @@ const BillNumber = async (id) => {
       { status: 'Billed', BillNo: billid },
       { new: true }
     );
+    if (bodydata.logisticsCost != null && bodydata.logisticsCost != '') {
+      await transportbill.create({
+        status: 'Billed',
+        billType: 'logisticsCost',
+        billAmount: bodydata.logisticsCost,
+        groupId: LoadedProduct._id,
+      });
+    }
+    if (bodydata.mislianeousCost != null && bodydata.mislianeousCost != '') {
+      await transportbill.create({
+        status: 'Billed',
+        billType: 'mislianeousCost',
+        billAmount: bodydata.mislianeousCost,
+        groupId: LoadedProduct._id,
+      });
+    }
+    if (bodydata.others != null && bodydata.others != '') {
+      await transportbill.create({
+        status: 'Billed',
+        billType: 'others',
+        billAmount: bodydata.others,
+        groupId: LoadedProduct._id,
+      });
+    }
   }
   return LoadedProduct;
 };
