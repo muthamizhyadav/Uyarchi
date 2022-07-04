@@ -164,6 +164,7 @@ const getAllWithPaginationBilled = async (page, status) => {
         supplierContact: '$supplierData.primaryContactNumber',
         Count: '$ReceivedData.Count',
         TotalExpense: '$TotalExpenseData.Counts',
+        transportHistory:'$transportBillData',
         BillNo: 1,
       },
     },
