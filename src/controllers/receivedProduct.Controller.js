@@ -37,7 +37,7 @@ const getAllWithPagination_loaded = catchAsync(async (req, res) => {
 });
 
 const getAllWithPagination_billed = catchAsync(async (req, res) => {
-  let receivedProduct = await ReceivedProductService.getAllWithPagination(req.params.page, 'Billed');
+  let receivedProduct = await ReceivedProductService.getAllWithPaginationBilled(req.params.page, 'Billed');
   res.send(receivedProduct);
 });
 
