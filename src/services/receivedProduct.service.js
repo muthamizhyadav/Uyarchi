@@ -132,6 +132,16 @@ const getAllWithPaginationBilled = async (page, status) => {
         from: 'transportbills',
         localField: '_id',
         foreignField: 'groupId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'expensesbills',
+              localField: '_id',
+              foreignField: 'billId',
+              as: 'TransactionData',
+            },
+          },
+        ],
         as: 'transportBillData',
       },
     },
@@ -147,6 +157,18 @@ const getAllWithPaginationBilled = async (page, status) => {
     {
       $unwind: '$TotalExpenseData',
     },
+    {
+      $lookup: {
+        from: 'expensesbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Counts: { $sum: '$Amount' } } }],
+        as: 'TotalPaidExpensesData',
+      },
+    },
+    // {
+    //   $unwind: '$TotalPaidExpensesData',
+    // },
     {
       $project: {
         _id: 1,
@@ -164,8 +186,9 @@ const getAllWithPaginationBilled = async (page, status) => {
         supplierContact: '$supplierData.primaryContactNumber',
         Count: '$ReceivedData.Count',
         TotalExpense: '$TotalExpenseData.Counts',
-        transportHistory:'$transportBillData',
+        transportHistory: '$transportBillData',
         BillNo: 1,
+        TotalPaidExpensesData: '$TotalPaidExpensesData',
       },
     },
     {
