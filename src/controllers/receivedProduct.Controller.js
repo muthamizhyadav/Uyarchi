@@ -52,7 +52,7 @@ const deleteReceivedOrdersById = catchAsync(async (req, res) => {
 });
 
 const BillNumber = catchAsync(async (req, res) => {
-  const receivedProduct = await ReceivedProductService.BillNumber(req.params.id,req.body);
+  const receivedProduct = await ReceivedProductService.BillNumber(req.params.id, req.body);
   res.send(receivedProduct);
 });
 
