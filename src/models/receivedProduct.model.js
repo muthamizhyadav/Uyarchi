@@ -41,6 +41,20 @@ const receivedProducrSchema = new mongoose.Schema({
   weighBridgeLoadedProduct: {
     type: String,
   },
+  billingQuantity:{
+    type:Number,
+  },
+  billingPrice:{
+    type:Number,
+  },
+  active:{
+    type: Boolean,
+    default:true,
+  },
+  archive:{
+    type: Boolean,
+    default:false,
+  },
 });
 
 const ReceivedProduct = mongoose.model('ReceivedProduct', receivedProducrSchema);
