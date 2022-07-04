@@ -1,5 +1,4 @@
 const httpStatus = require('http-status');
-const { ReceivedOrders } = require('../models');
 const ApiError = require('../utils/ApiError');
 const ReceivedProduct = require('../models/receivedProduct.model');
 const transportbill = require('../models/transportbill.model');
@@ -231,6 +230,95 @@ const getAllWithPaginationBilled = async (page, status) => {
   return { values: value, total: total.length };
 };
 
+const getAllWithPaginationBilled_Supplier = async (page, status) => {
+  let value = await ReceivedProduct.aggregate([
+    {
+      $match: {
+        $and: [{ status: { $eq: status } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Count: { $sum: 1 } } }],
+        as: 'ReceivedData',
+      },
+    },
+    {
+      $unwind: '$ReceivedData',
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'supplierData',
+      },
+    },
+    {
+      $unwind: '$supplierData',
+    },
+    {
+      $project: {
+        _id: 1,
+        status: 1,
+        vehicleType: 1,
+        vehicleNumber: 1,
+        driverName: 1,
+        driverNumber: 1,
+        weighBridgeEmpty: 1,
+        weighBridgeLoadedProduct: 1,
+        supplierId: 1,
+        date: 1,
+        time: 1,
+        supplierName: '$supplierData.primaryContactName',
+        supplierContact: '$supplierData.primaryContactNumber',
+        Count: '$ReceivedData.Count',
+        BillNo: 1,
+      },
+    },
+    {
+      $limit: 10,
+    },
+    {
+      $skip: 10 * page,
+    },
+  ]);
+  let total = await ReceivedProduct.aggregate([
+    {
+      $match: {
+        $and: [{ status: { $eq: status } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Count: { $sum: 1 } } }],
+        as: 'ReceivedData',
+      },
+    },
+    {
+      $unwind: '$ReceivedData',
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'supplierData',
+      },
+    },
+    {
+      $unwind: '$supplierData',
+    },
+  ]);
+  return { values: value, total: total.length };
+};
+
 const updateReceivedProduct = async (id, updateBody) => {
   let receivedProduct = await ReceivedProduct.findById(id);
   if (!receivedProduct) {
@@ -322,4 +410,5 @@ module.exports = {
   deleteReceivedProduct,
   BillNumber,
   getAllWithPaginationBilled,
+  getAllWithPaginationBilled_Supplier,
 };
