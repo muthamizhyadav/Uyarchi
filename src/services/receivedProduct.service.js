@@ -2,6 +2,8 @@ const httpStatus = require('http-status');
 const { ReceivedOrders } = require('../models');
 const ApiError = require('../utils/ApiError');
 const ReceivedProduct = require('../models/receivedProduct.model');
+const moment = require('moment');
+
 const createReceivedProduct = async (body) => {
   let Rproduct = await ReceivedProduct.create(body);
   return Rproduct;
@@ -105,7 +107,54 @@ const updateReceivedProduct = async (id, updateBody) => {
 };
 
 const deleteReceivedProduct = async (id) => {
-  return 'gg';
+  let receivedProduct = await ReceivedProduct.findById(id);
+  if (!receivedProduct) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'ReceivedProduct Not Found');
+  }
+  (receivedProduct.active = false), (receivedProduct.archive = true);
+  await receivedProduct.save();
+};
+
+const BillNumber = async (id) => {
+  let LoadedProduct = await ReceivedProduct.findById(id);
+  if (!LoadedProduct) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'ReceivedProduct Not Found');
+  }
+  console.log(LoadedProduct.date);
+  let receicedProduct = await ReceivedProduct.find({
+    date: LoadedProduct.date,
+    status: 'Billed',
+  }).count();
+
+  let center = '';
+  if (receicedProduct < 9) {
+    center = '000000';
+  }
+  if (receicedProduct < 99 && receicedProduct >= 9) {
+    center = '00000';
+  }
+  if (receicedProduct < 999 && receicedProduct >= 99) {
+    center = '0000';
+  }
+  if (receicedProduct < 9999 && receicedProduct >= 999) {
+    center = '000';
+  }
+  if (receicedProduct < 99999 && receicedProduct >= 9999) {
+    center = '00';
+  }
+  if (receicedProduct < 999999 && receicedProduct >= 99999) {
+    center = '0';
+  }
+  let total = receicedProduct + 1;
+  let billid = center + total;
+  if (LoadedProduct.status != 'Billed') {
+    LoadedProduct = await ReceivedProduct.findByIdAndUpdate(
+      { _id: id },
+      { status: 'Billed', BillNo: billid },
+      { new: true }
+    );
+  }
+  return LoadedProduct;
 };
 
 module.exports = {
@@ -113,4 +162,5 @@ module.exports = {
   getAllWithPagination,
   updateReceivedProduct,
   deleteReceivedProduct,
+  BillNumber,
 };

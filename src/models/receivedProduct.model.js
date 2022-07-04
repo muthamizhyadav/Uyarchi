@@ -41,19 +41,22 @@ const receivedProducrSchema = new mongoose.Schema({
   weighBridgeLoadedProduct: {
     type: String,
   },
-  billingQuantity:{
-    type:Number,
+  billingQuantity: {
+    type: Number,
   },
-  billingPrice:{
-    type:Number,
+  billingPrice: {
+    type: Number,
   },
-  active:{
+  BillNo: {
+    type: String,
+  },
+  active: {
     type: Boolean,
-    default:true,
+    default: true,
   },
-  archive:{
+  archive: {
     type: Boolean,
-    default:false,
+    default: false,
   },
 });
 

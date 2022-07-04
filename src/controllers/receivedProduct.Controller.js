@@ -44,10 +44,16 @@ const deleteReceivedOrdersById = catchAsync(async (req, res) => {
   res.send(receivedProduct);
 });
 
+const BillNumber = catchAsync(async (req, res) => {
+  const receivedProduct = await ReceivedProductService.BillNumber(req.params.id);
+  res.send(receivedProduct);
+});
+
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,
   updateReceivedProduct,
   deleteReceivedOrdersById,
   getAllWithPagination_loaded,
+  BillNumber,
 };

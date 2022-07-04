@@ -10,4 +10,5 @@ router
   .route('/:id')
   .put(receivedProductController.updateReceivedProduct)
   .delete(receivedProductController.deleteReceivedOrdersById);
+router.route('/BillNumber/:id').put(receivedProductController.BillNumber);
 module.exports = router;
