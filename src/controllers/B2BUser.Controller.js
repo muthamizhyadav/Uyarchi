@@ -107,6 +107,11 @@ const updatemetadata = catchAsync(async (req, res) => {
   res.send(users);
 });
 
+const forgotPassword = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.forgotPassword(req.body);
+  res.send(users);
+});
+
 module.exports = {
   createB2bUsers,
   getsalesExecuteRolesUsers,
@@ -123,4 +128,5 @@ module.exports = {
   getForMyAccount,
   getUsersById,
   updatemetadata,
+  forgotPassword,
 };

@@ -1,22 +1,23 @@
 const httpStatus = require('http-status');
 const { Users } = require('../models/B2Busers.model');
 const metaUsers = require('../models/userMeta.model');
-const Role = require('../models/roles.model')
+const Role = require('../models/roles.model');
 const bcrypt = require('bcryptjs');
 const ApiError = require('../utils/ApiError');
+const Textlocal = require('../config/textLocal');
 
 const createUser = async (userBody) => {
   return Users.create(userBody);
 };
-
+9;
 const getUsersById = async (id) => {
   let user = await Users.findById(id);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Users Not Found');
   }
-  let role = await Role.findOne({_id:user.userRole})
+  let role = await Role.findOne({ _id: user.userRole });
 
-  return {userData:user, RoleData:role};
+  return { userData: user, RoleData: role };
 };
 
 const getAllUsers = async () => {
@@ -60,6 +61,7 @@ const getAllUsers = async () => {
     },
   ]);
 };
+
 const UsersLogin = async (userBody) => {
   const { phoneNumber, password } = userBody;
   let userName = await Users.findOne({ phoneNumber: phoneNumber });
@@ -91,8 +93,17 @@ const B2bUsersAdminLogin = async (userBody) => {
 
 const createMetaUsers = async (userBody) => {
   const user = await metaUsers.create(userBody);
-
   return user;
+};
+
+const forgotPassword = async (body) => {
+  // const { phoneNumber } = body;
+  // await Textlocal.Otp(body);
+  let users = await Users.findOne({ phoneNumber: body.mobileNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
+  if (!users) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
+  }
+  return await Textlocal.Otp(body,users);
 };
 
 const getForMyAccount = async (userId) => {
@@ -204,4 +215,5 @@ module.exports = {
   getForMyAccount,
   getsalesExecuteRolesUsers,
   updatemetadata,
+  forgotPassword,
 };

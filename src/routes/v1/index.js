@@ -63,10 +63,15 @@ const B2bBillStatus = require('./b2bBillStatus.Route');
 const ReceivedProduct = require('./receivedProduct.route');
 const ReceivedStock = require('./receivedStock.Route');
 const TransactionRoute = require('./transaction.route');
+const SupplierBillRoute = require('./supplierbills.route');
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/supplierBills',
+    route: SupplierBillRoute,
   },
   {
     path: '/B2bBillStatus',
