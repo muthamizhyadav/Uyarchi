@@ -83,6 +83,7 @@
     "passport-jwt": "^4.0.0",
     "pm2": "^5.1.0",
     "random-key": "^0.3.2",
+    "rawurlencode": "^1.0.2",
     "serverless-http": "^3.0.1",
     "swagger-jsdoc": "^6.0.8",
     "swagger-ui-express": "^4.1.6",

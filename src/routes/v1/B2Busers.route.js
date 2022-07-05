@@ -20,4 +20,5 @@ router
 router.route('/changePassword').put(authorization, b2bUsersController.changePassword);
 router.route('/getusers/salesExecute').get(b2bUsersController.getsalesExecuteRolesUsers);
 router.route('/updatemeta/byuser').post(b2bUsersController.updatemetadata);
+router.route('/forgot-password').post(b2bUsersController.forgotPassword);
 module.exports = router;
