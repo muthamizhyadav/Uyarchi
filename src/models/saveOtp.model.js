@@ -43,7 +43,7 @@ const otpsave = mongoose.Schema({
   },
   create: {
     type: String,
-    default: moment().utcOffset('+05:30').format('h:mm a'),
+    default: moment().utcOffset('+05:30').format()
   },
 });
 otpsave.plugin(toJSON);
