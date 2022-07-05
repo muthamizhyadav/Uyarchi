@@ -93,7 +93,24 @@ const generateAuthTokens = async (user) => {
     },
   };
 };
+const generateAuthTokens_forget = async (user) => {
+  const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'days');
+  const accessToken = generateToken(user._id, user.userRole, accessTokenExpires, tokenTypes.ACCESS);
+  const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
+  const refreshToken = generateToken(user._id, user.userRole, refreshTokenExpires, tokenTypes.REFRESH);
+  await saveToken(refreshToken, user._id, user.userRole, refreshTokenExpires, tokenTypes.REFRESH);
 
+  return {
+    access: {
+      token: accessToken,
+      expires: accessTokenExpires.toDate(),
+    },
+    refresh: {
+      token: refreshToken,
+      expires: refreshTokenExpires.toDate(),
+    },
+  };
+};
 /**
  * Generate reset password token
  * @param {string} email
@@ -130,4 +147,5 @@ module.exports = {
   generateAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailToken,
+  generateAuthTokens_forget
 };

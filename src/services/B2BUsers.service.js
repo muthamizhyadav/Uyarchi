@@ -5,6 +5,7 @@ const Role = require('../models/roles.model');
 const bcrypt = require('bcryptjs');
 const ApiError = require('../utils/ApiError');
 const Textlocal = require('../config/textLocal');
+const Verfy = require('../config/OtpVerify');
 
 const createUser = async (userBody) => {
   return Users.create(userBody);
@@ -105,6 +106,17 @@ const forgotPassword = async (body) => {
   }
   return await Textlocal.Otp(body,users);
 };
+const otpVerfiy = async (body) => {
+  // const { phoneNumber } = body;
+  // await Textlocal.Otp(body);
+  let users = await Users.findOne({ phoneNumber: body.mobileNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
+  if (!users) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
+  }
+
+  return await Verfy.verfiy(body,users);
+};
+
 
 const getForMyAccount = async (userId) => {
   let values = await Users.aggregate([
@@ -216,4 +228,5 @@ module.exports = {
   getsalesExecuteRolesUsers,
   updatemetadata,
   forgotPassword,
+  otpVerfiy
 };

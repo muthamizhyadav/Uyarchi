@@ -111,6 +111,11 @@ const forgotPassword = catchAsync(async (req, res) => {
   const users = await b2bUsersService.forgotPassword(req.body);
   res.send(users);
 });
+const verfiOtp = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.otpVerfiy(req.body);
+  res.send(users);
+});
+
 
 module.exports = {
   createB2bUsers,
@@ -129,4 +134,5 @@ module.exports = {
   getUsersById,
   updatemetadata,
   forgotPassword,
+  verfiOtp
 };
