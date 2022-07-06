@@ -282,7 +282,8 @@ const getAllWithPaginationBilled_Supplier = async (id, status) => {
         billingTotal: '$ReceivedData.billingTotal',
         BillNo: 1,
         PaymentDetails: '$PaymentDetails',
-        PaymentData:'$PaymentData'
+        PaymentData: '$PaymentData',
+        pendingAmount:1,
       },
     },
   ]);
