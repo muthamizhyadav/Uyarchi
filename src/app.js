@@ -17,7 +17,6 @@ const ApiError = require('./utils/ApiError');
 const cookieparser = require('cookie-parser');
 const app = express();
 
-
 // app.use(session( { secret:'hello world',
 // store:SessionStore,
 // resave:false,
@@ -50,10 +49,10 @@ app.use(mongoSanitize());
 app.use(compression());
 
 // enable cors
-const corsconfig ={
-  credentials:true,
-  origin:"*",
-}
+const corsconfig = {
+  credentials: true,
+  origin: '*',
+};
 app.use(cors());
 app.options('*', cors());
 app.use(cookieparser());
