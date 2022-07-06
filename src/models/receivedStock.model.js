@@ -45,6 +45,12 @@ const receivedStockSchema = new mongoose.Schema({
   incomingWastage: {
     type: Number,
   },
+  billingQuantity: {
+    type: Number,
+  },
+  billingPrice: {
+    type: Number,
+  },
 });
 
 const ReceivedStock = mongoose.model('receivedStock', receivedStockSchema);

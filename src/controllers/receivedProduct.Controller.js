@@ -61,6 +61,11 @@ const BillNumber = catchAsync(async (req, res) => {
   res.send(receivedProduct);
 });
 
+const getSupplierBillsDetails = catchAsync(async (req, res) => {
+  const receivedProduct = await ReceivedProductService.getSupplierBillsDetails();
+  res.send(receivedProduct);
+});
+
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,
@@ -70,4 +75,5 @@ module.exports = {
   BillNumber,
   getAllWithPagination_billed,
   getAllWithPagination_billed_supplier,
+  getSupplierBillsDetails,
 };

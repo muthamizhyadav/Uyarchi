@@ -55,18 +55,17 @@ const saveToken = async (token, userId, userRole, expires, type, blacklisted = f
  */
 const verifyToken = async (token) => {
   const payload = jwt.verify(token, config.jwt.secret);
-  console.log(payload)
+  console.log(payload);
   // const tokenDoc = await Token.findOne({ token, type , user: payload._id, blacklisted: false });
   // console.log(payload._id)
   // if (!tokenDoc) {
   //   return "hello"
   // }
   const userss = await b2busers.findOne({ _id: payload._id });
-console.log(userss)
-if (!userss) {
-  return false;
-
-}
+  console.log(userss);
+  if (!userss) {
+    return false;
+  }
   return true;
 };
 
@@ -147,5 +146,5 @@ module.exports = {
   generateAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailToken,
-  generateAuthTokens_forget
+  generateAuthTokens_forget,
 };

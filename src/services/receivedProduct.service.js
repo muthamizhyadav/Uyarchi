@@ -401,6 +401,10 @@ const BillNumber = async (id, bodydata) => {
   return LoadedProduct;
 };
 
+const getSupplierBillsDetails = async () => {
+  return triggered;
+};
+
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,
@@ -409,4 +413,5 @@ module.exports = {
   BillNumber,
   getAllWithPaginationBilled,
   getAllWithPaginationBilled_Supplier,
+  getSupplierBillsDetails,
 };
