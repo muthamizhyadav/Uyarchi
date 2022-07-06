@@ -401,8 +401,16 @@ const BillNumber = async (id, bodydata) => {
   return LoadedProduct;
 };
 
-const getSupplierBillsDetails = async () => {
-  return triggered;
+const getSupplierBillsDetails = async (page) => {
+  let values = await Supplier.aggregate([
+    {
+      $limit: 10,
+    },
+    {
+      $skip: 10 * page,
+    },
+  ]);
+  return values;
 };
 
 module.exports = {

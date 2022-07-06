@@ -13,5 +13,5 @@ router
   .put(receivedProductController.updateReceivedProduct)
   .delete(receivedProductController.deleteReceivedOrdersById);
 router.route('/BillNumber/:id').put(receivedProductController.BillNumber);
-router.route('/getSupplierBills').get(receivedProductController.getSupplierBillsDetails);
+router.route('/getSupplierBills/:page').get(receivedProductController.getSupplierBillsDetails);
 module.exports = router;

@@ -62,7 +62,7 @@ const BillNumber = catchAsync(async (req, res) => {
 });
 
 const getSupplierBillsDetails = catchAsync(async (req, res) => {
-  const receivedProduct = await ReceivedProductService.getSupplierBillsDetails();
+  const receivedProduct = await ReceivedProductService.getSupplierBillsDetails(req.params.page);
   res.send(receivedProduct);
 });
 
