@@ -55,18 +55,17 @@ const saveToken = async (token, userId, userRole, expires, type, blacklisted = f
  */
 const verifyToken = async (token) => {
   const payload = jwt.verify(token, config.jwt.secret);
-  console.log(payload)
+  console.log(payload);
   // const tokenDoc = await Token.findOne({ token, type , user: payload._id, blacklisted: false });
   // console.log(payload._id)
   // if (!tokenDoc) {
   //   return "hello"
   // }
   const userss = await b2busers.findOne({ _id: payload._id });
-console.log(userss)
-if (!userss) {
-  return false;
-
-}
+  console.log(userss);
+  if (!userss) {
+    return false;
+  }
   return true;
 };
 
@@ -93,7 +92,24 @@ const generateAuthTokens = async (user) => {
     },
   };
 };
+const generateAuthTokens_forget = async (user) => {
+  const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'days');
+  const accessToken = generateToken(user._id, user.userRole, accessTokenExpires, tokenTypes.ACCESS);
+  const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
+  const refreshToken = generateToken(user._id, user.userRole, refreshTokenExpires, tokenTypes.REFRESH);
+  await saveToken(refreshToken, user._id, user.userRole, refreshTokenExpires, tokenTypes.REFRESH);
 
+  return {
+    access: {
+      token: accessToken,
+      expires: accessTokenExpires.toDate(),
+    },
+    refresh: {
+      token: refreshToken,
+      expires: refreshTokenExpires.toDate(),
+    },
+  };
+};
 /**
  * Generate reset password token
  * @param {string} email
@@ -130,4 +146,5 @@ module.exports = {
   generateAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailToken,
+  generateAuthTokens_forget,
 };

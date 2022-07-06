@@ -228,11 +228,11 @@ const getAllWithPaginationBilled = async (page, status) => {
   return { values: value, total: total.length };
 };
 
-const getAllWithPaginationBilled_Supplier = async (page, status) => {
+const getAllWithPaginationBilled_Supplier = async (id, status) => {
   let value = await ReceivedProduct.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: status } }],
+        $and: [{ status: { $eq: status } }, { supplierId: { $eq: id } }, { pendingAmount: { $ne: 0 } }],
       },
     },
     {
@@ -240,7 +240,7 @@ const getAllWithPaginationBilled_Supplier = async (page, status) => {
         from: 'receivedstocks',
         localField: '_id',
         foreignField: 'groupId',
-        pipeline: [{ $group: { _id: null, Count: { $sum: 1 } } }],
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
         as: 'ReceivedData',
       },
     },
@@ -249,15 +249,23 @@ const getAllWithPaginationBilled_Supplier = async (page, status) => {
     },
     {
       $lookup: {
-        from: 'suppliers',
-        localField: 'supplierId',
-        foreignField: '_id',
-        as: 'supplierData',
+        from: 'supplierbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Amount: { $sum: '$Amount' } } }],
+        as: 'PaymentDetails',
       },
     },
     {
-      $unwind: '$supplierData',
+      $lookup: {
+        from: 'supplierbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        // pipeline: [{ $group: { _id: null, Amount: { $sum: '$Amount' } } }],
+        as: 'PaymentData',
+      },
     },
+
     {
       $project: {
         _id: 1,
@@ -271,50 +279,16 @@ const getAllWithPaginationBilled_Supplier = async (page, status) => {
         supplierId: 1,
         date: 1,
         time: 1,
-        supplierName: '$supplierData.primaryContactName',
-        supplierContact: '$supplierData.primaryContactNumber',
-        Count: '$ReceivedData.Count',
+        billingTotal: '$ReceivedData.billingTotal',
         BillNo: 1,
+        PaymentDetails: '$PaymentDetails',
+        PaymentData: '$PaymentData',
+        pendingAmount: 1,
       },
-    },
-    {
-      $limit: 10,
-    },
-    {
-      $skip: 10 * page,
     },
   ]);
-  let total = await ReceivedProduct.aggregate([
-    {
-      $match: {
-        $and: [{ status: { $eq: status } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'receivedstocks',
-        localField: '_id',
-        foreignField: 'groupId',
-        pipeline: [{ $group: { _id: null, Count: { $sum: 1 } } }],
-        as: 'ReceivedData',
-      },
-    },
-    {
-      $unwind: '$ReceivedData',
-    },
-    {
-      $lookup: {
-        from: 'suppliers',
-        localField: 'supplierId',
-        foreignField: '_id',
-        as: 'supplierData',
-      },
-    },
-    {
-      $unwind: '$supplierData',
-    },
-  ]);
-  return { values: value, total: total.length };
+  let supplier = await Supplier.findById(id);
+  return { values: value, supplier: supplier };
 };
 
 const updateReceivedProduct = async (id, updateBody) => {
@@ -401,6 +375,114 @@ const BillNumber = async (id, bodydata) => {
   return LoadedProduct;
 };
 
+const getSupplierBillsDetails = async (page) => {
+  let values = await Supplier.aggregate([
+    {
+      $lookup: {
+        from: 'receivedproducts',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'receivedstocks',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
+              as: 'pendingData',
+            },
+          },
+          {
+            $unwind: '$pendingData',
+          },
+          {
+            $project: {
+              pendingData: '$pendingData',
+            },
+          },
+        ],
+        as: 'pendingDataall',
+      },
+    },
+    {
+      $lookup: {
+        from: 'receivedproducts',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $ne: [0, '$pendingAmount'],
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'supplierbills',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [{ $group: { _id: null, Amount: { $sum: '$Amount' } } }],
+              as: 'PaymentData',
+            },
+          },
+             {
+            $unwind: '$PaymentData',
+          },
+          // {
+          //   $project: {
+          //     PaymentData: '$PaymentData',
+          //   },
+          // },
+        ],
+        as: 'receivedData',
+      },
+    },
+    // {
+    //   $unwind: '$receivedData',
+    // },
+    {
+      $lookup: {
+        from: 'receivedproducts',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $ne: [0, '$pendingAmount'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+          { $group: { _id: null, total: { $sum: 1 } } },
+        ],
+        as: 'receivedDatacount',
+      },
+    },
+    {
+      $unwind: '$receivedDatacount',
+    },
+    {
+      $project: {
+        PaymentData:{ $sum: "$receivedData.PaymentData.Amount"},
+        receivedData: { $sum: '$pendingDataall.pendingData.billingTotal' },
+        primaryContactName: 1,
+        receivedDatacount: '$receivedDatacount.total',
+        primaryContactNumber: 1,
+        // totalprice: { $sum: "$receivedData.pendingData.billingTotal" },
+        _id: 1,
+      },
+    },
+    {
+      $limit: 10,
+    },
+    {
+      $skip: 10 * page,
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,
@@ -409,4 +491,5 @@ module.exports = {
   BillNumber,
   getAllWithPaginationBilled,
   getAllWithPaginationBilled_Supplier,
+  getSupplierBillsDetails,
 };

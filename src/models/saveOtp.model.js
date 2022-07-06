@@ -2,13 +2,6 @@ const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
 const moment = require('moment');
-let options = {
-    timeZone: 'asia/kolkata',
-    hour: 'numeric',
-    minute: 'numeric',
-  },
-  formatter = new Intl.DateTimeFormat([], options);
-var dt = moment(formatter.format(new Date()), ['h:mm A']).format('h:mm a');
 const otpsave = mongoose.Schema({
   name: {
     type: String,
@@ -21,17 +14,21 @@ const otpsave = mongoose.Schema({
   },
   date: {
     type: String,
-    default: moment(new Date()).format('DD-MM-yyy'),
+    default: moment().utcOffset(331).format('DD-MM-yyy'),
   },
   time: {
     type: String,
-    default: dt,
+    default: moment().utcOffset(331).format('h:mm a'),
   },
   expired: {
     type: Boolean,
   },
   userId: {
     type: String,
+  },
+  used: {
+    type: Boolean,
+    default: false,
   },
   active: {
     type: Boolean,
@@ -43,7 +40,7 @@ const otpsave = mongoose.Schema({
   },
   create: {
     type: String,
-    default: moment().utcOffset('+05:30').format()
+    default: moment().utcOffset(331).format(),
   },
 });
 otpsave.plugin(toJSON);
