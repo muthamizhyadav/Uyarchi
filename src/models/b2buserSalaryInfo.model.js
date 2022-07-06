@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 const { v4 } = require('uuid');
 
-
 const B2BUsersSalaryInfoSchema = new mongoose.Schema({
     _id: {
         type: String,

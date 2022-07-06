@@ -63,7 +63,8 @@ const B2bBillStatus = require('./b2bBillStatus.Route');
 const ReceivedProduct = require('./receivedProduct.route');
 const ReceivedStock = require('./receivedStock.Route');
 const TransactionRoute = require('./transaction.route');
-const Attendance = require('./b2bAttendance.route')
+const Attendance = require('./b2bAttendance.route');
+const wallet = require('./b2b.wallet.route');
 const SupplierBillRoute = require('./supplierbills.route');
 const defaultRoutes = [
   {
@@ -313,6 +314,10 @@ const defaultRoutes = [
   {
     path: '/attendance',
     route:  Attendance,
+  },
+  {
+    path: '/wallet',
+    route: wallet,
   }
 ];
 
