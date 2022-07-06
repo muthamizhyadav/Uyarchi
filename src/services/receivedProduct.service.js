@@ -384,9 +384,36 @@ const getSupplierBillsDetails = async (page) => {
         foreignField: 'supplierId',
         pipeline: [
           {
+            $lookup: {
+              from: 'receivedstocks',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
+              as: 'pendingData',
+            },
+          },
+          {
+            $unwind: '$pendingData',
+          },
+          {
+            $project: {
+              pendingData: '$pendingData',
+            },
+          },
+        ],
+        as: 'pendingDataall',
+      },
+    },
+    {
+      $lookup: {
+        from: 'receivedproducts',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
             $match: {
               $expr: {
-                $ne: [0, '$pendingAmount'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                $ne: [0, '$pendingAmount'],
               },
             },
           },
@@ -399,31 +426,21 @@ const getSupplierBillsDetails = async (page) => {
               as: 'PaymentData',
             },
           },
-          {
-            $lookup: {
-              from: 'receivedstocks',
-              localField: '_id',
-              foreignField: 'groupId',
-              pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
-              as: 'pendingData',
-            },
-          },
-          {
-            $unwind: '$pendingData',
+             {
+            $unwind: '$PaymentData',
           },
           // {
           //   $project: {
-          //     pendingData: '$pendingData',
-          //     // PaymentData: '$PaymentData',
+          //     PaymentData: '$PaymentData',
           //   },
           // },
         ],
         as: 'receivedData',
       },
     },
-    {
-      $unwind: '$receivedData',
-    },
+    // {
+    //   $unwind: '$receivedData',
+    // },
     {
       $lookup: {
         from: 'receivedproducts',
@@ -447,12 +464,13 @@ const getSupplierBillsDetails = async (page) => {
     },
     {
       $project: {
-        PaymentData: '$receivedData.PaymentData',
-        receivedData: '$receivedData.pendingData',
+        PaymentData:{ $sum: "$receivedData.PaymentData.Amount"},
+        receivedData: { $sum: '$pendingDataall.pendingData.billingTotal' },
         primaryContactName: 1,
-        receivedDatacount:"$receivedDatacount.total",
+        receivedDatacount: '$receivedDatacount.total',
         primaryContactNumber: 1,
-        _id:1
+        // totalprice: { $sum: "$receivedData.pendingData.billingTotal" },
+        _id: 1,
       },
     },
     {
