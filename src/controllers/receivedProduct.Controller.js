@@ -42,7 +42,7 @@ const getAllWithPagination_billed = catchAsync(async (req, res) => {
 });
 
 const getAllWithPagination_billed_supplier = catchAsync(async (req, res) => {
-  let receivedProduct = await ReceivedProductService.getAllWithPaginationBilled_Supplier(req.params.page, 'Billed');
+  let receivedProduct = await ReceivedProductService.getAllWithPaginationBilled_Supplier(req.params.id, 'Billed');
   res.send(receivedProduct);
 });
 

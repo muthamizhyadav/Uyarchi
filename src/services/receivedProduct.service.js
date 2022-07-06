@@ -228,11 +228,11 @@ const getAllWithPaginationBilled = async (page, status) => {
   return { values: value, total: total.length };
 };
 
-const getAllWithPaginationBilled_Supplier = async (page, status) => {
+const getAllWithPaginationBilled_Supplier = async (id, status) => {
   let value = await ReceivedProduct.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: status } }],
+        $and: [{ status: { $eq: status } }, { supplierId: { $eq: id } }],
       },
     },
     {
@@ -240,23 +240,12 @@ const getAllWithPaginationBilled_Supplier = async (page, status) => {
         from: 'receivedstocks',
         localField: '_id',
         foreignField: 'groupId',
-        pipeline: [{ $group: { _id: null, Count: { $sum: 1 } } }],
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
         as: 'ReceivedData',
       },
     },
     {
       $unwind: '$ReceivedData',
-    },
-    {
-      $lookup: {
-        from: 'suppliers',
-        localField: 'supplierId',
-        foreignField: '_id',
-        as: 'supplierData',
-      },
-    },
-    {
-      $unwind: '$supplierData',
     },
     {
       $project: {
@@ -271,23 +260,15 @@ const getAllWithPaginationBilled_Supplier = async (page, status) => {
         supplierId: 1,
         date: 1,
         time: 1,
-        supplierName: '$supplierData.primaryContactName',
-        supplierContact: '$supplierData.primaryContactNumber',
-        Count: '$ReceivedData.Count',
+        billingTotal: '$ReceivedData.billingTotal',
         BillNo: 1,
       },
-    },
-    {
-      $limit: 10,
-    },
-    {
-      $skip: 10 * page,
     },
   ]);
   let total = await ReceivedProduct.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: status } }],
+        $and: [{ status: { $eq: status } }, { supplierId: { $eq: id } }],
       },
     },
     {
@@ -295,26 +276,16 @@ const getAllWithPaginationBilled_Supplier = async (page, status) => {
         from: 'receivedstocks',
         localField: '_id',
         foreignField: 'groupId',
-        pipeline: [{ $group: { _id: null, Count: { $sum: 1 } } }],
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
         as: 'ReceivedData',
       },
     },
     {
       $unwind: '$ReceivedData',
     },
-    {
-      $lookup: {
-        from: 'suppliers',
-        localField: 'supplierId',
-        foreignField: '_id',
-        as: 'supplierData',
-      },
-    },
-    {
-      $unwind: '$supplierData',
-    },
   ]);
-  return { values: value, total: total.length };
+  let supplier = await Supplier.findById(id);
+  return { values: value, total: total.length, supplier: supplier };
 };
 
 const updateReceivedProduct = async (id, updateBody) => {

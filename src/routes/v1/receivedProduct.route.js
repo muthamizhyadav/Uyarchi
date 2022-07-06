@@ -7,7 +7,7 @@ router.route('/').post(receivedProductController.createReceivedProduct);
 router.route('/getAll/:page').get(receivedProductController.getAllWithPagination);
 router.route('/getloaded/:page').get(receivedProductController.getAllWithPagination_loaded);
 router.route('/getbilled/:page').get(receivedProductController.getAllWithPagination_billed);
-router.route('/getbilled/supplier/:page').get(receivedProductController.getAllWithPagination_billed_supplier);
+router.route('/getbilled/supplier/:id').get(receivedProductController.getAllWithPagination_billed_supplier);
 router
   .route('/:id')
   .put(receivedProductController.updateReceivedProduct)
