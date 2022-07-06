@@ -31,11 +31,11 @@ router
   .get(marketController.getmarketCloneById)
   .put(marketController.updatemarketClone)
   .delete(marketController.updatemarketClone);
-router.route('/marketClone/aggregation/:page').get(marketController.getMarketCloneWithAggregation)
-router.route('/marketShopClone/aggregation/Shop/:page').get(marketController.getmarketShopCloneWithAggregation)
+router.route('/marketClone/aggregation/:page').get(marketController.getMarketCloneWithAggregation);
+router.route('/marketShopClone/aggregation/Shop/:page').get(marketController.getmarketShopCloneWithAggregation);
 
 // marketShop Clone
-router.route('/marketShop/WithMarketId/:id/:page').get(marketController.getMarketShopsbyMarketId)
+router.route('/marketShop/WithMarketId/:id/:page').get(marketController.getMarketShopsbyMarketId);
 router
   .route('/market/shop/clone')
   .post(authorization, marketShopClone.array('image'), marketController.createmarketShopCloneService)
