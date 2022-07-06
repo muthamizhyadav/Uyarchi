@@ -283,7 +283,7 @@ const getAllWithPaginationBilled_Supplier = async (id, status) => {
         BillNo: 1,
         PaymentDetails: '$PaymentDetails',
         PaymentData: '$PaymentData',
-        pendingAmount:1,
+        pendingAmount: 1,
       },
     },
   ]);
@@ -377,6 +377,84 @@ const BillNumber = async (id, bodydata) => {
 
 const getSupplierBillsDetails = async (page) => {
   let values = await Supplier.aggregate([
+    {
+      $lookup: {
+        from: 'receivedproducts',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $ne: [0, '$pendingAmount'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'supplierbills',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [{ $group: { _id: null, Amount: { $sum: '$Amount' } } }],
+              as: 'PaymentData',
+            },
+          },
+          {
+            $lookup: {
+              from: 'receivedstocks',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
+              as: 'pendingData',
+            },
+          },
+          {
+            $unwind: '$pendingData',
+          },
+          // {
+          //   $project: {
+          //     pendingData: '$pendingData',
+          //     // PaymentData: '$PaymentData',
+          //   },
+          // },
+        ],
+        as: 'receivedData',
+      },
+    },
+    {
+      $unwind: '$receivedData',
+    },
+    {
+      $lookup: {
+        from: 'receivedproducts',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $ne: [0, '$pendingAmount'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+          { $group: { _id: null, total: { $sum: 1 } } },
+        ],
+        as: 'receivedDatacount',
+      },
+    },
+    {
+      $unwind: '$receivedDatacount',
+    },
+    {
+      $project: {
+        PaymentData: '$receivedData.PaymentData',
+        receivedData: '$receivedData.pendingData',
+        primaryContactName: 1,
+        receivedDatacount:"$receivedDatacount.total",
+        primaryContactNumber: 1,
+        _id:1
+      },
+    },
     {
       $limit: 10,
     },
