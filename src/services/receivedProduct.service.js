@@ -232,7 +232,7 @@ const getAllWithPaginationBilled_Supplier = async (id, status) => {
   let value = await ReceivedProduct.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: status } }, { supplierId: { $eq: id } }],
+        $and: [{ status: { $eq: status } }, { supplierId: { $eq: id } }, { pendingAmount: { $ne: 0 } }],
       },
     },
     {
@@ -256,6 +256,15 @@ const getAllWithPaginationBilled_Supplier = async (id, status) => {
         as: 'PaymentDetails',
       },
     },
+    {
+      $lookup: {
+        from: 'supplierbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        // pipeline: [{ $group: { _id: null, Amount: { $sum: '$Amount' } } }],
+        as: 'PaymentData',
+      },
+    },
 
     {
       $project: {
@@ -273,6 +282,7 @@ const getAllWithPaginationBilled_Supplier = async (id, status) => {
         billingTotal: '$ReceivedData.billingTotal',
         BillNo: 1,
         PaymentDetails: '$PaymentDetails',
+        PaymentData:'$PaymentData'
       },
     },
   ]);
