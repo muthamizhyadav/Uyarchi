@@ -248,6 +248,16 @@ const getAllWithPaginationBilled_Supplier = async (id, status) => {
       $unwind: '$ReceivedData',
     },
     {
+      $lookup: {
+        from: 'supplierbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Amount: { $sum: '$Amount' } } }],
+        as: 'PaymentDetails',
+      },
+    },
+
+    {
       $project: {
         _id: 1,
         status: 1,
@@ -262,6 +272,7 @@ const getAllWithPaginationBilled_Supplier = async (id, status) => {
         time: 1,
         billingTotal: '$ReceivedData.billingTotal',
         BillNo: 1,
+        PaymentDetails: '$PaymentDetails',
       },
     },
   ]);

@@ -50,6 +50,9 @@ const receivedProducrSchema = new mongoose.Schema({
   BillNo: {
     type: String,
   },
+  pendingAmount: {
+    type: Number,
+  },
   active: {
     type: Boolean,
     default: true,
