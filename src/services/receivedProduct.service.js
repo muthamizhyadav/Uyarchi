@@ -265,27 +265,8 @@ const getAllWithPaginationBilled_Supplier = async (id, status) => {
       },
     },
   ]);
-  let total = await ReceivedProduct.aggregate([
-    {
-      $match: {
-        $and: [{ status: { $eq: status } }, { supplierId: { $eq: id } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'receivedstocks',
-        localField: '_id',
-        foreignField: 'groupId',
-        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
-        as: 'ReceivedData',
-      },
-    },
-    {
-      $unwind: '$ReceivedData',
-    },
-  ]);
   let supplier = await Supplier.findById(id);
-  return { values: value, total: total.length, supplier: supplier };
+  return { values: value, supplier: supplier };
 };
 
 const updateReceivedProduct = async (id, updateBody) => {
