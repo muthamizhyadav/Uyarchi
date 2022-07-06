@@ -14,11 +14,11 @@ const otpsave = mongoose.Schema({
   },
   date: {
     type: String,
-    default: moment().utcOffset(328).format('DD-MM-yyy'),
+    default: moment().utcOffset(331).format('DD-MM-yyy'),
   },
   time: {
     type: String,
-    default: moment().utcOffset(328).format('h:mm a'),
+    default: moment().utcOffset(331).format('h:mm a'),
   },
   expired: {
     type: Boolean,
@@ -40,7 +40,7 @@ const otpsave = mongoose.Schema({
   },
   create: {
     type: String,
-    default: moment().utcOffset(328).format(),
+    default: moment().utcOffset(331).format(),
   },
 });
 otpsave.plugin(toJSON);
