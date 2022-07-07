@@ -42,7 +42,6 @@ const getTrendsClone = async (wardId, street, page) => {
   } else {
     wardmatch = { active: true };
   }
-  console.log(wardmatch);
   let values = await TrendsClone.aggregate([
     {
       $match: { $and: [match] },
