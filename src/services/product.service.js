@@ -44,6 +44,130 @@ const setTrendsValueforProduct = async (id, updateBody) => {
   return product;
 };
 
+const getTrendsData = async (date, wardId, street, page) => {
+  console.log('Ward:' + wardId + 'STreet:' + street);
+  let match;
+  if (street != 'null') {
+    match = { steetId: { $eq: street } };
+  } else {
+    match = { active: true };
+  }
+  let wardmatch;
+  if (wardId != 'null') {
+    wardmatch = { wardId: wardId };
+  } else {
+    wardmatch = { active: true };
+  }
+  let values = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'trendproductsclones',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          {
+            $match: {
+              date: { $eq: date },
+            },
+          },
+          {
+            $match: { $and: [match] },
+          },
+          {
+            $lookup: {
+              from: 'streets',
+              localField: 'steetId',
+              foreignField: '_id',
+              pipeline: [{ $match: wardmatch }],
+              as: 'StreetData',
+            },
+          },
+          { $group: { _id: null, Avg: { $avg: '$Rate' }, Max: { $max: '$Rate' }, Min: { $min: '$Rate' } } },
+        ],
+        as: 'Productdata',
+      },
+    },
+    {
+      $unwind: '$Productdata',
+    },
+    {
+      $lookup: {
+        from: 'trendproductsclones',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          {
+            $match: {
+              date: { $eq: date },
+            },
+          },
+          {
+            $match: { $and: [match] },
+          },
+          {
+            $lookup: {
+              from: 'marketshopsclones',
+              localField: 'shopId',
+              foreignField: '_id',
+              as: 'marketshop',
+            },
+          },
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'shopId',
+              foreignField: '_id',
+              as: 'b2bshop',
+            },
+          },
+          {
+            $lookup: {
+              from: 'streets',
+              localField: 'steetId',
+              foreignField: '_id',
+              pipeline: [{ $match: wardmatch }],
+              as: 'StreetData',
+            },
+          },
+          {
+            $unwind:"$StreetData"
+          },
+          {
+            $project:{
+              street:"$StreetData.street",
+              Rate:1,
+              Weight:1,
+              Unit:1,
+              shopId:1,
+              steetId:1,
+              UserId:1,
+              date :1,
+              marketshop:"$marketshop",
+              b2bshop:"$b2bshop"
+
+            }
+          }
+        ],
+        as: 'Productdetails',
+      },
+    },
+    {
+      $project: {
+        productDetails:"$Productdetails",
+        Avg:"$Productdata.Avg",
+        Max:"$Productdata.Max",
+        Min:"$Productdata.Min",
+        productTitle:1,
+        _id:1
+      }
+    },
+   
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  return values;
+};
+
 const createManageBill = async (manageBillBody) => {
   const { billId, supplierId, orderId } = manageBillBody;
   const bill = await BillRaise.findById(billId);
@@ -407,7 +531,7 @@ const paginationForTrends = async (id) => {
   return Product.aggregate([
     {
       $match: {
-        TrendspreferredQuantity:{$ne:null}
+        TrendspreferredQuantity: { $ne: null },
       },
     },
     {
@@ -631,6 +755,7 @@ const productaggregateById = async (page) => {
 };
 module.exports = {
   createProduct,
+  getTrendsData,
   getStockById,
   productDateTimeFilter,
   paginationForTrends,

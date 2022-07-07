@@ -10,7 +10,7 @@ const trendsCloneSchema = new mongoose.Schema({
   shopid: {
     type: String,
   },
-  street: {
+  streetId: {
     type: String,
   },
   Uid: {
@@ -43,6 +43,10 @@ const trendsCloneSchema = new mongoose.Schema({
   time: {
     type: Number,
   },
+  wardId: {
+    type: String,
+  },
+
   active: {
     type: Boolean,
     default: true,

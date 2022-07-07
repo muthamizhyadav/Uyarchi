@@ -29,18 +29,73 @@ const getTrendsCloneById = async (TrendsCloneId) => {
   return TrendsClone;
 };
 
-const getTrendsClone = async (page) => {
+const getTrendsClone = async (wardId, street, page) => {
+  let match;
+  if (street != 'null') {
+    match = { streetId: { $eq: street } };
+  } else {
+    match = { active: true };
+  }
+  let wardmatch;
+  if (wardId != 'null') {
+    wardmatch = { wardId: wardId };
+  } else {
+    wardmatch = { active: true };
+  }
   let values = await TrendsClone.aggregate([
     {
-      $limit: 10,
+      $match: { $and: [match] },
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'streetId',
+        foreignField: '_id',
+        as: 'streetData',
+        pipeline: [{ $match: wardmatch }],
+      },
+    },
+
+    {
+      $unwind: '$streetData',
+    },
+    {
+      $project: {
+        _id: 1,
+        product: 1,
+        shopid: 1,
+        data: 1,
+        time: 1,
+        street: '$streetData.street',
+      },
     },
     {
       $skip: 10 * page,
     },
+    {
+      $limit: 10,
+    },
   ]);
-  let total = await TrendsClone.find().count();
+  let total = await TrendsClone.aggregate([
+    {
+      $match: { $and: [match] },
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'streetId',
+        foreignField: '_id',
+        as: 'streetData',
+        pipeline: [{ $match: wardmatch }],
+      },
+    },
 
-  return { Values: values, total: total };
+    {
+      $unwind: '$streetData',
+    },
+  ]);
+
+  return { Values: values, total: total.length };
 };
 
 const updateTrendsCloneById = async (TrendsCloneId, updateBody) => {
