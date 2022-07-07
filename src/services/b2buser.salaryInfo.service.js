@@ -54,11 +54,10 @@ const updateuserStatus = async (id) => {
   if (!b2buserSalary) {
     throw new ApiError(httpStatus.NOT_FOUND, 'B2bUserSalaryInfo Not Found');
   }
-  console.log(b2buserSalary);
+  console.log(b2buserSalary.userStatus);
   if (b2buserSalary.userStatus == 'Active') {
     b2buserSalary = await B2bUserSalaryInfo.findByIdAndUpdate({ _id: id }, { userStatus: 'Passive' }, { new: true });
-  }
-  if (b2buserSalary.userStatus == 'Passive') {
+  } else {
     b2buserSalary = await B2bUserSalaryInfo.findByIdAndUpdate({ _id: id }, { userStatus: 'Active' }, { new: true });
   }
   return b2buserSalary;
