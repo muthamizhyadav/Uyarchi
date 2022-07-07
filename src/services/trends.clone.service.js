@@ -32,7 +32,7 @@ const getTrendsCloneById = async (TrendsCloneId) => {
 const getTrendsClone = async (wardId, street, page) => {
   let match;
   if (street != 'null') {
-    match = { steetId: { $eq: street } };
+    match = { streetId: { $eq: street } };
   } else {
     match = { active: true };
   }
@@ -42,21 +42,33 @@ const getTrendsClone = async (wardId, street, page) => {
   } else {
     wardmatch = { active: true };
   }
+  console.log(wardmatch);
   let values = await TrendsClone.aggregate([
     {
-      $match: match,
+      $match: { $and: [match] },
     },
     {
       $lookup: {
         from: 'streets',
-        localField: 'steetId',
+        localField: 'streetId',
         foreignField: '_id',
         as: 'streetData',
         pipeline: [{ $match: wardmatch }],
       },
     },
+
     {
       $unwind: '$streetData',
+    },
+    {
+      $project: {
+        _id: 1,
+        product: 1,
+        shopid: 1,
+        data: 1,
+        time: 1,
+        street: '$streetData.street',
+      },
     },
     {
       $skip: 10 * page,

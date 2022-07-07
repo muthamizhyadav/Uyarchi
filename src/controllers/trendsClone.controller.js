@@ -11,6 +11,7 @@ const { Shop } = require('../models/b2b.ShopClone.model');
 const { MarketClone } = require('../models/market.model');
 
 const createTrends = catchAsync(async (req, res) => {
+  let userId = req.userId;
   const trends = await trendsCloneService.createTrendsClone(req.body);
   req.body.product.forEach(async (e) => {
     let row = {
@@ -22,7 +23,7 @@ const createTrends = catchAsync(async (req, res) => {
       orderId: trends._id,
       shopId: req.body.shopid,
       steetId: req.body.street,
-      UserId: req.body.Uid,
+      UserId: userId,
       date: req.body.date,
       time: req.body.time,
       fulldate: req.body.fulldate,
@@ -43,8 +44,7 @@ const createTrends = catchAsync(async (req, res) => {
     let market = await MarketClone.findById(mid);
     streetId = market.Strid;
   }
-  console.log(streetId, 'sdfasas');
-  await TrendsClone.findByIdAndUpdate({ _id: trends._id }, { streetId: streetId }, { new: true });
+  await TrendsClone.findByIdAndUpdate({ _id: trends._id }, { streetId: streetId, Uid: userId }, { new: true });
   // trends.streetId = streetId;
 
   res.status(httpStatus.CREATED).send(trends);
