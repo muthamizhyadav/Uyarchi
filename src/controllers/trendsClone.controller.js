@@ -31,15 +31,16 @@ const createTrends = catchAsync(async (req, res) => {
     await TrendproductClone.create(row);
   });
   let shopclone = await Shop.findById({ _id: req.body.shopid });
-  let marketshopclone = await MarketClone.findById({ _id: req.body.shopid });
+  let marketshopclone = await MarketShopsClone.findById({ _id: req.body.shopid });
   let streetId;
+  // console.log(shopclone,"sdfsfd")
+
   if (shopclone) {
     streetId = shopclone.Strid;
   }
   if (marketshopclone) {
     let mid = marketshopclone.MName;
-    // console.log(marketshopclone)
-    let market = await MarketClone.findById(mid._id);
+    let market = await MarketClone.findById(mid);
     streetId = market.Strid;
   }
   console.log(streetId, 'sdfasas');
