@@ -44,6 +44,34 @@ const setTrendsValueforProduct = async (id, updateBody) => {
   return product;
 };
 
+const getTrendsData = async (date, wardId, street, page) => {
+  console.log('Ward:' + wardId + 'STreet:' + street);
+  let values = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'trendproducts',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          {
+            $match: {
+              date: { $eq: date },
+            },
+          },
+        ],
+
+        as: 'Productdata',
+      },
+    },
+    {
+      $unwind: '$Productdata',
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  return values;
+};
+
 const createManageBill = async (manageBillBody) => {
   const { billId, supplierId, orderId } = manageBillBody;
   const bill = await BillRaise.findById(billId);
@@ -407,7 +435,7 @@ const paginationForTrends = async (id) => {
   return Product.aggregate([
     {
       $match: {
-        TrendspreferredQuantity:{$ne:null}
+        TrendspreferredQuantity: { $ne: null },
       },
     },
     {
@@ -631,6 +659,7 @@ const productaggregateById = async (page) => {
 };
 module.exports = {
   createProduct,
+  getTrendsData,
   getStockById,
   productDateTimeFilter,
   paginationForTrends,

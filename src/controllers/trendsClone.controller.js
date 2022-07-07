@@ -13,24 +13,6 @@ const { MarketClone } = require('../models/market.model');
 const createTrends = catchAsync(async (req, res) => {
   let userId = req.userId;
   const trends = await trendsCloneService.createTrendsClone(req.body);
-  req.body.product.forEach(async (e) => {
-    let row = {
-      productId: e.Pid,
-      productName: e.PName,
-      Unit: e.Unit,
-      Rate: e.Rate,
-      Weight: e.Weight,
-      orderId: trends._id,
-      shopId: req.body.shopid,
-      steetId: req.body.street,
-      UserId: userId,
-      date: req.body.date,
-      time: req.body.time,
-      fulldate: req.body.fulldate,
-      created: req.body.created,
-    };
-    await TrendproductClone.create(row);
-  });
   let shopclone = await Shop.findById({ _id: req.body.shopid });
   let marketshopclone = await MarketShopsClone.findById({ _id: req.body.shopid });
   let streetId;
@@ -44,6 +26,25 @@ const createTrends = catchAsync(async (req, res) => {
     let market = await MarketClone.findById(mid);
     streetId = market.Strid;
   }
+  req.body.product.forEach(async (e) => {
+    let row = {
+      productId: e.Pid,
+      productName: e.PName,
+      Unit: e.Unit,
+      Rate: e.Rate,
+      Weight: e.Weight,
+      orderId: trends._id,
+      shopId: req.body.shopid,
+      steetId: streetId,
+      UserId: userId,
+      date: req.body.date,
+      time: req.body.time,
+      fulldate: req.body.fulldate,
+      created: req.body.created,
+    };
+    await TrendproductClone.create(row);
+  });
+
   await TrendsClone.findByIdAndUpdate({ _id: trends._id }, { streetId: streetId, Uid: userId }, { new: true });
   // trends.streetId = streetId;
 
