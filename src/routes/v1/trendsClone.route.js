@@ -5,5 +5,5 @@ router.route('/').post(trendsCloneController.createTrends).get(trendsCloneContro
 router.route('/:trendsId').get(trendsCloneController.getTrendsById).put(trendsCloneController.updateTrendsById);
 router.route('/pagination/:id').get(trendsCloneController.trendsPagination);
 router.route('/updateProduct/FromTrends/:id').put(trendsCloneController.updateProductFromTrendsClone);
-router.route('/getAll/:page').get(trendsCloneController.getTrendsClone);
+router.route('/getAll/:wardId/:street/:page').get(trendsCloneController.getTrendsClone);
 module.exports = router;

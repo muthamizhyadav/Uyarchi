@@ -4,7 +4,8 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const trendsCloneService = require('../services/trends.clone.service');
 const TrendproductClone = require('../models/trendsProduct.clocne.model');
-
+const TrendsClone = require('../models/trendsClone.model');
+const Street=require('../models/street.model')
 const createTrends = catchAsync(async (req, res) => {
   const trends = await trendsCloneService.createTrendsClone(req.body);
   req.body.product.forEach(async (e) => {
@@ -23,6 +24,8 @@ const createTrends = catchAsync(async (req, res) => {
       fulldate: req.body.fulldate,
       created: req.body.created,
     };
+    trends.wardId=await Street.findById
+    trends.streetId=req.body.street;
     await TrendproductClone.create(row);
   });
   res.status(httpStatus.CREATED).send(trends);
@@ -85,7 +88,7 @@ const updateTrendsById = catchAsync(async (req, res) => {
 });
 
 const getTrendsClone = catchAsync(async (req, res) => {
-  const trends = await trendsCloneService.getTrendsClone(req.params.page);
+  const trends = await trendsCloneService.getTrendsClone(req.params.wardId, req.params.street, req.params.page);
   res.send(trends);
 });
 

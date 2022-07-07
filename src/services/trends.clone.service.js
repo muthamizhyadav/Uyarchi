@@ -29,18 +29,45 @@ const getTrendsCloneById = async (TrendsCloneId) => {
   return TrendsClone;
 };
 
-const getTrendsClone = async (page) => {
+const getTrendsClone = async (wardId, street, page) => {
+  let match;
+  if (street != 'null') {
+    match = { steetId: { $eq: street } };
+  } else {
+    match = { active: true };
+  }
+  let wardmatch;
+  if (wardId != 'null') {
+    wardmatch = { wardId: wardId };
+  } else {
+    wardmatch = { active: true };
+  }
   let values = await TrendsClone.aggregate([
     {
-      $limit: 10,
+      $match: match,
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'steetId',
+        foreignField: '_id',
+        as: 'streetData',
+        pipeline: [{ $match: wardmatch }],
+      },
+    },
+    {
+      $unwind: '$streetData',
     },
     {
       $skip: 10 * page,
     },
+    {
+      $limit: 10,
+    },
   ]);
-  let total = await TrendsClone.find().count();
+  let total = await TrendsClone.find();
 
-  return { Values: values, total: total };
+  return { Values: values, total: total.length };
 };
 
 const updateTrendsCloneById = async (TrendsCloneId, updateBody) => {

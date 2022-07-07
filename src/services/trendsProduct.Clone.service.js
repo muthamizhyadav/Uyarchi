@@ -201,7 +201,6 @@ const getProductCloneCalculation = async (wardId, street, productId, date) => {
     match = { date: date };
   }
   let wardmatch;
-
   if (wardId != 'null') {
     wardmatch = { wardId: wardId };
   } else {
