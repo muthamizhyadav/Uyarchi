@@ -296,6 +296,7 @@ const getShopsByIdFromTrends = async (id) => {
   ]);
   return values;
 };
+
 module.exports = {
   getStreetsByWardIdAndProductsClone,
   getProductByProductIdFromTrendProductClone,

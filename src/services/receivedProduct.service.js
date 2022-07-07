@@ -426,7 +426,7 @@ const getSupplierBillsDetails = async (page) => {
               as: 'PaymentData',
             },
           },
-             {
+          {
             $unwind: '$PaymentData',
           },
           // {
@@ -464,7 +464,7 @@ const getSupplierBillsDetails = async (page) => {
     },
     {
       $project: {
-        PaymentData:{ $sum: "$receivedData.PaymentData.Amount"},
+        PaymentData: { $sum: '$receivedData.PaymentData.Amount' },
         receivedData: { $sum: '$pendingDataall.pendingData.billingTotal' },
         primaryContactName: 1,
         receivedDatacount: '$receivedDatacount.total',
