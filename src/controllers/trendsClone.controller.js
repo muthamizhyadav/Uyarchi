@@ -5,7 +5,11 @@ const catchAsync = require('../utils/catchAsync');
 const trendsCloneService = require('../services/trends.clone.service');
 const TrendproductClone = require('../models/trendsProduct.clocne.model');
 const TrendsClone = require('../models/trendsClone.model');
-const Street=require('../models/street.model')
+const Street = require('../models/street.model');
+const { MarketShopsClone } = require('../models/market.model');
+const { Shop } = require('../models/b2b.ShopClone.model');
+const { MarketClone } = require('../models/market.model');
+
 const createTrends = catchAsync(async (req, res) => {
   const trends = await trendsCloneService.createTrendsClone(req.body);
   req.body.product.forEach(async (e) => {
@@ -24,10 +28,24 @@ const createTrends = catchAsync(async (req, res) => {
       fulldate: req.body.fulldate,
       created: req.body.created,
     };
-    trends.wardId=await Street.findById
-    trends.streetId=req.body.street;
     await TrendproductClone.create(row);
   });
+  let shopclone = await Shop.findById({ _id: req.body.shopid });
+  let marketshopclone = await MarketClone.findById({ _id: req.body.shopid });
+  let streetId;
+  if (shopclone) {
+    streetId = shopclone.Strid;
+  }
+  if (marketshopclone) {
+    let mid = marketshopclone.MName;
+    // console.log(marketshopclone)
+    let market = await MarketClone.findById(mid._id);
+    streetId = market.Strid;
+  }
+  console.log(streetId, 'sdfasas');
+  await TrendsClone.findByIdAndUpdate({ _id: trends._id }, { streetId: streetId }, { new: true });
+  // trends.streetId = streetId;
+
   res.status(httpStatus.CREATED).send(trends);
 });
 
