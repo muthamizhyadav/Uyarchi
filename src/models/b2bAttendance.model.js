@@ -13,6 +13,9 @@ const AttendanceSchema = mongoose.Schema({
   month: {
     type: Number,
   },
+  days: {
+    type: Number,
+  },
 
   TotalAbsentDays: {
     type: Number,
@@ -29,7 +32,7 @@ const AttendanceSchema = mongoose.Schema({
   leaveReduceAmounts: {
     type: Number,
   },
-  
+
   payingSalary: {
     type: Number,
   },
