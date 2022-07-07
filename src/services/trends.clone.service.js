@@ -77,7 +77,24 @@ const getTrendsClone = async (wardId, street, page) => {
       $limit: 10,
     },
   ]);
-  let total = await TrendsClone.find();
+  let total = await TrendsClone.aggregate([
+    {
+      $match: { $and: [match] },
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'streetId',
+        foreignField: '_id',
+        as: 'streetData',
+        pipeline: [{ $match: wardmatch }],
+      },
+    },
+
+    {
+      $unwind: '$streetData',
+    },
+  ]);
 
   return { Values: values, total: total.length };
 };
