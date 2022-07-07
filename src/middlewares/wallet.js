@@ -1,15 +1,15 @@
 const multer = require('multer');
 const path = require('path');
 
-
 let counts = 0;
 const storage = multer.diskStorage({
   destination: function (req, res, cb) {
-    cb(null, path.join(__dirname, '../../public/images/BusersUpload'));
+    cb(null, path.join(__dirname, '../../public/images/wallet'));
   },
   filename: function (req, file, cb) {
     let ext = path.extname(file.originalname);
     counts++;
+    console.log(ext)
     cb(null, Date.now() + counts.toString() + ext);
   },
 });
