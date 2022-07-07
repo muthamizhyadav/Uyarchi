@@ -29,6 +29,20 @@ const getTrendsCloneById = async (TrendsCloneId) => {
   return TrendsClone;
 };
 
+const getTrendsClone = async (page) => {
+  let values = await TrendsClone.aggregate([
+    {
+      $limit: 10,
+    },
+    {
+      $skip: 10 * page,
+    },
+  ]);
+  let total = await TrendsClone.find().count();
+
+  return { Values: values, total: total };
+};
+
 const updateTrendsCloneById = async (TrendsCloneId, updateBody) => {
   let TrendsClone = await getTrendsCloneById(TrendsCloneId);
   if (!TrendsClone) {
@@ -61,4 +75,5 @@ module.exports = {
   updateProductFromTrendsClone,
   updateTrendsCloneById,
   deleteTrendsCloneById,
+  getTrendsClone,
 };
