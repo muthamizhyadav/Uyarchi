@@ -5,6 +5,7 @@ const httpStatus = require('http-status');
 
 const createWalletAccount = catchAsync(async (req, res) => {
   const wallet = await walletService.createWallet(req.body);
+  // console.log(wallet);
   if (req.files) {
     let path = '';
     path = 'images/wallet/';
@@ -22,9 +23,8 @@ const createWalletAccount = catchAsync(async (req, res) => {
           return e.filename;
         });
     }
-    res.status(httpStatus.CREATED).send(wallet);
-
     await wallet.save();
+    res.status(httpStatus.CREATED).send(wallet);
   }
 });
 
@@ -33,7 +33,22 @@ const getAll = catchAsync(async (req, res) => {
   res.send(wallet);
 });
 
+const updateWallet = catchAsync(async (req, res) => {
+  const wallet = await walletService.updateWallet(req.params.id, req.body)
+  res.send(wallet)
+
+})
+
+
+const deleteWallet = catchAsync(async (req, res) => {
+  const wallet = await walletService.deleteWalletById(req.params.id)
+  res.send(wallet)
+})
+
+
 module.exports = {
   createWalletAccount,
   getAll,
+  updateWallet,
+  deleteWallet
 };

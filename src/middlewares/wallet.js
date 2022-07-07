@@ -1,14 +1,16 @@
 const multer = require('multer');
 const path = require('path');
-const wallet = require('../models/b2b.walletAccount.model');
 
+let counts = 0;
 const storage = multer.diskStorage({
   destination: function (req, res, cb) {
     cb(null, path.join(__dirname, '../../public/images/wallet'));
   },
   filename: function (req, file, cb) {
     let ext = path.extname(file.originalname);
-    cb(null, Date.now() + ext);
+    counts++;
+    console.log(ext)
+    cb(null, Date.now() + counts.toString() + ext);
   },
 });
 

@@ -22,20 +22,21 @@ const walletSchema = mongoose.Schema({
     type: String,
   },
   idProof: {
-    Type: String,
+    type: String,
   },
   addressProof: {
-    Type: String,
+    type: String,
   },
-  //   active: {
-  //     type: Boolean,
-  //     default: true,
-  //   },
-  //   archive: {
-  //     type: Boolean,
-  //     default: false,
-  //   },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const wallet = mongoose.model('wallet', walletSchema);
+
 module.exports = wallet;
