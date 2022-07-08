@@ -76,7 +76,7 @@ const createMainWherehouseLoadingExecute = catchAsync(async (req, res) => {
 });
 
 const gettrendsCount = catchAsync(async (req, res) => {
-  const product = await productService.gettrendsCount(
+  const product = await productService.TrendsCounts(
     req.params.productId,
     req.params.date,
     req.params.wardId,
