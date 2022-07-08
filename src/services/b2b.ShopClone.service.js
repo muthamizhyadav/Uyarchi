@@ -287,16 +287,16 @@ const deleteAttendanceById = async (id) => {
   return attendance;
 };
 
-const totalCount = async () => {
+const totalCount = async (userId) => {
   const moment = require('moment');
   let datenow = moment(new Date()).format('DD-MM-YYYY');
-  const Totalcount = await Shop.find().count();
-  const todayCount = await Shop.find({ date: datenow }).count();
-  const marketTotalcount = await MarketClone.find().count();
-  const markettodayCount = await MarketClone.find({ date: datenow }).count();
-  const marketshopTotalcount = await MarketShopsClone.find().count();
-  const marketshoptodayCount = await MarketShopsClone.find({ date: datenow }).count();
-  console.log(Totalcount, todayCount, marketTotalcount, markettodayCount, marketshopTotalcount, marketshoptodayCount);
+  const Totalcount = await Shop.find({ Uid: userId }).count();
+  const todayCount = await Shop.find({ date: datenow, Uid: userId }).count();
+  const marketTotalcount = await MarketClone.find({ Uid: userId }).count();
+  const markettodayCount = await MarketClone.find({ date: datenow, Uid: userId }).count();
+  const marketshopTotalcount = await MarketShopsClone.find({ Uid: userId }).count();
+  const marketshoptodayCount = await MarketShopsClone.find({ date: datenow, Uid: userId }).count();
+  // console.log(Totalcount, todayCount, marketTotalcount, markettodayCount, marketshopTotalcount, marketshoptodayCount);
   return {
     shopTotal: Totalcount,
     shopToday: todayCount,

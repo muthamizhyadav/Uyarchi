@@ -31,7 +31,6 @@ router
   .put(authorization, b2bShopCloneController.updateAttendanceById)
   .delete(authorization, b2bShopCloneController.deleteAttendanceById);
 
-
-  router.route('/totalCount/counts').get(b2bShopCloneController.getTotalCounts);
+router.route('/totalCount/counts').get(authorization, b2bShopCloneController.getTotalCounts);
 
 module.exports = router;
