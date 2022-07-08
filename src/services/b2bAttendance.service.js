@@ -7,7 +7,7 @@ const createAttendance = async (attendanceBody) => {
   const { days, ApprovedAbsentDays, leaveReduceAmounts, payingSalary, b2bUser } = attendanceBody;
 
   let total = days - ApprovedAbsentDays;
-  console.log(total);
+  // console.log(total);
   let userSalary = await salaryInfo.findOne({ userId: b2bUser });
   let oneDaySalary = userSalary.salary / days;
   let reduceSalary = ApprovedAbsentDays * oneDaySalary;
@@ -19,7 +19,7 @@ const createAttendance = async (attendanceBody) => {
       leaveReduceAmounts: Math.round(reduceSalary),
       payingSalary: Math.round(payingSalaryAmount),
     },
-  };
+  } ;
   let attendance = await attendanceModel.create(values);
 
   return attendance;
@@ -29,13 +29,13 @@ const getAll = async (page) => {
   let values = await attendanceModel.aggregate([
     {
       $lookup: {
-        from: 'b2busers',
+        from: 'b2busers',  
         localField: 'b2bUser',
         foreignField: '_id',
         as: 'userData',
       },
     },
-    { $unwind: '$userData' },
+    { $unwind: '$userData' },  //array to object
     {
       $project: {
         month: 1,
@@ -46,13 +46,14 @@ const getAll = async (page) => {
         leaveReduceAmounts: 1,
         payingSalary: 1,
         userName: '$userData.name',
-        
+
       },
     },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  return values;
+  let total = await attendanceModel.find().count();
+  return { values: values, total: total};
 };
 
 module.exports = {
