@@ -65,9 +65,7 @@ const getTrendsData = async (date, wardId, street, page) => {
         foreignField: 'productId',
         pipeline: [
           {
-            $match: {
-              date: { $eq: date },
-            },
+            $match: { date: date },
           },
           {
             $match: { $and: [match] },
@@ -80,6 +78,9 @@ const getTrendsData = async (date, wardId, street, page) => {
               pipeline: [{ $match: wardmatch }],
               as: 'StreetData',
             },
+          },
+          {
+            $unwind: '$StreetData',
           },
           { $group: { _id: null, Avg: { $avg: '$Rate' }, Max: { $max: '$Rate' }, Min: { $min: '$Rate' } } },
         ],
@@ -191,12 +192,13 @@ const TrendsCounts = async (productId, date, wardId, street) => {
     {
       $lookup: {
         from: 'trendproductsclones',
-        localField: 'steetId',
-        foreignField: '_id',
+        localField: '_id',
+        foreignField: 'shopId',
         pipeline: [
           {
             $match: {
               date: { $eq: date },
+              productId: { $eq: productId },
             },
           },
         ],
@@ -235,6 +237,7 @@ const createShopList = async (shopListBody) => {
 const getAllShopList = async () => {
   return ShopList.find();
 };
+
 const createStock = async (stockbody) => {
   const { supplierId, product, productName } = stockbody;
   const first = Math.floor(1000 + Math.random() * 9000);
