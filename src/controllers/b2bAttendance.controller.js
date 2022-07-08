@@ -10,7 +10,7 @@ const createAttendance = catchAsync(async (req, res) => {
 
 
 const getAll = catchAsync(async (req, res) => {
-    const attendance = await attendanceService.getAll()
+    const attendance = await attendanceService.getAll(req.params.page)
     res.send(attendance)
 });
 
