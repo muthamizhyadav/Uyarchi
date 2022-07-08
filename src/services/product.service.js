@@ -4,8 +4,8 @@ const ApiError = require('../utils/ApiError');
 const Supplier = require('../models/supplier.model');
 const ReceivedOrder = require('../models/receivedOrders.model');
 const ShopOrders = require('../models/shopOrder.model');
+const B2bShopClone = require('../models/b2b.ShopClone.model');
 const moment = require('moment');
-
 let datenow = moment(new Date()).format('DD-MM-YYYY');
 
 const createProduct = async (productBody) => {
@@ -45,7 +45,6 @@ const setTrendsValueforProduct = async (id, updateBody) => {
 };
 
 const getTrendsData = async (date, wardId, street, page) => {
-  console.log('Ward:' + wardId + 'STreet:' + street);
   let match;
   if (street != 'null') {
     match = { steetId: { $eq: street } };
@@ -130,42 +129,85 @@ const getTrendsData = async (date, wardId, street, page) => {
             },
           },
           {
-            $unwind:"$StreetData"
+            $unwind: '$StreetData',
           },
           {
-            $project:{
-              street:"$StreetData.street",
-              Rate:1,
-              Weight:1,
-              Unit:1,
-              shopId:1,
-              steetId:1,
-              UserId:1,
-              date :1,
-              marketshop:"$marketshop",
-              b2bshop:"$b2bshop"
-
-            }
-          }
+            $project: {
+              street: '$StreetData.street',
+              Rate: 1,
+              Weight: 1,
+              Unit: 1,
+              shopId: 1,
+              steetId: 1,
+              UserId: 1,
+              date: 1,
+              marketshop: '$marketshop',
+              b2bshop: '$b2bshop',
+            },
+          },
         ],
         as: 'Productdetails',
       },
     },
     {
       $project: {
-        productDetails:"$Productdetails",
-        Avg:"$Productdata.Avg",
-        Max:"$Productdata.Max",
-        Min:"$Productdata.Min",
-        productTitle:1,
-        _id:1
-      }
+        productDetails: '$Productdetails',
+        Avg: '$Productdata.Avg',
+        Max: '$Productdata.Max',
+        Min: '$Productdata.Min',
+        productTitle: 1,
+        _id: 1,
+      },
     },
-   
+
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
   return values;
+};
+
+const TrendsCounts = async (productId, date, wardId, street) => {
+  let match;
+  if (street != 'null') {
+    match = { steetId: { $eq: street } };
+  } else {
+    match = { active: true };
+  }
+  let wardmatchCount;
+  let wardmatch;
+  if (wardId != 'null') {
+    wardmatch = { wardId: wardId };
+    wardmatchCount = { wardId: { $eq: wardId } };
+  } else {
+    wardmatch = { active: true };
+    wardmatchCount = { active: true };
+  }
+  let stock = await B2bShopClone.aggregate([
+    {
+      $match: {
+        $and: [match, wardmatchCount],
+      },
+    },
+    {
+      $lookup: {
+        from: 'trendproductsclones',
+        localField: 'steetId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              date: { $eq: date },
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+  ]);
+  return stock.length;
 };
 
 const createManageBill = async (manageBillBody) => {
@@ -810,4 +852,5 @@ module.exports = {
   productaggregateById,
   updateStockById,
   setTrendsValueforProduct,
+  TrendsCounts,
 };

@@ -75,6 +75,16 @@ const createMainWherehouseLoadingExecute = catchAsync(async (req, res) => {
   await mwloading.save();
 });
 
+const gettrendsCount = catchAsync(async (req, res) => {
+  const product = await productService.gettrendsCount(
+    req.params.productId,
+    req.params.date,
+    req.params.wardId,
+    req.params.street
+  );
+  res.send(product);
+});
+
 const createShopListService = catchAsync(async (req, res) => {
   const { body } = req;
   const shop = await productService.createShopList(body);
@@ -441,4 +451,5 @@ module.exports = {
   getShopList,
   productaggregateById,
   updatesStockById,
+  gettrendsCount,
 };
