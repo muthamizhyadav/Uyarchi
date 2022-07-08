@@ -11,7 +11,7 @@ const AttendanceSchema = mongoose.Schema({
   },
 
   month: {
-    type: Number,
+    type: String,
   },
   days: {
     type: Number,
