@@ -103,6 +103,12 @@ const attendanceSchema = new mongoose.Schema({
   time: {
     type: Number,
   },
+  // todayCount: {
+  //   type: Number,
+  // },
+  // totalCount: {
+  //   type: Number,
+  // },
   active: {
     type: Boolean,
     default: true,
@@ -111,6 +117,7 @@ const attendanceSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+
 });
 
 const AttendanceClone = mongoose.model('AttendanceClone', attendanceSchema);

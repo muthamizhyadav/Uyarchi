@@ -40,7 +40,7 @@ const getAllB2BshopClone = catchAsync(async (req, res) => {
 });
 
 const getB2BShopById = catchAsync(async (req, res) => {
-  const shop = await b2bCloneService.getB2BShopById(req.params.id);
+  const shop = await b2bCloneService.getShopById(req.params.id);
   if (!shop) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Shop not Found');
   }
@@ -111,6 +111,11 @@ const deleteAttendanceById = catchAsync(async (req, res) => {
   res.send();
 });
 
+
+const getTotalCounts = catchAsync(async (req, res)=>{
+  const attendance = await b2bCloneService.totalCount();
+  res.send(attendance);
+})
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -125,4 +130,7 @@ module.exports = {
   getshopWardStreetNamesWithAggregation,
   updateAttendanceById,
   deleteAttendanceById,
+  getTotalCounts,
+ 
+
 };
