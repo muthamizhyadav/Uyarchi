@@ -40,7 +40,7 @@ const getAllB2BshopClone = catchAsync(async (req, res) => {
 });
 
 const getB2BShopById = catchAsync(async (req, res) => {
-  const shop = await b2bCloneService.getB2BShopById(req.params.id);
+  const shop = await b2bCloneService.getShopById(req.params.id);
   if (!shop) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Shop not Found');
   }
@@ -69,7 +69,7 @@ const deleteB2BShopById = catchAsync(async (req, res) => {
 
 const creatAttendanceClone = catchAsync(async (req, res) => {
   const attendance = await b2bCloneService.createAttendanceClone(req.body);
-  attendance.Uid=req.userId;
+  attendance.Uid = req.userId;
   console.log(req.files);
   if (req.files) {
     req.files.forEach(function (files, index, arr) {
@@ -81,7 +81,13 @@ const creatAttendanceClone = catchAsync(async (req, res) => {
 });
 
 const getAlAttendanceClone = catchAsync(async (req, res) => {
-  const attendance = await b2bCloneService.getAllAttendanceClone(req.params.id,req.params.date,req.params.fromtime,req.params.totime,req.params.page);
+  const attendance = await b2bCloneService.getAllAttendanceClone(
+    req.params.id,
+    req.params.date,
+    req.params.fromtime,
+    req.params.totime,
+    req.params.page
+  );
   res.send(attendance);
 });
 
@@ -111,6 +117,11 @@ const deleteAttendanceById = catchAsync(async (req, res) => {
   res.send();
 });
 
+const getTotalCounts = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const attendance = await b2bCloneService.totalCount(userId);
+  res.send(attendance);
+});
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -125,4 +136,5 @@ module.exports = {
   getshopWardStreetNamesWithAggregation,
   updateAttendanceById,
   deleteAttendanceById,
+  getTotalCounts,
 };
