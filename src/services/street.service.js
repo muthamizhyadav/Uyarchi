@@ -491,6 +491,12 @@ const areaSearchApi = async (key) => {
     },
   ]);
   return values;
+}
+
+const getDummy = async () => {
+  const dummystreet = await  Streets.find({ dommy: true });
+  return dummystreet;
+  // return 'summa';
 };
 
 module.exports = {
@@ -514,4 +520,5 @@ module.exports = {
   queryStreet,
   getAllStreetById,
   areaSearchApi,
-};
+  getDummy,
+}
