@@ -478,6 +478,21 @@ const deleteStreetById = async (streetId) => {
   return street;
 };
 
+const areaSearchApi = async (key) => {
+  let lowercase = key.toUpperCase();
+  let values = await Street.aggregate([
+    {
+      $match: {
+        $or: [{ area: { $regex: lowercase } }, { street: { $regex: lowercase } }, { locality: { $regex: lowercase } }],
+      },
+    },
+    {
+      $limit: 100,
+    },
+  ]);
+  return values;
+}
+
 const getDummy = async () => {
   const dummystreet = await  Streets.find({ dommy: true });
   return dummystreet;
@@ -514,6 +529,8 @@ module.exports = {
   getwardBystreetAngular,
   queryStreet,
   getAllStreetById,
+  areaSearchApi,
   getDummy,
   getStreetByWard,
 };
+

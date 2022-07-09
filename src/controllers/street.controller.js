@@ -21,7 +21,6 @@ const getAllStreet = catchAsync(async (req, res) => {
 });
 
 const closedStatus = catchAsync(async (req, res) => {
-
   const street = await StreetService.closedStatus(req.params.streetId, {
     ...req.body,
     ...{ filter: 'fullypending' },
@@ -83,7 +82,6 @@ const getStreetByWardId = catchAsync(async (req, res) => {
   res.send(street);
 });
 
-
 const getStreetDetailsById = catchAsync(async (req, res) => {
   const street = await StreetService.getStreetById(req.params.streetId);
   if (!street || street.active === false) {
@@ -112,6 +110,10 @@ const deleteStreet = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const areaSearchApi = catchAsync(async (req, res) => {
+  let street = await StreetService.areaSearchApi(req.params.key);
+  res.send(street);
+})
 const getDummyStreet = catchAsync(async (req, res) => {
   let street = await StreetService.getDummy()
     res.send(street);
@@ -140,6 +142,7 @@ module.exports = {
   closedStatus,
   getAllDeAllocatedStreetOnly,
   streetorder,
+  areaSearchApi,
   getDummyStreet,
   getStreetWard,
 }
