@@ -26,5 +26,6 @@ router.route('/getall/wardid/:wardId').get(streetController.getStreetByWardId);
 
 
 router.route('/getDummy/streets').get(streetController.getDummyStreet);
+router.route('/getward/ward/:wardId').get(streetController.getStreetWard);
 
 module.exports = router;

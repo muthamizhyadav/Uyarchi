@@ -115,9 +115,11 @@ const deleteStreet = catchAsync(async (req, res) => {
 const getDummyStreet = catchAsync(async (req, res) => {
   let street = await StreetService.getDummy()
     res.send(street);
-  
-  // res.status(httpStatus.NO_CONTENT).send();
-  
+});
+
+const getStreetWard = catchAsync(async (req, res) => {
+  let ward = await StreetService.getStreetByWard(req.params.wardId);
+  res.send(ward);
 });
 
 module.exports = {
@@ -139,4 +141,5 @@ module.exports = {
   getAllDeAllocatedStreetOnly,
   streetorder,
   getDummyStreet,
-};
+  getStreetWard,
+}

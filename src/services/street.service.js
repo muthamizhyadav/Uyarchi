@@ -484,6 +484,16 @@ const getDummy = async () => {
   // return 'summa';
 };
 
+// const rename = async()=>{
+//   const reName = await Streets.find();
+// }
+
+const getStreetByWard = async (wardId) =>{
+  console.log(wardId)
+  const street = await Street.find({ dommy:{$ne: true}, wardId:{$eq:wardId} });
+  return street;
+}
+
 module.exports = {
   createStreet,
   getStreetById,
@@ -505,4 +515,5 @@ module.exports = {
   queryStreet,
   getAllStreetById,
   getDummy,
+  getStreetByWard,
 };

@@ -65,7 +65,7 @@ const streetSchema = mongoose.Schema({
   },
   filter:{
     type:String,
-  }
+  },
 });
 streetSchema.plugin(toJSON);
 streetSchema.plugin(paginate);
