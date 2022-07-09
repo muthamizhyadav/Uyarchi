@@ -47,8 +47,13 @@ const updateuserStatus = catchAsync(async (req, res) => {
   res.send(salaryInfo);
 });
 
+const getActiveUsers = catchAsync(async (req, res) => {
+  const activeUsers = await b2busersalaryController.getActiveUsers();
+ res.send(activeUsers);
+});
 module.exports = {
   createB2bSalaryInfo,
   getAllDataWithAggregation,
   updateuserStatus,
+  getActiveUsers,
 };
