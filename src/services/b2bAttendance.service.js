@@ -9,6 +9,9 @@ const createAttendance = async (attendanceBody) => {
   let total = days - ApprovedAbsentDays;
   // console.log(total);
   let userSalary = await salaryInfo.findOne({ userId: b2bUser });
+  if(!userSalary){
+    throw new ApiError(httpStatus.NOT_FOUND, 'User Not Found')
+  }
   let oneDaySalary = userSalary.salary / days;
   let reduceSalary = ApprovedAbsentDays * oneDaySalary;
   let payingSalaryAmount = userSalary.salary - reduceSalary;
