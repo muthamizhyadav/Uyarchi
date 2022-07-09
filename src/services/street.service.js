@@ -78,7 +78,6 @@ const getAllStreetById = async (id) => {
   ]);
 };
 
-
 const getaggregationByUserId = async (AllocatedUser) => {
   return await Streets.aggregate([
     {
@@ -478,6 +477,13 @@ const deleteStreetById = async (streetId) => {
   (street.active = false), (street.archive = true), await street.save();
   return street;
 };
+
+const getDummy = async () => {
+  const dummystreet = await  Streets.find({ dommy: true });
+  return dummystreet;
+  // return 'summa';
+};
+
 module.exports = {
   createStreet,
   getStreetById,
@@ -498,4 +504,5 @@ module.exports = {
   getwardBystreetAngular,
   queryStreet,
   getAllStreetById,
+  getDummy,
 };

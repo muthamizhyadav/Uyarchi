@@ -23,4 +23,8 @@ router
 router.route('/closedStatus/:streetId').put(streetController.closedStatus);
 router.route('/:id/order/street').get(streetController.streetorder);
 router.route('/getall/wardid/:wardId').get(streetController.getStreetByWardId);
+
+
+router.route('/getDummy/streets').get(streetController.getDummyStreet);
+
 module.exports = router;

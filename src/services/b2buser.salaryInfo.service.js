@@ -69,6 +69,8 @@ const getActiveUsers = async()=>{
       $lookup: {
         from: 'b2busers',
         localField: 'userId',
+
+
         foreignField: '_id',
         as: 'userData',
       },
@@ -80,6 +82,7 @@ const getActiveUsers = async()=>{
     {$project:{
       userId:"$userData._id",
       userName:"$userData.name",
+      
       empId:1,
       salary:1,
 
