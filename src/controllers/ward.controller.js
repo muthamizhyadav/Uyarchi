@@ -62,6 +62,11 @@ const deleteWard = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const createDummyStreet = catchAsync(async (req, res) => {
+  const ward = await wardService.createDummyStreet();
+  res.send(ward);
+});
+
 module.exports = {
   createWard,
   getAllWard,
@@ -72,4 +77,5 @@ module.exports = {
   getAllWardsForManageTrends,
   wardPagination,
   getmetaData,
+  createDummyStreet,
 };

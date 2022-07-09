@@ -78,7 +78,6 @@ const getAllStreetById = async (id) => {
   ]);
 };
 
-
 const getaggregationByUserId = async (AllocatedUser) => {
   return await Streets.aggregate([
     {
@@ -478,6 +477,22 @@ const deleteStreetById = async (streetId) => {
   (street.active = false), (street.archive = true), await street.save();
   return street;
 };
+
+const areaSearchApi = async (key) => {
+  let lowercase = key.toUpperCase();
+  let values = await Street.aggregate([
+    {
+      $match: {
+        $or: [{ area: { $regex: lowercase } }, { street: { $regex: lowercase } }, { locality: { $regex: lowercase } }],
+      },
+    },
+    {
+      $limit: 100,
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createStreet,
   getStreetById,
@@ -498,4 +513,5 @@ module.exports = {
   getwardBystreetAngular,
   queryStreet,
   getAllStreetById,
+  areaSearchApi,
 };

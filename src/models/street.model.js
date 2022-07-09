@@ -1,3 +1,4 @@
+const { boolean } = require('joi');
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
@@ -65,6 +66,12 @@ const streetSchema = mongoose.Schema({
   },
   filter:{
     type:String,
+  },
+  dommy:{
+    type:Boolean
+  },
+  sort:{
+    type:Number
   }
 });
 streetSchema.plugin(toJSON);

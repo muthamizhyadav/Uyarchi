@@ -4,7 +4,8 @@ const ApiError = require('../utils/ApiError');
 const Supplier = require('../models/supplier.model');
 const ReceivedOrder = require('../models/receivedOrders.model');
 const ShopOrders = require('../models/shopOrder.model');
-const B2bShopClone = require('../models/b2b.ShopClone.model');
+const { Shop } = require('../models/b2b.ShopClone.model');
+const { MarketShopsClone } = require('../models/market.model');
 const moment = require('moment');
 let datenow = moment(new Date()).format('DD-MM-YYYY');
 
@@ -164,7 +165,111 @@ const getTrendsData = async (date, wardId, street, page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  return values;
+  let total = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'trendproductsclones',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          {
+            $match: { date: date },
+          },
+          {
+            $match: { $and: [match] },
+          },
+          {
+            $lookup: {
+              from: 'streets',
+              localField: 'steetId',
+              foreignField: '_id',
+              pipeline: [{ $match: wardmatch }],
+              as: 'StreetData',
+            },
+          },
+          {
+            $unwind: '$StreetData',
+          },
+          { $group: { _id: null, Avg: { $avg: '$Rate' }, Max: { $max: '$Rate' }, Min: { $min: '$Rate' } } },
+        ],
+        as: 'Productdata',
+      },
+    },
+    {
+      $unwind: '$Productdata',
+    },
+    {
+      $lookup: {
+        from: 'trendproductsclones',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          {
+            $match: {
+              date: { $eq: date },
+            },
+          },
+          {
+            $match: { $and: [match] },
+          },
+          {
+            $lookup: {
+              from: 'marketshopsclones',
+              localField: 'shopId',
+              foreignField: '_id',
+              as: 'marketshop',
+            },
+          },
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'shopId',
+              foreignField: '_id',
+              as: 'b2bshop',
+            },
+          },
+          {
+            $lookup: {
+              from: 'streets',
+              localField: 'steetId',
+              foreignField: '_id',
+              pipeline: [{ $match: wardmatch }],
+              as: 'StreetData',
+            },
+          },
+          {
+            $unwind: '$StreetData',
+          },
+          {
+            $project: {
+              street: '$StreetData.street',
+              Rate: 1,
+              Weight: 1,
+              Unit: 1,
+              shopId: 1,
+              steetId: 1,
+              UserId: 1,
+              date: 1,
+              marketshop: '$marketshop',
+              b2bshop: '$b2bshop',
+            },
+          },
+        ],
+        as: 'Productdetails',
+      },
+    },
+    {
+      $project: {
+        productDetails: '$Productdetails',
+        Avg: '$Productdata.Avg',
+        Max: '$Productdata.Max',
+        Min: '$Productdata.Min',
+        productTitle: 1,
+        _id: 1,
+      },
+    },
+  ]);
+  return { values: values, total: total };
 };
 
 const TrendsCounts = async (productId, date, wardId, street) => {
@@ -183,7 +288,7 @@ const TrendsCounts = async (productId, date, wardId, street) => {
     wardmatch = { active: true };
     wardmatchCount = { active: true };
   }
-  let stock = await B2bShopClone.aggregate([
+  let b2bshops = await Shop.aggregate([
     {
       $match: {
         $and: [match, wardmatchCount],
@@ -197,8 +302,8 @@ const TrendsCounts = async (productId, date, wardId, street) => {
         pipeline: [
           {
             $match: {
-              date: { $eq: date },
-              productId: { $eq: productId },
+              date: date,
+              productId: productId,
             },
           },
         ],
@@ -209,7 +314,60 @@ const TrendsCounts = async (productId, date, wardId, street) => {
       $unwind: '$StreetData',
     },
   ]);
-  return stock.length;
+  if (street != 'null') {
+    match = { productId: { $eq: productId }, date: { $eq: date }, steetId: { $eq: street } };
+  } else {
+    match = { productId: { $eq: productId }, date: { $eq: date } };
+  }
+  console.log(wardId);
+  if (wardId != 'null') {
+    wardmatch = { Wardid: wardId };
+    wardmatchCount = { Wardid: { $eq: wardId } };
+  } else {
+    wardmatch = { active: true };
+    wardmatchCount = { active: true };
+  }
+  console.log(match);
+  let marketshop = await MarketShopsClone.aggregate([
+    {
+      $lookup: {
+        from: 'marketclones',
+        localField: 'MName',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: wardmatchCount,
+          },
+        ],
+        as: 'StreetDatass',
+      },
+    },
+    {
+      $unwind: '$StreetDatass',
+    },
+    {
+      $lookup: {
+        from: 'trendproductsclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: match,
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+  ]);
+  let totelcount = marketshop.length+b2bshops.length;
+  if (street != 'null') {
+    totelcount = 1;
+  }
+
+  return { streetCount: totelcount };
 };
 
 const createManageBill = async (manageBillBody) => {
