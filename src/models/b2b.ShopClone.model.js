@@ -54,6 +54,13 @@ const shopSchema = mongoose.Schema({
   created: {
     type: String,
   },
+  marketId: { type: String },
+  shopNo: {
+    type: String,
+  },
+  shopMobile: {
+    type: String,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -63,6 +70,9 @@ const shopSchema = mongoose.Schema({
     default: false,
   },
   reason: {
+    type: String,
+  },
+  type: {
     type: String,
   },
 });
@@ -103,12 +113,10 @@ const attendanceSchema = new mongoose.Schema({
   time: {
     type: Number,
   },
-  // todayCount: {
-  //   type: Number,
-  // },
-  // totalCount: {
-  //   type: Number,
-  // },
+  type: {
+    type: String,
+  },
+
   active: {
     type: Boolean,
     default: true,
@@ -117,7 +125,6 @@ const attendanceSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-
 });
 
 const AttendanceClone = mongoose.model('AttendanceClone', attendanceSchema);

@@ -45,7 +45,7 @@ const deleteBusinessById = catchAsync(async (req, res) => {
 
 const finishOrder = catchAsync(async (req, res) => {
   const callStatus = await CallStatusService.finishOrder(req.params.pId, req.params.date);
-  res.send(callStatus);
+  res.status(httpStatus.OK).send(callStatus);
 });
 
 module.exports = {
