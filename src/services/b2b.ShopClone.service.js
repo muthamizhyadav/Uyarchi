@@ -286,7 +286,7 @@ const deleteAttendanceById = async (id) => {
   await attendance.save();
   return attendance;
 };
-
+``
 const totalCount = async (userId) => {
   const moment = require('moment');
   let datenow = moment(new Date()).format('DD-MM-YYYY');
@@ -297,7 +297,7 @@ const totalCount = async (userId) => {
   const marketshopTotalcount = await Shop.find({ Uid: userId, type: 'market' }).count();
   const marketshoptodayCount = await Shop.find({ date: datenow, Uid: userId, type: 'market' }).count();
   // console.log(Totalcount, todayCount, marketTotalcount, markettodayCount, marketshopTotalcount, marketshoptodayCount);
-  return {
+  return { 
     shopTotal: Totalcount,
     shopToday: todayCount,
     marketTotal: marketTotalcount,
