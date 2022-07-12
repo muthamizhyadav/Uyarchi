@@ -5,13 +5,13 @@ const redirectSchema = mongoose.Schema({
     type: String,
     default: v4,
   },
-  zone: {
+  street: {
     type: String,
   },
-  ward: {
+  locality: {
     type: String,
   },
-  dummyStreet: {
+  area: {
     type: String,
   },
   
