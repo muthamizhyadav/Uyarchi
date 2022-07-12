@@ -9,7 +9,7 @@ const createWard = async (wardBody) => {
   console.log(zoneId);
   let zon = await Zone.findById(zoneId);
   if (zon === null) {
-    throw new ApiError(httpStatus.NOT_FOUND, '! 🖕oops');
+    throw new ApiError(httpStatus.NOT_FOUND, '! 😞oops');
   }
   return Ward.create(wardBody);
 };
@@ -18,7 +18,7 @@ const getWardById = async (id, active) => {
   const ward = await Ward.findById(id);
   return ward;
 };
- 
+
 const getAllWard = async () => {
   return Ward.aggregate([
     {
@@ -125,7 +125,6 @@ const getAllWardsForManageTrends = async () => {
   ]);
 };
 
-
 const querWard = async (filter, options) => {
   return Ward.paginate(filter, options);
 };
@@ -148,17 +147,14 @@ const deleteWardById = async (wardId) => {
   return ward;
 };
 
-
-
-
 const createDummyStreet = async () => {
   // let ward = await Ward.find().sort({ ward: 1 }).skip(0).limit(100);
   // let count = 0;
   // let sort = 0;
-  // // const deletes =await Street.find({ dommy: true })
-  // // deletes.forEach(async (e) => {
-  // //   await Street.findByIdAndDelete({ _id: e._id });
-  // // });
+  // const deletes =await Street.find({ dommy: true })
+  // deletes.forEach(async (e) => {
+  //   await Street.findByIdAndDelete({ _id: e._id });
+  // });
   // ward.forEach(async (e) => {
   //   let arra = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
   //   arra.forEach(async() => {
@@ -182,9 +178,9 @@ const createDummyStreet = async () => {
   //   });
   // });
   // console.log(count);
-  return await Street.find({ dommy: true}).sort({sort:1});
+  return await Street.find({ dommy: true }).sort({ sort: 1 });
 };
- 
+
 module.exports = {
   createWard,
   getWardByZoneId,

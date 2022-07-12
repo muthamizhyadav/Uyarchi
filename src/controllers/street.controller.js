@@ -113,13 +113,11 @@ const deleteStreet = catchAsync(async (req, res) => {
 const areaSearchApi = catchAsync(async (req, res) => {
   let street = await StreetService.areaSearchApi(req.params.key);
   res.send(street);
-})
+});
+
 const getDummyStreet = catchAsync(async (req, res) => {
-  let street = await StreetService.getDummy()
-    res.send(street);
-  
-  // res.status(httpStatus.NO_CONTENT).send();
-  
+  let street = await StreetService.getDummy();
+  res.send(street);
 });
 
 module.exports = {
@@ -142,4 +140,4 @@ module.exports = {
   streetorder,
   areaSearchApi,
   getDummyStreet,
-}
+};
