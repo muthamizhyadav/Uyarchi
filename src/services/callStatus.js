@@ -19,7 +19,7 @@ const getProductAndSupplierDetails = async (page) => {
         localField: '_id',
         foreignField: 'supplierid',
         pipeline: [
-          { $match: { confirmcallstatus: 'Accepted', StockReceived: 'Pending' } },
+          { $match: { confirmcallstatus: 'Accepted', StockReceived: 'Pending', showWhs: true } },
           { $group: { _id: null, myCount: { $sum: 1 } } },
         ],
         as: 'CallstatusData',
@@ -157,6 +157,14 @@ const deleteCallStatusById = async (id) => {
   return callstatus;
 };
 
+const finishOrder = async (pId, date) => {
+  let values = await CallStatus.find({ productid: pId, date: date, confirmcallstatus: 'Accepted' });
+  values.forEach(async (e) => {
+    await CallStatus.findByIdAndUpdate({ _id: e._id }, { showWhs: true }, { new: true });
+  });
+  return 'Order Finished 😃';
+};
+
 module.exports = {
   createCallStatus,
   getCallStatusById,
@@ -164,4 +172,5 @@ module.exports = {
   deleteCallStatusById,
   getProductAndSupplierDetails,
   getDataWithSupplierId,
+  finishOrder,
 };

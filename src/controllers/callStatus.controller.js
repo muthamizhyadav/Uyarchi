@@ -43,11 +43,17 @@ const deleteBusinessById = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const finishOrder = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.finishOrder(req.params.pId, req.params.date);
+  res.send(callStatus);
+});
+
 module.exports = {
   createCallStatus,
   getProductAndSupplierDetails,
   getCallStatusbyId,
   updateCallStatusById,
   deleteBusinessById,
-  getDataWithSupplierId
+  getDataWithSupplierId,
+  finishOrder,
 };

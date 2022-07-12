@@ -99,7 +99,7 @@ const getDeAllocationaggregationByUserId = catchAsync(async (req, res) => {
   const street = await StreetService.getDeAllocationaggregationByUserId(req.params.AllocatedUser);
   res.send(street);
 });
-
+``;
 const updateStreet = catchAsync(async (req, res) => {
   const street = await StreetService.updateStreetById(req.params.streetId, req.body);
   res.send(street);
@@ -116,8 +116,8 @@ const areaSearchApi = catchAsync(async (req, res) => {
 });
 
 const getDummyStreet = catchAsync(async (req, res) => {
-  let street = await StreetService.getDummy()
-    res.send(street);
+  let street = await StreetService.getDummy();
+  res.send(street);
 });
 
 const getStreetWard = catchAsync(async (req, res) => {
@@ -146,4 +146,4 @@ module.exports = {
   areaSearchApi,
   getDummyStreet,
   getStreetWard,
-}
+};

@@ -256,7 +256,7 @@ const streetDeAllocation = async (allocationbody) => {
   //   if(check1.length != 0){
   //     throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Street Already allocated Apartment or Shop');
   //   }
-  // }
+  // }                                          
   for (let i = 0; i < arr.length; i++) {
     const check = await Apartment.find({ Strid: arr[i] });
     const check1 = await Shop.find({ Strid: arr[i] });
@@ -491,10 +491,10 @@ const areaSearchApi = async (key) => {
     },
   ]);
   return values;
-}
+};
 
 const getDummy = async () => {
-  const dummystreet = await  Streets.find({ dommy: true });
+  const dummystreet = await Streets.find({ dommy: true });
   return dummystreet;
   // return 'summa';
 };
@@ -503,11 +503,11 @@ const getDummy = async () => {
 //   const reName = await Streets.find();
 // }
 
-const getStreetByWard = async (wardId) =>{
-  console.log(wardId)
-  const street = await Street.find({ dommy:{$ne: true}, wardId:{$eq:wardId} });
+const getStreetByWard = async (wardId) => {
+  console.log(wardId);
+  const street = await Street.find({ dommy: { $ne: true }, wardId: { $eq: wardId } });
   return street;
-}
+};
 
 module.exports = {
   createStreet,
@@ -533,4 +533,3 @@ module.exports = {
   getDummy,
   getStreetByWard,
 };
-
