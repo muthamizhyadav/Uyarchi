@@ -15,12 +15,12 @@ const createB2bShopClone = catchAsync(async (req, res) => {
     let bodydata = { Uid: userId };
     if (req.body.type == 'market') {
       let marketdata = await MarketClone.findById(marketId);
-      console.log(marketdata)
+      console.log(marketdata);
       if (marketdata) {
         bodydata = { Uid: userId, Strid: marketdata.Strid, Wardid: marketdata.Wardid };
       }
     }
-    console.log(bodydata)
+    console.log(bodydata);
     await Shop.findByIdAndUpdate({ _id: shop.id }, bodydata, { new: true });
   }
   if (req.files) {
