@@ -116,10 +116,6 @@ const areaSearchApi = catchAsync(async (req, res) => {
 });
 
 const getDummyStreet = catchAsync(async (req, res) => {
-<<<<<<< HEAD
-  let street = await StreetService.getDummy();
-  res.send(street);
-=======
   let street = await StreetService.getDummy()
     res.send(street);
 });
@@ -127,7 +123,6 @@ const getDummyStreet = catchAsync(async (req, res) => {
 const getStreetWard = catchAsync(async (req, res) => {
   let ward = await StreetService.getStreetByWard(req.params.wardId);
   res.send(ward);
->>>>>>> bc083b493299ad73ab131e7468594ddb98130139
 });
 
 module.exports = {
@@ -150,9 +145,5 @@ module.exports = {
   streetorder,
   areaSearchApi,
   getDummyStreet,
-<<<<<<< HEAD
-};
-=======
   getStreetWard,
 }
->>>>>>> bc083b493299ad73ab131e7468594ddb98130139
