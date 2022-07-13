@@ -49,15 +49,16 @@ const callHistorySchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
-  declineReason : {
+  reason : {
     type: String,
   },
-  reSchedule:{
-    type: String,
-  },
-  callBackReason: {
-    type: String,
-  },
+  // reSchedule:{
+  //   type: String,
+  // },
+  // callBackReason: {
+  //   type: String,
+  // },
+  
   select : {
     type: String,
   },

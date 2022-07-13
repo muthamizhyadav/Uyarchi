@@ -9,11 +9,6 @@ const createCallHistory = async (body) => {
   return callHistory;
 };
 
-const createStatus = async (body) =>{
-  let status = await callHistoryModel.create(body);
-  return status;
-}
-
 const getAll = async () => {
   return callHistoryModel.find();
 };
@@ -31,10 +26,7 @@ const getShop = async (page) => {
           },
        
           { $skip: 10 * page },
-          { $limit: 10 },
-        //   {
-        //     $unwind: '$shopData',
-        //   },
+          { $limit: 10 }, 
         ]);
 
         let total = await Shop.aggregate([ 
@@ -57,5 +49,4 @@ module.exports = {
   createCallHistory,
   getAll,
   getShop,
-  createStatus,
 }
