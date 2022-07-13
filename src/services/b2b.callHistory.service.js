@@ -9,6 +9,11 @@ const createCallHistory = async (body) => {
   return callHistory;
 };
 
+const createStatus = async (body) =>{
+  let status = await callHistoryModel.create(body);
+  return status;
+}
+
 const getAll = async () => {
   return callHistoryModel.find();
 };
@@ -52,4 +57,5 @@ module.exports = {
   createCallHistory,
   getAll,
   getShop,
+  createStatus,
 }

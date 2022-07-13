@@ -58,6 +58,12 @@ const callHistorySchema = mongoose.Schema({
   callBackReason: {
     type: String,
   },
+  select : {
+    type: String,
+  },
+  selectStatus: {
+    type: String,
+  }
 });
 
 const callHistory = mongoose.model('callHistory',callHistorySchema );

@@ -6,7 +6,12 @@ const catchAsync = require('../utils/catchAsync');
 const createCallHistory = catchAsync(async (req, res) => {
     const callHistory = await callHistoryService.createCallHistory(req.body)
     res.send(callHistory)
-})
+});
+
+const createstatus = catchAsync(async (req, res) => {
+    const status = await callHistoryService.createStatus(req.body)
+    res.send(status);
+});
 
 const getAll = catchAsync(async (req, res) => {
     const callhistory = await callHistoryService.getAll()
@@ -30,4 +35,5 @@ module.exports = {
     getAll,
     getShop,
     getAllPage,
+    createstatus,
 }
