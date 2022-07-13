@@ -262,6 +262,7 @@ const updateTrendsById = async (id, body) => {
   if (!trendproduct) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
   }
+
   console.log(trendproduct);
   trendproduct = await TrendProductClone.findByIdAndUpdate({ _id: id }, body, { new: true });
   return trendproduct;
@@ -280,6 +281,7 @@ const getShopsByIdFromTrends = async (id) => {
   let match = [{ active: { $eq: false } }];
   if (600 < dt && 1000 > dt) {
     console.log('1');
+    
     match = [{ date: { $eq: datenow } }, { shopid: { $eq: id } }, { time: { $gte: 600 } }, { time: { $lte: 1000 } }];
   }
   if (1100 < dt && 1400 > dt) {
@@ -288,7 +290,7 @@ const getShopsByIdFromTrends = async (id) => {
   if (1500 < dt && 1800 > dt) {
     match = [{ date: { $eq: datenow } }, { shopid: { $eq: id } }, { time: { $gte: 1500 } }, { time: { $lte: 1800 } }];
   }
-  console.log(match)
+  console.log(match);
   let values = await Trends.aggregate([
     {
       $match: {

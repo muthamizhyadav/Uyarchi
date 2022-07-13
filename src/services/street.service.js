@@ -256,7 +256,7 @@ const streetDeAllocation = async (allocationbody) => {
   //   if(check1.length != 0){
   //     throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Street Already allocated Apartment or Shop');
   //   }
-  // }                                          
+  // }
   for (let i = 0; i < arr.length; i++) {
     const check = await Apartment.find({ Strid: arr[i] });
     const check1 = await Shop.find({ Strid: arr[i] });
@@ -484,6 +484,40 @@ const areaSearchApi = async (key) => {
     {
       $match: {
         $or: [{ area: { $regex: lowercase } }, { street: { $regex: lowercase } }, { locality: { $regex: lowercase } }],
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'wardId',
+        foreignField: '_id',
+        as: 'wardData',
+      },
+    },
+    {
+      $unwind: '$wardData',
+    },
+    {
+      $lookup: {
+        from: 'zones',
+        localField: 'zone',
+        foreignField: '_id',
+        as: 'zoneData',
+      },
+    },
+    {
+      $unwind: '$zoneData',
+    },
+    {
+      $project: {
+        _id: 1,
+        street: 1,
+        area: 1,
+        locality: 1,
+        wardName: '$wardData.ward',
+        zone: '$zoneData.zone',
+        zoneCode: '$zonesData.zoneCode',
       },
     },
     {

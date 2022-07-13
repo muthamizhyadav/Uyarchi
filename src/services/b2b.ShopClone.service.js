@@ -286,7 +286,7 @@ const deleteAttendanceById = async (id) => {
   await attendance.save();
   return attendance;
 };
-``
+
 const totalCount = async (userId) => {
   const moment = require('moment');
   let datenow = moment(new Date()).format('DD-MM-YYYY');
