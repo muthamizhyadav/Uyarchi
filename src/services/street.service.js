@@ -486,6 +486,40 @@ const areaSearchApi = async (key) => {
         $or: [{ area: { $regex: lowercase } }, { street: { $regex: lowercase } }, { locality: { $regex: lowercase } }],
       },
     },
+
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'wardId',
+        foreignField: '_id',
+        as: 'wardData',
+      },
+    },
+    {
+      $unwind: '$wardData',
+    },
+    {
+      $lookup: {
+        from: 'zones',
+        localField: 'zone',
+        foreignField: '_id',
+        as: 'zoneData',
+      },
+    },
+    {
+      $unwind: '$zoneData',
+    },
+    {
+      $project: {
+        _id: 1,
+        street: 1,
+        area: 1,
+        locality: 1,
+        wardName: '$wardData.ward',
+        zone: '$zoneData.zone',
+        zoneCode: '$zonesData.zoneCode',
+      },
+    },
     {
       $limit: 100,
     },
@@ -529,6 +563,11 @@ const getDummy = async () => {
   // let reName = await Street.create(body)
 //   return streetData;
 // };
+const getStreetByWard = async (wardId) => {
+  console.log(wardId);
+  const street = await Street.find({ dommy: { $ne: true }, wardId: { $eq: wardId } });
+  return street;
+};
 
 module.exports = {
   createStreet,

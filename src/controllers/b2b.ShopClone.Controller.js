@@ -5,13 +5,23 @@ const catchAsync = require('../utils/catchAsync');
 const b2bCloneService = require('../services/b2b.ShopClone.service');
 const token = require('../services/token.service');
 const { Shop } = require('../models/b2b.ShopClone.model');
-// shop Clone Controller
 
+const { MarketClone } = require('../models/market.model');
 const createB2bShopClone = catchAsync(async (req, res) => {
   const shop = await b2bCloneService.createShopClone(req.body);
   const userId = req.userId;
+  let marketId = req.body.marketId;
   if (shop) {
-    await Shop.findByIdAndUpdate({ _id: shop.id }, { Uid: userId }, { new: true });
+    let bodydata = { Uid: userId };
+    if (req.body.type == 'market') {
+      let marketdata = await MarketClone.findById(marketId);
+      console.log(marketdata);
+      if (marketdata) {
+        bodydata = { Uid: userId, Strid: marketdata.Strid, Wardid: marketdata.Wardid };
+      }
+    }
+    console.log(bodydata);
+    await Shop.findByIdAndUpdate({ _id: shop.id }, bodydata, { new: true });
   }
   if (req.files) {
     console.log(req.files);
@@ -19,6 +29,7 @@ const createB2bShopClone = catchAsync(async (req, res) => {
       shop.photoCapture.push('images/shopClone/' + files.filename);
     });
   }
+
   res.send(shop);
   await shop.save();
 });

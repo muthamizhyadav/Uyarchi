@@ -56,6 +56,10 @@ const callStatusSchema = mongoose.Schema({
   date: {
     type: String,
   },
+  showWhs: {
+    type: Boolean,
+    default: false,
+  },
   time: {
     type: String,
   },
