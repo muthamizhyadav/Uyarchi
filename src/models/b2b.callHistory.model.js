@@ -1,0 +1,48 @@
+const mongoose = require('mongoose');
+const { v4 } = require('uuid');
+const moment = require('moment');
+
+const callHistorySchema = mongoose.Schema({
+    _id: {
+      type: String,
+      default: v4,
+    },
+    TimeofCall: {
+        type: String,
+    },
+    callStatus: {
+        type:String,
+    },
+    orderedStatus:{
+        type: String,
+    },
+    reason:{
+        type: String,
+    },
+    calledBy:{
+        type: String,
+    },
+    active: {
+    type: Boolean,
+    default: true,
+  },
+    archive: {
+    type: Boolean,
+    default: false,
+  },
+  shopId: {
+    type: String,
+  },
+  date: {
+    type: String,
+    default: moment().utcOffset(331).format('DD-MM-yyy'),
+  },
+  time: {
+    type: String,
+    default: moment().utcOffset(331).format('h:mm a'),
+  },
+});
+
+const callHistory = mongoose.model('callHistory',callHistorySchema );
+
+module.exports = callHistory;

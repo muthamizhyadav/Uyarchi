@@ -125,7 +125,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         Slong: 1,
         created: 1,
         SOwner: 1,
-
+        
         mobile: 1,
         date: 1,
       },

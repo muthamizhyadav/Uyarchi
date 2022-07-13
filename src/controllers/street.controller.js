@@ -124,6 +124,11 @@ const getStreetWard = catchAsync(async (req, res) => {
   res.send(ward);
 });
 
+const renameStreet = catchAsync(async (req, res) => {
+  const street = await StreetService.rename(req.body);
+  res.status(httpStatus.CREATED).send(street);
+});
+
 module.exports = {
   createStreet,
   getStreetDetailsById,
@@ -145,4 +150,5 @@ module.exports = {
   areaSearchApi,
   getDummyStreet,
   getStreetWard,
+  renameStreet
 }

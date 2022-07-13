@@ -28,6 +28,9 @@ const streetSchema = mongoose.Schema({
   area: {
     type: String,
   },
+  modifiedName: {
+    type: String,
+  },
   active: {
     type: Boolean,
     default: true,

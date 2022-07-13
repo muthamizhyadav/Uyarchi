@@ -67,6 +67,7 @@ const Attendance = require('./b2bAttendance.route');
 const wallet = require('./b2b.wallet.route');
 const SupplierBillRoute = require('./supplierbills.route');
 const redirect = require('./b2b.redirect.route');
+const callHistory = require('./b2b.callHistory.route');
 const defaultRoutes = [
   {
     path: '/auth',
@@ -320,10 +321,10 @@ const defaultRoutes = [
     path: '/wallet',
     route: wallet,
   },
-  // {
-  //   path: '/redirect',
-  //   route: redirect,
-  // },
+  {
+    path: '/callHistory',
+    route: callHistory,
+  },
 ];
 
 const devRoutes = [

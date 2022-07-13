@@ -122,6 +122,10 @@ const getTotalCounts = catchAsync(async (req, res) => {
   const attendance = await b2bCloneService.totalCount(userId);
   res.send(attendance);
 });
+
+
+const telecall = 
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,

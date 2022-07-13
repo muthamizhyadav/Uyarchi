@@ -491,10 +491,10 @@ const areaSearchApi = async (key) => {
     },
   ]);
   return values;
-}
+};
 
 const getDummy = async () => {
-  const dummystreet = await  Streets.find({ dommy: true });
+  const dummystreet = await Streets.find({ dommy: true });
   return dummystreet;
   // return 'summa';
 };
@@ -503,11 +503,32 @@ const getDummy = async () => {
 //   const reName = await Streets.find();
 // }
 
-const getStreetByWard = async (wardId) =>{
-  console.log(wardId)
-  const street = await Street.find({ dommy:{$ne: true}, wardId:{$eq:wardId} });
-  return street;
-}
+// const getStreetByWard = async (wardId) => {
+//   console.log(wardId);
+//   const street = await Street.find({ dommy: { $ne: true }, wardId: { $eq: wardId } });
+//   return street;
+// };
+
+// const rename = async (body) => {
+//   // console.log(body);
+//   let streetData = await Street.findById(body.sId);
+//   console.log(streetData);
+//   if (body.type == 'rename') {
+//     await Street.findByIdAndUpdate(
+//       { _id: body.sId },
+//       { modifiedName: streetData.street, street: body.Sname, locality: body.loc, area: body.area,district: body.selDis,zone : body.selZone, wardId:body.selWard, dommy:false, },
+//       { new: true }
+//     );
+//   }
+  // if(body.type == 'redirect'){
+  //   await Street.findByIdAndUpdate({
+ 
+  //   })
+  // }
+
+  // let reName = await Street.create(body)
+//   return streetData;
+// };
 
 module.exports = {
   createStreet,
@@ -531,6 +552,6 @@ module.exports = {
   getAllStreetById,
   areaSearchApi,
   getDummy,
-  getStreetByWard,
+  // getStreetByWard,
+  // rename,
 };
-
