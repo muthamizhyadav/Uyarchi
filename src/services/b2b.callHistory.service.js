@@ -24,6 +24,9 @@ const getShop = async (page) => {
         as: 'shopData',
       },
     },
+    {
+      $sort: { callStatus: -1 },
+    },
     //   {
     //     $unwind: '$shopData',
     //   },

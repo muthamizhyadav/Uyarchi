@@ -39,6 +39,11 @@ const getAllShopClone = async () => {
 const getshopWardStreetNamesWithAggregation = async (page) => {
   let values = await Shop.aggregate([
     {
+      $match: {
+        $and: [{type: { $eq: 'shop' }}],
+      },
+    },
+    {
       $lookup: {
         from: 'b2busers',
         localField: 'Uid',
@@ -125,7 +130,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         Slong: 1,
         created: 1,
         SOwner: 1,
-        
+
         mobile: 1,
         date: 1,
       },
@@ -297,7 +302,7 @@ const totalCount = async (userId) => {
   const marketshopTotalcount = await Shop.find({ Uid: userId, type: 'market' }).count();
   const marketshoptodayCount = await Shop.find({ date: datenow, Uid: userId, type: 'market' }).count();
   // console.log(Totalcount, todayCount, marketTotalcount, markettodayCount, marketshopTotalcount, marketshoptodayCount);
-  return { 
+  return {
     shopTotal: Totalcount,
     shopToday: todayCount,
     marketTotal: marketTotalcount,
