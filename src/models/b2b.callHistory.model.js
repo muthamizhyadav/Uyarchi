@@ -41,6 +41,14 @@ const callHistorySchema = mongoose.Schema({
     type: String,
     default: moment().utcOffset(331).format('h:mm a'),
   },
+  status: {
+    type: String,
+    default: 'Pending',
+  },
+  noOfCalls : {
+    type: Number,
+    default: 0,
+  }
 });
 
 const callHistory = mongoose.model('callHistory',callHistorySchema );
