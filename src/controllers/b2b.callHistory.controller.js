@@ -19,8 +19,15 @@ const getShop = catchAsync(async (req, res) => {
 });
 
 
+const getAllPage = catchAsync(async (req, res) => {
+    const call = await callHistoryService.getShop(req.params.page)
+    res.send(call)
+});
+
+
 module.exports = {
     createCallHistory,
     getAll,
     getShop,
+    getAllPage,
 }

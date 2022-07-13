@@ -20,15 +20,32 @@ const getShop = async (page) => {
             $lookup: {
               from: 'callhistories',
               localField: '_id',
-              foreignField: 'SName',
+              foreignField: 'shopId',
               as: 'shopData',
             },
           },
+       
+          { $skip: 10 * page },
+          { $limit: 10 },
         //   {
         //     $unwind: '$shopData',
         //   },
         ]);
-        return values;
+
+        let total = await Shop.aggregate([ 
+            {
+                $lookup: {
+                  from: 'callhistories',
+                  localField: '_id',
+                  foreignField: 'shopId',
+                  as: 'shopData',
+                },
+              },
+              {
+                $unwind: '$shopData',
+              },
+            ]);
+        return {Values:values, Total:total.length}
     };
 
 module.exports = {
