@@ -48,7 +48,16 @@ const callHistorySchema = mongoose.Schema({
   noOfCalls : {
     type: Number,
     default: 0,
-  }
+  },
+  declineReason : {
+    type: String,
+  },
+  reSchedule:{
+    type: String,
+  },
+  callBackReason: {
+    type: String,
+  },
 });
 
 const callHistory = mongoose.model('callHistory',callHistorySchema );
