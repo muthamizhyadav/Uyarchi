@@ -19,6 +19,11 @@ const getShop = catchAsync(async (req, res) => {
     res.send(shopId)
 });
 
+const getById = catchAsync(async (req, res) => {
+    const callCount = await callHistoryService.getById(req.params.id)
+    res.send(callCount)
+})
+
 
 const getAllPage = catchAsync(async (req, res) => {
     const call = await callHistoryService.getShop(req.params.page)
@@ -31,5 +36,6 @@ module.exports = {
     getAll,
     getShop,
     getAllPage,
+    getById,
    
 }

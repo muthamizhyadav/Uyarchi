@@ -6,5 +6,6 @@ router.route('/call').post(callHistoryController.createCallHistory);
 router.route('/getAll/CallHistory').get(callHistoryController.getAll); 
 router.route('/getShopId').get(callHistoryController.getShop);
 router.route('/getAll/callHistory/:page').get(callHistoryController.getAllPage);
+router.route('/getCallCount/:id').get(callHistoryController.getById);
 
 module.exports = router;

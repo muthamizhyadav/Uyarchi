@@ -13,6 +13,13 @@ const getAll = async () => {
   return callHistoryModel.find();
 };
 
+const getById = async (id) => {
+  // let callCount = await callHistoryModel.findById(id)
+  // return callCount;
+  let history = await callHistoryModel.find({shopId:id})
+  return history;
+}
+
 const getShop = async (page) => {
     // return shopclone.find()
     let values = await Shop.aggregate([ 
@@ -49,4 +56,5 @@ module.exports = {
   createCallHistory,
   getAll,
   getShop,
+  getById,
 }
