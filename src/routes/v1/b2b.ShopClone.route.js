@@ -32,5 +32,7 @@ router
   .delete(authorization, b2bShopCloneController.deleteAttendanceById);
 
 router.route('/totalCount/counts').get(authorization, b2bShopCloneController.getTotalCounts);
+// getmarket shop route
 
+router.route('/getMarket/shop/:page').get(b2bShopCloneController.getMarkeShop);
 module.exports = router;

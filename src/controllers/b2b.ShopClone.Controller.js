@@ -135,7 +135,10 @@ const getTotalCounts = catchAsync(async (req, res) => {
 });
 
 
-const telecall = 
+const getMarkeShop = catchAsync(async (req, res) =>{
+  const marketshop = await b2bCloneService.getMarkeShop(req.params.page)
+  res.send(marketshop)
+})
 
 module.exports = {
   createB2bShopClone,
@@ -152,4 +155,6 @@ module.exports = {
   updateAttendanceById,
   deleteAttendanceById,
   getTotalCounts,
+  // getmaketShop
+  getMarkeShop,
 };
