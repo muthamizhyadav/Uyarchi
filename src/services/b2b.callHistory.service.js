@@ -5,6 +5,8 @@ const { Shop } = require('../models/b2b.ShopClone.model');
 // const moment = require('moment');
 
 const createCallHistory = async (body) => {
+  console.log(body.callStatus);
+  await Shop.findByIdAndUpdate({ _id: body.shopId }, { CallStatus: body.callStatus }, { new: true });
   let callHistory = await callHistoryModel.create(body);
   return callHistory;
 };
@@ -14,24 +16,44 @@ const getAll = async () => {
 };
 
 const getShop = async (page) => {
-  // return shopclone.find()
   let values = await Shop.aggregate([
+    { $sort: { callStatus: -1 } },
     {
       $lookup: {
         from: 'callhistories',
         localField: '_id',
         foreignField: 'shopId',
+        pipeline: [
+          {
+            $sort: { callStatus: -1 },
+          },
+        ],
+        as: 'shopData',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+
+  let total = await Shop.aggregate([
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $sort: { callStatus: -1 },
+          },
+        ],
         as: 'shopData',
       },
     },
     {
-      $sort: { callStatus: -1 },
+      $unwind: '$shopData',
     },
-    //   {
-    //     $unwind: '$shopData',
-    //   },
   ]);
-  return values;
+  return { values: values, total: total.length };
 };
 
 module.exports = {
