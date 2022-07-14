@@ -16,14 +16,14 @@ const filterShopwithNameAndContact = async (key) => {
   const marketClone = await MarketShopsClone.aggregate([
     {
       $match: {
-        $or: [{ SName: { $regex: key } }, { mobile: { $regex: key } }, { ownnum: { $regex: key } }],
+        $or: [{ SName: { $regex: key , '$options': 'i' } }, { mobile: { $regex: key , '$options': 'i' } }, { ownnum: { $regex: key , '$options': 'i' } }],
       },
     },
   ]);
   const shop = await Shop.aggregate([
     {
       $match: {
-        $or: [{ SName: { $regex: key } }, { mobile: { $regex: key } }],
+        $or: [{ SName: { $regex: key, '$options': 'i' } }, { mobile: { $regex: key, '$options': 'i' } }],
       },
     },
   ]);
