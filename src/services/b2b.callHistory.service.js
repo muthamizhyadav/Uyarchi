@@ -11,6 +11,7 @@ const createCallHistory = async (body) => {
   return callHistory;
 };
 
+
 const getAll = async () => {
   return callHistoryModel.find();
 };
