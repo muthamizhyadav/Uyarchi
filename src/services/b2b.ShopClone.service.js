@@ -314,11 +314,11 @@ const totalCount = async (userId) => {
 
 // get marketShop
 
-const getMarkeShop = async (page) => {
+const getMarkeShop = async (marketId) => {
   let values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ type: { $eq: 'market' } }],
+        $and: [{ type: { $eq: 'market' } }, { marketId: { $eq: marketId } }],
       },
     },
     {
@@ -393,6 +393,17 @@ const getMarkeShop = async (page) => {
     },
     {
       $unwind: '$shoptype',
+    },
+    {
+      $lookup: {
+        from: 'marketclones',
+        localField: 'marketId',
+        foreignField: '_id',
+        as: 'marketData',
+      },
+    },
+    {
+      $unwind: '$marketData'
     },
     {
       $project: {
@@ -402,104 +413,22 @@ const getMarkeShop = async (page) => {
         ward: '$WardData.ward',
         username: '$UsersData.name',
         shoptype: '$shoptype.shopList',
+        marketName:'$marketData.MName',
         photoCapture: 1,
         SName: 1,
         Slat: 1,
         Slong: 1,
         created: 1,
         SOwner: 1,
+        marketId: 1,
         type: 1,
         mobile: 1,
         date: 1,
       },
     },
-    { $skip: 10 * page },
-    { $limit: 10 },
   ]);
-  let total = await Shop.aggregate([
-    {
-      $match: {
-        $and: [{ type: { $eq: 'market' } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'Uid',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $project: {
-              name: 1,
-            },
-          },
-        ],
-        as: 'UsersData',
-      },
-    },
-    {
-      $unwind: '$UsersData',
-    },
-    {
-      $lookup: {
-        from: 'wards',
-        localField: 'Wardid',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $project: {
-              ward: 1,
-            },
-          },
-        ],
-        as: 'WardData',
-      },
-    },
-    {
-      $unwind: '$WardData',
-    },
-    {
-      $lookup: {
-        from: 'streets',
-        localField: 'Strid',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $project: {
-              street: 1,
-            },
-          },
-        ],
-        as: 'StreetData',
-      },
-    },
-    {
-      $unwind: '$StreetData',
-    },
-    // shoplists
-    {
-      $lookup: {
-        from: 'shoplists',
-        localField: 'SType',
-        foreignField: '_id',
-        // pipeline:[
-        //     {
-        //       $project: {
-        //         street:1
-        //       }
-        //     }
-        // ],
-        as: 'shoptype',
-      },
-    },
-    {
-      $unwind: '$shoptype',
-    },
-  ]);
-  return {
-    values: values,
-    total: total.length,
-  };
+
+  return values;
 };
 
 module.exports = {
