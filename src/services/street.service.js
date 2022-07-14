@@ -376,9 +376,20 @@ const getAllStreet = async () => {
 
 // pagination with Aggregation
 
-const streetPagination = async (id) => {
-  console.log(id);
+const streetPagination = async (key, id) => {
+  let lowercase;
+  let match = [{ archive: { $ne: true } }];
+  if (key != 'null') {
+    lowercase = key.toUpperCase();
+    match = [{ area: { $regex: lowercase } }, { street: { $regex: lowercase } }, { locality: { $regex: lowercase } }];
+  }
+  console.log(match)
   return Street.aggregate([
+    {
+      $match: {
+        $or: match,
+      },
+    },
     {
       $sort: { locality: 1 },
     },
@@ -554,13 +565,13 @@ const getDummy = async () => {
 //       { new: true }
 //     );
 //   }
-  // if(body.type == 'redirect'){
-  //   await Street.findByIdAndUpdate({
- 
-  //   })
-  // }
+// if(body.type == 'redirect'){
+//   await Street.findByIdAndUpdate({
 
-  // let reName = await Street.create(body)
+//   })
+// }
+
+// let reName = await Street.create(body)
 //   return streetData;
 // };
 const getStreetByWard = async (wardId) => {

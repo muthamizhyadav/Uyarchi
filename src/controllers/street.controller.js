@@ -42,7 +42,7 @@ const getAllDeAllocatedStreetOnly = catchAsync(async (req, res) => {
 });
 
 const streetPagination = catchAsync(async (req, res) => {
-  const pagination = await StreetService.streetPagination(req.params.id);
+  const pagination = await StreetService.streetPagination(req.params.key,req.params.id);
   res.send(pagination);
 });
 

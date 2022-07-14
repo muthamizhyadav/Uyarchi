@@ -39,6 +39,11 @@ const getAllShopClone = async () => {
 const getshopWardStreetNamesWithAggregation = async (page) => {
   let values = await Shop.aggregate([
     {
+      $match: {
+        $and: [{ type: { $eq: 'shop' } }],
+      },
+    },
+    {
       $lookup: {
         from: 'b2busers',
         localField: 'Uid',
@@ -125,7 +130,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         Slong: 1,
         created: 1,
         SOwner: 1,
-        
+
         mobile: 1,
         date: 1,
       },
@@ -297,7 +302,7 @@ const totalCount = async (userId) => {
   const marketshopTotalcount = await Shop.find({ Uid: userId, type: 'market' }).count();
   const marketshoptodayCount = await Shop.find({ date: datenow, Uid: userId, type: 'market' }).count();
   // console.log(Totalcount, todayCount, marketTotalcount, markettodayCount, marketshopTotalcount, marketshoptodayCount);
-  return { 
+  return {
     shopTotal: Totalcount,
     shopToday: todayCount,
     marketTotal: marketTotalcount,
@@ -306,6 +311,126 @@ const totalCount = async (userId) => {
     marketShopToday: marketshoptodayCount,
   };
 };
+
+// get marketShop
+
+const getMarkeShop = async (marketId) => {
+  let values = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ type: { $eq: 'market' } }, { marketId: { $eq: marketId } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              ward: 1,
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      },
+    },
+    {
+      $unwind: '$shoptype',
+    },
+    {
+      $lookup: {
+        from: 'marketclones',
+        localField: 'marketId',
+        foreignField: '_id',
+        as: 'marketData',
+      },
+    },
+    {
+      $unwind: '$marketData'
+    },
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street: '$StreetData.street',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: '$shoptype.shopList',
+        marketName:'$marketData.MName',
+        photoCapture: 1,
+        SName: 1,
+        Slat: 1,
+        Slong: 1,
+        created: 1,
+        SOwner: 1,
+        marketId: 1,
+        type: 1,
+        mobile: 1,
+        date: 1,
+      },
+    },
+  ]);
+
+  return values;
+};
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -321,4 +446,6 @@ module.exports = {
   updateAttendanceById,
   deleteAttendanceById,
   totalCount,
+  // get marketShop
+  getMarkeShop,
 };
