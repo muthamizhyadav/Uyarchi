@@ -17,7 +17,7 @@ const getAll = async () => {
 
 const getShop = async (page) => {
   let values = await Shop.aggregate([
-    { $sort: { callStatus: -1 } },
+    { $sort: { callStatus: -1, time: -1 } },
     {
       $lookup: {
         from: 'callhistories',
@@ -56,8 +56,14 @@ const getShop = async (page) => {
   return { values: values, total: total.length };
 };
 
+const updateCallingStatus = async (id, userId) => {
+  await Shop.findByIdAndUpdate({ _id: id }, { callingStatus: 'On_a_call', callingUserId: userId }, { new: true });
+  return 'On a Call';
+};
+
 module.exports = {
   createCallHistory,
   getAll,
   getShop,
+  updateCallingStatus,
 };
