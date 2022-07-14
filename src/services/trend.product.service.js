@@ -240,30 +240,31 @@ const getProductCalculation = async (wardId, street, productId, date) => {
     wardmatch = { active: { $eq: true } };
   }
   console.log(wardmatch);
-  shopss = await Street.aggregate([
-    {
-      $match: {
-        $and: [match, wardmatch],
+  if (shopss == 'null') {
+    shopss = await Street.aggregate([
+      {
+        $match: {
+          $and: [match, wardmatch],
+        },
       },
-    },
-    {
-      $lookup: {
-        from: 'trendproductsclones',
-        localField: '_id',
-        foreignField: 'steetId',
-        pipeline: [
-          { $match: { date: date } },
-          { $match: { productId: productId } },
-          { $group: { _id: null, myCount: { $sum: 1 } } },
-        ],
-        as: 'TrendProductdata',
+      {
+        $lookup: {
+          from: 'trendproductsclones',
+          localField: '_id',
+          foreignField: 'steetId',
+          pipeline: [
+            { $match: { date: date } },
+            { $match: { productId: productId } },
+            { $group: { _id: null, myCount: { $sum: 1 } } },
+          ],
+          as: 'TrendProductdata',
+        },
       },
-    },
-    {
-      $unwind: '$TrendProductdata',
-    },
-  ]);
-
+      {
+        $unwind: '$TrendProductdata',
+      },
+    ]);
+  }
   return { totalshops: value.length, totalStreet: shopss.length };
 };
 
