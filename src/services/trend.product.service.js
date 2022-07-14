@@ -3,9 +3,9 @@ const ApiError = require('../utils/ApiError');
 const TrendProduct = require('../models/trendproduct.model');
 const Trends = require('../models/trends.model');
 const { Product } = require('../models/product.model');
-const { Shop } = require('../models/apartmentTable.model');
+const { Shop } = require('../models/b2b.ShopClone.model');
 const moment = require('moment');
-
+const Street = require('../models/street.model');
 const getStreetsByWardIdAndProducts = async (wardId, street, date, page) => {
   console.log(date, 'sdfsa');
 
@@ -195,65 +195,74 @@ const getProductByProductIdFromTrendProduct = async (wardId, street, productId, 
 
 const getProductCalculation = async (wardId, street, productId, date) => {
   let match;
-  if (street != 'null') {
-    match = { steetId: { $eq: street } };
-  } else {
-    match = { date: date };
-  }
   let wardmatch;
+  if (street != 'null') {
+    match = { Strid: { $eq: street } };
+  } else {
+    match = { active: { $eq: true } };
+  }
 
   if (wardId != 'null') {
-    wardmatch = { wardId: wardId };
+    wardmatch = { Wardid: { $eq: wardId } };
   } else {
-    wardmatch = { active: true };
+    wardmatch = { active: { $eq: true } };
   }
-  let value = await TrendProduct.aggregate([
+
+  let value = await Shop.aggregate([
     {
       $match: {
-        $and: [{ date: { $eq: date } }, { productId: { $eq: productId } }],
+        $and: [match, wardmatch],
       },
-    },
-    {
-      $match: match,
     },
     {
       $lookup: {
-        from: 'streets',
-        localField: 'steetId',
-        foreignField: '_id',
-        as: 'streetData',
-        pipeline: [{ $match: wardmatch }],
+        from: 'trendproductsclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        as: 'TrendProductdata',
+        pipeline: [{ $match: { date: date } }, { $match: { productId: productId } }],
       },
     },
     {
-      $unwind: '$streetData',
-    },
-    {
-      $lookup: {
-        from: 'shops',
-        localField: 'shopId',
-        foreignField: '_id',
-        as: 'shopdateData',
-      },
+      $unwind: '$TrendProductdata',
     },
   ]);
   let shopss = [{ date: 'dsf' }];
-  if (street == 'null') {
-    shopss = await Shop.aggregate([
-      {
-        $lookup: {
-          from: 'trendproducts',
-          localField: '_id',
-          foreignField: 'shopId',
-          as: 'TrendProductdata',
-          pipeline: [{ $match: { date: date } }, { $match: { productId: productId } }, { $match: wardmatch }],
-        },
-      },
-      {
-        $unwind: '$TrendProductdata',
-      },
-    ]);
+  if (street != 'null') {
+    match = { Strid: { $eq: street } };
+  } else {
+    match = { active: { $eq: true } };
   }
+
+  if (wardId != 'null') {
+    wardmatch = { wardId: { $eq: wardId } };
+  } else {
+    wardmatch = { active: { $eq: true } };
+  }
+  console.log(wardmatch);
+  shopss = await Street.aggregate([
+    {
+      $match: {
+        $and: [match, wardmatch],
+      },
+    },
+    {
+      $lookup: {
+        from: 'trendproductsclones',
+        localField: '_id',
+        foreignField: 'steetId',
+        pipeline: [
+          { $match: { date: date } },
+          { $match: { productId: productId } },
+          { $group: { _id: null, myCount: { $sum: 1 } } },
+        ],
+        as: 'TrendProductdata',
+      },
+    },
+    {
+      $unwind: '$TrendProductdata',
+    },
+  ]);
 
   return { totalshops: value.length, totalStreet: shopss.length };
 };
