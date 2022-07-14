@@ -54,6 +54,12 @@ const shopSchema = mongoose.Schema({
   created: {
     type: String,
   },
+  callingStatus: {
+    type: String,
+  },
+  callingUserId:{
+    type: String,
+  },
   marketId: { type: String },
   shopNo: {
     type: String,
