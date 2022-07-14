@@ -62,6 +62,14 @@ const latitudeMap = async (location,radius,type,keyword,id) => {
     return response.data
 }
 
+const WardNoApi = async (location,id) => {
+  let response = await axios.get(
+    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location}&key=${id}`
+  )
+
+  return response.data
+}
+
 const AllCount = async ()=>{
    const userCount = await manageUser.find({active:true});
    const street = await Street.aggregate([
@@ -2167,7 +2175,8 @@ module.exports = {
   getApartmentUserStreet,
   getShopUserStreet,
   groupMap,
-  latitudeMap
+  latitudeMap,
+  WardNoApi,
 
   // paginationManageUserAttendance,
  

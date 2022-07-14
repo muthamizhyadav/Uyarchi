@@ -36,10 +36,18 @@ const groupMapService = catchAsync(async (req,res)=>{
   res.send(user)
 })
 
+
+const WardApi = catchAsync(async (req,res)=>{
+  const user = await apartmentTableService.WardNoApi(req.params.location, req.params.id)
+  res.send(user)
+})
+
 const locationMapService = catchAsync(async (req,res)=>{
   const user = await apartmentTableService.latitudeMap(req.params.location, req.params.radius, req.params.type, req.params.keyword, req.params.id)
   res.send(user)
 })
+
+
 
 // thirdPartyApis
 
@@ -274,6 +282,9 @@ module.exports = {
   getApartmentUserAndStreet,
   getShopUserAndStreet,
   groupMapService,
-  locationMapService
+  locationMapService,
+  WardApi,
+  
+
   // getManageUserAttendance,
 };
