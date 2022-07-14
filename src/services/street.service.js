@@ -78,7 +78,6 @@ const getAllStreetById = async (id) => {
   ]);
 };
 
-
 const getaggregationByUserId = async (AllocatedUser) => {
   return await Streets.aggregate([
     {
@@ -377,9 +376,20 @@ const getAllStreet = async () => {
 
 // pagination with Aggregation
 
-const streetPagination = async (id) => {
-  console.log(id);
+const streetPagination = async (key, id) => {
+  let lowercase;
+  let match = [{ archive: { $ne: true } }];
+  if (key != 'null') {
+    lowercase = key.toUpperCase();
+    match = [{ area: { $regex: lowercase } }, { street: { $regex: lowercase } }, { locality: { $regex: lowercase } }];
+  }
+  console.log(match)
   return Street.aggregate([
+    {
+      $match: {
+        $or: match,
+      },
+    },
     {
       $sort: { locality: 1 },
     },
@@ -478,6 +488,98 @@ const deleteStreetById = async (streetId) => {
   (street.active = false), (street.archive = true), await street.save();
   return street;
 };
+
+const areaSearchApi = async (key) => {
+  let lowercase = key.toUpperCase();
+  let values = await Street.aggregate([
+    {
+      $match: {
+        $or: [{ area: { $regex: lowercase } }, { street: { $regex: lowercase } }, { locality: { $regex: lowercase } }],
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'wardId',
+        foreignField: '_id',
+        as: 'wardData',
+      },
+    },
+    {
+      $unwind: '$wardData',
+    },
+    {
+      $lookup: {
+        from: 'zones',
+        localField: 'zone',
+        foreignField: '_id',
+        as: 'zoneData',
+      },
+    },
+    {
+      $unwind: '$zoneData',
+    },
+    {
+      $project: {
+        _id: 1,
+        street: 1,
+        area: 1,
+        locality: 1,
+        wardName: '$wardData.ward',
+        zone: '$zoneData.zone',
+        zoneCode: '$zonesData.zoneCode',
+      },
+    },
+    {
+      $limit: 100,
+    },
+  ]);
+  return values;
+};
+
+const getDummy = async () => {
+  const dummystreet = await Streets.find({ dommy: true });
+  return dummystreet;
+  // return 'summa';
+};
+
+// const rename = async()=>{
+//   const reName = await Streets.find();
+// }
+
+// const getStreetByWard = async (wardId) => {
+//   console.log(wardId);
+//   const street = await Street.find({ dommy: { $ne: true }, wardId: { $eq: wardId } });
+//   return street;
+// };
+
+// const rename = async (body) => {
+//   // console.log(body);
+//   let streetData = await Street.findById(body.sId);
+//   console.log(streetData);
+//   if (body.type == 'rename') {
+//     await Street.findByIdAndUpdate(
+//       { _id: body.sId },
+//       { modifiedName: streetData.street, street: body.Sname, locality: body.loc, area: body.area,district: body.selDis,zone : body.selZone, wardId:body.selWard, dommy:false, },
+//       { new: true }
+//     );
+//   }
+// if(body.type == 'redirect'){
+//   await Street.findByIdAndUpdate({
+
+//   })
+// }
+
+// let reName = await Street.create(body)
+//   return streetData;
+// };
+const getStreetByWard = async (wardId) => {
+  console.log(wardId);
+  const street = await Street.find({ dommy: { $ne: true }, wardId: { $eq: wardId } });
+  return street;
+};
+
 module.exports = {
   createStreet,
   getStreetById,
@@ -498,4 +600,8 @@ module.exports = {
   getwardBystreetAngular,
   queryStreet,
   getAllStreetById,
+  areaSearchApi,
+  getDummy,
+  // getStreetByWard,
+  // rename,
 };

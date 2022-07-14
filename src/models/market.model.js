@@ -50,6 +50,12 @@ const marketSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  date: {
+    type: String,
+  },
+  time: {
+    type: Number,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -111,6 +117,12 @@ const marketCloneSchema = new mongoose.Schema({
     type: String,
   },
   userNo: {
+    type: Number,
+  },
+  date: {
+    type: String,
+  },
+  time: {
     type: Number,
   },
   status: {
@@ -182,6 +194,12 @@ const ShopsSchema = mongoose.Schema({
   status: {
     type: String,
   },
+  date: {
+    type: String,
+  },
+  time: {
+    type: Number,
+  },
   reason: {
     type: String,
   },
@@ -234,6 +252,12 @@ const ShopsCloneSchema = mongoose.Schema({
     type: String,
   },
   pincode: {
+    type: Number,
+  },
+  date: {
+    type: String,
+  },
+  time: {
     type: Number,
   },
   Uid: {

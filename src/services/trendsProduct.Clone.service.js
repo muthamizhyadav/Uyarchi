@@ -201,7 +201,6 @@ const getProductCloneCalculation = async (wardId, street, productId, date) => {
     match = { date: date };
   }
   let wardmatch;
-
   if (wardId != 'null') {
     wardmatch = { wardId: wardId };
   } else {
@@ -263,6 +262,7 @@ const updateTrendsById = async (id, body) => {
   if (!trendproduct) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
   }
+
   console.log(trendproduct);
   trendproduct = await TrendProductClone.findByIdAndUpdate({ _id: id }, body, { new: true });
   return trendproduct;
@@ -276,17 +276,21 @@ const getShopsByIdFromTrends = async (id) => {
     },
     formatter = new Intl.DateTimeFormat([], options);
   var dt = moment(formatter.format(new Date()), ['h:mm A']).format('HHmm');
-  let match = [{ active: { $eq: true } }];
+  let datenow = moment(new Date()).format('DD-MM-YYYY');
+  console.log(dt);
+  let match = [{ active: { $eq: false } }];
   if (600 < dt && 1000 > dt) {
     console.log('1');
-    match = [{ shopid: { $eq: id } }, { time: { $gte: 600 } }, { time: { $lte: 1000 } }];
+
+    match = [{ date: { $eq: datenow } }, { shopid: { $eq: id } }, { time: { $gte: 600 } }, { time: { $lte: 1000 } }];
   }
   if (1100 < dt && 1400 > dt) {
-    match = [{ shopid: { $eq: id } }, { time: { $gte: 1100 } }, { time: { $lte: 1400 } }];
+    match = [{ date: { $eq: datenow } }, { shopid: { $eq: id } }, { time: { $gte: 1100 } }, { time: { $lte: 1400 } }];
   }
   if (1500 < dt && 1800 > dt) {
-    match = [{ shopid: { $eq: id } }, { time: { $gte: 1500 } }, { time: { $lte: 1800 } }];
+    match = [{ date: { $eq: datenow } }, { shopid: { $eq: id } }, { time: { $gte: 1500 } }, { time: { $lte: 1800 } }];
   }
+  console.log(match);
   let values = await Trends.aggregate([
     {
       $match: {
@@ -296,6 +300,7 @@ const getShopsByIdFromTrends = async (id) => {
   ]);
   return values;
 };
+
 module.exports = {
   getStreetsByWardIdAndProductsClone,
   getProductByProductIdFromTrendProductClone,

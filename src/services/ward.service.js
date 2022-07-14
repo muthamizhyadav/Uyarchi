@@ -2,13 +2,14 @@ const httpStatus = require('http-status');
 const { Ward } = require('../models');
 const Zone = require('../models/zone.model');
 const ApiError = require('../utils/ApiError');
+const Street = require('../models/street.model');
 
 const createWard = async (wardBody) => {
   const { zone, zoneId } = wardBody;
   console.log(zoneId);
   let zon = await Zone.findById(zoneId);
   if (zon === null) {
-    throw new ApiError(httpStatus.NOT_FOUND, '! 🖕oops');
+    throw new ApiError(httpStatus.NOT_FOUND, '! 😞oops');
   }
   return Ward.create(wardBody);
 };
@@ -60,10 +61,10 @@ const getWardByZoneId = async (zoneId) => {
   console.log(zoneId);
   const zone = await Ward.aggregate([
     {
-      $match:{
-        $and:[{zoneId:{$eq:zoneId}}]
-      }
-    }
+      $match: {
+        $and: [{ zoneId: { $eq: zoneId } }],
+      },
+    },
   ]);
   return zone;
 };
@@ -114,15 +115,16 @@ const wardPagination = async (id) => {
   ]);
 };
 
-const getAllWardsForManageTrends = async () =>{
-  return await Ward.aggregate([{
+const getAllWardsForManageTrends = async () => {
+  return await Ward.aggregate([
+    {
       $sort: {
         ward: 1,
-    }
-  }])
+      },
+    },
+  ]);
+};
 
-
-}
 const querWard = async (filter, options) => {
   return Ward.paginate(filter, options);
 };
@@ -145,6 +147,40 @@ const deleteWardById = async (wardId) => {
   return ward;
 };
 
+const createDummyStreet = async () => {
+  // let ward = await Ward.find().sort({ ward: 1 }).skip(0).limit(100);
+  // let count = 0;
+  // let sort = 0;
+  // const deletes =await Street.find({ dommy: true })
+  // deletes.forEach(async (e) => {
+  //   await Street.findByIdAndDelete({ _id: e._id });
+  // });
+  // ward.forEach(async (e) => {
+  //   let arra = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+  //   arra.forEach(async() => {
+  //     count++;
+  //     sort++;
+  //     let street = 'A' + count;
+  //     const zone = e.zoneId;
+  //     const district = e.district;
+  //     const wardId = e._id;
+  //     const row = {
+  //       zone: zone,
+  //       district: district,
+  //       wardId: wardId,
+  //       street: street,
+  //       dommy: true,
+  //       sort:sort
+  //     };
+  //     console.log(row);
+
+  //     // await Street.create(row);
+  //   });
+  // });
+  // console.log(count);
+  return await Street.find({ dommy: true }).sort({ sort: 1 });
+};
+
 module.exports = {
   createWard,
   getWardByZoneId,
@@ -153,5 +189,6 @@ module.exports = {
   updatewardById,
   deleteWardById,
   wardPagination,
-  getAllWardsForManageTrends
+  getAllWardsForManageTrends,
+  createDummyStreet,
 };

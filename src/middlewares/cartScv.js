@@ -1,13 +1,16 @@
 const multer = require('multer');
 const path = require('path');
 
+
+let counts = 0;
 const storage = multer.diskStorage({
   destination: function (req, res, cb) {
     cb(null, path.join(__dirname, '../../public/images/cartScv'));
   },
   filename: function (req, file, cb) {
     let ext = path.extname(file.originalname);
-    cb(null, Date.now() + ext);
+    counts++;
+    cb(null, Date.now() + counts.toString() + ext);
   },
 });
 

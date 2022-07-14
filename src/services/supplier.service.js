@@ -4,6 +4,7 @@ const { Supplier } = require('../models');
 const { Product } = require('../models/product.model');
 const { ProductorderSchema } = require('../models/shopOrder.model');
 const CallStatus = require('../models/callStatus');
+const B2bBillStatus = require('../models/b2bbillStatus.model');
 const createSupplier = async (supplierBody) => {
   return Supplier.create(supplierBody);
 };
@@ -87,6 +88,49 @@ const getproductfromCallStatus = async (date) => {
       },
     },
   ]);
+};
+
+const getSupplierAmountDetailsForSupplierBills = async (page) => {
+  let values = await Supplier.aggregate([
+    {
+      $lookup: {
+        from: 'callstatuses',
+        localField: '_id',
+        foreignField: 'supplierid',
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [{ $gt: ['$PendingTotalConfirmedAmt', 0] }, { $eq: ['$stockStatus', 'Billed'] }],
+              },
+            },
+          },
+        ],
+        as: 'callstatusData',
+      },
+    },
+    {
+      $project: {
+        TotalPendingAmt: { $sum: '$callstatusData.PendingTotalConfirmedAmt' },
+        TotalPendingBills: { $size: '$callstatusData.PendingTotalConfirmedAmt' },
+        supplierid: '$callstatusData.supplierid',
+        primaryContactName: 1,
+        _id: 1,
+      },
+    },
+  ]);
+  return values;
+};
+
+const getSupplierPaymentDetailsBySupplierId = async (id) => {
+  let values = B2bBillStatus.aggregate([
+    {
+      $match: {
+        $and: [{ supplierId: { $eq: id } }],
+      },
+    },
+  ]);
+  return values;
 };
 
 const updateDisableSupplierById = async (id) => {
@@ -282,4 +326,6 @@ module.exports = {
   recoverById,
   getproductsWithSupplierId,
   getAllDisableSupplier,
+  getSupplierAmountDetailsForSupplierBills,
+  getSupplierPaymentDetailsBySupplierId,
 };

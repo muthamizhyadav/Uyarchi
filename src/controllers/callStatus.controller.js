@@ -16,47 +16,7 @@ const createCallStatus = catchAsync(async (req, res) => {
 });
 
 const getProductAndSupplierDetails = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getProductAndSupplierDetails(req.params.date, req.params.page);
-  res.send(callStatus);
-});
-
-const getCallStatusId = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getAllConfirmStatus(req.params.id);
-  res.send(callStatus);
-});
-
-const totalAggregation = catchAsync(async (req, res) => {
-  const callstatus = await CallStatusService.totalAggregation();
-  res.send(callstatus);
-});
-
-const AddVehicleDetailsInCallStatus = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.AddVehicleDetailsInCallStatus(req.params.id, req.body);
-  if (req.files != null) {
-    if (req.files.length != 0) {
-      let path = '';
-      req.files.forEach(function (files, index, arr) {
-        path = 'images/stock/' + files.filename;
-      });
-      callStatus.weighbridgeBill = path;
-    }
-  }
-  await callStatus.save();
-  res.send(callStatus);
-});
-
-const getAcknowledgedData = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getAcknowledgedData(req.params.date, req.params.page);
-  res.send(callStatus);
-});
-
-const getOnlyLoadedData = catchAsync(async (req, res) => {
-  const callstatus = await CallStatusService.getOnlyLoadedData(req.params.date, req.params.page);
-  res.send(callstatus);
-});
-
-const getConfirmedStockStatus = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getConfirmedStockStatus(req.params.date, req.params.page);
+  const callStatus = await CallStatusService.getProductAndSupplierDetails(req.params.page);
   res.send(callStatus);
 });
 
@@ -69,34 +29,12 @@ const getCallStatusbyId = catchAsync(async (req, res) => {
 });
 
 const updateCallStatusById = catchAsync(async (req, res) => {
-  const billcount = await CallStatus.find({ billStatus: 'Billed', date: corrundDate }).count();
-  const statusCheck = await CallStatus.findOne({ _id: req.params.id });
-  if (statusCheck.billStatus == 'Billed') {
-    throw new ApiError(httpStatus.CONFLICT, 'Already Billed');
-  }
-  let center = '';
-  if (billcount < 9) {
-    center = '000000';
-  }
-  if (billcount < 99 && billcount >= 9) {
-    center = '00000';
-  }
-  if (billcount < 999 && billcount >= 99) {
-    center = '0000';
-  }
-  if (billcount < 9999 && billcount >= 999) {
-    center = '000';
-  }
-  if (billcount < 99999 && billcount >= 9999) {
-    center = '00';
-  }
-  if (billcount < 999999 && billcount >= 99999) {
-    center = '0';
-  }
-  let total = billcount + 1;
-  let billid = center + total;
- 
-  const callStatus = await CallStatusService.updateCallStatusById(req.params.id, req.body, billid);
+  const callStatus = await CallStatusService.updateCallStatusById(req.params.id, req.body);
+  res.send(callStatus);
+});
+
+const getDataWithSupplierId = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.getDataWithSupplierId(req.params.id, req.params.page);
   res.send(callStatus);
 });
 
@@ -105,18 +43,9 @@ const deleteBusinessById = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-const getDataByVehicleNumber = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getDataByVehicleNumber(
-    req.params.vehicleNumber,
-    req.params.date,
-    req.params.page
-  );
-  res.send(callStatus);
-});
-
-const getAcknowledgedDataforLE = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getAcknowledgedDataforLE(req.params.date, req.params.page);
-  res.send(callStatus);
+const finishOrder = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.finishOrder(req.params.pId, req.params.date);
+  res.status(httpStatus.OK).send(callStatus);
 });
 
 module.exports = {
@@ -124,13 +53,7 @@ module.exports = {
   getProductAndSupplierDetails,
   getCallStatusbyId,
   updateCallStatusById,
-  totalAggregation,
   deleteBusinessById,
-  getDataByVehicleNumber,
-  AddVehicleDetailsInCallStatus,
-  getCallStatusId,
-  getAcknowledgedData,
-  getOnlyLoadedData,
-  getConfirmedStockStatus,
-  getAcknowledgedDataforLE,
+  getDataWithSupplierId,
+  finishOrder,
 };

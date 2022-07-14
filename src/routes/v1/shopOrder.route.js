@@ -34,4 +34,7 @@ router
   .get(shopOrderController.getProductOrderCloneById)
   .put(shopOrderController.updateProductOrderCloneById)
   .delete(shopOrderController.deleteProductOrderCloneById);
+
+
+  router.route('/telecaller').get(shopOrderController.getAll)
 module.exports = router;

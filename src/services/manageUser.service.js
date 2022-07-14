@@ -131,8 +131,10 @@ const getManageUserdataByIdStatus = async (id, streetId, status, page) => {
         { active: { $eq: true } },
       ],
     };
+    
   } else if (streetId == 'null' && status == 'Approved') {
     match = {
+
       $and: [
         { 'streetsdata.AllocatedUser': { $eq: id } },
         { 'streetsdata.AllocationStatus': { $ne: 'DeAllocated' } },

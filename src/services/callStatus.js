@@ -1,7 +1,8 @@
 const httpStatus = require('http-status');
 const { CallStatus } = require('../models');
+const Supplier = require('../models/supplier.model');
 const ApiError = require('../utils/ApiError');
-
+const { Product } = require('../models/product.model');
 const createCallStatus = async (callStatusBody) => {
   return CallStatus.create(callStatusBody);
 };
@@ -10,39 +11,77 @@ const getCallStatusById = async (id) => {
   return CallStatus.findById(id);
 };
 
-const totalAggregation = async () => {
-  return CallStatus.aggregate([{ $group: { _id: null, TotalPhApproved: { $sum: '$phApproved' } } }]);
-};
-
-const getDataByVehicleNumber = async (vehicleNumber, date, page) => {
-  let values = await CallStatus.aggregate([
+const getProductAndSupplierDetails = async (page) => {
+  let details = await Supplier.aggregate([
     {
-      $match: {
-        $and: [{ date: { $eq: date } }, { vehicleNumber: { $eq: vehicleNumber } }],
+      $lookup: {
+        from: 'callstatuses',
+        localField: '_id',
+        foreignField: 'supplierid',
+        pipeline: [
+          { $match: { confirmcallstatus: 'Accepted', StockReceived: 'Pending', showWhs: true } },
+          { $group: { _id: null, myCount: { $sum: 1 } } },
+        ],
+        as: 'CallstatusData',
       },
     },
-    { $skip: 10 * page },
-    { $limit: 10 },
+    {
+      $unwind: '$CallstatusData',
+    },
+    {
+      $project: {
+        primaryContactName: 1,
+        primaryContactNumber: 1,
+        secondaryContactName: 1,
+        secondaryContactNumber: 1,
+        RegisteredAddress: 1,
+        countries: 1,
+        district: 1,
+        gstNo: 1,
+        email: 1,
+        pinCode: 1,
+        ConfirmOrders: '$CallstatusData.myCount',
+      },
+    },
+    {
+      $limit: 10,
+    },
+    {
+      $skip: 10 * page,
+    },
   ]);
-  let total = await CallStatus.find({ vehicleNumber: { $eq: vehicleNumber } }).count();
+  let total = await Supplier.aggregate([
+    {
+      $lookup: {
+        from: 'callstatuses',
+        localField: '_id',
+        foreignField: 'supplierid',
+        pipeline: [
+          { $match: { confirmcallstatus: 'Accepted', StockReceived: 'Pending' } },
+          { $group: { _id: null, myCount: { $sum: 1 } } },
+        ],
+        as: 'CallstatusData',
+      },
+    },
+    {
+      $unwind: '$CallstatusData',
+    },
+  ]);
   return {
-    value: values,
-    total: total,
+    value: details,
+    total: total.length,
   };
 };
 
-const getConfirmedStockStatus = async (date, page) => {
+const getDataWithSupplierId = async (id, page) => {
   let values = await CallStatus.aggregate([
     {
       $match: {
-        $and: [{ date: { $eq: date } }],
-      },
-    },
-    {
-      $match: {
-        stockStatus: {
-          $in: ['Confirmed', 'Billed'],
-        },
+        $and: [
+          { supplierid: { $eq: id } },
+          { StockReceived: { $eq: 'Pending' } },
+          { confirmcallstatus: { $eq: 'Accepted' } },
+        ],
       },
     },
     {
@@ -50,255 +89,17 @@ const getConfirmedStockStatus = async (date, page) => {
         from: 'products',
         localField: 'productid',
         foreignField: '_id',
-        as: 'productsdata',
+        as: 'ProductData',
       },
     },
     {
-      $unwind: '$productsdata',
-    },
-    {
-      $lookup: {
-        from: 'suppliers',
-        localField: 'supplierid',
-        foreignField: '_id',
-        as: 'suppliersdata',
-      },
-    },
-    {
-      $unwind: '$suppliersdata',
+      $unwind: '$ProductData',
     },
     {
       $project: {
-        productName: '$productsdata.productTitle',
-        SupplierName: '$suppliersdata.primaryContactName',
-        vehicleNumber: 1,
-        driverName: 1,
-        vehicleType: 1,
-        driverNumber: 1,
-        weighbridgeBill: 1,
-        date: 1,
-        confirmcallstatus: 1,
-        incomingWastage: 1,
-        stockStatus: 1,
-      },
-    },
-    { $skip: 10 * page },
-    { $limit: 10 },
-  ]);
-  let total = await CallStatus.find({ $and: [{ stockStatus: 'Confirmed' }, { date: date }] }).count();
-  return {
-    value: values,
-    total: total,
-  };
-};
-
-const getAcknowledgedData = async (date, page) => {
-  let values = await CallStatus.aggregate([
-    {
-      $match: {
-        $and: [{ date: { $eq: date } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'products',
-        localField: 'productid',
-        foreignField: '_id',
-        as: 'productsdata',
-      },
-    },
-    {
-      $unwind: '$productsdata',
-    },
-    {
-      $lookup: {
-        from: 'suppliers',
-        localField: 'supplierid',
-        foreignField: '_id',
-        as: 'suppliersdata',
-      },
-    },
-    {
-      $unwind: '$suppliersdata',
-    },
-    {
-      $project: {
-        productName: '$productsdata.productTitle',
-        SupplierName: '$suppliersdata.primaryContactName',
-        vehicleNumber: 1,
-        driverName: 1,
-        vehicleType: 1,
-        driverNumber: 1,
-        weighbridgeBill: 1,
-        date: 1,
-        confirmcallstatus: 1,
-        incomingWastage: 1,
-        stockStatus: 1,
-      },
-    },
-    { $skip: 10 * page },
-    { $limit: 10 },
-  ]);
-  let total = await CallStatus.find({ date: { $eq: date } }).count();
-  return {
-    value: values,
-    total: total,
-  };
-};
-
-const getAcknowledgedDataforLE = async (date, page) => {
-  let values = await CallStatus.aggregate([
-    {
-      $match: {
-        $and: [{ date: { $eq: date } }, { stockStatus: { $ne: 'Pending' } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'products',
-        localField: 'productid',
-        foreignField: '_id',
-        as: 'productsdata',
-      },
-    },
-    {
-      $unwind: '$productsdata',
-    },
-    {
-      $lookup: {
-        from: 'suppliers',
-        localField: 'supplierid',
-        foreignField: '_id',
-        as: 'suppliersdata',
-      },
-    },
-    {
-      $unwind: '$suppliersdata',
-    },
-    {
-      $project: {
-        productName: '$productsdata.productTitle',
-        SupplierName: '$suppliersdata.primaryContactName',
-        vehicleNumber: 1,
-        driverName: 1,
-        driverNumber: 1,
-        vehicleType: 1,
-        vehicleNumber: 1,
-        weighbridgeBill: 1,
-        date: 1,
-        confirmcallstatus: 1,
-        incomingWastage: 1,
-        stockStatus: 1,
-      },
-    },
-    { $skip: 10 * page },
-    { $limit: 10 },
-  ]);
-  let total = await CallStatus.find({ stockStatus: { $ne: 'Pending' } }).count();
-  return {
-    value: values,
-    total: total,
-  };
-};
-
-const getOnlyLoadedData = async (date, page) => {
-  let values = await CallStatus.aggregate([
-    {
-      $match: {
-        $and: [{ date: { $eq: date } }],
-      },
-    },
-    {
-      $match: {
-        stockStatus: {
-          $in: ['Confirmed', 'Loaded'],
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: 'products',
-        localField: 'productid',
-        foreignField: '_id',
-        as: 'productsdata',
-      },
-    },
-    {
-      $unwind: '$productsdata',
-    },
-    {
-      $lookup: {
-        from: 'suppliers',
-        localField: 'supplierid',
-        foreignField: '_id',
-        as: 'suppliersdata',
-      },
-    },
-    {
-      $unwind: '$suppliersdata',
-    },
-    {
-      $project: {
-        productName: '$productsdata.productTitle',
-        SupplierName: '$suppliersdata.primaryContactName',
-        vehicleNumber: 1,
-        driverName: 1,
-        driverNumber: 1,
-        vehicleType: 1,
-        vehicleNumber: 1,
-        weighbridgeBill: 1,
-        date: 1,
-        stockStatus: 1,
-        confirmOrder: 1,
-        confirmcallDetail: 1,
-        incomingQuantity: 1,
-        confirmcallstatus: 1,
-        incomingWastage: 1,
-        confirmprice: 1,
-        phApproved: 1,
-      },
-    },
-    { $skip: 10 * page },
-    { $limit: 10 },
-  ]);
-  let total = await CallStatus.find({ stockStatus: { $eq: 'Loaded' } }).count();
-  return {
-    value: values,
-    total: total,
-  };
-};
-
-const getAllConfirmStatus = async (id) => {
-  return await CallStatus.aggregate([
-    {
-      $match: {
-        $and: [{ productid: { $eq: id } }, { confirmcallstatus: { $eq: 'Accepted' } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'products',
-        localField: 'productid',
-        foreignField: '_id',
-        as: 'productsdata',
-      },
-    },
-    {
-      $unwind: '$productsdata',
-    },
-    {
-      $lookup: {
-        from: 'suppliers',
-        localField: 'supplierid',
-        foreignField: '_id',
-        as: 'suppliersdata',
-      },
-    },
-    {
-      $unwind: '$suppliersdata',
-    },
-    {
-      $project: {
+        _id: 1,
+        active: 1,
+        StockReceived: 1,
         qtyOffered: 1,
         strechedUpto: 1,
         price: 1,
@@ -306,6 +107,8 @@ const getAllConfirmStatus = async (id) => {
         requestAdvancePayment: 1,
         callstatus: 1,
         callDetail: 1,
+        productid: 1,
+        supplierid: 1,
         date: 1,
         time: 1,
         phApproved: 1,
@@ -315,89 +118,28 @@ const getAllConfirmStatus = async (id) => {
         confirmcallDetail: 1,
         confirmcallstatus: 1,
         confirmprice: 1,
-        supplier: '$suppliersdata',
-        product: '$productsdata',
+        productTitle: '$ProductData.productTitle',
       },
     },
+    { $limit: 10 },
+    { $skip: 10 * page },
   ]);
-};
-
-const getProductAndSupplierDetails = async (date, page) => {
-  let details = await CallStatus.aggregate([
+  let total = await CallStatus.aggregate([
     {
       $match: {
-        $and: [{ date: { $eq: date } }, { confirmcallstatus: { $eq: 'Accepted' } }],
+        $and: [
+          { supplierid: { $eq: id } },
+          { StockReceived: { $eq: 'Pending' } },
+          { confirmcallstatus: { $eq: 'Accepted' } },
+        ],
       },
     },
-    {
-      $lookup: {
-        from: 'products',
-        localField: 'productid',
-        foreignField: '_id',
-        as: 'productsdata',
-      },
-    },
-    {
-      $unwind: '$productsdata',
-    },
-    {
-      $lookup: {
-        from: 'suppliers',
-        localField: 'supplierid',
-        foreignField: '_id',
-        as: 'supplierData',
-      },
-    },
-    {
-      $unwind: '$supplierData',
-    },
-    {
-      $project: {
-        supplierName: '$supplierData.primaryContactName',
-        productTitle: '$productsdata.productTitle',
-        date: 1,
-        qtyOffered: 1,
-        strechedUpto: 1,
-        price: 1,
-        callstatus: 1,
-        confirmcallstatus: 1,
-        time: 1,
-        phApproved: 1,
-        phStatus: 1,
-        phreason: 1,
-        confirmOrder: 1,
-        confirmcallstatus: 1,
-        incomingWastage: 1,
-        confirmcallDetail: 1,
-        confirmcallstatus: 1,
-        confirmcallstatus: 1,
-        incomingWastage: 1,
-        confirmprice: 1,
-        stockStatus: 1,
-      },
-    },
-    { $skip: 10 * page },
-    { $limit: 10 },
   ]);
-
-  let total = await CallStatus.find({ confirmcallstatus: { $eq: 'Accepted' } }).count();
-  return {
-    value: details,
-    total: total,
-  };
-};
-const updateCallStatusById = async (id, updateBody, billid) => {
-  let callstatus = await getCallStatusById(id);
-  if (!callstatus) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus  not found');
-  }
-  callstatus = await CallStatus.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-  callstatus = await CallStatus.findByIdAndUpdate({ _id: id }, { billId: billid }, { new: true });
-  console.log(callstatus);
-  return callstatus;
+  let getSupplier = await Supplier.findById(id);
+  return { values: values, total: total.length, supplier: getSupplier };
 };
 
-const AddVehicleDetailsInCallStatus = async (id, updateBody) => {
+const updateCallStatusById = async (id, updateBody) => {
   let callstatus = await CallStatus.findById(id);
   if (!callstatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus Not Found');
@@ -415,18 +157,20 @@ const deleteCallStatusById = async (id) => {
   return callstatus;
 };
 
+const finishOrder = async (pId, date) => {
+  let values = await CallStatus.find({ productid: pId, date: date, confirmcallstatus: 'Accepted' });
+  values.forEach(async (e) => {
+    await CallStatus.findByIdAndUpdate({ _id: e._id }, { showWhs: true }, { new: true });
+  });
+  return 'Order Finished 😃';
+};
+
 module.exports = {
   createCallStatus,
-  getConfirmedStockStatus,
   getCallStatusById,
-  getDataByVehicleNumber,
   updateCallStatusById,
-  AddVehicleDetailsInCallStatus,
   deleteCallStatusById,
   getProductAndSupplierDetails,
-  getOnlyLoadedData,
-  totalAggregation,
-  getAllConfirmStatus,
-  getAcknowledgedDataforLE,
-  getAcknowledgedData,
+  getDataWithSupplierId,
+  finishOrder,
 };

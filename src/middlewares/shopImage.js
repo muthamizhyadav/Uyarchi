@@ -2,7 +2,7 @@ const multer = require('multer');
 const path = require('path');
 
 
-
+let counts = 0;
 const storage = multer.diskStorage({
     destination: function(req,res, cb){
      cb(null, path.join(__dirname, '../../public/images/shop'));
@@ -10,7 +10,8 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) {
       console.log(file,"sdfsdfsdfsdfsdf")
       let ext = path.extname(file.originalname);
-      cb(null, Date.now() + ext);
+      counts++;
+      cb(null, Date.now() + counts.toString() + ext);
     },
   });
 

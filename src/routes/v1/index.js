@@ -56,21 +56,50 @@ const generalEnquiryRoute = require('./generalEnquiry.route');
 const trendProductRoute = require('./trend.product.route');
 const hsnRoute = require('./hsn.route');
 const manageExpenseRoute = require('./manage.expenses.route');
-const b2bUSerSalaryRoute = require('./b2bUser.Salary.route')
+const b2bUSerSalaryRoute = require('./b2bUser.Salary.route');
 const TrendsCloneRoute = require('./trendsClone.route');
 const TrendProductCloneRoute = require('./trendsProduct.clone.route');
+const B2bBillStatus = require('./b2bBillStatus.Route');
+const ReceivedProduct = require('./receivedProduct.route');
+const ReceivedStock = require('./receivedStock.Route');
+const TransactionRoute = require('./transaction.route');
+const Attendance = require('./b2bAttendance.route');
+const wallet = require('./b2b.wallet.route');
+const SupplierBillRoute = require('./supplierbills.route');
+const redirect = require('./b2b.redirect.route');
+const callHistory = require('./b2b.callHistory.route');
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
   },
   {
-    path:'/b2bUserSalary',
-    route:b2bUSerSalaryRoute,
+    path: '/supplierBills',
+    route: SupplierBillRoute,
+  },
+  {
+    path: '/B2bBillStatus',
+    route: B2bBillStatus,
+  },
+  {
+    path: '/Transaction',
+    route: TransactionRoute,
+  },
+  {
+    path: '/receivedStock',
+    route: ReceivedStock,
+  },
+  {
+    path: '/b2bUserSalary',
+    route: b2bUSerSalaryRoute,
   },
   {
     path: '/hsn',
     route: hsnRoute,
+  },
+  {
+    path: '/receivedProduct',
+    route: ReceivedProduct,
   },
   {
     path: '/manageExpenses',
@@ -283,6 +312,18 @@ const defaultRoutes = [
   {
     path: '/supplierBuyer',
     route: supplierBuyerRoute,
+  },
+  {
+    path: '/attendance',
+    route:  Attendance,
+  },
+  {
+    path: '/wallet',
+    route: wallet,
+  },
+  {
+    path: '/callHistory',
+    route: callHistory,
   },
 ];
 

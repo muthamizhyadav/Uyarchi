@@ -14,14 +14,14 @@ const getAllRoles = async () => {
 //   return Roles.paginate(filter, options);
 // };
 
-const mainWarehouseRoles = async ()=>{
-  const roles = await Roles.find({addMainWH:true})
-  console.log(roles)
-  if(!roles){
-    throw new ApiError(httpStatus.NOT_FOUND, "There is No Roles Available For Main WhareHouse Admin")
+const mainWarehouseRoles = async () => {
+  const roles = await Roles.find({ addMainWH: true });
+  console.log(roles);
+  if (!roles) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'There is No Roles Available For Main WhareHouse Admin');
   }
-  return roles
-}
+  return roles;
+};
 
 const getRolesById = async (id) => {
   const role = Roles.findById(id);

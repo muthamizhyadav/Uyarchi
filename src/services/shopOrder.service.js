@@ -264,7 +264,17 @@ const deleteShopOrderById = async (shopOrderId) => {
   return shoporder;
 };
 
+// TELECALLER
+
+const getAll = async () => {
+  return ShopOrderClone.find()
+}
+
+
+
 module.exports = {
+
+  // product
   createProductOrderClone,
   getAllProductOrderClone,
   getProductOrderCloneById,
@@ -286,4 +296,8 @@ module.exports = {
   updateShopOrderById,
   getShopNameWithPagination,
   deleteShopOrderById,
+
+  // Telecaller
+
+  getAll,
 };

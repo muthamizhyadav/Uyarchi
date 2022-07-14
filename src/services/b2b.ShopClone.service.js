@@ -1,8 +1,7 @@
 const httpStatus = require('http-status');
 const { Shop, AttendanceClone } = require('../models/b2b.ShopClone.model');
-const { MarketShopsClone } = require('../models/market.model');
+const { MarketShopsClone, MarketClone } = require('../models/market.model');
 const ApiError = require('../utils/ApiError');
-
 // Shop Clone Serive
 
 const createShopClone = async (shopBody) => {
@@ -39,6 +38,11 @@ const getAllShopClone = async () => {
 
 const getshopWardStreetNamesWithAggregation = async (page) => {
   let values = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ type: { $eq: 'shop' } }],
+      },
+    },
     {
       $lookup: {
         from: 'b2busers',
@@ -288,6 +292,145 @@ const deleteAttendanceById = async (id) => {
   return attendance;
 };
 
+const totalCount = async (userId) => {
+  const moment = require('moment');
+  let datenow = moment(new Date()).format('DD-MM-YYYY');
+  const Totalcount = await Shop.find({ Uid: userId, type: 'shop' }).count();
+  const todayCount = await Shop.find({ date: datenow, Uid: userId, type: 'shop' }).count();
+  const marketTotalcount = await MarketClone.find({ Uid: userId }).count();
+  const markettodayCount = await MarketClone.find({ date: datenow, Uid: userId }).count();
+  const marketshopTotalcount = await Shop.find({ Uid: userId, type: 'market' }).count();
+  const marketshoptodayCount = await Shop.find({ date: datenow, Uid: userId, type: 'market' }).count();
+  // console.log(Totalcount, todayCount, marketTotalcount, markettodayCount, marketshopTotalcount, marketshoptodayCount);
+  return {
+    shopTotal: Totalcount,
+    shopToday: todayCount,
+    marketTotal: marketTotalcount,
+    marketToday: markettodayCount,
+    marketShopTotal: marketshopTotalcount,
+    marketShopToday: marketshoptodayCount,
+  };
+};
+
+// get marketShop
+
+const getMarkeShop = async (marketId) => {
+  let values = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ type: { $eq: 'market' } }, { marketId: { $eq: marketId } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              ward: 1,
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      },
+    },
+    {
+      $unwind: '$shoptype',
+    },
+    {
+      $lookup: {
+        from: 'marketclones',
+        localField: 'marketId',
+        foreignField: '_id',
+        as: 'marketData',
+      },
+    },
+    {
+      $unwind: '$marketData'
+    },
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street: '$StreetData.street',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: '$shoptype.shopList',
+        marketName:'$marketData.MName',
+        photoCapture: 1,
+        SName: 1,
+        Slat: 1,
+        Slong: 1,
+        created: 1,
+        SOwner: 1,
+        marketId: 1,
+        type: 1,
+        mobile: 1,
+        date: 1,
+      },
+    },
+  ]);
+
+  return values;
+};
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -302,4 +445,7 @@ module.exports = {
   getshopWardStreetNamesWithAggregation,
   updateAttendanceById,
   deleteAttendanceById,
+  totalCount,
+  // get marketShop
+  getMarkeShop,
 };

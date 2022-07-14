@@ -14,7 +14,7 @@ router.route('/streets/:AllocatedUser').get(streetController.getaggregationByUse
 router.route('/streets/DeAllocatedUser/:AllocatedUser').get(streetController.getDeAllocationaggregationByUserId);
 router.route('/streetByWard/:wardId').get(streetController.getStreetByWardId);
 router.route('/street/Ward/:wardId/:status').get(streetController.getStreetByWard);
-router.route('/page/:id').get(streetController.streetPagination);
+router.route('/page/:key/:id').get(streetController.streetPagination);
 router.route('/street/Allocation').post(streetController.streetAllocation).get(streetController.getAllocatedStreeOnly);
 router
   .route('/street/deAllocation')
@@ -23,4 +23,11 @@ router
 router.route('/closedStatus/:streetId').put(streetController.closedStatus);
 router.route('/:id/order/street').get(streetController.streetorder);
 router.route('/getall/wardid/:wardId').get(streetController.getStreetByWardId);
+router.route('/Search/Api/:key').get(streetController.areaSearchApi);
+
+
+router.route('/getDummy/streets').get(streetController.getDummyStreet);
+router.route('/getward/ward/:wardId').get(streetController.getStreetWard);
+router.route('/renameStreet').post(streetController.renameStreet);
+
 module.exports = router;

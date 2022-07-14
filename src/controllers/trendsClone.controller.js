@@ -4,9 +4,28 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const trendsCloneService = require('../services/trends.clone.service');
 const TrendproductClone = require('../models/trendsProduct.clocne.model');
+const TrendsClone = require('../models/trendsClone.model');
+const Street = require('../models/street.model');
+const { MarketShopsClone } = require('../models/market.model');
+const { Shop } = require('../models/b2b.ShopClone.model');
+const { MarketClone } = require('../models/market.model');
 
 const createTrends = catchAsync(async (req, res) => {
+  let userId = req.userId;
   const trends = await trendsCloneService.createTrendsClone(req.body);
+  let shopclone = await Shop.findById({ _id: req.body.shopid });
+  let marketshopclone = await MarketShopsClone.findById({ _id: req.body.shopid });
+  let streetId;
+  // console.log(shopclone,"sdfsfd")
+
+  if (shopclone) {
+    streetId = shopclone.Strid;
+  }
+  if (marketshopclone) {
+    let mid = marketshopclone.MName;
+    let market = await MarketClone.findById(mid);
+    streetId = market.Strid;
+  }
   req.body.product.forEach(async (e) => {
     let row = {
       productId: e.Pid,
@@ -16,8 +35,8 @@ const createTrends = catchAsync(async (req, res) => {
       Weight: e.Weight,
       orderId: trends._id,
       shopId: req.body.shopid,
-      steetId: req.body.street,
-      UserId: req.body.Uid,
+      steetId: streetId,
+      UserId: userId,
       date: req.body.date,
       time: req.body.time,
       fulldate: req.body.fulldate,
@@ -25,12 +44,16 @@ const createTrends = catchAsync(async (req, res) => {
     };
     await TrendproductClone.create(row);
   });
+
+  await TrendsClone.findByIdAndUpdate({ _id: trends._id }, { streetId: streetId, Uid: userId }, { new: true });
+  // trends.streetId = streetId;
+
   res.status(httpStatus.CREATED).send(trends);
 });
 
 const updateProductFromTrendsClone = catchAsync(async (req, res) => {
-  const trends = await trendsCloneService.updateProductFromTrendsClone (req.params.id,req.body);
-  console.log(trends)
+  const trends = await trendsCloneService.updateProductFromTrendsClone(req.params.id, req.body);
+  console.log(trends);
   req.body.product.forEach(async (e) => {
     let row = {
       productId: e.Pid,
@@ -38,10 +61,10 @@ const updateProductFromTrendsClone = catchAsync(async (req, res) => {
       Unit: e.Unit,
       Rate: e.Rate,
       Weight: e.Weight,
-      orderId:req.params.id,
+      orderId: req.params.id,
       shopId: trends.shopid,
       steetId: trends.street,
-      UserId:trends.Uid,
+      UserId: trends.Uid,
       date: trends.date,
       time: trends.time,
       fulldate: trends.fulldate,
@@ -84,6 +107,11 @@ const updateTrendsById = catchAsync(async (req, res) => {
   res.send(trends);
 });
 
+const getTrendsClone = catchAsync(async (req, res) => {
+  const trends = await trendsCloneService.getTrendsClone(req.params.wardId, req.params.street, req.params.page);
+  res.send(trends);
+});
+
 module.exports = {
   createTrends,
   getAllTrends,
@@ -91,4 +119,5 @@ module.exports = {
   trendsPagination,
   updateProductFromTrendsClone,
   updateTrendsById,
+  getTrendsClone,
 };

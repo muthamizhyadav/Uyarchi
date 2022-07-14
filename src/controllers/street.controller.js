@@ -21,7 +21,6 @@ const getAllStreet = catchAsync(async (req, res) => {
 });
 
 const closedStatus = catchAsync(async (req, res) => {
-
   const street = await StreetService.closedStatus(req.params.streetId, {
     ...req.body,
     ...{ filter: 'fullypending' },
@@ -43,7 +42,7 @@ const getAllDeAllocatedStreetOnly = catchAsync(async (req, res) => {
 });
 
 const streetPagination = catchAsync(async (req, res) => {
-  const pagination = await StreetService.streetPagination(req.params.id);
+  const pagination = await StreetService.streetPagination(req.params.key,req.params.id);
   res.send(pagination);
 });
 
@@ -83,7 +82,6 @@ const getStreetByWardId = catchAsync(async (req, res) => {
   res.send(street);
 });
 
-
 const getStreetDetailsById = catchAsync(async (req, res) => {
   const street = await StreetService.getStreetById(req.params.streetId);
   if (!street || street.active === false) {
@@ -101,7 +99,7 @@ const getDeAllocationaggregationByUserId = catchAsync(async (req, res) => {
   const street = await StreetService.getDeAllocationaggregationByUserId(req.params.AllocatedUser);
   res.send(street);
 });
-
+``;
 const updateStreet = catchAsync(async (req, res) => {
   const street = await StreetService.updateStreetById(req.params.streetId, req.body);
   res.send(street);
@@ -111,6 +109,27 @@ const deleteStreet = catchAsync(async (req, res) => {
   await StreetService.deleteStreetById(req.params.streetId);
   res.status(httpStatus.NO_CONTENT).send();
 });
+
+const areaSearchApi = catchAsync(async (req, res) => {
+  let street = await StreetService.areaSearchApi(req.params.key);
+  res.send(street);
+});
+
+const getDummyStreet = catchAsync(async (req, res) => {
+  let street = await StreetService.getDummy();
+  res.send(street);
+});
+
+const getStreetWard = catchAsync(async (req, res) => {
+  let ward = await StreetService.getStreetByWard(req.params.wardId);
+  res.send(ward);
+});
+
+const renameStreet = catchAsync(async (req, res) => {
+  const street = await StreetService.rename(req.body);
+  res.status(httpStatus.CREATED).send(street);
+});
+
 module.exports = {
   createStreet,
   getStreetDetailsById,
@@ -129,4 +148,9 @@ module.exports = {
   closedStatus,
   getAllDeAllocatedStreetOnly,
   streetorder,
-};
+  areaSearchApi,
+  getDummyStreet,
+  getStreetWard,
+  renameStreet
+}
+

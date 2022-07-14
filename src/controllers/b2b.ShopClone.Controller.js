@@ -5,13 +5,23 @@ const catchAsync = require('../utils/catchAsync');
 const b2bCloneService = require('../services/b2b.ShopClone.service');
 const token = require('../services/token.service');
 const { Shop } = require('../models/b2b.ShopClone.model');
-// shop Clone Controller
 
+const { MarketClone } = require('../models/market.model');
 const createB2bShopClone = catchAsync(async (req, res) => {
   const shop = await b2bCloneService.createShopClone(req.body);
   const userId = req.userId;
+  let marketId = req.body.marketId;
   if (shop) {
-    await Shop.findByIdAndUpdate({ _id: shop.id }, { Uid: userId }, { new: true });
+    let bodydata = { Uid: userId };
+    if (req.body.type == 'market') {
+      let marketdata = await MarketClone.findById(marketId);
+      console.log(marketdata);
+      if (marketdata) {
+        bodydata = { Uid: userId, Strid: marketdata.Strid, Wardid: marketdata.Wardid };
+      }
+    }
+    console.log(bodydata);
+    await Shop.findByIdAndUpdate({ _id: shop.id }, bodydata, { new: true });
   }
   if (req.files) {
     console.log(req.files);
@@ -19,6 +29,7 @@ const createB2bShopClone = catchAsync(async (req, res) => {
       shop.photoCapture.push('images/shopClone/' + files.filename);
     });
   }
+
   res.send(shop);
   await shop.save();
 });
@@ -40,7 +51,7 @@ const getAllB2BshopClone = catchAsync(async (req, res) => {
 });
 
 const getB2BShopById = catchAsync(async (req, res) => {
-  const shop = await b2bCloneService.getB2BShopById(req.params.id);
+  const shop = await b2bCloneService.getShopById(req.params.id);
   if (!shop) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Shop not Found');
   }
@@ -69,7 +80,7 @@ const deleteB2BShopById = catchAsync(async (req, res) => {
 
 const creatAttendanceClone = catchAsync(async (req, res) => {
   const attendance = await b2bCloneService.createAttendanceClone(req.body);
-  attendance.Uid=req.userId;
+  attendance.Uid = req.userId;
   console.log(req.files);
   if (req.files) {
     req.files.forEach(function (files, index, arr) {
@@ -81,7 +92,13 @@ const creatAttendanceClone = catchAsync(async (req, res) => {
 });
 
 const getAlAttendanceClone = catchAsync(async (req, res) => {
-  const attendance = await b2bCloneService.getAllAttendanceClone(req.params.id,req.params.date,req.params.fromtime,req.params.totime,req.params.page);
+  const attendance = await b2bCloneService.getAllAttendanceClone(
+    req.params.id,
+    req.params.date,
+    req.params.fromtime,
+    req.params.totime,
+    req.params.page
+  );
   res.send(attendance);
 });
 
@@ -111,6 +128,20 @@ const deleteAttendanceById = catchAsync(async (req, res) => {
   res.send();
 });
 
+const getTotalCounts = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const attendance = await b2bCloneService.totalCount(userId);
+  res.send(attendance);
+});
+
+const getMarkeShop = catchAsync(async (req, res) => {
+  const marketshop = await b2bCloneService.getMarkeShop(req.params.marketId);
+  if (!marketshop) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop not Found');
+  }
+  res.send(marketshop);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -125,4 +156,7 @@ module.exports = {
   getshopWardStreetNamesWithAggregation,
   updateAttendanceById,
   deleteAttendanceById,
+  getTotalCounts,
+  // getmaketShop
+  getMarkeShop,
 };

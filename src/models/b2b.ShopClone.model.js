@@ -54,6 +54,22 @@ const shopSchema = mongoose.Schema({
   created: {
     type: String,
   },
+  callingStatus: {
+    type: String,
+  },
+  callingUserId:{
+    type: String,
+  },
+  marketId: { type: String },
+  shopNo: {
+    type: String,
+  },
+  shopMobile: {
+    type: String,
+  },
+  CallStatus: {
+    type: String,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -63,6 +79,9 @@ const shopSchema = mongoose.Schema({
     default: false,
   },
   reason: {
+    type: String,
+  },
+  type: {
     type: String,
   },
 });
@@ -103,6 +122,10 @@ const attendanceSchema = new mongoose.Schema({
   time: {
     type: Number,
   },
+  type: {
+    type: String,
+  },
+
   active: {
     type: Boolean,
     default: true,

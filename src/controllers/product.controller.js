@@ -34,13 +34,18 @@ const createProduct = catchAsync(async (req, res) => {
 
 const setTrendsValueforProduct = catchAsync(async (req, res) => {
   const product = await productService.setTrendsValueforProduct(req.params.id, req.body);
-  await product.save()
+  await product.save();
   res.send(product);
 });
 
 const getStockbyBillId = catchAsync(async (req, res) => {
   const bills = await productService.getByBillId(req.params.billId);
   res.send(bills);
+});
+
+const getAllTrends = catchAsync(async (req, res) => {
+  const trends = await productService.getTrendsData(req.params.date, req.params.wardId, req.params.street, req.params.page);
+  res.send(trends);
 });
 
 const createStock = catchAsync(async (req, res) => {
@@ -68,6 +73,16 @@ const createMainWherehouseLoadingExecute = catchAsync(async (req, res) => {
   const mwloading = await productService.createMainWherehouseLoadingExecute(body);
   res.status(httpStatus.CREATED).send(mwloading);
   await mwloading.save();
+});
+
+const gettrendsCount = catchAsync(async (req, res) => {
+  const product = await productService.TrendsCounts(
+    req.params.productId,
+    req.params.date,
+    req.params.wardId,
+    req.params.street
+  );
+  res.send(product);
 });
 
 const createShopListService = catchAsync(async (req, res) => {
@@ -420,6 +435,7 @@ module.exports = {
   updateArrivedById,
   updateStockStatusById,
   updateMainWherehouseLoadingExecuteById,
+  getAllTrends,
   getproduct,
   updateStockById,
   productDateTimeFilter,
@@ -435,4 +451,5 @@ module.exports = {
   getShopList,
   productaggregateById,
   updatesStockById,
+  gettrendsCount,
 };

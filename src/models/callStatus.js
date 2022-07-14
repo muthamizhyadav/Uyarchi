@@ -44,15 +44,6 @@ const callStatusSchema = mongoose.Schema({
   confirmOrder: {
     type: Number,
   },
-  logisticsCost: {
-    type: Number,
-  },
-  mislianeousCost: {
-    type: Number,
-  },
-  others: {
-    type: Number,
-  },
   phStatus: {
     type: String,
   },
@@ -65,67 +56,20 @@ const callStatusSchema = mongoose.Schema({
   date: {
     type: String,
   },
-  time: {
-    type: String,
-  },
-  stockStatus: {
-    type: String,
-    default: 'Pending',
-  },
-  modified: {
+  showWhs: {
     type: Boolean,
     default: false,
   },
-  driverNumber: {
-    type: Number,
-  },
-  weighBridgeEmpty: {
+  time: {
     type: String,
-  },
-  weighBridgeLoadedProduct: {
-    type: String,
-  },
-  vehicleType: {
-    type: String,
-    default: '',
-  },
-  vehicleNumber: {
-    type: String,
-    default: '',
-  },
-  billId: {
-    type: String,
-  },
-  incomingQuantity: {
-    type: Number,
-  },
-  billStatus: {
-    type: String,
-    default: 'Pending',
-  },
-  confirmprice: {
-    type: Number,
-  },
-  incomingWastage: {
-    type: Number,
-  },
-  mislianeousCost: {
-    type: Number,
-  },
-  others: {
-    type: Number,
-  },
-  driverName: {
-    type: String,
-    default: '',
-  },
-  weighbridgeBill: {
-    type: String,
-    default: '',
   },
   active: {
     type: Boolean,
     default: true,
+  },
+  StockReceived: {
+    type: String,
+    default: 'Pending',
   },
   archive: {
     type: Boolean,
