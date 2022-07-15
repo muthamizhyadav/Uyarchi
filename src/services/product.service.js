@@ -958,7 +958,9 @@ const productaggregateById = async (page) => {
 };
 
 const costPriceCalculation = async (date) => {
-  let values = await Product.aggregate([]);
+  let values = await Product.aggregate([{
+    
+  }]);
 };
 
 module.exports = {
