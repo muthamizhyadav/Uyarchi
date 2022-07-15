@@ -11,15 +11,30 @@ const createCallHistory = async (body) => {
   return callHistory;
 };
 
-
 const getAll = async () => {
   return callHistoryModel.find();
 };
 
 const getById = async (id) => {
-  let history = await callHistoryModel.find({shopId:id})
-  return history;
-}
+  // let history = await callHistoryModel.find({shopId:id})
+  // return history;
+  let historys = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ Id: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: '_id',
+        foreignField: 'SName',
+        as: 'shopName',
+      },
+    },
+  ]);
+  return historys;
+};
 
 const getShop = async (page) => {
   let values = await Shop.aggregate([
@@ -68,15 +83,15 @@ const updateCallingStatus = async (id, userId) => {
 };
 
 const updateStatuscall = async (id, updateBody) => {
-  let status = await callHistoryModel.findById(id);
+  let status = await Shop.findById(id);
   if (!status) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  status = await callHistoryModel.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  status = await Shop.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return status;
 };
 
-module.exports = {  
+module.exports = {
   createCallHistory,
   getAll,
   getShop,
@@ -84,5 +99,3 @@ module.exports = {
   getById,
   updateStatuscall,
 };
-  
-
