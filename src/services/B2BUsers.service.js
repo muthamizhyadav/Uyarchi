@@ -8,9 +8,9 @@ const Textlocal = require('../config/textLocal');
 const Verfy = require('../config/OtpVerify');
 
 const createUser = async (userBody) => {
-  return Users.create(userBody);
+  return Users.create(userBody);  
 };
-9;
+
 const getUsersById = async (id) => {
   let user = await Users.findById(id);
   if (!user) {
