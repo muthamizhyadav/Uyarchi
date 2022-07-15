@@ -165,6 +165,65 @@ const finishOrder = async (pId, date) => {
   return 'Order Finished 😃';
 };
 
+const getCallstatusForSuddenOrders = async (page) => {
+  let values = await CallStatus.aggregate([
+    {
+      $match: {
+        $and: [{ orderType: { $eq: 'sudden' } }, { confirmcallstatus: { $eq: 'Accepted' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        as: 'SupplierData',
+      },
+    },
+    {
+      $unwind: '$SupplierData',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: '$productData',
+    },
+    {
+      $project: {
+        productName: '$productData.productTitle',
+        supplierName: '$supplierData.primaryContactName',
+        supplierContact: '$supplierData.primaryContactNumber',
+        date: 1,
+        time: 1,
+        confirmOrder: 1,
+        confirmcallstatus: 1,
+        confirmprice: 1,
+        status: 1,
+        exp_date: 1,
+        productid: 1,
+        supplierid: 1,
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+
+  let total = await CallStatus.aggregate([
+    {
+      $match: {
+        $and: [{ orderType: { $eq: 'sudden' } }, { confirmcallstatus: { $eq: 'Accepted' } }],
+      },
+    },
+  ]);
+  return { values: values, total: total.length };
+};
+
 module.exports = {
   createCallStatus,
   getCallStatusById,
@@ -173,4 +232,5 @@ module.exports = {
   getProductAndSupplierDetails,
   getDataWithSupplierId,
   finishOrder,
+  getCallstatusForSuddenOrders,
 };

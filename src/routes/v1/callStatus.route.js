@@ -13,4 +13,5 @@ router.route('/:id/:date').put(CallStatusController.updateCallStatusById);
 router.route('/getSuppplier/getproduct/details/:page').get(CallStatusController.getProductAndSupplierDetails);
 router.route('/getDataWithSupplierId/:id/:page').get(CallStatusController.getDataWithSupplierId);
 router.route('/order/finished/:pId/:date').get(CallStatusController.finishOrder);
+router.route('/callstatusData/SuddenOrders/:page').get(CallStatusController.getCallstatusForSuddenOrders);
 module.exports = router;
