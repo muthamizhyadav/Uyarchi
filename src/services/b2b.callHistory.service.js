@@ -17,8 +17,6 @@ const getAll = async () => {
 };
 
 const getById = async (id) => {
-  // let callCount = await callHistoryModel.findById(id)
-  // return callCount;
   let history = await callHistoryModel.find({shopId:id})
   return history;
 }
@@ -69,12 +67,22 @@ const updateCallingStatus = async (id, userId) => {
   return 'On a Call';
 };
 
-module.exports = {
+const updateStatuscall = async (id, updateBody) => {
+  let status = await callHistoryModel.findById(id);
+  if (!status) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  status = await callHistoryModel.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return status;
+};
+
+module.exports = {  
   createCallHistory,
   getAll,
   getShop,
   updateCallingStatus,
   getById,
+  updateStatuscall,
 };
   
 

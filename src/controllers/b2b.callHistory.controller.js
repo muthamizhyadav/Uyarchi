@@ -34,6 +34,11 @@ const updateCallingStatus = catchAsync(async (req, res) => {
   res.send(callingStatus);
 });
 
+const updateStatuscall = catchAsync(async (req, res) => {
+  const callstatus = await callHistoryService.updateStatuscall(req.params.id, req.body);
+  res.send(callstatus);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -41,4 +46,5 @@ module.exports = {
   getAllPage,
   getById,
   updateCallingStatus,
+  updateStatuscall,
 };
