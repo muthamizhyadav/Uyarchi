@@ -92,6 +92,12 @@ const getSupplierPaymentDetailsBySupplierId = catchAsync(async (req, res) => {
   const supplier = await supplierService.getSupplierPaymentDetailsBySupplierId(req.params.id);
   res.send(supplier);
 });
+
+const getSupplierPaymentDetailsByProductId = catchAsync(async (req, res) => {
+  const supplier = await supplierService.getSupplierDataByProductId(req.params.id);
+  res.send(supplier);
+});
+
 module.exports = {
   createSupplier,
   getproductfromCallStatus,
@@ -108,4 +114,5 @@ module.exports = {
   getSupplierById,
   getSupplierAmountDetailsForSupplierBills,
   getSupplierPaymentDetailsBySupplierId,
+  getSupplierPaymentDetailsByProductId,
 };

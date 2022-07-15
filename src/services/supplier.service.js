@@ -221,6 +221,19 @@ const productDealingWithsupplier = async (id, date) => {
   ]);
 };
 
+const getSupplierDataByProductId = async (id) => {
+  let values = await Supplier.aggregate([
+    {
+      $match: {
+        productDealingWith: {
+          $eq: id,
+        },
+      },
+    },
+  ]);
+  return values;
+};
+
 const getSupplierWithApprovedstatus = async (date) => {
   return Supplier.aggregate([
     {
@@ -328,4 +341,5 @@ module.exports = {
   getAllDisableSupplier,
   getSupplierAmountDetailsForSupplierBills,
   getSupplierPaymentDetailsBySupplierId,
+  getSupplierDataByProductId,
 };

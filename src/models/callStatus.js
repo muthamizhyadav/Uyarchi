@@ -67,6 +67,12 @@ const callStatusSchema = mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  exp_date: {
+    type: String,
+  },
+  orderType:{
+    type:String,
+  },
   StockReceived: {
     type: String,
     default: 'Pending',

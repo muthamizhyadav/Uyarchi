@@ -16,7 +16,7 @@ const getAllHsn = async (key) => {
     },
     {
       $match: {
-        $or: [{ HSN_Description: { $regex: text } }],
+        $or: [{ HSN_Description: { $regex: text , '$options': 'i'} }],
       },
     },
     { $limit: 500 },

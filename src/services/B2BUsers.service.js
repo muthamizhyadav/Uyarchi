@@ -17,7 +17,6 @@ const getUsersById = async (id) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Users Not Found');
   }
   let role = await Role.findOne({ _id: user.userRole });
-
   return { userData: user, RoleData: role };
 };
 
@@ -104,7 +103,7 @@ const forgotPassword = async (body) => {
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
   }
-  return await Textlocal.Otp(body,users);
+  return await Textlocal.Otp(body, users);
 };
 const otpVerfiy = async (body) => {
   // const { phoneNumber } = body;
@@ -114,9 +113,8 @@ const otpVerfiy = async (body) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
   }
 
-  return await Verfy.verfiy(body,users);
+  return await Verfy.verfiy(body, users);
 };
-
 
 const getForMyAccount = async (userId) => {
   let values = await Users.aggregate([
@@ -228,5 +226,5 @@ module.exports = {
   getsalesExecuteRolesUsers,
   updatemetadata,
   forgotPassword,
-  otpVerfiy
+  otpVerfiy,
 };
