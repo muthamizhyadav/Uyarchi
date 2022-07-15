@@ -18,20 +18,44 @@ const getAll = async () => {
 const getById = async (id) => {
   // let history = await callHistoryModel.find({shopId:id})
   // return history;
-  let historys = await Shop.aggregate([
+  let historys = await callHistoryModel.aggregate([
     {
       $match: {
-        $and: [{ Id: { $eq: id } }],
+        $and: [{ shopId: { $eq: id } }],
       },
     },
     {
       $lookup: {
-        from: 'callhistories',
-        localField: '_id',
-        foreignField: 'SName',
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
         as: 'shopName',
       },
     },
+    {
+      $unwind: '$shopName',
+    },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'shopName.SType',
+        foreignField: '_id',
+        as: 'shopType',
+      }
+    },
+    {
+      $unwind: '$shopType'
+    },
+    {
+      $project: {
+        shopName: '$shopName.SName',
+        shopMobile: '$shopName.mobile',
+        shopType: '$shopType.shopList',
+        _id :1,
+
+
+    }
+  }
   ]);
   return historys;
 };
