@@ -197,8 +197,8 @@ const getCallstatusForSuddenOrders = async (page) => {
     {
       $project: {
         productName: '$productData.productTitle',
-        supplierName: '$supplierData.primaryContactName',
-        supplierContact: '$supplierData.primaryContactNumber',
+        supplierName: '$SupplierData.primaryContactName',
+        supplierContact: '$SupplierData.primaryContactNumber',
         date: 1,
         time: 1,
         confirmOrder: 1,
