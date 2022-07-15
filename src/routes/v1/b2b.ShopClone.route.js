@@ -36,11 +36,13 @@ router.route('/totalCount/counts').get(authorization, b2bShopCloneController.get
 
 router.route('/getMarket/shop/:marketId').get(b2bShopCloneController.getMarkeShop);
 
-
-// 
+//
 
 router.route('/sales/registerUser').post(b2bShopCloneController.registerUser);
 // router.route('/sales/forgot-password').post(b2bShopCloneController.forgotPassword);
 // router.route('/sales/otpverify').post(b2bShopCloneController.verfiOtp);
 
+// verify register Mobile OTP
+
+router.route('/verify-RegisterOTP').post(b2bShopCloneController.verifyRegisterOTP);
 module.exports = router;
