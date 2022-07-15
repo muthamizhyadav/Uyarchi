@@ -5,6 +5,8 @@ const { Users } = require('../models/B2Busers.model');
 const ApiError = require('../utils/ApiError');
 const Textlocal = require('../config/textLocal');
 const Verfy = require('../config/OtpVerify');
+const RegisterOtp = require('../config/registerOtp');
+const { verfiy } = require('../config/registerOTP.Verify');
 // Shop Clone Serive
 
 const createShopClone = async (shopBody) => {
@@ -19,14 +21,18 @@ const filterShopwithNameAndContact = async (key) => {
   const marketClone = await MarketShopsClone.aggregate([
     {
       $match: {
-        $or: [{ SName: { $regex: key , '$options': 'i' } }, { mobile: { $regex: key , '$options': 'i' } }, { ownnum: { $regex: key , '$options': 'i' } }],
+        $or: [
+          { SName: { $regex: key, $options: 'i' } },
+          { mobile: { $regex: key, $options: 'i' } },
+          { ownnum: { $regex: key, $options: 'i' } },
+        ],
       },
     },
   ]);
   const shop = await Shop.aggregate([
     {
       $match: {
-        $or: [{ SName: { $regex: key, '$options': 'i' } }, { mobile: { $regex: key, '$options': 'i' } }],
+        $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }],
       },
     },
   ]);
@@ -176,10 +182,15 @@ const craeteRegister = async (shopBody) => {
       return shop;
     } else {
       let b2bshop = await Shop.create(shopBody);
-      
+      await RegisterOtp.Otp(mobile);
       return b2bshop;
     }
   }
+};
+
+const verifyRegisterOTP = async (body) => {
+  const { otp, mobileNumber } = body;
+  return await verfiy(otp, mobileNumber);
 };
 
 const deleteShopById = async (id) => {
@@ -494,4 +505,5 @@ module.exports = {
   craeteRegister,
   forgotPassword,
   otpVerfiy,
+  verifyRegisterOTP,
 };
