@@ -362,7 +362,7 @@ const TrendsCounts = async (productId, date, wardId, street) => {
       $unwind: '$StreetData',
     },
   ]);
-  let totelcount = marketshop.length+b2bshops.length;
+  let totelcount = marketshop.length + b2bshops.length;
   if (street != 'null') {
     totelcount = 1;
   }
@@ -956,6 +956,11 @@ const productaggregateById = async (page) => {
     total: total,
   };
 };
+
+const costPriceCalculation = async (date) => {
+  let values = await Product.aggregate([]);
+};
+
 module.exports = {
   createProduct,
   getTrendsData,
@@ -1014,4 +1019,6 @@ module.exports = {
   updateStockById,
   setTrendsValueforProduct,
   TrendsCounts,
+  // cost price calculation
+  costPriceCalculation,
 };
