@@ -176,6 +176,7 @@ const craeteRegister = async (shopBody) => {
       return shop;
     } else {
       let b2bshop = await Shop.create(shopBody);
+      
       return b2bshop;
     }
   }

@@ -48,6 +48,11 @@ const finishOrder = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send(callStatus);
 });
 
+const getCallstatusForSuddenOrders = catchAsync(async (req, res) => {
+  const callstatus = await CallStatusService.getCallstatusForSuddenOrders(req.params.page);
+  res.send(callstatus);
+});
+
 module.exports = {
   createCallStatus,
   getProductAndSupplierDetails,
@@ -56,4 +61,5 @@ module.exports = {
   deleteBusinessById,
   getDataWithSupplierId,
   finishOrder,
+  getCallstatusForSuddenOrders,
 };
