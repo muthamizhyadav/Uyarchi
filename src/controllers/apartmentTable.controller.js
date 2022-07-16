@@ -3,6 +3,7 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const apartmentTableService = require('../services/apartmentTable.service');
+const axios = require('axios')
 
 const createapartmentTableService = catchAsync(async (req, res) => {
   const apart = await apartmentTableService.createApartment(req.body);
@@ -41,6 +42,35 @@ const WardApi = catchAsync(async (req,res)=>{
   const user = await apartmentTableService.WardNoApi(req.params.location, req.params.id)
   res.send(user)
 })
+
+
+const WardNoApi2 = catchAsync(async (req,res)=>{
+  const user = await apartmentTableService.WardApi2(req.params.longi, req.params.lati, req.params.data)
+  res.send(user)
+})
+
+
+const getWardDataForDB = async (req, res, next) => {
+  const countriesJSON =
+  'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries.json'
+
+try {
+  let responseCountry = await axios.get(countriesJSON)
+  let countryList = responseCountry.data.map((e) => {
+     return {
+        label: e.name.toUpperCase(),
+        name: e.id,
+     }
+  })
+
+  await res.status(200).json({
+     success: true,
+     data: countryList,
+  })
+} catch (err) {
+  next(err)
+}
+}
 
 const locationMapService = catchAsync(async (req,res)=>{
   const user = await apartmentTableService.latitudeMap(req.params.location, req.params.radius, req.params.type, req.params.keyword, req.params.id)
@@ -284,6 +314,8 @@ module.exports = {
   groupMapService,
   locationMapService,
   WardApi,
+  WardNoApi2,
+  getWardDataForDB,
   
 
   // getManageUserAttendance,

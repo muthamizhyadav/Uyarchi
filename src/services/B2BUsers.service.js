@@ -1,66 +1,15 @@
 const httpStatus = require('http-status');
 const { Users } = require('../models/B2Busers.model');
 const metaUsers = require('../models/userMeta.model');
-const Role = require('../models/roles.model');
 const bcrypt = require('bcryptjs');
 const ApiError = require('../utils/ApiError');
-const Textlocal = require('../config/textLocal');
-const Verfy = require('../config/OtpVerify');
 
 const createUser = async (userBody) => {
   return Users.create(userBody);
 };
-9;
-const getUsersById = async (id) => {
-  let user = await Users.findById(id);
-  if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Users Not Found');
-  }
-  let role = await Role.findOne({ _id: user.userRole });
-
-  return { userData: user, RoleData: role };
-};
 
 const getAllUsers = async () => {
-  return Users.aggregate([
-    {
-      $lookup: {
-        from: 'roles',
-        localField: 'userRole',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $project: {
-              roleName: 1,
-            },
-          },
-        ],
-        as: 'RoleData',
-      },
-    },
-    {
-      $unwind: '$RoleData',
-    },
-    {
-      $lookup: {
-        from: 'musers',
-        localField: '_id',
-        foreignField: 'user_id',
-        as: 'metadatas',
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        name: 1,
-        email: 1,
-        phoneNumber: 1,
-        createdAt: 1,
-        userrole: '$RoleData.roleName',
-        metavalue: '$metadatas',
-      },
-    },
-  ]);
+  return Users.find();
 };
 
 const UsersLogin = async (userBody) => {
@@ -77,6 +26,7 @@ const UsersLogin = async (userBody) => {
   }
   return userName;
 };
+
 const B2bUsersAdminLogin = async (userBody) => {
   const { phoneNumber, password } = userBody;
   let userName = await Users.findOne({ phoneNumber: phoneNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
@@ -94,29 +44,9 @@ const B2bUsersAdminLogin = async (userBody) => {
 
 const createMetaUsers = async (userBody) => {
   const user = await metaUsers.create(userBody);
+
   return user;
 };
-
-const forgotPassword = async (body) => {
-  // const { phoneNumber } = body;
-  // await Textlocal.Otp(body);
-  let users = await Users.findOne({ phoneNumber: body.mobileNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
-  if (!users) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
-  }
-  return await Textlocal.Otp(body,users);
-};
-const otpVerfiy = async (body) => {
-  // const { phoneNumber } = body;
-  // await Textlocal.Otp(body);
-  let users = await Users.findOne({ phoneNumber: body.mobileNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
-  if (!users) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
-  }
-
-  return await Verfy.verfiy(body,users);
-};
-
 
 const getForMyAccount = async (userId) => {
   let values = await Users.aggregate([
@@ -145,13 +75,14 @@ const getForMyAccount = async (userId) => {
         roleName: '$RoleData.roleName',
       },
     },
+    {
+      $skip:10*parseInt(page)
+    },
+   {
+      $limit:10
+    },
   ]);
   return values;
-};
-
-const getsalesExecuteRolesUsers = async () => {
-  let users = await Users.find({ userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
-  return users;
 };
 
 const changePassword = async (userId, body) => {
@@ -194,24 +125,6 @@ const deleteMetaUser = async (id) => {
   (metauser.active = false), (metauser.archive = true), await metauser.save();
 };
 
-const updatemetadata = async (updateBody) => {
-  updateBody.metavalue.forEach(async (e) => {
-    console.log(e.key);
-    const metauser = await metaUsers.findOne({ user_id: updateBody.userId, metaKey: e.key });
-    let update = {
-      user_id: updateBody.userId,
-      metaKey: e.key,
-      metavalue: e.value,
-    };
-    if (metauser) {
-      await metaUsers.findByIdAndUpdate({ _id: metauser.id }, update, { new: true });
-    } else {
-      await metaUsers.create(update);
-    }
-  });
-  return 'success';
-};
-
 module.exports = {
   createUser,
   UsersLogin,
@@ -222,11 +135,6 @@ module.exports = {
   deleteMetaUser,
   getAllmetaUsers,
   changePassword,
-  getUsersById,
   getusermetaDataById,
   getForMyAccount,
-  getsalesExecuteRolesUsers,
-  updatemetadata,
-  forgotPassword,
-  otpVerfiy
 };
