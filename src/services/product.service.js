@@ -7,8 +7,9 @@ const ShopOrders = require('../models/shopOrder.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { MarketShopsClone } = require('../models/market.model');
 const moment = require('moment');
+const { isDate } = require('moment');
 let datenow = moment(new Date()).format('DD-MM-YYYY');
-
+const ReceivedProduct = require('../models/receivedProduct.model');
 const createProduct = async (productBody) => {
   let { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime, maxBidAomunt, minBidAmount } =
     productBody;
@@ -957,10 +958,36 @@ const productaggregateById = async (page) => {
   };
 };
 
-const costPriceCalculation = async (date) => {
-  let values = await Product.aggregate([{
-    
-  }]);
+const costPriceCalculation = async (date, page) => {
+  // console.log(date);
+  let values = await Product.aggregate([{ $skip: 10 * page }, { $limit: 10 }]);
+  let retunJson = [];
+  await values.forEach(async (product) => {
+    // console.log(product);
+    let receiveddate = await ReceivedProduct.aggregate([
+      {
+        $match: {
+          date: { $eq: date },
+        },
+      },
+      {
+        $lookup: {
+          from: 'receivedstocks',
+          localField: '_id',
+          foreignField: 'groupId',
+          pipeline: [{ $match: { productId: product._id } }],
+          as: 'receivedstocks',
+        },
+      },
+      { $unwind: '$receivedstocks' },
+    ]);
+    if (receiveddate.length != 0) {
+      retunJson.push(receiveddate[0]);
+      console.log(retunJson);
+    }
+  });
+
+  return await Promise.all(retunJson);
 };
 
 module.exports = {
