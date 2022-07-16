@@ -11,4 +11,7 @@ router.route('/update/callingStatus/:id').put(authorization, callHistoryControll
 router.route('/update/StatusCall/:id').put(callHistoryController.updateStatuscall);
 router.route('/getCallCount/:id').get(callHistoryController.getById);
 
+
+router.route('/craeteCallStatus').post(callHistoryController.createcallHistoryWithTypes);
+
 module.exports = router;
