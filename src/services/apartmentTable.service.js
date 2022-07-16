@@ -66,8 +66,43 @@ const WardNoApi = async (location,id) => {
   let response = await axios.get(
     `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location}&key=${id}`
   )
-
   return response.data
+}
+
+const WardApi2 = async (longi,lati,data1) =>{
+  let longitude = longi
+  let latitude = lati
+  // console.log(longitude.length)
+let data = []
+let data2 = data1
+  let response = await axios.get(
+    'https://chennaicorporation.gov.in/gcc/citizen-details/location-service/assets/GCC_DIVISION.geojson'
+  )
+
+//  console.log(response.data.features.length )
+//  console.log(response.data.features[0].geometry.coordinates[0])
+  for(let i = 0 ; i < response.data.features.length ; i++){
+    for(let j = 0 ; j < response.data.features[i].geometry.coordinates[0].length ; j++){
+          let b = response.data.features[i].geometry.coordinates[0][j]
+          // console.log(b)
+          let lon = b.slice(0,1)
+          let la = b.slice(1,2)
+          const first2Str = String(la).slice(0, 5);
+          const  second2Str= String(lon).slice(0, 5); 
+          const first2Num = first2Str;
+          const second2Num = second2Str;
+          if(first2Num == latitude && second2Num == longitude){
+            // console.log(second2Num)
+            // console.log(Number(longitude))
+            // console.log(first2Num)
+            //  console.log(Number(latitude))
+             data = response.data.features[i].properties
+            break;
+          }
+    }
+  }
+  return data
+  
 }
 
 const AllCount = async ()=>{
@@ -2177,6 +2212,7 @@ module.exports = {
   groupMap,
   latitudeMap,
   WardNoApi,
+  WardApi2,
 
   // paginationManageUserAttendance,
  
