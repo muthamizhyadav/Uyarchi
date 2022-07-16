@@ -41,21 +41,19 @@ const getById = async (id) => {
         localField: 'shopName.SType',
         foreignField: '_id',
         as: 'shopType',
-      }
+      },
     },
     {
-      $unwind: '$shopType'
+      $unwind: '$shopType',
     },
     {
       $project: {
         shopName: '$shopName.SName',
         shopMobile: '$shopName.mobile',
         shopType: '$shopType.shopList',
-        _id :1,
-
-
-    }
-  }
+        _id: 1,
+      },
+    },
   ]);
   return historys;
 };
@@ -67,6 +65,7 @@ const getShop = async (page) => {
       $lookup: {
         from: 'callhistories',
         localField: '_id',
+
         foreignField: 'shopId',
         pipeline: [
           {

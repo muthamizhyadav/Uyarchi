@@ -81,6 +81,6 @@ router.route('/trendsCounts/:productId/:date/:wardId/:street').get(productContro
 
 // cost price calculation
 
-router.route('/costPrice/calculation').get(productController.costPriceCalculation);
+router.route('/costPrice/calculation/:date/:page').get(productController.costPriceCalculation);
 
 module.exports = router;
