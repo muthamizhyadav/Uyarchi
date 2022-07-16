@@ -12,8 +12,7 @@ router.post('/shopOrder/login', b2bUsersController.B2bUsersAdminLogin);
 router.route('/:id').get(b2bUsersController.getUsersById);
 // metaUser Route
 router.route('/meta/user').post(b2bUsersController.createMetaUSers);
-router
-  .route('/metauser/:id')
+router.route('/metauser/:id')
   .get(b2bUsersController.getusermetaDataById)
   .put(b2bUsersController.updateMetaUsers)
   .delete(b2bUsersController.deleteMetaUser);

@@ -64,7 +64,10 @@ const callHistorySchema = mongoose.Schema({
   },
   selectStatus: {
     type: String,
-  }
+  },
+  type:{
+    type: String,
+  },
 });
 
 const callHistory = mongoose.model('callHistory',callHistorySchema );

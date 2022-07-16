@@ -30,8 +30,13 @@ const getAllPage = catchAsync(async (req, res) => {
 const updateCallingStatus = catchAsync(async (req, res) => {
   let userId = req.userId;
   console.log(userId);
-  const callingStatus = await callHistoryService.updateCallingStatus(req.params.id, userId);
+  const callingStatus = await callHistoryService.updateStatuscall(req.params.id, userId, req.body);
   res.send(callingStatus);
+});
+
+const updateStatuscall = catchAsync(async (req, res) => {
+  const callstatus = await callHistoryService.updateStatuscall(req.params.id, req.body);
+  res.send(callstatus);
 });
 
 module.exports = {
@@ -41,4 +46,5 @@ module.exports = {
   getAllPage,
   getById,
   updateCallingStatus,
+  updateStatuscall,
 };

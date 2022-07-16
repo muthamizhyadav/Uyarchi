@@ -1,7 +1,12 @@
 const httpStatus = require('http-status');
 const { Shop, AttendanceClone } = require('../models/b2b.ShopClone.model');
 const { MarketShopsClone, MarketClone } = require('../models/market.model');
+const { Users } = require('../models/B2Busers.model');
 const ApiError = require('../utils/ApiError');
+const Textlocal = require('../config/textLocal');
+const Verfy = require('../config/OtpVerify');
+const RegisterOtp = require('../config/registerOtp');
+const { verfiy } = require('../config/registerOTP.Verify');
 // Shop Clone Serive
 
 const createShopClone = async (shopBody) => {
@@ -16,14 +21,18 @@ const filterShopwithNameAndContact = async (key) => {
   const marketClone = await MarketShopsClone.aggregate([
     {
       $match: {
-        $or: [{ SName: { $regex: key } }, { mobile: { $regex: key } }, { ownnum: { $regex: key } }],
+        $or: [
+          { SName: { $regex: key, $options: 'i' } },
+          { mobile: { $regex: key, $options: 'i' } },
+          { ownnum: { $regex: key, $options: 'i' } },
+        ],
       },
     },
   ]);
   const shop = await Shop.aggregate([
     {
       $match: {
-        $or: [{ SName: { $regex: key } }, { mobile: { $regex: key } }],
+        $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }],
       },
     },
   ]);
@@ -157,6 +166,31 @@ const updateShopById = async (id, updateBody) => {
   }
   shop = await Shop.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return shop;
+};
+
+// register user
+
+const craeteRegister = async (shopBody) => {
+  const { mobile } = shopBody;
+  const register = await Users.findOne({ phoneNumber: mobile });
+  // console.log(register);
+  if (register) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'MobileNumber already registered');
+  } else if (register == null) {
+    const shop = await Shop.find({ mobile: mobile });
+    if (shop.length != 0) {
+      return shop;
+    } else {
+      // let b2bshop = await Shop.create(shopBody);
+      await RegisterOtp.Otp(mobile);
+      return "OTP send successfully";
+    }
+  }
+};
+
+const verifyRegisterOTP = async (body) => {
+  const { otp, mobileNumber } = body;
+  return await verfiy(otp, mobileNumber);
 };
 
 const deleteShopById = async (id) => {
@@ -403,7 +437,7 @@ const getMarkeShop = async (marketId) => {
       },
     },
     {
-      $unwind: '$marketData'
+      $unwind: '$marketData',
     },
     {
       $project: {
@@ -413,7 +447,7 @@ const getMarkeShop = async (marketId) => {
         ward: '$WardData.ward',
         username: '$UsersData.name',
         shoptype: '$shoptype.shopList',
-        marketName:'$marketData.MName',
+        marketName: '$marketData.MName',
         photoCapture: 1,
         SName: 1,
         Slat: 1,
@@ -429,6 +463,26 @@ const getMarkeShop = async (marketId) => {
   ]);
 
   return values;
+};
+
+const forgotPassword = async (body) => {
+  // const { phoneNumber } = body;
+  // await Textlocal.Otp(body);
+  let users = await Users.findOne({ phoneNumber: body.mobileNumber });
+  if (!users) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
+  }
+  return await Textlocal.Otp(body, users);
+};
+const otpVerfiy = async (body) => {
+  // const { phoneNumber } = body;
+  // await Textlocal.Otp(body);
+  let users = await Users.findOne({ phoneNumber: body.mobileNumber });
+  if (!users) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
+  }
+
+  return await Verfy.verfiy(body, users);
 };
 
 module.exports = {
@@ -448,4 +502,8 @@ module.exports = {
   totalCount,
   // get marketShop
   getMarkeShop,
+  craeteRegister,
+  forgotPassword,
+  otpVerfiy,
+  verifyRegisterOTP,
 };

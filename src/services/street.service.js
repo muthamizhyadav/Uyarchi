@@ -377,13 +377,11 @@ const getAllStreet = async () => {
 // pagination with Aggregation
 
 const streetPagination = async (key, id) => {
-  let lowercase;
   let match = [{ archive: { $ne: true } }];
   if (key != 'null') {
-    lowercase = key.toUpperCase();
-    match = [{ area: { $regex: lowercase } }, { street: { $regex: lowercase } }, { locality: { $regex: lowercase } }];
+    match = [{ area: { $regex: key,'$options': 'i'  } }, { street: { $regex: key,'$options': 'i'  } }, { locality: { $regex: key,'$options': 'i'  } }];
   }
-  console.log(match)
+  console.log(match);
   return Street.aggregate([
     {
       $match: {
@@ -490,11 +488,15 @@ const deleteStreetById = async (streetId) => {
 };
 
 const areaSearchApi = async (key) => {
-  let lowercase = key.toUpperCase();
+
   let values = await Street.aggregate([
     {
       $match: {
-        $or: [{ area: { $regex: lowercase } }, { street: { $regex: lowercase } }, { locality: { $regex: lowercase } }],
+        $or: [
+          { area: { $regex: key, '$options': 'i' } },
+          { street: { $regex: key,'$options': 'i'} },
+          { locality: { $regex: key, '$options': 'i' } },
+        ],
       },
     },
 

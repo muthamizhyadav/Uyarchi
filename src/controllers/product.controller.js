@@ -395,6 +395,11 @@ const updatesStockById = catchAsync(async (req, res) => {
   res.send(stock);
 });
 
+const costPriceCalculation = catchAsync(async (req, res) => {
+  const product = await productService.costPriceCalculation();
+  res.send(product);
+});
+
 module.exports = {
   createProduct,
   getAllienceBySupplierId,
@@ -452,4 +457,7 @@ module.exports = {
   productaggregateById,
   updatesStockById,
   gettrendsCount,
+
+  // cost price calculation
+  costPriceCalculation,
 };

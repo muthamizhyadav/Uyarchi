@@ -16,11 +16,47 @@ const getAll = async () => {
 };
 
 const getById = async (id) => {
-  // let callCount = await callHistoryModel.findById(id)
-  // return callCount;
-  let history = await callHistoryModel.find({shopId:id})
-  return history;
-}
+  // let history = await callHistoryModel.find({shopId:id})
+  // return history;
+  let historys = await callHistoryModel.aggregate([
+    {
+      $match: {
+        $and: [{ shopId: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones', //add table
+        localField: 'shopId', //callhistory
+        foreignField: '_id', //shopclone
+        as: 'shopName',
+      },
+    },
+    {
+      $unwind: '$shopName',
+    },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'shopName.SType',
+        foreignField: '_id',
+        as: 'shopType',
+      },
+    },
+    {
+      $unwind: '$shopType',
+    },
+    {
+      $project: {
+        shopName: '$shopName.SName',
+        shopMobile: '$shopName.mobile',
+        shopType: '$shopType.shopList',
+        _id: 1,
+      },
+    },
+  ]);
+  return historys;
+};
 
 const getShop = async (page) => {
   let values = await Shop.aggregate([
@@ -63,9 +99,23 @@ const getShop = async (page) => {
   return { values: values, total: total.length };
 };
 
-const updateCallingStatus = async (id, userId) => {
-  await Shop.findByIdAndUpdate({ _id: id }, { callingStatus: 'On_a_call', callingUserId: userId }, { new: true });
-  return 'On a Call';
+const updateCallingStatus = async (id, updatebody) => {
+  let shops = await Shop.findById(id);
+  if (!shops) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'shop not found');
+  }
+  shops = await Shop.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  return shops;
+};
+
+const updateStatuscall = async (id, userId, updateBody) => {
+  let status = await Shop.findById(id);
+  if (!status) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  status = await Shop.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  status = await Shop.findByIdAndUpdate({ _id: id }, { callingUserId: userId }, { new: true });
+  return status;
 };
 
 module.exports = {
@@ -74,6 +124,5 @@ module.exports = {
   getShop,
   updateCallingStatus,
   getById,
+  updateStatuscall,
 };
-  
-

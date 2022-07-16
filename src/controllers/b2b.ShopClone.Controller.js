@@ -34,6 +34,13 @@ const createB2bShopClone = catchAsync(async (req, res) => {
   await shop.save();
 });
 
+// register user
+
+const registerUser = catchAsync(async (req, res) => {
+  const register = await b2bCloneService.craeteRegister(req.body);
+  res.send(register);
+});
+
 const filterShopwithNameAndContact = catchAsync(async (req, res) => {
   const shop = await b2bCloneService.filterShopwithNameAndContact(req.params.key);
   res.send(shop);
@@ -141,6 +148,19 @@ const getMarkeShop = catchAsync(async (req, res) => {
   }
   res.send(marketshop);
 });
+const forgotPassword = catchAsync(async (req, res) => {
+  const users = await b2bCloneService.forgotPassword(req.body);
+  res.send(users);
+});
+const verfiOtp = catchAsync(async (req, res) => {
+  const users = await b2bCloneService.otpVerfiy(req.body);
+  res.send(users);
+});
+
+const verifyRegisterOTP = catchAsync(async (req, res) => {
+  const users = await b2bCloneService.verifyRegisterOTP(req.body);
+  res.send(users);
+});
 
 module.exports = {
   createB2bShopClone,
@@ -159,4 +179,8 @@ module.exports = {
   getTotalCounts,
   // getmaketShop
   getMarkeShop,
+  registerUser,
+  forgotPassword,
+  verfiOtp,
+  verifyRegisterOTP,
 };

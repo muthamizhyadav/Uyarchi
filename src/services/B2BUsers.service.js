@@ -5,7 +5,16 @@ const bcrypt = require('bcryptjs');
 const ApiError = require('../utils/ApiError');
 
 const createUser = async (userBody) => {
-  return Users.create(userBody);
+  return Users.create(userBody);  
+};
+
+const getUsersById = async (id) => {
+  let user = await Users.findById(id);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Users Not Found');
+  }
+  let role = await Role.findOne({ _id: user.userRole });
+  return { userData: user, RoleData: role };
 };
 
 const getAllUsers = async () => {
@@ -46,6 +55,26 @@ const createMetaUsers = async (userBody) => {
   const user = await metaUsers.create(userBody);
 
   return user;
+};
+
+const forgotPassword = async (body) => {
+  // const { phoneNumber } = body;
+  // await Textlocal.Otp(body);
+  let users = await Users.findOne({ phoneNumber: body.mobileNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
+  if (!users) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
+  }
+  return await Textlocal.Otp(body, users);
+};
+const otpVerfiy = async (body) => {
+  // const { phoneNumber } = body;
+  // await Textlocal.Otp(body);
+  let users = await Users.findOne({ phoneNumber: body.mobileNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
+  if (!users) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
+  }
+
+  return await Verfy.verfiy(body, users);
 };
 
 const getForMyAccount = async (userId) => {
@@ -137,4 +166,8 @@ module.exports = {
   changePassword,
   getusermetaDataById,
   getForMyAccount,
+  getsalesExecuteRolesUsers,
+  updatemetadata,
+  forgotPassword,
+  otpVerfiy,
 };

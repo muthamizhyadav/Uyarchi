@@ -20,4 +20,5 @@ router.route('/product/supplier/:supplierId/:date').get(supplierController.getpr
 router.route('/products/aggregate/:date').get(supplierController.getproductfromCallStatus);
 router.route('/supplierPendingAmounts/:page').get(supplierController.getSupplierAmountDetailsForSupplierBills);
 router.route('/supplier/paymend/details/:id').get(supplierController.getSupplierPaymentDetailsBySupplierId);
+router.route('/productData/:id').get(supplierController.getSupplierPaymentDetailsByProductId);
 module.exports = router;

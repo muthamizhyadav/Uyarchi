@@ -60,7 +60,9 @@ const shopSchema = mongoose.Schema({
   callingUserId:{
     type: String,
   },
-  marketId: { type: String },
+  marketId: { 
+    type: String 
+  },
   shopNo: {
     type: String,
   },
