@@ -1,13 +1,14 @@
 const httpStatus = require('http-status');
 const { Users } = require('../models/B2Busers.model');
 const metaUsers = require('../models/userMeta.model');
+const Role = require('../models/roles.model');
 const bcrypt = require('bcryptjs');
 const ApiError = require('../utils/ApiError');
-
+const Textlocal = require('../config/textLocal');
+const Verfy = require('../config/OtpVerify');
 const createUser = async (userBody) => {
-  return Users.create(userBody);  
+  return Users.create(userBody);
 };
-
 const getUsersById = async (id) => {
   let user = await Users.findById(id);
   if (!user) {
@@ -16,11 +17,47 @@ const getUsersById = async (id) => {
   let role = await Role.findOne({ _id: user.userRole });
   return { userData: user, RoleData: role };
 };
-
 const getAllUsers = async () => {
-  return Users.find();
+  return Users.aggregate([
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'userRole',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              roleName: 1,
+            },
+          },
+        ],
+        as: 'RoleData',
+      },
+    },
+    {
+      $unwind: '$RoleData',
+    },
+    {
+      $lookup: {
+        from: 'musers',
+        localField: '_id',
+        foreignField: 'user_id',
+        as: 'metadatas',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        email: 1,
+        phoneNumber: 1,
+        createdAt: 1,
+        userrole: '$RoleData.roleName',
+        metavalue: '$metadatas',
+      },
+    },
+  ]);
 };
-
 const UsersLogin = async (userBody) => {
   const { phoneNumber, password } = userBody;
   let userName = await Users.findOne({ phoneNumber: phoneNumber });
@@ -35,7 +72,6 @@ const UsersLogin = async (userBody) => {
   }
   return userName;
 };
-
 const B2bUsersAdminLogin = async (userBody) => {
   const { phoneNumber, password } = userBody;
   let userName = await Users.findOne({ phoneNumber: phoneNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
@@ -50,13 +86,10 @@ const B2bUsersAdminLogin = async (userBody) => {
   }
   return userName;
 };
-
 const createMetaUsers = async (userBody) => {
   const user = await metaUsers.create(userBody);
-
   return user;
 };
-
 const forgotPassword = async (body) => {
   // const { phoneNumber } = body;
   // await Textlocal.Otp(body);
@@ -73,10 +106,8 @@ const otpVerfiy = async (body) => {
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
   }
-
   return await Verfy.verfiy(body, users);
 };
-
 const getForMyAccount = async (userId) => {
   let values = await Users.aggregate([
     {
@@ -104,16 +135,13 @@ const getForMyAccount = async (userId) => {
         roleName: '$RoleData.roleName',
       },
     },
-    {
-      $skip:10*parseInt(page)
-    },
-   {
-      $limit:10
-    },
   ]);
   return values;
 };
-
+const getsalesExecuteRolesUsers = async () => {
+  let users = await Users.find({ userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
+  return users;
+};
 const changePassword = async (userId, body) => {
   let user = await Users.findById(userId);
   if (!user) {
@@ -125,16 +153,13 @@ const changePassword = async (userId, body) => {
   user = await Users.findByIdAndUpdate({ _id: userId }, { password: password }, { new: true });
   return user;
 };
-
 const getAllmetaUsers = async () => {
   return metaUsers.find();
 };
-
 const getusermetaDataById = async (id) => {
   const metauser = await metaUsers.findById(id);
   return metauser;
 };
-
 const updateMetaUsers = async (id, updateBody) => {
   let metauser = await getusermetaDataById(id);
   console.log(metauser);
@@ -144,16 +169,30 @@ const updateMetaUsers = async (id, updateBody) => {
   metauser = await metaUsers.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return metauser;
 };
-
 const deleteMetaUser = async (id) => {
   let metauser = await getusermetaDataById(id);
   if (!metauser) {
     throw new ApiError(httpStatus.NOT_FOUND, 'not Found');
   }
-
   (metauser.active = false), (metauser.archive = true), await metauser.save();
 };
-
+const updatemetadata = async (updateBody) => {
+  updateBody.metavalue.forEach(async (e) => {
+    console.log(e.key);
+    const metauser = await metaUsers.findOne({ user_id: updateBody.userId, metaKey: e.key });
+    let update = {
+      user_id: updateBody.userId,
+      metaKey: e.key,
+      metavalue: e.value,
+    };
+    if (metauser) {
+      await metaUsers.findByIdAndUpdate({ _id: metauser.id }, update, { new: true });
+    } else {
+      await metaUsers.create(update);
+    }
+  });
+  return 'success';
+};
 module.exports = {
   createUser,
   UsersLogin,
@@ -164,6 +203,7 @@ module.exports = {
   deleteMetaUser,
   getAllmetaUsers,
   changePassword,
+  getUsersById,
   getusermetaDataById,
   getForMyAccount,
   getsalesExecuteRolesUsers,

@@ -4,7 +4,6 @@ const { OTPModel } = require('../models/RegisetOtp.model');
 
 const verfiy = async (otp, mobileNumber) => {
   let verify = await OTPModel.findOne({ OTP: otp, mobileNumber: mobileNumber });
-  console.log(verify);
   if (!verify || verfiy == null) {
     throw new ApiError(httpStatus.NOT_FOUND, 'OTP Is Wrong Or Invalid');
   }

@@ -396,7 +396,7 @@ const updatesStockById = catchAsync(async (req, res) => {
 });
 
 const costPriceCalculation = catchAsync(async (req, res) => {
-  const product = await productService.costPriceCalculation();
+  const product = await productService.costPriceCalculation(req.params.date,req.params.page);
   res.send(product);
 });
 
