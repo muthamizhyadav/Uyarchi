@@ -181,9 +181,9 @@ const craeteRegister = async (shopBody) => {
     if (shop.length != 0) {
       return shop;
     } else {
-      let b2bshop = await Shop.create(shopBody);
+      // let b2bshop = await Shop.create(shopBody);
       await RegisterOtp.Otp(mobile);
-      return b2bshop;
+      return "OTP send successfully";
     }
   }
 };
