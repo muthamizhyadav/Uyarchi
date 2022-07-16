@@ -11,6 +11,16 @@ const createCallHistory = async (body) => {
   return callHistory;
 };
 
+
+const createcallHistoryWithType = async(body)=>{
+  const { callStatus,shopId } = body ;
+  if(callStatus != 'accept' ){
+    await Shop.findByIdAndUpdate({ _id:shopId},{callingStatus:callStatus},{ new: true})
+  }
+  let callHistory = await callHistoryModel.create(body);
+  return callHistory;
+}
+
 const getAll = async () => {
   return callHistoryModel.find();
 };
@@ -125,4 +135,5 @@ module.exports = {
   updateCallingStatus,
   getById,
   updateStatuscall,
+  createcallHistoryWithType
 };
