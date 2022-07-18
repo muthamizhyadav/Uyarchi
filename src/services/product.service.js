@@ -138,8 +138,9 @@ const getTrendsData = async (date, wardId, street, page) => {
               shopId: 1,
               steetId: 1,
               UserId: 1,
-              longitude:'$b2bshop.Slong',
-              latitude:'$b2bshop.Slat',
+              longitude: '$b2bshop.Slong',
+              latitude: '$b2bshop.Slat',
+              ShopName: '$b2bshop.SName',
               date: 1,
             },
           },
@@ -954,7 +955,6 @@ const productaggregateById = async (page) => {
 };
 
 const costPriceCalculation = async (date, page) => {
-  // console.log(date);
   let values = await Product.aggregate([{ $skip: 10 * page }, { $limit: 10 }]);
   const result = await values.map(async (product) => {
     const followers = await ReceivedProduct.aggregate([
