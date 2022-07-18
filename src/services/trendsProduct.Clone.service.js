@@ -194,6 +194,7 @@ const getProductByProductIdFromTrendProductClone = async (wardId, street, produc
 };
 
 const getProductCloneCalculation = async (wardId, street, productId, date) => {
+  console.log(productId)
   let match;
   if (street != 'null') {
     match = { steetId: { $eq: street } };
@@ -253,6 +254,7 @@ const getProductCloneCalculation = async (wardId, street, productId, date) => {
       },
     ]);
   }
+  console.log(shopss.length)
 
   return { totalshops: value.length, totalStreet: shopss.length };
 };
