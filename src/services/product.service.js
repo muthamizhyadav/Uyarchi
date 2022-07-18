@@ -108,19 +108,14 @@ const getTrendsData = async (date, wardId, street, page) => {
           },
           {
             $lookup: {
-              from: 'marketshopsclones',
-              localField: 'shopId',
-              foreignField: '_id',
-              as: 'marketshop',
-            },
-          },
-          {
-            $lookup: {
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
               as: 'b2bshop',
             },
+          },
+          {
+            $unwind: '$b2bshop',
           },
           {
             $lookup: {
@@ -143,9 +138,9 @@ const getTrendsData = async (date, wardId, street, page) => {
               shopId: 1,
               steetId: 1,
               UserId: 1,
+              longitude:'$b2bshop.Slong',
+              latitude:'$b2bshop.Slat',
               date: 1,
-              marketshop: '$marketshop',
-              b2bshop: '$b2bshop',
             },
           },
         ],
