@@ -619,6 +619,58 @@ const createMainWherehouseLoadingExecute = async (MWLEbody) => {
   return LoadingExecute.create(values);
 };
 
+const AccountDetails = async (date, page) => {
+  let values = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'productorders',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          { $match: { date: date } },
+          { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
+        ],
+        as: 'productDetails',
+      },
+    },
+    {
+      $unwind: '$productDetails',
+    },
+    {
+      $limit: 10,
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $project: {
+        _id: 1,
+        productTitle: 1,
+        Qty: '$productDetails.Qty',
+        Avg: '$productDetails.Avg',
+      },
+    },
+  ]);
+  let total = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'productorders',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          { $match: { date: date } },
+          { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
+        ],
+        as: 'productDetails',
+      },
+    },
+    {
+      $unwind: '$productDetails',
+    },
+  ]);
+  return { values: values, total: total.length };
+};
+
 const createBillRaise = async (billRaiseBody) => {
   const { productId } = billRaiseBody;
   const product = await Product.findById(productId);
@@ -1112,4 +1164,5 @@ module.exports = {
   TrendsCounts,
   // cost price calculation
   costPriceCalculation,
+  AccountDetails,
 };

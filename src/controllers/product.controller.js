@@ -396,7 +396,12 @@ const updatesStockById = catchAsync(async (req, res) => {
 });
 
 const costPriceCalculation = catchAsync(async (req, res) => {
-  const product = await productService.costPriceCalculation(req.params.date,req.params.page);
+  const product = await productService.costPriceCalculation(req.params.date, req.params.page);
+  res.send(product);
+});
+
+const AccountDetails = catchAsync(async (req, res) => {
+  const product = await productService.AccountDetails(req.params.date, req.params.page);
   res.send(product);
 });
 
@@ -460,4 +465,5 @@ module.exports = {
 
   // cost price calculation
   costPriceCalculation,
+  AccountDetails,
 };
