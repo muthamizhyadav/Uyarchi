@@ -129,6 +129,11 @@ const updateStatuscall = async (id, userId, updateBody) => {
   return status;
 };
 
+const createShopByOwner = async (body) => {
+  let values = await Shop.create(body);
+  return values;
+};
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -136,5 +141,6 @@ module.exports = {
   updateCallingStatus,
   getById,
   updateStatuscall,
+  createShopByOwner,
   createcallHistoryWithType
 };
