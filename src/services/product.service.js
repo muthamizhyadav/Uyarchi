@@ -270,7 +270,7 @@ const getTrendsData = async (date, wardId, street, page) => {
       },
     },
   ]);
-  return { values: values, total: total };
+  return { values: values, total: total.length };
 };
 
 const TrendsCounts = async (productId, date, wardId, street) => {
@@ -961,10 +961,8 @@ const productaggregateById = async (page) => {
 const costPriceCalculation = async (date, page) => {
   // console.log(date);
   let values = await Product.aggregate([{ $skip: 10 * page }, { $limit: 10 }]);
-  let retunJson = [];
-  await values.forEach(async (product) => {
-    // console.log(product);
-    let receiveddate = await ReceivedProduct.aggregate([
+  const result = await values.map(async (product) => {
+    const followers = await ReceivedProduct.aggregate([
       {
         $match: {
           date: { $eq: date },
@@ -975,17 +973,86 @@ const costPriceCalculation = async (date, page) => {
           from: 'receivedstocks',
           localField: '_id',
           foreignField: 'groupId',
+          pipeline: [{ $group: { _id: null, Total: { $sum: '$incomingQuantity' } } }],
+          as: 'incomingQuantity',
+        },
+      },
+      { $unwind: '$incomingQuantity' },
+      {
+        $lookup: {
+          from: 'receivedstocks',
+          localField: '_id',
+          foreignField: 'groupId',
           pipeline: [{ $match: { productId: product._id } }],
           as: 'receivedstocks',
         },
       },
       { $unwind: '$receivedstocks' },
+      {
+        $lookup: {
+          from: 'transportbills',
+          localField: '_id',
+          foreignField: 'groupId',
+          pipeline: [{ $group: { _id: null, Total: { $sum: '$billAmount' } } }],
+          as: 'transportbills',
+        },
+      },
+      { $unwind: '$transportbills' },
     ]);
-    if (receiveddate.length != 0) {
-      retunJson.push(receiveddate[0]);
-      console.log(retunJson);
+    let retunJson;
+    if (followers.length != 0) {
+      console.log(followers[0]);
+      let cost = followers[0].receivedstocks.billingPrice;
+      let exp = followers[0].transportbills.Total / followers[0].incomingQuantity.Total;
+      retunJson = {
+        _id: product._id,
+        productTitle: product.productTitle,
+        onlinePrice: product.onlinePrice,
+        salesmanPrice: product.salesmanPrice,
+        expenceTotal: followers[0].transportbills.Total,
+        incomingQuantity: followers[0].incomingQuantity.Total,
+        expenceamount: Math.round(cost + exp),
+      };
+    } else {
+      retunJson = {
+        _id: product._id,
+        productTitle: product.productTitle,
+        onlinePrice: product.onlinePrice,
+        salesmanPrice: product.salesmanPrice,
+        expenceTotal: 0,
+        incomingQuantity: 0,
+        expenceamount: 0,
+      };
     }
+    return retunJson;
   });
+  // Resolve all promises in the array:
+  return await Promise.all(result);
+
+  // await values.forEach(async (product) => {`
+  //   // console.log(product);
+  //   let receiveddate = await ReceivedProduct.aggregate([
+  //     {
+  //       $match: {
+  //         date: { $eq: date },
+  //       },
+  //     },
+  //     {
+  //       $lookup: {
+  //         from: 'receivedstocks',
+  //         localField: '_id',
+  //         foreignField: 'groupId',
+  //         pipeline: [{ $match: { productId: product._id } }],
+  //         as: 'receivedstocks',
+  //       },
+  //     },
+  //     { $unwind: '$receivedstocks' },
+  //   ]);
+  //   if (receiveddate.length != 0) {
+  //     retunJson.push(receiveddate[0]);
+  //     console.log(retunJson);
+  //   }
+  // });
 
   return await Promise.all(retunJson);
 };

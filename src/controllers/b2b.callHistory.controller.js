@@ -39,6 +39,11 @@ const updateStatuscall = catchAsync(async (req, res) => {
   res.send(callstatus);
 });
 
+const createShopByOwner = catchAsync(async (req, res) => {
+  const shops = await callHistoryService.createShopByOwner(req.body);
+  res.send(shops);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -47,4 +52,5 @@ module.exports = {
   getById,
   updateCallingStatus,
   updateStatuscall,
+  createShopByOwner,
 };
