@@ -176,10 +176,7 @@ const getBilledDataForSupplierBills = async (date, page) => {
       $unwind: '$supplierData',
     },
     {
-      $project:{
-
-        
-      }
+      $project: {},
     },
     { $skip: 10 * page },
     { $limit: 10 },
