@@ -264,7 +264,6 @@ const updateTrendsById = async (id, body) => {
   if (!trendproduct) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
   }
-
   console.log(trendproduct);
   trendproduct = await TrendProductClone.findByIdAndUpdate({ _id: id }, body, { new: true });
   return trendproduct;
