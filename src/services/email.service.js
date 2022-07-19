@@ -27,9 +27,9 @@ const generateOTP = () => {
   return OTP;
 };
 const sendEmail = async (to, subject, text, Otp) => {
-  subject = "DON't share your otp";
+  subject = "Don't share your otp";
   let otp = generateOTP();
-  text = `Your Otp Expired With in 10 Minutes::: ${otp}`;
+  text = `Your Otp Expired With in 10 Minutes :$ ${otp}`;
   let msg = { from: config.email.from, to, subject, text, otp };
   await transport.sendMail(msg);
   return msg;
