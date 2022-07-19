@@ -3,8 +3,6 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { shopOrderService } = require('../services');
 
-
-
 const createshopOrder = catchAsync(async (req, res) => {
   let userid = req.userId;
   const shopOrder = await shopOrderService.createshopOrder(req.body, userid);
@@ -113,9 +111,9 @@ const deleteShopOrderById = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-const  getAll = catchAsync(async (req, res) => {
-  const telecaller = await shopOrderService.getAll()
-  res.send(telecaller)
+const getAll = catchAsync(async (req, res) => {
+  const telecaller = await shopOrderService.getAll();
+  res.send(telecaller);
 });
 
 module.exports = {
