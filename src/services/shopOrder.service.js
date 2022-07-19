@@ -1,12 +1,11 @@
 const httpStatus = require('http-status');
 const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone } = require('../models/shopOrder.model');
 const { Product } = require('../models/product.model');
-const { Shop } = require('../models/b2b.ShopClone.model')
+const { Shop } = require('../models/b2b.ShopClone.model');
 const ApiError = require('../utils/ApiError');
 
 const createshopOrder = async (shopOrderBody, userid) => {
   let body = { ...shopOrderBody, ...{ Uid: userid } };
-  console.log(body);
   let createShopOrder = await ShopOrder.create(body);
   console.log(createShopOrder);
   let { product, date, time, shopId } = shopOrderBody;
@@ -26,7 +25,6 @@ const createshopOrder = async (shopOrderBody, userid) => {
 
 const createshopOrderClone = async (body, userid) => {
   let bod = { ...body, ...{ Uid: userid } };
-  console.log(body);
   let createShopOrderClone = await ShopOrderClone.create(bod);
   let { product, date, time, shopId } = body;
   await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: 'Accepted' }, { new: true });
@@ -95,7 +93,6 @@ const getShopOrderCloneById = async (id) => {
       },
     },
 
-    // .marketshopsclones
   ]);
   return Values;
 };
