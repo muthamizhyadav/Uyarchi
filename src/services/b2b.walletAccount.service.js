@@ -12,6 +12,14 @@ const getAll = async () => {
   return walletModel.find();
 };
 
+const getWallet = async (page) =>{
+  let wallet = await walletModel.aggregate([
+     { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  return wallet;
+}
+
 const updateWallet = async (id, walletbody) => {
   let wallet = await walletModel.findById(id);
   if (!wallet) {
@@ -36,4 +44,5 @@ module.exports = {
   getAll,
   updateWallet,
   deleteWalletById,
+  getWallet,
 };

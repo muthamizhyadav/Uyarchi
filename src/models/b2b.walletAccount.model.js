@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
+const moment = require('moment');
 const walletSchema = mongoose.Schema({
   _id: {
     type: String,
@@ -11,9 +12,13 @@ const walletSchema = mongoose.Schema({
   type: {
     type: String,
   },
-  dateOpeningWallet: {
-    type: Date,
-    default: Date.now,
+  date: {
+    type: String,
+    default: moment().utcOffset(331).format('DD-MM-yyy'),
+  },
+  time: {
+    type: String,
+    default: moment().utcOffset(331).format('h:mm a'),
   },
   email: {
     type: String,
@@ -34,6 +39,9 @@ const walletSchema = mongoose.Schema({
   archive: {
     type: Boolean,
     default: false,
+  },
+  contactNumber:{
+    type: Number
   },
 });
 
