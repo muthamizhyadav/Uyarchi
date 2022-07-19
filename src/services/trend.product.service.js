@@ -239,8 +239,7 @@ const getProductCalculation = async (wardId, street, productId, date) => {
   } else {
     wardmatch = { active: { $eq: true } };
   }
-  console.log(wardmatch);
-  if (shopss == 'null') {
+  if (street == 'null') {
     shopss = await Street.aggregate([
       {
         $match: {

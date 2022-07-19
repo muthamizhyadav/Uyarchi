@@ -147,10 +147,89 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await Shop.find().count();
+  let total = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ type: { $eq: 'shop' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              ward: 1,
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      },
+    },
+    {
+      $unwind: '$shoptype',
+    },
+  ])
   return {
     values: values,
-    total: total,
+    total: total.length,
   };
 };
 
@@ -183,7 +262,7 @@ const craeteRegister = async (shopBody) => {
     } else {
       // let b2bshop = await Shop.create(shopBody);
       await RegisterOtp.Otp(mobile);
-      return "OTP send successfully";
+      return 'OTP send successfully';
     }
   }
 };
@@ -348,7 +427,7 @@ const totalCount = async (userId) => {
 
 // get marketShop
 
-const getMarkeShop = async (marketId) => {
+const getMarkeShop = async (marketId, page) => {
   let values = await Shop.aggregate([
     {
       $match: {
@@ -440,6 +519,12 @@ const getMarkeShop = async (marketId) => {
       $unwind: '$marketData',
     },
     {
+      $limit: 10,
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
       $project: {
         // _id:1,
         // created:1,
@@ -461,8 +546,98 @@ const getMarkeShop = async (marketId) => {
       },
     },
   ]);
-
-  return values;
+  let total = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ type: { $eq: 'market' } }, { marketId: { $eq: marketId } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              ward: 1,
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      },
+    },
+    {
+      $unwind: '$shoptype',
+    },
+    {
+      $lookup: {
+        from: 'marketclones',
+        localField: 'marketId',
+        foreignField: '_id',
+        as: 'marketData',
+      },
+    },
+    {
+      $unwind: '$marketData',
+    },
+  ]);
+  return { values: values, total: total.length };
 };
 
 const forgotPassword = async (body) => {

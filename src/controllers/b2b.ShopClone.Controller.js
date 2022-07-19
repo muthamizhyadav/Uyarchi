@@ -142,7 +142,7 @@ const getTotalCounts = catchAsync(async (req, res) => {
 });
 
 const getMarkeShop = catchAsync(async (req, res) => {
-  const marketshop = await b2bCloneService.getMarkeShop(req.params.marketId);
+  const marketshop = await b2bCloneService.getMarkeShop(req.params.marketId, req.params.page);
   if (!marketshop) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Shop not Found');
   }

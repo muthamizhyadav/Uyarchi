@@ -31,6 +31,7 @@ const getProductCalculation = catchAsync(async (req, res) => {
     req.params.productId,
     req.params.date
   );
+  console.log(trendProduct)
   res.send(trendProduct);
 });
 
