@@ -194,7 +194,7 @@ const getProductByProductIdFromTrendProductClone = async (wardId, street, produc
 };
 
 const getProductCloneCalculation = async (wardId, street, productId, date) => {
-  console.log(productId)
+  console.log(productId);
   let match;
   if (street != 'null') {
     match = { steetId: { $eq: street } };
@@ -254,7 +254,7 @@ const getProductCloneCalculation = async (wardId, street, productId, date) => {
       },
     ]);
   }
-  console.log(shopss.length)
+  console.log(shopss.length);
 
   return { totalshops: value.length, totalStreet: shopss.length };
 };
@@ -281,13 +281,13 @@ const getShopsByIdFromTrends = async (id) => {
   let datenow = moment(new Date()).format('DD-MM-YYYY');
   console.log(dt);
   let match = [{ active: { $eq: false } }];
-  if (600 < dt && 1000 > dt) {
+  if (600 < dt && 1100 > dt) {
     console.log('1');
 
-    match = [{ date: { $eq: datenow } }, { shopid: { $eq: id } }, { time: { $gte: 600 } }, { time: { $lte: 1000 } }];
+    match = [{ date: { $eq: datenow } }, { shopid: { $eq: id } }, { time: { $gte: 600 } }, { time: { $lte: 1100 } }];
   }
-  if (1100 < dt && 1400 > dt) {
-    match = [{ date: { $eq: datenow } }, { shopid: { $eq: id } }, { time: { $gte: 1100 } }, { time: { $lte: 1400 } }];
+  if (1100 < dt && 1500 > dt) {
+    match = [{ date: { $eq: datenow } }, { shopid: { $eq: id } }, { time: { $gte: 1100 } }, { time: { $lte: 1500 } }];
   }
   if (1500 < dt && 1800 > dt) {
     match = [{ date: { $eq: datenow } }, { shopid: { $eq: id } }, { time: { $gte: 1500 } }, { time: { $lte: 1800 } }];
