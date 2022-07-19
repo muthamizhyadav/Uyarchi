@@ -8,4 +8,7 @@ router.route('/getAll').get(walletController.getAll);
 router.route('/:id').put(walletController.updateWallet);
 router.route('/:id').delete(walletController.deleteWallet);
 
+
+router.route('/getpage/:page').get(walletController.getWallet);
+
 module.exports = router;
