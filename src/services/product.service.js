@@ -1234,7 +1234,12 @@ const costPriceCalculation = async (date, page) => {
 
   return await Promise.all(retunJson);
 };
-
+const removeImage = async (pid, index) => {
+  const manageBill = await Product.findById(pid);
+  let image = manageBill.galleryImages.splice(index, 1)
+  const updateproduct = await Product.findByIdAndUpdate({ _id: pid }, { galleryImages: image }, { new: true });
+  return updateproduct;
+};
 module.exports = {
   createProduct,
   getTrendsData,
@@ -1296,4 +1301,5 @@ module.exports = {
   // cost price calculation
   costPriceCalculation,
   AccountDetails,
+  removeImage
 };
