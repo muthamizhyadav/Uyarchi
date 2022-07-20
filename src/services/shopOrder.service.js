@@ -27,7 +27,7 @@ const createshopOrderClone = async (body, userid) => {
   let bod = { ...body, ...{ Uid: userid } };
   let createShopOrderClone = await ShopOrderClone.create(bod);
   let { product, date, time, shopId } = body;
-  await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: 'accept' }, { new: true });
+  await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: body.progress }, { new: true });
   product.forEach(async (e) => {
     ProductorderClone.create({
       orderId: createShopOrderClone.id,
@@ -92,7 +92,6 @@ const getShopOrderCloneById = async (id) => {
         as: 'marketshopData',
       },
     },
-
   ]);
   return Values;
 };
