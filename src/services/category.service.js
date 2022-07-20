@@ -100,9 +100,9 @@ const deletecategoryById = async (categoryId) => {
 
 const categoryPagination = async (page) => {
   const cat = await Category.aggregate([
-    {
-      $sort: { _id: 1 },
-    },
+    // {
+    //   $sort: { _id: -1 },
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
