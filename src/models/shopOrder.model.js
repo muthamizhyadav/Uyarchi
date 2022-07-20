@@ -84,6 +84,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   Uid: {
     type: String,
   },
+  preOrderClose: {
+    type: Boolean,
+    default: false,
+  },
   active: {
     type: Boolean,
     default: true,
