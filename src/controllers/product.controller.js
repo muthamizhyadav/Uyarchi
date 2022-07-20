@@ -241,6 +241,12 @@ const updateProduct = catchAsync(async (req, res) => {
       });
     }
   }
+  if (req.body.removeimage == 'true') {
+    product.image = '';
+  }
+  if (req.body.removegallery == 'true') {
+    product.galleryImages = [];
+  }
   await product.save();
   res.send(product);
 });

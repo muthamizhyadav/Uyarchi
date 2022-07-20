@@ -14,6 +14,7 @@ const createbrand = catchAsync(async (req, res) => {
     });
     brands.image = path;
   }
+
   await brands.save();
 
   res.status(httpStatus.CREATED).send(brands);
@@ -53,6 +54,9 @@ const updateShop = catchAsync(async (req, res) => {
       path = 'images/brands/' + files.filename;
     });
     brands.image = path;
+  }
+  if (req.body.removeimage == 'true') {
+    brands.image = '';
   }
   res.send(brands);
   await brands.save();

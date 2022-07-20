@@ -87,6 +87,9 @@ const updateCategory = catchAsync(async (req, res) => {
     });
     category.categoryImage = path;
   }
+  if (req.body.removeimage == 'true') {
+    category.categoryImage = '';
+  }
   await category.save();
   res.send(category);
 });
@@ -99,6 +102,9 @@ const updatesubCategory = catchAsync(async (req, res) => {
       path = 'images/subcategory/' + files.filename;
     });
     subcategory.categoryImage = path;
+  }
+  if (req.body.removeimage == 'true') {
+    subcategory.categoryImage = '';
   }
   await subcategory.save();
   res.send(subcategory);

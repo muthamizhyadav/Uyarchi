@@ -128,8 +128,11 @@ const updateStatuscall = async (id, userId, updateBody) => {
   if (!status) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  status = await Shop.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-  status = await Shop.findByIdAndUpdate({ _id: id }, { callingUserId: userId }, { new: true });
+  status = await Shop.findByIdAndUpdate(
+    { _id: id },
+    { callingStatus: 'under_the_call', callingUserId: userId },
+    { new: true }
+  );
   return status;
 };
 
