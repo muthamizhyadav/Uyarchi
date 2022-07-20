@@ -35,6 +35,42 @@ const filterShopwithNameAndContact = async (key) => {
         $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }],
       },
     },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streetData',
+      },
+    },
+    {
+      $unwind: '$streetData',
+    },
+    {
+      $project: {
+        SName: 1,
+        mobile: 1,
+        streetName: '$streetData.street',
+        _id: 1,
+        SOwner:1,
+        SType:1,
+        Slat:1,
+        Slong:1,
+        Strid:1,
+        Uid:1,
+        Wardid:1,
+        callingUserId:1,
+        created:1,
+        date:1,
+        marketId:1,
+        mobile:1,
+        photoCapture:1,
+        status:1,
+        time:1,
+        type:1,
+        streetId: '$streetData._id',
+      },
+    },
   ]);
   const returns = marketClone.concat(shop);
 
@@ -226,7 +262,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
     {
       $unwind: '$shoptype',
     },
-  ])
+  ]);
   return {
     values: values,
     total: total.length,
