@@ -16,8 +16,6 @@ const createShopClone = async (shopBody) => {
 };
 
 const filterShopwithNameAndContact = async (key) => {
-  // const shop = await Shop.find({ $or: [{ SName: { $regex: key } }, { SCont1: { $regex: key } }] });
-  // const marketClone = await MarketShopsClone.find({ $or: [{ SName: { $regex: key } }, { mobile: { $regex: key } },{ ownnum: { $regex: key } }] });
   const marketClone = await MarketShopsClone.aggregate([
     {
       $match: {
