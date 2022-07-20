@@ -152,6 +152,10 @@ const productorderCloneSchema = new mongoose.Schema({
   productid: {
     type: String,
   },
+  preOrderClose: {
+    type: Boolean,
+    default: false,
+  },
   quantity: {
     type: Number,
   },

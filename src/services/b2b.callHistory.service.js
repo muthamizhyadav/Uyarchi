@@ -11,15 +11,14 @@ const createCallHistory = async (body) => {
   return callHistory;
 };
 
-
-const createcallHistoryWithType = async(body)=>{
-  const { callStatus,shopId } = body ;
-  if(callStatus != 'accept' ){
-    await Shop.findByIdAndUpdate({ _id:shopId},{callingStatus:callStatus},{ new: true})
+const createcallHistoryWithType = async (body) => {
+  const { callStatus, shopId } = body;
+  if (callStatus != 'accept') {
+    await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus }, { new: true });
   }
   let callHistory = await callHistoryModel.create(body);
   return callHistory;
-}
+};
 
 const getAll = async () => {
   return callHistoryModel.find();
@@ -28,27 +27,27 @@ const getAll = async () => {
 const getById = async (id) => {
   // let history = await callHistoryModel.find({shopId:id})
   // return history;
-  let historys = await callHistoryModel.aggregate([
+  let historys = await Shop.aggregate([
     {
       $match: {
-        $and: [{ shopId: { $eq: id } }],
+        $and: [{ _id: { $eq: id } }],
       },
     },
     {
       $lookup: {
-        from: 'b2bshopclones', //add table
-        localField: 'shopId', //callhistory
-        foreignField: '_id', //shopclone
+        from: 'callhistories', //add table
+        localField: '_id', //callhistory
+        foreignField: 'shopId', //shopclone
         as: 'shopName',
       },
     },
-    {
-      $unwind: '$shopName',
-    },
+    // {
+    //   $unwind: '$shopName',
+    // },
     {
       $lookup: {
         from: 'shoplists',
-        localField: 'shopName.SType',
+        localField: 'SType',
         foreignField: '_id',
         as: 'shopType',
       },
@@ -58,15 +57,15 @@ const getById = async (id) => {
     },
     {
       $project: {
-        shopName: '$shopName.SName',
-        shopMobile: '$shopName.mobile',
-        shopType: '$shopType.shopList',
-        callStatus: "$shopName.callingStatus",
-        date:1,
-        time:1,
-        status:1,
-        reason:1,
-        _id: 1,
+        SName: 1,
+        SOwner: 1,
+        mobile: 1,
+        Slat: 1,
+        Slong: 1,
+        date: 1,
+        time: 1,
+        shopName: '$shopType.shopList',
+        shopHistory: '$shopName',
       },
     },
   ]);
@@ -147,5 +146,5 @@ module.exports = {
   getById,
   updateStatuscall,
   createShopByOwner,
-  createcallHistoryWithType
+  createcallHistoryWithType,
 };

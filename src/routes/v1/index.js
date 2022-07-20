@@ -70,6 +70,7 @@ const monthlyRecuring = require('./b2b.monthlyRecuring.route');
 // const redirect = require('./b2b.redirect.route');
 const callHistory = require('./b2b.callHistory.route');
 // const salesApp = require('./b2b.sales.route');
+const estimateOrderRoute = require('./estimatedOrders.route');
 const defaultRoutes = [
   {
     path: '/auth',
@@ -78,6 +79,10 @@ const defaultRoutes = [
   {
     path: '/supplierBills',
     route: SupplierBillRoute,
+  },
+  {
+    path: '/estimatedOrders',
+    route: estimateOrderRoute,
   },
   {
     path: '/B2bBillStatus',
@@ -317,7 +322,7 @@ const defaultRoutes = [
   },
   {
     path: '/attendance',
-    route:  Attendance,
+    route: Attendance,
   },
   {
     path: '/wallet',
