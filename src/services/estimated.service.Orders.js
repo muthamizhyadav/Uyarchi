@@ -172,7 +172,7 @@ const getEstimatedByDate = async (date, page) => {
         Avg: '$productDetails.Avg',
         
         orderDetails: '$orderDetails',
-        // estimatedDetails: '$estimatedDetails',
+        estimatedDetails: '$estimatedDetails',
         estimatedId: '$estimatedDetails._id',
         closedQty: '$estimatedDetails.closedQty',
         avgPrice: '$estimatedDetails.avgPrice',
