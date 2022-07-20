@@ -47,6 +47,9 @@ const monthlyRecuringSchema = mongoose.Schema({
   vehicleNo: {
     type: String,
   },
+  amounts:{
+    type: Number,
+  },
 });
 
 const monthlyRecuring = mongoose.model('monthlyRecuring', monthlyRecuringSchema);
