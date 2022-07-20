@@ -28,6 +28,7 @@ const estimatedSchema = mongoose.Schema({
   },
   estimatedStatus: {
     type: String,
+    default: 'Pending',
   },
   closedQty: {
     type: Number,
