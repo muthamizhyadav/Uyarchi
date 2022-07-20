@@ -26,6 +26,9 @@ const estimatedSchema = mongoose.Schema({
   estimatedQty: {
     type: Number,
   },
+  estimatedStatus: {
+    type: String,
+  },
   closedQty: {
     type: Number,
   },
