@@ -28,6 +28,11 @@ const createWalletAccount = catchAsync(async (req, res) => {
   }
 });
 
+const createAmountWallet = catchAsync(async (req, res) => {
+  const amount = await walletService.currentAmount(req.body)
+  res.send(amount)
+})
+
 const getAll = catchAsync(async (req, res) => {
   const wallet = await walletService.getAll();
   res.send(wallet);
@@ -56,5 +61,7 @@ module.exports = {
   getAll,
   updateWallet,
   deleteWallet,
-  getWallet
+  getWallet,
+
+  createAmountWallet,
 };

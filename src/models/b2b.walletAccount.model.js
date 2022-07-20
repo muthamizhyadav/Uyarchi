@@ -41,7 +41,11 @@ const walletSchema = mongoose.Schema({
     default: false,
   },
   contactNumber:{
-    type: Number
+    type: Number,
+  },
+  date: {
+    type: String,
+    default: moment().utcOffset(331).format('DD-MM-yyy'),
   },
 });
 
