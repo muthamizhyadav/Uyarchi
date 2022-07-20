@@ -642,7 +642,7 @@ const AccountDetails = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date } },
+          { $match: { date: date, preOrderClose: { $eq: false } } },
           {
             $lookup: {
               from: 'b2bshopclones',
@@ -659,7 +659,7 @@ const AccountDetails = async (date, page) => {
               from: 'shoporderclones',
               localField: 'orderId',
               foreignField: '_id',
-              pipeline:[
+              pipeline: [
                 {
                   $lookup: {
                     from: 'b2busers',
@@ -672,10 +672,10 @@ const AccountDetails = async (date, page) => {
                   $unwind: '$UsersData',
                 },
                 {
-                  $project:{
-                    userName:'$UsersData.name',
-                  }
-                }
+                  $project: {
+                    userName: '$UsersData.name',
+                  },
+                },
               ],
               as: 'shoporderclones',
             },
@@ -683,19 +683,87 @@ const AccountDetails = async (date, page) => {
           {
             $unwind: '$shoporderclones',
           },
+
           {
-            $project:{
-              shopName:'$shopData.SName',
-              orderby:'$shoporderclones.userName',
-              quantity:1,
-              priceperkg:1,
-            }
-          }
+            $project: {
+              shopName: '$shopData.SName',
+              orderby: '$shoporderclones.userName',
+              quantity: 1,
+              priceperkg: 1,
+            },
+          },
+        ],
+        as: 'liveStock',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          { $match: { date: date, preOrderClose: { $eq: true } } },
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'customerId',
+              foreignField: '_id',
+              as: 'shopData',
+            },
+          },
+          {
+            $unwind: '$shopData',
+          },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'b2busers',
+                    localField: 'Uid',
+                    foreignField: '_id',
+                    as: 'UsersData',
+                  },
+                },
+                {
+                  $unwind: '$UsersData',
+                },
+                {
+                  $project: {
+                    userName: '$UsersData.name',
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+
+          {
+            $project: {
+              shopName: '$shopData.SName',
+              orderby: '$shoporderclones.userName',
+              quantity: 1,
+              priceperkg: 1,
+            },
+          },
         ],
         as: 'orderDetails',
       },
     },
-
+    {
+      $lookup: {
+        from: 'estimatedorders',
+        localField: '_id',
+        foreignField: 'productId',
+        as: 'estimatedDetails',
+      },
+    },
     {
       $limit: 10,
     },
@@ -708,7 +776,9 @@ const AccountDetails = async (date, page) => {
         productTitle: 1,
         Qty: '$productDetails.Qty',
         Avg: '$productDetails.Avg',
-        orderDetails:'$orderDetails'
+        orderDetails: '$orderDetails',
+        estimatedDetails: '$estimatedDetails',
+        liveStock: '$liveStock',
       },
     },
   ]);
