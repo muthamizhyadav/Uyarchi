@@ -11,4 +11,7 @@ router.route('/:id').delete(walletController.deleteWallet);
 
 router.route('/getpage/:page').get(walletController.getWallet);
 
+
+router.route('/createAmount').post(walletController.createAmountWallet);
+
 module.exports = router;

@@ -66,6 +66,7 @@ const TransactionRoute = require('./transaction.route');
 const Attendance = require('./b2bAttendance.route');
 const wallet = require('./b2b.wallet.route');
 const SupplierBillRoute = require('./supplierbills.route');
+const monthlyRecuring = require('./b2b.monthlyRecuring.route');
 // const redirect = require('./b2b.redirect.route');
 const callHistory = require('./b2b.callHistory.route');
 // const salesApp = require('./b2b.sales.route');
@@ -330,6 +331,10 @@ const defaultRoutes = [
   {
     path: '/callHistory',
     route: callHistory,
+  },
+  {
+    path: '/monthlyRecuring',
+    route: monthlyRecuring,
   },
   // {
   //   path: '/sales',

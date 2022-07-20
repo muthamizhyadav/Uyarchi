@@ -8,6 +8,13 @@ const createWallet = async (walletbody) => {
   return wallet;
 };
 
+
+const currentAmount = async (amountBody) => {
+  let amount = await walletModel.create(amountBody);
+  return amount;
+};
+
+
 const getAll = async () => {
   return walletModel.find();
 };
@@ -45,4 +52,6 @@ module.exports = {
   updateWallet,
   deleteWalletById,
   getWallet,
+
+  currentAmount,
 };
