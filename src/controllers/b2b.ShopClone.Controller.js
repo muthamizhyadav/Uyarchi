@@ -57,6 +57,11 @@ const getAllB2BshopClone = catchAsync(async (req, res) => {
   res.send(shop);
 });
 
+const getStreetAndShopDetails = catchAsync(async (req, res) => {
+  const shop = await b2bCloneService.getStreetAndShopDetails(req.params.id);
+  res.send(shop);
+});
+
 const getB2BShopById = catchAsync(async (req, res) => {
   const shop = await b2bCloneService.getShopById(req.params.id);
   if (!shop) {
@@ -183,4 +188,5 @@ module.exports = {
   forgotPassword,
   verfiOtp,
   verifyRegisterOTP,
+  getStreetAndShopDetails,
 };

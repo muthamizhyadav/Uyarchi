@@ -15,6 +15,38 @@ const createShopClone = async (shopBody) => {
   return shop;
 };
 
+const getStreetAndShopDetails = async (supplierId) => {
+  let values = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: supplierId } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streetData',
+      },
+    },
+    {
+      $unwind: '$streetData'
+    },
+    {
+      $project:{
+        SName:1,
+        mobile:1,
+        date:1,
+        time:1,
+        Uid:1,
+        streetName:'$streetData.street'
+      }
+    }
+  ]);
+  return values; 
+};
+
 const filterShopwithNameAndContact = async (key) => {
   const marketClone = await MarketShopsClone.aggregate([
     {
@@ -50,22 +82,22 @@ const filterShopwithNameAndContact = async (key) => {
         mobile: 1,
         streetName: '$streetData.street',
         _id: 1,
-        SOwner:1,
-        SType:1,
-        Slat:1,
-        Slong:1,
-        Strid:1,
-        Uid:1,
-        Wardid:1,
-        callingUserId:1,
-        created:1,
-        date:1,
-        marketId:1,
-        mobile:1,
-        photoCapture:1,
-        status:1,
-        time:1,
-        type:1,
+        SOwner: 1,
+        SType: 1,
+        Slat: 1,
+        Slong: 1,
+        Strid: 1,
+        Uid: 1,
+        Wardid: 1,
+        callingUserId: 1,
+        created: 1,
+        date: 1,
+        marketId: 1,
+        mobile: 1,
+        photoCapture: 1,
+        status: 1,
+        time: 1,
+        type: 1,
         streetId: '$streetData._id',
       },
     },
@@ -712,6 +744,7 @@ module.exports = {
   // get marketShop
   getMarkeShop,
   craeteRegister,
+  getStreetAndShopDetails,
   forgotPassword,
   otpVerfiy,
   verifyRegisterOTP,

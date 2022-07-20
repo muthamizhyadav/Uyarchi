@@ -45,4 +45,6 @@ router.route('/sales/registerUser').post(b2bShopCloneController.registerUser);
 // verify register Mobile OTP
 
 router.route('/verify-RegisterOTP').post(b2bShopCloneController.verifyRegisterOTP);
+router.route('/shopdetails/:id').get(b2bShopCloneController.getStreetAndShopDetails);
+
 module.exports = router;
