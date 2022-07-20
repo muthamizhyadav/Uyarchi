@@ -9,4 +9,29 @@ const createEstimatedOrders = async (body) => {
   return estimate;
 };
 
-module.exports = { createEstimatedOrders };
+const getEstimatedByDate = async (date, page) => {
+  let values = await Estimated.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }],
+      },
+    },
+    {
+      $limit: 10,
+    },
+    {
+      $skip: 10 * page,
+    },
+  ]);
+  let total = await Estimated.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }],
+      },
+    },
+  ]);
+
+  return { values: values, total: total };
+};
+
+module.exports = { createEstimatedOrders, getEstimatedByDate };

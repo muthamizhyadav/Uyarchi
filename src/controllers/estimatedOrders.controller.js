@@ -9,4 +9,9 @@ const createEstimatedOrders = catchAsync(async (req, res) => {
   res.send(estimate);
 });
 
-module.exports = { createEstimatedOrders };
+const getEstimatedByDate = catchAsync(async (req, res) => {
+  const estimate = await EstimatedOrderService.getEstimatedByDate(req.params.date, req.params.page);
+  res.send(estimate);
+});
+
+module.exports = { createEstimatedOrders, getEstimatedByDate };
