@@ -135,9 +135,9 @@ const subcategoryPagination = async (page) => {
         categoryImage: 1,
       },
     },
-    {
-      $sort: { _id: 1 },
-    },
+    // {
+    //   $sort: { _id: 1 },
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);

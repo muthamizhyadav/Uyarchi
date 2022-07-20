@@ -37,9 +37,9 @@ const brandPagination = async (page) => {
         image: 1,
       },
     },
-    {
-      $sort: { _id: 1 },
-    },
+    // {
+    //   $sort: { _id: 1 },
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
