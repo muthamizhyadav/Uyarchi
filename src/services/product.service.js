@@ -1236,7 +1236,16 @@ const costPriceCalculation = async (date, page) => {
 };
 const removeImage = async (pid, index) => {
   const manageBill = await Product.findById(pid);
-  let image = manageBill.galleryImages.splice(index, 1)
+  let image = [];
+  let indexof = 0;
+  manageBill.galleryImages.forEach((e) => {
+    if (index != indexof) {
+      image.push(e)
+    }
+    indexof = indexof + 1;
+  })
+  console.log(manageBill)
+  console.log(image)
   const updateproduct = await Product.findByIdAndUpdate({ _id: pid }, { galleryImages: image }, { new: true });
   return updateproduct;
 };
