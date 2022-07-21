@@ -74,7 +74,7 @@ const getById = async (id) => {
 
 const getShop = async (page) => {
   let values = await Shop.aggregate([
-    { $sort: { callingStatus: -1} },
+    { $sort: { callingStatus: -1 } },
     {
       $lookup: {
         from: 'callhistories',
@@ -96,9 +96,6 @@ const getShop = async (page) => {
         foreignField: 'shopId',
         as: 'shopData',
       },
-    },
-    {
-      $unwind: '$shopData',
     },
   ]);
   return { values: values, total: total.length };

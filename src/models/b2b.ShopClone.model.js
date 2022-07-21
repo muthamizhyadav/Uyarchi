@@ -76,6 +76,7 @@ const shopSchema = mongoose.Schema({
   shopMobile: {
     type: String,
   },
+  
   CallStatus: {
     type: String,
   },
