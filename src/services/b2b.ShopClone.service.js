@@ -31,20 +31,20 @@ const getStreetAndShopDetails = async (supplierId) => {
       },
     },
     {
-      $unwind: '$streetData'
+      $unwind: '$streetData',
     },
     {
-      $project:{
-        SName:1,
-        mobile:1,
-        date:1,
-        time:1,
-        Uid:1,
-        streetName:'$streetData.street'
-      }
-    }
+      $project: {
+        SName: 1,
+        mobile: 1,
+        date: 1,
+        time: 1,
+        Uid: 1,
+        streetName: '$streetData.street',
+      },
+    },
   ]);
-  return values; 
+  return values;
 };
 
 const filterShopwithNameAndContact = async (key) => {
@@ -352,7 +352,6 @@ const deleteShopById = async (id) => {
 
 const createAttendanceClone = async (shopBody) => {
   const attendance = await AttendanceClone.create(shopBody);
-  console.log(attendance);
   return attendance;
 };
 
@@ -411,7 +410,7 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
         foreignField: '_id',
         as: 'b2busersData',
       },
-    },
+    }, 
     { $unwind: '$b2busersData' },
     { $skip: 10 * page },
     { $limit: 10 },

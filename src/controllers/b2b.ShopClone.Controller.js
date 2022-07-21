@@ -15,16 +15,13 @@ const createB2bShopClone = catchAsync(async (req, res) => {
     let bodydata = { Uid: userId };
     if (req.body.type == 'market') {
       let marketdata = await MarketClone.findById(marketId);
-      console.log(marketdata);
       if (marketdata) {
         bodydata = { Uid: userId, Strid: marketdata.Strid, Wardid: marketdata.Wardid };
       }
     }
-    console.log(bodydata);
     await Shop.findByIdAndUpdate({ _id: shop.id }, bodydata, { new: true });
   }
   if (req.files) {
-    console.log(req.files);
     req.files.forEach(function (files, index, arr) {
       shop.photoCapture.push('images/shopClone/' + files.filename);
     });
@@ -52,7 +49,6 @@ const getshopWardStreetNamesWithAggregation = catchAsync(async (req, res) => {
 });
 
 const getAllB2BshopClone = catchAsync(async (req, res) => {
-  console.log(req.userRole);
   const shop = await b2bCloneService.getAllB2BshopClone();
   res.send(shop);
 });

@@ -23,6 +23,27 @@ const Otp = async (bodydata, user) => {
   https.request(options, callback).end();
   return 'OTP Send Successfully';
 };
+
+const sendPwd = async (mobileNumber, name, OTPCODE) => {
+  var sender = 'txtlcl';
+  const contact = mobileNumber;
+  numbers = '91' + contact;
+  apiKey = urlencode('NTgzOTZiMzY3MTQ4MzI0ODU1NmI0NDZhNDQ3NTQ5NmY=');
+  sender = urlencode('UYARCH');
+  message = urlencodeed(
+    'Dear ' +
+      name +
+      ', thank you for registering with Tradelots (An Uyarchi Solutions company). Your OTP for logging into the account is ' +
+      OTPCODE +
+      ' .'
+  );
+  data = 'send/?apikey=' + apiKey + '&numbers=' + numbers + '&sender=' + sender + '&message=' + message;
+  var options = 'https://api.textlocal.in/' + data;
+  // await saveOtp.saveOtp(contact, OTPCODE, user);
+  https.request(options, callback).end();
+  return 'Password Send Successfully';
+};
+
 callback = function (response) {
   var str = '';
   response.on('data', function (chunk) {
@@ -33,4 +54,4 @@ callback = function (response) {
   });
 };
 
-module.exports = { Otp };
+module.exports = { Otp, sendPwd };
