@@ -74,18 +74,12 @@ const getById = async (id) => {
 
 const getShop = async (page) => {
   let values = await Shop.aggregate([
-    { $sort: { callStatus: -1, time: -1 } },
+    { $sort: { callingStatus: -1 } },
     {
       $lookup: {
         from: 'callhistories',
         localField: '_id',
-
         foreignField: 'shopId',
-        pipeline: [
-          {
-            $sort: { callStatus: -1 },
-          },
-        ],
         as: 'shopData',
       },
     },
@@ -94,21 +88,14 @@ const getShop = async (page) => {
   ]);
 
   let total = await Shop.aggregate([
+    { $sort: { callingStatus: -1} },
     {
       $lookup: {
         from: 'callhistories',
         localField: '_id',
         foreignField: 'shopId',
-        pipeline: [
-          {
-            $sort: { callStatus: -1 },
-          },
-        ],
         as: 'shopData',
       },
-    },
-    {
-      $unwind: '$shopData',
     },
   ]);
   return { values: values, total: total.length };
