@@ -20,9 +20,6 @@ const getAll = async () => {
     return recurring;
   }
   
-
-
-
 module.exports= {
     createMonthlyRecuring,
     getAll,
