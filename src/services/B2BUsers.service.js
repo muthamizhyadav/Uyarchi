@@ -200,6 +200,7 @@ const updatemetadata = async (updateBody) => {
       metaKey: e.key,
       metavalue: e.value,
     };
+    await Users.findOneAndUpdate({ _id: updateBody.userId }, { stepTwo: true }, { new: true });
     if (metauser) {
       await metaUsers.findByIdAndUpdate({ _id: metauser.id }, update, { new: true });
     } else {
