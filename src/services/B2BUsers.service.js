@@ -11,8 +11,9 @@ const createUser = async (userBody) => {
   let OTPCODE = Math.floor(1000000 + Math.random() * 9000000);
   let password = { password: OTPCODE };
   let bodyData = { ...userBody, ...password };
+  let value = Users.create(bodyData);
   await Textlocal.sendPwd(userBody.phoneNumber, userBody.name, OTPCODE);
-  return Users.create(bodyData);
+  return value;
 };
 
 const getUsersById = async (id) => {
@@ -57,7 +58,7 @@ const getAllUsers = async () => {
         name: 1,
         email: 1,
         phoneNumber: 1,
-        stepTwo:1,
+        stepTwo: 1,
         createdAt: 1,
         userrole: '$RoleData.roleName',
         metavalue: '$metadatas',
