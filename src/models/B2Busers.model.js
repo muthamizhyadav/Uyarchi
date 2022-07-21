@@ -12,12 +12,12 @@ const B2BusersSchema = mongoose.Schema(
     },
     name: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     email: {
       type: String,
-      required: true,
+      // required: true,
       unique: true,
       trim: true,
       lowercase: true,

@@ -9,8 +9,7 @@ const Verfy = require('../config/OtpVerify');
 
 const createUser = async (userBody) => {
   let OTPCODE = Math.floor(1000000 + Math.random() * 9000000);
-  const salt = await bcrypt.genSalt(7);
-  let password = { password: await bcrypt.hash(OTPCODE.toString(), salt) };
+  let password = { password: OTPCODE };
   let bodyData = { ...userBody, ...password };
   await Textlocal.sendPwd(userBody.phoneNumber, userBody.name, OTPCODE);
   return Users.create(bodyData);
@@ -81,10 +80,15 @@ const UsersLogin = async (userBody) => {
 };
 const B2bUsersAdminLogin = async (userBody) => {
   const { phoneNumber, password } = userBody;
+  console.log(password);
+  const salt = await bcrypt.genSalt(7);
+  let passwor = { password: await bcrypt.hash(password.toString(), salt) };
+  console.log(passwor);
   let userName = await Users.findOne({ phoneNumber: phoneNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
   if (!userName) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Phone Number Not Registered');
   } else {
+    console.log(await userName.isPasswordMatch(password));
     if (await userName.isPasswordMatch(password)) {
       console.log('Password Macthed');
     } else {

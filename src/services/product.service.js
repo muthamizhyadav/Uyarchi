@@ -1092,6 +1092,7 @@ const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
   }
   (loading.active = false), (loading.archive = true), await loading.save();
 };
+
 const productaggregateById = async (page) => {
   const product = await Product.aggregate([
     {
@@ -1234,21 +1235,27 @@ const costPriceCalculation = async (date, page) => {
 
   return await Promise.all(retunJson);
 };
+
 const removeImage = async (pid, index) => {
   const manageBill = await Product.findById(pid);
   let image = [];
   let indexof = 0;
   manageBill.galleryImages.forEach((e) => {
     if (index != indexof) {
-      image.push(e)
+      image.push(e);
     }
     indexof = indexof + 1;
-  })
-  console.log(manageBill)
-  console.log(image)
+  });
   const updateproduct = await Product.findByIdAndUpdate({ _id: pid }, { galleryImages: image }, { new: true });
   return updateproduct;
 };
+
+const calculateCostPriceByProductId = async () => {
+  let values = await Product.aggregate([{
+    
+  }]);
+};
+
 module.exports = {
   createProduct,
   getTrendsData,
@@ -1310,5 +1317,5 @@ module.exports = {
   // cost price calculation
   costPriceCalculation,
   AccountDetails,
-  removeImage
+  removeImage,
 };
