@@ -1253,6 +1253,7 @@ const removeImage = async (pid, index) => {
 const calculateCostPriceByProductId = async () => {
   let values = await Product.aggregate([{
     
+    
   }]);
 };
 

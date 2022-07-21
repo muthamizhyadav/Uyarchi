@@ -84,7 +84,11 @@ const B2bUsersAdminLogin = async (userBody) => {
   const salt = await bcrypt.genSalt(7);
   let passwor = { password: await bcrypt.hash(password.toString(), salt) };
   console.log(passwor);
-  let userName = await Users.findOne({ phoneNumber: phoneNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
+  let userName = await Users.findOne({
+    phoneNumber: phoneNumber,
+    userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
+    stepTwo: true,
+  });
   if (!userName) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Phone Number Not Registered');
   } else {
