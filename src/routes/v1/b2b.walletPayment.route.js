@@ -4,5 +4,6 @@
 
 
     router.route('/createPayment').post(walletPaymentController.createWalletPayment);
+    router.route('/getWalletPayment/:page').get(walletPaymentController.getWallet);
 
     module.exports = router;

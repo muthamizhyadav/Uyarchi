@@ -7,6 +7,9 @@ const walletPaymentSchema = mongoose.Schema({
         type: String,
         default:v4,
     },
+    walletId:{
+        type:String,
+    },
     currentAmount: {
         type: Number,
         default:0,

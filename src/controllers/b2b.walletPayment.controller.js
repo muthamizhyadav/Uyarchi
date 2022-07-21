@@ -9,8 +9,13 @@ const createWalletPayment = catchAsync(async (req, res) => {
     res.send(payment)
 });
 
+const getWallet = catchAsync(async (req, res) => {
+    const payment = await walletPaymentService.getWalletPayment(req.params.page)
+    res.send(payment)
 
+});
 
 module.exports = {
     createWalletPayment,
+    getWallet
 }
