@@ -1251,7 +1251,72 @@ const removeImage = async (pid, index) => {
 };
 
 const rateSetSellingPrice = async (productId, date) => {
-  return 'triggered';
+  let prod = await Product.aggregate([
+    {
+      $match: {
+        _id: { $eq: productId },
+      },
+    },
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          { $match: { date: date } },
+          {
+            $group: {
+              _id: null,
+              low: { $min: '$billingPrice' },
+              High: { $max: '$billingPrice' },
+              Avg: { $avg: '$billingPrice' },
+            },
+          },
+        ],
+        as: 'receivedstocks',
+      },
+    },
+    {
+      $unwind: '$receivedstocks',
+    },
+    {
+      $lookup: {
+        from: 'trendproductsclones',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          { $match: { date: date } },
+          {
+            $group: {
+              _id: null,
+              low: { $min: '$Rate' },
+              High: { $max: '$Rate' },
+              Avg: { $avg: '$Rate' },
+            },
+          },
+        ],
+        as: 'marketTrend',
+      },
+    },
+    {
+      $unwind: '$marketTrend',
+    },
+    
+    {
+      $project: {
+        productTitle: 1,
+        stock: 1,
+        GST_Number: 1,
+        costPricewLow: '$receivedstocks.low',
+        costPricewHigh: '$receivedstocks.High',
+        costPricewAvg: '$receivedstocks.Avg',
+        marketTrendLow: '$marketTrend.low',
+        marketTrendHigh: '$marketTrend.High',
+        marketTrendAvg: '$marketTrend.Avg',
+      },
+    },
+  ]);
+  return prod;
 };
 
 module.exports = {

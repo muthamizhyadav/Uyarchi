@@ -84,4 +84,8 @@ router.route('/trendsCounts/:productId/:date/:wardId/:street').get(productContro
 
 router.route('/costPrice/calculation/:date/:page').get(productController.costPriceCalculation);
 router.route('/AccountsDetails/:date/:page').get(productController.AccountDetails);
+
+// rateSetSellingPrice
+
+router.route('/rateSetSellingPrice/consolidate/:productId/:date').get(productController.rateSetSellingPrice);
 module.exports = router;

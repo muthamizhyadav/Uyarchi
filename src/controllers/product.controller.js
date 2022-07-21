@@ -413,9 +413,12 @@ const AccountDetails = catchAsync(async (req, res) => {
 const removeImage = catchAsync(async (req, res) => {
   const product = await productService.removeImage(req.params.id, req.params.index);
   res.send(product);
-})
+});
 
-
+const rateSetSellingPrice = catchAsync(async (req, res) => {
+  const product = await productService.rateSetSellingPrice(req.params.productId, req.params.date);
+  res.send(product);
+});
 
 module.exports = {
   createProduct,
@@ -478,5 +481,6 @@ module.exports = {
   // cost price calculation
   costPriceCalculation,
   AccountDetails,
-  removeImage
+  removeImage,
+  rateSetSellingPrice,
 };

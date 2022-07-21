@@ -49,7 +49,7 @@ const getshopWardStreetNamesWithAggregation = catchAsync(async (req, res) => {
 });
 
 const getAllB2BshopClone = catchAsync(async (req, res) => {
-  const shop = await b2bCloneService.getAllB2BshopClone();
+  const shop = await b2bCloneService.getAllShopClone()
   res.send(shop);
 });
 
