@@ -6,7 +6,7 @@ const walletSchema = mongoose.Schema({
     type: String,
     default: v4,
   },
-  uname: {
+  shopName: {
     type: String,
   },
   type: {

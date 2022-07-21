@@ -24,7 +24,9 @@ const getWallet = async (page) =>{
      { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  return wallet;
+  let total = await walletModel.find().count();
+    return {wallet : wallet , total:total};
+  
 }
 
 const updateWallet = async (id, walletbody) => {
