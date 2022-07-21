@@ -36,6 +36,8 @@ const B2BusersSchema = mongoose.Schema(
     },
     phoneNumber: {
       type: Number,
+      required: true,
+      unique: true,
     },
     userRole: {
       type: String,
