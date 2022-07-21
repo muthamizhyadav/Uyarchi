@@ -28,16 +28,11 @@ const B2BusersSchema = mongoose.Schema(
       },
     },
     password: {
-      type: String,
-      required: true,
-      trim: true,
-      minlength: 8,
-      validate(value) {
-        if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
-          throw new Error('Password must contain at least one letter and one number');
-        }
-      },
-      private: true, // used by the toJSON plugin
+      type: String, // used by the toJSON plugin
+    },
+    stepTwo: {
+      type: Boolean,
+      default: false,
     },
     phoneNumber: {
       type: Number,
@@ -110,16 +105,16 @@ const usermetaSchema = new mongoose.Schema({
   metavalue: {
     type: String,
   },
-  active:{
+  active: {
     type: Boolean,
-    default:true,
+    default: true,
   },
-  archive:{
-    type:Boolean,
-    default:false
-  }
+  archive: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const metaUsers = mongoose.model('MetaUsers',usermetaSchema );
+const metaUsers = mongoose.model('MetaUsers', usermetaSchema);
 
 module.exports = { Users, metaUsers };

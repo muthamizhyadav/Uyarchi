@@ -6,9 +6,16 @@ const bcrypt = require('bcryptjs');
 const ApiError = require('../utils/ApiError');
 const Textlocal = require('../config/textLocal');
 const Verfy = require('../config/OtpVerify');
+
 const createUser = async (userBody) => {
-  return Users.create(userBody);
+  let OTPCODE = Math.floor(1000000 + Math.random() * 9000000);
+  const salt = await bcrypt.genSalt(7);
+  let password = { password: await bcrypt.hash(OTPCODE.toString(), salt) };
+  let bodyData = { ...userBody, ...password };
+  await Textlocal.sendPwd(userBody.phoneNumber, userBody.name, OTPCODE);
+  return Users.create(bodyData);
 };
+
 const getUsersById = async (id) => {
   let user = await Users.findById(id);
   if (!user) {

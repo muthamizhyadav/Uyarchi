@@ -15,9 +15,39 @@ const createShopClone = async (shopBody) => {
   return shop;
 };
 
+const getStreetAndShopDetails = async (supplierId) => {
+  let values = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: supplierId } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streetData',
+      },
+    },
+    {
+      $unwind: '$streetData',
+    },
+    {
+      $project: {
+        SName: 1,
+        mobile: 1,
+        date: 1,
+        time: 1,
+        Uid: 1,
+        streetName: '$streetData.street',
+      },
+    },
+  ]);
+  return values;
+};
+
 const filterShopwithNameAndContact = async (key) => {
-  // const shop = await Shop.find({ $or: [{ SName: { $regex: key } }, { SCont1: { $regex: key } }] });
-  // const marketClone = await MarketShopsClone.find({ $or: [{ SName: { $regex: key } }, { mobile: { $regex: key } },{ ownnum: { $regex: key } }] });
   const marketClone = await MarketShopsClone.aggregate([
     {
       $match: {
@@ -33,6 +63,42 @@ const filterShopwithNameAndContact = async (key) => {
     {
       $match: {
         $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streetData',
+      },
+    },
+    {
+      $unwind: '$streetData',
+    },
+    {
+      $project: {
+        SName: 1,
+        mobile: 1,
+        streetName: '$streetData.street',
+        _id: 1,
+        SOwner: 1,
+        SType: 1,
+        Slat: 1,
+        Slong: 1,
+        Strid: 1,
+        Uid: 1,
+        Wardid: 1,
+        callingUserId: 1,
+        created: 1,
+        date: 1,
+        marketId: 1,
+        mobile: 1,
+        photoCapture: 1,
+        status: 1,
+        time: 1,
+        type: 1,
+        streetId: '$streetData._id',
       },
     },
   ]);
@@ -226,7 +292,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
     {
       $unwind: '$shoptype',
     },
-  ])
+  ]);
   return {
     values: values,
     total: total.length,
@@ -286,7 +352,6 @@ const deleteShopById = async (id) => {
 
 const createAttendanceClone = async (shopBody) => {
   const attendance = await AttendanceClone.create(shopBody);
-  console.log(attendance);
   return attendance;
 };
 
@@ -345,7 +410,7 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
         foreignField: '_id',
         as: 'b2busersData',
       },
-    },
+    }, 
     { $unwind: '$b2busersData' },
     { $skip: 10 * page },
     { $limit: 10 },
@@ -678,6 +743,7 @@ module.exports = {
   // get marketShop
   getMarkeShop,
   craeteRegister,
+  getStreetAndShopDetails,
   forgotPassword,
   otpVerfiy,
   verifyRegisterOTP,
