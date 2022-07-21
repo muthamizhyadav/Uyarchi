@@ -12,7 +12,9 @@ const createUser = async (userBody) => {
   let password = { password: OTPCODE };
   let bodyData = { ...userBody, ...password };
   let value = Users.create(bodyData);
-  await Textlocal.sendPwd(userBody.phoneNumber, userBody.name, OTPCODE);
+  if (value) {
+    await Textlocal.sendPwd(userBody.phoneNumber, userBody.name, OTPCODE);
+  }
   return value;
 };
 
