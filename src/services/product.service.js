@@ -1301,14 +1301,17 @@ const rateSetSellingPrice = async (productId, date) => {
     {
       $unwind: '$marketTrend',
     },
-
     {
       $project: {
         productTitle: 1,
         stock: 1,
         GST_Number: 1,
-        startPriceLow: { $avg: '$start' },
-        startPriceHigh: { $max: '$start' },
+        startPriceAvg: { $avg: '$salesmanPrice.start' },
+        startPriceHigh: { $max: '$salesmanPrice.start' },
+        startPriceLow: { $min: '$salesmanPrice.start' },
+        endPriceAvg: { $avg: '$salesmanPrice.end' },
+        endPriceHigh: { $max: '$salesmanPrice.end' },
+        endPriceLow: { $min: '$salesmanPrice.end' },
         costPricewLow: '$receivedstocks.low',
         costPricewHigh: '$receivedstocks.High',
         costPricewAvg: '$receivedstocks.Avg',

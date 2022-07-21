@@ -157,10 +157,12 @@ const getForMyAccount = async (userId) => {
   ]);
   return values;
 };
+
 const getsalesExecuteRolesUsers = async () => {
   let users = await Users.find({ userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
   return users;
 };
+
 const changePassword = async (userId, body) => {
   let user = await Users.findById(userId);
   if (!user) {
@@ -172,13 +174,16 @@ const changePassword = async (userId, body) => {
   user = await Users.findByIdAndUpdate({ _id: userId }, { password: password }, { new: true });
   return user;
 };
+
 const getAllmetaUsers = async () => {
   return metaUsers.find();
 };
+
 const getusermetaDataById = async (id) => {
   const metauser = await metaUsers.findById(id);
   return metauser;
 };
+
 const updateMetaUsers = async (id, updateBody) => {
   let metauser = await getusermetaDataById(id);
   console.log(metauser);
@@ -188,6 +193,7 @@ const updateMetaUsers = async (id, updateBody) => {
   metauser = await metaUsers.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return metauser;
 };
+
 const deleteMetaUser = async (id) => {
   let metauser = await getusermetaDataById(id);
   if (!metauser) {
@@ -195,6 +201,7 @@ const deleteMetaUser = async (id) => {
   }
   (metauser.active = false), (metauser.archive = true), await metauser.save();
 };
+
 const updatemetadata = async (updateBody) => {
   updateBody.metavalue.forEach(async (e) => {
     console.log(e.key);
@@ -213,6 +220,7 @@ const updatemetadata = async (updateBody) => {
   });
   return 'success';
 };
+
 module.exports = {
   createUser,
   UsersLogin,
