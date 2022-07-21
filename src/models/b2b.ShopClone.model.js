@@ -18,6 +18,12 @@ const shopSchema = mongoose.Schema({
   SType: {
     type: String,
   },
+  address: {
+    type: String,
+  },
+  shopNo: {
+    type: String,
+  },
   SName: {
     type: String,
   },
@@ -56,12 +62,13 @@ const shopSchema = mongoose.Schema({
   },
   callingStatus: {
     type: String,
+    default: 'Pending',
   },
-  callingUserId:{
+  callingUserId: {
     type: String,
   },
-  marketId: { 
-    type: String 
+  marketId: {
+    type: String,
   },
   shopNo: {
     type: String,

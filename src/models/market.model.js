@@ -83,6 +83,9 @@ const marketCloneSchema = new mongoose.Schema({
   MName: {
     type: String,
   },
+  address: {
+    type: String,
+  },
   Wardid: {
     type: String,
   },

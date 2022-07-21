@@ -11,7 +11,6 @@ const createB2bUsers = catchAsync(async (req, res) => {
   // if (!users) {
   //   throw new ApiError(httpStatus.NOT_FOUND, 'users Not Fount');
   // }
-  console.log(users)
   res.status(httpStatus.CREATED).send(users);
 });
 
@@ -45,7 +44,6 @@ const B2bUsersAdminLogin = catchAsync(async (req, res) => {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
   };
-  console.log(options);
   res.cookie('tokens', tokens.access.token, options).send({ users, tokens });
   res.send({ users, tokens });
 });
