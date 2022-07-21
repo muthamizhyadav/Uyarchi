@@ -12,10 +12,17 @@ const getAll = async () => {
     return monthlyRecuringModel.find();
   };
 
-
-
+  const getMonthlyRecuring = async (page)=>{
+    let recurring = await monthlyRecuringModel.aggregate([
+        { $skip: 10 * page },
+    { $limit: 10 },
+    ]);
+    return recurring;
+  }
+  
 module.exports= {
     createMonthlyRecuring,
     getAll,
+    getMonthlyRecuring
 
 }
