@@ -17,12 +17,19 @@ const getAll = async () => {
         { $skip: 10 * page },
     { $limit: 10 },
     ]);
-    return recurring;
+    let total = await monthlyRecuringModel.find().count();
+    return {Recurring : recurring , total:total};
   }
+
+  const getById = async (id) => {
+    let getsample = await monthlyRecuringModel.findById(id)
+    return getsample
+}
   
 module.exports= {
     createMonthlyRecuring,
     getAll,
-    getMonthlyRecuring
+    getMonthlyRecuring,
+    getById
 
 }

@@ -19,8 +19,14 @@ const getMonthlyRecuring= catchAsync(async (req, res) => {
     const wallet = await monthlyRecuringService.getMonthlyRecuring(req.params.page);
     res.send(wallet);
   })
+  const getById = catchAsync(async (req, res) => {
+    const sample = await monthlyRecuringService.getById(req.params.id)
+    res.send(sample)
+})
+
 module.exports = { 
     createRecuring,
     getRecuring,
     getMonthlyRecuring,
+    getById,
 }
