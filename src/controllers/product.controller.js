@@ -415,6 +415,8 @@ const removeImage = catchAsync(async (req, res) => {
   res.send(product);
 })
 
+
+
 module.exports = {
   createProduct,
   getAllienceBySupplierId,

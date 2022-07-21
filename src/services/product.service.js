@@ -1250,11 +1250,8 @@ const removeImage = async (pid, index) => {
   return updateproduct;
 };
 
-const calculateCostPriceByProductId = async () => {
-  let values = await Product.aggregate([{
-    
-    
-  }]);
+const rateSetSellingPrice = async (productId, date) => {
+  return 'triggered';
 };
 
 module.exports = {
@@ -1319,4 +1316,5 @@ module.exports = {
   costPriceCalculation,
   AccountDetails,
   removeImage,
+  rateSetSellingPrice,
 };

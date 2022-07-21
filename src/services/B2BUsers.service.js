@@ -57,6 +57,7 @@ const getAllUsers = async () => {
         name: 1,
         email: 1,
         phoneNumber: 1,
+        stepTwo:1,
         createdAt: 1,
         userrole: '$RoleData.roleName',
         metavalue: '$metadatas',
