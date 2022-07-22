@@ -204,4 +204,95 @@ const getEstimatedByDate = async (date, page) => {
   return { values: values, total: total.length };
 };
 
-module.exports = { createEstimatedOrders, getEstimatedByDate };
+const getSingleProductEstimations = async (id) => {
+  let values = await Estimated.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productId',
+        foreignField: '_id',
+        as: 'productDetails',
+      },
+    },
+    {
+      $unwind: '$productDetails',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        let: { date: '$date', productId: '$productId' },
+        // localField: 'productId',
+        // foreignField: 'productid',
+        pipeline: [
+          { $match: { $expr: { $and: [{ $eq: ['$productid', '$$productId'] }, { $eq: ['$date', '$$date'] }] } } },
+          { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
+        ],
+        as: 'productorders',
+      },
+    },
+    {
+      $unwind: '$productorders',
+    },
+    {
+      $lookup: {
+        from: 'estimatedorders',
+        localField: 'productId',
+        foreignField: 'productId',
+        pipeline: [
+          { $match: { _id: { $ne: id }, estimatedStatus: 'Estimated' } },
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productId',
+              foreignField: '_id',
+              as: 'productDetails',
+            },
+          },
+          {
+            $unwind: '$productDetails',
+          },
+          {
+            $project: {
+              status: 1,
+              productId: 1,
+              closedQty: 1,
+              avgPrice: 21,
+              date: 1,
+              time: 1,
+              productTitle: '$productDetails.productTitle',
+            },
+          },
+          {
+            $limit: 5,
+          },
+          { $sort: { date: -1 } },
+        ],
+        as: 'oldestimatedorders',
+      },
+    },
+    {
+      $project: {
+        status: 1,
+        productId: 1,
+        closedQty: 1,
+        avgPrice: 21,
+        date: 1,
+        time: 1,
+        productTitle: '$productDetails.productTitle',
+        stock: '$productDetails.stock',
+        stock: '$productDetails.stock',
+        image: '$productDetails.image',
+        liveStock: '$productorders.Qty',
+        liveAvg: '$productorders.Avg',
+        oldestimatedorders: '$oldestimatedorders',
+      },
+    },
+  ]);
+
+  return values;
+};
+
+module.exports = { createEstimatedOrders, getEstimatedByDate, getSingleProductEstimations };
