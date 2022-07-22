@@ -204,7 +204,6 @@ const deleteMetaUser = async (id) => {
 
 const updatemetadata = async (updateBody) => {
   updateBody.metavalue.forEach(async (e) => {
-    console.log(e.key);
     const metauser = await metaUsers.findOne({ user_id: updateBody.userId, metaKey: e.key });
     let update = {
       user_id: updateBody.userId,

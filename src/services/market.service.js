@@ -108,9 +108,9 @@ const getMarketShopsbyMarketId = async (id, page) => {
   ]);
   let total = await MarketShopsClone.find().count();
   return {
-    values:values,
-    total: total
-  }
+    values: values,
+    total: total,
+  };
 };
 
 const getMarketCloneWithAggregation = async (page) => {
@@ -167,11 +167,44 @@ const getMarketCloneWithAggregation = async (page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await MarketClone.find().count();
-  console.log(total);
+  let total = await MarketClone.aggregate([
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        as: 'wardData',
+      },
+    },
+    {
+      $unwind: '$wardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streetData',
+      },
+    },
+    {
+      $unwind: '$streetData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+  ]);
   return {
     value: aggre,
-    total: total,
+    total: total.length,
   };
 };
 
