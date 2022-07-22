@@ -50,6 +50,9 @@ const monthlyRecuringSchema = mongoose.Schema({
   amounts:{
     type: Number,
   },
+  endDate:{
+    type:String
+  }
 });
 
 const monthlyRecuring = mongoose.model('monthlyRecuring', monthlyRecuringSchema);
