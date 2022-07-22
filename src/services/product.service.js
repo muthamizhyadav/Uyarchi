@@ -761,6 +761,7 @@ const AccountDetails = async (date, page) => {
         from: 'estimatedorders',
         localField: '_id',
         foreignField: 'productId',
+        pipeline: [{ $match: { date: date } }],
         as: 'estimatedDetails',
       },
     },
@@ -923,6 +924,7 @@ const paginationForTrends = async (id) => {
     { $skip: 10 * id },
     { $limit: 10 },
   ]);
+
   let total = await Product.aggregate([
     {
       $match: {

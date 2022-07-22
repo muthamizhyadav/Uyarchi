@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const callHistoryModel = require('../models/b2b.callHistory.model');
 const ApiError = require('../utils/ApiError');
 const { Shop } = require('../models/b2b.ShopClone.model');
-// const moment = require('moment');
+
 
 const createCallHistory = async (body) => {
   console.log(body.callStatus);
