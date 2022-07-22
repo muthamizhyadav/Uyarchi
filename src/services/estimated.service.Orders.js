@@ -152,11 +152,12 @@ const getEstimatedByDate = async (date, page) => {
         from: 'estimatedorders',
         localField: '_id',
         foreignField: 'productId',
+        pipeline: [{ $match: { date: date } }],
         as: 'estimatedDetails',
       },
     },
     {
-      $unwind: '$estimatedDetails'
+      $unwind: '$estimatedDetails',
     },
     {
       $limit: 10,
@@ -170,15 +171,15 @@ const getEstimatedByDate = async (date, page) => {
         productTitle: 1,
         Qty: '$productDetails.Qty',
         Avg: '$productDetails.Avg',
-        
+
         orderDetails: '$orderDetails',
         estimatedDetails: '$estimatedDetails',
         estimatedId: '$estimatedDetails._id',
         closedQty: '$estimatedDetails.closedQty',
         avgPrice: '$estimatedDetails.avgPrice',
-        estimatedQty:'$estimatedDetails.estimatedQty',
-        status:'$estimatedDetails.status',
-        estimatedStatus:'$estimatedDetails.estimatedStatus',
+        estimatedQty: '$estimatedDetails.estimatedQty',
+        status: '$estimatedDetails.status',
+        estimatedStatus: '$estimatedDetails.estimatedStatus',
         liveStock: '$liveStock',
       },
     },
