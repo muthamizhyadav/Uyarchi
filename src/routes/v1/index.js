@@ -68,6 +68,7 @@ const wallet = require('./b2b.wallet.route');
 const walletPayment = require('./b2b.walletPayment.route')
 const SupplierBillRoute = require('./supplierbills.route');
 const monthlyRecuring = require('./b2b.monthlyRecuring.route');
+const AnnualExpenseRecuring = require('./b2b.expenses.annual.recuring.route') 
 // const redirect = require('./b2b.redirect.route');
 const callHistory = require('./b2b.callHistory.route');
 // const salesApp = require('./b2b.sales.route');
@@ -341,6 +342,10 @@ const defaultRoutes = [
     path: '/monthlyRecuring',
     route: monthlyRecuring,
   },
+  {
+    path: '/annualExpenseRecuring',
+    route: AnnualExpenseRecuring,
+  }
   // {
   //   path: '/sales',
   //   route: salesApp,
