@@ -47,4 +47,8 @@ router.route('/sales/registerUser').post(b2bShopCloneController.registerUser);
 router.route('/verify-RegisterOTP').post(b2bShopCloneController.verifyRegisterOTP);
 router.route('/shopdetails/:id').get(b2bShopCloneController.getStreetAndShopDetails);
 
+router
+  .route('/attendanceclone/Admin/map/View/:id/:date/:fromtime/:totime')
+  .get(b2bShopCloneController.getAllAttendanceCloneforMapView);
+
 module.exports = router;

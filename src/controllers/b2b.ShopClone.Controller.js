@@ -49,7 +49,7 @@ const getshopWardStreetNamesWithAggregation = catchAsync(async (req, res) => {
 });
 
 const getAllB2BshopClone = catchAsync(async (req, res) => {
-  const shop = await b2bCloneService.getAllShopClone()
+  const shop = await b2bCloneService.getAllShopClone();
   res.send(shop);
 });
 
@@ -163,6 +163,16 @@ const verifyRegisterOTP = catchAsync(async (req, res) => {
   res.send(users);
 });
 
+const getAllAttendanceCloneforMapView = catchAsync(async (req, res) => {
+  const users = await b2bCloneService.getAllAttendanceCloneforMapView(
+    req.params.id,
+    req.params.date,
+    req.params.fromtime,
+    req.params.totime
+  );
+  res.send(users);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -184,5 +194,6 @@ module.exports = {
   forgotPassword,
   verfiOtp,
   verifyRegisterOTP,
+  getAllAttendanceCloneforMapView,
   getStreetAndShopDetails,
 };
