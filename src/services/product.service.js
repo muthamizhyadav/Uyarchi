@@ -911,7 +911,7 @@ const getStockByLoadingExecute = async () => {
 };
 
 const paginationForTrends = async (id) => {
-  return Product.aggregate([
+  let values = await Product.aggregate([
     {
       $match: {
         TrendspreferredQuantity: { $ne: null },
@@ -923,6 +923,17 @@ const paginationForTrends = async (id) => {
     { $skip: 10 * id },
     { $limit: 10 },
   ]);
+  let total = await Product.aggregate([
+    {
+      $match: {
+        TrendspreferredQuantity: { $ne: null },
+      },
+    },
+    {
+      $sort: { productTitle: 1 },
+    },
+  ]);
+  return { values: values, total: total.length };
 };
 
 const updateManageBill = async (manageBillId, updatebody) => {
