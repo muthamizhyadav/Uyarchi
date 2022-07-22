@@ -438,6 +438,15 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
         $and: match,
       },
     },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    }, 
+    { $unwind: '$b2busersData' },
   ]);
 
   return {
