@@ -66,6 +66,11 @@ const updateuserStatus = async (id) => {
 const getActiveUsers = async () => {
   let values = await B2bUserSalaryInfo.aggregate([
     {
+      $match: {
+        $and: [{ userStatus: { $eq: 'Active' } }],
+      },
+    },
+    {
       $lookup: {
         from: 'b2busers',
         localField: 'userId',
@@ -81,6 +86,7 @@ const getActiveUsers = async () => {
       $project: {
         userId: '$userData._id',
         userName: '$userData.name',
+        userStatus: 1,
         empId: 1,
         salary: 1,
       },
