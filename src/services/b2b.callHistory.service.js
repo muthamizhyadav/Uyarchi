@@ -80,7 +80,7 @@ const getById = async (id) => {
 
 const getShop = async (page) => {
   let values = await Shop.aggregate([
-    { $sort: { callingStatus: 1 } },
+    { $sort: { callingStatusSort: 1 } },
     {
       $lookup: {
         from: 'callhistories',
