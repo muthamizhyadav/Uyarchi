@@ -29,12 +29,19 @@ const createB2bSalaryInfo = catchAsync(async (req, res) => {
   let total = salary + 1;
   let employeId = id + center + total;
   let salaryInfo;
-  if (employeId != '') {
-    salaryInfo = await b2busersalaryController.createB2bSalaryInfo(req.body);
+  console.log(req.body.userId);
+  let check = await b2buserSalary.findOne({ userId: req.body.userId });
+  if (check != 'null') {
+    let hh = await b2buserSalary.findByIdAndUpdate({ _id: check._id }, req.body, { new: true });
+    res.send(hh);
+  } else {
+    if (employeId != '') {
+      salaryInfo = await b2busersalaryController.createB2bSalaryInfo(req.body);
+    }
+    salaryInfo.empId = employeId;
+    await salaryInfo.save();
+    res.send(salaryInfo);
   }
-  salaryInfo.empId = employeId;
-  await salaryInfo.save();
-  res.status(httpStatus.CREATED).send(salaryInfo);
 });
 
 const getAllDataWithAggregation = catchAsync(async (req, res) => {
@@ -49,7 +56,7 @@ const updateuserStatus = catchAsync(async (req, res) => {
 
 const getActiveUsers = catchAsync(async (req, res) => {
   const activeUsers = await b2busersalaryController.getActiveUsers();
- res.send(activeUsers);
+  res.send(activeUsers);
 });
 module.exports = {
   createB2bSalaryInfo,
