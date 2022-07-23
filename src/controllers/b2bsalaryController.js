@@ -31,7 +31,7 @@ const createB2bSalaryInfo = catchAsync(async (req, res) => {
   let salaryInfo;
   console.log(req.body.userId);
   let check = await b2buserSalary.findOne({ userId: req.body.userId });
-  if (check != 'null') {
+  if (check != null) {
     let hh = await b2buserSalary.findByIdAndUpdate({ _id: check._id }, req.body, { new: true });
     res.send(hh);
   } else {
