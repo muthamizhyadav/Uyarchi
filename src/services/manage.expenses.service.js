@@ -7,13 +7,20 @@ const createManageExpenses = async (body) => {
   return manageExpense;
 };
 
-const getAllManageExpenses = async () => {
+const getAllManageExpenses = async (page) => {
   let values = await ManageExpenses.aggregate([
     {
       $sort: { date: 1 },
     },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
   ]);
-  return values;
+  let total = await ManageExpenses.find().count();
+  return { values: values, total: total };
 };
 
 module.exports = {

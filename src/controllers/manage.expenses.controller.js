@@ -10,7 +10,7 @@ const createManageExpenses = catchAsync(async (req, res) => {
 });
 
 const getAllManageExpenses = catchAsync(async (req, res) => {
-  const manageExpense = await ManageExpensesService.getAllManageExpenses();
+  const manageExpense = await ManageExpensesService.getAllManageExpenses(req.params.page);
   res.send(manageExpense);
 });
 
