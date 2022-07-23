@@ -63,14 +63,12 @@ const updateuserStatus = async (id) => {
   return b2buserSalary;
 };
 
-const getActiveUsers = async()=>{
+const getActiveUsers = async () => {
   let values = await B2bUserSalaryInfo.aggregate([
     {
       $lookup: {
         from: 'b2busers',
         localField: 'userId',
-
-
         foreignField: '_id',
         as: 'userData',
       },
@@ -78,24 +76,22 @@ const getActiveUsers = async()=>{
     {
       $unwind: '$userData',
     },
-    
-    {$project:{
-      userId:"$userData._id",
-      userName:"$userData.name",
-      
-      empId:1,
-      salary:1,
 
-    }}
-  ])
- return values;
-
-}
+    {
+      $project: {
+        userId: '$userData._id',
+        userName: '$userData.name',
+        empId: 1,
+        salary: 1,
+      },
+    },
+  ]);
+  return values;
+};
 
 module.exports = {
   createB2bSalaryInfo,
   getAllDataWithAggregation,
   updateuserStatus,
-  getActiveUsers
-
+  getActiveUsers,
 };
