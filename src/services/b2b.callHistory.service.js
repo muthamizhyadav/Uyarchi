@@ -94,7 +94,7 @@ const getShop = async (page) => {
   ]);
 
   let total = await Shop.aggregate([
-    { $sort: { callingStatus: -1 } },
+    { $sort: { callingStatusSort: 1 } },
     {
       $lookup: {
         from: 'callhistories',
