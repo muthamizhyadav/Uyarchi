@@ -4,7 +4,7 @@ const router = express.Router();
 const authorization = require('../../controllers/tokenVerify.controller');
 
 router.post('/', b2bUsersController.createB2bUsers);
-router.get('/All', b2bUsersController.getAllUsers);
+router.get('/All/:page', b2bUsersController.getAllUsers);
 router.post('/login', b2bUsersController.B2bUsersLogin);
 router.get('/logout', b2bUsersController.B2bUsersLogout);
 router.route('/getForMyAccount').get(authorization, b2bUsersController.getForMyAccount);
