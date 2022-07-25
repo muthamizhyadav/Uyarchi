@@ -134,7 +134,6 @@ const getSalaryInfo = async (page) => {
       }
     },
     
-
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
