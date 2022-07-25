@@ -41,4 +41,4 @@ module.exports.orderRaisedbyMWA = require('./orderRaisedbyMWA.model');
 module.exports.Status = require('./status.model');
 module.exports.SetTrendsValue = require('./set.TrendsValue.model')
 module.exports.SupplierBuyer = require('./supplierBuyer.model')
-
+module.exports.ManageSalary = require('./manage.salary.model')
