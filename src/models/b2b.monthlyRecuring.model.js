@@ -17,6 +17,7 @@ const monthlyRecuringSchema = mongoose.Schema({
     type: String,
   },
   address: {
+
     type: String,
   },
   use: {

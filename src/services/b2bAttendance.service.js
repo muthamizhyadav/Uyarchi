@@ -60,15 +60,50 @@ const getAll = async (page) => {
         from: 'b2busers',
         localField: 'b2bUser',
         foreignField: '_id',
+        
         as: 'userData',
       },
     },
     { $unwind: '$userData' },
+    // {
+    //   $project: {
+
+    //   }
+    // }
   ]);
   return { values: values, total: total.length };
 };
 
+
+const updateAttendance = async (id, updatebody) => {
+  let attendance = await attendanceModel.findById(id)
+  if (!attendance) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'attendance Not found')
+  }
+  attendance = await attendance.findByIdAndUpdate({ _id: id }, updatebody, { new: true })
+  return attendance
+}
+
+
+const getSalaryInfo = async(page)=>{
+  let values = await attendanceModel.aggregate([
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'salaryData ',
+      },
+    },{$unwind: '$salaryData'},
+    {$skip: 10 * page},
+    {$limit:10},
+  ])
+  return values;
+}
+
 module.exports = {
   createAttendance,
   getAll,
+  updateAttendance,
+  getSalaryInfo,
 };
