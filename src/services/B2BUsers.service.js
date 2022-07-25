@@ -60,7 +60,7 @@ const getAllUsers = async (page) => {
         name: 1,
         email: 1,
         phoneNumber: 1,
-        active:1,
+        active: 1,
         stepTwo: 1,
         createdAt: 1,
         userrole: '$RoleData.roleName',
@@ -128,6 +128,7 @@ const B2bUsersAdminLogin = async (userBody) => {
     phoneNumber: phoneNumber,
     userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
     stepTwo: true,
+    active: true,
   });
   if (!userName) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Phone Number Not Registered');
