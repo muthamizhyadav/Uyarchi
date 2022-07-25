@@ -19,6 +19,9 @@ const createcallHistoryWithType = async (body) => {
   if (callStatus == 'Call back') {
     sort = 3;
   }
+  if (callStatus == 'Call_under_progress') {
+    sort = 4;
+  }
   if (callStatus != 'accept') {
     await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, callingStatusSort: sort }, { new: true });
   }
