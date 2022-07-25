@@ -6,5 +6,5 @@ const router = express.Router();
 router.route('/').post(estimateOrderController.createEstimatedOrders);
 router.route('/:date/:page').get(estimateOrderController.getEstimatedByDate);
 router.route('/product/Estimate/:id').get(estimateOrderController.getSingleProductEstimations);
-// router.route('/:id').put(estimateOrderController)
+router.route('/:id').put(estimateOrderController.updateEstimatedOrders);
 module.exports = router;

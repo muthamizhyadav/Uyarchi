@@ -64,6 +64,10 @@ const shopSchema = mongoose.Schema({
     type: String,
     default: 'Pending',
   },
+  callingStatusSort: {
+    type: Number,
+    default: 1,
+  },
   callingUserId: {
     type: String,
   },
@@ -76,7 +80,7 @@ const shopSchema = mongoose.Schema({
   shopMobile: {
     type: String,
   },
-  
+
   CallStatus: {
     type: String,
   },

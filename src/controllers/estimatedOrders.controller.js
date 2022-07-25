@@ -14,13 +14,14 @@ const getEstimatedByDate = catchAsync(async (req, res) => {
   res.send(estimate);
 });
 
-// const updateEstimatedOrders = catchAsync(async (req, res) => {
-//   const estimate = awa
-// });
+const updateEstimatedOrders = catchAsync(async (req, res) => {
+  const estimate = await EstimatedOrderService.updateEstimateById(req.params.id, req.body);
+  res.send(estimate);
+});
 
 const getSingleProductEstimations = catchAsync(async (req, res) => {
   const estimate = await EstimatedOrderService.getSingleProductEstimations(req.params.id);
   res.send(estimate);
 });
 
-module.exports = { createEstimatedOrders, getEstimatedByDate, getSingleProductEstimations };
+module.exports = { createEstimatedOrders, getEstimatedByDate, getSingleProductEstimations, updateEstimatedOrders };

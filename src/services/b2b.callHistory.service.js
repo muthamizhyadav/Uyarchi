@@ -3,7 +3,6 @@ const callHistoryModel = require('../models/b2b.callHistory.model');
 const ApiError = require('../utils/ApiError');
 const { Shop } = require('../models/b2b.ShopClone.model');
 
-
 const createCallHistory = async (body) => {
   console.log(body.callStatus);
   await Shop.findByIdAndUpdate({ _id: body.shopId }, { CallStatus: body.callStatus }, { new: true });
@@ -13,8 +12,15 @@ const createCallHistory = async (body) => {
 
 const createcallHistoryWithType = async (body) => {
   const { callStatus, shopId } = body;
+  let sort;
+  if (callStatus == 'reschedule') {
+    sort = 2;
+  }
+  if (callStatus == 'Call back') {
+    sort = 3;
+  }
   if (callStatus != 'accept') {
-    await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus }, { new: true });
+    await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, callingStatusSort: sort }, { new: true });
   }
   let callHistory = await callHistoryModel.create(body);
   return callHistory;
@@ -74,7 +80,7 @@ const getById = async (id) => {
 
 const getShop = async (page) => {
   let values = await Shop.aggregate([
-    { $sort: { callingStatus: 1 } },
+    { $sort: { callingStatusSort: 1 } },
     {
       $lookup: {
         from: 'callhistories',
@@ -88,7 +94,7 @@ const getShop = async (page) => {
   ]);
 
   let total = await Shop.aggregate([
-    { $sort: { callingStatus: -1} },
+    { $sort: { callingStatusSort: 1 } },
     {
       $lookup: {
         from: 'callhistories',
