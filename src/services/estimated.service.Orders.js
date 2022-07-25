@@ -262,6 +262,8 @@ const getSingleProductEstimations = async (id) => {
               avgPrice: 21,
               date: 1,
               time: 1,
+              estimatedQty:1,
+              estimatedStatus:1,
               productTitle: '$productDetails.productTitle',
             },
           },
