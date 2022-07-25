@@ -121,6 +121,11 @@ const verfiOtp = catchAsync(async (req, res) => {
   res.send(users);
 });
 
+const updateB2bUsers = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.updateB2bUsers(req.params.id, req.body);
+  res.send(users);
+});
+
 module.exports = {
   createB2bUsers,
   getsalesExecuteRolesUsers,
@@ -139,4 +144,5 @@ module.exports = {
   updatemetadata,
   forgotPassword,
   verfiOtp,
+  updateB2bUsers,
 };

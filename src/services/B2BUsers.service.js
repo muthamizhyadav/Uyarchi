@@ -220,6 +220,15 @@ const updatemetadata = async (updateBody) => {
   return 'success';
 };
 
+const updateB2bUsers = async (id, updateBody) => {
+  let User = await Users.findById(id);
+  if (!User) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Users Not Found');
+  }
+  User = await Users.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return User;
+};
+
 module.exports = {
   createUser,
   UsersLogin,
@@ -237,4 +246,5 @@ module.exports = {
   updatemetadata,
   forgotPassword,
   otpVerfiy,
+  updateB2bUsers
 };

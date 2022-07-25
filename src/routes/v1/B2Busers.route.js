@@ -22,5 +22,5 @@ router.route('/getusers/salesExecute').get(b2bUsersController.getsalesExecuteRol
 router.route('/updatemeta/byuser').post(b2bUsersController.updatemetadata);
 router.route('/forgot-password').post(b2bUsersController.forgotPassword);
 router.route('/verfy-otp').post(b2bUsersController.verfiOtp);
-
+router.route('/updateB2bUsers/:id').put(b2bUsersController.updateB2bUsers);
 module.exports = router;
