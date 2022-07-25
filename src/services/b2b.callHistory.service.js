@@ -19,7 +19,7 @@ const createcallHistoryWithType = async (body) => {
   if (callStatus == 'Call back') {
     sort = 3;
   }
-  if (callStatus == 'Call_under_progress') {
+  if (callStatus == 'under_the_call') {
     sort = 4;
   }
   if (callStatus != 'accept') {
