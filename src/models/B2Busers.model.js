@@ -15,6 +15,12 @@ const B2BusersSchema = mongoose.Schema(
       // required: true,
       trim: true,
     },
+    dateOfJoining: {
+      type: String,
+    },
+    salary: {
+      type: Number,
+    },
     email: {
       type: String,
       // required: true,
