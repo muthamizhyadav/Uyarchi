@@ -26,8 +26,8 @@ const getUsersById = async (id) => {
   let role = await Role.findOne({ _id: user.userRole });
   return { userData: user, RoleData: role };
 };
-const getAllUsers = async () => {
-  return Users.aggregate([
+const getAllUsers = async (page) => {
+  let values = await Users.aggregate([
     {
       $lookup: {
         from: 'roles',
@@ -60,13 +60,49 @@ const getAllUsers = async () => {
         name: 1,
         email: 1,
         phoneNumber: 1,
+        active:1,
         stepTwo: 1,
         createdAt: 1,
         userrole: '$RoleData.roleName',
         metavalue: '$metadatas',
       },
     },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
   ]);
+  let total = await Users.aggregate([
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'userRole',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              roleName: 1,
+            },
+          },
+        ],
+        as: 'RoleData',
+      },
+    },
+    {
+      $unwind: '$RoleData',
+    },
+    {
+      $lookup: {
+        from: 'musers',
+        localField: '_id',
+        foreignField: 'user_id',
+        as: 'metadatas',
+      },
+    },
+  ]);
+  return { values: values, total: total.length };
 };
 const UsersLogin = async (userBody) => {
   const { phoneNumber, password } = userBody;
@@ -246,5 +282,5 @@ module.exports = {
   updatemetadata,
   forgotPassword,
   otpVerfiy,
-  updateB2bUsers
+  updateB2bUsers,
 };

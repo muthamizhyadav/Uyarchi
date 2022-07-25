@@ -61,7 +61,7 @@ const B2bUsersLogout = catchAsync(async (req, res) => {
 const smsGateway = catchAsync(async (req, res) => {});
 
 const getAllUsers = catchAsync(async (req, res) => {
-  const user = await b2bUsersService.getAllUsers();
+  const user = await b2bUsersService.getAllUsers(req.params.page);
   res.send(user);
 });
 
