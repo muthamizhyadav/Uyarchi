@@ -130,7 +130,8 @@ const getSalaryInfo = async (page) => {
        netSalary: '$salaryData.salary',
        attendanceLeaveReduceAmount: '$attendanceData.leaveReduceAmounts',
        payingSalary:'$attendanceData.payingSalary',
-       payDate: '$attendancePaymentData.date'
+       payDate: '$attendancePaymentData.date',
+       status:'$attendancePaymentData.status'
       }
     },
     
