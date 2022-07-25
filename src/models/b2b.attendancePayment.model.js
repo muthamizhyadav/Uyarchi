@@ -7,7 +7,7 @@ const attendancePayment = mongoose.Schema({
     type: String,
     default: v4,
   },
-  type: {
+  status: {
     type: String,
   },
   GpayNo: {
@@ -26,6 +26,9 @@ const attendancePayment = mongoose.Schema({
   time: {
     type: String,
     default: moment().utcOffset(330).format('h:mm a'),
+  },
+  userId: {
+    type: String,
   },
 });
 
