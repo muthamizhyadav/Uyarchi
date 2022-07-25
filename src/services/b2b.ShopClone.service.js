@@ -680,6 +680,7 @@ const getMarkeShop = async (marketId, page) => {
         Slong: 1,
         created: 1,
         SOwner: 1,
+        shopNo:1,
         marketId: 1,
         type: 1,
         mobile: 1,
