@@ -5,15 +5,19 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const b2bUsersService = require('../services/B2BUsers.service');
 const tokenService = require('../services/token.service');
+const ManageSalary = require('../services/manage.salary.service');
 
 const createB2bUsers = catchAsync(async (req, res) => {
   const users = await b2bUsersService.createUser(req.body);
-  // if (!users) {
-  //   throw new ApiError(httpStatus.NOT_FOUND, 'users Not Fount');
-  // }
+  if (!users) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'users Not Fount');
+  }
+  await ManageSalary.createManageSalary({
+    userid: users.id,
+    salary: req.body.salary,
+  });
   res.status(httpStatus.CREATED).send(users);
 });
-
 
 const B2bUsersLogin = catchAsync(async (req, res) => {
   const users = await b2bUsersService.UsersLogin(req.body);
@@ -117,6 +121,10 @@ const verfiOtp = catchAsync(async (req, res) => {
   res.send(users);
 });
 
+const updateB2bUsers = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.updateB2bUsers(req.params.id, req.body);
+  res.send(users);
+});
 
 module.exports = {
   createB2bUsers,
@@ -135,5 +143,6 @@ module.exports = {
   getUsersById,
   updatemetadata,
   forgotPassword,
-  verfiOtp
+  verfiOtp,
+  updateB2bUsers,
 };

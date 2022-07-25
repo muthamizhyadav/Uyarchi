@@ -65,15 +65,16 @@ const ReceivedStock = require('./receivedStock.Route');
 const TransactionRoute = require('./transaction.route');
 const Attendance = require('./b2bAttendance.route');
 const wallet = require('./b2b.wallet.route');
-const walletPayment = require('./b2b.walletPayment.route')
+const walletPayment = require('./b2b.walletPayment.route');
 const SupplierBillRoute = require('./supplierbills.route');
 const monthlyRecuring = require('./b2b.monthlyRecuring.route');
-const AnnualExpenseRecuring = require('./b2b.expenses.annual.recuring.route') 
+const AnnualExpenseRecuring = require('./b2b.expenses.annual.recuring.route');
 // const redirect = require('./b2b.redirect.route');
 const callHistory = require('./b2b.callHistory.route');
 const attendancePayment = require('./b2b.atttendancePayment.route');
 // const salesApp = require('./b2b.sales.route');
 const estimateOrderRoute = require('./estimatedOrders.route');
+const manageSalary = require('./manage.salary.route');
 const defaultRoutes = [
   {
     path: '/auth',
@@ -169,7 +170,10 @@ const defaultRoutes = [
     path: '/users',
     route: userRoute,
   },
-
+  {
+    path: '/manageSalary',
+    route: manageSalary,
+  },
   {
     path: '/product',
     route: productRoute,
@@ -332,7 +336,7 @@ const defaultRoutes = [
     route: wallet,
   },
   {
-    path:'/walletPayment',
+    path: '/walletPayment',
     route: walletPayment,
   },
   {
