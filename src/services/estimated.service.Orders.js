@@ -295,4 +295,13 @@ const getSingleProductEstimations = async (id) => {
   return values;
 };
 
-module.exports = { createEstimatedOrders, getEstimatedByDate, getSingleProductEstimations };
+const updateEstimateById = async (id, updateBody) => {
+  let estimate = await Estimated.findById(id);
+  if (!estimate) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Estimate Not Found');
+  }
+  estimate = await Estimated.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return estimate;
+};
+
+module.exports = { createEstimatedOrders, getEstimatedByDate, getSingleProductEstimations, updateEstimateById };
