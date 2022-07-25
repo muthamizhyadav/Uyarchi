@@ -14,7 +14,6 @@ const createB2bUsers = catchAsync(async (req, res) => {
   }
   await ManageSalary.createManageSalary({
     userid: users.id,
-    date: req.body.date,
     salary: req.body.salary,
   });
   res.status(httpStatus.CREATED).send(users);

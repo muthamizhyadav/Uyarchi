@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
-
+const moment = require('moment');
 const manageSalarySchema = new mongoose.Schema({
   _id: {
     type: String,
@@ -15,8 +15,12 @@ const manageSalarySchema = new mongoose.Schema({
   },
   date: {
     type: String,
+    default: moment().utcOffset(330).format('DD-MM-yyy'),
   },
-  time: String,
+  time: {
+    type:String,
+    default: moment().utcOffset(330).format('h:mm a'),
+  },
   active: {
     type: Boolean,
     default: true,
