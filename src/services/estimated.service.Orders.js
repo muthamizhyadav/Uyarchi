@@ -353,6 +353,29 @@ const getEstimatedByDateforPH = async (date, page) => {
       $unwind: '$estimatedDetails',
     },
     {
+      $lookup: {
+        from: 'status',
+        let: { productid: '$productId' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ['$$productid', '$productId'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+          {
+            $match: {
+              $expr: {
+                $eq: [date, '$date'],
+              },
+            },
+          },
+        ],
+        as: 'productstatus',
+      },
+    },
+    {
       $limit: 10,
     },
     {
@@ -369,6 +392,7 @@ const getEstimatedByDateforPH = async (date, page) => {
         estimatedId: '$estimatedDetails._id',
         closedQty: '$estimatedDetails.closedQty',
         avgPrice: '$estimatedDetails.avgPrice',
+        productstatus:'$productstatus',
         estimatedQty: '$estimatedDetails.estimatedQty',
         status: '$estimatedDetails.status',
         estimatedStatus: '$estimatedDetails.estimatedStatus',
