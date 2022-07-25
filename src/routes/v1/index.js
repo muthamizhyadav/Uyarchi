@@ -71,6 +71,7 @@ const monthlyRecuring = require('./b2b.monthlyRecuring.route');
 const AnnualExpenseRecuring = require('./b2b.expenses.annual.recuring.route') 
 // const redirect = require('./b2b.redirect.route');
 const callHistory = require('./b2b.callHistory.route');
+const attendancePayment = require('./b2b.atttendancePayment.route');
 // const salesApp = require('./b2b.sales.route');
 const estimateOrderRoute = require('./estimatedOrders.route');
 const defaultRoutes = [
@@ -345,7 +346,11 @@ const defaultRoutes = [
   {
     path: '/annualExpenseRecuring',
     route: AnnualExpenseRecuring,
-  }
+  },
+  {
+    path:'/attendancePayment',
+    route: attendancePayment,
+  },
   // {
   //   path: '/sales',
   //   route: salesApp,

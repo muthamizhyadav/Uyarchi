@@ -65,6 +65,11 @@ const getAll = async (page) => {
       },
     },
     { $unwind: '$userData' },
+    // {
+    //   $project: {
+
+    //   }
+    // }
   ]);
   return { values: values, total: total.length };
 };
@@ -79,8 +84,26 @@ const updateAttendance = async (id, updatebody) => {
   return attendance
 }
 
+
+const getSalaryInfo = async(page)=>{
+  let values = await attendanceModel.aggregate([
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'salaryData ',
+      },
+    },{$unwind: '$salaryData'},
+    {$skip: 10 * page},
+    {$limit:10},
+  ])
+  return values;
+}
+
 module.exports = {
   createAttendance,
   getAll,
   updateAttendance,
+  getSalaryInfo,
 };

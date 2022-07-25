@@ -15,14 +15,20 @@ const getAll = catchAsync(async (req, res) => {
 });
 
 const updateAttendance = catchAsync(async (req, res) => {
-    const attendance = await attendanceService.updateSample(req.params.id, req.body)
+    const attendance = await attendanceService.updateAttendance(req.params.id, req.body)
     res.send(attendance)
 
-})
+});
+
+const getSalaryInfo = catchAsync(async (req, res) => {
+    const attendancesalary = await attendanceService.getSalaryInfo(req.params.page)
+    res.send(attendancesalary)
+});
 
 module.exports = {
     createAttendance,
     getAll,
     updateAttendance,
+    getSalaryInfo,
 }
 
