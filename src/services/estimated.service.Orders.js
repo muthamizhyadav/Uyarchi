@@ -233,7 +233,7 @@ const getEstimatedByDateforPH = async (date, page) => {
               localField: 'customerId',
               foreignField: '_id',
               as: 'shopData',
-          },
+            },
           },
           {
             $unwind: '$shopData',
@@ -355,20 +355,12 @@ const getEstimatedByDateforPH = async (date, page) => {
     {
       $lookup: {
         from: 'status',
-        let: { productid: '$productId' },
+        localField: '_id',
+        foreignField: 'productid',
         pipeline: [
           {
             $match: {
-              $expr: {
-                $eq: ['$$productid', '$productId'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
-              },
-            },
-          },
-          {
-            $match: {
-              $expr: {
-                $eq: [date, '$date'],
-              },
+              date: date,
             },
           },
         ],
@@ -378,20 +370,12 @@ const getEstimatedByDateforPH = async (date, page) => {
     {
       $lookup: {
         from: 'callstatuses',
-        let: { productid: '$productId' },
+        localField: '_id',
+        foreignField: 'productid',
         pipeline: [
           {
             $match: {
-              $expr: {
-                $eq: ['$$productid', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
-              },
-            },
-          },
-          {
-            $match: {
-              $expr: {
-                $eq: [date, '$date'],
-              },
+              date: date,
             },
           },
         ],
@@ -413,10 +397,10 @@ const getEstimatedByDateforPH = async (date, page) => {
         orderDetails: '$orderDetails',
         estimatedDetails: '$estimatedDetails',
         estimatedId: '$estimatedDetails._id',
-        CallStatus:'$callStatusData',
+        CallStatus: '$callStatusData',
         closedQty: '$estimatedDetails.closedQty',
         avgPrice: '$estimatedDetails.avgPrice',
-        productstatus:'$productstatus',
+        productstatus: '$productstatus',
         estimatedQty: '$estimatedDetails.estimatedQty',
         status: '$estimatedDetails.status',
         estimatedStatus: '$estimatedDetails.estimatedStatus',
@@ -439,6 +423,18 @@ const getEstimatedByDateforPH = async (date, page) => {
     },
     {
       $unwind: '$productDetails',
+    },
+    {
+      $lookup: {
+        from: 'estimatedorders',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [{ $match: { date: date, estimatedStatus: 'Estimated' } }],
+        as: 'estimatedDetails',
+      },
+    },
+    {
+      $unwind: '$estimatedDetails',
     },
   ]);
   return { values: values, total: total.length };
