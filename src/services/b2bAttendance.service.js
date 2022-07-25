@@ -60,6 +60,7 @@ const getAll = async (page) => {
         from: 'b2busers',
         localField: 'b2bUser',
         foreignField: '_id',
+        
         as: 'userData',
       },
     },
@@ -68,7 +69,18 @@ const getAll = async (page) => {
   return { values: values, total: total.length };
 };
 
+
+const updateAttendance = async (id, updatebody) => {
+  let attendance = await attendanceModel.findById(id)
+  if (!attendance) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'attendance Not found')
+  }
+  attendance = await attendance.findByIdAndUpdate({ _id: id }, updatebody, { new: true })
+  return attendance
+}
+
 module.exports = {
   createAttendance,
   getAll,
+  updateAttendance,
 };

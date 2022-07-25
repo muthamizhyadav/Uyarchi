@@ -14,8 +14,15 @@ const getAll = catchAsync(async (req, res) => {
     res.send(attendance)
 });
 
+const updateAttendance = catchAsync(async (req, res) => {
+    const attendance = await attendanceService.updateSample(req.params.id, req.body)
+    res.send(attendance)
+
+})
+
 module.exports = {
     createAttendance,
-    getAll
+    getAll,
+    updateAttendance,
 }
 
