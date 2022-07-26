@@ -7,11 +7,9 @@ const createCallHistory = catchAsync(async (req, res) => {
   res.send(callHistory);
 });
 
-
 const createcallHistoryWithTypes = catchAsync(async (req, res) => {
   const history = await callHistoryService.createcallHistoryWithType(req.body);
-  // res.send(history);
-  res.send(history)
+  res.send(history);
 });
 
 const getAll = catchAsync(async (req, res) => {
@@ -51,6 +49,11 @@ const createShopByOwner = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const callingStatusreport = catchAsync(async (req, res) => {
+  const shops = await callHistoryService.callingStatusreport();
+  res.send(shops);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -61,4 +64,5 @@ module.exports = {
   updateStatuscall,
   createShopByOwner,
   createcallHistoryWithTypes,
+  callingStatusreport,
 };

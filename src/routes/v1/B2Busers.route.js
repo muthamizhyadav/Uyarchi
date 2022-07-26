@@ -23,4 +23,6 @@ router.route('/updatemeta/byuser').post(b2bUsersController.updatemetadata);
 router.route('/forgot-password').post(b2bUsersController.forgotPassword);
 router.route('/verfy-otp').post(b2bUsersController.verfiOtp);
 router.route('/updateB2bUsers/:id').put(b2bUsersController.updateB2bUsers);
+router.route('/getUsersById/allData/:id').get(b2bUsersController.getUsersDataById);
+
 module.exports = router;

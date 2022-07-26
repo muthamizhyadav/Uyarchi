@@ -19,8 +19,14 @@ const createcallHistoryWithType = async (body) => {
   if (callStatus == 'Call back') {
     sort = 3;
   }
-  if (callStatus == 'Call_under_progress') {
+  if (callStatus == 'under_the_call') {
     sort = 4;
+  }
+  if (callStatus == 'declined') {
+    sort = 5;
+  }
+  if (callStatus == 'accept') {
+    sort = 6;
   }
   if (callStatus != 'accept') {
     await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, callingStatusSort: sort }, { new: true });
@@ -31,6 +37,21 @@ const createcallHistoryWithType = async (body) => {
 
 const getAll = async () => {
   return callHistoryModel.find();
+};
+
+const callingStatusreport = async () => {
+  let acceptCount = await Shop.find({ callingStatus: 'accept' }).count();
+  let callbackCount = await Shop.find({ callingStatus: 'Call back' }).count();
+  let rescheduleCount = await Shop.find({ callingStatus: 'reschedule' }).count();
+  let pendingCount = await Shop.find({ callingStatus: 'pending' }).count();
+  let declinedCount = await Shop.find({ callingStatus: 'declined' }).count();
+  return {
+    acceptCount: acceptCount,
+    callbackCount: callbackCount,
+    rescheduleCount: rescheduleCount,
+    pendingCount: pendingCount,
+    declinedCount: declinedCount,
+  };
 };
 
 const getById = async (id) => {
@@ -146,4 +167,5 @@ module.exports = {
   updateStatuscall,
   createShopByOwner,
   createcallHistoryWithType,
+  callingStatusreport,
 };
