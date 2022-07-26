@@ -33,6 +33,21 @@ const getAll = async () => {
   return callHistoryModel.find();
 };
 
+const callingStatusreport = async () => {
+  let acceptCount = await Shop.find({ callingStatus: 'accept' }).count();
+  let callbackCount = await Shop.find({ callingStatus: 'Call back' }).count();
+  let rescheduleCount = await Shop.find({ callingStatus: 'reschedule' }).count();
+  let pendingCount = await Shop.find({ callingStatus: 'pending' }).count();
+  let declinedCount = await Shop.find({ callingStatus: 'declined' }).count();
+  return {
+    acceptCount: acceptCount,
+    callbackCount: callbackCount,
+    rescheduleCount: rescheduleCount,
+    pendingCount: pendingCount,
+    declinedCount: declinedCount,
+  };
+};
+
 const getById = async (id) => {
   // let history = await callHistoryModel.find({shopId:id})
   // return history;
@@ -146,4 +161,5 @@ module.exports = {
   updateStatuscall,
   createShopByOwner,
   createcallHistoryWithType,
+  callingStatusreport,
 };

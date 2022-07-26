@@ -10,8 +10,8 @@ router.route('/getAll/callHistory/:page').get(callHistoryController.getAllPage);
 router.route('/update/callingStatus/:id').put(authorization, callHistoryController.updateCallingStatus);
 router.route('/update/StatusCall/:id').put(callHistoryController.updateStatuscall);
 router.route('/getCallCount/:id').get(callHistoryController.getById);
-router.route('/createByOwner/shop').post(callHistoryController.createShopByOwner);  
-
+router.route('/createByOwner/shop').post(callHistoryController.createShopByOwner);
+router.route('/callHistory/report/callingStatus').get(callHistoryController.callingStatusreport);
 router.route('/craeteCallStatus').post(callHistoryController.createcallHistoryWithTypes);
 
 module.exports = router;
