@@ -25,10 +25,16 @@ const getSalaryInfo = catchAsync(async (req, res) => {
     res.send(attendancesalary)
 });
 
+
+const getempName = catchAsync(async (req, res) => {
+    const attendance = await attendanceService.getEmpName(req.params.input)
+    res.send(attendance)
+});
+
 module.exports = {
     createAttendance,
     getAll,
     updateAttendance,
-    getSalaryInfo,
+    getSalaryInfo,getempName,
 }
 
