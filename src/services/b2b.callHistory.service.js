@@ -16,7 +16,7 @@ const createcallHistoryWithType = async (body) => {
   if (callStatus == 'reschedule') {
     sort = 2;
   }
-  if (callStatus == 'Call back') {
+  if (callStatus == 'callback') {
     sort = 3;
   }
   if (callStatus == 'under_the_call') {
