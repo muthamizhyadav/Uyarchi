@@ -31,6 +31,7 @@ const updateDistrictById = async (districtId, updateBody) => {
   district = await District.findByIdAndUpdate({ _id: districtId }, updateBody, { new: true });
   return district;
 };
+
 const deleteDistrictById = async (districtId) => {
   const district = await getDistrictById(districtId);
   if (!district) {
@@ -39,6 +40,7 @@ const deleteDistrictById = async (districtId) => {
   (district.active = false), (district.archive = true), await district.save();
   return district;
 };
+
 module.exports = {
   createDistrict,
   getAllDistrict,

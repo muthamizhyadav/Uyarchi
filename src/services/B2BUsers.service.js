@@ -313,6 +313,7 @@ const getUsersDataById = async (id) => {
         stepTwo: 1,
         createdAt: 1,
         userrole: '$RoleData.roleName',
+        roleId: '$RoleData._id',
         metavalue: '$metadatas',
       },
     },
