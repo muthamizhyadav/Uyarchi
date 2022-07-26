@@ -19,7 +19,7 @@ const AttendanceSchema = mongoose.Schema({
 
   TotalAbsentDays: {
     type: Number,
-  },
+  },                                                                       
 
   ApprovedAbsentDays: {
     type: Number,
