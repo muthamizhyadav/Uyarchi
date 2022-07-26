@@ -61,6 +61,8 @@ const getAllUsers = async (page) => {
         email: 1,
         phoneNumber: 1,
         active: 1,
+        salary:1,
+        dateOfJoining:1,
         stepTwo: 1,
         createdAt: 1,
         userrole: '$RoleData.roleName',

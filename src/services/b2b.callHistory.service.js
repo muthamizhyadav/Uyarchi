@@ -22,6 +22,12 @@ const createcallHistoryWithType = async (body) => {
   if (callStatus == 'under_the_call') {
     sort = 4;
   }
+  if (callStatus == 'declined') {
+    sort = 5;
+  }
+  if (callStatus == 'accept') {
+    sort = 6;
+  }
   if (callStatus != 'accept') {
     await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, callingStatusSort: sort }, { new: true });
   }
