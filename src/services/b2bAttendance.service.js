@@ -31,61 +31,65 @@ const createAttendance = async (attendanceBody) => {
 };
 
 
-const getEmpName = async(input)=>{
-  console.log(input)
-  let inp =  input.replace(/[^0-9\.]+/g, '');
+const getEmpName = async()=>{}
 
-  let arr = []
-  let status = await attendanceModel.aggregate([
+
+// const getEmpName = async(input)=>{
+//   console.log(input)
+//   let inp =  input.replace(/[^0-9\.]+/g, '');
+
+//   let arr = []
+//   let status = await attendanceModel.aggregate([
    
-    {
-      $lookup:{
-        from:'attendancepayments',
-        localField:'b2bUser',
-        foreignField:'userId',
-        pipeline: [{ $match: { status: 'pending' } }],
-        as:'attendanceStatus'
-      },
-    },
-    { $unwind: '$attendanceStatus' }, 
-    {
-      $lookup: {
-        from:'b2busers',
-        localField:'attendanceStatus.userId',
-        foreignField:'_id',
-        as:'b2busersData'
-      }
-    },
-    {
-      $unwind: '$b2busersData'
-    },
-    {
-      $project:{
-        Status:'$attendanceStatus.status',
-        DateofJoining: '$b2busersData.dateOfJoining',
-        name: '$b2busersData.name',
-      }
-    },
+//     {
+//       $lookup:{
+//         from:'attendancepayments',
+//         localField:'b2bUser',
+//         foreignField:'userId',
+//         pipeline: [{ $match: { status: 'pending' } }],
+//         as:'attendanceStatus'
+//       },
+//     },
+//     { $unwind: '$attendanceStatus' }, 
+//     {
+//       $lookup: {
+//         from:'b2busers',
+//         localField:'attendanceStatus.userId',
+//         foreignField:'_id',
+//         // pipeline: [{ $match: { active: 'true' } }],
+//         as:'b2busersData'
+//       }
+//     },
+//     {
+//       $unwind: '$b2busersData'
+//     },
+//     {
+//       $project:{
+//         Status:'$attendanceStatus.status',
+//         DateofJoining: '$b2busersData.dateOfJoining',
+//         name: '$b2busersData.name',
+//       }
+//     },
 
-  ])
-//   console.log(inp)
-// console.log(status.length)
-//  let data = status[0].DateofJoining.replace(/[^0-9\.]+/g, '');
-//  console.log(String(data).slice(0, 6))
+//   ])
+// //   console.log(inp)
+// // console.log(status.length)
+// //  let data = status[0].DateofJoining.replace(/[^0-9\.]+/g, '');
+// //  console.log(String(data).slice(0, 6))
 
-for(let i = 0;i<status.length;i++){
-  let data = status[i].DateofJoining.replace (/[^0-9\.]+/g, '');
-  let data1 =  String(data).slice(0, 6);
-  console.log(data1)
-  if(data1 == inp){
+// for(let i = 0;i<status.length;i++){
+//   let data = status[i].DateofJoining.replace (/[^0-9\.]+/g, '');
+//   let data1 =  String(data).slice(0, 6);
+//   console.log(data1)
+//   if(data1 == inp){
 
-  arr.push(status[i])
-  }
-}
-console.log(arr);
-//  return {arr: arr , status: status}
-return arr;
-}
+//   arr.push(status[i])
+//   }
+// }
+// console.log(arr);
+// //  return {arr: arr , status: status}
+// return arr;
+// }
 
 const getAll = async (page) => {
   let values = await attendanceModel.aggregate([

@@ -153,6 +153,20 @@ const updateStatuscall = async (id, userId, updateBody) => {
   return status;
 };
 
+const updateOrderStatus = async(id)=>{
+  let orderedStatus = await callHistoryModel.findById(id);
+  console.log(orderedStatus)
+  if(!orderedStatus){
+    throw new ApiError(httpStatus.NOT_FOUND, 'OrderStatus not found');
+  }
+  orderedStatus = await callHistoryModel.findByIdAndUpdate(
+    { _id: id },
+    { status: 'ordered'},
+    { new: true }
+  )
+  console.log(orderedStatus);
+};
+
 const createShopByOwner = async (body) => {
   let values = await Shop.create(body);
   return values;
@@ -168,4 +182,5 @@ module.exports = {
   createShopByOwner,
   createcallHistoryWithType,
   callingStatusreport,
+  updateOrderStatus,
 };
