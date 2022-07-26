@@ -68,6 +68,9 @@ const callHistorySchema = mongoose.Schema({
   type:{
     type: String,
   },
+  // orderedStatus: {
+  //   type: String,
+  // },
 });
 
 const callHistory = mongoose.model('callHistory',callHistorySchema );
