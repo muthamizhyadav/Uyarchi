@@ -61,8 +61,8 @@ const getAllUsers = async (page) => {
         email: 1,
         phoneNumber: 1,
         active: 1,
-        salary:1,
-        dateOfJoining:1,
+        salary: 1,
+        dateOfJoining: 1,
         stepTwo: 1,
         createdAt: 1,
         userrole: '$RoleData.roleName',
@@ -268,6 +268,58 @@ const updateB2bUsers = async (id, updateBody) => {
   return User;
 };
 
+const getUsersDataById = async (id) => {
+  let values = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'userRole',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              roleName: 1,
+            },
+          },
+        ],
+        as: 'RoleData',
+      },
+    },
+    {
+      $unwind: '$RoleData',
+    },
+    {
+      $lookup: {
+        from: 'musers',
+        localField: '_id',
+        foreignField: 'user_id',
+        as: 'metadatas',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        email: 1,
+        phoneNumber: 1,
+        active: 1,
+        salary: 1,
+        dateOfJoining: 1,
+        stepTwo: 1,
+        createdAt: 1,
+        userrole: '$RoleData.roleName',
+        metavalue: '$metadatas',
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createUser,
   UsersLogin,
@@ -286,4 +338,5 @@ module.exports = {
   forgotPassword,
   otpVerfiy,
   updateB2bUsers,
+  getUsersDataById,
 };
