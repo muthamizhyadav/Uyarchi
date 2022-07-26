@@ -9,6 +9,12 @@ const createManageSalary = catchAsync(async (req, res) => {
   res.send(managesalary);
 });
 
+const getSalaryInfoById = catchAsync(async (req, res) => {
+  const salary = await ManageSalaryService.getSalaryInfoById(req.params.userid);
+  res.send(salary);
+});
+
 module.exports = {
   createManageSalary,
+  getSalaryInfoById,
 };

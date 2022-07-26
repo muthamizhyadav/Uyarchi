@@ -22,12 +22,6 @@ const createB2bUsers = catchAsync(async (req, res) => {
 const B2bUsersLogin = catchAsync(async (req, res) => {
   const users = await b2bUsersService.UsersLogin(req.body);
   const tokens = await tokenService.generateAuthTokens(users);
-  let options = {
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
-  };
-  console.log(options);
-  res.cookie('tokens', tokens.access.token, options).send({ users, tokens });
   res.send({ users, tokens });
 });
 
