@@ -3,5 +3,5 @@ const manageSalaryController = require('../../controllers/manage.salary.controll
 const router = express.Router();
 
 router.route('/').post(manageSalaryController.createManageSalary);
-
+router.route('/:userid').get(manageSalaryController.getSalaryInfoById);
 module.exports = router;
