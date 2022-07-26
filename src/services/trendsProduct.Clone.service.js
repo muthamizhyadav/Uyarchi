@@ -288,7 +288,7 @@ const getShopsByIdFromTrends = async (id) => {
   if (1100 < dt && 1500 > dt) {
     match = [{ date: { $eq: datenow } }, { shopid: { $eq: id } }, { time: { $gte: 1100 } }, { time: { $lte: 1500 } }];
   }
-  if (1500 < dt && 1800 > dt) {
+  if (1500 < dt && 2400 > dt) {
     match = [{ date: { $eq: datenow } }, { shopid: { $eq: id } }, { time: { $gte: 1500 } }, { time: { $lte: 1800 } }];
   }
   console.log(match);
