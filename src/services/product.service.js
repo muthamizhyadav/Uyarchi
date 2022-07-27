@@ -1337,6 +1337,53 @@ const rateSetSellingPrice = async (productId, date) => {
   return prod;
 };
 
+const productaggregateFilter = async (key) => {
+  console.log(key);
+  const product = await Product.aggregate([
+    {
+      $match: {
+        $and: [{ productTitle: { $regex: key, $options: 'i' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'catName',
+      },
+    },
+    {
+      $lookup: {
+        from: 'subcategories',
+        localField: 'SubCatId',
+        foreignField: '_id',
+        as: 'subcatName',
+      },
+    },
+    {
+      $lookup: {
+        from: 'brands',
+        localField: 'Brand',
+        foreignField: '_id',
+        as: 'brandName',
+      },
+    },
+    {
+      $lookup: {
+        from: 'hsns',
+        localField: 'HSN_Code',
+        foreignField: '_id',
+        as: 'hsnData',
+      },
+    },
+    // { $skip: 10 * 1 },
+    { $limit: 10 },
+  ]);
+
+  return product;
+};
+
 module.exports = {
   createProduct,
   getTrendsData,
@@ -1400,4 +1447,5 @@ module.exports = {
   AccountDetails,
   removeImage,
   rateSetSellingPrice,
+  productaggregateFilter,
 };

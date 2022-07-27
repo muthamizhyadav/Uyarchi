@@ -420,6 +420,11 @@ const rateSetSellingPrice = catchAsync(async (req, res) => {
   res.send(product);
 });
 
+const productaggregateFilter = catchAsync(async (req, res) => {
+  const product = await productService.productaggregateFilter(req.params.key);
+  res.send(product);
+});
+
 module.exports = {
   createProduct,
   getAllienceBySupplierId,
@@ -476,6 +481,7 @@ module.exports = {
   getShopList,
   productaggregateById,
   updatesStockById,
+  productaggregateFilter,
   gettrendsCount,
 
   // cost price calculation
