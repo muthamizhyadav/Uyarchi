@@ -33,7 +33,6 @@ const createcallHistoryWithType = async (body) => {
   console.log(sort);
   if (shopdata.callingStatus != 'accept') {
     await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, callingStatusSort: sort }, { new: true });
-    // await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatusSort: sort }, { new: true });
   }
   let callHistory = await callHistoryModel.create(body);
   return callHistory;
@@ -45,7 +44,7 @@ const getAll = async () => {
 
 const callingStatusreport = async () => {
   let acceptCount = await Shop.find({ callingStatus: 'accept' }).count();
-  let callbackCount = await Shop.find({ callingStatus: 'Call back' }).count();
+  let callbackCount = await Shop.find({ callingStatus: 'callback' }).count();
   let rescheduleCount = await Shop.find({ callingStatus: 'reschedule' }).count();
   let pendingCount = await Shop.find({ callingStatus: 'pending' }).count();
   let declinedCount = await Shop.find({ callingStatus: 'declined' }).count();
