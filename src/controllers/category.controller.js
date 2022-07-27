@@ -120,6 +120,16 @@ const deleteSubCategory = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const getAllSubCategoryFilter = catchAsync(async (req, res) => {
+  const subcategory = await categoryService.getAllSubCategoryFilter(req.params.key);
+  res.send(subcategory);
+});
+
+const categoryFilter = catchAsync(async (req, res) => {
+  const category = await categoryService.categoryFilter(req.params.key);
+  res.send(category);
+});
+
 module.exports = {
   createCategory,
   subcreateCategory,
@@ -135,4 +145,6 @@ module.exports = {
   subcategoryPagination,
   deleteCategory,
   getsubcategoryusemain,
+  getAllSubCategoryFilter,
+  categoryFilter,
 };
