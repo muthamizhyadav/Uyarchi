@@ -12,13 +12,14 @@ const createCallHistory = async (body) => {
 
 const createcallHistoryWithType = async (body) => {
   const { callStatus, shopId } = body;
+
   let sort;
   if (callStatus == 'reschedule') {
     sort = 2;
   }
   if (callStatus == 'callback') {
     sort = 3;
-  }      
+  }
   if (callStatus == 'under_the_call') {
     sort = 4;
   }
@@ -28,8 +29,11 @@ const createcallHistoryWithType = async (body) => {
   if (callStatus == 'accept') {
     sort = 6;
   }
-  if (callStatus != 'accept') {
+  let shopdata = await Shop.findOne({ _id: shopId });
+  console.log(sort);
+  if (shopdata.callingStatus != 'accept') {
     await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, callingStatusSort: sort }, { new: true });
+    // await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatusSort: sort }, { new: true });
   }
   let callHistory = await callHistoryModel.create(body);
   return callHistory;
@@ -153,17 +157,13 @@ const updateStatuscall = async (id, userId, updateBody) => {
   return status;
 };
 
-const updateOrderStatus = async(id)=>{
+const updateOrderStatus = async (id) => {
   let orderedStatus = await callHistoryModel.findById(id);
-  console.log(orderedStatus)
-  if(!orderedStatus){
+  console.log(orderedStatus);
+  if (!orderedStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'OrderStatus not found');
   }
-  orderedStatus = await callHistoryModel.findByIdAndUpdate(
-    { _id: id },
-    { status: 'ordered'},
-    { new: true }
-  )
+  orderedStatus = await callHistoryModel.findByIdAndUpdate({ _id: id }, { status: 'ordered' }, { new: true });
   console.log(orderedStatus);
 };
 
