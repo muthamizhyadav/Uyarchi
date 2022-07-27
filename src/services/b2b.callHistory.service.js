@@ -18,7 +18,7 @@ const createcallHistoryWithType = async (body) => {
   }
   if (callStatus == 'callback') {
     sort = 3;
-  }
+  }      
   if (callStatus == 'under_the_call') {
     sort = 4;
   }
