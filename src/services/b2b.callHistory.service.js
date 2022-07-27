@@ -4,7 +4,6 @@ const ApiError = require('../utils/ApiError');
 const { Shop } = require('../models/b2b.ShopClone.model');
 
 const createCallHistory = async (body) => {
-  console.log(body.callStatus);
   await Shop.findByIdAndUpdate({ _id: body.shopId }, { CallStatus: body.callStatus }, { new: true });
   let callHistory = await callHistoryModel.create(body);
   return callHistory;
@@ -12,7 +11,6 @@ const createCallHistory = async (body) => {
 
 const createcallHistoryWithType = async (body) => {
   const { callStatus, shopId } = body;
-
   let sort;
   if (callStatus == 'reschedule') {
     sort = 2;
@@ -31,8 +29,10 @@ const createcallHistoryWithType = async (body) => {
   }
   let shopdata = await Shop.findOne({ _id: shopId });
   console.log(sort);
-  if (shopdata.callingStatus != 'accept') {
-    await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, callingStatusSort: sort }, { new: true });
+  if (callStatus != 'accept') {
+    if (shopdata.callingStatus != 'accept') {
+      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, callingStatusSort: sort }, { new: true });
+    }
   }
   let callHistory = await callHistoryModel.create(body);
   return callHistory;
@@ -158,12 +158,10 @@ const updateStatuscall = async (id, userId, updateBody) => {
 
 const updateOrderStatus = async (id) => {
   let orderedStatus = await callHistoryModel.findById(id);
-  console.log(orderedStatus);
   if (!orderedStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'OrderStatus not found');
   }
   orderedStatus = await callHistoryModel.findByIdAndUpdate({ _id: id }, { status: 'ordered' }, { new: true });
-  console.log(orderedStatus);
 };
 
 const createShopByOwner = async (body) => {
