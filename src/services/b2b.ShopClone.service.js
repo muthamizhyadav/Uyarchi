@@ -201,11 +201,11 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         shoptype: '$shoptype.shopList',
         photoCapture: 1,
         SName: 1,
+        address:1,
         Slat: 1,
         Slong: 1,
         created: 1,
         SOwner: 1,
-
         mobile: 1,
         date: 1,
       },

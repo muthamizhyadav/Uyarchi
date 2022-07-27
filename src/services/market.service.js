@@ -160,6 +160,7 @@ const getMarketCloneWithAggregation = async (page) => {
         mlongitude: 1,
         mlatitude: 1,
         created: 1,
+        address: 1,
         pincode: 1,
         image: 1,
       },
