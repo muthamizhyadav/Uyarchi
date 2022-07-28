@@ -26,7 +26,7 @@ const createProduct = async (productBody) => {
   return Product.create(productBody);
 };
 const doplicte_check = async (req, res, next) => {
-  console.log(req.body.SubCatId);
+  const { body } = req;
   const product = await Product.findOne({
     SubCatId: req.body.SubCatId,
     category: req.body.category,

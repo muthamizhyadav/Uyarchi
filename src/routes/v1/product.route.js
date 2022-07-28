@@ -4,10 +4,14 @@ const upload = require('../../middlewares/upload');
 const stockImage = require('../../middlewares/stock');
 const bill = require('../../middlewares/bills');
 const router = express.Router();
-const productservice=require('../../services/product.service')
+const productservice = require('../../services/product.service');
 router
   .route('/create')
-  .post(productservice.doplicte_check,upload.fields([{ name: 'image' }, { name: 'galleryImages' }]), productController.createProduct)
+  .post(
+    upload.fields([{ name: 'image' }, { name: 'galleryImages' }]),
+    productservice.doplicte_check,
+    productController.createProduct
+  );
 router
   .route('/:productId')
   .get(productController.getproduct)
