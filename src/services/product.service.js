@@ -25,6 +25,19 @@ const createProduct = async (productBody) => {
   }
   return Product.create(productBody);
 };
+const doplicte_check = async (req, res, next) => {
+  console.log(req.body.SubCatId);
+  const product = await Product.findOne({
+    SubCatId: req.body.SubCatId,
+    category: req.body.category,
+    productTitle: req.body.productTitle,
+  });
+  console.log(product);
+  if (product) {
+    return res.send(httpStatus.CONFLICT, 'Exist');
+  }
+  return next();
+};
 
 const updateStockById = async (id, updateBody) => {
   let stock = await Stock.findById(id);
@@ -1448,4 +1461,5 @@ module.exports = {
   removeImage,
   rateSetSellingPrice,
   productaggregateFilter,
+  doplicte_check,
 };

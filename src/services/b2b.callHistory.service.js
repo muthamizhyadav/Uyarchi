@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const callHistoryModel = require('../models/b2b.callHistory.model');
 const ApiError = require('../utils/ApiError');
 const { Shop } = require('../models/b2b.ShopClone.model');
-
+const { Users } = require('../models/B2Busers.model');
 const createCallHistory = async (body) => {
   await Shop.findByIdAndUpdate({ _id: body.shopId }, { CallStatus: body.callStatus }, { new: true });
   let callHistory = await callHistoryModel.create(body);
@@ -57,9 +57,10 @@ const callingStatusreport = async () => {
   };
 };
 
-const getById = async (id) => {
+const getById = async (id, userId) => {
   // let history = await callHistoryModel.find({shopId:id})
   // return history;
+  let userdata = await Users.findOne({ _id: userId });
   let historys = await Shop.aggregate([
     {
       $match: {
@@ -102,7 +103,7 @@ const getById = async (id) => {
       },
     },
   ]);
-  return historys;
+  return { historys: historys, users: userdata };
 };
 
 const getShop = async (page) => {

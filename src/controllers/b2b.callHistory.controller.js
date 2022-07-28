@@ -23,7 +23,8 @@ const getShop = catchAsync(async (req, res) => {
 });
 
 const getById = catchAsync(async (req, res) => {
-  const callCount = await callHistoryService.getById(req.params.id);
+  let userId = req.userId;
+  const callCount = await callHistoryService.getById(req.params.id, userId);
   res.send(callCount);
 });
 
@@ -43,7 +44,6 @@ const updateStatuscall = catchAsync(async (req, res) => {
   const callstatus = await callHistoryService.updateStatuscall(req.params.id, req.body);
   res.send(callstatus);
 });
-
 
 const updateOrderedStatus = catchAsync(async (req, res) => {
   const orderstatus = await callHistoryService.updateOrderStatus(req.params.id);
@@ -71,5 +71,5 @@ module.exports = {
   createShopByOwner,
   createcallHistoryWithTypes,
   callingStatusreport,
-  updateOrderedStatus
+  updateOrderedStatus,
 };
