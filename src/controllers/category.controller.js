@@ -3,6 +3,7 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { categoryService } = require('../services');
+const { Category, Subcategory } = require('../models/category.model');
 
 const createCategory = catchAsync(async (req, res) => {
   const { body } = req;
@@ -18,6 +19,32 @@ const createCategory = catchAsync(async (req, res) => {
   await category.save();
   res.status(httpStatus.CREATED).send(category);
 });
+
+const categoryduplicte_check = async (req, res, next) => {
+  const { body } = req;
+  const product = await Category.findOne({
+    categoryName: req.body.categoryName,
+  });
+  console.log(product);
+  if (product) {
+    return res.send(httpStatus.UNAUTHORIZED, 'Exist');
+  }
+  return next();
+};
+
+const subcategoryduplicte_check = async (req, res, next) => {
+  const { body } = req;
+  const product = await Subcategory.findOne({
+    parentCategoryId: req.body.parentCategoryId,
+    subcategoryName: req.body.subcategoryName,
+
+  });
+  console.log(product);
+  if (product) {
+    return res.send(httpStatus.UNAUTHORIZED, 'Exist');
+  }
+  return next();
+};
 
 const categoryPagination = catchAsync(async (req, res) => {
   const category = await categoryService.categoryPagination(req.params.page);
@@ -147,4 +174,6 @@ module.exports = {
   getsubcategoryusemain,
   getAllSubCategoryFilter,
   categoryFilter,
+  subcategoryduplicte_check,
+  categoryduplicte_check
 };
