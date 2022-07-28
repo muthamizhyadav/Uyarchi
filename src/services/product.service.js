@@ -30,9 +30,10 @@ const doplicte_check = async (req, res, next) => {
   const product = await Product.findOne({
     SubCatId: req.body.SubCatId,
     category: req.body.category,
+    // $text:{$search:req.body.productTitle, $caseSensitive:false}
     productTitle: req.body.productTitle,
-  });
-  console.log(product);
+  }).collation( { locale: 'en', strength: 2 } )
+  console.log(product)
   if (product) {
     return res.send(httpStatus.UNAUTHORIZED, 'Exist');
   }
@@ -1397,7 +1398,7 @@ const productaggregateFilter = async (key) => {
   return product;
 };
 
-const incommingStockQty = async (page) => {
+const incommingStockQty = async (date, page) => {
   let values = await Product.aggregate([
     {
       $lookup: {
@@ -1409,14 +1410,41 @@ const incommingStockQty = async (page) => {
           {
             $group: {
               _id: null,
-              TtalQty: { $sum: '$incomingQuantity' },
+              TotalQty: { $sum: '$incomingQuantity' },
+              Totalwastage: { $sum: '$incomingWastage' },
             },
           },
         ],
         as: 'receivedstocks',
       },
     },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
+  let total = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          // { $match: { date: date } },
+          {
+            $group: {
+              _id: null,
+              TotalQty: { $sum: '$incomingQuantity' },
+              Totalwastage: { $sum: '$incomingWastage' },
+            },
+          },
+        ],
+        as: 'receivedstocks',
+      },
+    },
+    {
+      $unwind: '$receivedstocks',
+    },
+  ]);
+  return { values: values, total: total.length };
 };
 
 module.exports = {

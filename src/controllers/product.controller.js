@@ -425,6 +425,11 @@ const productaggregateFilter = catchAsync(async (req, res) => {
   res.send(product);
 });
 
+const incommingStockQty = catchAsync(async (req, res) => {
+  const product = await productService.incommingStockQty(req.params.date, req.params.page);
+  res.send(product);
+});
+
 module.exports = {
   createProduct,
   getAllienceBySupplierId,
@@ -489,4 +494,5 @@ module.exports = {
   AccountDetails,
   removeImage,
   rateSetSellingPrice,
+  incommingStockQty,
 };
