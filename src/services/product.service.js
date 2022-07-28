@@ -10,7 +10,6 @@ const moment = require('moment');
 const { isDate } = require('moment');
 let datenow = moment(new Date()).format('DD-MM-YYYY');
 const ReceivedProduct = require('../models/receivedProduct.model');
-const { response } = require('express');
 const createProduct = async (productBody) => {
   let { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime, maxBidAomunt, minBidAmount } =
     productBody;
@@ -35,12 +34,9 @@ const doplicte_check = async (req, res, next) => {
   });
   console.log(product);
   if (product) {
-    res.status(409).send('Exist')
-    // throw new ApiError(httpStatus.CONFLICT, 'Already Exist');
-    // return exit()
-  } else {
-    return next();
+    return res.send(httpStatus.UNAUTHORIZED, 'Exist');
   }
+  return next();
 };
 
 const updateStockById = async (id, updateBody) => {
