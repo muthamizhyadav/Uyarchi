@@ -24,8 +24,7 @@ const getShop = catchAsync(async (req, res) => {
 });
 
 const getById = catchAsync(async (req, res) => {
-  let userId = req.userId;
-  const callCount = await callHistoryService.getById(req.params.id, userId);
+  const callCount = await callHistoryService.getById(req.params.id);
   res.send(callCount);
 });
 

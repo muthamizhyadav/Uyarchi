@@ -58,10 +58,8 @@ const callingStatusreport = async () => {
   };
 };
 
-const getById = async (id, userId) => {
-  // let history = await callHistoryModel.find({shopId:id})
-  // return history;
-  let userdata = await Users.findOne({ _id: userId });
+const getById = async (id) => {
+  console.log('params Id', id);
   let historys = await Shop.aggregate([
     {
       $match: {
@@ -73,12 +71,20 @@ const getById = async (id, userId) => {
         from: 'callhistories', //add table
         localField: '_id', //callhistory
         foreignField: 'shopId', //shopclone
-        as: 'shopName',
+        as: 'callhistory',
       },
     },
-    // {
-    //   $unwind: '$shopName',
-    // },
+    {
+      $lookup: {
+        from: 'b2busers', //add table
+        localField: 'callingUserId', //callhistory
+        foreignField: '_id', //shopclone
+        as: 'usersData',
+      },
+    },
+    {
+      $unwind: '$usersData',
+    },
     {
       $lookup: {
         from: 'shoplists',
@@ -96,15 +102,17 @@ const getById = async (id, userId) => {
         SOwner: 1,
         mobile: 1,
         Slat: 1,
+        address:1,
+        userName:'$usersData.name',
         Slong: 1,
         date: 1,
         time: 1,
         shopName: '$shopType.shopList',
-        shopHistory: '$shopName',
+        callhistory: '$callhistory',
       },
     },
   ]);
-  return { historys: historys, users: userdata };
+  return historys;
 };
 
 const getShop = async (page) => {
