@@ -12,7 +12,7 @@ router
     upload.fields([{ name: 'image' }, { name: 'galleryImages' }]),
     productController.createProduct
   )
-  .get(productController.getProducts);
+  // .get(productController.getProducts);
 router
   .route('/:productId')
   .get(productController.getproduct)
