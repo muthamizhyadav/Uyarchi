@@ -9,7 +9,7 @@ const createCallHistory = async (body) => {
   return callHistory;
 };
 
-const createcallHistoryWithType = async (body) => {
+const createcallHistoryWithType = async (body, userId) => {
   const { callStatus, shopId } = body;
   let sort;
   if (callStatus == 'reschedule') {
@@ -27,6 +27,7 @@ const createcallHistoryWithType = async (body) => {
   if (callStatus == 'accept') {
     sort = 6;
   }
+  let values = { ...body, ...{ userId: userId } };
   let shopdata = await Shop.findOne({ _id: shopId });
   console.log(sort);
   if (callStatus != 'accept') {
@@ -34,7 +35,7 @@ const createcallHistoryWithType = async (body) => {
       await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, callingStatusSort: sort }, { new: true });
     }
   }
-  let callHistory = await callHistoryModel.create(body);
+  let callHistory = await callHistoryModel.create(values);
   return callHistory;
 };
 

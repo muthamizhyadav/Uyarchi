@@ -8,7 +8,8 @@ const createCallHistory = catchAsync(async (req, res) => {
 });
 
 const createcallHistoryWithTypes = catchAsync(async (req, res) => {
-  const history = await callHistoryService.createcallHistoryWithType(req.body);
+  let userId = req.userId;
+  const history = await callHistoryService.createcallHistoryWithType(req.body, userId);
   res.send(history);
 });
 
