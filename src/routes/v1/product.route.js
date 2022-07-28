@@ -12,6 +12,7 @@ router
     productservice.doplicte_check,
     productController.createProduct
   );
+router.route('/').get(productController.getProducts);
 router
   .route('/:productId')
   .get(productController.getproduct)

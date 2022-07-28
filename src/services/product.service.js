@@ -1397,6 +1397,28 @@ const productaggregateFilter = async (key) => {
   return product;
 };
 
+const incommingStockQty = async (page) => {
+  let values = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          { $match: { date: date } },
+          {
+            $group: {
+              _id: null,
+              TtalQty: { $sum: '$incomingQuantity' },
+            },
+          },
+        ],
+        as: 'receivedstocks',
+      },
+    },
+  ]);
+};
+
 module.exports = {
   createProduct,
   getTrendsData,
@@ -1462,4 +1484,5 @@ module.exports = {
   rateSetSellingPrice,
   productaggregateFilter,
   doplicte_check,
+  incommingStockQty,
 };
