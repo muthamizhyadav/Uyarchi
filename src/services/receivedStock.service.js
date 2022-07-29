@@ -3,7 +3,7 @@ const { ReceivedOrders } = require('../models');
 const ApiError = require('../utils/ApiError');
 const ReceivedProduct = require('../models/receivedProduct.model');
 const ReceivedStock = require('../models/receivedStock.model');
-
+const { Product } = require('../models/product.model');
 const getDataById = async (id) => {
   let values = await ReceivedStock.aggregate([
     {
@@ -132,7 +132,8 @@ const getDetailsByProductId = async (productId, date, page) => {
       },
     },
   ]);
-  return values;
+  let product = await Product.findById(productId);
+  return { values: values, product: product.productTitle, date: date };
 };
 
 module.exports = { getDataById, updateReceivedStockById, getDataByLoading, getDetailsByProductId };
