@@ -42,8 +42,24 @@ const receivedStockSchema = new mongoose.Schema({
   incomingQuantity: {
     type: Number,
   },
+  FQ1: {
+    type: Number,
+  },
+  FQ2: {
+    type: Number,
+  },
+  FQ3: {
+    type: Number,
+  },
+  seg_wastage: {
+    type: Number,
+  },
   incomingWastage: {
     type: Number,
+  },
+  segStatus: {
+    type: String,
+    default: 'Pending',
   },
   billingQuantity: {
     type: Number,
