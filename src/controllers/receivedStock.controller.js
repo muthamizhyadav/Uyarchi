@@ -19,4 +19,9 @@ const getDataByLoading = catchAsync(async (req, res) => {
   res.send(receivedStock);
 });
 
-module.exports = { getDataById, updateReceivedStockById, getDataByLoading };
+const getDetailsByProductId = catchAsync(async (req, res) => {
+  const receivedStock = await ReceivedStockService.getDetailsByProductId(req.params.productId, req.params.date);
+  res.send(receivedStock);
+});
+
+module.exports = { getDataById, updateReceivedStockById, getDataByLoading, getDetailsByProductId };

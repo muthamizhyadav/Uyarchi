@@ -92,4 +92,47 @@ const updateReceivedStockById = async (id, updateBody) => {
   return receivedStock;
 };
 
-module.exports = { getDataById, updateReceivedStockById, getDataByLoading };
+const getDetailsByProductId = async (productId, date, page) => {
+  const values = await ReceivedStock.aggregate([
+    {
+      $match: {
+        $and: [{ productId: { $eq: productId } }, { date: { $eq: date } }, { status: { $eq: 'Loaded' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'supplierData',
+      },
+    },
+    {
+      $unwind: '$supplierData',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productId',
+        foreignField: '_id',
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: '$productData',
+    },
+    {
+      $project: {
+        incomingQuantity: 1,
+        incomingWastage: 1,
+        supplierId: 1,
+        supplierName: '$supplierData.primaryContactName',
+        supplierNumber: '$supplierData.primaryContactNumber',
+        productName: '$productData.productTitle',
+      },
+    },
+  ]);
+  return values;
+};
+
+module.exports = { getDataById, updateReceivedStockById, getDataByLoading, getDetailsByProductId };
