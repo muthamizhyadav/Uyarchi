@@ -1418,6 +1418,18 @@ const incommingStockQty = async (date, page) => {
         as: 'receivedstocks',
       },
     },
+    {
+      $unwind: '$receivedstocks',
+    },
+    {
+      $project: {
+        _id: 1,
+        productTitle: 1,
+        date: date,
+        receivedstocks: '$receivedstocks.TotalQty',
+        Totalwastage: '$receivedstocks.Totalwastage',
+      },
+    },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -1428,7 +1440,7 @@ const incommingStockQty = async (date, page) => {
         localField: '_id',
         foreignField: 'productId',
         pipeline: [
-          // { $match: { date: date } },
+          { $match: { date: date, status: 'Loaded' } },
           {
             $group: {
               _id: null,
