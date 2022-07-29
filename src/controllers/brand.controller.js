@@ -63,7 +63,6 @@ const updateShop = catchAsync(async (req, res) => {
   await brands.save();
 });
 
-
 const doplicte_check = async (req, res, next) => {
   const { body } = req;
   const product = await brandModel
@@ -81,6 +80,11 @@ const doplicte_check = async (req, res, next) => {
   return next();
 };
 
+const getAllBrandFilter = catchAsync(async (req, res) => {
+  const brands = await brand.getAllBrandFilter(req.params.key);
+  res.send(brands);
+});
+
 module.exports = {
   createbrand,
   getbrand,
@@ -89,4 +93,5 @@ module.exports = {
   updateShop,
   brandPagination,
   doplicte_check,
+  getAllBrandFilter
 };

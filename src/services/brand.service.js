@@ -4,7 +4,52 @@ const createbrand = async (brandBody) => {
   return brand.create(brandBody);
 };
 
-
+const getAllBrandFilter = async (key) => {
+  console.log(key);
+  return brand.aggregate([
+    {
+      $match: {
+        $and: [{ brandname: { $regex: key, $options: 'i' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'categorydata',
+      },
+    },
+    {
+      $unwind: '$categorydata',
+    },
+    {
+      $lookup: {
+        from: 'subcategories',
+        localField: 'subcategory',
+        foreignField: '_id',
+        as: 'subcategorydata',
+      },
+    },
+    {
+      $unwind: '$subcategorydata',
+    },
+    {
+      $project: {
+        _id: 1,
+        brandname: 1,
+        subcategory: '$subcategorydata.subcategoryName',
+        category: '$categorydata.categoryName',
+        image: 1,
+      },
+    },
+    // {
+    //   $sort: { _id: 1 },
+    // },
+    // { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+};
 
 const brandPagination = async (page) => {
   const brands = await brand.aggregate([
@@ -151,4 +196,5 @@ module.exports = {
   brandPagination,
   getcategorySubCategories,
   updateBrandById,
+  getAllBrandFilter,
 };

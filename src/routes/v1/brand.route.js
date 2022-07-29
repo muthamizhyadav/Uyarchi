@@ -6,5 +6,5 @@ router.route('/').post(brandimage.array('image'), brand.doplicte_check, brand.cr
 router.route('/:brandId').put(brandimage.array('image'), brand.updateShop).get(brand.getBrandServicebyId);
 router.route('/:categoryId/:subcategoryId').get(brand.getcategorySubCategories);
 router.route('/brands/pagination/:page').get(brand.brandPagination);
-
+router.route('/filter/Brand/:key').get(brand.getAllBrandFilter);
 module.exports = router;
