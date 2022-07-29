@@ -1406,7 +1406,12 @@ const incommingStockQty = async (date, page) => {
         localField: '_id',
         foreignField: 'productId',
         pipeline: [
-          { $match: { date: date, status: 'Loaded' } },
+          // { $match: { date: date, status: 'Loaded' } },
+          {
+            $match: {
+              $and: [{ date: { $eq: date } }, { status: { $in: ['Loaded', 'Billed'] } }],
+            },
+          },
           {
             $group: {
               _id: null,
@@ -1440,7 +1445,12 @@ const incommingStockQty = async (date, page) => {
         localField: '_id',
         foreignField: 'productId',
         pipeline: [
-          { $match: { date: date, status: { $in: ['Loaded', 'Billed'] } } },
+          // { $match: { date: date, status: { $in: ['Loaded', 'Billed'] } } },
+          {
+            $match: {
+              $and: [{ date: { $eq: date } }, { status: { $in: ['Loaded', 'Billed'] } }],
+            },
+          },
           {
             $group: {
               _id: null,
