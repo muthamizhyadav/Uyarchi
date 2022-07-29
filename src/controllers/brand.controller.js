@@ -2,6 +2,7 @@ const brand = require('../services/brand.service');
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
+const brandModel = require('../models/brand.model');
 
 const createbrand = catchAsync(async (req, res) => {
   const { body } = req;
@@ -65,10 +66,10 @@ const updateShop = catchAsync(async (req, res) => {
 
 const doplicte_check = async (req, res, next) => {
   const { body } = req;
-  const product = await brand
+  const product = await brandModel
     .findOne({
-      // SubCatId: req.body.SubCatId,
-      // category: req.body.category,
+      subcategory: req.body.subcategory,
+      category: req.body.category,
       // $text:{$search:req.body.productTitle, $caseSensitive:false}
       brandname: req.body.brandname,
     })
