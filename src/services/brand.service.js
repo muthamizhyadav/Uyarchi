@@ -5,7 +5,6 @@ const createbrand = async (brandBody) => {
 };
 
 const getAllBrandFilter = async (key) => {
-  console.log(key);
   return brand.aggregate([
     {
       $match: {
@@ -43,10 +42,6 @@ const getAllBrandFilter = async (key) => {
         image: 1,
       },
     },
-    // {
-    //   $sort: { _id: 1 },
-    // },
-    // { $skip: 10 * page },
     { $limit: 10 },
   ]);
 };

@@ -32,8 +32,8 @@ const doplicte_check = async (req, res, next) => {
     category: req.body.category,
     // $text:{$search:req.body.productTitle, $caseSensitive:false}
     productTitle: req.body.productTitle,
-  }).collation( { locale: 'en', strength: 2 } )
-  console.log(product)
+  }).collation({ locale: 'en', strength: 2 });
+  console.log(product);
   if (product) {
     return res.send(httpStatus.UNAUTHORIZED, 'Exist');
   }
@@ -1406,7 +1406,7 @@ const incommingStockQty = async (date, page) => {
         localField: '_id',
         foreignField: 'productId',
         pipeline: [
-          { $match: { date: date } },
+          { $match: { date: date, status: 'Loaded' } },
           {
             $group: {
               _id: null,
