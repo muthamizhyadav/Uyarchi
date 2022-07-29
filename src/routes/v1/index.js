@@ -75,10 +75,16 @@ const attendancePayment = require('./b2b.atttendancePayment.route');
 // const salesApp = require('./b2b.sales.route');
 const estimateOrderRoute = require('./estimatedOrders.route');
 const manageSalary = require('./manage.salary.route');
+const usableStock = require('./usableStock.route');
+
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/usableStock',
+    route: usableStock,
   },
   {
     path: '/supplierBills',
@@ -352,7 +358,7 @@ const defaultRoutes = [
     route: AnnualExpenseRecuring,
   },
   {
-    path:'/attendancePayment',
+    path: '/attendancePayment',
     route: attendancePayment,
   },
   // {
