@@ -62,6 +62,24 @@ const updateShop = catchAsync(async (req, res) => {
   await brands.save();
 });
 
+
+const doplicte_check = async (req, res, next) => {
+  const { body } = req;
+  const product = await brand
+    .findOne({
+      // SubCatId: req.body.SubCatId,
+      // category: req.body.category,
+      // $text:{$search:req.body.productTitle, $caseSensitive:false}
+      brandname: req.body.brandname,
+    })
+    .collation({ locale: 'en', strength: 2 });
+  console.log(product);
+  if (product) {
+    return res.send(httpStatus.UNAUTHORIZED, 'Exist');
+  }
+  return next();
+};
+
 module.exports = {
   createbrand,
   getbrand,
@@ -69,4 +87,5 @@ module.exports = {
   getBrandServicebyId,
   updateShop,
   brandPagination,
+  doplicte_check,
 };

@@ -24,7 +24,7 @@ const categoryduplicte_check = async (req, res, next) => {
   const { body } = req;
   const product = await Category.findOne({
     categoryName: req.body.categoryName,
-  });
+  }).collation({ locale: 'en', strength: 2 });
   console.log(product);
   if (product) {
     return res.send(httpStatus.UNAUTHORIZED, 'Exist');
@@ -37,8 +37,7 @@ const subcategoryduplicte_check = async (req, res, next) => {
   const product = await Subcategory.findOne({
     parentCategoryId: req.body.parentCategoryId,
     subcategoryName: req.body.subcategoryName,
-
-  });
+  }).collation({ locale: 'en', strength: 2 });
   console.log(product);
   if (product) {
     return res.send(httpStatus.UNAUTHORIZED, 'Exist');
@@ -175,5 +174,5 @@ module.exports = {
   getAllSubCategoryFilter,
   categoryFilter,
   subcategoryduplicte_check,
-  categoryduplicte_check
+  categoryduplicte_check,
 };
