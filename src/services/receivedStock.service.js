@@ -91,6 +91,14 @@ const updateReceivedStockById = async (id, updateBody) => {
   receivedStock = await ReceivedStock.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return receivedStock;
 };
+const updatesegrecation = async (id, updateBody) => {
+  let receivedStock = await ReceivedStock.findById(id);
+  if (!receivedStock) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  receivedStock = await ReceivedStock.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return receivedStock;
+};
 
 const getDetailsByProductId = async (productId, date, page) => {
   const values = await ReceivedStock.aggregate([
@@ -141,4 +149,4 @@ const getDetailsByProductId = async (productId, date, page) => {
   return { values: values, product: product.productTitle, date: date };
 };
 
-module.exports = { getDataById, updateReceivedStockById, getDataByLoading, getDetailsByProductId };
+module.exports = { getDataById, updateReceivedStockById, getDataByLoading, getDetailsByProductId, updatesegrecation };
