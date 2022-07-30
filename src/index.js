@@ -2,10 +2,15 @@ const mongoose = require('mongoose');
 const app = require('./app');
 const config = require('./config/config');
 const logger = require('./config/logger');
+
 let server;
 const express = require('express');
 const init = express();
+var timestamp = new Date((dt = new Date()).getTime() - dt.getTimezoneOffset() * 60000)
+  .toISOString()
+  .replace(/(.*)T(.*)\..*/, '$1 $2');
 mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
+  console.log(timestamp);
   logger.info('Connected to MongoDB');
   server = app.listen(config.port, () => {
     logger.info(`Listening to port ${config.port}`);
