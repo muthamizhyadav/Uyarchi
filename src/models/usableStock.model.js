@@ -74,15 +74,15 @@ const usableStockhistory = new mongoose.Schema({
   },
   date: {
     type: String,
-    default: moment().utcOffset(330).format('DD-MM-yyy'),
+    default: moment().format('DD-MM-yyy'),
   },
   time: {
     type: String,
-    default: moment().utcOffset(330).format('h:mm a'),
+    default: moment().format('h:mm a'),
   },
   timeFilter: {
     type: String,
-    default: moment().utcOffset(330).format('Hmm'),
+    default: moment().format('Hmm'),
   },
   usableStock:{
     type:String

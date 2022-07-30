@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const moment = require('moment');
+const nDate = new Date().toLocaleString('en-US', {
+  timeZone: 'Asia/Calcutta',
+});
 
 const callHistorySchema = mongoose.Schema({
   _id: {
@@ -38,11 +41,11 @@ const callHistorySchema = mongoose.Schema({
   },
   date: {
     type: String,
-    default: moment().utcOffset(330).format('DD-MM-yyy'),
+    default: moment().format('DD-MM-yyy'),
   },
   time: {
     type: String,
-    default: moment().utcOffset(330).format('h:mm a'),
+    default: moment().format('h:mm a'),
   },
   status: {
     type: String,
