@@ -62,6 +62,17 @@ const getAssignStockbyId = async (id) => {
       },
     },
     {
+      $lookup: {
+        from: 'products',
+        localField: 'productId',
+        foreignField: '_id',
+        as: 'productsdata',
+      },
+    },
+    {
+      $unwind: '$productsdata'
+    },
+    {
       $project: {
         _id: 1,
         b2cassignTotal: { $sum: '$b2cAssign.Total' },
@@ -76,7 +87,8 @@ const getAssignStockbyId = async (id) => {
         FQ3:1,
         totalStock: 1,
         wastage: 1,
-        assignHistory:"$assignHistory"
+        ProductName:"$productsdata.productTitle"
+        assignHistory:"$assignHistory",
       },
     },
   ]);
