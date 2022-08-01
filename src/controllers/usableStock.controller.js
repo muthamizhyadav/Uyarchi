@@ -23,10 +23,14 @@ const updateUsableStockbyId = catchAsync(async (req, res) => {
   const usable = await usableStockService.updateUsableStockbyId(req.params.id, req.body);
   res.send(usable);
 });
-
+const getAssignStockbyId = catchAsync(async (req, res) => {
+  const usable = await usableStockService.getAssignStockbyId(req.params.id);
+  res.send(usable);
+});
 module.exports = {
   createUsableStock,
   getAllUsableStock,
   getUsableStockById,
   updateUsableStockbyId,
+  getAssignStockbyId,
 };
