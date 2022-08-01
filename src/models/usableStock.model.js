@@ -86,7 +86,7 @@ const usableStockhistory = new mongoose.Schema({
   },
   time: {
     type: String,
-    default: moment().format('Hmm'),
+    default: moment().format('h:mm a'),
   },
   timeFilter: {
     type: String,

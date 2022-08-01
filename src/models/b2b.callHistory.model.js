@@ -45,7 +45,7 @@ const callHistorySchema = mongoose.Schema({
   },
   time: {
     type: String,
-    default: moment().format('h:mm a'),
+    default: moment().format('Hmm'),
   },
   status: {
     type: String,
