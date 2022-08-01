@@ -1499,6 +1499,7 @@ const AssignStockGetall = async (date, page) => {
         b2bStock: '$usablestocks.b2bStock',
         b2cStock: '$usablestocks.b2cStock',
         usablestocks: '$usablestocks',
+        usablestocksID: '$usablestocks._id',
       },
     },
     { $skip: 10 * page },
