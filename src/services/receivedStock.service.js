@@ -96,12 +96,13 @@ const updateReceivedStockById = async (id, updateBody) => {
   return receivedStock;
 };
 const updatesegrecation = async (id, updateBody) => {
+  console.log(':sdxdcfvxsdcfxsdf', id);
   let receivedStock = await ReceivedStock.findById(id);
   if (!receivedStock) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
   }
   receivedStock = await ReceivedStock.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-  const date = receivedStock.data;
+  const date = receivedStock.date;
   let usable = await usableStock.findOne({ productId: receivedStock.productId, data: date });
   if (!usable) {
     usable = await usableStock.create({
@@ -136,6 +137,7 @@ const updatesegrecation = async (id, updateBody) => {
 };
 
 const getDetailsByProductId = async (productId, date, page) => {
+  console.log("zsdad")
   const values = await ReceivedStock.aggregate([
     {
       $match: {
