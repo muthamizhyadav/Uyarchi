@@ -113,13 +113,13 @@ const updatesegrecation = async (id, updateBody) => {
   let FQ1 = updateBody.FQ1 != null ? updateBody.FQ1 : 0;
   let FQ2 = updateBody.FQ2 != null ? updateBody.FQ2 : 0;
   let FQ3 = updateBody.FQ3 != null ? updateBody.FQ3 : 0;
-  let wastage = updateBody.wastage != null ? updateBody.wastage : 0;
+  let wastage = updateBody.seg_wastage != null ? updateBody.seg_wastage : 0;
   let useFQ1 = usable.FQ1 != null ? usable.FQ1 + FQ1 : FQ1;
   let useFQ2 = usable.FQ2 != null ? usable.FQ2 + FQ2 : FQ2;
   let useFQ3 = usable.FQ3 != null ? usable.FQ3 + FQ3 : FQ3;
   let totalStock = usable.totalStock != null ? usable.totalStock : 0;
   let usetotal = FQ1 + FQ2 + FQ3 + totalStock;
-  let usewastage = usable.wastage != null ? usable.wastage + wastage : wastage;
+  let usewastage = usable.seg_wastage != null ? usable.seg_wastage + wastage : wastage;
   await Stockhistory.create({
     usableStock: usable._id,
     FQ1: FQ1,
@@ -129,7 +129,7 @@ const updatesegrecation = async (id, updateBody) => {
   });
   await usableStock.findByIdAndUpdate(
     { _id: usable._id },
-    { FQ1: useFQ1, FQ2: useFQ2, FQ3: useFQ3, wastage: usewastage, totalStock: usewastage },
+    { FQ1: useFQ1, FQ2: useFQ2, FQ3: useFQ3, wastage: usewastage, totalStock: usetotal },
     { new: true }
   );
   return usable;
