@@ -1479,7 +1479,7 @@ const AssignStockGetall = async (date, page) => {
         pipeline: [
           {
             $match: {
-              $and: [{ date: { $eq: date } }],
+              $and: [{ date: { $eq: date } },{ totalStock: { $gte: 0 } }],
             },
           },
         ],
