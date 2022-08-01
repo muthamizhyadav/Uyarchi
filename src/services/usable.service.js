@@ -87,7 +87,7 @@ const getAssignStockbyId = async (id) => {
         FQ3:1,
         totalStock: 1,
         wastage: 1,
-        ProductName:"$productsdata.productTitle"
+        ProductName:"$productsdata.productTitle",
         assignHistory:"$assignHistory",
       },
     },
