@@ -76,7 +76,7 @@ const attendancePayment = require('./b2b.atttendancePayment.route');
 const estimateOrderRoute = require('./estimatedOrders.route');
 const manageSalary = require('./manage.salary.route');
 const usableStock = require('./usableStock.route');
-
+const AssignStock = require('./AssignStock.route');
 const defaultRoutes = [
   {
     path: '/auth',
@@ -360,6 +360,10 @@ const defaultRoutes = [
   {
     path: '/attendancePayment',
     route: attendancePayment,
+  },
+  {
+    path: '/AssignStock',
+    route: AssignStock,
   },
   // {
   //   path: '/sales',

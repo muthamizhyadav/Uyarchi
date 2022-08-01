@@ -97,4 +97,6 @@ router.route('/product/existCheck/filter/:key').get(productController.productagg
 // stock segregation flow
 
 router.route('/stock/segregation/:date/:page').get(productController.incommingStockQty);
+router.route('/stock/Assgin/:date/:page').get(productController.AssignStockGetall);
+
 module.exports = router;

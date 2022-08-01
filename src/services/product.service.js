@@ -1469,6 +1469,60 @@ const incommingStockQty = async (date, page) => {
   return { values: values, total: total.length };
 };
 
+const AssignStockGetall = async (date, page) => {
+  let values = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'usablestocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ date: { $eq: date } }],
+            },
+          },
+        ],
+        as: 'usablestocks',
+      },
+    },
+    {
+      $unwind: '$usablestocks',
+    },
+    {
+      $project: {
+        _id: 1,
+        productTitle: 1,
+        date: date,
+        usablestocks: '$usablestocks',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'usablestocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ date: { $eq: date } }],
+            },
+          },
+        ],
+        as: 'usablestocks',
+      },
+    },
+    {
+      $unwind: '$usablestocks',
+    },
+  ]);
+  return { values: values, total: total.length };
+};
+
 module.exports = {
   createProduct,
   getTrendsData,
@@ -1535,4 +1589,5 @@ module.exports = {
   productaggregateFilter,
   doplicte_check,
   incommingStockQty,
+  AssignStockGetall,
 };

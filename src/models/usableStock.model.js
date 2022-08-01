@@ -47,6 +47,14 @@ const usableStockSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  b2bStock: {
+    type: Number,
+    default: 0,
+  },
+  b2cStock: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const usableStock = mongoose.model('usableStock', usableStockSchema);
@@ -84,8 +92,8 @@ const usableStockhistory = new mongoose.Schema({
     type: String,
     default: moment().format('Hmm'),
   },
-  usableStock:{
-    type:String
+  usableStock: {
+    type: String,
   },
   active: {
     type: Boolean,

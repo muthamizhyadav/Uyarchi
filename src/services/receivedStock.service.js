@@ -96,7 +96,6 @@ const updateReceivedStockById = async (id, updateBody) => {
   return receivedStock;
 };
 const updatesegrecation = async (id, updateBody) => {
-  console.log(':sdf', id);
   let receivedStock = await ReceivedStock.findById(id);
   if (!receivedStock) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
@@ -118,6 +117,8 @@ const updatesegrecation = async (id, updateBody) => {
   let useFQ1 = usable.FQ1 != null ? usable.FQ1 + FQ1 : FQ1;
   let useFQ2 = usable.FQ2 != null ? usable.FQ2 + FQ2 : FQ2;
   let useFQ3 = usable.FQ3 != null ? usable.FQ3 + FQ3 : FQ3;
+  let totalStock = usable.totalStock != null ? usable.totalStock : 0;
+  let usetotal = FQ1 + FQ2 + FQ3 + totalStock;
   let usewastage = usable.wastage != null ? usable.wastage + wastage : wastage;
   await Stockhistory.create({
     usableStock: usable._id,
@@ -128,7 +129,7 @@ const updatesegrecation = async (id, updateBody) => {
   });
   await usableStock.findByIdAndUpdate(
     { _id: usable._id },
-    { FQ1: useFQ1, FQ2: useFQ2, FQ3: useFQ3, wastage: usewastage },
+    { FQ1: useFQ1, FQ2: useFQ2, FQ3: useFQ3, wastage: usewastage, totalStock: usewastage },
     { new: true }
   );
   return usable;

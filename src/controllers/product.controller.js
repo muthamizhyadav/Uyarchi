@@ -429,6 +429,11 @@ const incommingStockQty = catchAsync(async (req, res) => {
   const product = await productService.incommingStockQty(req.params.date, req.params.page);
   res.send(product);
 });
+const AssignStockGetall = catchAsync(async (req, res) => {
+  const product = await productService.AssignStockGetall(req.params.date, req.params.page);
+  res.send(product);
+});
+
 
 module.exports = {
   createProduct,
@@ -495,4 +500,5 @@ module.exports = {
   removeImage,
   rateSetSellingPrice,
   incommingStockQty,
+  AssignStockGetall
 };
