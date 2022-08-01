@@ -29,7 +29,16 @@ const updateUsableStockbyId = async (id, updateBody) => {
 };
 
 const getAssignStockbyId = async (id) => {
-  return await usableStock.findById(id);
+  return await usableStock.aggregate([
+    {
+      $lookup: {
+        from: 'assignstocks',
+        localField: '_id',
+        foreignField: 'usablestockId',
+        as: 'assignstocks',
+      },
+    },
+  ]);
 };
 
 module.exports = {
