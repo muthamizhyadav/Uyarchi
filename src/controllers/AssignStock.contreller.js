@@ -6,7 +6,7 @@ const assignStockService = require('../services/AssignStock.service');
 
 const createAssignStock = catchAsync(async (req, res) => {
   const assignStock = await assignStockService.createAssignStock(req.body);
-  if (!assign) {
+  if (!assignStock) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Assign Not Fount');
   }
   res.status(httpStatus.CREATED).send(assignStock);
