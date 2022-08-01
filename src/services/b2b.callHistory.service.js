@@ -115,7 +115,7 @@ const getById = async (id) => {
   return historys;
 };
 
-const getShop = async (page) => {
+const getShop = async (page, userId) => {
   let values = await Shop.aggregate([
     { $sort: { callingStatusSort: 1, date: -1, time: -1 } },
     {
@@ -163,6 +163,7 @@ const getShop = async (page) => {
         Uid: 1,
         shopData: '$shopData',
         shoptypeName: '$shoplists.shopList',
+        matching: { $eq : ["$callingUserId",userId]},
       },
     },
     { $skip: 10 * page },
