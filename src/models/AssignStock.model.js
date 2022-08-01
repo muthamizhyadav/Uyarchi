@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
-
+const moment = require('moment');
 const assignSchema = mongoose.Schema({
   _id: {
     type: String,
@@ -21,14 +21,19 @@ const assignSchema = mongoose.Schema({
   },
   date: {
     type: String,
+    default: moment().format('DD-MM-yyy'),
   },
   time: {
     type: String,
+    default: moment().format('h:mm a'),
+  },
+  timeFilter: {
+    type: String,
+    default: moment().format('Hmm'),
   },
   usablestockId: {
     type: String,
   },
-  
 });
 
 assignSchema.plugin(toJSON);
