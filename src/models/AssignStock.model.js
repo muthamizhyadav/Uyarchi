@@ -11,7 +11,7 @@ const assignSchema = mongoose.Schema({
     type: String,
   },
   quantity: {
-    type: String,
+    type: Number,
   },
   price: {
     type: Number,

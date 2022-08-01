@@ -117,7 +117,7 @@ const getById = async (id) => {
 
 const getShop = async (page) => {
   let values = await Shop.aggregate([
-    
+    { $sort: { callingStatusSort: 1, date: -1, time: -1 } },
     {
       $lookup: {
         from: 'callhistories',
@@ -137,7 +137,6 @@ const getShop = async (page) => {
     {
       $unwind: '$shoplists',
     },
-    { $sort: { callingStatusSort: 1, date: -1, time: -1, "shopData.time":-1} },
     {
       $project: {
         _id: 1,

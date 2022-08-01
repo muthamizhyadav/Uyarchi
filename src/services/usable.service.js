@@ -31,11 +31,52 @@ const updateUsableStockbyId = async (id, updateBody) => {
 const getAssignStockbyId = async (id) => {
   return await usableStock.aggregate([
     {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
       $lookup: {
         from: 'assignstocks',
         localField: '_id',
         foreignField: 'usablestockId',
-        as: 'assignstocks',
+        pipeline: [{ $match: { type: 'b2b' } }, { $group: { _id: null, Total: { $sum: '$quantity' } } }],
+        as: 'b2bAssign',
+      },
+    },
+    {
+      $lookup: {
+        from: 'assignstocks',
+        localField: '_id',
+        foreignField: 'usablestockId',
+        pipeline: [{ $match: { type: 'b2c' } }, { $group: { _id: null, Total: { $sum: '$quantity' } } }],
+        as: 'b2cAssign',
+      },
+    },
+    {
+      $lookup: {
+        from: 'assignstocks',
+        localField: '_id',
+        foreignField: 'usablestockId',
+        as: 'assignHistory',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        b2cassignTotal: { $sum: '$b2cAssign.Total' },
+        b2bassignTotal: { $sum: '$b2bAssign.Total' },
+        b2bStock: 1,
+        b2cStock: 1,
+        productId: 1,
+        date: 1,
+        time: 1,
+        FQ1: 1,
+        FQ2:1,
+        FQ3:1,
+        totalStock: 1,
+        wastage: 1,
+        assignHistory:"$assignHistory"
       },
     },
   ]);
