@@ -420,6 +420,25 @@ const rateSetSellingPrice = catchAsync(async (req, res) => {
   res.send(product);
 });
 
+const productaggregateFilter = catchAsync(async (req, res) => {
+  const product = await productService.productaggregateFilter(req.params.key);
+  res.send(product);
+});
+
+const incommingStockQty = catchAsync(async (req, res) => {
+  const product = await productService.incommingStockQty(req.params.date, req.params.page);
+  res.send(product);
+});
+const AssignStockGetall = catchAsync(async (req, res) => {
+  const product = await productService.AssignStockGetall(req.params.date, req.params.page);
+  res.send(product);
+});
+
+const getDataOnlySetSales = catchAsync(async (req, res) => {
+  const product = await productService.getDataOnlySetSales(req.params.page);
+  res.send(product);
+});
+
 module.exports = {
   createProduct,
   getAllienceBySupplierId,
@@ -476,6 +495,7 @@ module.exports = {
   getShopList,
   productaggregateById,
   updatesStockById,
+  productaggregateFilter,
   gettrendsCount,
 
   // cost price calculation
@@ -483,4 +503,7 @@ module.exports = {
   AccountDetails,
   removeImage,
   rateSetSellingPrice,
+  incommingStockQty,
+  AssignStockGetall,
+  getDataOnlySetSales,
 };

@@ -321,6 +321,15 @@ const getUsersDataById = async (id) => {
   return values;
 };
 
+const deleteB2bUsersbyId = async (id) => {
+  let users = await Users.findById(id);
+  if (!users) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Users Not Found');
+  }
+  users = await Users.deleteOne({ _id: id });
+  return users;
+};
+
 module.exports = {
   createUser,
   UsersLogin,
@@ -340,4 +349,5 @@ module.exports = {
   otpVerfiy,
   updateB2bUsers,
   getUsersDataById,
+  deleteB2bUsersbyId,
 };

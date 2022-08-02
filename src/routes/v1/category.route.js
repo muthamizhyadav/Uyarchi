@@ -7,7 +7,7 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(category.array('categoryImage'), categoryController.createCategory)
+  .post(category.array('categoryImage'), categoryController.categoryduplicte_check, categoryController.createCategory)
   .get(categoryController.getAllCategory);
 
 router
@@ -18,7 +18,11 @@ router
 
 router
   .route('/sub/category')
-  .post(subCategory.array('categoryImage'), categoryController.subcreateCategory)
+  .post(
+    subCategory.array('categoryImage'),
+    categoryController.subcategoryduplicte_check,
+    categoryController.subcreateCategory
+  )
   .get(categoryController.getAllSubCategory);
 // router
 //   .route('/sub/Category/:subcategoryId')
@@ -35,5 +39,8 @@ router
 router.route('/subcat/main/:id').get(categoryController.getsubcategoryusemain);
 router.route('/category/pagination/:page').get(categoryController.categoryPagination);
 router.route('/subcategory/pagination/:page').get(categoryController.subcategoryPagination);
-router.route('/product/category').get(categoryController.getproductWithCategory)
+router.route('/product/category').get(categoryController.getproductWithCategory);
+router.route('/subcategory/Filter/:key').get(categoryController.getAllSubCategoryFilter);
+router.route('/categoryFilter/:key').get(categoryController.categoryFilter);
+
 module.exports = router;

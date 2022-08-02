@@ -2,21 +2,25 @@ const httpStatus = require('http-status');
 const callHistoryModel = require('../models/b2b.callHistory.model');
 const ApiError = require('../utils/ApiError');
 const { Shop } = require('../models/b2b.ShopClone.model');
+const { Users } = require('../models/B2Busers.model');
+const moment = require('moment');
+let time = moment().format('hhmm');
+let date = moment().format('DDmmyyyy');
+let finalsort = `${date}${time}`;
 
 const createCallHistory = async (body) => {
-  console.log(body.callStatus);
   await Shop.findByIdAndUpdate({ _id: body.shopId }, { CallStatus: body.callStatus }, { new: true });
   let callHistory = await callHistoryModel.create(body);
   return callHistory;
 };
 
-const createcallHistoryWithType = async (body) => {
+const createcallHistoryWithType = async (body, userId) => {
   const { callStatus, shopId } = body;
   let sort;
   if (callStatus == 'reschedule') {
     sort = 2;
   }
-  if (callStatus == 'Call back') {
+  if (callStatus == 'callback') {
     sort = 3;
   }
   if (callStatus == 'under_the_call') {
@@ -28,10 +32,19 @@ const createcallHistoryWithType = async (body) => {
   if (callStatus == 'accept') {
     sort = 6;
   }
+  let values = { ...body, ...{ userId: userId } };
+  let shopdata = await Shop.findOne({ _id: shopId });
+  console.log(sort);
   if (callStatus != 'accept') {
-    await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, callingStatusSort: sort }, { new: true });
+    if (shopdata.callingStatus != 'accept') {
+      await Shop.findByIdAndUpdate(
+        { _id: shopId },
+        { callingStatus: callStatus, callingStatusSort: sort, sortdatetime: finalsort },
+        { new: true }
+      );
+    }
   }
-  let callHistory = await callHistoryModel.create(body);
+  let callHistory = await callHistoryModel.create(values);
   return callHistory;
 };
 
@@ -41,9 +54,9 @@ const getAll = async () => {
 
 const callingStatusreport = async () => {
   let acceptCount = await Shop.find({ callingStatus: 'accept' }).count();
-  let callbackCount = await Shop.find({ callingStatus: 'Call back' }).count();
+  let callbackCount = await Shop.find({ callingStatus: 'callback' }).count();
   let rescheduleCount = await Shop.find({ callingStatus: 'reschedule' }).count();
-  let pendingCount = await Shop.find({ callingStatus: 'pending' }).count();
+  let pendingCount = await Shop.find({ callingStatus: 'Pending' }).count();
   let declinedCount = await Shop.find({ callingStatus: 'declined' }).count();
   return {
     acceptCount: acceptCount,
@@ -55,8 +68,7 @@ const callingStatusreport = async () => {
 };
 
 const getById = async (id) => {
-  // let history = await callHistoryModel.find({shopId:id})
-  // return history;
+  console.log('params Id', id);
   let historys = await Shop.aggregate([
     {
       $match: {
@@ -68,12 +80,20 @@ const getById = async (id) => {
         from: 'callhistories', //add table
         localField: '_id', //callhistory
         foreignField: 'shopId', //shopclone
-        as: 'shopName',
+        as: 'callhistory',
       },
     },
-    // {
-    //   $unwind: '$shopName',
-    // },
+    {
+      $lookup: {
+        from: 'b2busers', //add table
+        localField: 'callingUserId', //callhistory
+        foreignField: '_id', //shopclone
+        as: 'usersData',
+      },
+    },
+    {
+      $unwind: '$usersData',
+    },
     {
       $lookup: {
         from: 'shoplists',
@@ -91,20 +111,22 @@ const getById = async (id) => {
         SOwner: 1,
         mobile: 1,
         Slat: 1,
+        address: 1,
+        userName: '$usersData.name',
         Slong: 1,
         date: 1,
         time: 1,
         shopName: '$shopType.shopList',
-        shopHistory: '$shopName',
+        callhistory: '$callhistory',
       },
     },
   ]);
   return historys;
 };
 
-const getShop = async (page) => {
+const getShop = async (page, userId) => {
   let values = await Shop.aggregate([
-    { $sort: { callingStatusSort: 1 } },
+    { $sort: { callingStatusSort: 1, sortdatetime: 1 } },
     {
       $lookup: {
         from: 'callhistories',
@@ -113,12 +135,52 @@ const getShop = async (page) => {
         as: 'shopData',
       },
     },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplists',
+      },
+    },
+    {
+      $unwind: '$shoplists',
+    },
+    {
+      $project: {
+        _id: 1,
+        photoCapture: 1,
+        callingStatus: 1,
+        callingStatusSort: 1,
+        active: 1,
+        archive: 1,
+        Wardid: 1,
+        type: 1,
+        SName: 1,
+        SType: 1,
+        SOwner: 1,
+        mobile: 1,
+        Slat: 1,
+        Strid: 1,
+        Slong: 1,
+        address: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        status: 1,
+        __v: 1,
+        Uid: 1,
+        shopData: '$shopData',
+        shoptypeName: '$shoplists.shopList',
+        matching: { $eq: ['$callingUserId', userId] },
+      },
+    },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
 
   let total = await Shop.aggregate([
-    { $sort: { callingStatusSort: 1 } },
+    { $sort: { callingStatusSort: 1, sortdatetime: 1 } },
     {
       $lookup: {
         from: 'callhistories',
@@ -153,18 +215,12 @@ const updateStatuscall = async (id, userId, updateBody) => {
   return status;
 };
 
-const updateOrderStatus = async(id)=>{
+const updateOrderStatus = async (id) => {
   let orderedStatus = await callHistoryModel.findById(id);
-  console.log(orderedStatus)
-  if(!orderedStatus){
+  if (!orderedStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'OrderStatus not found');
   }
-  orderedStatus = await callHistoryModel.findByIdAndUpdate(
-    { _id: id },
-    { status: 'ordered'},
-    { new: true }
-  )
-  console.log(orderedStatus);
+  orderedStatus = await callHistoryModel.findByIdAndUpdate({ _id: id }, { status: 'ordered' }, { new: true });
 };
 
 const createShopByOwner = async (body) => {

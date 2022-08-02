@@ -2,6 +2,7 @@ const brand = require('../services/brand.service');
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
+const brandModel = require('../models/brand.model');
 
 const createbrand = catchAsync(async (req, res) => {
   const { body } = req;
@@ -62,6 +63,28 @@ const updateShop = catchAsync(async (req, res) => {
   await brands.save();
 });
 
+const doplicte_check = async (req, res, next) => {
+  const { body } = req;
+  const product = await brandModel
+    .findOne({
+      subcategory: req.body.subcategory,
+      category: req.body.category,
+      // $text:{$search:req.body.productTitle, $caseSensitive:false}
+      brandname: req.body.brandname,
+    })
+    .collation({ locale: 'en', strength: 2 });
+  console.log(product);
+  if (product) {
+    return res.send(httpStatus.UNAUTHORIZED, 'Exist');
+  }
+  return next();
+};
+
+const getAllBrandFilter = catchAsync(async (req, res) => {
+  const brands = await brand.getAllBrandFilter(req.params.key);
+  res.send(brands);
+});
+
 module.exports = {
   createbrand,
   getbrand,
@@ -69,4 +92,6 @@ module.exports = {
   getBrandServicebyId,
   updateShop,
   brandPagination,
+  doplicte_check,
+  getAllBrandFilter
 };

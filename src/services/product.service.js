@@ -25,6 +25,20 @@ const createProduct = async (productBody) => {
   }
   return Product.create(productBody);
 };
+const doplicte_check = async (req, res, next) => {
+  const { body } = req;
+  const product = await Product.findOne({
+    SubCatId: req.body.SubCatId,
+    category: req.body.category,
+    // $text:{$search:req.body.productTitle, $caseSensitive:false}
+    productTitle: req.body.productTitle,
+  }).collation({ locale: 'en', strength: 2 });
+  console.log(product);
+  if (product) {
+    return res.send(httpStatus.UNAUTHORIZED, 'Exist');
+  }
+  return next();
+};
 
 const updateStockById = async (id, updateBody) => {
   let stock = await Stock.findById(id);
@@ -1116,6 +1130,9 @@ const productaggregateById = async (page) => {
         as: 'catName',
       },
     },
+    // {
+    //   $unwind: '$catName',
+    // },
     {
       $lookup: {
         from: 'subcategories',
@@ -1124,6 +1141,9 @@ const productaggregateById = async (page) => {
         as: 'subcatName',
       },
     },
+    // {
+    //   $unwind: '$subcatName',
+    // },
     {
       $lookup: {
         from: 'brands',
@@ -1132,6 +1152,9 @@ const productaggregateById = async (page) => {
         as: 'brandName',
       },
     },
+    // {
+    //   $unwind: '$brandName',
+    // },
     {
       $lookup: {
         from: 'hsns',
@@ -1140,15 +1163,63 @@ const productaggregateById = async (page) => {
         as: 'hsnData',
       },
     },
+    // {
+    //   $unwind: '$hsnData',
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'setsalesprices',
+    //     localField: '_id',
+    //     foreignField: 'product',
+    //     as: 'setSalesData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$setSalesData',
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
+
   const total = await Product.find().count();
 
+  // console.log(total.length);
   return {
     value: product,
     total: total,
   };
+};
+
+const getDataOnlySetSales = async (page) => {
+  const values = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'setsalesprices',
+        localField: '_id',
+        foreignField: 'product',
+        as: 'setsalesData',
+      },
+    },
+    {
+      $unwind: '$setsalesData',
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'setsalesprices',
+        localField: '_id',
+        foreignField: 'product',
+        as: 'setsalesData',
+      },
+    },
+    {
+      $unwind: '$setsalesData',
+    },
+  ]);
+  return { values: values, total: total.length };
 };
 
 const costPriceCalculation = async (date, page) => {
@@ -1337,6 +1408,183 @@ const rateSetSellingPrice = async (productId, date) => {
   return prod;
 };
 
+const productaggregateFilter = async (key) => {
+  console.log(key);
+  const product = await Product.aggregate([
+    {
+      $match: {
+        $and: [{ productTitle: { $regex: key, $options: 'i' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'catName',
+      },
+    },
+    {
+      $lookup: {
+        from: 'subcategories',
+        localField: 'SubCatId',
+        foreignField: '_id',
+        as: 'subcatName',
+      },
+    },
+    {
+      $lookup: {
+        from: 'brands',
+        localField: 'Brand',
+        foreignField: '_id',
+        as: 'brandName',
+      },
+    },
+    {
+      $lookup: {
+        from: 'hsns',
+        localField: 'HSN_Code',
+        foreignField: '_id',
+        as: 'hsnData',
+      },
+    },
+    // { $skip: 10 * 1 },
+    { $limit: 10 },
+  ]);
+
+  return product;
+};
+
+const incommingStockQty = async (date, page) => {
+  let values = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          // { $match: { date: date, status: 'Loaded' } },
+          {
+            $match: {
+              $and: [{ date: { $eq: date } }, { status: { $in: ['Loaded', 'Billed'] } }],
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              TotalQty: { $sum: '$incomingQuantity' },
+              Totalwastage: { $sum: '$incomingWastage' },
+            },
+          },
+        ],
+        as: 'receivedstocks',
+      },
+    },
+    {
+      $unwind: '$receivedstocks',
+    },
+    {
+      $project: {
+        _id: 1,
+        productTitle: 1,
+        date: date,
+        receivedstocks: '$receivedstocks.TotalQty',
+        Totalwastage: '$receivedstocks.Totalwastage',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          // { $match: { date: date, status: { $in: ['Loaded', 'Billed'] } } },
+          {
+            $match: {
+              $and: [{ date: { $eq: date } }, { status: { $in: ['Loaded', 'Billed'] } }],
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              TotalQty: { $sum: '$incomingQuantity' },
+              Totalwastage: { $sum: '$incomingWastage' },
+            },
+          },
+        ],
+        as: 'receivedstocks',
+      },
+    },
+    {
+      $unwind: '$receivedstocks',
+    },
+  ]);
+  return { values: values, total: total.length };
+};
+
+const AssignStockGetall = async (date, page) => {
+  let values = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'usablestocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ date: { $eq: date } }, { totalStock: { $gte: 0 } }],
+            },
+          },
+        ],
+        as: 'usablestocks',
+      },
+    },
+    {
+      $unwind: '$usablestocks',
+    },
+    {
+      $project: {
+        _id: 1,
+        productTitle: 1,
+        date: date,
+        totalStock: '$usablestocks.totalStock',
+        wastage: '$usablestocks.wastage',
+        b2bStock: '$usablestocks.b2bStock',
+        b2cStock: '$usablestocks.b2cStock',
+        usablestocks: '$usablestocks',
+        usablestocksID: '$usablestocks._id',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'usablestocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ date: { $eq: date } }],
+            },
+          },
+        ],
+        as: 'usablestocks',
+      },
+    },
+    {
+      $unwind: '$usablestocks',
+    },
+  ]);
+  return { values: values, total: total.length };
+};
+
 module.exports = {
   createProduct,
   getTrendsData,
@@ -1400,4 +1648,9 @@ module.exports = {
   AccountDetails,
   removeImage,
   rateSetSellingPrice,
+  productaggregateFilter,
+  doplicte_check,
+  incommingStockQty,
+  AssignStockGetall,
+  getDataOnlySetSales,
 };

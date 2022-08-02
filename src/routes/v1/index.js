@@ -75,11 +75,20 @@ const attendancePayment = require('./b2b.atttendancePayment.route');
 // const salesApp = require('./b2b.sales.route');
 const estimateOrderRoute = require('./estimatedOrders.route');
 const manageSalary = require('./manage.salary.route');
+<<<<<<< HEAD
 const wardAdminRouter = require('./b2b.wardAdmin.routes');
+=======
+const usableStock = require('./usableStock.route');
+const AssignStock = require('./AssignStock.route');
+>>>>>>> baf6147f4949704bbd6f94634f50e6d832c89177
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/usableStock',
+    route: usableStock,
   },
   {
     path: '/supplierBills',
@@ -353,13 +362,16 @@ const defaultRoutes = [
     route: AnnualExpenseRecuring,
   },
   {
-    path:'/attendancePayment',
+    path: '/attendancePayment',
     route: attendancePayment,
   },
   {
     path:'/wardAdminDetails',
     route: wardAdminRouter,
   }
+    path: '/AssignStock',
+    route: AssignStock,
+  },
   // {
   //   path: '/sales',
   //   route: salesApp,

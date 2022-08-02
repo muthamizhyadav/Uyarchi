@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
 
-
 const productSchema = mongoose.Schema({
   _id: {
     type: String,
@@ -43,10 +42,10 @@ const productSchema = mongoose.Schema({
     enum: ['yes', 'no'],
   },
   GST_Number: {
-    type:Number,
+    type: Number,
   },
-  HSN_Code:{
-    type:String,
+  HSN_Code: {
+    type: String,
   },
   TrendspreferredQuantity: {
     type: Number,
@@ -54,8 +53,8 @@ const productSchema = mongoose.Schema({
   TrendspreferredUnit: {
     type: String,
   },
-  setTrendsDate:{
-    type:String,
+  setTrendsDate: {
+    type: String,
   },
   description: {
     type: String,

@@ -3,30 +3,33 @@ const { v4 } = require('uuid');
 const moment = require('moment');
 
 const callHistorySchema = mongoose.Schema({
-    _id: {
-      type: String,
-      default: v4,
-    },
-    TimeofCall: {
-        type: String,
-    },
-    callStatus: {
-        type:String,
-    },
-    orderedStatus:{
-        type: String,
-    },
-    reason:{
-        type: String,
-    },
-    calledBy:{
-        type: String,
-    },
-    active: {
+  _id: {
+    type: String,
+    default: v4,
+  },
+  userId: {
+    type: String,
+  },
+  TimeofCall: {
+    type: String,
+  },
+  callStatus: {
+    type: String,
+  },
+  orderedStatus: {
+    type: String,
+  },
+  reason: {
+    type: String,
+  },
+  calledBy: {
+    type: String,
+  },
+  active: {
     type: Boolean,
     default: true,
   },
-    archive: {
+  archive: {
     type: Boolean,
     default: false,
   },
@@ -35,21 +38,21 @@ const callHistorySchema = mongoose.Schema({
   },
   date: {
     type: String,
-    default: moment().utcOffset(330).format('DD-MM-yyy'),
+    default: moment().format('DD-MM-yyy'),
   },
   time: {
     type: String,
-    default: moment().utcOffset(330).format('h:mm a'),
+    default: moment().format('h:mm a'),
   },
   status: {
     type: String,
     default: 'Pending',
   },
-  noOfCalls : {
+  noOfCalls: {
     type: Number,
     default: 0,
   },
-  reason : {
+  reason: {
     type: String,
   },
   // reSchedule:{
@@ -58,14 +61,14 @@ const callHistorySchema = mongoose.Schema({
   // callBackReason: {
   //   type: String,
   // },
-  
-  select : {
+
+  select: {
     type: String,
   },
   selectStatus: {
     type: String,
   },
-  type:{
+  type: {
     type: String,
   },
   // orderedStatus: {
@@ -73,6 +76,6 @@ const callHistorySchema = mongoose.Schema({
   // },
 });
 
-const callHistory = mongoose.model('callHistory',callHistorySchema );
+const callHistory = mongoose.model('callHistory', callHistorySchema);
 
 module.exports = callHistory;

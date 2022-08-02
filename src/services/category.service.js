@@ -166,6 +166,47 @@ const getsubcategoryusemain = async (subid) => {
   return subcategory;
 };
 
+const categoryFilter = async (key) => {
+  return Category.aggregate([
+    {
+      $match: {
+        $and: [{ categoryName: { $regex: key, $options: 'i' } }],
+      },
+    },
+  ]);
+};
+
+const getAllSubCategoryFilter = async (key) => {
+  return Subcategory.aggregate([
+    {
+      $match: {
+        $and: [{ subcategoryName: { $regex: key, $options: 'i' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'parentCategoryId',
+        foreignField: '_id',
+        as: 'cate',
+      },
+    },
+    {
+      $unwind: '$cate',
+    },
+    { $limit: 10 },
+    {
+      $project: {
+        subcategoryName: 1,
+        id: 1,
+        categoryName: '$cate.categoryName',
+        description: 1,
+        categoryImage: 1,
+      },
+    },
+  ]);
+};
+
 module.exports = {
   createcategory,
   subCreatecategory,
@@ -182,4 +223,6 @@ module.exports = {
   subcategoryPagination,
   getsubcategoryusemain,
   getproductWithCategory,
+  getAllSubCategoryFilter,
+  categoryFilter,
 };

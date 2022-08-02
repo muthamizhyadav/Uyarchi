@@ -47,6 +47,13 @@ const shopSchema = mongoose.Schema({
   },
   status: {
     type: String,
+    default: 'Pending',
+  },
+  whatsappnumber: {
+    type: Number,
+  },
+  alternatenumber: {
+    type: Number,
   },
   reason: {
     type: String,
@@ -70,6 +77,9 @@ const shopSchema = mongoose.Schema({
   },
   callingUserId: {
     type: String,
+  },
+  sortdatetime: {
+    type: Number,
   },
   marketId: {
     type: String,

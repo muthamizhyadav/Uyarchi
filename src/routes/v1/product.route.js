@@ -4,11 +4,15 @@ const upload = require('../../middlewares/upload');
 const stockImage = require('../../middlewares/stock');
 const bill = require('../../middlewares/bills');
 const router = express.Router();
-
+const productservice = require('../../services/product.service');
 router
-  .route('/')
-  .post(upload.fields([{ name: 'image' }, { name: 'galleryImages' }]), productController.createProduct)
-  .get(productController.getProducts);
+  .route('/create')
+  .post(
+    upload.fields([{ name: 'image' }, { name: 'galleryImages' }]),
+    productservice.doplicte_check,
+    productController.createProduct
+  );
+router.route('/').get(productController.getProducts);
 router
   .route('/:productId')
   .get(productController.getproduct)
@@ -88,4 +92,11 @@ router.route('/AccountsDetails/:date/:page').get(productController.AccountDetail
 // rateSetSellingPrice
 
 router.route('/rateSetSellingPrice/consolidate/:productId/:date').get(productController.rateSetSellingPrice);
+router.route('/product/existCheck/filter/:key').get(productController.productaggregateFilter);
+
+// stock segregation flow
+
+router.route('/stock/segregation/:date/:page').get(productController.incommingStockQty);
+router.route('/stock/Assgin/:date/:page').get(productController.AssignStockGetall);
+router.route('/getsetsales/dataOnly/:page').get(productController.getDataOnlySetSales)
 module.exports = router;

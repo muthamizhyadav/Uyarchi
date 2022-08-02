@@ -13,10 +13,19 @@ const updateReceivedStockById = catchAsync(async (req, res) => {
   const receivedStock = await ReceivedStockService.updateReceivedStockById(req.params.id, req.body);
   res.send(receivedStock);
 });
+const updatesegrecation = catchAsync(async (req, res) => {
+  const receivedStock = await ReceivedStockService.updatesegrecation(req.params.id, req.body);
+  res.send(receivedStock);
+});
 
 const getDataByLoading = catchAsync(async (req, res) => {
   const receivedStock = await ReceivedStockService.getDataByLoading(req.params.id);
   res.send(receivedStock);
 });
 
-module.exports = { getDataById, updateReceivedStockById, getDataByLoading };
+const getDetailsByProductId = catchAsync(async (req, res) => {
+  const receivedStock = await ReceivedStockService.getDetailsByProductId(req.params.productId, req.params.date);
+  res.send(receivedStock);
+});
+
+module.exports = { getDataById, updateReceivedStockById, getDataByLoading, getDetailsByProductId ,updatesegrecation};

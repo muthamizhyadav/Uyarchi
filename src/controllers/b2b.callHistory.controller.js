@@ -8,7 +8,8 @@ const createCallHistory = catchAsync(async (req, res) => {
 });
 
 const createcallHistoryWithTypes = catchAsync(async (req, res) => {
-  const history = await callHistoryService.createcallHistoryWithType(req.body);
+  let userId = req.userId;
+  const history = await callHistoryService.createcallHistoryWithType(req.body, userId);
   res.send(history);
 });
 
@@ -28,7 +29,9 @@ const getById = catchAsync(async (req, res) => {
 });
 
 const getAllPage = catchAsync(async (req, res) => {
-  const call = await callHistoryService.getShop(req.params.page);
+  console.log(req.userId)
+  let userId = req.userId;
+  const call = await callHistoryService.getShop(req.params.page,userId);
   res.send(call);
 });
 
@@ -43,7 +46,6 @@ const updateStatuscall = catchAsync(async (req, res) => {
   const callstatus = await callHistoryService.updateStatuscall(req.params.id, req.body);
   res.send(callstatus);
 });
-
 
 const updateOrderedStatus = catchAsync(async (req, res) => {
   const orderstatus = await callHistoryService.updateOrderStatus(req.params.id);
@@ -71,5 +73,5 @@ module.exports = {
   createShopByOwner,
   createcallHistoryWithTypes,
   callingStatusreport,
-  updateOrderedStatus
+  updateOrderedStatus,
 };

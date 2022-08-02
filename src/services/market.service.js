@@ -15,7 +15,6 @@ const createmarket = async (marketbody) => {
   if (ManageUser === null) {
     throw new ApiError(httpStatus.NO_CONTENT, '!oops 🖕');
   }
-  console.log(values);
   return Market.create(values);
 };
 
@@ -160,6 +159,8 @@ const getMarketCloneWithAggregation = async (page) => {
         mlongitude: 1,
         mlatitude: 1,
         created: 1,
+        date:1,
+        address: 1,
         pincode: 1,
         image: 1,
       },
@@ -279,7 +280,7 @@ const updatemarketCloneById = async (id, updateBody) => {
 const deletemarketCloneById = async (id) => {
   const market = await MarketClone.findById(id);
   if (!market) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'MArket Clone Not Found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Market Clone Not Found');
   }
   (market.active = false), (market.archive = true);
   await market.save();
