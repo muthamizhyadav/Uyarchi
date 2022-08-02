@@ -4,8 +4,8 @@ const ApiError = require('../utils/ApiError');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
 const moment = require('moment');
-let time = moment().format('hhmm');
-let date = moment().format('DDmmyyyy');
+let time = moment().format('Hmm');
+let date = moment().format('DDMMyyy');
 let finalsort = `${date}${time}`;
 
 const createCallHistory = async (body) => {
@@ -125,8 +125,9 @@ const getById = async (id) => {
 };
 
 const getShop = async (page, userId) => {
+  console.log(finalsort)
   let values = await Shop.aggregate([
-    { $sort: {  sortdatetime: 1 } },
+    { $sort: { sortdatetime: -1  } },
     {
       $lookup: {
         from: 'callhistories',
@@ -162,6 +163,7 @@ const getShop = async (page, userId) => {
         mobile: 1,
         Slat: 1,
         Strid: 1,
+        sortdatetime:1,
         Slong: 1,
         address: 1,
         date: 1,
@@ -180,7 +182,7 @@ const getShop = async (page, userId) => {
   ]);
 
   let total = await Shop.aggregate([
-    { $sort: {  sortdatetime: 1 } },
+    { $sort: { callingStatusSort: 1, sortdatetime: 1 } },
     {
       $lookup: {
         from: 'callhistories',
