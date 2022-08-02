@@ -314,12 +314,12 @@ const updateShopById = async (id, updateBody) => {
   return shop;
 };
 
-const updateShopStatus = async (id, status) => {
+const updateShopStatus = async (id, status, bodyData) => {
   let shop = await getShopById(id);
   if (!shop) {
     throw new ApiError(httpStatus.NOT_FOUND, 'shop Not Found');
   }
-  shop = await Shop.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
+  shop = await Shop.findByIdAndUpdate({ _id: id }, { ...bodyData, ...{ status: status } }, { new: true });
   return shop;
 };
 
