@@ -174,17 +174,17 @@ const getAllAttendanceCloneforMapView = catchAsync(async (req, res) => {
 });
 
 const updateShopStatusdataapproved = catchAsync(async (req, res) => {
-  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'data_approved');
+  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'data_approved',req.body);
   res.send(shops);
 });
 
 const updateShopStatusphoneapproved = catchAsync(async (req, res) => {
-  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'phone_approved');
+  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'phone_approved',req.body);
   res.send(shops);
 });
 
 const updateShopStatuskycapproved = catchAsync(async (req, res) => {
-  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'kyc_verified');
+  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'kyc_verified',req.body);
   res.send(shops);
 });
 
