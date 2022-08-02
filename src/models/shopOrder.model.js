@@ -81,6 +81,9 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   status: {
     type: String,
   },
+  productStatus: {
+    type: String,
+  },
   Uid: {
     type: String,
   },

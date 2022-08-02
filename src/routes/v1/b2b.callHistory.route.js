@@ -1,5 +1,6 @@
 const express = require('express');
 const callHistoryController = require('../../controllers/b2b.callHistory.controller');
+
 const router = express.Router();
 const authorization = require('../../controllers/tokenVerify.controller');
 
@@ -12,6 +13,7 @@ router.route('/update/StatusCall/:id').put(callHistoryController.updateStatuscal
 router.route('/getCallCount/:id').get(callHistoryController.getById);
 router.route('/createByOwner/shop').post(callHistoryController.createShopByOwner);
 router.route('/callHistory/report/callingStatus').get(callHistoryController.callingStatusreport);
+router.route('/craeteCallStatus').post(callHistoryController.createcallHistoryWithTypes);
 router.route('/craeteCallStatus').post(authorization, callHistoryController.createcallHistoryWithTypes);
 
 router.route('/updateOrderedStatus/:id').put(callHistoryController.updateOrderedStatus);
