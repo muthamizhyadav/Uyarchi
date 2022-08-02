@@ -1130,6 +1130,9 @@ const productaggregateById = async (page) => {
         as: 'catName',
       },
     },
+    // {
+    //   $unwind: '$catName',
+    // },
     {
       $lookup: {
         from: 'subcategories',
@@ -1138,6 +1141,9 @@ const productaggregateById = async (page) => {
         as: 'subcatName',
       },
     },
+    // {
+    //   $unwind: '$subcatName',
+    // },
     {
       $lookup: {
         from: 'brands',
@@ -1146,6 +1152,9 @@ const productaggregateById = async (page) => {
         as: 'brandName',
       },
     },
+    // {
+    //   $unwind: '$brandName',
+    // },
     {
       $lookup: {
         from: 'hsns',
@@ -1154,14 +1163,42 @@ const productaggregateById = async (page) => {
         as: 'hsnData',
       },
     },
+    // {
+    //   $unwind: '$hsnData',
+    // },
+    {
+      $lookup: {
+        from: 'setsalesprices',
+        localField: '_id',
+        foreignField: 'product',
+        as: 'setSalesData',
+      },
+    },
+    {
+      $unwind: '$setSalesData',
+    },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  const total = await Product.find().count();
 
+  const total = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'setsalesprices',
+        localField: '_id',
+        foreignField: 'product',
+        as: 'setSalesData',
+      },
+    },
+    {
+      $unwind: '$setSalesData',
+    },
+  ]);
+
+  // console.log(total.length);
   return {
     value: product,
-    total: total,
+    total: total.length,
   };
 };
 
