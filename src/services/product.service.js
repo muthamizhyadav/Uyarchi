@@ -1190,6 +1190,38 @@ const productaggregateById = async (page) => {
   };
 };
 
+const getDataOnlySetSales = async (page) => {
+  const values = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'setsalesprices',
+        localField: '_id',
+        foreignField: 'product',
+        as: 'setsalesData',
+      },
+    },
+    {
+      $unwind: '$setsalesData',
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'setsalesprices',
+        localField: '_id',
+        foreignField: 'product',
+        as: 'setsalesData',
+      },
+    },
+    {
+      $unwind: '$setsalesData',
+    },
+  ]);
+  return { values: values, total: total.length };
+};
+
 const costPriceCalculation = async (date, page) => {
   let values = await Product.aggregate([{ $skip: 10 * page }, { $limit: 10 }]);
   const result = await values.map(async (product) => {
@@ -1620,4 +1652,5 @@ module.exports = {
   doplicte_check,
   incommingStockQty,
   AssignStockGetall,
+  getDataOnlySetSales,
 };

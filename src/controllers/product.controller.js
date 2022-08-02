@@ -434,6 +434,10 @@ const AssignStockGetall = catchAsync(async (req, res) => {
   res.send(product);
 });
 
+const getDataOnlySetSales = catchAsync(async (req, res) => {
+  const product = await productService.getDataOnlySetSales(req.params.page);
+  res.send(product);
+});
 
 module.exports = {
   createProduct,
@@ -500,5 +504,6 @@ module.exports = {
   removeImage,
   rateSetSellingPrice,
   incommingStockQty,
-  AssignStockGetall
+  AssignStockGetall,
+  getDataOnlySetSales,
 };
