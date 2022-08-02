@@ -5,7 +5,7 @@ const logger = require('./config/logger');
 const moment = require('moment');
 let time = moment().utcOffset(330).format('h:mm a')
 let times = moment().utcOffset(530).format('h:mm a')
-let timess = moment().format('h:mm a')
+let timess = moment().format('hmm')
 
 
 
