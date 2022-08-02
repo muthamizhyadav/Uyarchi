@@ -4,9 +4,7 @@ const ApiError = require('../utils/ApiError');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
 const moment = require('moment');
-let time = moment().format('Hmm');
-let date = moment().format('DDMMyyy');
-let finalsort = `${date}${time}`;
+
 
 const createCallHistory = async (body) => {
   await Shop.findByIdAndUpdate({ _id: body.shopId }, { CallStatus: body.callStatus }, { new: true });
@@ -121,7 +119,6 @@ const getById = async (id) => {
 };
 
 const getShop = async (page, userId) => {
-  console.log(finalsort);
   let values = await Shop.aggregate([
     { $sort: { sortdatetime: -1 } },
     {
@@ -201,6 +198,9 @@ const updateCallingStatus = async (id, updatebody) => {
 };
 
 const updateStatuscall = async (id, userId, updateBody) => {
+  let time = moment().format('Hmm');
+let date = moment().format('DDMMyyy');
+let finalsort = `${date}${time}`;
   let status = await Shop.findById(id);
   if (!status) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
