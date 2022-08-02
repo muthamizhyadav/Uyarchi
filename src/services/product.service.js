@@ -1166,39 +1166,27 @@ const productaggregateById = async (page) => {
     // {
     //   $unwind: '$hsnData',
     // },
-    {
-      $lookup: {
-        from: 'setsalesprices',
-        localField: '_id',
-        foreignField: 'product',
-        as: 'setSalesData',
-      },
-    },
-    {
-      $unwind: '$setSalesData',
-    },
+    // {
+    //   $lookup: {
+    //     from: 'setsalesprices',
+    //     localField: '_id',
+    //     foreignField: 'product',
+    //     as: 'setSalesData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$setSalesData',
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
 
-  const total = await Product.aggregate([
-    {
-      $lookup: {
-        from: 'setsalesprices',
-        localField: '_id',
-        foreignField: 'product',
-        as: 'setSalesData',
-      },
-    },
-    {
-      $unwind: '$setSalesData',
-    },
-  ]);
+  const total = await Product.find().count();
 
   // console.log(total.length);
   return {
     value: product,
-    total: total.length,
+    total: total,
   };
 };
 
