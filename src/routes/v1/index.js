@@ -75,6 +75,7 @@ const attendancePayment = require('./b2b.atttendancePayment.route');
 // const salesApp = require('./b2b.sales.route');
 const estimateOrderRoute = require('./estimatedOrders.route');
 const manageSalary = require('./manage.salary.route');
+const wardAdminRouter = require('./b2b.wardAdmin.routes');
 const defaultRoutes = [
   {
     path: '/auth',
@@ -355,6 +356,10 @@ const defaultRoutes = [
     path:'/attendancePayment',
     route: attendancePayment,
   },
+  {
+    path:'/wardAdminDetails',
+    route: wardAdminRouter,
+  }
   // {
   //   path: '/sales',
   //   route: salesApp,

@@ -23,6 +23,7 @@ const getWallet = async (page) =>{
   let wallet = await walletModel.aggregate([
      { $skip: 10 * page },
     { $limit: 10 },
+    
   ]);
   let total = await walletModel.find().count();
     return {wallet : wallet , total:total};

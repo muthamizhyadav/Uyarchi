@@ -1,0 +1,88 @@
+const httpStatus = require('http-status');
+const ApiError = require('../utils/ApiError');
+const catchAsync = require('../utils/catchAsync');
+const wardAdminService = require('../services/b2b.wardAdmin.service')
+
+
+const getDetails = catchAsync (async(req,res)=>{
+    const details = await wardAdminService.getdetails(req.params.page);
+    res.send(details)
+});
+
+const getproductDetails = catchAsync(async (req, res)=>{
+    const productDetails = await wardAdminService.getproductdetails(req.params.orderId);
+    res.send(productDetails)
+})
+
+// const getProductCount = catchAsync(async (req, res)=>{
+//     const productCount = await wardAdminService.getProductCount(req.params.orderId);
+//     res.send(productCount)
+// })
+
+const updateProduct = catchAsync(async (req, res) => {
+    const product = await wardAdminService.updateProduct(req.params.id,req.body)
+    res.send(product)
+});
+
+const updateAcknowledge = catchAsync(async(req,res)=>{
+    const acknowledgement = await wardAdminService.updateAcknowledge(req.params.id);
+    res.send(acknowledgement)
+});
+
+const updateApproved = catchAsync(async(req,res)=>{
+    const approved = await wardAdminService.updateApproved(req.params.id);
+    res.send(approved)
+});
+
+
+const updateModified = catchAsync(async(req,res)=>{
+    const modified = await wardAdminService.updateModified(req.params.id);
+    res.send(modified)
+});
+
+const updateRejected = catchAsync(async(req, res)=>{
+    const rejected = await wardAdminService.updateRejected(req.params.id)
+    res.send(rejected)
+});
+
+
+// ward loading executive
+const wardloadExecutive = catchAsync(async (req, res) => {
+    const executive = await wardAdminService.wardloadExecutive(req.params.page);
+    res.send(executive);
+});
+
+const updatePacked = catchAsync(async(req, res)=>{
+    const packed = await wardAdminService.updatePacked(req.params.id)
+    res.send(packed)
+});
+
+
+const updateAssigned = catchAsync(async(req, res)=>{
+    const assign = await wardAdminService.updateAssigned(req.params.id)
+    res.send(assign)
+});
+
+const updateBilled = catchAsync(async(req, res)=>{
+    const billed = await wardAdminService.updateBilled(req.params.id)
+    res.send(billed)
+});
+
+
+
+module.exports = {
+    getDetails,
+    getproductDetails,
+    updateProduct,
+    updateAcknowledge,
+    updateApproved,
+    updateModified,
+    updateRejected,
+
+    // ward loading executive
+
+    wardloadExecutive,
+    updatePacked,
+    updateAssigned,
+    updateBilled,
+}
