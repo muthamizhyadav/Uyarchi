@@ -204,6 +204,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         address:1,
         Slat: 1,
         Slong: 1,
+        status:1,
         created: 1,
         SOwner: 1,
         mobile: 1,
