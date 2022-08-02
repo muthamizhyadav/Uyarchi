@@ -124,6 +124,11 @@ const getUsersDataById = catchAsync(async (req, res) => {
   res.send(users);
 });
 
+const deleteB2bUsersbyId = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.deleteB2bUsersbyId(req.params.id);
+  res.status(204).send({ message: 'Deleted' });
+});
+
 module.exports = {
   createB2bUsers,
   getsalesExecuteRolesUsers,
@@ -144,4 +149,5 @@ module.exports = {
   verfiOtp,
   updateB2bUsers,
   getUsersDataById,
+  deleteB2bUsersbyId,
 };

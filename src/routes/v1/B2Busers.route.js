@@ -24,5 +24,5 @@ router.route('/forgot-password').post(b2bUsersController.forgotPassword);
 router.route('/verfy-otp').post(b2bUsersController.verfiOtp);
 router.route('/updateB2bUsers/:id').put(b2bUsersController.updateB2bUsers);
 router.route('/getUsersById/allData/:id').get(b2bUsersController.getUsersDataById);
-
+router.route('/delete/Users/:id').delete(b2bUsersController.deleteB2bUsersbyId);
 module.exports = router;
