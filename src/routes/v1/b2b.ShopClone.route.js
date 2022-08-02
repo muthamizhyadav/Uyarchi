@@ -51,4 +51,8 @@ router
   .route('/attendanceclone/Admin/map/View/:id/:date/:fromtime/:totime')
   .get(b2bShopCloneController.getAllAttendanceCloneforMapView);
 
+router.route('/update/data/approved/:id').get(b2bShopCloneController.updateShopStatusdataapproved);
+router.route('/update/phone/approved/:id').get(b2bShopCloneController.updateShopStatusphoneapproved);
+router.route('/update/kyc/approved/:id').get(b2bShopCloneController.updateShopStatuskycapproved);
+
 module.exports = router;

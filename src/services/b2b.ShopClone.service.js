@@ -201,10 +201,10 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         shoptype: '$shoptype.shopList',
         photoCapture: 1,
         SName: 1,
-        address:1,
+        address: 1,
         Slat: 1,
         Slong: 1,
-        status:1,
+        status: 1,
         created: 1,
         SOwner: 1,
         mobile: 1,
@@ -311,6 +311,15 @@ const updateShopById = async (id, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Shop Not found');
   }
   shop = await Shop.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return shop;
+};
+
+const updateShopStatus = async (id, status) => {
+  let shop = await getShopById(id);
+  if (!shop) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'shop Not Found');
+  }
+  shop = await Shop.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
   return shop;
 };
 
@@ -681,7 +690,7 @@ const getMarkeShop = async (marketId, page) => {
         Slong: 1,
         created: 1,
         SOwner: 1,
-        shopNo:1,
+        shopNo: 1,
         marketId: 1,
         type: 1,
         mobile: 1,
@@ -825,6 +834,6 @@ module.exports = {
   forgotPassword,
   otpVerfiy,
   verifyRegisterOTP,
-
+  updateShopStatus,
   getAllAttendanceCloneforMapView,
 };

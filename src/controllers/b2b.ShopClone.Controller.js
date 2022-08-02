@@ -173,6 +173,21 @@ const getAllAttendanceCloneforMapView = catchAsync(async (req, res) => {
   res.send(users);
 });
 
+const updateShopStatusdataapproved = catchAsync(async (req, res) => {
+  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'data_approved');
+  res.send(shops);
+});
+
+const updateShopStatusphoneapproved = catchAsync(async (req, res) => {
+  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'phone_approved');
+  res.send(shops);
+});
+
+const updateShopStatuskycapproved = catchAsync(async (req, res) => {
+  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'kyc_verified');
+  res.send(shops);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -196,4 +211,7 @@ module.exports = {
   verifyRegisterOTP,
   getAllAttendanceCloneforMapView,
   getStreetAndShopDetails,
+  updateShopStatusdataapproved,
+  updateShopStatusphoneapproved,
+  updateShopStatuskycapproved,
 };
