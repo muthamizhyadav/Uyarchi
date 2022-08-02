@@ -3,25 +3,14 @@ const app = require('./app');
 const config = require('./config/config');
 const logger = require('./config/logger');
 const moment = require('moment');
-let time = moment().utcOffset(330).format('h:mm a')
-let times = moment().utcOffset(530).format('h:mm a')
-let timess = moment().format('hmm')
-
-
 
 let server;
 const express = require('express');
 const init = express();
-var timestamp = new Date((dt = new Date()).getTime() - dt.getTimezoneOffset() * 60000)
-  .toISOString()
-  .replace(/(.*)T(.*)\..*/, '$1 $2');
+// var timestamp = new Date((dt = new Date()).getTime() - dt.getTimezoneOffset() * 60000)
+//   .toISOString()
+//   .replace(/(.*)T(.*)\..*/, '$1 $2');
 mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
-  console.log(time);
-  console.log(timestamp);
-  console.log(times);
-  console.log(timess);
-
-
   logger.info('Connected to MongoDB');
   server = app.listen(config.port, () => {
     logger.info(`Listening to port ${config.port}`);

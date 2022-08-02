@@ -47,6 +47,7 @@ const shopSchema = mongoose.Schema({
   },
   status: {
     type: String,
+    default: 'Pending',
   },
   reason: {
     type: String,
