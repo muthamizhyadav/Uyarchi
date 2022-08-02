@@ -368,7 +368,7 @@ const defaultRoutes = [
   {
     path:'/wardAdminDetails',
     route: wardAdminRouter,
-  }
+  },{
     path: '/AssignStock',
     route: AssignStock,
   },
