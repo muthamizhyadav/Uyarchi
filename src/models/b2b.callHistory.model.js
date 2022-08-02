@@ -2,10 +2,6 @@ const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const moment = require('moment');
 
-const nDate = new Date().toLocaleString('en-US', {
-  timeZone: 'Asia/Calcutta',
-});
-
 const callHistorySchema = mongoose.Schema({
   _id: {
     type: String,

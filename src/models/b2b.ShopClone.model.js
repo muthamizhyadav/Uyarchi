@@ -49,6 +49,12 @@ const shopSchema = mongoose.Schema({
     type: String,
     default: 'Pending',
   },
+  whatsappnumber: {
+    type: Number,
+  },
+  alternatenumber: {
+    type: Number,
+  },
   reason: {
     type: String,
   },
