@@ -37,11 +37,7 @@ const createcallHistoryWithType = async (body, userId) => {
   console.log(sort);
   if (callStatus != 'accept') {
     if (shopdata.callingStatus != 'accept') {
-      await Shop.findByIdAndUpdate(
-        { _id: shopId },
-        { callingStatus: callStatus, callingStatusSort: sort, sortdatetime: finalsort },
-        { new: true }
-      );
+      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, callingStatusSort: sort }, { new: true });
     }
   }
   let callHistory = await callHistoryModel.create(values);
@@ -125,9 +121,9 @@ const getById = async (id) => {
 };
 
 const getShop = async (page, userId) => {
-  console.log(finalsort)
+  console.log(finalsort);
   let values = await Shop.aggregate([
-    { $sort: { sortdatetime: -1  } },
+    { $sort: { sortdatetime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
@@ -163,7 +159,7 @@ const getShop = async (page, userId) => {
         mobile: 1,
         Slat: 1,
         Strid: 1,
-        sortdatetime:1,
+        sortdatetime: 1,
         Slong: 1,
         address: 1,
         date: 1,
@@ -211,7 +207,7 @@ const updateStatuscall = async (id, userId, updateBody) => {
   }
   status = await Shop.findByIdAndUpdate(
     { _id: id },
-    { callingStatus: 'under_the_call', callingUserId: userId },
+    { callingStatus: 'under_the_call', sortdatetime: finalsort, callingUserId: userId },
     { new: true }
   );
   return status;
