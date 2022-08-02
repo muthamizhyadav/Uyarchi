@@ -188,6 +188,11 @@ const updateShopStatuskycapproved = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const getshopDataById = catchAsync(async (req, res) => {
+  const shops = await b2bCloneService.getshopDataById(req.params.id);
+  res.send(shops);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -214,4 +219,5 @@ module.exports = {
   updateShopStatusdataapproved,
   updateShopStatusphoneapproved,
   updateShopStatuskycapproved,
+  getshopDataById,
 };

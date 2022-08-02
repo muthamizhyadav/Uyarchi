@@ -812,6 +812,18 @@ const otpVerfiy = async (body) => {
   return await Verfy.verfiy(body, users);
 };
 
+const getshopDataById = async (id) => {
+  const shop = await Shop.findById(id);
+  if (!shop) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop not found');
+  }
+  if (shop.status == 'phone_approved' || shop.status == 'kyc_verified') {
+    throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'Data Not Acceptable');
+  } else {
+    return shop;
+  }
+};
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -836,4 +848,5 @@ module.exports = {
   verifyRegisterOTP,
   updateShopStatus,
   getAllAttendanceCloneforMapView,
+  getshopDataById,
 };

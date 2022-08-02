@@ -54,5 +54,5 @@ router
 router.route('/update/data/approved/:id').get(b2bShopCloneController.updateShopStatusdataapproved);
 router.route('/update/phone/approved/:id').get(b2bShopCloneController.updateShopStatusphoneapproved);
 router.route('/update/kyc/approved/:id').get(b2bShopCloneController.updateShopStatuskycapproved);
-
+router.route('/getshopData/:id').get(b2bShopCloneController.getshopDataById);
 module.exports = router;
