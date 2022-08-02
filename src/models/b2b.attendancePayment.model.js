@@ -21,11 +21,11 @@ const attendancePayment = mongoose.Schema({
   },
   date: {
     type: String,
-    default: moment().utcOffset(330).format('DD-MM-yyy'),
+    default: moment().utcOffset(530).format('DD-MM-yyy'),
   },
   time: {
     type: String,
-    default: moment().utcOffset(330).format('h:mm a'),
+    default: moment().utcOffset(530).format('h:mm a'),
   },
   userId: {
     type: String,
