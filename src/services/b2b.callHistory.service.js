@@ -12,6 +12,8 @@ const createCallHistory = async (body) => {
 };
 
 const createcallHistoryWithType = async (body, userId) => {
+  let time = moment().format('HHmm');
+  let date = moment().format('yyy-MM-DD');
   const { callStatus, shopId } = body;
   let sort;
   if (callStatus == 'reschedule') {
@@ -34,7 +36,11 @@ const createcallHistoryWithType = async (body, userId) => {
   console.log(sort);
   if (callStatus != 'accept') {
     if (shopdata.callingStatus != 'accept') {
-      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, callingStatusSort: sort }, { new: true });
+      await Shop.findByIdAndUpdate(
+        { _id: shopId },
+        { callingStatus: callStatus, sortdate: date, sorttime: time, callingStatusSort: sort },
+        { new: true }
+      );
     }
   }
   let callHistory = await callHistoryModel.create(values);
@@ -197,8 +203,6 @@ const updateCallingStatus = async (id, updatebody) => {
 };
 
 const updateStatuscall = async (id, userId, updateBody) => {
-  let time = moment().format('HHmm');
-  let date = moment().format('yyy-MM-DD');
   console.log(time);
   let finalsort = `${date}${time}`;
   let status = await Shop.findById(id);
@@ -207,7 +211,7 @@ const updateStatuscall = async (id, userId, updateBody) => {
   }
   status = await Shop.findByIdAndUpdate(
     { _id: id },
-    { callingStatus: 'under_the_call', sortdate: date, sorttime: time, callingUserId: userId },
+    { callingStatus: 'under_the_call', callingUserId: userId },
     { new: true }
   );
   return status;
