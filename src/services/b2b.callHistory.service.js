@@ -22,9 +22,9 @@ const createcallHistoryWithType = async (body, userId) => {
   if (callStatus == 'callback') {
     sort = 3;
   }
-  if (callStatus == 'under_the_call') {
-    sort = 4;
-  }
+  // if (callStatus == 'under_the_call') {
+  //   sort = 4;
+  // }
   if (callStatus == 'declined') {
     sort = 5;
   }
@@ -209,7 +209,7 @@ const updateStatuscall = async (id, userId, updateBody) => {
   }
   status = await Shop.findByIdAndUpdate(
     { _id: id },
-    { callingStatus: 'under_the_call', callingUserId: userId },
+    { callingStatus: 'under_the_call', callingStatusSort: 4, callingUserId: userId },
     { new: true }
   );
   return status;

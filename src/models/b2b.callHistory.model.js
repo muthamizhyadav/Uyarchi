@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const moment = require('moment');
-console.log(moment().format('h:mm a'),)
+console.log(moment().format('hh:mm a'),)
 const callHistorySchema = mongoose.Schema({
   _id: {
     type: String,
@@ -42,7 +42,7 @@ const callHistorySchema = mongoose.Schema({
   },
   time: {
     type: String,
-    default: moment().format('h:mm a'),
+    default: moment().format('hh:mm a'),
   },
   status: {
     type: String,
