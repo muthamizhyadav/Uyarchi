@@ -78,7 +78,10 @@ const shopSchema = mongoose.Schema({
   callingUserId: {
     type: String,
   },
-  sortdatetime: {
+  sortdate: {
+    type: String,
+  },
+  sorttime: {
     type: Number,
   },
   marketId: {

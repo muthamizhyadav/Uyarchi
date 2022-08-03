@@ -4,9 +4,6 @@ const ApiError = require('../utils/ApiError');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
 const moment = require('moment');
-let time = moment().format('hhmm');
-let date = moment().format('DDmmyyyy');
-let finalsort = `${date}${time}`;
 
 const createCallHistory = async (body) => {
   await Shop.findByIdAndUpdate({ _id: body.shopId }, { CallStatus: body.callStatus }, { new: true });
@@ -15,6 +12,8 @@ const createCallHistory = async (body) => {
 };
 
 const createcallHistoryWithType = async (body, userId) => {
+  let time = moment().format('HHmm');
+  let date = moment().format('yyy-MM-DD');
   const { callStatus, shopId } = body;
   let sort;
   if (callStatus == 'reschedule') {
@@ -39,7 +38,7 @@ const createcallHistoryWithType = async (body, userId) => {
     if (shopdata.callingStatus != 'accept') {
       await Shop.findByIdAndUpdate(
         { _id: shopId },
-        { callingStatus: callStatus, callingStatusSort: sort, sortdatetime: finalsort },
+        { callingStatus: callStatus, sortdate: date, sorttime: time, callingStatusSort: sort },
         { new: true }
       );
     }
@@ -126,7 +125,7 @@ const getById = async (id) => {
 
 const getShop = async (page, userId) => {
   let values = await Shop.aggregate([
-    { $sort: { callingStatusSort: 1, sortdatetime: -1 } },
+    { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
@@ -162,6 +161,7 @@ const getShop = async (page, userId) => {
         mobile: 1,
         Slat: 1,
         Strid: 1,
+        sortdatetime: 1,
         Slong: 1,
         address: 1,
         date: 1,
@@ -180,7 +180,7 @@ const getShop = async (page, userId) => {
   ]);
 
   let total = await Shop.aggregate([
-    { $sort: { callingStatusSort: 1, sortdatetime: -1 } },
+    { $sort: { callingStatusSort: 1, sortdatetime: 1 } },
     {
       $lookup: {
         from: 'callhistories',
