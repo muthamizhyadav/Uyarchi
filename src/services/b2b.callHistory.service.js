@@ -203,8 +203,6 @@ const updateCallingStatus = async (id, updatebody) => {
 };
 
 const updateStatuscall = async (id, userId, updateBody) => {
-  console.log(time);
-  let finalsort = `${date}${time}`;
   let status = await Shop.findById(id);
   if (!status) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
