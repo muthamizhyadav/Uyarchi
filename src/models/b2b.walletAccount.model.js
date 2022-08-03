@@ -32,6 +32,12 @@ const walletSchema = mongoose.Schema({
   addressProof: {
     type: String,
   },
+  idProofNo:{
+    type: String,
+  },
+  addressProofNo: {
+    type:String,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -43,10 +49,10 @@ const walletSchema = mongoose.Schema({
   contactNumber:{
     type: Number,
   },
-  date: {
-    type: String,
-    default: moment().utcOffset(331).format('DD-MM-yyy'),
-  },
+  // date: {
+  //   type: String,
+  //   default: moment().utcOffset(331).format('DD-MM-yyy'),
+  // },
 });
 
 const wallet = mongoose.model('wallet', walletSchema);

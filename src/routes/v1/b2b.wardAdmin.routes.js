@@ -25,6 +25,8 @@ router.route('/wardloadingExecutive/updateProductBilled/:id').put(wardAdminContr
 
 router.route('/wardloadingExecutive/getdetails/:page').get(wardAdminController.wardloadExecutive);
 
+router.route('/wardloadingExecutive/getPackedProductDetails/:page').get(wardAdminController.wardloadExecutivePacked)
+
 
 
 module.exports = router;

@@ -80,9 +80,11 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   status: {
     type: String,
+    default: 'ordered'
   },
   productStatus: {
     type: String,
+    default: 'pending',
   },
   Uid: {
     type: String,

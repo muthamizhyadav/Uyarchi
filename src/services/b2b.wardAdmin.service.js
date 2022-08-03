@@ -1,7 +1,8 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const { ShopOrderClone } = require('../models/shopOrder.model');
-const { ProductorderClone } = require('../models/shopOrder.model')
+const { ProductorderClone } = require('../models/shopOrder.model');
+const { Shop } = require('../models/b2b.ShopClone.model')
 
 
 // GET DETAILS
@@ -28,14 +29,14 @@ const getdetails = async (page) => {
                 as: 'orderData',
             }
         },
-       
+
         {
             $project: {
-                shopId:1,
+                shopId: 1,
                 shopType: '$userData.type',
                 shopName: '$userData.SName',
-                orderId : '$orderData.orderId',
-                totalItems: {"$size":"$orderData"}
+                orderId: '$orderData.orderId',
+                totalItems: { "$size": "$orderData" }
 
             }
         },
@@ -43,8 +44,8 @@ const getdetails = async (page) => {
         { $limit: 10 },
     ]);
 
-                
-    return  values;
+
+    return values;
 }
 
 
@@ -72,71 +73,71 @@ const updateProduct = async (id, updateBody) => {
 // UPDATE STATUS ACKNOWLEDGE
 
 
-const updateAcknowledge = async (id) => {
-    let acknowledge = await ShopOrderClone.findById(id);
-    console.log(acknowledge);
-    if (!acknowledge) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'acknowledge not found')
-    }
-    acknowledge = await ShopOrderClone.findByIdAndUpdate(
-        { _id: id },
-        { status: 'Acknowledge' },
-        { new: true }
-    )
-    console.log(acknowledge)
-    return acknowledge;
-};
+// const updateAcknowledge = async (id) => {
+//     let acknowledge = await ShopOrderClone.findById(id);
+//     console.log(acknowledge);
+//     if (!acknowledge) {
+//         throw new ApiError(httpStatus.NOT_FOUND, 'acknowledge not found')
+//     }
+//     acknowledge = await ShopOrderClone.findByIdAndUpdate(
+//         { _id: id },
+//         { status: 'Acknowledge' },
+//         { new: true }
+//     )
+//     console.log(acknowledge)
+//     return acknowledge;
+// };
 
 
 // UPDATE STATUS APPROVED
 
 
-const updateApproved = async (id) => {
-    let approved = await ShopOrderClone.findById(id);
-    console.log(approved);
-    if (!approved) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'approved not found')
-    }
-    approved = await ShopOrderClone.findByIdAndUpdate(
-        { _id: id },
-        { status: 'Approved' },
-        { new: true }
-    )
-    console.log(approved);
-    return approved;
-}
+// const updateApproved = async (id) => {
+//     let approved = await ShopOrderClone.findById(id);
+//     console.log(approved);
+//     if (!approved) {
+//         throw new ApiError(httpStatus.NOT_FOUND, 'approved not found')
+//     }
+//     approved = await ShopOrderClone.findByIdAndUpdate(
+//         { _id: id },
+//         { status: 'Approved' },
+//         { new: true }
+//     )
+//     console.log(approved);
+//     return approved;
+// }
 
 
 //  UPDATE STATUS MODIFIED
 
 
-const updateModified = async (id) => {
-    let modified = await ShopOrderClone.findById(id);
-    console.log(modified);
-    if (!modified) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'modified not found')
-    }
-    modified = await ShopOrderClone.findByIdAndUpdate(
-        { _id: id },
-        { status: 'Modified' },
-        { new: true }
-    )
-    console.log(modified)
-    return modified;
-}
+// const updateModified = async (id) => {
+//     let modified = await ShopOrderClone.findById(id);
+//     console.log(modified);
+//     if (!modified) {
+//         throw new ApiError(httpStatus.NOT_FOUND, 'modified not found')
+//     }
+//     modified = await ShopOrderClone.findByIdAndUpdate(
+//         { _id: id },
+//         { status: 'Modified' },
+//         { new: true }
+//     )
+//     console.log(modified)
+//     return modified;
+// }
 
 
 //  UPDATE STATUS REJECTION
 
-const updateRejected = async (id) => {
+const updateRejected = async (id, status) => {
     let rejected = await ShopOrderClone.findById(id);
     console.log(rejected);
     if (!rejected) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'rejection not found')
+        throw new ApiError(httpStatus.NOT_FOUND, ' not found')
     }
     rejected = await ShopOrderClone.findByIdAndUpdate(
         { _id: id },
-        { status: 'Rejected' },
+        { status: status },
         { new: true },
     )
     console.log(rejected);
@@ -148,14 +149,15 @@ const updateRejected = async (id) => {
 
 
 const wardloadExecutive = async (page) => {
+
     let data = await ShopOrderClone.aggregate([
 
         {
-        $match: { 
-            'status': { 
-              $in: ['Approved','Modified'] 
-            } 
-          }
+            $match: {
+                'status': {
+                    $in: ['Approved', 'Modified']
+                }
+            }
         },
         {
             $lookup: {
@@ -176,73 +178,110 @@ const wardloadExecutive = async (page) => {
                 as: 'orderData',
             }
         },
-       
+
         {
             $project: {
-                shopId:1,
-                status:1,
+                shopId: 1,
+                status: 1,
                 shopType: '$userData.type',
                 shopName: '$userData.SName',
-                orderId : '$orderData.orderId',
+                orderId: '$orderData.orderId',
             }
         },
         { $skip: 10 * page },
         { $limit: 10 },
-        
+
     ])
     return data;
 }
 
-//  UPDATE PACKED STATUS FOR PRODUCT STATUS
 
-
-    const updatePacked = async(id)=>{
-        let productPacked = await ShopOrderClone.findById(id);
-        if(!productPacked){
-            throw new ApiError(httpStatus.NOT_FOUND, 'productPacked not found')
-        }
-        productPacked = await ShopOrderClone.findByIdAndUpdate(
-            { _id: id},
-            {productStatus: 'Packed'},
-            { new: true}
-        )
-        console.log(productPacked);
-        return productPacked;
+// TRACK STATUS FOR PRODUCT STATUS
+const updateBilled = async (id, productStatus) => {
+    let productOrderBilled = await ShopOrderClone.findById(id);
+    if (!productOrderBilled) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'productOrderBilled not found')
     }
+    productOrderBilled = await ShopOrderClone.findByIdAndUpdate(
+        { _id: id },
+        { productStatus: productStatus },
+        { new: true }
+    )
+    console.log(productOrderBilled);
+    return productOrderBilled;
+}
 
-    // UPDATE ASSIGNED STATUS FOR PRODUCT STATUS
-
-    const updateAssigned = async(id)=>{
-        let productAssign = await ShopOrderClone.findById(id);
-        if(!productAssign){
-            throw new ApiError(httpStatus.NOT_FOUND, 'productAssigned not found')
-        }
-        productAssign = await ShopOrderClone.findByIdAndUpdate(
-            { _id: id},
-            {productStatus: 'Assigned'},
-            { new: true}
-        )
-        console.log(productAssign);
-        return productAssign;
-    }
+// AFTER PACKED BY WARD LOADING EXECUTE
 
 
-       // UPDATE BILLED STATUS FOR PRODUCT STATUS
+const wardloadExecutivePacked = async (page) => {
+    let data = await ShopOrderClone.aggregate([
+        {
+            $match: {
+                'productStatus':{
+                    $in: ['Packed']
+                }
+            }
+        },
+        {
+            $lookup: {
+                from: 'b2bshopclones',
+                localField: 'shopId',
+                foreignField: '_id',
+                as: 'shopData',
+            }
+        },
+        { $unwind: '$shopData' },
+        {
+            $lookup: {
+                from: 'streets',
+                localField: 'shopData.Strid',
+                foreignField: '_id',
+                as: 'streetsData',
+            }
+        },
+        { $unwind: '$streetsData'},
 
+        {
+            $lookup: {
+                from: 'productorderclones',
+                localField: '_id',
+                foreignField: 'orderId',
+                pipeline: [
+                    { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
+                ],
+                as: 'orderData',
+            }
+        },
+        { $unwind: '$orderData' },
+        {
+            $lookup: {
+                from: 'productorderclones',
+                localField: '_id',
+                foreignField: 'orderId',
+                as: 'orderDatafortotal',
+            }
+        },
+       
+        {
+            $project: {
+                type: '$shopData.type',
+                street: '$streetsData.street',
+                orderId: '$orderDatafortotal.orderId',
+                orderDate: '$orderDatafortotal.date',
+                orderTime: '$orderDatafortotal.time',
+                totalItems: { $size: "$orderDatafortotal" },
+                Qty: "$orderData.Qty",
+                // totalcount: '$orderData.totalItems'
+            }
+        },
+        { $skip: 10 * page },
+        { $limit: 10 },
+    ])
 
-       const updateBilled= async(id)=>{
-        let productOrderBilled = await ShopOrderClone.findById(id);
-        if(!productOrderBilled){
-            throw new ApiError(httpStatus.NOT_FOUND, 'productOrderBilled not found')
-        }
-        productOrderBilled = await ShopOrderClone.findByIdAndUpdate(
-            { _id: id},
-            {productStatus: 'Billed'},
-            { new: true}
-        )
-        console.log(productOrderBilled);
-        return productOrderBilled;
-    }
+    return data;
+}
+
 
 
 
@@ -250,14 +289,15 @@ module.exports = {
     getdetails,
     getproductdetails,
     updateProduct,
-    updateAcknowledge,
-    updateApproved,
-    updateModified,
+    // updateAcknowledge,
+    // updateApproved,
+    // updateModified,
     updateRejected,
 
     //WARD LOADING EXECUTIVE
     wardloadExecutive,
-    updatePacked,
-    updateAssigned,
     updateBilled,
+
+
+    wardloadExecutivePacked,
 }
