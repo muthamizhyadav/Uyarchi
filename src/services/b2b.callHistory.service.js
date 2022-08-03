@@ -12,7 +12,7 @@ const createCallHistory = async (body) => {
 };
 
 const createcallHistoryWithType = async (body, userId) => {
-  let time = moment().format('HHmm');
+  let time = moment().format('HHmmss');
   let date = moment().format('yyy-MM-DD');
   const { callStatus, shopId } = body;
   let sort;
@@ -24,7 +24,7 @@ const createcallHistoryWithType = async (body, userId) => {
   }
   // if (callStatus == 'under_the_call') {
   //   sort = 4;
-  // }
+  // } 
   if (callStatus == 'declined') {
     sort = 5;
   }
