@@ -5,7 +5,6 @@ const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
 const moment = require('moment');
 
-
 const createCallHistory = async (body) => {
   await Shop.findByIdAndUpdate({ _id: body.shopId }, { CallStatus: body.callStatus }, { new: true });
   let callHistory = await callHistoryModel.create(body);
@@ -120,7 +119,7 @@ const getById = async (id) => {
 
 const getShop = async (page, userId) => {
   let values = await Shop.aggregate([
-    { $sort: { sortdatetime: -1 } },
+    { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
@@ -198,16 +197,17 @@ const updateCallingStatus = async (id, updatebody) => {
 };
 
 const updateStatuscall = async (id, userId, updateBody) => {
-  let time = moment().format('Hmm');
-let date = moment().format('DDMMyyy');
-let finalsort = `${date}${time}`;
+  let time = moment().format('HHmm');
+  let date = moment().format('yyy-MM-DD');
+  console.log(time);
+  let finalsort = `${date}${time}`;
   let status = await Shop.findById(id);
   if (!status) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
   status = await Shop.findByIdAndUpdate(
     { _id: id },
-    { callingStatus: 'under_the_call', sortdatetime: finalsort, callingUserId: userId },
+    { callingStatus: 'under_the_call', sortdate: date, sorttime: time, callingUserId: userId },
     { new: true }
   );
   return status;
