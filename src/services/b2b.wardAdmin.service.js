@@ -35,7 +35,7 @@ const getdetails = async (page) => {
                 shopId: 1,
                 shopType: '$userData.type',
                 shopName: '$userData.SName',
-                orderId: '$orderData.orderId',
+                // orderId: '$orderData.orderId',
                 totalItems: { "$size": "$orderData" }
 
             }
@@ -170,14 +170,14 @@ const wardloadExecutive = async (page) => {
         {
             $unwind: '$userData'
         },
-        {
-            $lookup: {
-                from: 'productorderclones',
-                localField: '_id',
-                foreignField: 'orderId',
-                as: 'orderData',
-            }
-        },
+        // {
+        //     $lookup: {
+        //         from: 'productorderclones',
+        //         localField: '_id',
+        //         foreignField: 'orderId',
+        //         as: 'orderData',
+        //     }
+        // },
 
         {
             $project: {
@@ -185,7 +185,7 @@ const wardloadExecutive = async (page) => {
                 status: 1,
                 shopType: '$userData.type',
                 shopName: '$userData.SName',
-                orderId: '$orderData.orderId',
+                // orderId: '$orderData.orderId',
             }
         },
         { $skip: 10 * page },
@@ -265,11 +265,14 @@ const wardloadExecutivePacked = async (page) => {
        
         {
             $project: {
+                date:1,
+                time:1,
+                productStatus:1,
                 type: '$shopData.type',
                 street: '$streetsData.street',
-                orderId: '$orderDatafortotal.orderId',
-                orderDate: '$orderDatafortotal.date',
-                orderTime: '$orderDatafortotal.time',
+                // orderId: '$orderDatafortotal.orderId',
+                // orderDate: '$orderDatafortotal.date',
+                // orderTime: '$orderDatafortotal.time',
                 totalItems: { $size: "$orderDatafortotal" },
                 Qty: "$orderData.Qty",
                 // totalcount: '$orderData.totalItems'
