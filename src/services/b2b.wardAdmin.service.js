@@ -153,22 +153,21 @@ const wardloadExecutive = async (page) => {
     let data = await ShopOrderClone.aggregate([
 
         {
-            $match: {
-                'status': {
-                    $in: ['Approved', 'Modified']
-                }
-            }
-        },
-        {
             $lookup: {
-                from: 'b2bshopclones',
-                localField: 'Uid', //Uid
-                foreignField: 'Uid', //Uid
-                as: 'userData',
+                from:'b2bshopclones',
+                localField:'shopId', //Uid
+                foreignField:'_id', //Uid
+                as: 'b2bshopclonesData',
             },
         },
         {
-            $unwind: '$userData'
+            $unwind: '$b2bshopclonesData'
+        },
+        {
+
+            $match: {
+              $or: [{ status: { $eq: 'Approved' }},{ status: { $eq: 'Modified' }}],
+            }
         },
         // {
         //     $lookup: {
@@ -183,9 +182,10 @@ const wardloadExecutive = async (page) => {
             $project: {
                 shopId: 1,
                 status: 1,
-                shopType: '$userData.type',
-                shopName: '$userData.SName',
-                // orderId: '$orderData.orderId',
+                SName:"$b2bshopclonesData.SName",
+                type:"$b2bshopclonesData.type",
+
+                
             }
         },
         { $skip: 10 * page },
