@@ -6,7 +6,8 @@ const bcrypt = require('bcryptjs');
 const ApiError = require('../utils/ApiError');
 const Textlocal = require('../config/textLocal');
 const Verfy = require('../config/OtpVerify');
-
+const WardAssign = require('../models/wardAssign.model');
+const moment = require('moment');
 const createUser = async (userBody) => {
   // let OTPCODE = Math.floor(1000000 + Math.random() * 9000000);
   // let password = { password: OTPCODE };
@@ -265,6 +266,27 @@ const updatemetadata = async (updateBody) => {
     } else {
       await metaUsers.create(update);
     }
+  });
+
+  let assign = updateBody.assign.forEach(async (e) => {
+    let servercreatetime = moment().format('hh:mm a');
+    let serverdate = moment().format('DD-MM-yyy');
+    // const assigns = await WardAssign.findOne({
+    //   user_id: updateBody.userId,
+    //   key: e.key,
+    //   value: e.value,
+    //   assignStatus: 'Assigned',
+    // });
+    // if (!assigns) {
+    //   throw new ApiError(httpStatus.NOT_FOUND, 'WardAssign not Found');
+    // }
+    let update = {
+      userId: updateBody.userId,
+      key: e.key,
+      value: e.value,
+    };
+    let values = { ...update, ...{ date: serverdate, time: servercreatetime } };
+    await WardAssign.create(values);
   });
   return 'success';
 };

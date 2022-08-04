@@ -13,8 +13,8 @@ const usermetaSchema = new mongoose.Schema({
     metaKey: {
       type: String,
     },
-    metavalue: {
-      type: String,
+    metavalue:{
+      type:String,
     },
     active:{
       type: Boolean,

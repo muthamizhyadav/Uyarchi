@@ -5,6 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const ReceivedProductService = require('../services/receivedProduct.service');
 const ReceivedStock = require('../models/receivedStock.model');
 const CallStatus = require('../models/callStatus');
+
 const createReceivedProduct = catchAsync(async (req, res) => {
   let receivedProduct = await ReceivedProductService.createReceivedProduct(req.body);
   if (receivedProduct) {
