@@ -231,7 +231,7 @@ const getOncallfromshops = async (date, userId) => {
   if (values.length != 0) {
     return { OnCallstatus: false };
   } else {
-    return true;
+    return { OnCallstatus: true };
   }
 };
 
