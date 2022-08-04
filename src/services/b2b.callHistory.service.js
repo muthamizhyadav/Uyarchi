@@ -125,14 +125,22 @@ const getById = async (id) => {
   return historys;
 };
 
-const getShop = async (page, userId) => {
+const getShop = async (date, page, userId) => {
   let values = await Shop.aggregate([
     { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
+
     {
       $lookup: {
         from: 'callhistories',
         localField: '_id',
         foreignField: 'shopId',
+        pipeline:[
+          {
+            $match: {
+              $and: [{ date: { $eq: date } }],
+            },
+          },
+        ],
         as: 'shopData',
       },
     },
@@ -188,6 +196,13 @@ const getShop = async (page, userId) => {
         from: 'callhistories',
         localField: '_id',
         foreignField: 'shopId',
+        pipeline:[
+          {
+            $match: {
+              $and: [{ date: { $eq: date } }],
+            },
+          },
+        ],
         as: 'shopData',
       },
     },
@@ -231,7 +246,7 @@ const getOncallfromshops = async (date, userId) => {
   if (values.length != 0) {
     return { OnCallstatus: false };
   } else {
-    return true;
+    return { OnCallstatus: true };
   }
 };
 

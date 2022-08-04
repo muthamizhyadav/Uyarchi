@@ -31,7 +31,7 @@ const getById = catchAsync(async (req, res) => {
 const getAllPage = catchAsync(async (req, res) => {
   console.log(req.userId);
   let userId = req.userId;
-  const call = await callHistoryService.getShop(req.params.page, userId);
+  const call = await callHistoryService.getShop(req.params.date, req.params.page, userId);
   res.send(call);
 });
 
