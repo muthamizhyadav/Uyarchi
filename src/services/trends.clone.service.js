@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const TrendsClone = require('../models/trendsClone.model');
+const moment = require('moment');
 
 const createTrendsClone = async (body) => {
   let servertime = moment().format('hhmm');
