@@ -47,13 +47,17 @@ const shopSchema = mongoose.Schema({
   },
   status: {
     type: String,
-    default: 'Pending',
+    default: 'Nill',
   },
   whatsappnumber: {
     type: Number,
   },
   alternatenumber: {
     type: Number,
+  },
+  kyc_status: {
+    type: String,
+    default: 'Pending',
   },
   reason: {
     type: String,
