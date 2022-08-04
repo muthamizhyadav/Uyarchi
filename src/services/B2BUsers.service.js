@@ -8,13 +8,13 @@ const Textlocal = require('../config/textLocal');
 const Verfy = require('../config/OtpVerify');
 
 const createUser = async (userBody) => {
-  let OTPCODE = Math.floor(1000000 + Math.random() * 9000000);
-  let password = { password: OTPCODE };
-  let bodyData = { ...userBody, ...password };
-  let value = Users.create(bodyData);
-  if (value) {
-    await Textlocal.sendPwd(userBody.phoneNumber, userBody.name, OTPCODE);
-  }
+  // let OTPCODE = Math.floor(1000000 + Math.random() * 9000000);
+  // let password = { password: OTPCODE };
+  // let bodyData = { ...userBody, ...password };
+  let value = Users.create(userBody);
+  // if (value) {
+  //   await Textlocal.sendPwd(userBody.phoneNumber, userBody.name, OTPCODE);
+  // }
   return value;
 };
 
@@ -26,6 +26,7 @@ const getUsersById = async (id) => {
   let role = await Role.findOne({ _id: user.userRole });
   return { userData: user, RoleData: role };
 };
+
 const getAllUsers = async (page) => {
   let values = await Users.aggregate([
     {
@@ -151,7 +152,11 @@ const createMetaUsers = async (userBody) => {
 const forgotPassword = async (body) => {
   // const { phoneNumber } = body;
   // await Textlocal.Otp(body);
-  let users = await Users.findOne({ phoneNumber: body.mobileNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
+  let users = await Users.findOne({
+    phoneNumber: body.mobileNumber,
+    active: true,
+    userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
+  });
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
   }
@@ -160,12 +165,17 @@ const forgotPassword = async (body) => {
 const otpVerfiy = async (body) => {
   // const { phoneNumber } = body;
   // await Textlocal.Otp(body);
-  let users = await Users.findOne({ phoneNumber: body.mobileNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
+  let users = await Users.findOne({
+    phoneNumber: body.mobileNumber,
+    active: true,
+    userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
+  });
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
   }
   return await Verfy.verfiy(body, users);
 };
+
 const getForMyAccount = async (userId) => {
   let values = await Users.aggregate([
     {
