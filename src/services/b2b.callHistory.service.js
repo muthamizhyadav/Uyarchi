@@ -211,7 +211,7 @@ const updateStatuscall = async (id, userId, updateBody) => {
   }
   status = await Shop.findByIdAndUpdate(
     { _id: id },
-    { callingStatus: 'under_the_call', callingStatusSort: 4, callingUserId: userId },
+    { callingStatus: 'under_the_call', callingUserId: userId },
     { new: true }
   );
   return status;
