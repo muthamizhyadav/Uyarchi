@@ -152,7 +152,11 @@ const createMetaUsers = async (userBody) => {
 const forgotPassword = async (body) => {
   // const { phoneNumber } = body;
   // await Textlocal.Otp(body);
-  let users = await Users.findOne({ phoneNumber: body.mobileNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
+  let users = await Users.findOne({
+    phoneNumber: body.mobileNumber,
+    active: true,
+    userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
+  });
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
   }
@@ -161,7 +165,11 @@ const forgotPassword = async (body) => {
 const otpVerfiy = async (body) => {
   // const { phoneNumber } = body;
   // await Textlocal.Otp(body);
-  let users = await Users.findOne({ phoneNumber: body.mobileNumber, userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' });
+  let users = await Users.findOne({
+    phoneNumber: body.mobileNumber,
+    active: true,
+    userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
+  });
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
   }
