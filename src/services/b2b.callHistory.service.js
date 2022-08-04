@@ -189,6 +189,11 @@ const getShop = async (date, page, userId) => {
   let total = await Shop.aggregate([
     { $sort: { callingStatusSort: 1, sortdatetime: 1 } },
     {
+      $match: {
+        $and: [{ date: { $eq: date } }],
+      },
+    },
+    {
       $lookup: {
         from: 'callhistories',
         localField: '_id',
