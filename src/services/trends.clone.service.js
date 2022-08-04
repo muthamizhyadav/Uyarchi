@@ -3,7 +3,10 @@ const ApiError = require('../utils/ApiError');
 const TrendsClone = require('../models/trendsClone.model');
 
 const createTrendsClone = async (body) => {
-  const trendsClone = await TrendsClone.create(body);
+  let servertime = moment().format('hhmm');
+  let serverdate = moment().format('DD-MM-yyy');
+  let values = { ...body, ...{ date: serverdate, time: servertime } };
+  const trendsClone = await TrendsClone.create(values);
   return trendsClone;
 };
 
