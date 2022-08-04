@@ -20,10 +20,32 @@ const getshopName = async()=>{
   let shopname = await Shop.aggregate([
 
     {
+      $lookup:{
+        from:'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        as:'wardData'
+      }
+    },
+    {
+      $lookup:{
+        from:'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streetData'
+      }
+
+    },
+
+    {
       $project: {
         SName:1,
         mobile:1,
         address:1,
+        SOwner:1,
+        type:1,
+          wardNo: '$wardData.wardNo',
+          streetName: '$streetData.street'
       }
 
     },
