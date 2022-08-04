@@ -134,7 +134,7 @@ const getShop = async (date, page, userId) => {
         from: 'callhistories',
         localField: '_id',
         foreignField: 'shopId',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: [{ date: { $eq: date } }],
@@ -196,7 +196,7 @@ const getShop = async (date, page, userId) => {
         from: 'callhistories',
         localField: '_id',
         foreignField: 'shopId',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: [{ date: { $eq: date } }],
@@ -241,9 +241,9 @@ const createShopByOwner = async (body) => {
   return values;
 };
 
-const getOncallfromshops = async (date, userId) => {
-  let values = await Shop.find({ date: date, Uid: userId, callingStatus: 'On Call' });
-  console.log(values)
+const getOncallfromshops = async (userId) => {
+  let values = await Shop.find({ Uid: userId, callingStatus: 'On Call' });
+  console.log(values);
   if (values.length != 0) {
     return { OnCallstatus: false };
   } else {
