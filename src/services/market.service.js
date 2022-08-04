@@ -19,7 +19,7 @@ const createmarket = async (marketbody) => {
 };
 
 const createmarketClone = async (body) => {
-  let servertime = moment().format('hhmm');
+  let servertime = moment().format('HHmm');
   let serverdate = moment().format('DD-MM-yyy');
   let values = {...body, ...{date: serverdate, time: servertime }}
   const marketclone = await MarketClone.create(values);
@@ -27,7 +27,7 @@ const createmarketClone = async (body) => {
 };
 
 const createmarketShopClone = async (body) => {
-  let servertime = moment().format('hhmm');
+  let servertime = moment().format('HHmm');
   let serverdate = moment().format('DD-MM-yyy');
   let values = {...body, ...{date: serverdate, time: servertime }}
   const marketShopclone = await MarketShopsClone.create(values);

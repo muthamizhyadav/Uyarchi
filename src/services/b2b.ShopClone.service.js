@@ -12,7 +12,7 @@ const { verfiy } = require('../config/registerOTP.Verify');
 // Shop Clone Serive
 
 const createShopClone = async (shopBody) => {
-  let servertime = moment().format('hh:mm');
+  let servertime = moment().format('HH:mm');
   let serverdate = moment().format('DD-MM-yyy');
   let values = { ...shopBody, ...{ date: serverdate, time: servertime } };
   const shop = await Shop.create(values);
@@ -367,9 +367,10 @@ const deleteShopById = async (id) => {
 // Attendance Clone Service
 
 const createAttendanceClone = async (shopBody) => {
-  let servertime = moment().format('hhmm');
+  let servertime = moment().format('HHmm');
+  let servercreatetime = moment().format('HH:mm a');
   let serverdate = moment().format('DD-MM-yyy');
-  let values = { ...shopBody, ...{ date: serverdate, time: servertime } };
+  let values = { ...shopBody, ...{ date: serverdate, time: servertime, created: servercreatetime } };
   const attendance = await AttendanceClone.create(values);
   return attendance;
 };
