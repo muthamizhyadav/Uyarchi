@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const walletModel = require('../models/b2b.walletAccount.model');
+const { Shop } = require('../models/b2b.ShopClone.model')
 
 const createWallet = async (walletbody) => {
   let wallet = await walletModel.create(walletbody);
@@ -13,6 +14,25 @@ const currentAmount = async (amountBody) => {
   let amount = await walletModel.create(amountBody);
   return amount;
 };
+
+
+const getshopName = async()=>{
+  let shopname = await Shop.aggregate([
+
+    {
+      $project: {
+        SName:1,
+        mobile:1,
+        address:1,
+      }
+
+    },
+
+  ])
+  return shopname;
+
+}
+
 
 
 const getAll = async () => {
@@ -57,4 +77,5 @@ module.exports = {
   getWallet,
 
   currentAmount,
+  getshopName,
 };
