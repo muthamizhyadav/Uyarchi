@@ -10,7 +10,7 @@ const verfiy = async (body, user) => {
     used: false,
   });
   if (!validate) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'OTP NOT Matching');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Incorrect_OTP');
   }
   await OTP.findOneAndUpdate({ _id: validate._id }, { used: true }, { new: true });
   const token_ser = await token.generateAuthTokens_forget(user);

@@ -8,10 +8,10 @@ const Textlocal = require('../config/textLocal');
 const Verfy = require('../config/OtpVerify');
 
 const createUser = async (userBody) => {
-  let OTPCODE = Math.floor(1000000 + Math.random() * 9000000);
-  let password = { password: OTPCODE };
-  let bodyData = { ...userBody, ...password };
-  let value = Users.create(bodyData);
+  // let OTPCODE = Math.floor(1000000 + Math.random() * 9000000);
+  // let password = { password: OTPCODE };
+  // let bodyData = { ...userBody, ...password };
+  let value = Users.create(userBody);
   // if (value) {
   //   await Textlocal.sendPwd(userBody.phoneNumber, userBody.name, OTPCODE);
   // }
@@ -26,6 +26,7 @@ const getUsersById = async (id) => {
   let role = await Role.findOne({ _id: user.userRole });
   return { userData: user, RoleData: role };
 };
+
 const getAllUsers = async (page) => {
   let values = await Users.aggregate([
     {
@@ -166,6 +167,7 @@ const otpVerfiy = async (body) => {
   }
   return await Verfy.verfiy(body, users);
 };
+
 const getForMyAccount = async (userId) => {
   let values = await Users.aggregate([
     {
