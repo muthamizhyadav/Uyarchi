@@ -6,12 +6,16 @@ const ApiError = require('../utils/ApiError');
 const Textlocal = require('../config/textLocal');
 const Verfy = require('../config/OtpVerify');
 const RegisterOtp = require('../config/registerOtp');
+const moment = require('moment');
 const { verfiy } = require('../config/registerOTP.Verify');
+
 // Shop Clone Serive
 
 const createShopClone = async (shopBody) => {
-  const shop = await Shop.create(shopBody);
-  console.log(shop);
+  let servertime = moment().format('HH:mm');
+  let serverdate = moment().format('DD-MM-yyy');
+  let values = { ...shopBody, ...{ date: serverdate, time: servertime } };
+  const shop = await Shop.create(values);
   return shop;
 };
 
@@ -207,6 +211,8 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         status: 1,
         created: 1,
         SOwner: 1,
+        kyc_status: 1,
+        active: 1,
         mobile: 1,
         date: 1,
       },
@@ -361,7 +367,11 @@ const deleteShopById = async (id) => {
 // Attendance Clone Service
 
 const createAttendanceClone = async (shopBody) => {
-  const attendance = await AttendanceClone.create(shopBody);
+  let servertime = moment().format('HHmm');
+  let servercreatetime = moment().format('hh:mm a');
+  let serverdate = moment().format('DD-MM-yyy');
+  let values = { ...shopBody, ...{ date: serverdate, time: servertime, created: servercreatetime } };
+  const attendance = await AttendanceClone.create(values);
   return attendance;
 };
 

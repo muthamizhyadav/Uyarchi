@@ -64,7 +64,7 @@ const callingStatusreport = catchAsync(async (req, res) => {
 
 const getOncallfromshops = catchAsync(async (req, res) => {
   let userId = req.userId;
-  const shops = await callHistoryService.getOncallfromshops(req.params.date, userId);
+  const shops = await callHistoryService.getOncallfromshops(userId);
   res.send(shops);
 });
 

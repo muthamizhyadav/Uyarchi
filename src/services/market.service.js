@@ -3,7 +3,7 @@ const { Market } = require('../models/market.model');
 const { MarketShops, MarketClone, MarketShopsClone } = require('../models/market.model');
 const manageUser = require('../models/manageUser.model');
 const ApiError = require('../utils/ApiError');
-
+const moment = require('moment');
 const createmarket = async (marketbody) => {
   const { Uid } = marketbody;
   let ManageUser = await manageUser.findById(Uid);
@@ -19,12 +19,18 @@ const createmarket = async (marketbody) => {
 };
 
 const createmarketClone = async (body) => {
-  const marketclone = await MarketClone.create(body);
+  let servertime = moment().format('HHmm');
+  let serverdate = moment().format('DD-MM-yyy');
+  let values = {...body, ...{date: serverdate, time: servertime }}
+  const marketclone = await MarketClone.create(values);
   return marketclone;
 };
 
 const createmarketShopClone = async (body) => {
-  const marketShopclone = await MarketShopsClone.create(body);
+  let servertime = moment().format('HHmm');
+  let serverdate = moment().format('DD-MM-yyy');
+  let values = {...body, ...{date: serverdate, time: servertime }}
+  const marketShopclone = await MarketShopsClone.create(values);
   return marketShopclone;
 };
 
