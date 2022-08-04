@@ -8,6 +8,7 @@ const Verfy = require('../config/OtpVerify');
 const RegisterOtp = require('../config/registerOtp');
 const moment = require('moment');
 const { verfiy } = require('../config/registerOTP.Verify');
+
 // Shop Clone Serive
 
 const createShopClone = async (shopBody) => {
@@ -211,6 +212,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         created: 1,
         SOwner: 1,
         kyc_status: 1,
+        active: 1,
         mobile: 1,
         date: 1,
       },
