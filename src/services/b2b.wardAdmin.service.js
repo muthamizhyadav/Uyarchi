@@ -29,25 +29,6 @@ const getdetails = async (page) => {
       },
     },
 
-<<<<<<< HEAD
-        {
-            $project: {
-                shopId: 1,
-                shopType: '$userData.type',
-                shopName: '$userData.SName',
-                // orderId: '$orderData.orderId',
-                totalItems: { "$size": "$orderData" }
-
-            }
-        },
-        { $skip: 10 * page },
-        { $limit: 10 },
-    ]);
-
-
-    return values;
-}
-=======
     {
       $project: {
         shopId: 1,
@@ -60,7 +41,6 @@ const getdetails = async (page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
->>>>>>> 1e9f5d4571eb66a05a345ff2233782e84a52b17c
 
   return values;
 };
@@ -150,54 +130,6 @@ const updateRejected = async (id, status) => {
 //WARD LOADING EXECUTIVE
 
 const wardloadExecutive = async (page) => {
-<<<<<<< HEAD
-
-    let data = await ShopOrderClone.aggregate([
-
-        {
-            $match: {
-                'status': {
-                    $in: ['Approved', 'Modified']
-                }
-            }
-        },
-        {
-            $lookup: {
-                from: 'b2bshopclones',
-                localField: 'Uid', //Uid
-                foreignField: 'Uid', //Uid
-                as: 'userData',
-            },
-        },
-        {
-            $unwind: '$userData'
-        },
-        // {
-        //     $lookup: {
-        //         from: 'productorderclones',
-        //         localField: '_id',
-        //         foreignField: 'orderId',
-        //         as: 'orderData',
-        //     }
-        // },
-
-        {
-            $project: {
-                shopId: 1,
-                status: 1,
-                shopType: '$userData.type',
-                shopName: '$userData.SName',
-                // orderId: '$orderData.orderId',
-            }
-        },
-        { $skip: 10 * page },
-        { $limit: 10 },
-
-    ])
-    return data;
-}
-
-=======
   let data = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -240,7 +172,6 @@ const wardloadExecutive = async (page) => {
   ]);
   return data;
 };
->>>>>>> 1e9f5d4571eb66a05a345ff2233782e84a52b17c
 
 // TRACK STATUS FOR PRODUCT STATUS
 const updateBilled = async (id, productStatus) => {
@@ -262,69 +193,6 @@ const wardloadExecutivePacked = async (page) => {
         productStatus: {
           $in: ['Packed'],
         },
-<<<<<<< HEAD
-        {
-            $lookup: {
-                from: 'b2bshopclones',
-                localField: 'shopId',
-                foreignField: '_id',
-                as: 'shopData',
-            }
-        },
-        { $unwind: '$shopData' },
-        {
-            $lookup: {
-                from: 'streets',
-                localField: 'shopData.Strid',
-                foreignField: '_id',
-                as: 'streetsData',
-            }
-        },
-        { $unwind: '$streetsData'},
-
-        {
-            $lookup: {
-                from: 'productorderclones',
-                localField: '_id',
-                foreignField: 'orderId',
-                pipeline: [
-                    { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
-                ],
-                as: 'orderData',
-            }
-        },
-        { $unwind: '$orderData' },
-        {
-            $lookup: {
-                from: 'productorderclones',
-                localField: '_id',
-                foreignField: 'orderId',
-                as: 'orderDatafortotal',
-            }
-        },
-       
-        {
-            $project: {
-                date:1,
-                time:1,
-                productStatus:1,
-                type: '$shopData.type',
-                street: '$streetsData.street',
-                // orderId: '$orderDatafortotal.orderId',
-                // orderDate: '$orderDatafortotal.date',
-                // orderTime: '$orderDatafortotal.time',
-                totalItems: { $size: "$orderDatafortotal" },
-                Qty: "$orderData.Qty",
-                // totalcount: '$orderData.totalItems'
-            }
-        },
-        { $skip: 10 * page },
-        { $limit: 10 },
-    ])
-
-    return data;
-}
-=======
       },
     },
     {
@@ -345,7 +213,6 @@ const wardloadExecutivePacked = async (page) => {
       },
     },
     { $unwind: '$streetsData' },
->>>>>>> 1e9f5d4571eb66a05a345ff2233782e84a52b17c
 
     {
       $lookup: {
