@@ -209,11 +209,7 @@ const updateStatuscall = async (id, userId, updateBody) => {
   if (!status) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  status = await Shop.findByIdAndUpdate(
-    { _id: id },
-    { callingStatus: 'On Call', callingUserId: userId },
-    { new: true }
-  );
+  status = await Shop.findByIdAndUpdate({ _id: id }, { callingStatus: 'On Call', callingUserId: userId }, { new: true });
   return status;
 };
 
@@ -230,6 +226,15 @@ const createShopByOwner = async (body) => {
   return values;
 };
 
+const getOncallfromshops = async (date, userId) => {
+  let values = await Shop.find({ date: date, Uid: userId, callingStatus: 'On Call' });
+  if (values.length != 0) {
+    return { OnCallstatus: false };
+  } else {
+    return true;
+  }
+};
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -241,4 +246,5 @@ module.exports = {
   createcallHistoryWithType,
   callingStatusreport,
   updateOrderStatus,
+  getOncallfromshops,
 };

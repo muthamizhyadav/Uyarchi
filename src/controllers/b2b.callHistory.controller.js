@@ -29,9 +29,9 @@ const getById = catchAsync(async (req, res) => {
 });
 
 const getAllPage = catchAsync(async (req, res) => {
-  console.log(req.userId)
+  console.log(req.userId);
   let userId = req.userId;
-  const call = await callHistoryService.getShop(req.params.page,userId);
+  const call = await callHistoryService.getShop(req.params.page, userId);
   res.send(call);
 });
 
@@ -62,6 +62,12 @@ const callingStatusreport = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const getOncallfromshops = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const shops = await callHistoryService.getOncallfromshops(req.params.date, userId);
+  res.send(shops);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -74,4 +80,5 @@ module.exports = {
   createcallHistoryWithTypes,
   callingStatusreport,
   updateOrderedStatus,
+  getOncallfromshops,
 };

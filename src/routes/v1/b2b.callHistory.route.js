@@ -7,7 +7,7 @@ const authorization = require('../../controllers/tokenVerify.controller');
 router.route('/call').post(authorization, callHistoryController.createCallHistory);
 router.route('/getAll/CallHistory').get(callHistoryController.getAll);
 // router.route('/getShopId').get(callHistoryController.getShop);
-router.route('/getAll/callHistory/:page').get(authorization,callHistoryController.getAllPage);
+router.route('/getAll/callHistory/:page').get(authorization, callHistoryController.getAllPage);
 router.route('/update/callingStatus/:id').put(authorization, callHistoryController.updateCallingStatus);
 router.route('/update/StatusCall/:id').put(callHistoryController.updateStatuscall);
 router.route('/getCallCount/:id').get(callHistoryController.getById);
@@ -15,7 +15,7 @@ router.route('/createByOwner/shop').post(callHistoryController.createShopByOwner
 router.route('/callHistory/report/callingStatus').get(callHistoryController.callingStatusreport);
 router.route('/craeteCallStatus').post(callHistoryController.createcallHistoryWithTypes);
 router.route('/craeteCallStatus').post(authorization, callHistoryController.createcallHistoryWithTypes);
-
 router.route('/updateOrderedStatus/:id').put(callHistoryController.updateOrderedStatus);
+router.route('/oncallcheck/:date').get(authorization, callHistoryController.getOncallfromshops);
 
 module.exports = router;

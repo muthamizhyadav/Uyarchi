@@ -35,7 +35,7 @@ const getdetails = async (page) => {
                 shopId: 1,
                 shopType: '$userData.type',
                 shopName: '$userData.SName',
-                // orderId: '$orderData.orderId',
+                orderId: '$orderData.orderId',
                 totalItems: { "$size": "$orderData" }
 
             }
