@@ -49,6 +49,9 @@ const walletSchema = mongoose.Schema({
   contactNumber:{
     type: Number,
   },
+  shopId: {
+    type: String,
+  },
   // date: {
   //   type: String,
   //   default: moment().utcOffset(331).format('DD-MM-yyy'),
