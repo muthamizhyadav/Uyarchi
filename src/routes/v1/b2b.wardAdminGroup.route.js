@@ -3,7 +3,9 @@ const wardAdminGroupController = require('../../controllers/b2b.wardAdminGroup.c
 const router = express.Router();
 
 
-router.route('/craeteGroupId').get(wardAdminGroupController.createGroupOrder);
+router.route('/craeteGroupId').post(wardAdminGroupController.createGroupOrder);
+
+// router.route('/groupId').post(wardAdminGroupController.createGroupId)
 
 
 module.exports = router;
