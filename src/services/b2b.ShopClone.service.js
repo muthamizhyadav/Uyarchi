@@ -381,7 +381,6 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
   let from;
   const d = new Date(date);
   date = moment(d).format('DD-MM-YYYY');
-  console.log(date);
   if (parseInt(fromtime) <= parseInt(totime)) {
     to = parseInt(fromtime);
     from = parseInt(totime);
@@ -482,6 +481,8 @@ const getAllAttendanceCloneforMapView = async (id, date, fromtime, totime) => {
   let match;
   let to;
   let from;
+  const d = new Date(date);
+  date = moment(d).format('DD-MM-YYYY');
   if (parseInt(fromtime) <= parseInt(totime)) {
     to = parseInt(fromtime);
     from = parseInt(totime);
