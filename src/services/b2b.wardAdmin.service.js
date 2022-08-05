@@ -43,6 +43,7 @@ const getdetails = async (page) => {
             $project: {
                 shopId: 1,
                 OrderId:1,
+                status:1,
                 name : '$userNameData.name',
 
                 shopType: '$userData.type',
