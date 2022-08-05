@@ -254,7 +254,6 @@ const deleteMetaUser = async (id) => {
 
 const updatemetadata = async (updateBody) => {
   updateBody.metavalue.forEach(async (e) => {
-    if (e.key != 'ward') {
       const metauser = await metaUsers.findOne({ user_id: updateBody.userId, metaKey: e.key });
       let update = {
         user_id: updateBody.userId,
@@ -267,7 +266,6 @@ const updatemetadata = async (updateBody) => {
       } else {
         await metaUsers.create(update);
       }
-    }
   });
 
   // let assign = updateBody.assign.forEach(async (e) => {
