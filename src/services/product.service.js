@@ -80,9 +80,9 @@ const getTrendsData = async (date, wardId, street, page) => {
         localField: '_id',
         foreignField: 'productId',
         pipeline: [
-          {
-            $match: { date: date },
-          },
+          // {
+          //   $match: { date: date },
+          // },
           {
             $match: { $and: [match] },
           },

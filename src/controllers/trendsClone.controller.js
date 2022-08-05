@@ -9,6 +9,7 @@ const Street = require('../models/street.model');
 const { MarketShopsClone } = require('../models/market.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { MarketClone } = require('../models/market.model');
+const moment = require('moment');
 
 const createTrends = catchAsync(async (req, res) => {
   let userId = req.userId;
@@ -17,7 +18,9 @@ const createTrends = catchAsync(async (req, res) => {
   let marketshopclone = await MarketShopsClone.findById({ _id: req.body.shopid });
   let streetId;
   // console.log(shopclone,"sdfsfd")
-
+  let servertime = moment().format('HHmm');
+  let serverdate = moment().format('DD-MM-yyy');
+  let created = moment().format('hh:mm a');
   if (shopclone) {
     streetId = shopclone.Strid;
   }
@@ -37,10 +40,10 @@ const createTrends = catchAsync(async (req, res) => {
       shopId: req.body.shopid,
       steetId: streetId,
       UserId: userId,
-      date: req.body.date,
-      time: req.body.time,
-      fulldate: req.body.fulldate,
-      created: req.body.created,
+      date: serverdate,
+      time: servertime,
+      // fulldate: req.body.fulldate,
+      created: created,
     };
     await TrendproductClone.create(row);
   });
