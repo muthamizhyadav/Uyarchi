@@ -367,7 +367,7 @@ const deleteShopById = async (id) => {
 // Attendance Clone Service
 
 const createAttendanceClone = async (shopBody) => {
-  let servertime = moment().format('HHmmss');
+  let servertime = moment().format('HHmm');
   let servercreatetime = moment().format('hh:mm a');
   let serverdate = moment().format('DD-MM-yyy');
   let values = { ...shopBody, ...{ date: serverdate, time: servertime, created: servercreatetime } };
