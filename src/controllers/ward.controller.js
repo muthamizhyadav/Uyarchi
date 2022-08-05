@@ -32,7 +32,7 @@ const getmetaData = catchAsync(async (req, res) => {
   if (!zoneId) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Zone Not FOund');
   }
-  const dis = await wardService.getWardByZoneId(zoneId.metavalue);
+  const dis = await wardService.getWardByZoneIdBySalesman(zoneId.metavalue);
   res.send(dis);
 });
 

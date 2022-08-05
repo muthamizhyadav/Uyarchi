@@ -62,6 +62,18 @@ const getWardByZoneId = async (zoneId) => {
   const zone = await Ward.aggregate([
     {
       $match: {
+        $and: [{ zoneId: { $eq: zoneId } }],
+      },
+    },
+  ]);
+  return zone;
+};
+
+const getWardByZoneIdBySalesman = async (zoneId) => {
+  console.log(zoneId);
+  const zone = await Ward.aggregate([
+    {
+      $match: {
         $and: [{ district: { $eq: zoneId } }],
       },
     },
@@ -191,4 +203,5 @@ module.exports = {
   wardPagination,
   getAllWardsForManageTrends,
   createDummyStreet,
+  getWardByZoneIdBySalesman,
 };
