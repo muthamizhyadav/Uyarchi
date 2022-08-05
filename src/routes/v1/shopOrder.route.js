@@ -37,4 +37,7 @@ router
 
 
   router.route('/telecaller').get(shopOrderController.getAll)
+
+
+  router.route('/createorderId').post(shopOrderController.createOrderId);
 module.exports = router;

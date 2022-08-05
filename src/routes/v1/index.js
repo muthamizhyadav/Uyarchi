@@ -78,6 +78,7 @@ const manageSalary = require('./manage.salary.route');
 const wardAdminRouter = require('./b2b.wardAdmin.routes');
 const usableStock = require('./usableStock.route');
 const AssignStock = require('./AssignStock.route');
+const wardAdminGroup = require('./b2b.wardAdminGroup.route')
 const defaultRoutes = [
   {
     path: '/auth',
@@ -368,6 +369,10 @@ const defaultRoutes = [
   },{
     path: '/AssignStock',
     route: AssignStock,
+  },
+  {
+    path: '/wardAdminGroup',
+    route: wardAdminGroup,
   },
   // {
   //   path: '/sales',

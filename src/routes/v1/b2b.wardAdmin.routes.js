@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.route('/getDetails/:page').get(wardAdminController.getDetails);
 
-router.route('/getProductDetails/:orderId').get(wardAdminController.getproductDetails);
+router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 
 router.route('/updateProductById/:id').put(wardAdminController.updateProduct);
 
