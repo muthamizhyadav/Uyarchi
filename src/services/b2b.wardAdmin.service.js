@@ -13,8 +13,8 @@ const getdetails = async (page) => {
         {
             $lookup: {
                 from: 'b2bshopclones',
-                localField: 'Uid', //Uid
-                foreignField: 'Uid', //Uid
+                localField: 'shopId', //Uid
+                foreignField: '_id', //Uid
                 as: 'userData',
             },
         },
@@ -29,12 +29,24 @@ const getdetails = async (page) => {
                 as: 'orderData',
             }
         },
+       {
+        $lookup: {
+            from: 'b2busers',
+            localField: 'Uid',
+                foreignField: '_id',
+                as: 'userNameData',
+        }
+
+       },
 
         {
             $project: {
                 shopId: 1,
+                name : '$userNameData.name',
+
                 shopType: '$userData.type',
                 shopName: '$userData.SName',
+                // UserName: '$userData.name',
                 orderId: '$orderData.orderId',
                 totalItems: { "$size": "$orderData" }
 
@@ -52,8 +64,8 @@ const getdetails = async (page) => {
 // GET PRODUCT DETAILS
 
 
-const getproductdetails = async (orderId) => {
-    let getproduct = await ShopOrderClone.findById(orderId)
+const getproductdetails = async (id) => {
+    let getproduct = await ShopOrderClone.findById(id)
     return getproduct
 }
 

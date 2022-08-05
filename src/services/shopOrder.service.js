@@ -3,6 +3,8 @@ const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone } = req
 const { Product } = require('../models/product.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const ApiError = require('../utils/ApiError');
+const moment = require('moment');
+let currentDate = moment().format('DD-MM-YYYY');
 
 const createshopOrder = async (shopOrderBody, userid) => {
   let body = { ...shopOrderBody, ...{ Uid: userid } };
@@ -267,6 +269,11 @@ const getAll = async () => {
   return ShopOrderClone.find();
 };
 
+const createOrderId = async (body)=>{
+  return ShopOrderClone.create(body);
+};
+
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -294,4 +301,5 @@ module.exports = {
   // Telecaller
 
   getAll,
+  createOrderId,
 };

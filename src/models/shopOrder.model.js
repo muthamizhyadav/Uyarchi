@@ -44,6 +44,7 @@ const ShopOrderPriceSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+ 
 });
 
 ShopOrderPriceSchema.plugin(toJSON);
@@ -87,6 +88,9 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     default: 'pending',
   },
   Uid: {
+    type: String,
+  },
+  OrderId: {
     type: String,
   },
   active: {

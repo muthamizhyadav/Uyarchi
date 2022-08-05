@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { shopOrderService } = require('../services');
+const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone } = require('../models/shopOrder.model');
 
 const createshopOrder = catchAsync(async (req, res) => {
   let userid = req.userId;
@@ -116,6 +117,41 @@ const getAll = catchAsync(async (req, res) => {
   res.send(telecaller);
 });
 
+
+const createOrderId = catchAsync(async (req, res) => {
+  const Buy = await ShopOrderClone.find();
+  let center = '';
+  // console.log(Buy.length);
+  if (Buy.length < 9) {
+    center = 'OD00';
+  }
+  if (Buy.length < 99 && Buy.length >= 9) {
+    center = 'OD0';
+  }
+  if (Buy.length < 999 && Buy.length >= 99) {
+    center = 'OD';
+  }
+  if (Buy.length < 9999 && Buy.length >= 999) {
+    center = '0';
+  }
+  // console.log(center, 0);
+  let userId = '';
+  let totalcount = Buy.length + 1;
+
+  userId = center + totalcount;
+
+  let supplierss;
+  if (userId != '') {
+    supplierss = await shopOrderService.createOrderId(req.body);
+  }
+  console.log(userId)
+  supplierss.OrderId = userId;
+  console.log(supplierss)
+  // console.log(supplierss)
+  res.status(httpStatus.CREATED).send(supplierss);
+  await supplierss.save();
+})
+
 module.exports = {
   createshopOrder,
   getAllShopOrder,
@@ -142,4 +178,8 @@ module.exports = {
 
   // Telecaller
   getAll,
+
+
+
+  createOrderId,
 };
