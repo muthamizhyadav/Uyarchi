@@ -157,28 +157,6 @@ const getShop = async (date, page, userId, userRole) => {
       $unwind: '$shoplists',
     },
     {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'Uid',
-        foreignField: '_id',
-        as: 'userData',
-      },
-    },
-    {
-      $unwind: '$userData',
-    },
-    {
-      $lookup: {
-        from: 'roles',
-        localField: 'userData.userRole',
-        foreignField: '_id',
-        as: 'RoleData',
-      },
-    },
-    {
-      $unwind: '$RoleData',
-    },
-    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -209,7 +187,6 @@ const getShop = async (date, page, userId, userRole) => {
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         callingUserId: 1,
         // userData: '$userData',
-        RoleName: '$RoleData.roleName',
       },
     },
     { $skip: 10 * page },
