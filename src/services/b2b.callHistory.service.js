@@ -182,7 +182,7 @@ const getShop = async (date, page, userId) => {
         Uid: 1,
         shopData: '$shopData',
         shoptypeName: '$shoplists.shopList',
-        matching: { $eq: ['$callingUserId', userId] },
+        matching: { $eq: ['$callingUserId', userId], $eq: ['$callingStatus', 'On Call'] },
       },
     },
     { $skip: 10 * page },
