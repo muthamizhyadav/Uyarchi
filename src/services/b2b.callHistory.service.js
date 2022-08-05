@@ -126,6 +126,7 @@ const getById = async (id) => {
 };
 
 const getShop = async (date, page, userId) => {
+  console.log('date:', date);
   let values = await Shop.aggregate([
     { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
 
@@ -156,6 +157,28 @@ const getShop = async (date, page, userId) => {
       $unwind: '$shoplists',
     },
     {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'userData.userRole',
+        foreignField: '_id',
+        as: 'RoleData',
+      },
+    },
+    {
+      $unwind: '$RoleData',
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -184,7 +207,9 @@ const getShop = async (date, page, userId) => {
         shoptypeName: '$shoplists.shopList',
         // matching: { $and: { $eq: ['$callingUserId', userId], $eq: ['$callingStatus', 'On Call'] } },
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
-        callingUserId:1,
+        callingUserId: 1,
+        // userData: '$userData',
+        RoleName:'$RoleData.roleName'
       },
     },
     { $skip: 10 * page },
