@@ -242,7 +242,7 @@ const createShopByOwner = async (body) => {
 };
 
 const getOncallfromshops = async (userId) => {
-  let values = await Shop.find({ Uid: userId, callingStatus: 'On Call' });
+  let values = await Shop.find({ callingUserId: userId, callingStatus: 'On Call' });
   console.log(values);
   if (values.length != 0) {
     return { OnCallstatus: false };
