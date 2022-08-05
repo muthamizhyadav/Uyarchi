@@ -28,7 +28,7 @@ const getWardByZoneId = catchAsync(async (req, res) => {
 });
 
 const getmetaData = catchAsync(async (req, res) => {
-  let zoneId = await metaModel.findOne({ user_id: req.userId, metaKey: 'zone' });
+  let zoneId = await metaModel.findOne({ user_id: req.userId, metaKey: 'district' });
   if (!zoneId) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Zone Not FOund');
   }

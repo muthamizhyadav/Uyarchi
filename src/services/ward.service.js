@@ -62,7 +62,7 @@ const getWardByZoneId = async (zoneId) => {
   const zone = await Ward.aggregate([
     {
       $match: {
-        $and: [{ zoneId: { $eq: zoneId } }],
+        $and: [{ district: { $eq: zoneId } }],
       },
     },
   ]);
