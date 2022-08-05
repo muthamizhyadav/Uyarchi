@@ -380,8 +380,8 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
   let to;
   let from;
   const d = new Date(date);
-  data = moment(d).format('DD-MM-YYYY');
-  console.log(data)
+  date = moment(d).format('DD-MM-YYYY');
+  console.log(data);
   if (parseInt(fromtime) <= parseInt(totime)) {
     to = parseInt(fromtime);
     from = parseInt(totime);
