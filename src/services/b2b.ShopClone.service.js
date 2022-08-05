@@ -12,7 +12,7 @@ const { verfiy } = require('../config/registerOTP.Verify');
 // Shop Clone Serive
 
 const createShopClone = async (shopBody) => {
-  let servertime = moment().format('HH:mm');
+  let servertime = moment().format('HH:mm:ss');
   let serverdate = moment().format('DD-MM-yyy');
   let values = { ...shopBody, ...{ date: serverdate, time: servertime } };
   const shop = await Shop.create(values);
@@ -390,6 +390,8 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
   console.log('ge', to);
   if (id != 'null' && date != 'null' && fromtime != 'null' && totime != 'null') {
     //  match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: from,$lte: to}},{active:{$eq:true}}];
+    const d = new Date(date);
+    date = moment(d).format('DD-MM-YYYY');
     match = [
       { Uid: { $eq: id } },
       { date: { $eq: date } },
@@ -406,12 +408,16 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
     //  match=[{ time:{ $gte: from}},{ time:{$lte: to}},{active:{$eq:true}}]
     match = [{ time: { $gte: to } }, { time: { $lte: from } }, { active: { $eq: true } }];
   } else if (id == 'null' && date != 'null' && fromtime != 'null' && totime != 'null') {
+    const d = new Date(date);
+    date = moment(d).format('DD-MM-YYYY');
     //  match=[{ date: { $eq: date }},{ time:{$lte: to ,$gte: from}},{active:{$eq:true}}]
     match = [{ date: { $eq: date } }, { time: { $gte: to } }, { time: { $lte: from } }, { active: { $eq: true } }];
   } else if (id != 'null' && date == 'null' && fromtime != 'null' && totime != 'null') {
     //  match=[{ Uid: { $eq: id }},{ time:{$lte: to, $gte: from}},{active:{$eq:true}}]
     match = [{ Uid: { $eq: id } }, { time: { $gte: to } }, { time: { $lte: from } }, { active: { $eq: true } }];
   } else if (id != 'null' && date != 'null' && fromtime == 'null' && totime == 'null') {
+    const d = new Date(date);
+    date = moment(d).format('DD-MM-YYYY');
     match = [{ Uid: { $eq: id } }, { date: { $eq: date } }, { active: { $eq: true } }];
   } else {
     match = [{ Uid: { $ne: null } }, { active: { $eq: true } }];
@@ -479,6 +485,8 @@ const getAllAttendanceCloneforMapView = async (id, date, fromtime, totime) => {
   let match;
   let to;
   let from;
+  const d = new Date(date);
+  date = moment(d).format('DD-MM-YYYY');
   if (parseInt(fromtime) <= parseInt(totime)) {
     to = parseInt(fromtime);
     from = parseInt(totime);

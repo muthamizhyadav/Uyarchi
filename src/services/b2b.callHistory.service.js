@@ -15,7 +15,7 @@ const createcallHistoryWithType = async (body, userId) => {
   let time = moment().format('HHmmss');
   let date = moment().format('yyy-MM-DD');
   let servertime = moment().format('hh:mm a');
-  let serverdate = moment().format('DD-MM-yyy');
+  let serverdate = moment().format('DD-MM-yyyy');
   const { callStatus, shopId } = body;
   let sort;
   if (callStatus == 'reschedule') {
@@ -182,7 +182,9 @@ const getShop = async (date, page, userId) => {
         Uid: 1,
         shopData: '$shopData',
         shoptypeName: '$shoplists.shopList',
-        matching: { $eq: ['$callingUserId', userId] },
+        // matching: { $and: { $eq: ['$callingUserId', userId], $eq: ['$callingStatus', 'On Call'] } },
+        matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
+        callingUserId:1,
       },
     },
     { $skip: 10 * page },
@@ -242,7 +244,7 @@ const createShopByOwner = async (body) => {
 };
 
 const getOncallfromshops = async (userId) => {
-  let values = await Shop.find({ Uid: userId, callingStatus: 'On Call' });
+  let values = await Shop.find({ callingUserId: userId, callingStatus: 'On Call' });
   console.log(values);
   if (values.length != 0) {
     return { OnCallstatus: false };
