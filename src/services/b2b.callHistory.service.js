@@ -15,7 +15,7 @@ const createcallHistoryWithType = async (body, userId) => {
   let time = moment().format('HHmmss');
   let date = moment().format('yyy-MM-DD');
   let servertime = moment().format('hh:mm a');
-  let serverdate = moment().format('DD-MM-yyy');
+  let serverdate = moment().format('DD-MM-yyyy');
   const { callStatus, shopId } = body;
   let sort;
   if (callStatus == 'reschedule') {
