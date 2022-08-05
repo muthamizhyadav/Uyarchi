@@ -3,6 +3,7 @@ const callHistoryModel = require('../models/b2b.callHistory.model');
 const ApiError = require('../utils/ApiError');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
+const Role = require('../models/roles.model');
 const moment = require('moment');
 
 const createCallHistory = async (body) => {
@@ -125,8 +126,7 @@ const getById = async (id) => {
   return historys;
 };
 
-const getShop = async (date, page, userId) => {
-  console.log('date:', date);
+const getShop = async (date, page, userId, userRole) => {
   let values = await Shop.aggregate([
     { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
 
@@ -209,7 +209,7 @@ const getShop = async (date, page, userId) => {
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         callingUserId: 1,
         // userData: '$userData',
-        RoleName:'$RoleData.roleName'
+        RoleName: '$RoleData.roleName',
       },
     },
     { $skip: 10 * page },
@@ -234,7 +234,8 @@ const getShop = async (date, page, userId) => {
       },
     },
   ]);
-  return { values: values, total: total.length };
+  let role = await Role.findOne({ _id: userRole });
+  return { values: values, total: total.length, RoleName: role.roleName };
 };
 
 const updateCallingStatus = async (id, updatebody) => {

@@ -29,9 +29,9 @@ const getById = catchAsync(async (req, res) => {
 });
 
 const getAllPage = catchAsync(async (req, res) => {
-  console.log(req.userId);
   let userId = req.userId;
-  const call = await callHistoryService.getShop(req.params.date, req.params.page, userId);
+  let userRole = req.userRole;
+  const call = await callHistoryService.getShop(req.params.date, req.params.page, userId, userRole);
   res.send(call);
 });
 
