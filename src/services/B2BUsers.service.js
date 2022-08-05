@@ -130,7 +130,15 @@ const B2bUsersAdminLogin = async (userBody) => {
   console.log(passwor);
   let userName = await Users.findOne({
     phoneNumber: phoneNumber,
-    userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
+    // userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
+    $or: [
+      { userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' },
+      { userRole: '33a2ff87-400c-4c15-b607-7730a79b49a9' },
+      { userRole: '36151bdd-a8ce-4f80-987e-1f454cd0993f' },
+      { userRole: '57243437-a1d4-426f-a705-5da92a630d15' },
+      { userRole: '24a28b34-ae15-4f3a-a3e8-24cf5b7be5a1' },
+      { userRole: '569d9d3f-285c-434d-99e7-0c415245c40c' },
+    ],
     stepTwo: true,
     active: true,
   });
@@ -156,7 +164,15 @@ const forgotPassword = async (body) => {
   let users = await Users.findOne({
     phoneNumber: body.mobileNumber,
     active: true,
-    userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
+    // userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
+    $or: [
+      { userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' },
+      { userRole: '33a2ff87-400c-4c15-b607-7730a79b49a9' },
+      { userRole: '36151bdd-a8ce-4f80-987e-1f454cd0993f' },
+      { userRole: '57243437-a1d4-426f-a705-5da92a630d15' },
+      { userRole: '24a28b34-ae15-4f3a-a3e8-24cf5b7be5a1' },
+      { userRole: '569d9d3f-285c-434d-99e7-0c415245c40c' },
+    ],
   });
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
@@ -169,7 +185,15 @@ const otpVerfiy = async (body) => {
   let users = await Users.findOne({
     phoneNumber: body.mobileNumber,
     active: true,
-    userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
+    // userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
+    $or: [
+      { userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' },
+      { userRole: '33a2ff87-400c-4c15-b607-7730a79b49a9' },
+      { userRole: '36151bdd-a8ce-4f80-987e-1f454cd0993f' },
+      { userRole: '57243437-a1d4-426f-a705-5da92a630d15' },
+      { userRole: '24a28b34-ae15-4f3a-a3e8-24cf5b7be5a1' },
+      { userRole: '569d9d3f-285c-434d-99e7-0c415245c40c' },
+    ],
   });
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
@@ -254,18 +278,18 @@ const deleteMetaUser = async (id) => {
 
 const updatemetadata = async (updateBody) => {
   updateBody.metavalue.forEach(async (e) => {
-      const metauser = await metaUsers.findOne({ user_id: updateBody.userId, metaKey: e.key });
-      let update = {
-        user_id: updateBody.userId,
-        metaKey: e.key,
-        metavalue: e.value,
-      };
-      await Users.findOneAndUpdate({ _id: updateBody.userId }, { stepTwo: true }, { new: true });
-      if (metauser) {
-        await metaUsers.findByIdAndUpdate({ _id: metauser.id }, update, { new: true });
-      } else {
-        await metaUsers.create(update);
-      }
+    const metauser = await metaUsers.findOne({ user_id: updateBody.userId, metaKey: e.key });
+    let update = {
+      user_id: updateBody.userId,
+      metaKey: e.key,
+      metavalue: e.value,
+    };
+    await Users.findOneAndUpdate({ _id: updateBody.userId }, { stepTwo: true }, { new: true });
+    if (metauser) {
+      await metaUsers.findByIdAndUpdate({ _id: metauser.id }, update, { new: true });
+    } else {
+      await metaUsers.create(update);
+    }
   });
 
   // let assign = updateBody.assign.forEach(async (e) => {
