@@ -26,7 +26,29 @@ const createshopOrder = async (shopOrderBody, userid) => {
 };
 
 const createshopOrderClone = async (body, userid) => {
-  let bod = { ...body, ...{ Uid: userid } };
+  const Buy = await ShopOrderClone.find();
+  let center = '';
+  // console.log(Buy.length);
+  if (Buy.length < 9) {
+    center = '0000';
+  }
+  if (Buy.length < 99 && Buy.length >= 9) {
+    center = '000';
+  }
+  if (Buy.length < 999 && Buy.length >= 99) {
+    center = '00';
+  }
+  if (Buy.length < 9999 && Buy.length >= 999) {
+    center = '0';
+  }
+  // console.log(center, 0);
+  let userId = '';
+  let totalcount = Buy.length + 1;
+
+  userId = "OD"+ center + totalcount;
+  let bod = { ...body, ...{ Uid: userid, OrderId:userId  } };
+  console.log(bod)
+
   let createShopOrderClone = await ShopOrderClone.create(bod);
   let { product, date, time, shopId } = body;
   await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: 'accept', callingStatusSort: 6 }, { new: true });

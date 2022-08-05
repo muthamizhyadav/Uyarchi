@@ -12,10 +12,10 @@ const createGroup = async (body , userid)=>{
     let creation = await ProductorderClone.create(values);
 console.log(creation);
 
-    let { OrderId, street, type,  } = body;
+    let { OrderId, street, type  } = body;
     OrderId.forEach(async (e) =>{
         wardAdminGroup.create({
-          orderId : e.orderId,
+          orderId : creation.orderId,
           assignDate : e.assignDate,
           assignDate : e.assignTime,
           totalOrder : e.totalOrder,
@@ -25,6 +25,12 @@ console.log(creation);
     return creation;
 }
 
+
+const createGroupId = async (body)=>{
+    return wardAdminGroup.create(body);
+  };
+
 module.exports = {
     createGroup,
+    createGroupId,
 }

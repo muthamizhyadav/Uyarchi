@@ -18,7 +18,7 @@ const wardAdminGroupSchema = new mongoose.Schema({
     },
     assignTime: {
         type: String,
-        default: moment().utcOffset(331).format('DD-MM-yyy'),
+    default: moment().format('h:mm a'),
     },
 });
 
