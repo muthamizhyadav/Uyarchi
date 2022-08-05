@@ -577,7 +577,6 @@ const getDummy = async () => {
 //   return streetData;
 // };
 const getStreetByWard = async (wardId) => {
-  console.log(wardId);
   const street = await Street.find({ dommy: { $ne: true }, wardId: { $eq: wardId } });
   return street;
 };

@@ -254,40 +254,42 @@ const deleteMetaUser = async (id) => {
 
 const updatemetadata = async (updateBody) => {
   updateBody.metavalue.forEach(async (e) => {
-    const metauser = await metaUsers.findOne({ user_id: updateBody.userId, metaKey: e.key });
-    let update = {
-      user_id: updateBody.userId,
-      metaKey: e.key,
-      metavalue: e.value,
-    };
-    await Users.findOneAndUpdate({ _id: updateBody.userId }, { stepTwo: true }, { new: true });
-    if (metauser) {
-      await metaUsers.findByIdAndUpdate({ _id: metauser.id }, update, { new: true });
-    } else {
-      await metaUsers.create(update);
+    if (e.key != 'ward') {
+      const metauser = await metaUsers.findOne({ user_id: updateBody.userId, metaKey: e.key });
+      let update = {
+        user_id: updateBody.userId,
+        metaKey: e.key,
+        metavalue: e.value,
+      };
+      await Users.findOneAndUpdate({ _id: updateBody.userId }, { stepTwo: true }, { new: true });
+      if (metauser) {
+        await metaUsers.findByIdAndUpdate({ _id: metauser.id }, update, { new: true });
+      } else {
+        await metaUsers.create(update);
+      }
     }
   });
 
-  let assign = updateBody.assign.forEach(async (e) => {
-    let servercreatetime = moment().format('hh:mm a');
-    let serverdate = moment().format('DD-MM-yyy');
-    // const assigns = await WardAssign.findOne({
-    //   user_id: updateBody.userId,
-    //   key: e.key,
-    //   value: e.value,
-    //   assignStatus: 'Assigned',
-    // });
-    // if (!assigns) {
-    //   throw new ApiError(httpStatus.NOT_FOUND, 'WardAssign not Found');
-    // }
-    let update = {
-      userId: updateBody.userId,
-      key: e.key,
-      value: e.value,
-    };
-    let values = { ...update, ...{ date: serverdate, time: servercreatetime } };
-    await WardAssign.create(values);
-  });
+  // let assign = updateBody.assign.forEach(async (e) => {
+  //   let servercreatetime = moment().format('hh:mm a');
+  //   let serverdate = moment().format('DD-MM-yyy');
+  //   // const assigns = await WardAssign.findOne({
+  //   //   user_id: updateBody.userId,
+  //   //   key: e.key,
+  //   //   value: e.value,
+  //   //   assignStatus: 'Assigned',
+  //   // });
+  //   // if (!assigns) {
+  //   //   throw new ApiError(httpStatus.NOT_FOUND, 'WardAssign not Found');
+  //   // }
+  //   let update = {
+  //     userId: updateBody.userId,
+  //     key: e.key,
+  //     value: e.value,
+  //   };
+  //   let values = { ...update, ...{ date: serverdate, time: servercreatetime } };
+  //   await WardAssign.create(values);
+  // });
   return 'success';
 };
 
