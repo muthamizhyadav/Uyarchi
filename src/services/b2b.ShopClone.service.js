@@ -312,18 +312,23 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
   let wardMatch = { active: true };
   let streetMatch = { active: true };
   if (district != 'null') {
-    districtMatch = {};
+    districtMatch = { ...districtMatch, ...{ district: district } };
   }
   if (zone != 'null') {
+    districtMatch = { ...districtMatch, ...{ zoneId: zone } };
   }
   if (ward != 'null') {
+    wardMatch = { Wardid: { $eq: ward } };
   }
   if (street != 'null') {
+    streetMatch = { Strid: { $eq: street } };
   }
+  console.log(districtMatch);
+
   let values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }],
+        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch],
       },
     },
     {
@@ -350,6 +355,9 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
         localField: 'Wardid',
         foreignField: '_id',
         pipeline: [
+          {
+            $match: districtMatch,
+          },
           {
             $project: {
               ward: 1,

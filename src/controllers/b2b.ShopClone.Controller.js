@@ -52,7 +52,7 @@ const getshopWardStreetNamesWithAggregation = catchAsync(async (req, res) => {
 const getshopWardStreetNamesWithAggregation_withfilter = catchAsync(async (req, res) => {
   console.log(req.body);
 
-  const shop = await b2bCloneService.getshopWardStreetNamesWithAggregation(
+  const shop = await b2bCloneService.getshopWardStreetNamesWithAggregation_withfilter(
     req.params.district,
     req.params.zone,
     req.params.ward,

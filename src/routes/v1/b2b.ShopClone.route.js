@@ -13,8 +13,8 @@ router
   .get(authorization, b2bShopCloneController.getAllB2BshopClone);
 router.route('/aggregation/Names/:page').get(b2bShopCloneController.getshopWardStreetNamesWithAggregation);
 router
-  .route('/aggregation/Names/filter/:district/:zone/:ward/:street/:page')
-  .get(b2bShopCloneController.getshopWardStreetNamesWithAggregation);
+  .route('/aggregation/filter/:district/:zone/:ward/:street/:page')
+  .get(b2bShopCloneController.getshopWardStreetNamesWithAggregation_withfilter);
 router
   .route('/:id')
   .get(b2bShopCloneController.getB2BShopById)
