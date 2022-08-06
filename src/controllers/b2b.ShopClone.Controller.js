@@ -44,7 +44,21 @@ const filterShopwithNameAndContact = catchAsync(async (req, res) => {
 });
 
 const getshopWardStreetNamesWithAggregation = catchAsync(async (req, res) => {
+  console.log(req.body);
   const shop = await b2bCloneService.getshopWardStreetNamesWithAggregation(req.params.page);
+  res.send(shop);
+});
+
+const getshopWardStreetNamesWithAggregation_withfilter = catchAsync(async (req, res) => {
+  console.log(req.body);
+
+  const shop = await b2bCloneService.getshopWardStreetNamesWithAggregation(
+    req.params.district,
+    req.params.zone,
+    req.params.ward,
+    req.params.street,
+    req.params.page
+  );
   res.send(shop);
 });
 
@@ -174,17 +188,17 @@ const getAllAttendanceCloneforMapView = catchAsync(async (req, res) => {
 });
 
 const updateShopStatusdataapproved = catchAsync(async (req, res) => {
-  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'data_approved',req.body);
+  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'data_approved', req.body);
   res.send(shops);
 });
 
 const updateShopStatusphoneapproved = catchAsync(async (req, res) => {
-  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'phone_approved',req.body);
+  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'phone_approved', req.body);
   res.send(shops);
 });
 
 const updateShopStatuskycapproved = catchAsync(async (req, res) => {
-  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'kyc_verified',req.body);
+  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'kyc_verified', req.body);
   res.send(shops);
 });
 
@@ -220,4 +234,5 @@ module.exports = {
   updateShopStatusphoneapproved,
   updateShopStatuskycapproved,
   getshopDataById,
+  getshopWardStreetNamesWithAggregation_withfilter,
 };
