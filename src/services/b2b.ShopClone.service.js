@@ -14,7 +14,8 @@ const { verfiy } = require('../config/registerOTP.Verify');
 const createShopClone = async (shopBody) => {
   let servertime = moment().format('HHmm');
   let serverdate = moment().format('DD-MM-yyy');
-  let values = { ...shopBody, ...{ date: serverdate, time: servertime } };
+  let filterDate = moment().format('yyy-MM-DD');
+  let values = { ...shopBody, ...{ date: serverdate, time: servertime, filterDate: filterDate } };
   const shop = await Shop.create(values);
   return shop;
 };
