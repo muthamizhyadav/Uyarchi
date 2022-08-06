@@ -507,6 +507,207 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
   };
 };
 
+const getshopWardStreetNamesWithAggregation_withfilter_daily = async (district, zone, ward, street, page) => {
+  let districtMatch = { active: true };
+  let zoneMatch = { active: true };
+  let wardMatch = { active: true };
+  let streetMatch = { active: true };
+  if (district != 'null') {
+    districtMatch = { ...districtMatch, ...{ district: district } };
+  }
+  if (zone != 'null') {
+    districtMatch = { ...districtMatch, ...{ zoneId: zone } };
+  }
+  if (ward != 'null') {
+    wardMatch = { Wardid: { $eq: ward } };
+  }
+  if (street != 'null') {
+    streetMatch = { Strid: { $eq: street } };
+  }
+  console.log(districtMatch);
+
+  let values = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: districtMatch,
+          },
+          {
+            $project: {
+              ward: 1,
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoptype',
+      },
+    },
+    {
+      $unwind: '$shoptype',
+    },
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street: '$StreetData.street',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: '$shoptype.shopList',
+        photoCapture: 1,
+        SName: 1,
+        address: 1,
+        Slat: 1,
+        Slong: 1,
+        status: 1,
+        created: 1,
+        SOwner: 1,
+        kyc_status: 1,
+        active: 1,
+        mobile: 1,
+        date: 1,
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: districtMatch,
+          },
+          {
+            $project: {
+              ward: 1,
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoptype',
+      },
+    },
+    {
+      $unwind: '$shoptype',
+    },
+  ]);
+  return {
+    values: values,
+    total: total.length,
+  };
+};
+
 const getShopById = async (id) => {
   const shop = await Shop.findById(id);
   return shop;
@@ -1069,4 +1270,5 @@ module.exports = {
   getAllAttendanceCloneforMapView,
   getshopDataById,
   getshopWardStreetNamesWithAggregation_withfilter,
+  getshopWardStreetNamesWithAggregation_withfilter_daily,
 };

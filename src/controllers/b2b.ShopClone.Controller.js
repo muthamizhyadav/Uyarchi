@@ -62,6 +62,19 @@ const getshopWardStreetNamesWithAggregation_withfilter = catchAsync(async (req, 
   res.send(shop);
 });
 
+const getshopWardStreetNamesWithAggregation_withfilter_daily = catchAsync(async (req, res) => {
+  console.log(req.body);
+
+  const shop = await b2bCloneService.getshopWardStreetNamesWithAggregation_withfilter_daily(
+    req.params.district,
+    req.params.zone,
+    req.params.ward,
+    req.params.street,
+    req.params.page
+  );
+  res.send(shop);
+});
+
 const getAllB2BshopClone = catchAsync(async (req, res) => {
   const shop = await b2bCloneService.getAllShopClone();
   res.send(shop);
@@ -235,4 +248,5 @@ module.exports = {
   updateShopStatuskycapproved,
   getshopDataById,
   getshopWardStreetNamesWithAggregation_withfilter,
+  getshopWardStreetNamesWithAggregation_withfilter_daily,
 };
