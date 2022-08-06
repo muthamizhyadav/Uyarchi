@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
+const moment = require('moment');
 const catchAsync = require('../utils/catchAsync');
 const { shopOrderService } = require('../services');
 const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone } = require('../models/shopOrder.model');
@@ -119,26 +120,29 @@ const getAll = catchAsync(async (req, res) => {
 
 
 const createOrderId = catchAsync(async (req, res) => {
-  const Buy = await ShopOrderClone.find();
+  const Buy = await ShopOrderClone.find({ date: currentDate }).count();
   let center = '';
   // console.log(Buy.length);
-  if (Buy.length < 9) {
-    center = 'OD00';
+  if (Buy < 9) {
+    center = '00000';
   }
-  if (Buy.length < 99 && Buy.length >= 9) {
-    center = 'OD0';
+  if (Buy < 99 && Buy >= 9) {
+    center = '0000';
   }
-  if (Buy.length < 999 && Buy.length >= 99) {
-    center = 'OD';
+  if (Buy < 999 && Buy >= 99) {
+    center = '000';
   }
-  if (Buy.length < 9999 && Buy.length >= 999) {
+  if (Buy < 9999 && Buy >= 999) {
+    center = '00';
+  }
+  if (Buy < 99999 && Buy >= 9999) {
     center = '0';
   }
   // console.log(center, 0);
   let userId = '';
-  let totalcount = Buy.length + 1;
+  let totalcount = Buy + 1;
 
-  userId = center + totalcount;
+  userId = "OD" + center + totalcount;
 
   let supplierss;
   if (userId != '') {
