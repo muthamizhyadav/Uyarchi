@@ -428,7 +428,7 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }],
+        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch],
       },
     },
     {
@@ -455,6 +455,9 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
         localField: 'Wardid',
         foreignField: '_id',
         pipeline: [
+          {
+            $match: districtMatch,
+          },
           {
             $project: {
               ward: 1,
@@ -491,13 +494,6 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
         from: 'shoplists',
         localField: 'SType',
         foreignField: '_id',
-        // pipeline:[
-        //     {
-        //       $project: {
-        //         street:1
-        //       }
-        //     }
-        // ],
         as: 'shoptype',
       },
     },
