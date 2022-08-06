@@ -147,6 +147,24 @@ const getShop = async (date, page, userId, userRole) => {
     },
     {
       $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopData.shopId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
+            },
+          },
+        ],
+        as: 'shopclones',
+      },
+    },
+    {
+      $unwind: '$shopclones',
+    },
+    {
+      $lookup: {
         from: 'shoplists',
         localField: 'SType',
         foreignField: '_id',
@@ -158,35 +176,36 @@ const getShop = async (date, page, userId, userRole) => {
     },
     {
       $project: {
-        _id: 1,
-        photoCapture: 1,
-        callingStatus: 1,
-        callingStatusSort: 1,
-        active: 1,
-        archive: 1,
-        Wardid: 1,
-        type: 1,
-        SName: 1,
-        SType: 1,
-        SOwner: 1,
-        mobile: 1,
-        Slat: 1,
-        Strid: 1,
-        sortdatetime: 1,
-        Slong: 1,
-        address: 1,
-        date: 1,
-        time: 1,
-        created: 1,
-        status: 1,
-        __v: 1,
-        Uid: 1,
+        // _id: 1,
+        _id:'$shopclones._id',
+        photoCapture: '$shopclones.photoCapture',
+        callingStatus: '$shopclones.callingStatus',
+        callingStatusSort: '$shopclones.callingStatusSort',
+        active: '$shopclones.active',
+        archive: '$shopclones.archive',
+        Wardid: '$shopclones.Wardid',
+        type: '$shopclones.type',
+        SName: '$shopclones.SName',
+        SType: '$shopclones.SType',
+        SOwner: '$shopclones.SOwner',
+        mobile: '$shopclones.mobile',
+        Slat: '$shopclones.Slat',
+        Strid: '$shopclones.Strid',
+        sortdatetime: '$shopclones.sortdatetime',
+        Slong: '$shopclones.Slong',
+        address: '$shopclones.address',
+        date: '$shopclones.date',
+        time: '$shopclones.time',
+        created: '$shopclones.created',
+        status: '$shopclones.status',
+        Uid: '$shopclones.Uid',
         shopData: '$shopData',
         shoptypeName: '$shoplists.shopList',
         // matching: { $and: { $eq: ['$callingUserId', userId], $eq: ['$callingStatus', 'On Call'] } },
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         callingUserId: 1,
         // userData: '$userData',
+        // shopclones: '$shopclones',
       },
     },
     { $skip: 10 * page },
@@ -194,7 +213,8 @@ const getShop = async (date, page, userId, userRole) => {
   ]);
 
   let total = await Shop.aggregate([
-    { $sort: { callingStatusSort: 1, sortdatetime: 1 } },
+    { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
+
     {
       $lookup: {
         from: 'callhistories',
@@ -210,9 +230,39 @@ const getShop = async (date, page, userId, userRole) => {
         as: 'shopData',
       },
     },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopData.shopId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
+            },
+          },
+        ],
+        as: 'shopclones',
+      },
+    },
+    {
+      $unwind: '$shopclones',
+    },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplists',
+      },
+    },
+    {
+      $unwind: '$shoplists',
+    },
   ]);
   let role = await Role.findOne({ _id: userRole });
-  return { values: values, total: total.length, RoleName: role.roleName };
+  let user = await Users.findOne({ _id: userId });
+  return { values: values, total: total.length, RoleName: role.roleName, userName: user.name };
 };
 
 const updateCallingStatus = async (id, updatebody) => {
@@ -228,6 +278,9 @@ const updateStatuscall = async (id, userId, updateBody) => {
   let status = await Shop.findById(id);
   if (!status) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  if (status.callingStatus == 'On Call') {
+    throw new ApiError(httpStatus.NOT_FOUND, 'OnCall');
   }
   status = await Shop.findByIdAndUpdate({ _id: id }, { callingStatus: 'On Call', callingUserId: userId }, { new: true });
   return status;

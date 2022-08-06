@@ -1,6 +1,7 @@
 const callHistoryService = require('../services/b2b.callHistory.service');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
+const httpStatus = require('http-status');
 
 const createCallHistory = catchAsync(async (req, res) => {
   const callHistory = await callHistoryService.createCallHistory(req.body);
@@ -39,6 +40,7 @@ const updateCallingStatus = catchAsync(async (req, res) => {
   let userId = req.userId;
   console.log(userId);
   const callingStatus = await callHistoryService.updateStatuscall(req.params.id, userId, req.body);
+  // throw new ApiError(httpStatus.UNAUTHORIZED, 'OnCall');
   res.send(callingStatus);
 });
 
