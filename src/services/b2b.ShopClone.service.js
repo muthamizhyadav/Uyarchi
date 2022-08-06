@@ -12,7 +12,7 @@ const { verfiy } = require('../config/registerOTP.Verify');
 // Shop Clone Serive
 
 const createShopClone = async (shopBody) => {
-  let servertime = moment().format('HH:mm:ss');
+  let servertime = moment().format('HHmm');
   let serverdate = moment().format('DD-MM-yyy');
   let values = { ...shopBody, ...{ date: serverdate, time: servertime } };
   const shop = await Shop.create(values);
@@ -507,30 +507,48 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
   };
 };
 
-const getshopWardStreetNamesWithAggregation_withfilter_daily = async (user, startdata, enddate, starttime,endtime, page) => {
+const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
+  user,
+  startdata,
+  enddate,
+  starttime,
+  endtime,
+  page
+) => {
   ///:user/:startdata/:enddate/:starttime/:endtime/:page
-  let districtMatch = { active: true };
-  let zoneMatch = { active: true };
-  let wardMatch = { active: true };
+  let userMatch = { active: true };
+  let dateMatch = { active: true };
+  let timeMatch = { active: true };
   let streetMatch = { active: true };
-  // if (district != 'null') {
-  //   districtMatch = { ...districtMatch, ...{ district: district } };
-  // }
-  // if (zone != 'null') {
-  //   districtMatch = { ...districtMatch, ...{ zoneId: zone } };
-  // }
+  let startTime = 0;
+  let endTime = 2400;
+  if (user != 'null') {
+    userMatch = { user: user };
+  }
+  if (startdata != 'null' && enddate != 'null') {
+    dateMatch = { date: { $gte: startdata, $lte: enddate } };
+  }
+  if (starttime != 'null') {
+    startTime = parseInt(starttime);
+  }
+  if (endtime != 'null') {
+    endTime = parseInt(endtime);
+  }
+  timeMatch = { date: { $gte: starttime, $lte: endTime } };
+
   // if (ward != 'null') {
   //   wardMatch = { Wardid: { $eq: ward } };
   // }
   // if (street != 'null') {
   //   streetMatch = { Strid: { $eq: street } };
   // }
-  console.log(districtMatch);
+  console.log(userMatch);
+  console.log(dateMatch);
 
   let values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }],
+        $and: [{ type: { $eq: 'shop' } }, userMatch, dateMatch],
       },
     },
     {
@@ -621,8 +639,8 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (user, star
         date: 1,
       },
     },
-    { $skip: 10 * page },
-    { $limit: 10 },
+    // { $skip: 10 * page },
+    // { $limit: 10 },
   ]);
   let total = await Shop.aggregate([
     {
