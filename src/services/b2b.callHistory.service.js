@@ -147,6 +147,21 @@ const getShop = async (date, page, userId, userRole) => {
     },
     {
       $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopData.shopId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
+            },
+          },
+        ],
+        as: 'shopclones',
+      },
+    },
+    {
+      $lookup: {
         from: 'shoplists',
         localField: 'SType',
         foreignField: '_id',
@@ -187,6 +202,7 @@ const getShop = async (date, page, userId, userRole) => {
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         callingUserId: 1,
         // userData: '$userData',
+        shopclones: '$shopclones',
       },
     },
     { $skip: 10 * page },
@@ -212,7 +228,8 @@ const getShop = async (date, page, userId, userRole) => {
     },
   ]);
   let role = await Role.findOne({ _id: userRole });
-  return { values: values, total: total.length, RoleName: role.roleName };
+  let user = await Users.findOne({ _id: userId });
+  return { values: values, total: total.length, RoleName: role.roleName, userName: user.name };
 };
 
 const updateCallingStatus = async (id, updatebody) => {
