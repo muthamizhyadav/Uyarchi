@@ -65,8 +65,11 @@ const shopSchema = mongoose.Schema({
   date: {
     type: String,
   },
-  time: {
+  filterDate: {
     type: String,
+  },
+  time: {
+    type: Number,
   },
   created: {
     type: String,

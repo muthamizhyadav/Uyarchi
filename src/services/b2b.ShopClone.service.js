@@ -12,9 +12,10 @@ const { verfiy } = require('../config/registerOTP.Verify');
 // Shop Clone Serive
 
 const createShopClone = async (shopBody) => {
-  let servertime = moment().format('HH:mm:ss');
+  let servertime = moment().format('HHmm');
   let serverdate = moment().format('DD-MM-yyy');
-  let values = { ...shopBody, ...{ date: serverdate, time: servertime } };
+  let filterDate = moment().format('yyy-MM-DD');
+  let values = { ...shopBody, ...{ date: serverdate, time: servertime, filterDate: filterDate } };
   const shop = await Shop.create(values);
   return shop;
 };
@@ -507,29 +508,48 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
   };
 };
 
-const getshopWardStreetNamesWithAggregation_withfilter_daily = async (district, zone, ward, street, page) => {
-  let districtMatch = { active: true };
-  let zoneMatch = { active: true };
-  let wardMatch = { active: true };
+const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
+  user,
+  startdata,
+  enddate,
+  starttime,
+  endtime,
+  page
+) => {
+  ///:user/:startdata/:enddate/:starttime/:endtime/:page
+  let userMatch = { active: true };
+  let dateMatch = { active: true };
+  let timeMatch = { active: true };
   let streetMatch = { active: true };
-  if (district != 'null') {
-    districtMatch = { ...districtMatch, ...{ district: district } };
+  let startTime = 0;
+  let endTime = 2400;
+  if (user != 'null') {
+    userMatch = { user: user };
   }
-  if (zone != 'null') {
-    districtMatch = { ...districtMatch, ...{ zoneId: zone } };
+  if (startdata != 'null' && enddate != 'null') {
+    dateMatch = { date: { $gte: startdata, $lte: enddate } };
   }
-  if (ward != 'null') {
-    wardMatch = { Wardid: { $eq: ward } };
+  if (starttime != 'null') {
+    startTime = parseInt(starttime);
   }
-  if (street != 'null') {
-    streetMatch = { Strid: { $eq: street } };
+  if (endtime != 'null') {
+    endTime = parseInt(endtime);
   }
-  console.log(districtMatch);
+  timeMatch = { date: { $gte: starttime, $lte: endTime } };
+
+  // if (ward != 'null') {
+  //   wardMatch = { Wardid: { $eq: ward } };
+  // }
+  // if (street != 'null') {
+  //   streetMatch = { Strid: { $eq: street } };
+  // }
+  console.log(userMatch);
+  console.log(dateMatch);
 
   let values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch],
+        $and: [{ type: { $eq: 'shop' } }, userMatch, dateMatch],
       },
     },
     {
@@ -556,9 +576,6 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (district, 
         localField: 'Wardid',
         foreignField: '_id',
         pipeline: [
-          {
-            $match: districtMatch,
-          },
           {
             $project: {
               ward: 1,
@@ -623,13 +640,13 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (district, 
         date: 1,
       },
     },
-    { $skip: 10 * page },
-    { $limit: 10 },
+    // { $skip: 10 * page },
+    // { $limit: 10 },
   ]);
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch],
+        $and: [{ type: { $eq: 'shop' } }],
       },
     },
     {
@@ -656,9 +673,6 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (district, 
         localField: 'Wardid',
         foreignField: '_id',
         pipeline: [
-          {
-            $match: districtMatch,
-          },
           {
             $project: {
               ward: 1,

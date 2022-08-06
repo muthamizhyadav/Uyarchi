@@ -64,12 +64,13 @@ const getshopWardStreetNamesWithAggregation_withfilter = catchAsync(async (req, 
 
 const getshopWardStreetNamesWithAggregation_withfilter_daily = catchAsync(async (req, res) => {
   console.log(req.body);
-
+  ///:user/:startdata/:enddate/:starttime/:endtime/:page
   const shop = await b2bCloneService.getshopWardStreetNamesWithAggregation_withfilter_daily(
-    req.params.district,
-    req.params.zone,
-    req.params.ward,
-    req.params.street,
+    req.params.user,
+    req.params.startdata,
+    req.params.enddate,
+    req.params.starttime,
+    req.params.endtime,
     req.params.page
   );
   res.send(shop);
