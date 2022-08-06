@@ -12,38 +12,38 @@ const createGroupOrder = catchAsync(async (req, res) => {
   res.send(shopOrderClone);
 });
 
-  // const createGroupId = catchAsync(async (req, res) => {
-  //   const group = await wardAdminGroup.find();
-  //   let center = '';
+const updateOrderPickedStatus = catchAsync(async (req, res) => {
+    const orderPicked = await wardAdminGroupService.updateOrderStatus(req.params.id , "Order Picked")
+    res.send(orderPicked);
+});
 
-  //   if(group.length < 9){
-  //     center = 'G000';
-  //   }
-  //   if(group.length < 99 && group.length >= 9){
-  //     center = 'G00';
-  //   }
-  //   if(group.length < 999 && group.length >= 99){
-  //     center = 'G0';
-  //   }
-  //   if(group.length < 9999 && group.length >= 999){
-  //     center = '0';
-  //   }
+const updatePickedPettyStock = catchAsync(async(req,res)=>{
+  const pickedPettyStock = await wardAdminGroupService.updateOrderStatus(req.params.id, "Picked Petty Stock")
+  res.send(pickedPettyStock);
+});
 
-  //   let userId = '';
-  //   let totalcount = group.length + 1;
-  //   userId = center + totalcount ;
+const updatePickedPettyCash = catchAsync(async(req,res)=>{
+  const pickedPettyCash = await wardAdminGroupService.updateOrderStatus(req.params.id , "Picked Petty Cash")
+  res.send(pickedPettyCash);
+});
 
-  //   let craeteGroup;
-  //   if(userId != ''){
-  //     craeteGroup = await wardAdminGroupService.createGroupId(req.body);
-  //   }
-  //   craeteGroup.OrderId = userId;
-  //   res.status(httpStatus.CREATED).send(craeteGroup);
-  //   await craeteGroup.save();
-  // })
+const updateDeliveryStarted = catchAsync(async(req,res)=>{
+  const deleiveryStarted = await wardAdminGroupService.updateOrderStatus(req.params.id , "Delivery started");
+  res.send(deleiveryStarted);
+});
 
+const updateDeliveryCompleted = catchAsync(async(req,res)=>{
+  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id , "Delivery Completed");
+  res.send(deliveryCompleted);
+
+})
 
   module.exports = {
     createGroupOrder,
-    // createGroupId,
+    updateOrderPickedStatus,
+    updatePickedPettyStock,
+    updatePickedPettyCash,
+    updateDeliveryStarted,
+    updateDeliveryCompleted,
+
   }

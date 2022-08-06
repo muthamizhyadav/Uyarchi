@@ -87,6 +87,9 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     type: String,
     default: 'pending',
   },
+  overallTotal:{
+    type: String,
+  },
   Uid: {
     type: String,
   },
@@ -172,6 +175,9 @@ const productorderCloneSchema = new mongoose.Schema({
     type: Number,
   },
   orderId: {
+    type: String,
+  },
+  OrderId: {
     type: String,
   },
   customerId: {

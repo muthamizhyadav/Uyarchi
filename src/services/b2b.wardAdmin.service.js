@@ -232,11 +232,12 @@ const wardloadExecutivePacked = async (page) => {
     let data = await ShopOrderClone.aggregate([
         {
             $match: {
-                'productStatus':{
+                status:{
                     $in: ['Packed']
                 }
             }
         },
+
         {
             $lookup: {
                 from: 'b2bshopclones',
@@ -279,9 +280,11 @@ const wardloadExecutivePacked = async (page) => {
        
         {
             $project: {
+                _id:1,
                 date:1,
                 time:1,
                 productStatus:1,
+                status:1,
                 type: '$shopData.type',
                 street: '$streetsData.street',
                 // orderId: '$orderDatafortotal.orderId',

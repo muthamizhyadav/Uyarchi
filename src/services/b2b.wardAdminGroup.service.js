@@ -1,9 +1,10 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-
 const { Shop } = require('../models/b2b.ShopClone.model');
+const {  ShopOrderClone,  } = require('../models/shopOrder.model');
 const { ProductorderClone } = require('../models/shopOrder.model');
 const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
+
 
 
 
@@ -30,28 +31,38 @@ const createGroup = async (body , userid)=>{
     userId = "GD" + center + totalcount ;
 
     let values = { ...body, ...{ Uid: userid, groupId: userId}};
-    let creation = await ProductorderClone.create(values);
-console.log(creation);
+    let creation = await wardAdminGroup.create(values);
+    console.log(creation);
 
-    let { OrderId, street, type  } = body;
-    OrderId.forEach(async (e) =>{
-        wardAdminGroup.create({
-          orderId : creation.orderId,
-          assignDate : e.assignDate,
-          assignDate : e.assignTime,
-          totalOrder : e.totalOrder,
-        })
-    })
+    let createShopOrderClone;
 
-    return creation;
+    let { product, date, time, OrderId } = body;
+
+    product.forEach(async (e) => {
+      wardAdminGroup.create({
+      
+        OrderId: e._id,
+        groupId: e.groupId,
+        assignDate: e.assignDate,
+        assignTime: e.assignTime,
+      });
+    });
+    return createShopOrderClone;
+}
+
+const updateOrderStatus = async (id,updateBody)=>{
+  let status = await wardAdminGroup.findById(id);
+  if(!status){
+    throw new ApiError(httpStatus.NOT_FOUND, 'not found')
+  }
+  status = await wardAdminGroup.findByIdAndUpdate({_id: id},updateBody, { new: true });
+  return status;
 }
 
 
-// const createGroupId = async (body)=>{
-//     return wardAdminGroup.create(body);
-//   };
 
 module.exports = {
     createGroup,
-    // createGroupId,
+    updateOrderStatus,
+
 }
