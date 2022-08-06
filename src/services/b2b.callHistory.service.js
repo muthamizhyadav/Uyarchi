@@ -230,7 +230,7 @@ const updateStatuscall = async (id, userId, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
   if (status.callingStatus == 'On Call') {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'OnCall');
+    throw new ApiError(httpStatus.NOT_FOUND, 'OnCall');
   }
   status = await Shop.findByIdAndUpdate({ _id: id }, { callingStatus: 'On Call', callingUserId: userId }, { new: true });
   return status;
