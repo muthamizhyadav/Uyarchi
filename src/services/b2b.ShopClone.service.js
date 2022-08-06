@@ -524,10 +524,10 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   let startTime = 0;
   let endTime = 2400;
   if (user != 'null') {
-    userMatch = { user: user };
+    userMatch = { Uid: user };
   }
   if (startdata != 'null' && enddate != 'null') {
-    dateMatch = { date: { $gte: startdata, $lte: enddate } };
+    dateMatch = { filterDate: { $gte: startdata, $lte: enddate } };
   }
   if (starttime != 'null') {
     startTime = parseInt(starttime);
@@ -535,21 +535,15 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   if (endtime != 'null') {
     endTime = parseInt(endtime);
   }
-  timeMatch = { date: { $gte: starttime, $lte: endTime } };
-
-  // if (ward != 'null') {
-  //   wardMatch = { Wardid: { $eq: ward } };
-  // }
-  // if (street != 'null') {
-  //   streetMatch = { Strid: { $eq: street } };
-  // }
-  console.log(userMatch);
-  console.log(dateMatch);
+  timeMatch = { time: { $gte: startTime, $lte: endTime } };
 
   let values = await Shop.aggregate([
     {
+      $sort: { filterDate: -1 },
+    },
+    {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, userMatch, dateMatch],
+        $and: [{ type: { $eq: 'shop' } }, userMatch, dateMatch, timeMatch],
       },
     },
     {
@@ -640,13 +634,16 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         date: 1,
       },
     },
-    // { $skip: 10 * page },
-    // { $limit: 10 },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
   let total = await Shop.aggregate([
     {
+      $sort: { filterDate: -1 },
+    },
+    {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }],
+        $and: [{ type: { $eq: 'shop' } }, userMatch, dateMatch, timeMatch],
       },
     },
     {
