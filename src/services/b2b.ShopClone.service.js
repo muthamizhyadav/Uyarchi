@@ -507,29 +507,30 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
   };
 };
 
-const getshopWardStreetNamesWithAggregation_withfilter_daily = async (district, zone, ward, street, page) => {
+const getshopWardStreetNamesWithAggregation_withfilter_daily = async (user, startdata, enddate, starttime,endtime, page) => {
+  ///:user/:startdata/:enddate/:starttime/:endtime/:page
   let districtMatch = { active: true };
   let zoneMatch = { active: true };
   let wardMatch = { active: true };
   let streetMatch = { active: true };
-  if (district != 'null') {
-    districtMatch = { ...districtMatch, ...{ district: district } };
-  }
-  if (zone != 'null') {
-    districtMatch = { ...districtMatch, ...{ zoneId: zone } };
-  }
-  if (ward != 'null') {
-    wardMatch = { Wardid: { $eq: ward } };
-  }
-  if (street != 'null') {
-    streetMatch = { Strid: { $eq: street } };
-  }
+  // if (district != 'null') {
+  //   districtMatch = { ...districtMatch, ...{ district: district } };
+  // }
+  // if (zone != 'null') {
+  //   districtMatch = { ...districtMatch, ...{ zoneId: zone } };
+  // }
+  // if (ward != 'null') {
+  //   wardMatch = { Wardid: { $eq: ward } };
+  // }
+  // if (street != 'null') {
+  //   streetMatch = { Strid: { $eq: street } };
+  // }
   console.log(districtMatch);
 
   let values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch],
+        $and: [{ type: { $eq: 'shop' } }],
       },
     },
     {
@@ -556,9 +557,6 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (district, 
         localField: 'Wardid',
         foreignField: '_id',
         pipeline: [
-          {
-            $match: districtMatch,
-          },
           {
             $project: {
               ward: 1,
@@ -629,7 +627,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (district, 
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch],
+        $and: [{ type: { $eq: 'shop' } }],
       },
     },
     {
@@ -656,9 +654,6 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (district, 
         localField: 'Wardid',
         foreignField: '_id',
         pipeline: [
-          {
-            $match: districtMatch,
-          },
           {
             $project: {
               ward: 1,

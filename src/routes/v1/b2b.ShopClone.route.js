@@ -16,7 +16,7 @@ router
   .route('/aggregation/filter/:district/:zone/:ward/:street/:page')
   .get(b2bShopCloneController.getshopWardStreetNamesWithAggregation_withfilter);
 router
-  .route('/aggregation/filter/daily/:district/:zone/:ward/:street/:page')
+  .route('/aggregation/filter/daily/:user/:startdata/:enddate/:starttime/:endtime/:page')
   .get(b2bShopCloneController.getshopWardStreetNamesWithAggregation_withfilter_daily);
 router
   .route('/:id')
