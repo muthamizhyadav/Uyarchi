@@ -40,7 +40,6 @@ const createGroup = async (body , userid)=>{
 
     product.forEach(async (e) => {
       wardAdminGroup.create({
-      
         OrderId: e._id,
         groupId: e.groupId,
         assignDate: e.assignDate,

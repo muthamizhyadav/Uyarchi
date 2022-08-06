@@ -44,6 +44,7 @@ const getdetails = async (page) => {
                 shopId: 1,
                 OrderId:1,
                 status:1,
+                overallTotal:1,
                 name : '$userNameData.name',
 
                 shopType: '$userData.type',
@@ -58,8 +59,42 @@ const getdetails = async (page) => {
         { $limit: 10 },
     ]);
 
+    let total = await ShopOrderClone.aggregate([
 
-    return values;
+        {
+            $lookup: {
+                from: 'b2bshopclones',
+                localField: 'shopId', //Uid
+                foreignField: '_id', //Uid
+                as: 'userData',
+            },
+        },
+        {
+            $unwind: '$userData'
+        },
+        {
+            $lookup: {
+                from: 'productorderclones',
+                localField: '_id',
+                foreignField: 'orderId',
+                as: 'orderData',
+            }
+        },
+       {
+        $lookup: {
+            from: 'b2busers',
+            localField: 'Uid',
+                foreignField: '_id',
+                as: 'userNameData',
+        }
+
+       },
+
+
+    ])
+
+
+    return {values: values, total: total.length }
 }
 
 
