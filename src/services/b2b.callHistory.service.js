@@ -129,11 +129,11 @@ const getById = async (id) => {
 const getShop = async (date, page, userId, userRole) => {
   let values = await Shop.aggregate([
     { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
-    {
-      $match: {
-        $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
+    //   },
+    // },
     {
       $lookup: {
         from: 'callhistories',
@@ -149,24 +149,24 @@ const getShop = async (date, page, userId, userRole) => {
         as: 'shopData',
       },
     },
-    // {
-    //   $lookup: {
-    //     from: 'b2bshopclones',
-    //     localField: 'shopData.shopId',
-    //     foreignField: '_id',
-    //     pipeline: [
-    //       {
-    //         $match: {
-    //           $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
-    //         },
-    //       },
-    //     ],
-    //     as: 'shopclones',
-    //   },
-    // },
-    // {
-    //   $unwind: '$shopclones',
-    // },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopData.shopId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
+            },
+          },
+        ],
+        as: 'shopclones',
+      },
+    },
+    {
+      $unwind: '$shopclones',
+    },
     {
       $lookup: {
         from: 'shoplists',
@@ -181,33 +181,35 @@ const getShop = async (date, page, userId, userRole) => {
     {
       $project: {
         // _id: 1,
-        _id: 1,
-        photoCapture: 1,
-        callingStatus: 1,
-        callingStatusSort: 1,
-        active: 1,
-        archive: 1,
-        Wardid: 1,
-        type: 1,
-        SName: 1,
-        SType: 1,
-        SOwner: 1,
-        mobile: 1,
-        Slat: 1,
-        Strid: 1,
-        sortdatetime: 1,
-        Slong: 1,
-        address: 1,
-        date: 1,
-        time: 1,
-        created: 1,
-        status: 1,
-        Uid: 1,
-        shopData: 1,
-        shoptypeName: 1,
+        // _id: 1,
+        // photoCapture: 1,
+        // callingStatus: 1,
+        // callingStatusSort: 1,
+        // active: 1,
+        // archive: 1,
+        // Wardid: 1,
+        // type: 1,
+        // SName: 1,
+        // SType: 1,
+        // SOwner: 1,
+        // mobile: 1,
+        // Slat: 1,
+        // Strid: 1,
+        // sortdatetime: 1,
+        // Slong: 1,
+        // address: 1,
+        // date: 1,
+        // time: 1,
+        // created: 1,
+        // status: 1,
+        // Uid: 1,
+        // shopData: 1,
+        shopclones: '$shopclones',
+        shopData: '$shopData',
+        // shoptypeName: 1,
         // matching: { $and: { $eq: ['$callingUserId', userId], $eq: ['$callingStatus', 'On Call'] } },
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
-        callingUserId: 1,
+        // callingUserId: 1,
         // userData: '$userData',
         // shopclones: '$shopclones',
       },
@@ -218,11 +220,11 @@ const getShop = async (date, page, userId, userRole) => {
 
   let total = await Shop.aggregate([
     { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
-    {
-      $match: {
-        $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
+    //   },
+    // },
     {
       $lookup: {
         from: 'callhistories',
@@ -238,24 +240,24 @@ const getShop = async (date, page, userId, userRole) => {
         as: 'shopData',
       },
     },
-    // {
-    //   $lookup: {
-    //     from: 'b2bshopclones',
-    //     localField: 'shopData.shopId',
-    //     foreignField: '_id',
-    //     pipeline: [
-    //       {
-    //         $match: {
-    //           $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
-    //         },
-    //       },
-    //     ],
-    //     as: 'shopclones',
-    //   },
-    // },
-    // {
-    //   $unwind: '$shopclones',
-    // },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopData.shopId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
+            },
+          },
+        ],
+        as: 'shopclones',
+      },
+    },
+    {
+      $unwind: '$shopclones',
+    },
     {
       $lookup: {
         from: 'shoplists',
