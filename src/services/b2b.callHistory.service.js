@@ -213,7 +213,8 @@ const getShop = async (date, page, userId, userRole) => {
   ]);
 
   let total = await Shop.aggregate([
-    { $sort: { callingStatusSort: 1, sortdatetime: 1 } },
+    { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
+
     {
       $lookup: {
         from: 'callhistories',
@@ -228,6 +229,35 @@ const getShop = async (date, page, userId, userRole) => {
         ],
         as: 'shopData',
       },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopData.shopId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
+            },
+          },
+        ],
+        as: 'shopclones',
+      },
+    },
+    {
+      $unwind: '$shopclones',
+    },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplists',
+      },
+    },
+    {
+      $unwind: '$shoplists',
     },
   ]);
   let role = await Role.findOne({ _id: userRole });
