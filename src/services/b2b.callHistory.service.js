@@ -205,7 +205,7 @@ const getShop = async (date, page, userId, userRole) => {
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         callingUserId: 1,
         // userData: '$userData',
-        shopclones: '$shopclones',
+        // shopclones: '$shopclones',
       },
     },
     { $skip: 10 * page },
