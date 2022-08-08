@@ -36,6 +36,9 @@ const callHistorySchema = mongoose.Schema({
   shopId: {
     type: String,
   },
+  historydate: {
+    type: String,
+  },
   date: {
     type: String,
     // default: moment().format('DD-MM-yyy'),
