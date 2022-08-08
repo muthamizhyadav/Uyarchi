@@ -81,6 +81,11 @@ const updateStatuscallVisit = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const getshopsOrderWise = catchAsync(async (req, res) => {
+  const shops = await callHistoryService.getshopsOrderWise(req.params.status);
+  res.send(shops);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -96,4 +101,5 @@ module.exports = {
   getOncallfromshops,
   checkvisitOncallStatus,
   updateStatuscallVisit,
+  getshopsOrderWise,
 };

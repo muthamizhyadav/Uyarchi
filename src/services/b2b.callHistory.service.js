@@ -346,6 +346,39 @@ const checkvisitOncallStatus = async (id) => {
   return values;
 };
 
+const getshopsOrderWise = async (status, date) => {
+  let serverdate = moment().format('DD-MM-yyyy');
+  let pending = await Shop.find({ callingStatus: 'Pending'});
+  let accept = await Shop.find({ callingStatus: 'accept'});
+  let reschedule = await Shop.find({ callingStatus: 'reshedule'});
+  let callback = await Shop.find({ callingStatus: 'callback'});
+  let declined = await Shop.find({ callingStatus: 'declined'});
+  let oncall = await Shop.find({ callingStatus: 'On Call'});
+  let visit = await Shop.find({ callingStatus: 'visit'});
+
+  if (status == 'Pending') {
+    return pending;
+  }
+  if (status == 'accept') {
+    return accept;
+  }
+  if (status == 'reshedule') {
+    return reschedule;
+  }
+  if (status == 'callback') {
+    return callback;
+  }
+  if (status == 'declined') {
+    return declined;
+  }
+  if (status == 'On Call') {
+    return oncall;
+  }
+  if (status == 'visit') {
+    return visit;
+  }
+};
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -360,4 +393,5 @@ module.exports = {
   getOncallfromshops,
   checkvisitOncallStatus,
   updateStatuscallVisit,
+  getshopsOrderWise,
 };
