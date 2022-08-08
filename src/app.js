@@ -1,4 +1,3 @@
-
 const express = require('express');
 const helmet = require('helmet');
 const xss = require('xss-clean');
@@ -68,6 +67,22 @@ if (config.env === 'production') {
 }
 // v1 api routes
 app.use('/v1', routes);
+
+//default routes
+
+app.get('/', (req, res) => {
+  res.sendStatus(200);
+});
+// default v1 route
+
+app.get('/v1', (req, res) => {
+  res.sendStatus(200);
+});
+
+// health status code
+app.get('/health', (req, res) => {
+  res.sendStatus(200);
+});
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
