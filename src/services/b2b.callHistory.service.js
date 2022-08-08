@@ -208,7 +208,7 @@ const getShop = async (date, page, userId, userRole) => {
         shopData: 1,
         // shopclones: '$shopclones',
         shopData: '$shopData',
-        // shoptypeName: 1,
+        shoptypeName: '$shoplists.shopList',
         // matching: { $and: { $eq: ['$callingUserId', userId], $eq: ['$callingStatus', 'On Call'] } },
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         // callingUserId: 1,
