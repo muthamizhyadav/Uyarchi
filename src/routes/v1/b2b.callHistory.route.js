@@ -18,5 +18,5 @@ router.route('/craeteCallStatus').post(authorization, callHistoryController.crea
 router.route('/updateOrderedStatus/:id').put(callHistoryController.updateOrderedStatus);
 router.route('/oncallcheck').get(authorization, callHistoryController.getOncallfromshops);
 router.route('/callingStatus/:id').get(callHistoryController.checkvisitOncallStatus);
-router.route('/uupdate/callingStatus/visit/:id').put(authorization, callHistoryController.updateStatuscallVisit);
+router.route('/update/callingStatus/visit/:id').put(authorization, callHistoryController.updateStatuscallVisit);
 module.exports = router;
