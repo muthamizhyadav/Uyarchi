@@ -86,6 +86,11 @@ const getshopsOrderWise = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const getcallHistorylastFivedays = catchAsync(async (req, res) => {
+  const callhistory = await callHistoryService.getcallHistorylastFivedays(req.params.id);
+  res.send(callhistory);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -102,4 +107,5 @@ module.exports = {
   checkvisitOncallStatus,
   updateStatuscallVisit,
   getshopsOrderWise,
+  getcallHistorylastFivedays,
 };

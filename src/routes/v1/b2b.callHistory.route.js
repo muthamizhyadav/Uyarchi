@@ -20,4 +20,5 @@ router.route('/oncallcheck').get(authorization, callHistoryController.getOncallf
 router.route('/callingStatus/:id').get(callHistoryController.checkvisitOncallStatus);
 router.route('/update/callingStatus/visit/:id').put(authorization, callHistoryController.updateStatuscallVisit);
 router.route('/getshop/bystatus/:status').get(callHistoryController.getshopsOrderWise);
+router.route('/getcallhistory/lastfivedays/:id').get(callHistoryController.getcallHistorylastFivedays);
 module.exports = router;

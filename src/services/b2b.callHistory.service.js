@@ -346,15 +346,23 @@ const checkvisitOncallStatus = async (id) => {
   return values;
 };
 
-const getshopsOrderWise = async (status, date) => {
+const getcallHistorylastFivedays = async (id) => {
+  let currentDate = moment().format('DD-MM-yyyy');
+  let date = moment().add(-5, 'days').format('DD-MM-yyyy');
+  let values = await callHistoryModel.find({ shopId: id, date: { $lte: currentDate, $gte: date } });
+  // console.log(values);
+  return values;
+};
+
+const getshopsOrderWise = async (status) => {
   let serverdate = moment().format('DD-MM-yyyy');
-  let pending = await Shop.find({ callingStatus: 'Pending'});
-  let accept = await Shop.find({ callingStatus: 'accept'});
-  let reschedule = await Shop.find({ callingStatus: 'reshedule'});
-  let callback = await Shop.find({ callingStatus: 'callback'});
-  let declined = await Shop.find({ callingStatus: 'declined'});
-  let oncall = await Shop.find({ callingStatus: 'On Call'});
-  let visit = await Shop.find({ callingStatus: 'visit'});
+  let pending = await Shop.find({ callingStatus: 'Pending' });
+  let accept = await Shop.find({ callingStatus: 'accept' });
+  let reschedule = await Shop.find({ callingStatus: 'reshedule' });
+  let callback = await Shop.find({ callingStatus: 'callback' });
+  let declined = await Shop.find({ callingStatus: 'declined' });
+  let oncall = await Shop.find({ callingStatus: 'On Call' });
+  let visit = await Shop.find({ callingStatus: 'visit' });
 
   if (status == 'Pending') {
     return pending;
@@ -394,4 +402,5 @@ module.exports = {
   checkvisitOncallStatus,
   updateStatuscallVisit,
   getshopsOrderWise,
+  getcallHistorylastFivedays,
 };
