@@ -70,6 +70,17 @@ const getOncallfromshops = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const checkvisitOncallStatus = catchAsync(async (req, res) => {
+  let shops = await callHistoryService.checkvisitOncallStatus(req.params.id);
+  res.send(shops);
+});
+
+const updateStatuscallVisit = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  let shops = await callHistoryService.updateStatuscallVisit(req.params.id, userId);
+  res.send(shops);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -83,4 +94,6 @@ module.exports = {
   callingStatusreport,
   updateOrderedStatus,
   getOncallfromshops,
+  checkvisitOncallStatus,
+  updateStatuscallVisit,
 };

@@ -319,6 +319,33 @@ const getOncallfromshops = async (userId) => {
   }
 };
 
+const updateStatuscallVisit = async (id, userId, updateBody) => {
+  let status = await Shop.findById(id);
+  if (!status) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'shop not found');
+  }
+  if (status.callingStatus == 'visit') {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Already visit');
+  }
+  status = await Shop.findByIdAndUpdate(
+    { _id: id },
+    { callingStatus: 'visit', callingUserId: userId, callingStatusSort: 7 },
+    { new: true }
+  );
+  return status;
+};
+
+const checkvisitOncallStatus = async (id) => {
+  let values = await Shop.findById(id);
+  if (values.callingStatus == 'On Call') {
+    return { visit: false };
+  }
+  if (values.callingStatus == 'visit') {
+    return { visit: true };
+  }
+  return values;
+};
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -331,4 +358,6 @@ module.exports = {
   callingStatusreport,
   updateOrderStatus,
   getOncallfromshops,
+  checkvisitOncallStatus,
+  updateStatuscallVisit,
 };
