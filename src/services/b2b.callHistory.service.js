@@ -349,9 +349,7 @@ const checkvisitOncallStatus = async (id) => {
 };
 
 const getcallHistorylastFivedays = async (id) => {
-  let currentDate = moment().format('DD-MM-yyyy');
-  let date = moment().add(-5, 'days').format('DD-MM-yyyy');
-  let values = await callHistoryModel.find({ shopId: id, date: { $lte: currentDate, $gte: date } });
+  let values = await callHistoryModel.find({ shopId: id }).sort({ sortTime: -1 }).limit(5);
   return values;
 };
 
