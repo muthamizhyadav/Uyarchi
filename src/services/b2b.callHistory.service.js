@@ -386,6 +386,17 @@ const getshopsOrderWise = async (status) => {
   }
 };
 
+const getacceptDeclined = async () => {
+  let total = await Shop.aggregate([
+    {
+      $match: {
+        callingStatus: { $in: ['accept', 'declined'] },
+      },
+    },
+  ]);
+  return total;
+};
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -402,4 +413,5 @@ module.exports = {
   updateStatuscallVisit,
   getshopsOrderWise,
   getcallHistorylastFivedays,
+  getacceptDeclined,
 };

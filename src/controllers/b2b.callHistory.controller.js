@@ -91,6 +91,11 @@ const getcallHistorylastFivedays = catchAsync(async (req, res) => {
   res.send(callhistory);
 });
 
+const getacceptDeclined = catchAsync(async (req, res) => {
+  const callhistories = await callHistoryService.getacceptDeclined();
+  res.send(callhistories);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -108,4 +113,5 @@ module.exports = {
   updateStatuscallVisit,
   getshopsOrderWise,
   getcallHistorylastFivedays,
+  getacceptDeclined,
 };
