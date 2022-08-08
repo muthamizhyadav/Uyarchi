@@ -71,6 +71,9 @@ const callHistorySchema = mongoose.Schema({
   type: {
     type: String,
   },
+  sortTime: {
+    type: Number,
+  },
   // orderedStatus: {
   //   type: String,
   // },
