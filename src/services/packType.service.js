@@ -12,6 +12,7 @@ const createpackTypeData = async (packTypeBody) => {
 };
 
 const getpackTypeById = async (packTypeId) => {
+    console.log(packTypeId)
     return packType.findById(packTypeId);
   };
 
@@ -24,6 +25,7 @@ const getAllpackTypeAll = async (unit,page) => {
         match = [{unit:{$eq:unit}}]
     }
   const data = await packType.aggregate([
+    { $sort : {unit:-1,quantity:1} },
     {
         $match: {
           $and: match,
@@ -53,6 +55,7 @@ const getAllpackTypeAll = async (unit,page) => {
 const getAllpackTypeUnitAll = async (unit) => {
    
   const data = await packType.aggregate([
+    { $sort : {quantity:1} },
     {
         $match: {
           $and: [{unit:{$eq:unit}}],
