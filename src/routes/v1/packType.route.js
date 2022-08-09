@@ -4,6 +4,7 @@ const packTypeController = require('../../controllers/packType.controller');
 const router = express.Router();
 
 router.route('/').post(packTypeController.createpack);
+
 router.route('/allData/:unit/:page').get(packTypeController.getallPack)
 router.route('/:unit').get(packTypeController.getallPackUnit)
 router.route('/getId/:id').get(packTypeController.getpackrById)

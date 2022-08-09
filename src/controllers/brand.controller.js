@@ -93,5 +93,5 @@ module.exports = {
   updateShop,
   brandPagination,
   doplicte_check,
-  getAllBrandFilter
+  getAllBrandFilter,
 };

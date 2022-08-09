@@ -2,7 +2,6 @@ const express = require('express');
 const wardAdminController = require('../../controllers/b2b.wardAdmin.controller');
 const router = express.Router();
 
-
 router.route('/getDetails/:page').get(wardAdminController.getDetails);
 
 router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
@@ -25,11 +24,12 @@ router.route('/wardloadingExecutive/updateProductBilled/:id').put(wardAdminContr
 
 router.route('/wardloadingExecutive/getdetails/:page').get(wardAdminController.wardloadExecutive);
 
-router.route('/wardloadingExecutive/getPackedProductDetails/:page').get(wardAdminController.wardloadExecutivePacked)
+router.route('/wardloadingExecutive/getPackedProductDetails/:page').get(wardAdminController.wardloadExecutivePacked);
 
+router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
 
-router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive)
+router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
 
-
+router.route('/delivery/Executive/Name/:id').put(wardAdminController.deliveryexecutive);
 
 module.exports = router;

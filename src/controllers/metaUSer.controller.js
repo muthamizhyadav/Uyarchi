@@ -24,10 +24,9 @@ const deleteMetaUser = catchAsync(async (req, res) => {
   res.send();
 });
 
-
 module.exports = {
-    createMetaUSers,
-    getmetaUserById,
-    updateMetauser,
-    deleteMetaUser,
-}
+  createMetaUSers,
+  getmetaUserById,
+  updateMetauser,
+  deleteMetaUser,
+};

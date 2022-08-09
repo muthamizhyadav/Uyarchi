@@ -65,7 +65,7 @@ const callingStatusreport = async () => {
   let acceptCount = await Shop.find({ callingStatus: 'accept', historydate: serverdate }).count();
   let callbackCount = await Shop.find({ callingStatus: 'callback', historydate: serverdate }).count();
   let rescheduleCount = await Shop.find({ callingStatus: 'reschedule', historydate: serverdate }).count();
-  let pendingCount = await Shop.find({ callingStatus: 'Pending', historydate: serverdate }).count();
+  let pendingCount = await Shop.find({ callingStatus: 'Pending'}).count();
   let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate }).count();
   return {
     acceptCount: acceptCount,

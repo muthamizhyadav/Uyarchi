@@ -20,8 +20,8 @@ const cartManagementSchema = mongoose.Schema(
     image: {
       type: String,
     },
-    age:{
-      type:String,
+    age: {
+      type: String,
     },
     active: {
       type: Boolean,

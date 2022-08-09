@@ -7,15 +7,15 @@ const packTypeSchema = new mongoose.Schema({
     type: String,
     default: v4,
   },
-  unit:{
-    type:String,
+  unit: {
+    type: String,
   },
-  quantity:{
-    type:Number,
- },
-  material:{
-    type:String,
- },
+  quantity: {
+    type: Number,
+  },
+  material: {
+    type: String,
+  },
   active: {
     type: Boolean,
     default: true,

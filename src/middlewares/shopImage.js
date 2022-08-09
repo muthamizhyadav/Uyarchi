@@ -1,19 +1,18 @@
 const multer = require('multer');
 const path = require('path');
 
-
 let counts = 0;
 const storage = multer.diskStorage({
-    destination: function(req,res, cb){
-     cb(null, path.join(__dirname, '../../public/images/shop'));
-    },
-    filename: function (req, file, cb) {
-      console.log(file,"sdfsdfsdfsdfsdf")
-      let ext = path.extname(file.originalname);
-      counts++;
-      cb(null, Date.now() + counts.toString() + ext);
-    },
-  });
+  destination: function (req, res, cb) {
+    cb(null, path.join(__dirname, '../../public/images/shop'));
+  },
+  filename: function (req, file, cb) {
+    console.log(file, 'sdfsdfsdfsdfsdf');
+    let ext = path.extname(file.originalname);
+    counts++;
+    cb(null, Date.now() + counts.toString() + ext);
+  },
+});
 
 // const uploadImage = multer({
 //     storage: storage,
@@ -32,10 +31,10 @@ const storage = multer.diskStorage({
 
 const multerFilter = (req, file, cb) => {
   // console.log(file,"sdfsdfsdf")
-  if (file.mimetype.startsWith("image")) {
+  if (file.mimetype.startsWith('image')) {
     cb(null, true);
   } else {
-    cb("Not an image! Please upload only images.", false);
+    cb('Not an image! Please upload only images.', false);
   }
 };
 
@@ -44,5 +43,4 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
-
-  module.exports = upload;
+module.exports = upload;

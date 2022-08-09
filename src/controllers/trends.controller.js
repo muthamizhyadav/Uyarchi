@@ -28,8 +28,8 @@ const createTrends = catchAsync(async (req, res) => {
 });
 
 const updateProductFromTrends = catchAsync(async (req, res) => {
-  const trends = await trendsService.updateProductFromTrends(req.params.id,req.body);
-  console.log(trends)
+  const trends = await trendsService.updateProductFromTrends(req.params.id, req.body);
+  console.log(trends);
   req.body.product.forEach(async (e) => {
     let row = {
       productId: e.Pid,
@@ -37,10 +37,10 @@ const updateProductFromTrends = catchAsync(async (req, res) => {
       Unit: e.Unit,
       Rate: e.Rate,
       Weight: e.Weight,
-      orderId:req.params.id,
+      orderId: req.params.id,
       shopId: trends.shopid,
       steetId: trends.street,
-      UserId:trends.Uid,
+      UserId: trends.Uid,
       date: trends.date,
       time: trends.time,
       fulldate: trends.fulldate,

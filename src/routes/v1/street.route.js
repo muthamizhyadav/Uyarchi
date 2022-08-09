@@ -25,7 +25,6 @@ router.route('/:id/order/street').get(streetController.streetorder);
 router.route('/getall/wardid/:wardId').get(streetController.getStreetByWardId);
 router.route('/Search/Api/:key').get(streetController.areaSearchApi);
 
-
 router.route('/getDummy/streets').get(streetController.getDummyStreet);
 router.route('/getward/ward/:wardId').get(streetController.getStreetWard);
 router.route('/renameStreet').post(streetController.renameStreet);

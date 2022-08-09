@@ -67,7 +67,7 @@ const updateProductFromTrendsClone = catchAsync(async (req, res) => {
       orderId: req.params.id,
       shopId: trends.shopid,
       steetId: trends.street,
-      UserId: trends.Uid, 
+      UserId: trends.Uid,
       date: trends.date,
       time: trends.time,
       fulldate: trends.fulldate,

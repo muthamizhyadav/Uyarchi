@@ -6,6 +6,6 @@ const saveOtp = async (number, otp, user) => {
     mobileNumber: number,
     userId: user._id,
   });
-}; 
+};
 
 module.exports = { saveOtp };

@@ -3,7 +3,10 @@ const router = express.Router();
 const shopOrderController = require('../../controllers/shopOrder.controller');
 const authorization = require('../../controllers/tokenVerify.controller');
 
-router.route('/').post(authorization, shopOrderController.createshopOrder).get(authorization, shopOrderController.getAllShopOrder);
+router
+  .route('/')
+  .post(authorization, shopOrderController.createshopOrder)
+  .get(authorization, shopOrderController.getAllShopOrder);
 router
   .route('/:shopOrderId')
   .get(shopOrderController.getShopOrderById)
@@ -35,9 +38,7 @@ router
   .put(shopOrderController.updateProductOrderCloneById)
   .delete(shopOrderController.deleteProductOrderCloneById);
 
+router.route('/telecaller').get(shopOrderController.getAll);
 
-  router.route('/telecaller').get(shopOrderController.getAll)
-
-
-  router.route('/createorderId').post(shopOrderController.createOrderId);
-  module.exports = router;
+router.route('/createorderId').post(shopOrderController.createOrderId);
+module.exports = router;

@@ -18,10 +18,10 @@ const manageSalarySchema = new mongoose.Schema({
     default: moment().utcOffset(330).format('DD-MM-yyy'),
   },
   time: {
-    type:String,
+    type: String,
     default: moment().utcOffset(330).format('h:mm a'),
   },
-  oldSalary:{
+  oldSalary: {
     type: String,
   },
   active: {

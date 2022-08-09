@@ -28,4 +28,4 @@ const getDetailsByProductId = catchAsync(async (req, res) => {
   res.send(receivedStock);
 });
 
-module.exports = { getDataById, updateReceivedStockById, getDataByLoading, getDetailsByProductId ,updatesegrecation};
+module.exports = { getDataById, updateReceivedStockById, getDataByLoading, getDetailsByProductId, updatesegrecation };

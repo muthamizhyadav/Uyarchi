@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
 
-
 const phBillingSchema = new mongoose.Schema({
   _id: {
     type: String,

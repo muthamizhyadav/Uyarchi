@@ -61,9 +61,9 @@ const postOrderSchema = new mongoose.Schema({
   paymentmode: {
     type: String,
   },
-  date :{
-    type : String,
-  }
+  date: {
+    type: String,
+  },
 });
 postOrderSchema.plugin(toJSON);
 postOrderSchema.plugin(paginate);

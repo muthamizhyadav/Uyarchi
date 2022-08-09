@@ -17,7 +17,6 @@ const monthlyRecuringSchema = mongoose.Schema({
     type: String,
   },
   address: {
-
     type: String,
   },
   use: {
@@ -43,17 +42,17 @@ const monthlyRecuringSchema = mongoose.Schema({
     default: moment().utcOffset(330).format('h:mm a'),
   },
   vehicleType: {
-    type:String,
+    type: String,
   },
   vehicleNo: {
     type: String,
   },
-  amounts:{
+  amounts: {
     type: Number,
   },
-  endDate:{
-    type:String
-  }
+  endDate: {
+    type: String,
+  },
 });
 
 const monthlyRecuring = mongoose.model('monthlyRecuring', monthlyRecuringSchema);
