@@ -4,9 +4,7 @@ const orderRaisedByMWAController = require('../../controllers/orderRaisedbyMWA.c
 const router = express.Router();
 
 // router.route('/').post(receivedOrderController.creatreceivedOrders).get(receivedOrderController.getAllReceivedOrders);
-router
-  .route('/:id')
-  .get(orderRaisedByMWAController.createOrderRaised)
+router.route('/:id').get(orderRaisedByMWAController.createOrderRaised);
 //   .delete(receivedOrderController.deleteReceivedOrders)
 //   .put(receivedOrderController.updateReceivedOrders);
 

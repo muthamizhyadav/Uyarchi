@@ -70,7 +70,7 @@ const getAssignStockbyId = async (id) => {
       },
     },
     {
-      $unwind: '$productsdata'
+      $unwind: '$productsdata',
     },
     {
       $project: {
@@ -83,12 +83,12 @@ const getAssignStockbyId = async (id) => {
         date: 1,
         time: 1,
         FQ1: 1,
-        FQ2:1,
-        FQ3:1,
+        FQ2: 1,
+        FQ3: 1,
         totalStock: 1,
         wastage: 1,
-        ProductName:"$productsdata.productTitle",
-        assignHistory:"$assignHistory",
+        ProductName: '$productsdata.productTitle',
+        assignHistory: '$assignHistory',
       },
     },
   ]);

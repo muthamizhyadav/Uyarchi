@@ -70,8 +70,8 @@ const callStatusSchema = mongoose.Schema({
   exp_date: {
     type: String,
   },
-  orderType:{
-    type:String,
+  orderType: {
+    type: String,
   },
   StockReceived: {
     type: String,

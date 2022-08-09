@@ -34,17 +34,17 @@ const apartmentSchema = mongoose.Schema({
   Uid: {
     type: String,
   },
-  status:{
-    type:String,
+  status: {
+    type: String,
   },
-  date:{
-    type:String,
+  date: {
+    type: String,
   },
-  time:{
-    type:String,
+  time: {
+    type: String,
   },
-  created:{
-    type:String,
+  created: {
+    type: String,
   },
   active: {
     type: Boolean,
@@ -54,11 +54,10 @@ const apartmentSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  reason:{
-    type:String,
+  reason: {
+    type: String,
   },
 });
-
 
 const Apartment = mongoose.model('apartment', apartmentSchema);
 
@@ -94,20 +93,20 @@ const shopSchema = mongoose.Schema({
   Uid: {
     type: String,
   },
-  status:{
-    type:String,
+  status: {
+    type: String,
   },
-  reason:{
-    type:String,
+  reason: {
+    type: String,
   },
-  date:{
-    type:String,
+  date: {
+    type: String,
   },
-  time:{
-    type:String,
+  time: {
+    type: String,
   },
-  created:{
-    type:String,
+  created: {
+    type: String,
   },
   active: {
     type: Boolean,
@@ -117,9 +116,9 @@ const shopSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  reason:{
-    type:String,
-  }
+  reason: {
+    type: String,
+  },
 });
 
 // assignSchema.plugin(toJSON);
@@ -145,14 +144,14 @@ const manageUserAttendanceSchema = mongoose.Schema({
     type: String,
   },
   created: {
-     type:String,
-    },
-    date: {
-      type:String,
-      },
-   time: {
-    type:Number,
-    },
+    type: String,
+  },
+  date: {
+    type: String,
+  },
+  time: {
+    type: Number,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -161,17 +160,17 @@ const manageUserAttendanceSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  baseImage:{
-    type:Array,
+  baseImage: {
+    type: Array,
   },
   dateIso: {
     type: String,
     default: Date.now(),
-  }
+  },
 });
 
- manageUserAttendanceSchema.plugin(toJSON);
- manageUserAttendanceSchema.plugin(paginate);
+manageUserAttendanceSchema.plugin(toJSON);
+manageUserAttendanceSchema.plugin(paginate);
 
 const ManageUserAttendance = mongoose.model('manageUserAttendance', manageUserAttendanceSchema);
 const manageUserAttendanceAutoSchema = mongoose.Schema({
@@ -192,14 +191,14 @@ const manageUserAttendanceAutoSchema = mongoose.Schema({
     type: String,
   },
   created: {
-     type:String,
-    },
-    date: {
-      type:String,
-      },
-   time: {
-    type:Number,
-    },
+    type: String,
+  },
+  date: {
+    type: String,
+  },
+  time: {
+    type: Number,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -208,16 +207,15 @@ const manageUserAttendanceAutoSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  baseImage:{
-    type:Array,
+  baseImage: {
+    type: Array,
   },
 });
-
 
 const ManageUserAttendanceAuto = mongoose.model('manageUserAttendanceAuto', manageUserAttendanceAutoSchema);
 module.exports = {
   Shop,
   Apartment,
   ManageUserAttendance,
-  ManageUserAttendanceAuto
+  ManageUserAttendanceAuto,
 };

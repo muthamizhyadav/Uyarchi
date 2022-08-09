@@ -37,14 +37,14 @@ const createGroup = async (body, userid) => {
   if (product.length == 0) {
     throw new ApiError(httpStatus.NO_CONTENT, 'Fields Missing');
   }
-  console.log(wardAdminGroupcreate)
+  console.log(wardAdminGroupcreate);
   product.forEach(async (e) => {
     wardAdminGroupDetails.create({
       shopId: e.shopId,
       // OrderId: OrderId,
       // assignDate: assignDate,
-      // assignTime: assignTime,   
-      // groupId: values.Uid,   
+      // assignTime: assignTime,
+      // groupId: values.Uid,
       productid: e.productid,
       quantity: e.quantity,
       priceperkg: e.priceperkg,

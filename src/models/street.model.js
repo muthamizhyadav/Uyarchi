@@ -39,43 +39,43 @@ const streetSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  AllocatedUser:{
-    type:String
+  AllocatedUser: {
+    type: String,
   },
-  DeAllocatedUser:{
-    type:String,
+  DeAllocatedUser: {
+    type: String,
   },
-  AllocationStatus:{
-    type:String,
-    enum:['Allocated', 'DeAllocated']
+  AllocationStatus: {
+    type: String,
+    enum: ['Allocated', 'DeAllocated'],
   },
-  closed:{
-    type:String,
+  closed: {
+    type: String,
   },
-  reason:{
-    type:String,
+  reason: {
+    type: String,
   },
-  status:{
-    type:String,
+  status: {
+    type: String,
   },
-  closeDate:{
-    type:Date
+  closeDate: {
+    type: Date,
   },
-  date:{
-    type:String,
+  date: {
+    type: String,
   },
-  order:{
-    type:Number,
+  order: {
+    type: Number,
   },
-  filter:{
-    type:String,
+  filter: {
+    type: String,
   },
-  dommy:{
-    type:Boolean
+  dommy: {
+    type: Boolean,
   },
-  sort:{
-    type:Number
-  }
+  sort: {
+    type: Number,
+  },
 });
 streetSchema.plugin(toJSON);
 streetSchema.plugin(paginate);

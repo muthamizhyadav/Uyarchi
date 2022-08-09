@@ -4,40 +4,39 @@ const { toJSON, paginate } = require('./plugins');
 const moment = require('moment');
 
 const wardAdminGroupSchema = new mongoose.Schema({
-
-    _id: {
-        type: String,
-        default: v4,
-    },
-    groupId: {
-        type: String,
-    },
-    assignDate: {
-        type: String,
-    },
-    assignTime: {
-        type: String,
-    },
-    OrderId:{
-        type: String,
-    },
-    status: {
-        type: String,
-        default: "Pending",
-    },
-    product: {
-        type: Array,
-        default: [],
-      },
-      totalItems:{
-        type: Number,
-      },
-      street: {
-        type: String,
-      },
-      orderedTime: {
-        type: String,
-      },
+  _id: {
+    type: String,
+    default: v4,
+  },
+  groupId: {
+    type: String,
+  },
+  assignDate: {
+    type: String,
+  },
+  assignTime: {
+    type: String,
+  },
+  OrderId: {
+    type: String,
+  },
+  status: {
+    type: String,
+    default: 'Pending',
+  },
+  product: {
+    type: Array,
+    default: [],
+  },
+  totalItems: {
+    type: Number,
+  },
+  street: {
+    type: String,
+  },
+  orderedTime: {
+    type: String,
+  },
 });
 
 const wardAdminGroupModel = mongoose.model('wardAdminGroup', wardAdminGroupSchema);

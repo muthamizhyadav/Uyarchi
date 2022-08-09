@@ -4,5 +4,4 @@ const districtListController = require('../../controllers/districtList.controlle
 const router = express.Router();
 router.route('/').get(districtListController.getAllDistrictList).post(districtListController.createDistrict);
 
-
 module.exports = router;

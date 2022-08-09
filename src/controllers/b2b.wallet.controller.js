@@ -29,13 +29,13 @@ const createWalletAccount = catchAsync(async (req, res) => {
 });
 
 const createAmountWallet = catchAsync(async (req, res) => {
-  const amount = await walletService.currentAmount(req.body)
-  res.send(amount)
-})
+  const amount = await walletService.currentAmount(req.body);
+  res.send(amount);
+});
 
 const getshopName = catchAsync(async (req, res) => {
-  const name = await walletService.getshopName(req.body)
-  res.send(name)
+  const name = await walletService.getshopName(req.body);
+  res.send(name);
 });
 
 const getAll = catchAsync(async (req, res) => {
@@ -46,20 +46,17 @@ const getAll = catchAsync(async (req, res) => {
 const getWallet = catchAsync(async (req, res) => {
   const wallet = await walletService.getWallet(req.params.page);
   res.send(wallet);
-})
+});
 
 const updateWallet = catchAsync(async (req, res) => {
-  const wallet = await walletService.updateWallet(req.params.id, req.body)
-  res.send(wallet)
-
-})
-
+  const wallet = await walletService.updateWallet(req.params.id, req.body);
+  res.send(wallet);
+});
 
 const deleteWallet = catchAsync(async (req, res) => {
-  const wallet = await walletService.deleteWalletById(req.params.id)
-  res.send(wallet)
-})
-
+  const wallet = await walletService.deleteWalletById(req.params.id);
+  res.send(wallet);
+});
 
 module.exports = {
   createWalletAccount,
@@ -69,5 +66,5 @@ module.exports = {
   getWallet,
 
   createAmountWallet,
-  getshopName
+  getshopName,
 };

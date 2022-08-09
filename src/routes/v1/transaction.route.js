@@ -8,5 +8,5 @@ router
   .get(TransactionController.getTransactionById)
   .put(TransactionController.updateTrendsById)
   .delete(TransactionController.deleteTransactionById);
-  
+
 module.exports = router;

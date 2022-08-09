@@ -3,7 +3,7 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const apartmentTableService = require('../services/apartmentTable.service');
-const axios = require('axios')
+const axios = require('axios');
 
 const createapartmentTableService = catchAsync(async (req, res) => {
   const apart = await apartmentTableService.createApartment(req.body);
@@ -24,69 +24,66 @@ const createManageUserAttendanceService = catchAsync(async (req, res) => {
   await Attendance.save();
 });
 
-
-const getAllCount = catchAsync(async (req,res)=>{
-  const user = await apartmentTableService.AllCount()
-  res.send(user)
-})
+const getAllCount = catchAsync(async (req, res) => {
+  const user = await apartmentTableService.AllCount();
+  res.send(user);
+});
 
 // thirdPartyApis
 
-const groupMapService = catchAsync(async (req,res)=>{
-  const user = await apartmentTableService.groupMap(req.params.from, req.params.to, req.params.id)
-  res.send(user)
-})
+const groupMapService = catchAsync(async (req, res) => {
+  const user = await apartmentTableService.groupMap(req.params.from, req.params.to, req.params.id);
+  res.send(user);
+});
 
+const WardApi = catchAsync(async (req, res) => {
+  const user = await apartmentTableService.WardNoApi(req.params.location, req.params.id);
+  res.send(user);
+});
 
-const WardApi = catchAsync(async (req,res)=>{
-  const user = await apartmentTableService.WardNoApi(req.params.location, req.params.id)
-  res.send(user)
-})
-
-
-const WardNoApi2 = catchAsync(async (req,res)=>{
-  const user = await apartmentTableService.WardApi2(req.params.longi, req.params.lati, req.params.data)
-  res.send(user)
-})
-
+const WardNoApi2 = catchAsync(async (req, res) => {
+  const user = await apartmentTableService.WardApi2(req.params.longi, req.params.lati, req.params.data);
+  res.send(user);
+});
 
 const getWardDataForDB = async (req, res, next) => {
-  const countriesJSON =
-  'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries.json'
+  const countriesJSON = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries.json';
 
-try {
-  let responseCountry = await axios.get(countriesJSON)
-  let countryList = responseCountry.data.map((e) => {
-     return {
+  try {
+    let responseCountry = await axios.get(countriesJSON);
+    let countryList = responseCountry.data.map((e) => {
+      return {
         label: e.name.toUpperCase(),
         name: e.id,
-     }
-  })
+      };
+    });
 
-  await res.status(200).json({
-     success: true,
-     data: countryList,
-  })
-} catch (err) {
-  next(err)
-}
-}
+    await res.status(200).json({
+      success: true,
+      data: countryList,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
-const locationMapService = catchAsync(async (req,res)=>{
-  const user = await apartmentTableService.latitudeMap(req.params.location, req.params.radius, req.params.type, req.params.keyword, req.params.id)
-  res.send(user)
-})
-
-
+const locationMapService = catchAsync(async (req, res) => {
+  const user = await apartmentTableService.latitudeMap(
+    req.params.location,
+    req.params.radius,
+    req.params.type,
+    req.params.keyword,
+    req.params.id
+  );
+  res.send(user);
+});
 
 // thirdPartyApis
-
 
 const getAllSearchApi = catchAsync(async (req, res) => {
   const cate = await apartmentTableService.streetSearchApi(req.params.searchArea, req.params.key);
   res.send(cate);
 });
-
 
 const getAllmanageUserAttendanceAuto = catchAsync(async (req, res) => {
   const cate = await apartmentTableService.getAllManageUserAutoAttendance();
@@ -106,7 +103,7 @@ const createManageUserAttendanceAutoService = catchAsync(async (req, res) => {
 //   res.send(result);
 // });
 const getmanageUSerAttendanceAll = catchAsync(async (req, res) => {
-  console.log(req.params.totime)
+  console.log(req.params.totime);
 
   const attend = await apartmentTableService.getAllManageUSerAttendance(
     req.params.id,
@@ -134,15 +131,14 @@ const getmanageUSerAttendanceAllAutoTable = catchAsync(async (req, res) => {
   res.send(attend);
 });
 
-const getAllAttendance = catchAsync(async (req, res)=>{
+const getAllAttendance = catchAsync(async (req, res) => {
   const attendance = await apartmentTableService.getAllAttendance();
-  console.log(attendance)
-  res.send(attendance)
-})
+  console.log(attendance);
+  res.send(attendance);
+});
 
 const getApartmentUserAndStreet = catchAsync(async (req, res) => {
-
-  const apart = await apartmentTableService.getApartmentUserStreet(req.params.id,req.params.streetId);
+  const apart = await apartmentTableService.getApartmentUserStreet(req.params.id, req.params.streetId);
   if (!apart) {
     throw new ApiError(httpStatus.NOT_FOUND);
   }
@@ -150,21 +146,20 @@ const getApartmentUserAndStreet = catchAsync(async (req, res) => {
 });
 
 const getShopUserAndStreet = catchAsync(async (req, res) => {
-  
-  const shop = await apartmentTableService.getShopUserStreet(req.params.id,req.params.streetId);
+  const shop = await apartmentTableService.getShopUserStreet(req.params.id, req.params.streetId);
   if (!shop) {
     throw new ApiError(httpStatus.NOT_FOUND);
   }
   res.send(shop);
 });
 
-const getAttendanceLong = catchAsync(async(req,res)=>{
- const atten = await apartmentTableService.attendancelat(req.params.id,req.params.date1,req.params.date2);
- if (!atten) {
-  throw new ApiError(httpStatus.NOT_FOUND);
-}
-res.send(atten);
-})
+const getAttendanceLong = catchAsync(async (req, res) => {
+  const atten = await apartmentTableService.attendancelat(req.params.id, req.params.date1, req.params.date2);
+  if (!atten) {
+    throw new ApiError(httpStatus.NOT_FOUND);
+  }
+  res.send(atten);
+});
 
 const getallShopApartment = catchAsync(async (req, res) => {
   const shopApart = await apartmentTableService.getAllApartmentAndShop(
@@ -324,7 +319,6 @@ module.exports = {
   WardNoApi2,
   getWardDataForDB,
   getAllSearchApi,
-  
 
   // getManageUserAttendance,
 };

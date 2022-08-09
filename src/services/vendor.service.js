@@ -75,7 +75,7 @@ const changePassword = async (vendorId, oldPassword, newPassword) => {
   return updatedPassword;
 };
 const listVendor = async () => {
-  const vendor = (await Vendor.find({ active: true }));
+  const vendor = await Vendor.find({ active: true });
   return vendor.map((vendor) => {
     return {
       id: vendor.id,

@@ -137,7 +137,7 @@ const updatesegrecation = async (id, updateBody) => {
 };
 
 const getDetailsByProductId = async (productId, date, page) => {
-  console.log("zsdad")
+  console.log('zsdad');
   const values = await ReceivedStock.aggregate([
     {
       $match: {

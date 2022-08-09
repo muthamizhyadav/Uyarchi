@@ -78,8 +78,8 @@ const manageSalary = require('./manage.salary.route');
 const wardAdminRouter = require('./b2b.wardAdmin.routes');
 const usableStock = require('./usableStock.route');
 const AssignStock = require('./AssignStock.route');
-const wardAdminGroup = require('./b2b.wardAdminGroup.route')
-const packTypeRoute = require('./packType.route')
+const wardAdminGroup = require('./b2b.wardAdminGroup.route');
+const packTypeRoute = require('./packType.route');
 const defaultRoutes = [
   {
     path: '/auth',
@@ -365,9 +365,10 @@ const defaultRoutes = [
     route: attendancePayment,
   },
   {
-    path:'/wardAdminDetails',
+    path: '/wardAdminDetails',
     route: wardAdminRouter,
-  },{
+  },
+  {
     path: '/AssignStock',
     route: AssignStock,
   },
@@ -376,9 +377,9 @@ const defaultRoutes = [
     route: wardAdminGroup,
   },
   {
-    path:'/packType',
+    path: '/packType',
     route: packTypeRoute,
-  }
+  },
   // {
   //   path: '/sales',
   //   route: salesApp,

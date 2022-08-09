@@ -8,8 +8,4 @@ router.route('/getAll/:page').get(b2bUserSalaryInfo.getAllDataWithAggregation);
 router.route('/:id').put(b2bUserSalaryInfo.updateuserStatus);
 router.route('/getActiveUsers').get(b2bUserSalaryInfo.getActiveUsers);
 
-
-
-
-
 module.exports = router;

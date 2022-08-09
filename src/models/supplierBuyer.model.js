@@ -7,8 +7,8 @@ const supplierBuyerSchema = new mongoose.Schema({
     type: String,
     default: v4,
   },
-  type:{
-      type:String,
+  type: {
+    type: String,
   },
   tradeName: {
     type: String,

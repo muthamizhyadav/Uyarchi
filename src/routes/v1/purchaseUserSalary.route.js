@@ -9,5 +9,5 @@ router
   .get(PuserSalaryInfoController.getPusersalaryInfoById)
   .delete(PuserSalaryInfoController.deletePuserSalaryInfo)
   .put(PuserSalaryInfoController.updatePusersById);
-router.route('/status/:id').put(PuserSalaryInfoController.updateUserStatus)
+router.route('/status/:id').put(PuserSalaryInfoController.updateUserStatus);
 module.exports = router;

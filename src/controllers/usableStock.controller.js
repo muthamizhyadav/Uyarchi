@@ -25,7 +25,7 @@ const updateUsableStockbyId = catchAsync(async (req, res) => {
 });
 const getAssignStockbyId = catchAsync(async (req, res) => {
   const usable = await usableStockService.getAssignStockbyId(req.params.id);
-  if (usable.length ==0) {
+  if (usable.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stock Not Available');
   }
   res.send(usable[0]);

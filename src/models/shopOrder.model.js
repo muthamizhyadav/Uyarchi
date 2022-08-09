@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
@@ -45,7 +44,6 @@ const ShopOrderPriceSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
- 
 });
 
 ShopOrderPriceSchema.plugin(toJSON);
@@ -82,13 +80,13 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: 'ordered'
+    default: 'ordered',
   },
   productStatus: {
     type: String,
     default: 'pending',
   },
-  overallTotal:{
+  overallTotal: {
     type: Number,
   },
   Uid: {
@@ -114,7 +112,6 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   selfPickup: {
     type: String,
   },
-
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
@@ -213,11 +210,10 @@ const productorderCloneSchema = new mongoose.Schema({
   archive: {
     type: Boolean,
     default: false,
-    
   },
   status: {
     type: String,
-    default: "ordered",
+    default: 'ordered',
   },
 });
 

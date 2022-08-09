@@ -21,7 +21,7 @@ const createmarket = async (marketbody) => {
 const createmarketClone = async (body) => {
   let servertime = moment().format('HHmmss');
   let serverdate = moment().format('DD-MM-yyy');
-  let values = {...body, ...{date: serverdate, time: servertime }}
+  let values = { ...body, ...{ date: serverdate, time: servertime } };
   const marketclone = await MarketClone.create(values);
   return marketclone;
 };
@@ -29,7 +29,7 @@ const createmarketClone = async (body) => {
 const createmarketShopClone = async (body) => {
   let servertime = moment().format('HHmm');
   let serverdate = moment().format('DD-MM-yyy');
-  let values = {...body, ...{date: serverdate, time: servertime }}
+  let values = { ...body, ...{ date: serverdate, time: servertime } };
   const marketShopclone = await MarketShopsClone.create(values);
   return marketShopclone;
 };
@@ -165,7 +165,7 @@ const getMarketCloneWithAggregation = async (page) => {
         mlongitude: 1,
         mlatitude: 1,
         created: 1,
-        date:1,
+        date: 1,
         address: 1,
         pincode: 1,
         image: 1,

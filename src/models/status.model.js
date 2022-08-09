@@ -13,8 +13,8 @@ const StatusSchema = new mongoose.Schema({
   status: {
     type: String,
   },
-  date:{
-      type:String,
+  date: {
+    type: String,
   },
   createAt: {
     type: Date,

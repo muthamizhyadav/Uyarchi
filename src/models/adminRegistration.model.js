@@ -34,18 +34,18 @@ const AdminRegistrationSchema = mongoose.Schema(
       },
       private: true, // used by the toJSON plugin
     },
-    confirmPassword:{
-      type:String,
+    confirmPassword: {
+      type: String,
     },
-    active:{
-      type:Boolean,
-      default:true
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    archive: {
+      type: Boolean,
+      default: false,
+    },
   },
-   archive:{
-      type:Boolean,
-      default:false
-  },
-},
   {
     timestamps: true,
   }
@@ -61,8 +61,8 @@ const AdminRegistrationSchema = mongoose.Schema(
  * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
  * @returns {Promise<boolean>}
  */
- AdminRegistrationSchema.statics.isEmailTaken = async function (email, excludeUserId) {
-  const user = await this.findOne({email, _id: { $ne: excludeUserId } });
+AdminRegistrationSchema.statics.isEmailTaken = async function (email, excludeUserId) {
+  const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
   return !!user;
 };
 
@@ -71,7 +71,7 @@ const AdminRegistrationSchema = mongoose.Schema(
  * @param {string} password
  * @returns {Promise<boolean>}
  */
- AdminRegistrationSchema.methods.isPasswordMatch = async function (password) {
+AdminRegistrationSchema.methods.isPasswordMatch = async function (password) {
   const user = this;
   return bcrypt.compare(password, user.password);
 };
@@ -87,6 +87,6 @@ AdminRegistrationSchema.pre('save', async function (next) {
 /**
  * @typedef User
  */
-const AdminRegistration  = mongoose.model('adminRegistration', AdminRegistrationSchema );
+const AdminRegistration = mongoose.model('adminRegistration', AdminRegistrationSchema);
 
 module.exports = AdminRegistration;
