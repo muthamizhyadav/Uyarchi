@@ -21,6 +21,6 @@ router.route('/callingStatus/:id').get(callHistoryController.checkvisitOncallSta
 router.route('/update/callingStatus/visit/:id').put(authorization, callHistoryController.updateStatuscallVisit);
 router.route('/getshop/bystatus/:status').get(callHistoryController.getshopsOrderWise);
 router.route('/getcallhistory/lastfivedays/:id').get(callHistoryController.getcallHistorylastFivedays);
-router.route('/getacceptDeclined').get(callHistoryController.getacceptDeclined);
+router.route('/getacceptDeclined/:page').get(callHistoryController.getacceptDeclined);
 router.route('/reset/callingStatus').get(callHistoryController.resethistory);
 module.exports = router;

@@ -407,13 +407,15 @@ const getshopsOrderWise = async (status) => {
   }
 };
 
-const getacceptDeclined = async () => {
+const getacceptDeclined = async (page) => {
   let total = await Shop.aggregate([
     {
       $match: {
         callingStatus: { $in: ['accept', 'declined'] },
       },
     },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
   return total;
 };
