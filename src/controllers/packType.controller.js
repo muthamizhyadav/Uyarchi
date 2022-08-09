@@ -10,7 +10,7 @@ const createpack = catchAsync(async (req, res) => {
 });
 
 const getallPack = catchAsync(async (req, res) => {
-  const postorder = await packTypeService.getAllpackTypeAll();
+  const postorder = await packTypeService.getAllpackTypeAll(req.params.unit, req.params.page);
   res.send(postorder);
 });
 
