@@ -416,6 +416,14 @@ const getacceptDeclined = async () => {
   return total;
 };
 
+const resethistory = async () => {
+  let currentDate = moment().format('DD-MM-yyyy');
+  let today = '';
+  today = currentDate;
+  await Shop.updateMany({ historydate: { $ne: today } }, { $set: { callingStatus: 'Pending', callingStatusSort: 0 } });
+  return { dayfresh: true };
+};
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -433,4 +441,5 @@ module.exports = {
   getshopsOrderWise,
   getcallHistorylastFivedays,
   getacceptDeclined,
+  resethistory,
 };
