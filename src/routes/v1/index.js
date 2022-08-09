@@ -78,14 +78,11 @@ const manageSalary = require('./manage.salary.route');
 const wardAdminRouter = require('./b2b.wardAdmin.routes');
 const usableStock = require('./usableStock.route');
 const AssignStock = require('./AssignStock.route');
-<<<<<<< HEAD
 const wardAdminGroup = require('./b2b.wardAdminGroup.route')
 const packTypeRoute = require('./packType.route')
 const productpackTypeRoute = require('./productPacktype.route')
-=======
 const wardAdminGroup = require('./b2b.wardAdminGroup.route');
 const packTypeRoute = require('./packType.route');
->>>>>>> 0a033a06829f8c95e2f2de739f3cbb290353e6d1
 const defaultRoutes = [
   {
     path: '/auth',
