@@ -92,7 +92,7 @@ const getcallHistorylastFivedays = catchAsync(async (req, res) => {
 });
 
 const getacceptDeclined = catchAsync(async (req, res) => {
-  const callhistories = await callHistoryService.getacceptDeclined();
+  const callhistories = await callHistoryService.getacceptDeclined(req.params.page);
   res.send(callhistories);
 });
 

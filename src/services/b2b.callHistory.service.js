@@ -38,16 +38,18 @@ const createcallHistoryWithType = async (body, userId) => {
   if (callStatus == 'accept') {
     sort = 6;
   }
+  console.log(callStatus);
   let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
   let shopdata = await Shop.findOne({ _id: shopId });
-  console.log(sort);
-  if (callStatus != 'accept') {
+  let currentdate = moment().format('DD-MM-yyyy');
+  if (callStatus != '') {
     if (shopdata.callingStatus != 'accept') {
       await Shop.findByIdAndUpdate(
         { _id: shopId },
-        { callingStatus: callStatus, sortdate: date, sorttime: time, historydate: serverdate, callingStatusSort: sort },
+        { callingStatus: callStatus, sortdate: date, sorttime: time, historydate: currentdate, callingStatusSort: sort },
         { new: true }
       );
+      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, historydate: currentdate });
     }
   }
   let callHistory = await callHistoryModel.create(values);
@@ -405,13 +407,15 @@ const getshopsOrderWise = async (status) => {
   }
 };
 
-const getacceptDeclined = async () => {
+const getacceptDeclined = async (page) => {
   let total = await Shop.aggregate([
     {
       $match: {
         callingStatus: { $in: ['accept', 'declined'] },
       },
     },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
   return total;
 };
