@@ -287,7 +287,58 @@ const wardloadExecutivePacked = async (page) => {
         { $skip: 10 * page },
         { $limit: 10 },
     ]);
-    return data;
+
+    let total = await ShopOrderClone.aggregate([
+        {
+            $match: {
+                status:{
+                    $in: ['Packed']
+                }
+            }
+        },
+
+        {
+            $lookup: {
+                from: 'b2bshopclones',
+                localField: 'shopId',
+                foreignField: '_id',
+                as: 'shopData',
+            }
+        },
+        { $unwind: '$shopData' },
+        {
+            $lookup: {
+                from: 'streets',
+                localField: 'shopData.Strid',
+                foreignField: '_id',
+                as: 'streetsData',
+            }
+        },
+        { $unwind: '$streetsData'},
+
+        {
+            $lookup: {
+                from: 'productorderclones',
+                localField: '_id',
+                foreignField: 'orderId',
+                pipeline: [
+                    { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
+                ],
+                as: 'orderData',
+            }
+        },
+        { $unwind: '$orderData' },
+        {
+            $lookup: {
+                from: 'productorderclones',
+                localField: '_id',
+                foreignField: 'orderId',
+                as: 'orderDatafortotal',
+            }
+        },
+
+    ])
+    return {data:data, total: total.length};
 }
 
 
