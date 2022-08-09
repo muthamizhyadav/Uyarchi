@@ -41,8 +41,6 @@ const createcallHistoryWithType = async (body, userId) => {
   let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
-  console.log('sdkhgfjaskdbasgf', currentdate);
-  console.log(sort);
   if (callStatus != 'accept') {
     if (shopdata.callingStatus != 'accept') {
       await Shop.findByIdAndUpdate(
