@@ -154,6 +154,11 @@ const getShop = async (date, status, page, userId, userRole) => {
       },
     },
     {
+      $match: {
+        callingStatus: { $in: ['On Call'] },
+      },
+    },
+    {
       $lookup: {
         from: 'callhistories',
         localField: '_id',
