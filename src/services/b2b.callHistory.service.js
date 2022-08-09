@@ -150,11 +150,6 @@ const getShop = async (date, status, page, userId, userRole) => {
     },
     {
       $match: {
-        callingStatus: { $in: ['On Call'] },
-      },
-    },
-    {
-      $match: {
         callingStatus: { $nin: ['accept', 'declined'] },
       },
     },
