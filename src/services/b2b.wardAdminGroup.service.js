@@ -6,12 +6,11 @@ const { Shop } = require('../models/b2b.ShopClone.model');
 const { ShopOrderClone } = require('../models/shopOrder.model');
 const { ProductorderClone } = require('../models/shopOrder.model');
 const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
+const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 
 const createGroup = async (body, userid) => {
-
-  const group = await wardAdminGroup.find();
-  console.log(group);
-
+  let serverdates = moment().format('DD-MM-yyyy');
+  const group = await wardAdminGroup.find({ date: serverdates });
   let center = '';
 
   if (group.length < 9) {
@@ -26,38 +25,36 @@ const createGroup = async (body, userid) => {
   if (group.length < 9999 && group.length >= 999) {
     center = '0';
   }
-
   let userId = '';
   let totalcount = group.length + 1;
-  console.log(totalcount)
-  userId = "GD" + center + totalcount;
-  console.log(userId)
-
+  console.log(totalcount);
+  userId = 'G' + center + totalcount;
+  let { product } = body;
   let values = { ...body, ...{ Uid: userId } };
-  // let creation = await wardAdminGroup.create(values);
-  // let creation = values;
-  // console.log(creation);
-
-  // let createShopOrderClone = await wardAdminGroup.create(creation);
-
-  let { product, assignDate, assignTime, OrderId, street, totalItems, orderedTime } = body;
-
+  let wardAdminGroupcreate = await wardAdminGroup.create(values);
+  let serverdate = moment().format('DD-MM-yyyy');
+  let servertime = moment().format('hh:mm a');
+  if (product.length == 0) {
+    throw new ApiError(httpStatus.NO_CONTENT, 'Fields Missing');
+  }
+  console.log(wardAdminGroupcreate)
   product.forEach(async (e) => {
-    wardAdminGroup.create({
-    shopId: e._id,
-      OrderId: OrderId,
-      assignDate: assignDate,
-      assignTime: assignTime,
-      groupId: values.Uid,
-      product: product,
-      street: street,
-      totalItems: totalItems,
-      orderedTime: orderedTime,
+    wardAdminGroupDetails.create({
+      shopId: e.shopId,
+      // OrderId: OrderId,
+      // assignDate: assignDate,
+      // assignTime: assignTime,
+      // groupId: values.Uid,
+      productid: e.productid,
+      quantity: e.quantity,
+      priceperkg: e.priceperkg,
+      orderedTime: servertime,
+      date: serverdate,
+      wardadmingroupsId: wardAdminGroupcreate.id,
     });
   });
-  // return  createShopOrderClone ;
-}
-
+  return wardAdminGroupcreate;
+};
 
 const updateOrderStatus = async (id, status) => {
   let deliveryStatus = await wardAdminGroup.findById(id);
@@ -65,24 +62,17 @@ const updateOrderStatus = async (id, status) => {
   if (!deliveryStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  deliveryStatus = await wardAdminGroup.findByIdAndUpdate(
-    { _id: id },
-    { status: status },
-    { new: true }
-  )
+  deliveryStatus = await wardAdminGroup.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
   console.log(deliveryStatus);
   return deliveryStatus;
-}
-
+};
 
 // GET ORDER DETAILS FROM GROUP BY ID
 
-
 const getOrderFromGroupById = async (id) => {
-  let getDetails = await wardAdminGroup.findById(id)
+  let getDetails = await wardAdminGroup.findById(id);
   return getDetails;
-}
-
+};
 
 // const getPettyStock = async (id) => {
 //   let values = await wardAdminGroup.aggregate([
@@ -97,26 +87,17 @@ const getOrderFromGroupById = async (id) => {
 //   return values;
 // }
 
-const getPettyStock = async(id)=>{
-
+const getPettyStock = async (id) => {
   let values = await wardAdminGroup.aggregate([
-    { 
-      $unwind: "$product" 
+    {
+      $match: {
+        _id: { $eq: id },
+      },
     },
-
-    { $group : 
-      {
-        _id : "$product.productName",
-        Totalquantitysum : {$sum : "$product.quantity"}
-    }}
-                          
   ]);
-  console.log(values);
+  // console.log(values);
   return values;
-}
-
-
-
+};
 
 // const updateOrderStatus = async (id,status)=>{
 //   let deliveryStatus = await wardAdminGroup.findById(id);
@@ -197,8 +178,6 @@ const getPettyStock = async(id)=>{
 
 // }
 
-
-
 module.exports = {
   createGroup,
   updateOrderStatus,
@@ -208,5 +187,4 @@ module.exports = {
 
   // DELEIVERY DETAILS
   // getDeliveryDetails,
-
-}
+};
