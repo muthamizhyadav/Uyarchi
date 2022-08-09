@@ -2,7 +2,9 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const { ShopOrderClone } = require('../models/shopOrder.model');
 const { ProductorderClone } = require('../models/shopOrder.model');
-const { Shop } = require('../models/b2b.ShopClone.model')
+const { Shop } = require('../models/b2b.ShopClone.model');
+const {Users} = require('../models/B2Busers.model');
+const Roles = require('../models/roles.model');
 
 
 // GET DETAILS
@@ -352,6 +354,35 @@ const wardloadExecutivePacked = async (page) => {
 }
 
 
+const wardDeliveryExecutive = async ()=>{
+    let data = await Roles.aggregate([
+        {
+            $match: {
+                roleName:{
+                    $in: ["Ward delivery execute(WDE)"]
+                }
+            }
+        },
+        {
+            $lookup:{
+                from: 'b2busers',
+                localField: '_id',
+                foreignField: 'userRole',
+                as: 'deliveryExecutiveName',
+            }
+        },
+
+        {
+            $project: {
+                roleName:1,
+                deliveryExecutiveName: '$deliveryExecutiveName.name',
+            }
+        }
+    ])
+    return data;
+}
+
+
 
 
 module.exports = {
@@ -369,4 +400,6 @@ module.exports = {
 
 
     wardloadExecutivePacked,
+
+    wardDeliveryExecutive,
 }

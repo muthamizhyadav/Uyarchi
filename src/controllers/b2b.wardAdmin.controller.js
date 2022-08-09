@@ -79,6 +79,11 @@ const updateBilled = catchAsync(async (req, res) => {
     }); 
 
 
+    const wardDeliveryExecutive = catchAsync(async (req, res) => {
+        const name = await wardAdminService.wardDeliveryExecutive();
+        res.send(name);
+    }); 
+
 
 
 module.exports = {
@@ -99,4 +104,7 @@ module.exports = {
 
 
     wardloadExecutivePacked,
+
+
+    wardDeliveryExecutive,
 }
