@@ -19,7 +19,7 @@ const getAllpackTypeAll = async (unit,page) => {
     console.log(unit)
     let match
     if(unit == 'null'){
-      match =  [{active:{eq:true}}]
+      match =  [{active:{$eq:true}}]
     }else{
         match = [{unit:{$eq:unit}}]
     }
@@ -42,12 +42,6 @@ const getAllpackTypeAll = async (unit,page) => {
         $match: {
           $and: match,
         },
-      },
-      {
-        $skip:10*parseInt(page)
-      },
-     {
-        $limit:10
       },
 
   ]);
