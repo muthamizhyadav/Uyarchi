@@ -221,7 +221,7 @@ const getShop = async (date, status, page, userId, userRole) => {
         // matching: { $and: { $eq: ['$callingUserId', userId], $eq: ['$callingStatus', 'On Call'] } },
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         // callingUserId: 1,
-        // userData: '$userData',
+
         // shopclones: '$shopclones',
       },
     },
@@ -230,10 +230,9 @@ const getShop = async (date, status, page, userId, userRole) => {
   ]);
 
   let total = await Shop.aggregate([
-    { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $match: {
-        callingStatus: { $nin: ['accept', 'declined'] },
+        $and: match,
       },
     },
     {
