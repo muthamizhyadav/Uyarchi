@@ -32,7 +32,7 @@ const getById = catchAsync(async (req, res) => {
 const getAllPage = catchAsync(async (req, res) => {
   let userId = req.userId;
   let userRole = req.userRole;
-  const call = await callHistoryService.getShop(req.params.date, req.params.page, userId, userRole);
+  const call = await callHistoryService.getShop(req.params.date,req.params.status, req.params.page, userId,  userRole);
   res.send(call);
 });
 

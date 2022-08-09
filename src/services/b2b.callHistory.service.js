@@ -131,12 +131,12 @@ const getById = async (id) => {
   return historys;
 };
 
-const getShop = async (date, page, userId, userRole) => {
+const getShop = async (date, status, page, userId, userRole) => {
   let values = await Shop.aggregate([
-    { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
+    // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $match: {
-        callingStatus: { $nin: ['accept', 'declined'] },
+        callingStatus: status,
       },
     },
     {
