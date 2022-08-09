@@ -3,7 +3,8 @@ const packTypeController = require('../../controllers/packType.controller');
 
 const router = express.Router();
 
-router.route('/').post(packTypeController.createpack).get(packTypeController.getallPack);
+router.route('/').post(packTypeController.createpack);
+router.route('/allData/:unit/:page').get(packTypeController.getallPack)
 router
   .route('/:id')
   .get(packTypeController.getpackrById)

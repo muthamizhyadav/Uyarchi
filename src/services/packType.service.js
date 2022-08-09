@@ -15,10 +15,45 @@ const getpackTypeById = async (packTypeId) => {
     return packType.findById(packTypeId);
   };
 
-const getAllpackTypeAll = async () => {
-  const data = await packType.find({active:'true'});
-  return {data:data, total:data.length}
+const getAllpackTypeAll = async (unit,page) => {
+    console.log(unit)
+    let match
+    if(unit == 'null'){
+      match =  [{active:{eq:true}}]
+    }else{
+        match = [{unit:{$eq:unit}}]
+    }
+  const data = await packType.aggregate([
+    {
+        $match: {
+          $and: match,
+        },
+      },
+      {
+        $skip:10*parseInt(page)
+      },
+     {
+        $limit:10
+      },
+
+  ]);
+  const count = await packType.aggregate([
+    {
+        $match: {
+          $and: match,
+        },
+      },
+      {
+        $skip:10*parseInt(page)
+      },
+     {
+        $limit:10
+      },
+
+  ]);
+  return {data:data, total:count.length}
 }
+
 
 const updatepackTypeId = async (packTypeId, updateBody) => {
     let Manage = await getpackTypeById(packTypeId);
