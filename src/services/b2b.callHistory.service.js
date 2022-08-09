@@ -132,11 +132,17 @@ const getById = async (id) => {
 };
 
 const getShop = async (date, status, page, userId, userRole) => {
+  let match;
+  if (status == 'null') {
+    match = [{ active: { $eq: true } }];
+  } else {
+    match = [{ callingStatus: { $eq: status } }];
+  }
   let values = await Shop.aggregate([
     // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $match: {
-        callingStatus: status,
+        $and: match,
       },
     },
     {
@@ -150,7 +156,7 @@ const getShop = async (date, status, page, userId, userRole) => {
               date: { $eq: date },
             },
           },
-        ], 
+        ],
         as: 'shopData',
       },
     },
