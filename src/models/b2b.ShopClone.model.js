@@ -94,6 +94,9 @@ const shopSchema = mongoose.Schema({
   marketId: {
     type: String,
   },
+  historydate: {
+    type: String,
+  },
   shopNo: {
     type: String,
   },

@@ -20,6 +20,7 @@ const createcallHistoryWithType = async (body, userId) => {
   let date = moment().format('yyy-MM-DD');
   let servertime = moment().format('hh:mm a');
   let serverdate = moment().format('DD-MM-yyyy');
+
   const { callStatus, shopId } = body;
   let sort;
   if (callStatus == 'reschedule') {
@@ -37,7 +38,7 @@ const createcallHistoryWithType = async (body, userId) => {
   if (callStatus == 'accept') {
     sort = 6;
   }
-  let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime } };
+  let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
   let shopdata = await Shop.findOne({ _id: shopId });
   console.log(sort);
   if (callStatus != 'accept') {

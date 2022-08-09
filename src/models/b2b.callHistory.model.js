@@ -36,7 +36,7 @@ const callHistorySchema = mongoose.Schema({
   shopId: {
     type: String,
   },
-  historydate: {
+  historytime: {
     type: String,
   },
   date: {
