@@ -8,38 +8,38 @@ const wardAdminGroupDetailsSchema = new mongoose.Schema({
     _id: {
         type: String,
         default: v4,
-      },
-      productid: {
+    },
+    productid: {
         type: String,
-      },
-      quantity: {
+    },
+    quantity: {
         type: Number,
-      },
-      priceperkg: {
+    },
+    priceperkg: {
         type: Number,
-      },
-      OrderId: {
+    },
+    OrderId: {
         type: String,
-      },
-      userId: {
+    },
+    userId: {
         type: String,
-      },
-      date: {
+    },
+    date: {
         type: String,
-      },
-      time: {
+    },
+    time: {
         type: String,
-      },
-      active: {
+    },
+    active: {
         type: Boolean,
         default: true,
-      },
-      archive: {
+    },
+    archive: {
         type: Boolean,
         default: false,
-        
-      },
-     
+
+    },
+
 });
 
 const wardAdminGroupDetailsModel = mongoose.model('wardAdminGroupDetails', wardAdminGroupDetailsSchema);

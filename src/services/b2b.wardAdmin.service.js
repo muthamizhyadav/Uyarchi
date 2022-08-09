@@ -165,10 +165,9 @@ const wardloadExecutive = async (page) => {
             $project: {
                 shopId: 1,
                 status: 1,
+                OrderId:1,
                 SName:"$b2bshopclonesData.SName",
-                type:"$b2bshopclonesData.type",
-
-                
+                type:"$b2bshopclonesData.type", 
             }
         },
         { $skip: 10 * page },
