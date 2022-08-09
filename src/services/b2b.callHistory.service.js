@@ -83,6 +83,11 @@ const getById = async (id) => {
       },
     },
     {
+      $match: {
+        callingStatus: { $nin: ['accept', 'declined'] },
+      },
+    },
+    {
       $lookup: {
         from: 'callhistories', //add table
         localField: '_id', //callhistory
