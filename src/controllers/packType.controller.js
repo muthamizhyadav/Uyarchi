@@ -14,6 +14,11 @@ const getallPack = catchAsync(async (req, res) => {
   res.send(postorder);
 });
 
+const getallPackUnit = catchAsync(async (req, res) => {
+    const postorder = await packTypeService.getAllpackTypeUnitAll(req.params.unit);
+    res.send(postorder);
+  });
+
 const getpackrById = catchAsync(async (req, res) => {
   const postorder = await packTypeService.getpackTypeById(req.params.id);
   res.send(postorder);
@@ -28,4 +33,4 @@ const deletepack = catchAsync(async (req, res) => {
     res.status(httpStatus.NO_CONTENT).send();
   });
 
-module.exports = { createpack,getallPack, getpackrById, updatepackById, deletepack };
+module.exports = { createpack,getallPack, getpackrById, updatepackById, deletepack,getallPackUnit };
