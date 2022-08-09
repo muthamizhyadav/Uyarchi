@@ -15,4 +15,16 @@ router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateD
 
 router.route('/update/deliveryCompleted/:id').put(wardAdminGroupController.updateDeliveryCompleted);
 
+router.route('/update/unDelivered/:id').put(wardAdminGroupController.UpdateUnDeliveredStatus);
+
+
+router.route('/getDetails/groupIdFromOrderId/:id').get(wardAdminGroupController.getByIdGroupOrderDetails);
+
+
+router.route('/getdetails/product/:id').get(wardAdminGroupController.getproductDetails);
+
+// DELIVERY EXECUTIVE
+
+// router.route('/get/getDeliveryDetails/:page').get(wardAdminGroupController.getDeliveryDetails);
+
 module.exports = router;

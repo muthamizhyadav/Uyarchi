@@ -25,6 +25,19 @@ const wardAdminGroupSchema = new mongoose.Schema({
         type: String,
         default: "Pending",
     },
+    product: {
+        type: Array,
+        default: [],
+      },
+      totalItems:{
+        type: Number,
+      },
+      street: {
+        type: String,
+      },
+      orderedTime: {
+        type: String,
+      },
 });
 
 const wardAdminGroupModel = mongoose.model('wardAdminGroup', wardAdminGroupSchema);
