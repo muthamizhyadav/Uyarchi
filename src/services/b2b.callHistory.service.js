@@ -150,7 +150,7 @@ const getShop = async (date, status, page, userId, userRole) => {
               date: { $eq: date },
             },
           },
-        ],
+        ], 
         as: 'shopData',
       },
     },
