@@ -104,6 +104,16 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  orderType: {
+    type: String,
+  },
+  paymentStatus: {
+    type: String,
+  },
+  selfPickup: {
+    type: String,
+  },
+
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
@@ -202,6 +212,11 @@ const productorderCloneSchema = new mongoose.Schema({
   archive: {
     type: Boolean,
     default: false,
+    
+  },
+  status: {
+    type: String,
+    default: "ordered",
   },
 });
 

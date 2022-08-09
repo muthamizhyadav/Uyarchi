@@ -36,7 +36,36 @@ const updateDeliveryCompleted = catchAsync(async(req,res)=>{
   const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id , "Delivery Completed");
   res.send(deliveryCompleted);
 
+});
+
+const UpdateUnDeliveredStatus = catchAsync(async (req,res)=>{
+  const deliveryStatus = await wardAdminGroupService.updateOrderStatus(req.params.id , "UnDelivered")
+  res.send(deliveryStatus);
+});
+
+
+
+const getproductDetails = catchAsync(async (req, res)=>{
+  const details = await wardAdminGroupService.getPettyStock(req.params.id)
+  res.send(details);
 })
+
+
+
+
+// const getDeliveryDetails = catchAsync(async (req, res) => {
+//   const deliveryDetails = await wardAdminGroupService.getDeliveryDetails(req.params.page);
+//   res.send(deliveryDetails);
+// });
+
+
+
+
+const getByIdGroupOrderDetails = catchAsync(async (req, res) => {
+  const sample = await wardAdminGroupService.getOrderFromGroupById(req.params.id)
+  res.send(sample)
+})
+
 
   module.exports = {
     createGroupOrder,
@@ -45,5 +74,15 @@ const updateDeliveryCompleted = catchAsync(async(req,res)=>{
     updatePickedPettyCash,
     updateDeliveryStarted,
     updateDeliveryCompleted,
+
+    // getDeliveryDetails,
+
+
+    // get details from groupid
+    getByIdGroupOrderDetails,
+    UpdateUnDeliveredStatus,
+
+
+    getproductDetails,
 
   }

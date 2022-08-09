@@ -38,6 +38,7 @@ const getdetails = async (page) => {
         }
 
        },
+    //    { unwind: '$userNameData'},
 
         {
             $project: {
@@ -117,65 +118,6 @@ const updateProduct = async (id, updateBody) => {
     return product;
 }
 
-
-
-// UPDATE STATUS ACKNOWLEDGE
-
-
-// const updateAcknowledge = async (id) => {
-//     let acknowledge = await ShopOrderClone.findById(id);
-//     console.log(acknowledge);
-//     if (!acknowledge) {
-//         throw new ApiError(httpStatus.NOT_FOUND, 'acknowledge not found')
-//     }
-//     acknowledge = await ShopOrderClone.findByIdAndUpdate(
-//         { _id: id },
-//         { status: 'Acknowledge' },
-//         { new: true }
-//     )
-//     console.log(acknowledge)
-//     return acknowledge;
-// };
-
-
-// UPDATE STATUS APPROVED
-
-
-// const updateApproved = async (id) => {
-//     let approved = await ShopOrderClone.findById(id);
-//     console.log(approved);
-//     if (!approved) {
-//         throw new ApiError(httpStatus.NOT_FOUND, 'approved not found')
-//     }
-//     approved = await ShopOrderClone.findByIdAndUpdate(
-//         { _id: id },
-//         { status: 'Approved' },
-//         { new: true }
-//     )
-//     console.log(approved);
-//     return approved;
-// }
-
-
-//  UPDATE STATUS MODIFIED
-
-
-// const updateModified = async (id) => {
-//     let modified = await ShopOrderClone.findById(id);
-//     console.log(modified);
-//     if (!modified) {
-//         throw new ApiError(httpStatus.NOT_FOUND, 'modified not found')
-//     }
-//     modified = await ShopOrderClone.findByIdAndUpdate(
-//         { _id: id },
-//         { status: 'Modified' },
-//         { new: true }
-//     )
-//     console.log(modified)
-//     return modified;
-// }
-
-
 //  UPDATE STATUS REJECTION
 
 const updateRejected = async (id, status) => {
@@ -218,15 +160,7 @@ const wardloadExecutive = async (page) => {
               $or: [{ status: { $eq: 'Approved' }},{ status: { $eq: 'Modified' }}],
             }
         },
-        // {
-        //     $lookup: {
-        //         from: 'productorderclones',
-        //         localField: '_id',
-        //         foreignField: 'orderId',
-        //         as: 'orderData',
-        //     }
-        // },
-
+       
         {
             $project: {
                 shopId: 1,
@@ -240,20 +174,40 @@ const wardloadExecutive = async (page) => {
         { $skip: 10 * page },
         { $limit: 10 },
 
+    ]);
+
+    let total = await ShopOrderClone.aggregate([
+        {
+            $lookup: {
+                from:'b2bshopclones',
+                localField:'shopId', //Uid
+                foreignField:'_id', //Uid
+                as: 'b2bshopclonesData',
+            },
+        },
+        {
+            $unwind: '$b2bshopclonesData'
+        },
+        {
+
+            $match: {
+              $or: [{ status: { $eq: 'Approved' }},{ status: { $eq: 'Modified' }}],
+            }
+        },
     ])
-    return data;
+    return {data: data , total: total.length};
 }
 
 
 // TRACK STATUS FOR PRODUCT STATUS
-const updateBilled = async (id, productStatus) => {
+const updateBilled = async (id, status) => {
     let productOrderBilled = await ShopOrderClone.findById(id);
     if (!productOrderBilled) {
         throw new ApiError(httpStatus.NOT_FOUND, 'productOrderBilled not found')
     }
     productOrderBilled = await ShopOrderClone.findByIdAndUpdate(
         { _id: id },
-        { productStatus: productStatus },
+        { status: status },
         { new: true }
     )
     console.log(productOrderBilled);
@@ -320,6 +274,7 @@ const wardloadExecutivePacked = async (page) => {
                 time:1,
                 productStatus:1,
                 status:1,
+                OrderId:1,
                 type: '$shopData.type',
                 street: '$streetsData.street',
                 // orderId: '$orderDatafortotal.orderId',
@@ -332,8 +287,7 @@ const wardloadExecutivePacked = async (page) => {
         },
         { $skip: 10 * page },
         { $limit: 10 },
-    ])
-
+    ]);
     return data;
 }
 
