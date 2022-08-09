@@ -57,12 +57,8 @@ const getAllWithPagination = async (page, status) => {
         Count: '$ReceivedData.Count',
       },
     },
-    {
-      $limit: 10,
-    },
-    {
-      $skip: 10 * page,
-    },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
   let total = await ReceivedProduct.aggregate([
     {
