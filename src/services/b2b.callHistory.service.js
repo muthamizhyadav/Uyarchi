@@ -82,11 +82,7 @@ const getById = async (id) => {
         $and: [{ _id: { $eq: id } }],
       },
     },
-    {
-      $match: {
-        callingStatus: { $nin: ['accept', 'declined'] },
-      },
-    },
+
     {
       $lookup: {
         from: 'callhistories', //add table
@@ -148,6 +144,11 @@ const getShop = async (date, status, page, userId, userRole) => {
     {
       $match: {
         $and: match,
+      },
+    },
+    {
+      $match: {
+        callingStatus: { $nin: ['accept', 'declined'] },
       },
     },
     {
