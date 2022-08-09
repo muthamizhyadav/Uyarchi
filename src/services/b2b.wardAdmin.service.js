@@ -225,6 +225,22 @@ const updateBilled = async (id, status) => {
     return productOrderBilled;
 }
 
+
+
+const deliveryExecutive = async (id, body) => {
+    const { deliveryExecutiveId } = body
+    let delivery = await ShopOrderClone.findById(id);
+    if (!delivery) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'delivery not found')
+    }
+    delivery = await ShopOrderClone.findByIdAndUpdate(
+        { _id: id },
+        { deliveryExecutiveId: deliveryExecutiveId, status: 'Assigned' },
+        { new: true }
+    )
+    return delivery;
+} 
+
 // AFTER PACKED BY WARD LOADING EXECUTE
 
 
@@ -257,14 +273,14 @@ const wardloadExecutivePacked = async (page) => {
         },
         { $unwind: '$streetsData' },
         {
-            $lookup:{
+            $lookup: {
                 from: 'wards',
                 localField: 'streetsData.wardId',
                 foreignField: '_id',
                 as: 'wardData',
             }
         },
-        { $unwind: '$wardData'},
+        { $unwind: '$wardData' },
 
         {
             $lookup: {
@@ -286,7 +302,7 @@ const wardloadExecutivePacked = async (page) => {
                 as: 'orderDatafortotal',
             }
         },
- // shoporderClon
+        // shoporderClon
         {
             $project: {
                 _id: 1,
@@ -298,7 +314,7 @@ const wardloadExecutivePacked = async (page) => {
                 OrderId: 1,
                 type: '$shopData.type',
                 Slat: '$shopData.Slat',
-                Slong : '$shopData.Slong',
+                Slong: '$shopData.Slong',
                 street: '$streetsData.street',
                 // orderId: '$orderDatafortotal.orderId',
                 // orderDate: '$orderDatafortotal.date',
@@ -308,9 +324,9 @@ const wardloadExecutivePacked = async (page) => {
                 // totalcount: '$orderData.totalItems'
                 shopcloneId: '$shopData._id',
                 shopName: '$shopData.SName', // 
-                streetName:'$shopData.street',
-                ward : '$wardData.ward'
-            }  
+                streetName: '$shopData.street',
+                ward: '$wardData.ward'
+            }
         },
         { $skip: 10 * page },
         { $limit: 10 },
@@ -344,14 +360,14 @@ const wardloadExecutivePacked = async (page) => {
         },
         { $unwind: '$streetsData' },
         {
-            $lookup:{
+            $lookup: {
                 from: 'wards',
                 localField: 'streetsData.wardId',
                 foreignField: '_id',
                 as: 'wardData',
             }
         },
-        { $unwind: '$wardData'},
+        { $unwind: '$wardData' },
 
         {
             $lookup: {
@@ -426,4 +442,6 @@ module.exports = {
     wardloadExecutivePacked,
 
     wardDeliveryExecutive,
+
+    deliveryExecutive,
 }

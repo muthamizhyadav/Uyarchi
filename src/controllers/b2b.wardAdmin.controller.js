@@ -24,6 +24,11 @@ const updateProduct = catchAsync(async (req, res) => {
     res.send(product)
 });
 
+const deliveryexecutive = catchAsync(async (req, res) => {
+    const delivery = await wardAdminService.deliveryExecutive(req.params.id, req.body)
+    res.send(delivery)
+});
+
 const updateAcknowledge = catchAsync(async (req, res) => {
     const acknowledgement = await wardAdminService.updateRejected(req.params.id,'Acknowledge');
     res.send(acknowledgement)
@@ -107,4 +112,6 @@ module.exports = {
 
 
     wardDeliveryExecutive,
+
+    deliveryexecutive,
 }
