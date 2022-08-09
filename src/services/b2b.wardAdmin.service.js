@@ -157,7 +157,7 @@ const wardloadExecutive = async (page) => {
         {
 
             $match: {
-              $or: [{ status: { $eq: 'Approved' }},{ status: { $eq: 'Modified' }}],
+              $or: [{ status: { $eq: 'Approved' }},{ status: { $eq: 'Modified' }}, { status: { $eq: 'Packed' }}],
             }
         },
        
@@ -190,7 +190,17 @@ const wardloadExecutive = async (page) => {
         {
 
             $match: {
-              $or: [{ status: { $eq: 'Approved' }},{ status: { $eq: 'Modified' }}],
+              $or: [{ status: { $eq: 'Approved' }},{ status: { $eq: 'Modified' }}, { status: { $eq: 'Packed' }}],
+            }
+        },
+       
+        {
+            $project: {
+                shopId: 1,
+                status: 1,
+                OrderId:1,
+                SName:"$b2bshopclonesData.SName",
+                type:"$b2bshopclonesData.type", 
             }
         },
     ])
