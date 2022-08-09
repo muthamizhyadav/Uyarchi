@@ -242,6 +242,11 @@ const getShop = async (date, status, page, userId, userRole) => {
       },
     },
     {
+      $match: {
+        callingStatus: { $nin: ['accept', 'declined'] },
+      },
+    },
+    {
       $lookup: {
         from: 'callhistories',
         localField: '_id',
