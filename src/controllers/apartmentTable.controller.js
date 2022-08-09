@@ -81,6 +81,13 @@ const locationMapService = catchAsync(async (req,res)=>{
 
 // thirdPartyApis
 
+
+const getAllSearchApi = catchAsync(async (req, res) => {
+  const cate = await apartmentTableService.streetSearchApi(req.params.searchArea, req.params.key);
+  res.send(cate);
+});
+
+
 const getAllmanageUserAttendanceAuto = catchAsync(async (req, res) => {
   const cate = await apartmentTableService.getAllManageUserAutoAttendance();
   res.send(cate);
@@ -316,6 +323,7 @@ module.exports = {
   WardApi,
   WardNoApi2,
   getWardDataForDB,
+  getAllSearchApi,
   
 
   // getManageUserAttendance,
