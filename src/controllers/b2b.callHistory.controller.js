@@ -32,7 +32,7 @@ const getById = catchAsync(async (req, res) => {
 const getAllPage = catchAsync(async (req, res) => {
   let userId = req.userId;
   let userRole = req.userRole;
-  const call = await callHistoryService.getShop(req.params.date, req.params.page, userId, userRole);
+  const call = await callHistoryService.getShop(req.params.date,req.params.status, req.params.page, userId,  userRole);
   res.send(call);
 });
 
@@ -70,6 +70,32 @@ const getOncallfromshops = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const checkvisitOncallStatus = catchAsync(async (req, res) => {
+  let shops = await callHistoryService.checkvisitOncallStatus(req.params.id);
+  res.send(shops);
+});
+
+const updateStatuscallVisit = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  let shops = await callHistoryService.updateStatuscallVisit(req.params.id, userId);
+  res.send(shops);
+});
+
+const getshopsOrderWise = catchAsync(async (req, res) => {
+  const shops = await callHistoryService.getshopsOrderWise(req.params.status);
+  res.send(shops);
+});
+
+const getcallHistorylastFivedays = catchAsync(async (req, res) => {
+  const callhistory = await callHistoryService.getcallHistorylastFivedays(req.params.id);
+  res.send(callhistory);
+});
+
+const getacceptDeclined = catchAsync(async (req, res) => {
+  const callhistories = await callHistoryService.getacceptDeclined();
+  res.send(callhistories);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -83,4 +109,9 @@ module.exports = {
   callingStatusreport,
   updateOrderedStatus,
   getOncallfromshops,
+  checkvisitOncallStatus,
+  updateStatuscallVisit,
+  getshopsOrderWise,
+  getcallHistorylastFivedays,
+  getacceptDeclined,
 };

@@ -36,6 +36,9 @@ const callHistorySchema = mongoose.Schema({
   shopId: {
     type: String,
   },
+  historytime: {
+    type: String,
+  },
   date: {
     type: String,
     // default: moment().format('DD-MM-yyy'),
@@ -70,6 +73,9 @@ const callHistorySchema = mongoose.Schema({
   },
   type: {
     type: String,
+  },
+  sortTime: {
+    type: Number,
   },
   // orderedStatus: {
   //   type: String,

@@ -7,7 +7,7 @@ const authorization = require('../../controllers/tokenVerify.controller');
 router.route('/call').post(authorization, callHistoryController.createCallHistory);
 router.route('/getAll/CallHistory').get(callHistoryController.getAll);
 // router.route('/getShopId').get(callHistoryController.getShop);
-router.route('/getAll/callHistory/:date/:page').get(authorization, callHistoryController.getAllPage);
+router.route('/getAll/callHistory/:date/:status/:page').get(authorization, callHistoryController.getAllPage);
 router.route('/update/callingStatus/:id').put(authorization, callHistoryController.updateCallingStatus);
 router.route('/update/StatusCall/:id').put(callHistoryController.updateStatuscall);
 router.route('/getCallCount/:id').get(callHistoryController.getById);
@@ -17,5 +17,9 @@ router.route('/craeteCallStatus').post(callHistoryController.createcallHistoryWi
 router.route('/craeteCallStatus').post(authorization, callHistoryController.createcallHistoryWithTypes);
 router.route('/updateOrderedStatus/:id').put(callHistoryController.updateOrderedStatus);
 router.route('/oncallcheck').get(authorization, callHistoryController.getOncallfromshops);
-
+router.route('/callingStatus/:id').get(callHistoryController.checkvisitOncallStatus);
+router.route('/update/callingStatus/visit/:id').put(authorization, callHistoryController.updateStatuscallVisit);
+router.route('/getshop/bystatus/:status').get(callHistoryController.getshopsOrderWise);
+router.route('/getcallhistory/lastfivedays/:id').get(callHistoryController.getcallHistorylastFivedays);
+router.route('/getacceptDeclined').get(callHistoryController.getacceptDeclined);
 module.exports = router;
