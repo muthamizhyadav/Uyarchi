@@ -114,6 +114,9 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   selfPickup: {
     type: String,
   },
+  deliveryExecutiveId: {
+    type: String,
+  },
 
 });
 
@@ -219,6 +222,8 @@ const productorderCloneSchema = new mongoose.Schema({
     type: String,
     default: "ordered",
   },
+
+  
 });
 
 productorderCloneSchema.plugin(toJSON);

@@ -3,7 +3,7 @@ const ApiError = require('../utils/ApiError');
 const { ShopOrderClone } = require('../models/shopOrder.model');
 const { ProductorderClone } = require('../models/shopOrder.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
-const {Users} = require('../models/B2Busers.model');
+const { Users } = require('../models/B2Busers.model');
 const Roles = require('../models/roles.model');
 
 
@@ -31,24 +31,24 @@ const getdetails = async (page) => {
                 as: 'orderData',
             }
         },
-       {
-        $lookup: {
-            from: 'b2busers',
-            localField: 'Uid',
+        {
+            $lookup: {
+                from: 'b2busers',
+                localField: 'Uid',
                 foreignField: '_id',
                 as: 'userNameData',
-        }
+            }
 
-       },
-    //    { unwind: '$userNameData'},
+        },
+        //    { unwind: '$userNameData'},
 
         {
             $project: {
                 shopId: 1,
-                OrderId:1,
-                status:1,
-                overallTotal:1,
-                name : '$userNameData.name',
+                OrderId: 1,
+                status: 1,
+                overallTotal: 1,
+                name: '$userNameData.name',
 
                 shopType: '$userData.type',
                 shopName: '$userData.SName',
@@ -83,21 +83,21 @@ const getdetails = async (page) => {
                 as: 'orderData',
             }
         },
-       {
-        $lookup: {
-            from: 'b2busers',
-            localField: 'Uid',
+        {
+            $lookup: {
+                from: 'b2busers',
+                localField: 'Uid',
                 foreignField: '_id',
                 as: 'userNameData',
-        }
+            }
 
-       },
+        },
 
 
     ])
 
 
-    return {values: values, total: total.length }
+    return { values: values, total: total.length }
 }
 
 
@@ -106,7 +106,7 @@ const getdetails = async (page) => {
 
 const getproductdetails = async (id) => {
     let getproduct = await ShopOrderClone.findById(id)
-    return getproduct
+    return getproduct;
 }
 
 // UPDATE PRODUCT DETAILS
@@ -147,9 +147,9 @@ const wardloadExecutive = async (page) => {
 
         {
             $lookup: {
-                from:'b2bshopclones',
-                localField:'shopId', //Uid
-                foreignField:'_id', //Uid
+                from: 'b2bshopclones',
+                localField: 'shopId', //Uid
+                foreignField: '_id', //Uid
                 as: 'b2bshopclonesData',
             },
         },
@@ -159,17 +159,17 @@ const wardloadExecutive = async (page) => {
         {
 
             $match: {
-              $or: [{ status: { $eq: 'Approved' }},{ status: { $eq: 'Modified' }}, { status: { $eq: 'Packed' }}],
+                $or: [{ status: { $eq: 'Approved' } }, { status: { $eq: 'Modified' } }, { status: { $eq: 'Packed' } }],
             }
         },
-       
+
         {
             $project: {
                 shopId: 1,
                 status: 1,
-                OrderId:1,
-                SName:"$b2bshopclonesData.SName",
-                type:"$b2bshopclonesData.type", 
+                OrderId: 1,
+                SName: "$b2bshopclonesData.SName",
+                type: "$b2bshopclonesData.type",
             }
         },
         { $skip: 10 * page },
@@ -180,9 +180,9 @@ const wardloadExecutive = async (page) => {
     let total = await ShopOrderClone.aggregate([
         {
             $lookup: {
-                from:'b2bshopclones',
-                localField:'shopId', //Uid
-                foreignField:'_id', //Uid
+                from: 'b2bshopclones',
+                localField: 'shopId', //Uid
+                foreignField: '_id', //Uid
                 as: 'b2bshopclonesData',
             },
         },
@@ -192,21 +192,21 @@ const wardloadExecutive = async (page) => {
         {
 
             $match: {
-              $or: [{ status: { $eq: 'Approved' }},{ status: { $eq: 'Modified' }}, { status: { $eq: 'Packed' }}],
+                $or: [{ status: { $eq: 'Approved' } }, { status: { $eq: 'Modified' } }, { status: { $eq: 'Packed' } }],
             }
         },
-       
+
         {
             $project: {
                 shopId: 1,
                 status: 1,
-                OrderId:1,
-                SName:"$b2bshopclonesData.SName",
-                type:"$b2bshopclonesData.type", 
+                OrderId: 1,
+                SName: "$b2bshopclonesData.SName",
+                type: "$b2bshopclonesData.type",
             }
         },
     ])
-    return {data: data , total: total.length};
+    return { data: data, total: total.length };
 }
 
 
@@ -232,7 +232,7 @@ const wardloadExecutivePacked = async (page) => {
     let data = await ShopOrderClone.aggregate([
         {
             $match: {
-                status:{
+                status: {
                     $in: ['Packed']
                 }
             }
@@ -255,7 +255,16 @@ const wardloadExecutivePacked = async (page) => {
                 as: 'streetsData',
             }
         },
-        { $unwind: '$streetsData'},
+        { $unwind: '$streetsData' },
+        {
+            $lookup:{
+                from: 'wards',
+                localField: 'streetsData.wardId',
+                foreignField: '_id',
+                as: 'wardData',
+            }
+        },
+        { $unwind: '$wardData'},
 
         {
             $lookup: {
@@ -277,16 +286,19 @@ const wardloadExecutivePacked = async (page) => {
                 as: 'orderDatafortotal',
             }
         },
-       
+ // shoporderClon
         {
             $project: {
-                _id:1,
-                date:1,
-                time:1,
-                productStatus:1,
-                status:1,
-                OrderId:1,
+                _id: 1,
+                date: 1,
+                time: 1,
+                shopId: 1,
+                productStatus: 1,
+                status: 1,
+                OrderId: 1,
                 type: '$shopData.type',
+                Slat: '$shopData.Slat',
+                Slong : '$shopData.Slong',
                 street: '$streetsData.street',
                 // orderId: '$orderDatafortotal.orderId',
                 // orderDate: '$orderDatafortotal.date',
@@ -294,7 +306,11 @@ const wardloadExecutivePacked = async (page) => {
                 totalItems: { $size: "$orderDatafortotal" },
                 Qty: "$orderData.Qty",
                 // totalcount: '$orderData.totalItems'
-            }
+                shopcloneId: '$shopData._id',
+                shopName: '$shopData.SName', // 
+                streetName:'$shopData.street',
+                ward : '$wardData.ward'
+            }  
         },
         { $skip: 10 * page },
         { $limit: 10 },
@@ -303,7 +319,7 @@ const wardloadExecutivePacked = async (page) => {
     let total = await ShopOrderClone.aggregate([
         {
             $match: {
-                status:{
+                status: {
                     $in: ['Packed']
                 }
             }
@@ -326,7 +342,16 @@ const wardloadExecutivePacked = async (page) => {
                 as: 'streetsData',
             }
         },
-        { $unwind: '$streetsData'},
+        { $unwind: '$streetsData' },
+        {
+            $lookup:{
+                from: 'wards',
+                localField: 'streetsData.wardId',
+                foreignField: '_id',
+                as: 'wardData',
+            }
+        },
+        { $unwind: '$wardData'},
 
         {
             $lookup: {
@@ -348,23 +373,22 @@ const wardloadExecutivePacked = async (page) => {
                 as: 'orderDatafortotal',
             }
         },
-
     ])
-    return {data:data, total: total.length};
+    return { data: data, total: total.length };
 }
 
 
-const wardDeliveryExecutive = async ()=>{
+const wardDeliveryExecutive = async () => {
     let data = await Roles.aggregate([
         {
             $match: {
-                roleName:{
+                roleName: {
                     $in: ["Ward delivery execute(WDE)"]
                 }
             }
         },
         {
-            $lookup:{
+            $lookup: {
                 from: 'b2busers',
                 localField: '_id',
                 foreignField: 'userRole',
@@ -374,7 +398,7 @@ const wardDeliveryExecutive = async ()=>{
 
         {
             $project: {
-                roleName:1,
+                roleName: 1,
                 deliveryExecutiveName: '$deliveryExecutiveName.name',
             }
         }

@@ -291,8 +291,7 @@ const getAll = async () => {
   return ShopOrderClone.find();
 };
 
-const createOrderId = 
-async (body)=>{
+const createOrderId = async (body)=>{
   return ShopOrderClone.create(body);
 };
 
