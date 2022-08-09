@@ -80,6 +80,7 @@ const usableStock = require('./usableStock.route');
 const AssignStock = require('./AssignStock.route');
 const wardAdminGroup = require('./b2b.wardAdminGroup.route')
 const packTypeRoute = require('./packType.route')
+const productpackTypeRoute = require('./productPacktype.route')
 const defaultRoutes = [
   {
     path: '/auth',
@@ -378,6 +379,10 @@ const defaultRoutes = [
   {
     path:'/packType',
     route: packTypeRoute,
+  },
+  {
+    path:'/productpackType',
+    route: productpackTypeRoute,
   }
   // {
   //   path: '/sales',
