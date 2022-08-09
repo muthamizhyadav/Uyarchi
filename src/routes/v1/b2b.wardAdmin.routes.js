@@ -28,4 +28,8 @@ router.route('/wardloadingExecutive/getPackedProductDetails/:page').get(wardAdmi
 
 router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
 
+router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
+
+router.route('/delivery/Executive/Name/:id').put(wardAdminController.deliveryexecutive);
+
 module.exports = router;

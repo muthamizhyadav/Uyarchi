@@ -9,44 +9,44 @@ const Roles = require('../models/roles.model');
 // GET DETAILS
 
 const getdetails = async (page) => {
-  console.log(page);
-  let values = await ShopOrderClone.aggregate([
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId', //Uid
-        foreignField: '_id', //Uid
-        as: 'userData',
-      },
-    },
-    {
-      $unwind: '$userData',
-    },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'orderId',
-        as: 'orderData',
-      },
-    },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'Uid',
-        foreignField: '_id',
-        as: 'userNameData',
-      },
-    },
-    //    { unwind: '$userNameData'},
+    let values = await ShopOrderClone.aggregate([
+        {
+            $lookup: {
+                from: 'b2bshopclones',
+                localField: 'shopId', //Uid
+                foreignField: '_id', //Uid
+                as: 'userData',
+            },
+        },
+        {
+            $unwind: '$userData'
+        },
+        {
+            $lookup: {
+                from: 'productorderclones',
+                localField: '_id',
+                foreignField: 'orderId',
+                as: 'orderData',
+            }
+        },
+        {
+            $lookup: {
+                from: 'b2busers',
+                localField: 'Uid',
+                foreignField: '_id',
+                as: 'userNameData',
+            }
 
-    {
-      $project: {
-        shopId: 1,
-        OrderId: 1,
-        status: 1,
-        overallTotal: 1,
-        name: '$userNameData.name',
+        },
+        //    { unwind: '$userNameData'},
+
+        {
+            $project: {
+                shopId: 1,
+                OrderId: 1,
+                status: 1,
+                overallTotal: 1,
+                name: '$userNameData.name',
 
         shopType: '$userData.type',
         shopName: '$userData.SName',
@@ -89,15 +89,51 @@ const getdetails = async (page) => {
     },
   ]);
 
+    // let total = await ShopOrderClone.aggregate([
+
+    //     {
+    //         $lookup: {
+    //             from: 'b2bshopclones',
+    //             localField: 'shopId', //Uid
+    //             foreignField: '_id', //Uid
+    //             as: 'userData',
+    //         },
+    //     },
+    //     {
+    //         $unwind: '$userData'
+    //     },
+    //     {
+    //         $lookup: {
+    //             from: 'productorderclones',
+    //             localField: '_id',
+    //             foreignField: 'orderId',
+    //             as: 'orderData',
+    //         }
+    //     },
+    //     {
+    //         $lookup: {
+    //             from: 'b2busers',
+    //             localField: 'Uid',
+    //             foreignField: '_id',
+    //             as: 'userNameData',
+    //         }
+
+    //     },
+
+
+    // ])
+
+
   return { values: values, total: total.length };
 };
 
 // GET PRODUCT DETAILS
 
 const getproductdetails = async (id) => {
-  let getproduct = await ShopOrderClone.findById(id);
-  return getproduct;
-};
+    let getproduct = await ShopOrderClone.findById(id)
+    return getproduct;
+}
+
 
 // UPDATE PRODUCT DETAILS
 
@@ -157,37 +193,69 @@ const wardloadExecutive = async (page) => {
     { $limit: 10 },
   ]);
 
-  let total = await ShopOrderClone.aggregate([
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId', //Uid
-        foreignField: '_id', //Uid
-        as: 'b2bshopclonesData',
-      },
-    },
-    {
-      $unwind: '$b2bshopclonesData',
-    },
-    {
-      $match: {
-        $or: [{ status: { $eq: 'Approved' } }, { status: { $eq: 'Modified' } }, { status: { $eq: 'Packed' } }],
-      },
-    },
+    //     {
+    //         $lookup: {
+    //             from: 'b2bshopclones',
+    //             localField: 'shopId', //Uid
+    //             foreignField: '_id', //Uid
+    //             as: 'b2bshopclonesData',
+    //         },
+    //     },
+    //     {
+    //         $unwind: '$b2bshopclonesData'
+    //     },
+    //     {
 
-    {
-      $project: {
-        shopId: 1,
-        status: 1,
-        OrderId: 1,
-        SName: '$b2bshopclonesData.SName',
-        type: '$b2bshopclonesData.type',
-      },
-    },
-  ]);
-  return { data: data, total: total.length };
-};
+    //         $match: {
+    //             $or: [{ status: { $eq: 'Approved' } }, { status: { $eq: 'Modified' } }, { status: { $eq: 'Packed' } }],
+    //         }
+    //     },
 
+    //     {
+    //         $project: {
+    //             shopId: 1,
+    //             status: 1,
+    //             OrderId: 1,
+    //             SName: "$b2bshopclonesData.SName",
+    //             type: "$b2bshopclonesData.type",
+    //         }
+    //     },
+    //     { $skip: 10 * page },
+    //     { $limit: 10 },
+
+    // ]);
+
+    let total = await ShopOrderClone.aggregate([
+        {
+            $lookup: {
+                from: 'b2bshopclones',
+                localField: 'shopId', //Uid
+                foreignField: '_id', //Uid
+                as: 'b2bshopclonesData',
+            },
+        },
+        {
+            $unwind: '$b2bshopclonesData'
+        },
+        {
+
+            $match: {
+                $or: [{ status: { $eq: 'Approved' } }, { status: { $eq: 'Modified' } }, { status: { $eq: 'Packed' } }],
+            }
+        },
+
+        {
+            $project: {
+                shopId: 1,
+                status: 1,
+                OrderId: 1,
+                SName: "$b2bshopclonesData.SName",
+                type: "$b2bshopclonesData.type",
+            }
+        },
+    ])
+    return { data: data, total: total.length };
+}
 // TRACK STATUS FOR PRODUCT STATUS
 const updateBilled = async (id, status) => {
   let productOrderBilled = await ShopOrderClone.findById(id);
@@ -199,9 +267,26 @@ const updateBilled = async (id, status) => {
   return productOrderBilled;
 };
 
+
+
+const deliveryExecutive = async (id, body) => {
+    const { deliveryExecutiveId } = body
+    let delivery = await ShopOrderClone.findById(id);
+    if (!delivery) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'delivery not found')
+    }
+    delivery = await ShopOrderClone.findByIdAndUpdate(
+        { _id: id },
+        { deliveryExecutiveId: deliveryExecutiveId, status: 'Assigned' },
+        { new: true }
+    )
+    return delivery;
+} 
+
 // AFTER PACKED BY WARD LOADING EXECUTE
 
 const wardloadExecutivePacked = async (page) => {
+
   let data = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -271,14 +356,100 @@ const wardloadExecutivePacked = async (page) => {
     { $limit: 10 },
   ]);
 
-  let total = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        status: {
-          $in: ['Packed'],
+//   let total = await ShopOrderClone.aggregate([
+//     {
+//       $match: {
+//         status: {
+//           $in: ['Packed'],
+//         }
+//     }
+// },
+//         {
+//             $lookup: {
+//                 from: 'b2bshopclones',
+//                 localField: 'shopId',
+//                 foreignField: '_id',
+//                 as: 'shopData',
+//             }
+//         },
+//         { $unwind: '$shopData' },
+//         {
+//             $lookup: {
+//                 from: 'streets',
+//                 localField: 'shopData.Strid',
+//                 foreignField: '_id',
+//                 as: 'streetsData',
+//             }
+//         },
+//         { $unwind: '$streetsData' },
+//         {
+//             $lookup: {
+//                 from: 'wards',
+//                 localField: 'streetsData.wardId',
+//                 foreignField: '_id',
+//                 as: 'wardData',
+//             }
+//         },
+//         { $unwind: '$wardData' },
+
+//         {
+//             $lookup: {
+//                 from: 'productorderclones',
+//                 localField: '_id',
+//                 foreignField: 'orderId',
+//                 pipeline: [
+//                     { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
+//                 ],
+//                 as: 'orderData',
+//             }
+//         },
+//         { $unwind: '$orderData' },
+//         {
+//             $lookup: {
+//                 from: 'productorderclones',
+//                 localField: '_id',
+//                 foreignField: 'orderId',
+//                 as: 'orderDatafortotal',
+//             }
+//         },
+//         // shoporderClon
+//         {
+//             $project: {
+//                 _id: 1,
+//                 date: 1,
+//                 time: 1,
+//                 shopId: 1,
+//                 productStatus: 1,
+//                 status: 1,
+//                 OrderId: 1,
+//                 type: '$shopData.type',
+//                 Slat: '$shopData.Slat',
+//                 Slong: '$shopData.Slong',
+//                 street: '$streetsData.street',
+//                 // orderId: '$orderDatafortotal.orderId',
+//                 // orderDate: '$orderDatafortotal.date',
+//                 // orderTime: '$orderDatafortotal.time',
+//                 totalItems: { $size: "$orderDatafortotal" },
+//                 Qty: "$orderData.Qty",
+//                 // totalcount: '$orderData.totalItems'
+//                 shopcloneId: '$shopData._id',
+//                 shopName: '$shopData.SName', // 
+//                 streetName: '$shopData.street',
+//                 ward: '$wardData.ward'
+//             }
+//         },
+//         { $skip: 10 * page },
+//         { $limit: 10 },
+//     ]);
+
+    let total = await ShopOrderClone.aggregate([
+        {
+            $match: {
+                status: {
+                    $in: ['Packed']
+                }
+            }
         },
-      },
-    },
 
     {
       $lookup: {
@@ -321,39 +492,104 @@ const wardloadExecutivePacked = async (page) => {
   return { data: data, total: total.length };
 };
 
-const wardDeliveryExecutive = async () => {
-  let data = await Roles.aggregate([
-    {
-      $match: {
-        roleName: {
-          $in: ['Ward delivery execute(WDE)'],
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: '_id',
-        foreignField: 'userRole',
-        as: 'deliveryExecutiveName',
-      },
-    },
+// const wardDeliveryExecutive = async () => {
+//   let data = await Roles.aggregate([
+//     {
+//       $match: {
+//         roleName: {
+//           $in: ['Ward delivery execute(WDE)'],
+//         },
+//       },
+//     },
+//     {
+//       $lookup: {
+//         from: 'b2busers',
+//         localField: '_id',
+//         foreignField: 'userRole',
+//         as: 'deliveryExecutiveName',
+//       },
+//     },
 
-    {
-      $project: {
-        roleName: 1,
-        deliveryExecutiveName: '$deliveryExecutiveName.name',
-      },
-    },
-  ]);
-  return data;
-};
+//         { $unwind: '$shopData' },
+//         {
+//             $lookup: {
+//                 from: 'streets',
+//                 localField: 'shopData.Strid',
+//                 foreignField: '_id',
+//                 as: 'streetsData',
+//             }
+//         },
+//         { $unwind: '$streetsData' },
+//         {
+//             $lookup: {
+//                 from: 'wards',
+//                 localField: 'streetsData.wardId',
+//                 foreignField: '_id',
+//                 as: 'wardData',
+//             }
+//         },
+//         { $unwind: '$wardData' },
+
+//         {
+//             $lookup: {
+//                 from: 'productorderclones',
+//                 localField: '_id',
+//                 foreignField: 'orderId',
+//                 pipeline: [
+//                     { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
+//                 ],
+//                 as: 'orderData',
+//             }
+//         },
+//         { $unwind: '$orderData' },
+//         {
+//             $lookup: {
+//                 from: 'productorderclones',
+//                 localField: '_id',
+//                 foreignField: 'orderId',
+//                 as: 'orderDatafortotal',
+//             }
+//         },
+//     ])
+//     return { data: data, total: total.length };
+// }
+
+
+const wardDeliveryExecutive = async () => {
+    let data = await Roles.aggregate([
+        {
+            $match: {
+                roleName: {
+                    $in: ["Ward delivery execute(WDE)"]
+                }
+            }
+        },
+        {
+            $lookup: {
+                from: 'b2busers',
+                localField: '_id',
+                foreignField: 'userRole',
+                as: 'deliveryExecutiveName',
+            }
+        },
+
+        {
+            $project: {
+                roleName: 1,
+                deliveryExecutiveName: '$deliveryExecutiveName.name',
+            }
+        }
+    ])
+    return data;
+}
+
 
 module.exports = {
   getdetails,
   getproductdetails,
   updateProduct,
   // updateAcknowledge,
+  deliveryExecutive,
   // updateApproved,
   // updateModified,
   updateRejected,
@@ -363,6 +599,7 @@ module.exports = {
   updateBilled,
 
   wardloadExecutivePacked,
-
   wardDeliveryExecutive,
 };
+
+
