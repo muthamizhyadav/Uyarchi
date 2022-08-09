@@ -49,6 +49,22 @@ const getAllpackTypeAll = async (unit,page) => {
 }
 
 
+
+const getAllpackTypeUnitAll = async (unit) => {
+   
+  const data = await packType.aggregate([
+    {
+        $match: {
+          $and: [{unit:{$eq:unit}}],
+        },
+      },
+
+  ]);
+  return data;
+
+}
+
+
 const updatepackTypeId = async (packTypeId, updateBody) => {
     let Manage = await getpackTypeById(packTypeId);
 
@@ -68,4 +84,4 @@ const updatepackTypeId = async (packTypeId, updateBody) => {
     return Manage;
   };
 
-  module.exports = { createpackTypeData,getpackTypeById, getAllpackTypeAll, updatepackTypeId, deletePackTypeById };
+  module.exports = { createpackTypeData,getpackTypeById, getAllpackTypeAll, updatepackTypeId, deletePackTypeById, getAllpackTypeUnitAll };
