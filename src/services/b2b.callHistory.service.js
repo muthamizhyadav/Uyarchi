@@ -407,17 +407,152 @@ const getshopsOrderWise = async (status) => {
   }
 };
 
-const getacceptDeclined = async (page) => {
+const getacceptDeclined = async (date, page, userId, userRole) => {
+  let values = await Shop.aggregate([
+    // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
+    {
+      $match: {
+        callingStatus: { $in: ['accept', 'declined'] },
+      },
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              date: { $eq: date },
+            },
+          },
+        ],
+        as: 'shopData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopData.shopId',
+        foreignField: '_id',
+        // pipeline: [
+        //   {
+        //     $match: {
+        //       $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
+        //     },
+        //   },
+        // ],
+        as: 'shopclones',
+      },
+    },
+    // {
+    //   $unwind: '$shopclones',
+    // },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplists',
+      },
+    },
+    {
+      $unwind: '$shoplists',
+    },
+    {
+      $project: {
+        _id: 1,
+        _id: 1,
+        photoCapture: 1,
+        callingStatus: 1,
+        callingStatusSort: 1,
+        active: 1,
+        archive: 1,
+        Wardid: 1,
+        type: 1,
+        SName: 1,
+        SType: 1,
+        SOwner: 1,
+        mobile: 1,
+        Slat: 1,
+        Strid: 1,
+        sortdatetime: 1,
+        Slong: 1,
+        address: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        status: 1,
+        Uid: 1,
+        shopData: 1,
+        // shopclones: '$shopclones',
+        shopData: '$shopData',
+        shoptypeName: '$shoplists.shopList',
+        // matching: { $and: { $eq: ['$callingUserId', userId], $eq: ['$callingStatus', 'On Call'] } },
+        matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
+        // callingUserId: 1,
+
+        // shopclones: '$shopclones',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+
   let total = await Shop.aggregate([
     {
       $match: {
         callingStatus: { $in: ['accept', 'declined'] },
       },
     },
-    { $skip: 10 * page },
-    { $limit: 10 },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              date: { $eq: date },
+            },
+          },
+        ],
+        as: 'shopData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopData.shopId',
+        foreignField: '_id',
+        // pipeline: [
+        //   {
+        //     $match: {
+        //       $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
+        //     },
+        //   },
+        // ],
+        as: 'shopclones',
+      },
+    },
+    // {
+    //   $unwind: '$shopclones',
+    // },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplists',
+      },
+    },
+    {
+      $unwind: '$shoplists',
+    },
   ]);
-  return total;
+  let role = await Role.findOne({ _id: userRole });
+  let user = await Users.findOne({ _id: userId });
+  return { values: values, total: total.length, RoleName: role.roleName, userName: user.name };
 };
 
 const resethistory = async () => {

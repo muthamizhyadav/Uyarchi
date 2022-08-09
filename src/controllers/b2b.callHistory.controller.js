@@ -91,8 +91,12 @@ const getcallHistorylastFivedays = catchAsync(async (req, res) => {
   res.send(callhistory);
 });
 
+// date, status, page, userId, userRole
+
 const getacceptDeclined = catchAsync(async (req, res) => {
-  const callhistories = await callHistoryService.getacceptDeclined(req.params.page);
+  let userId = req.userId;
+  let userRole = req.userRole;
+  const callhistories = await callHistoryService.getacceptDeclined(req.params.date, req.params.page, userId, userRole);
   res.send(callhistories);
 });
 

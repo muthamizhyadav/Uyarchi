@@ -12,6 +12,7 @@ const createpackTypeData = async (packTypeBody) => {
 };
 
 const getpackTypeById = async (packTypeId) => {
+    console.log(packTypeId)
     return packType.findById(packTypeId);
   };
 
@@ -24,6 +25,7 @@ const getAllpackTypeAll = async (unit,page) => {
         match = [{unit:{$eq:unit}}]
     }
   const data = await packType.aggregate([
+    { $sort : {unit:-1,quantity:1} },
     {
         $match: {
           $and: match,
@@ -49,6 +51,23 @@ const getAllpackTypeAll = async (unit,page) => {
 }
 
 
+
+const getAllpackTypeUnitAll = async (unit) => {
+   
+  const data = await packType.aggregate([
+    { $sort : {quantity:1} },
+    {
+        $match: {
+          $and: [{unit:{$eq:unit}}],
+        },
+      },
+
+  ]);
+  return data;
+
+}
+
+
 const updatepackTypeId = async (packTypeId, updateBody) => {
     let Manage = await getpackTypeById(packTypeId);
 
@@ -68,4 +87,4 @@ const updatepackTypeId = async (packTypeId, updateBody) => {
     return Manage;
   };
 
-  module.exports = { createpackTypeData,getpackTypeById, getAllpackTypeAll, updatepackTypeId, deletePackTypeById };
+  module.exports = { createpackTypeData,getpackTypeById, getAllpackTypeAll, updatepackTypeId, deletePackTypeById, getAllpackTypeUnitAll };
