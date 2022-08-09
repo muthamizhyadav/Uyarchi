@@ -38,17 +38,18 @@ const createcallHistoryWithType = async (body, userId) => {
   if (callStatus == 'accept') {
     sort = 6;
   }
+  console.log(callStatus);
   let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
-  if (callStatus != 'accept') {
+  if (callStatus != '') {
     if (shopdata.callingStatus != 'accept') {
       await Shop.findByIdAndUpdate(
         { _id: shopId },
         { callingStatus: callStatus, sortdate: date, sorttime: time, historydate: currentdate, callingStatusSort: sort },
         { new: true }
       );
-      await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate });
+      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, historydate: currentdate });
     }
   }
   let callHistory = await callHistoryModel.create(values);
