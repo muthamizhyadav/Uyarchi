@@ -105,6 +105,12 @@ let data2 = data1
   
 }
 
+const streetSearchApi = async (searchArea,key) =>{
+  let response = await axios.get(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${searchArea}&inputtype=textquery&fields=formatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry&key=${key}`
+  )
+  return response.data
+}
+
 const AllCount = async ()=>{
    const userCount = await manageUser.find({active:true});
    const street = await Street.aggregate([
@@ -2213,6 +2219,7 @@ module.exports = {
   latitudeMap,
   WardNoApi,
   WardApi2,
+  streetSearchApi,
 
   // paginationManageUserAttendance,
  
