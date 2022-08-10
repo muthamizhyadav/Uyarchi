@@ -6,18 +6,17 @@ const { toJSON, paginate } = require('./plugins');
 const { roles } = require('../config/roles');
 
 const bankSchema = mongoose.Schema({
-    _id:false,
-    bankName:{
-        type:String,
-    },
-    branch:{
-        type:String,
-    },
-    ifsc:{
-        type:String,
-    },
-
-})
+  _id: false,
+  bankName: {
+    type: String,
+  },
+  branch: {
+    type: String,
+  },
+  ifsc: {
+    type: String,
+  },
+});
 
 const superAdminSchema = mongoose.Schema(
   {
@@ -93,12 +92,12 @@ const superAdminSchema = mongoose.Schema(
     bioData: {
       type: String,
     },
-    bankDetails:[bankSchema],
-    active:{
-        type:Boolean,
+    bankDetails: [bankSchema],
+    active: {
+      type: Boolean,
     },
-    archive:{
-        type:Boolean
+    archive: {
+      type: Boolean,
     },
   },
   {
@@ -116,7 +115,7 @@ superAdminSchema.plugin(paginate);
  * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
  * @returns {Promise<boolean>}
  */
- superAdminSchema.statics.isEmailTaken = async function (email, excludeUserId) {
+superAdminSchema.statics.isEmailTaken = async function (email, excludeUserId) {
   const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
   return !!user;
 };
@@ -126,7 +125,7 @@ superAdminSchema.plugin(paginate);
  * @param {string} password
  * @returns {Promise<boolean>}
  */
- superAdminSchema.methods.isPasswordMatch = async function (password) {
+superAdminSchema.methods.isPasswordMatch = async function (password) {
   const user = this;
   return bcrypt.compare(password, user.password);
 };

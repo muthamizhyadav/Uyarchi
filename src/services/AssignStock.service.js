@@ -6,6 +6,4 @@ const createAssignStock = async (bodyData) => {
   return AssignStock.create(bodyData);
 };
 
-
-
 module.exports = { createAssignStock };

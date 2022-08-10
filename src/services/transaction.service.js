@@ -38,8 +38,6 @@ const deleteTransactionById = async (id) => {
   await transaction.save();
 };
 
-
-
 module.exports = {
   createTransaction,
   getAllTrensaction,

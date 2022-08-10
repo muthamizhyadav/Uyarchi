@@ -5,5 +5,4 @@ const router = express.Router();
 
 router.route('/').get(webSocketController.web);
 
-
-module.exports = router
+module.exports = router;

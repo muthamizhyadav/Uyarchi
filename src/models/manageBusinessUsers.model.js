@@ -92,9 +92,9 @@ const superAdminAssignWardMember = new mongoose.Schema({
     type: String,
     default: ' ',
   },
-  phone:{
-    type:Number,
-    default:''
+  phone: {
+    type: Number,
+    default: '',
   },
   whnumber: {
     type: Number,

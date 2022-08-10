@@ -14,9 +14,6 @@ const redirectSchema = mongoose.Schema({
   area: {
     type: String,
   },
-  
-
-  
 });
 
 const reDirect = mongoose.model('redirect', redirectSchema);

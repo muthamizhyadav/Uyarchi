@@ -3,10 +3,9 @@ const bcrypt = require('bcryptjs');
 const { adminRegistration } = require('../models');
 const ApiError = require('../utils/ApiError');
 
-
 const createadminRegistration = async (adminRegistrationBody) => {
-  const { password, confirmPassword } = adminRegistrationBody
-  if(password !== confirmPassword){
+  const { password, confirmPassword } = adminRegistrationBody;
+  if (password !== confirmPassword) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Password Does Not Match 😞');
   }
   return adminRegistration.create(adminRegistrationBody);
@@ -48,7 +47,6 @@ const loginadminRegistrationWithEmailAndPassword = async (email, password) => {
 //   let communications = await  InterviewcommunicationSkill.find()
 //   let functionalSkills = await InterviewFunctionalSkill.find()
 
-
 //   let Detailmap = interviewDetails.map((e)=>{
 //     if(e.interviewId == id){
 //       interviewDetail = e.interviewId
@@ -81,7 +79,6 @@ const loginadminRegistrationWithEmailAndPassword = async (email, password) => {
 //     }
 //   })
 
- 
 //   let technologySkills = await InterviewtechnologySkill.find({interviewId:technology})
 //   interviewerData.technologySkill = technologySkills
 
@@ -93,7 +90,6 @@ const loginadminRegistrationWithEmailAndPassword = async (email, password) => {
 
 //   let functionals = await InterviewFunctionalSkill.find({interviewId:functional})
 //   interviewerData.functionalSkill = functionals
-
 
 //   let det = await InterviewerWorkStatus.find({interviewId:interviewDetail})
 //   interviewerData.workStatus =  det
@@ -108,7 +104,7 @@ const loginadminRegistrationWithEmailAndPassword = async (email, password) => {
 // const getSameInterviewRegistartion = async(id)=>{
 //   const interviewerData = await interviewerRegistration.findById(id)
 //   //  console.log(interviewerData._id)
- 
+
 //   if(!interviewerData){
 //     throw new ApiError(httpStatus.NOT_FOUND, 'Interviewer not found')
 //   }
@@ -126,10 +122,10 @@ const loginadminRegistrationWithEmailAndPassword = async (email, password) => {
 //       if(e.functionalSkillsss[i].functionalSkill1.functionalSkill == functionalSkills.functionalSkill1.functionalSkill){
 //         arr ={...e.functionalSkillsss[i]}
 //         // let jjjj = await functionalSkill.find({userId:e.userId})
-        
+
 //     }
 //     }
-   
+
 //    })
 
 //   //  console.log(arr)
@@ -138,10 +134,9 @@ const loginadminRegistrationWithEmailAndPassword = async (email, password) => {
 
 // }
 
-
 // const getInterviewerRegistration = async()=>{
 //   return interviewerRegistration.find();
-// } 
+// }
 // const updateInterviewerRegistrationById = async (interviewerRegistrationId, updateBody) => {
 //   const interviewersRegistration = await getInterviewerRegistrationId(interviewerRegistrationId);
 //   // console.log(interviewersRegistration.uploadResume)
@@ -206,5 +201,5 @@ module.exports = {
   // getSameInterviewRegistartion
   loginadminRegistrationWithEmailAndPassword,
   getadminRegistrationByEmail,
-  createadminRegistration
+  createadminRegistration,
 };

@@ -379,7 +379,11 @@ const getAllStreet = async () => {
 const streetPagination = async (key, id) => {
   let match = [{ archive: { $ne: true } }];
   if (key != 'null') {
-    match = [{ area: { $regex: key,'$options': 'i'  } }, { street: { $regex: key,'$options': 'i'  } }, { locality: { $regex: key,'$options': 'i'  } }];
+    match = [
+      { area: { $regex: key, $options: 'i' } },
+      { street: { $regex: key, $options: 'i' } },
+      { locality: { $regex: key, $options: 'i' } },
+    ];
   }
   console.log(match);
   return Street.aggregate([
@@ -488,14 +492,13 @@ const deleteStreetById = async (streetId) => {
 };
 
 const areaSearchApi = async (key) => {
-
   let values = await Street.aggregate([
     {
       $match: {
         $or: [
-          { area: { $regex: key, '$options': 'i' } },
-          { street: { $regex: key,'$options': 'i'} },
-          { locality: { $regex: key, '$options': 'i' } },
+          { area: { $regex: key, $options: 'i' } },
+          { street: { $regex: key, $options: 'i' } },
+          { locality: { $regex: key, $options: 'i' } },
         ],
       },
     },

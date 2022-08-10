@@ -32,11 +32,11 @@ const walletSchema = mongoose.Schema({
   addressProof: {
     type: String,
   },
-  idProofNo:{
+  idProofNo: {
     type: String,
   },
   addressProofNo: {
-    type:String,
+    type: String,
   },
   active: {
     type: Boolean,
@@ -46,7 +46,7 @@ const walletSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  contactNumber:{
+  contactNumber: {
     type: Number,
   },
   shopId: {

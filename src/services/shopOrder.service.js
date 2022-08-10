@@ -45,9 +45,9 @@ const createshopOrderClone = async (body, userid) => {
   let userId = '';
   let totalcount = Buy.length + 1;
 
-  userId = "OD"+ center + totalcount;
-  let bod = { ...body, ...{ Uid: userid, OrderId:userId  } };
-  console.log(bod)
+  userId = 'OD' + center + totalcount;
+  let bod = { ...body, ...{ Uid: userid, OrderId: userId } };
+  console.log(bod);
 
   let createShopOrderClone = await ShopOrderClone.create(bod);
   let { product, date, time, shopId } = body;
@@ -291,10 +291,10 @@ const getAll = async () => {
   return ShopOrderClone.find();
 };
 
+
 const createOrderId = async (body)=>{
   return ShopOrderClone.create(body);
 };
-
 
 module.exports = {
   // product

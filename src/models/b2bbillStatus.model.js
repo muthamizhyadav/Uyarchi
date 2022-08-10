@@ -28,8 +28,8 @@ const b2bBillStatusSchema = new mongoose.Schema({
   mislianeousCost: {
     type: Number,
   },
-  payAmount:{
-    type:Number
+  payAmount: {
+    type: Number,
   },
   others: {
     type: Number,
@@ -38,25 +38,25 @@ const b2bBillStatusSchema = new mongoose.Schema({
     type: String,
     default: 'Pending',
   },
-  modeOfPayment:{
-    type:String,
+  modeOfPayment: {
+    type: String,
   },
-  totalExpenseAmount:{
-    type:Number,
+  totalExpenseAmount: {
+    type: Number,
   },
-  PendingExpenseAmount:{
-    type:Number,
+  PendingExpenseAmount: {
+    type: Number,
   },
   BillId: {
     type: String,
   },
 
-  active:{
-    type:Boolean,
-    default:true,
+  active: {
+    type: Boolean,
+    default: true,
   },
-  archive:{
-    type:Boolean,
+  archive: {
+    type: Boolean,
     default: false,
   },
 });

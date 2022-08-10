@@ -16,7 +16,7 @@ const createSupplierBuyerwithType = async (type) => {
     values = await SupplierBuyer.find({ type: 'Supplier' });
   } else if (type == 'Buyer') {
     values = await SupplierBuyer.find({ type: 'Buyer' });
-  }else if(type == "Both") {
+  } else if (type == 'Both') {
     values = await SupplierBuyer.find({ type: 'Both' });
   }
   return values;

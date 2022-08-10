@@ -9,10 +9,10 @@ const createSupplierService = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(supplier);
 });
 
-const createSupplierBuyerwithType = catchAsync (async (req, res)=>{
-  const supplier = await supplierBuyerService.createSupplierBuyerwithType(req.params.type)
-  res.send(supplier)
-})
+const createSupplierBuyerwithType = catchAsync(async (req, res) => {
+  const supplier = await supplierBuyerService.createSupplierBuyerwithType(req.params.type);
+  res.send(supplier);
+});
 
 const getAllSupplierBuyerService = catchAsync(async (req, res) => {
   const supplier = await supplierBuyerService.getAllSupplierBuyer();

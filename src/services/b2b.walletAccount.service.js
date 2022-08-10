@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const walletModel = require('../models/b2b.walletAccount.model');
-const { Shop } = require('../models/b2b.ShopClone.model')
+const { Shop } = require('../models/b2b.ShopClone.model');
 
 const createWallet = async (walletbody) => {
   let wallet = await walletModel.create(walletbody);
@@ -9,68 +9,54 @@ const createWallet = async (walletbody) => {
   return wallet;
 };
 
-
 const currentAmount = async (amountBody) => {
   let amount = await walletModel.create(amountBody);
   return amount;
 };
 
-
-const getshopName = async()=>{
+const getshopName = async () => {
   let shopname = await Shop.aggregate([
-
     {
-      $lookup:{
-        from:'wards',
+      $lookup: {
+        from: 'wards',
         localField: 'Wardid',
         foreignField: '_id',
-        as:'wardData'
-      }
+        as: 'wardData',
+      },
     },
     {
-      $lookup:{
-        from:'streets',
+      $lookup: {
+        from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
-        as: 'streetData'
-      }
-
+        as: 'streetData',
+      },
     },
 
     {
       $project: {
-        SName:1,
-        mobile:1,
-        address:1,
-        SOwner:1,
-        type:1,
-          wardNo: '$wardData.wardNo',
-          streetName: '$streetData.street'
-      }
-
+        SName: 1,
+        mobile: 1,
+        address: 1,
+        SOwner: 1,
+        type: 1,
+        wardNo: '$wardData.wardNo',
+        streetName: '$streetData.street',
+      },
     },
-
-  ])
+  ]);
   return shopname;
-
-}
-
-
+};
 
 const getAll = async () => {
   return walletModel.find();
 };
 
-const getWallet = async (page) =>{
-  let wallet = await walletModel.aggregate([
-     { $skip: 10 * page },
-    { $limit: 10 },
-    
-  ]);
+const getWallet = async (page) => {
+  let wallet = await walletModel.aggregate([{ $skip: 10 * page }, { $limit: 10 }]);
   let total = await walletModel.find().count();
-    return {wallet : wallet , total:total};
-  
-}
+  return { wallet: wallet, total: total };
+};
 
 const updateWallet = async (id, walletbody) => {
   let wallet = await walletModel.findById(id);

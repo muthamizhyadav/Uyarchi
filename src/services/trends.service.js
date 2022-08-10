@@ -49,9 +49,9 @@ const deleteTrendsById = async (trendsId) => {
   return trends;
 };
 
-const updateProductFromTrends = async (id,updateBody) =>{
-  return  await Trends.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-}
+const updateProductFromTrends = async (id, updateBody) => {
+  return await Trends.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+};
 
 module.exports = {
   createTrends,

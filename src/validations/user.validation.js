@@ -60,6 +60,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
-  getUsersAttendance
-
+  getUsersAttendance,
 };

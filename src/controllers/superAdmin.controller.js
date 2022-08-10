@@ -72,11 +72,11 @@ const changePassword = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    createSuperAdmin,
-    getSuperAdminById,
-    login,
-    superAdminList,
-    updateSuperAdminById,
-    changePassword,
-    resetPassword,
-}
+  createSuperAdmin,
+  getSuperAdminById,
+  login,
+  superAdminList,
+  updateSuperAdminById,
+  changePassword,
+  resetPassword,
+};

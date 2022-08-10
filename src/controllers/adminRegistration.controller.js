@@ -5,8 +5,8 @@ const catchAsync = require('../utils/catchAsync');
 const { adminRegistrationService, tokenService } = require('../services');
 
 const createadminRegistrationService = catchAsync(async (req, res) => {
-  const adminRegistartion = await adminRegistrationService.createadminRegistration(req.body)
-  res.status(httpStatus.CREATED).send(adminRegistartion)
+  const adminRegistartion = await adminRegistrationService.createadminRegistration(req.body);
+  res.status(httpStatus.CREATED).send(adminRegistartion);
 });
 
 const login = catchAsync(async (req, res) => {
@@ -14,9 +14,9 @@ const login = catchAsync(async (req, res) => {
   const adminRegistartion = await adminRegistrationService.loginadminRegistrationWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(adminRegistartion);
   let options = {
-    httpOnly : true,
-  }
-  res.cookie("token", tokens.access.token, options)
+    httpOnly: true,
+  };
+  res.cookie('token', tokens.access.token, options);
   res.send({ adminRegistartion, tokens });
 });
 
@@ -42,7 +42,7 @@ const login = catchAsync(async (req, res) => {
 //     throw new ApiError(httpStatus.NOT_FOUND, 'InterviewerRegistration not found');
 //   }
 //  data =interviewerRegistration.functionalSkill[0].functionalSkill1[0].functionalSkill
-//  data1 = interviewerRegistration.functionalSkill[0].functionalSkill2[0].functionalSkill   
+//  data1 = interviewerRegistration.functionalSkill[0].functionalSkill2[0].functionalSkill
 //  exp = interviewerRegistration.functionalSkill[0].functionalSkill1[0].experience
 //  exp1 = interviewerRegistration.functionalSkill[0].functionalSkill2[0].experience
 
@@ -58,7 +58,7 @@ const login = catchAsync(async (req, res) => {
 //       // console.log(element.functionalSkill1[0].functionalSkill)
 //       if((element.functionalSkill1[0].functionalSkill == data &&  (element.functionalSkill1[0].experience == "0-1" && exp == "3-5" || element.functionalSkill1[0].experience == "1-3" && exp == "5-7" ||  element.functionalSkill1[0].experience == "3-5" && exp == "7-10" ||  element.functionalSkill1[0].experience == "5-10" && exp == "10-15"||  element.functionalSkill1[0].experience == "10-15" && exp == "15-20" ||  element.functionalSkill1[0].experience == "Above 15" && exp =="Above 20"))
 //       || (element.functionalSkill2[0].functionalSkill == data && (element.functionalSkill2[0].experience == "0-1" && exp == "3-5" || element.functionalSkill2[0].experience == "1-3" && exp == "5-7" ||  element.functionalSkill2[0].experience == "3-5" && exp == "7-10" ||  element.functionalSkill2[0].experience == "5-10" && exp == "10-15"||  element.functionalSkill2[0].experience == "10-15" && exp == "15-20" ||  element.functionalSkill2[0].experience == "Above 15" && exp =="Above 20"))
-//       || (element.functionalSkill1[0].functionalSkill == data1 && (element.functionalSkill1[0].experience == "0-1" && exp1 == "3-5" || element.functionalSkill1[0].experience == "1-3" && exp1 == "5-7" ||  element.functionalSkill1[0].experience == "3-5" && exp1 == "7-10" ||  element.functionalSkill1[0].experience == "5-10" && exp1 == "10-15"||  element.functionalSkill1[0].experience == "10-15" && exp1 == "15-20" ||  element.functionalSkill1[0].experience == "Above 15" && exp1 =="Above 20")) 
+//       || (element.functionalSkill1[0].functionalSkill == data1 && (element.functionalSkill1[0].experience == "0-1" && exp1 == "3-5" || element.functionalSkill1[0].experience == "1-3" && exp1 == "5-7" ||  element.functionalSkill1[0].experience == "3-5" && exp1 == "7-10" ||  element.functionalSkill1[0].experience == "5-10" && exp1 == "10-15"||  element.functionalSkill1[0].experience == "10-15" && exp1 == "15-20" ||  element.functionalSkill1[0].experience == "Above 15" && exp1 =="Above 20"))
 //       || (element.functionalSkill2[0].functionalSkill == data1 && (element.functionalSkill2[0].experience == "0-1" && exp1 == "3-5" || element.functionalSkill2[0].experience == "1-3" && exp1 == "5-7" ||  element.functionalSkill2[0].experience == "3-5" && exp1 == "7-10" ||  element.functionalSkill2[0].experience == "5-10" && exp1 == "10-15"||  element.functionalSkill2[0].experience == "10-15" && exp1 == "15-20" ||  element.functionalSkill2[0].experience == "Above 15" && exp1 =="Above 20"))){
 //         values.push(element);
 //         // count +=1;
@@ -85,7 +85,6 @@ const login = catchAsync(async (req, res) => {
 //   res.send(interviewerRegistration)
 // })
 
-
 // const listInterviewerRegistration = catchAsync(async (req, res) => {
 //   const results = await interviewerRegistrationService.getInterviewerRegistration();
 //   res.send(results);
@@ -111,8 +110,6 @@ const login = catchAsync(async (req, res) => {
 //   res.send(interviewerRegistration);
 //   await interviewerRegistration.save();
 // });
-
-
 
 // const deleteInterviewerRegistration = catchAsync(async (req, res) => {
 //   await interviewerRegistrationService.deleteInterviewerRegistrationById(req.params.interviewerRegistrationId);
