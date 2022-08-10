@@ -213,6 +213,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         created: 1,
         SOwner: 1,
         kyc_status: 1,
+        Uid: 1,
         active: 1,
         mobile: 1,
         date: 1,
