@@ -412,12 +412,18 @@ const getshopsOrderWise = async (status) => {
   }
 };
 
-const getacceptDeclined = async (date, page, userId, userRole) => {
+const getacceptDeclined = async (status, date, page, userId, userRole) => {
+  let match;
+  if (status == 'null') {
+    match = [{ active: { $eq: true } }];
+  } else {
+    match = [{ callingStatus: { $in: [status, 'On Call'] } }];
+  }
   let values = await Shop.aggregate([
     // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $match: {
-        callingStatus: { $in: ['accept', 'declined'] },
+        $and: match,
       },
     },
     {
@@ -507,7 +513,7 @@ const getacceptDeclined = async (date, page, userId, userRole) => {
   let total = await Shop.aggregate([
     {
       $match: {
-        callingStatus: { $in: ['accept', 'declined'] },
+        $and: match,
       },
     },
     {
