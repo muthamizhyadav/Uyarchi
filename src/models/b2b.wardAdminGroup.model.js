@@ -38,6 +38,10 @@ const wardAdminGroupSchema = new mongoose.Schema({
       orderedTime: {
         type: String,
       },
+      Orderdatas: {
+        type: Array,
+        default: [],
+      },
 });
 
 const wardAdminGroupModel = mongoose.model('wardAdminGroup', wardAdminGroupSchema);

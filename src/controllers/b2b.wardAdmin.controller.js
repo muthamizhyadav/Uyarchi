@@ -79,7 +79,7 @@ const updateBilled = catchAsync(async (req, res) => {
 
 
     const wardloadExecutivePacked = catchAsync(async (req, res) => {
-        const packedOnly = await wardAdminService.wardloadExecutivePacked(req.params.page);
+        const packedOnly = await wardAdminService.wardloadExecutivePacked();
         res.send(packedOnly);
     }); 
 

@@ -328,69 +328,69 @@ const wardloadExecutivePacked = async (page) => {
                 ward: '$wardData.ward'
             }
         },
-        { $skip: 10 * page },
-        { $limit: 10 },
+        // { $skip: 10 * page },
+        // { $limit: 10 },
     ]);
 
-    let total = await ShopOrderClone.aggregate([
-        {
-            $match: {
-                status: {
-                    $in: ['Packed']
-                }
-            }
-        },
+    // let total = await ShopOrderClone.aggregate([
+    //     {
+    //         $match: {
+    //             status: {
+    //                 $in: ['Packed']
+    //             }
+    //         }
+    //     },
 
-        {
-            $lookup: {
-                from: 'b2bshopclones',
-                localField: 'shopId',
-                foreignField: '_id',
-                as: 'shopData',
-            }
-        },
-        { $unwind: '$shopData' },
-        {
-            $lookup: {
-                from: 'streets',
-                localField: 'shopData.Strid',
-                foreignField: '_id',
-                as: 'streetsData',
-            }
-        },
-        { $unwind: '$streetsData' },
-        {
-            $lookup: {
-                from: 'wards',
-                localField: 'streetsData.wardId',
-                foreignField: '_id',
-                as: 'wardData',
-            }
-        },
-        { $unwind: '$wardData' },
+    //     {
+    //         $lookup: {
+    //             from: 'b2bshopclones',
+    //             localField: 'shopId',
+    //             foreignField: '_id',
+    //             as: 'shopData',
+    //         }
+    //     },
+    //     { $unwind: '$shopData' },
+    //     {
+    //         $lookup: {
+    //             from: 'streets',
+    //             localField: 'shopData.Strid',
+    //             foreignField: '_id',
+    //             as: 'streetsData',
+    //         }
+    //     },
+    //     { $unwind: '$streetsData' },
+    //     {
+    //         $lookup: {
+    //             from: 'wards',
+    //             localField: 'streetsData.wardId',
+    //             foreignField: '_id',
+    //             as: 'wardData',
+    //         }
+    //     },
+    //     { $unwind: '$wardData' },
 
-        {
-            $lookup: {
-                from: 'productorderclones',
-                localField: '_id',
-                foreignField: 'orderId',
-                pipeline: [
-                    { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
-                ],
-                as: 'orderData',
-            }
-        },
-        { $unwind: '$orderData' },
-        {
-            $lookup: {
-                from: 'productorderclones',
-                localField: '_id',
-                foreignField: 'orderId',
-                as: 'orderDatafortotal',
-            }
-        },
-    ])
-    return { data: data, total: total.length };
+    //     {
+    //         $lookup: {
+    //             from: 'productorderclones',
+    //             localField: '_id',
+    //             foreignField: 'orderId',
+    //             pipeline: [
+    //                 { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
+    //             ],
+    //             as: 'orderData',
+    //         }
+    //     },
+    //     { $unwind: '$orderData' },
+    //     {
+    //         $lookup: {
+    //             from: 'productorderclones',
+    //             localField: '_id',
+    //             foreignField: 'orderId',
+    //             as: 'orderDatafortotal',
+    //         }
+    //     },
+    // ])
+    return  data;
 }
 
 
