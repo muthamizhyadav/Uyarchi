@@ -285,26 +285,13 @@ const deliveryExecutive = async (id, body) => {
 
 
 const createdata = async (Orderdatas) =>{
-    Orderdatas.forEach((e) =>{
-        OrderId = e.OrderId;
-        Qty= e.Qty;
-        Slat = e.Slat;
-        Slong = e.Slong;
-        date = e.date;
-        productStatus = e.productStatus;
-        shopId = e.shopId;
-        shopName = e.shopName;
-        shopcloneId = e.shopcloneId;
-        status = e.status;
-        street = e.street;
-        time = e.time;
-        totalItems = e.totalItems;
-        type = e.type;
-        ward = e.ward;
-        _id = e._id;
+    const { Orderdatass,deliveryExecutiveId} = Orderdatas
+    console.log(Orderdatas)
+    Orderdatass.forEach(async(e) =>{
+await ShopOrderClone.findByIdAndUpdate({ _id: e._id},{deliveryExecutiveId:deliveryExecutiveId, status: "Assigned"})
     })
-    const data = await ShopOrderClone.create(Orderdatas)
-    return data;
+    // const data = await ShopOrderClone.create(Orderdatas)
+    return "success" ;
 }
 
 // AFTER PACKED BY WARD LOADING EXECUTE
