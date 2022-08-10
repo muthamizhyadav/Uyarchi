@@ -100,12 +100,21 @@ const WardApi2 = async (longi, lati, data1) => {
   return data;
 };
 
-const streetSearchApi = async (searchArea, key) => {
+const streetSearchApi = async (searchArea) => {
   let response = await axios.get(
-    `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${searchArea}&inputtype=textquery&fields=formatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry&key=${key}`
+    `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${searchArea}&inputtype=textquery&fields=formatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
   );
   return response.data;
 };
+
+
+const streetSearchApi2 = async (searchArea) => {
+  let response = await axios.get(
+    `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchArea}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
+  );
+  return response.data;
+};
+
 
 const AllCount = async () => {
   const userCount = await manageUser.find({ active: true });
@@ -4312,6 +4321,7 @@ module.exports = {
   WardNoApi,
   WardApi2,
   streetSearchApi,
+  streetSearchApi2,
 
   // paginationManageUserAttendance,
 };
