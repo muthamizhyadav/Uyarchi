@@ -44,7 +44,7 @@ const getAllpackTypeAll = async (unit, page) => {
   return { data: data, total: count.length };
 };
 
-const getAllpackTypeUnitAll = async (unit, date) => {
+const getAllpackTypeUnitAll = async (unit, date, Pid) => {
   const data = await packType.aggregate([
     { $sort: { quantity: 1 } },
     {
@@ -59,12 +59,17 @@ const getAllpackTypeUnitAll = async (unit, date) => {
         foreignField: 'packtypeId',
         pipeline: [
           {
+            $match: {
+              productId: Pid
+            }
+          },
+          {
             $lookup: {
               from: 'historypacktypes',
               localField: '_id',
               foreignField: 'productPackId',
               pipeline: [
-                { $match: { date: date } }
+                { $match: { date: date, productId: Pid } }
               ],
               as: 'historypackData',
             },
@@ -81,12 +86,17 @@ const getAllpackTypeUnitAll = async (unit, date) => {
         foreignField: 'packtypeId',
         pipeline: [
           {
+            $match: {
+              productId: Pid
+            }
+          },
+          {
             $lookup: {
               from: 'historypacktypes',
               localField: '_id',
               foreignField: 'productPackId',
               pipeline: [
-                { $match: { date: date } }
+                { $match: { date: date, productId: Pid } }
               ],
               as: 'historypackData',
             },

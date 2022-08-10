@@ -15,7 +15,7 @@ const getallPack = catchAsync(async (req, res) => {
 });
 
 const getallPackUnit = catchAsync(async (req, res) => {
-  const postorder = await packTypeService.getAllpackTypeUnitAll(req.params.unit, req.params.date);
+  const postorder = await packTypeService.getAllpackTypeUnitAll(req.params.unit, req.params.date,req.params.Pid);
   res.send(postorder);
 });
 
