@@ -204,6 +204,8 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         ward: '$WardData.ward',
         username: '$UsersData.name',
         shoptype: '$shoptype.shopList',
+        Area:'$StreetData.area',
+        Locality:'$StreetData.locality',
         photoCapture: 1,
         SName: 1,
         address: 1,
@@ -214,6 +216,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         SOwner: 1,
         kyc_status: 1,
         Uid: 1,
+        
         active: 1,
         mobile: 1,
         date: 1,
