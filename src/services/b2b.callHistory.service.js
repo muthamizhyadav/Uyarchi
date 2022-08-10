@@ -139,13 +139,13 @@ const getShop = async (date, status, page, userId, userRole) => {
   if (status == 'null') {
     match = [{ active: { $eq: true } }];
   } else {
-    match = [{ callingStatus: { $eq: status }}];
+    match = [{ callingStatus: { $in: [status, 'On Call'] } }];
   }
   let values = await Shop.aggregate([
     // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $match: {
-        $and: match
+        $and: match,
       },
     },
     {
