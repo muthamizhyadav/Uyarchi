@@ -519,12 +519,14 @@ const wardDeliveryExecutive = async () => {
             }
         },
 
-        {
-            $project: {
-                roleName: 1,
-                deliveryExecutiveName: '$deliveryExecutiveName.name',
-            }
-        }
+        // {
+        //     $project: {
+        //         _id:1,
+        //         roleName: 1,
+        //         deliveryExecutiveName: '$deliveryExecutiveName.name',
+        //         deliveryExecutive: '$deliveryExecutiveName._id'
+        //     }
+        // }
     ])
     return data;
 }
