@@ -168,6 +168,8 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
           {
             $project: {
               street: 1,
+              area: 1,
+              locality: 1,
             },
           },
         ],
@@ -204,6 +206,8 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         ward: '$WardData.ward',
         username: '$UsersData.name',
         shoptype: '$shoptype.shopList',
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
         photoCapture: 1,
         SName: 1,
         address: 1,
@@ -214,6 +218,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         SOwner: 1,
         kyc_status: 1,
         Uid: 1,
+
         active: 1,
         mobile: 1,
         date: 1,
@@ -381,6 +386,8 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
           {
             $project: {
               street: 1,
+              area: 1,
+              locality: 1,
             },
           },
         ],
@@ -407,6 +414,8 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
         // _id:1,
         // created:1,
         street: '$StreetData.street',
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
         ward: '$WardData.ward',
         username: '$UsersData.name',
         shoptype: '$shoptype.shopList',
@@ -592,6 +601,8 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
           {
             $project: {
               street: 1,
+              area: 1,
+              locality: 1,
             },
           },
         ],
@@ -618,6 +629,8 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         // _id:1,
         // created:1,
         street: '$StreetData.street',
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
         ward: '$WardData.ward',
         username: '$UsersData.name',
         shoptype: '$shoptype.shopList',

@@ -283,6 +283,17 @@ const deliveryExecutive = async (id, body) => {
     return delivery;
 } 
 
+
+const createdata = async (Orderdatas) =>{
+    const { Orderdatass,deliveryExecutiveId} = Orderdatas
+    console.log(Orderdatas)
+    Orderdatass.forEach(async(e) =>{
+await ShopOrderClone.findByIdAndUpdate({ _id: e._id},{deliveryExecutiveId:deliveryExecutiveId, status: "Assigned"})
+    })
+    // const data = await ShopOrderClone.create(Orderdatas)
+    return "success" ;
+}
+
 // AFTER PACKED BY WARD LOADING EXECUTE
 
 const wardloadExecutivePacked = async () => {
@@ -519,12 +530,14 @@ const wardDeliveryExecutive = async () => {
             }
         },
 
-        {
-            $project: {
-                roleName: 1,
-                deliveryExecutiveName: '$deliveryExecutiveName.name',
-            }
-        }
+        // {
+        //     $project: {
+        //         _id:1,
+        //         roleName: 1,
+        //         deliveryExecutiveName: '$deliveryExecutiveName.name',
+        //         deliveryExecutive: '$deliveryExecutiveName._id'
+        //     }
+        // }
     ])
     return data;
 }
@@ -546,6 +559,9 @@ module.exports = {
 
   wardloadExecutivePacked,
   wardDeliveryExecutive,
+
+// create data
+  createdata,
 };
 
 
