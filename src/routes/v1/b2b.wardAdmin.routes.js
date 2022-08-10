@@ -2,6 +2,8 @@ const express = require('express');
 const wardAdminController = require('../../controllers/b2b.wardAdmin.controller');
 const router = express.Router();
 
+router.route('/create/data').post(wardAdminController.createdata);
+
 router.route('/getDetails/:page').get(wardAdminController.getDetails);
 
 router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);

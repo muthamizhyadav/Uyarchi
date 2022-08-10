@@ -3,6 +3,12 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const wardAdminService = require('../services/b2b.wardAdmin.service');
 
+
+const createdata = catchAsync(async (req, res) => {
+    const data = await wardAdminService.createdata(req.body);
+    res.send(data);
+  });
+
 const getDetails = catchAsync(async (req, res) => {
   const details = await wardAdminService.getdetails(req.params.page);
   res.send(details);
@@ -100,4 +106,7 @@ module.exports = {
   wardloadExecutivePacked,
   wardDeliveryExecutive,
   deliveryexecutive,
+
+
+  createdata,
 };

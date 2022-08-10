@@ -116,6 +116,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   deliveryExecutiveId: {
     type: String,
   },
+  Orderdatas:{
+    type: Array,
+    default: [],
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
