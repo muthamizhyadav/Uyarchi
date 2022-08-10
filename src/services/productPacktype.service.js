@@ -38,6 +38,155 @@ const getproductpackTypeById = async (packTypeId) => {
     return productpackType.findById(packTypeId);
 };
 
+const getALLproductpackTypeById = async (page) => {
+    let date = moment().format('yyyy-MM-DD');
+    const value = await productpackType.aggregate([
+        {
+            $match: {
+                $and: [{ show: { $eq: true } }],
+            },
+        },
+        {
+            $lookup: {
+                from: 'historypacktypes',
+                localField: '_id',
+                foreignField: 'productPackId',
+                pipeline: [
+                    { $match: { date: date } },
+                    {
+                        $group: {
+                            _id: null,
+                            averageQuantity: { $avg: '$onlinePrice' },
+                            minprice: { $min: '$onlinePrice' },
+                            maxprice: { $max: '$onlinePrice' },
+                        },
+                    },
+                ],
+                as: 'historypacktypesData',
+            },
+        },
+        {
+            $unwind: "$historypacktypesData"
+        },
+        {
+            $lookup: {
+                from: 'products',
+                localField: 'productId',
+                foreignField: '_id',
+                as: 'productsData',
+            },
+        },
+        {
+            $unwind: "$productsData"
+        },
+        {
+            $lookup: {
+                from: 'packtypes',
+                localField: 'packtypeId',
+                foreignField: '_id',
+                as: 'packtypesData',
+            },
+        },
+        {
+            $unwind: "$packtypesData"
+        },
+        {
+            $project: {
+                onlinePrice: 1,
+                salesstartPrice: 1,
+                salesendPrice: 1,
+                productId: 1,
+                packtypeId: 1,
+                show: true,
+                productTitle: "$productsData.productTitle",
+                image: "$productsData.image",
+                unit: "$packtypesData.unit",
+                quantity: "$packtypesData.quantity",
+                material: "$packtypesData.material",
+
+            }
+        },
+
+        {
+            $skip: 10 * parseInt(page),
+        },
+        {
+            $limit: 10,
+        },]);
+    const total = await productpackType.aggregate([
+        {
+            $match: {
+                $and: [{ show: { $eq: true } }],
+            },
+        },
+        {
+            $lookup: {
+                from: 'historypacktypes',
+                localField: '_id',
+                foreignField: 'productPackId',
+                pipeline: [
+                    { $match: { date: date } },
+                    {
+                        $group: {
+                            _id: null,
+                            averageQuantity: { $avg: '$onlinePrice' },
+                            minprice: { $min: '$onlinePrice' },
+                            maxprice: { $max: '$onlinePrice' },
+                        },
+                    },
+                ],
+                as: 'historypacktypesData',
+            },
+        },
+        {
+            $unwind: "$historypacktypesData"
+        },
+        {
+            $lookup: {
+                from: 'products',
+                localField: 'productId',
+                foreignField: '_id',
+                as: 'productsData',
+            },
+        },
+        {
+            $unwind: "$productsData"
+        },
+        {
+            $lookup: {
+                from: 'packtypes',
+                localField: 'packtypeId',
+                foreignField: '_id',
+                as: 'packtypesData',
+            },
+        },
+        {
+            $unwind: "$packtypesData"
+        },
+        {
+            $project: {
+                onlinePrice: 1,
+                salesstartPrice: 1,
+                salesendPrice: 1,
+                productId: 1,
+                packtypeId: 1,
+                show: true,
+                productTitle: "$productsData.productTitle",
+                image: "$productsData.image",
+                // packtypesData: "$packtypesData",
+                unit: "$packtypesData.unit",
+                quantity: "$packtypesData.quantity",
+                material: "$packtypesData.material",
+
+            }
+        },]);
+
+    return {
+        value: value,
+        total: total.length
+    }
+};
+
 const getproductpackTypeshow = async (packTypeId) => {
     let data = await getproductpackTypeById(packTypeId);
     if (!data) {
@@ -70,4 +219,4 @@ const deleteproductPackTypeById = async (packTypeId) => {
     return Manage;
 };
 
-module.exports = { deleteproductPackTypeById, updateproductpackTypeId, getproductpackTypeById, createproductpackTypeData, createHistoryproductpackTypeData, getproductpackTypeshow };
+module.exports = { deleteproductPackTypeById, updateproductpackTypeId, getproductpackTypeById, createproductpackTypeData, createHistoryproductpackTypeData, getproductpackTypeshow, getALLproductpackTypeById };
