@@ -24,7 +24,10 @@ router.route('/wardloadingExecutive/updateProductBilled/:id').put(wardAdminContr
 
 router.route('/wardloadingExecutive/getdetails/:page').get(wardAdminController.wardloadExecutive);
 
-router.route('/wardloadingExecutive/getPackedProductDetails/:page').get(wardAdminController.wardloadExecutivePacked);
+
+router.route('/wardloadingExecutive/getPackedProductDetails').get(wardAdminController.wardloadExecutivePacked)
+
+
 
 router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
 
