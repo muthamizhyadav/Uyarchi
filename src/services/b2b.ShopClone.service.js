@@ -168,6 +168,8 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
           {
             $project: {
               street: 1,
+              area:1,
+              locality:1,
             },
           },
         ],
