@@ -101,6 +101,7 @@ const getAllpackTypeUnitAll = async (unit, date) => {
         quantity: 1,
         material: 1,
         productpackId: "$productpackData._id",
+        productpackData: "$productpackData",
         historypackData: "$productpackDataobj.historypackData"
 
       }
