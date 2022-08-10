@@ -44,7 +44,7 @@ const getAllpackTypeAll = async (unit, page) => {
   return { data: data, total: count.length };
 };
 
-const getAllpackTypeUnitAll = async (unit) => {
+const getAllpackTypeUnitAll = async (unit, date) => {
   const data = await packType.aggregate([
     { $sort: { quantity: 1 } },
     {
@@ -52,6 +52,60 @@ const getAllpackTypeUnitAll = async (unit) => {
         $and: [{ unit: { $eq: unit } }],
       },
     },
+    {
+      $lookup: {
+        from: 'productpacktypes',
+        localField: '_id',
+        foreignField: 'packtypeId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'historypacktypes',
+              localField: '_id',
+              foreignField: 'productPackId',
+              pipeline: [
+                { $match: { date: date } }
+              ],
+              as: 'historypackData',
+            },
+          },
+          { $unwind: "$historypackData" },
+        ],
+        as: 'productpackData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productpacktypes',
+        localField: '_id',
+        foreignField: 'packtypeId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'historypacktypes',
+              localField: '_id',
+              foreignField: 'productPackId',
+              pipeline: [
+                { $match: { date: date } }
+              ],
+              as: 'historypackData',
+            },
+          },
+        ],
+        as: 'productpackDataobj',
+      },
+    },
+    {
+      $project: {
+        unit: 1,
+        quantity: 1,
+        material: 1,
+        productpackId: "$productpackData._id",
+        historypackData: "$productpackDataobj.historypackData"
+
+      }
+    }
+
   ]);
   return data;
 };
