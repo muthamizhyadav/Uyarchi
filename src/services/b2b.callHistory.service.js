@@ -143,11 +143,7 @@ const getShop = async (date, status, page, userId, userRole) => {
   }
   let values = await Shop.aggregate([
     // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
-    {
-      $match: {
-        $and: match,
-      },
-    },
+    { $match: { $or: [match, { callingStatus: 'On Call' }] } },
     {
       $match: {
         callingStatus: { $nin: ['accept', 'declined'] },
