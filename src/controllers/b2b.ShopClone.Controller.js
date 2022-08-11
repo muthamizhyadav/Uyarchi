@@ -221,6 +221,27 @@ const getshopDataById = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const getshopWardStreetNamesWithAggregation_withfilter_all = catchAsync(async (req, res) => {
+  const shops = await b2bCloneService.getshopWardStreetNamesWithAggregation_withfilter_all(
+    req.params.district,
+    req.params.zone,
+    req.params.ward,
+    req.params.street
+  );
+  res.send(shops);
+});
+
+const getshopWardStreetNamesWithAggregation_withfilter_daily_all = catchAsync(async (req, res) => {
+  const shops = await b2bCloneService.getshopWardStreetNamesWithAggregation_withfilter_daily_all(
+    req.params.user,
+    req.params.startdata,
+    req.params.enddate,
+    req.params.starttime,
+    req.params.endtime
+  );
+  res.send(shops);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -250,4 +271,6 @@ module.exports = {
   getshopDataById,
   getshopWardStreetNamesWithAggregation_withfilter,
   getshopWardStreetNamesWithAggregation_withfilter_daily,
+  getshopWardStreetNamesWithAggregation_withfilter_all,
+  getshopWardStreetNamesWithAggregation_withfilter_daily_all,
 };
