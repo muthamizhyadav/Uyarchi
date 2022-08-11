@@ -44,7 +44,6 @@ const filterShopwithNameAndContact = catchAsync(async (req, res) => {
 });
 
 const getshopWardStreetNamesWithAggregation = catchAsync(async (req, res) => {
-  console.log(req.body);
   const shop = await b2bCloneService.getshopWardStreetNamesWithAggregation(req.params.page);
   res.send(shop);
 });
