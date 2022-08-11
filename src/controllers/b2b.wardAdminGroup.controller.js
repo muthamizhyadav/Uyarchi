@@ -56,6 +56,12 @@ const getByIdGroupOrderDetails = catchAsync(async (req, res) => {
   res.send(sample);
 });
 
+const getGroupDetails = catchAsync(async (req, res) => {
+  const getdetatils = await wardAdminGroupService.getGroupdetails(req.params.page)
+  res.send(getdetatils)
+
+});
+
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -71,4 +77,5 @@ module.exports = {
   UpdateUnDeliveredStatus,
 
   getproductDetails,
+  getGroupDetails,
 };
