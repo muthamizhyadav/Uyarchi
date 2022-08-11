@@ -79,9 +79,7 @@ const getGroupdetails = async () => {
 // GET ASSIGN DATA BY DEVIVERY EXECUTIVE NAME
 
   const getstatus = async (id)=>{
-    let details = await ShopOrderClone.aggregate([
-
-
+    let details = await wardAdminGroup.aggregate([
 
       {
         $match: {
@@ -91,24 +89,24 @@ const getGroupdetails = async () => {
           ]
         },
       },
-      {
-        $lookup:{
-          from: 'wardadmingroups',
-          localField: 'deliveryExecutiveId',
-          foreignField: 'deliveryExecutiveId',
-          as: 'deliveryExecutiveStatus'
-        }
-      },
-     {$unwind : '$deliveryExecutiveStatus'},
-     {
-      $project:{
-        groupId: '$deliveryExecutiveStatus.groupId',
-        assignTime: '$deliveryExecutiveStatus.assignTime',
-        assignDate: '$deliveryExecutiveStatus.assignDate',
-        totalOrders: '$deliveryExecutiveStatus.totalOrders',
-        status:1,
-      }
-     }
+    //   {
+    //     $lookup:{
+    //       from: 'wardadmingroups',
+    //       localField: 'deliveryExecutiveId',
+    //       foreignField: 'deliveryExecutiveId',
+    //       as: 'deliveryExecutiveStatus'
+    //     }
+    //   },
+    //  {$unwind : '$deliveryExecutiveStatus'},
+    //  {
+    //   $project:{
+    //     groupId: '$deliveryExecutiveStatus.groupId',
+    //     assignTime: '$deliveryExecutiveStatus.assignTime',
+    //     assignDate: '$deliveryExecutiveStatus.assignDate',
+    //     totalOrders: '$deliveryExecutiveStatus.totalOrders',
+    //     status:1,
+    //   }
+    //  }
 
      
     ]);

@@ -258,7 +258,7 @@ const createdata = async (Orderdatas) =>{
     const { Orderdatass,deliveryExecutiveId} = Orderdatas;
     console.log(Orderdatas);
     Orderdatass.forEach(async(e) =>{
-await ShopOrderClone.findByIdAndUpdate({ _id: e._id},{deliveryExecutiveId:deliveryExecutiveId, status: "Assigned"})
+    await ShopOrderClone.findByIdAndUpdate({ _id: e._id},{deliveryExecutiveId:deliveryExecutiveId, status: "Assigned"})
     })
     // const data = await ShopOrderClone.create(Orderdatas)
     return "success" ;
