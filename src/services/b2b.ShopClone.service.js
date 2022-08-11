@@ -335,7 +335,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_all = async (district, zo
   let values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch],
+        $and: [ wardMatch, streetMatch],
       },
     },
     {
@@ -670,7 +670,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily_all = async (user, 
     },
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, userMatch, dateMatch, timeMatch],
+        $and: [userMatch, dateMatch, timeMatch],
       },
     },
     {
