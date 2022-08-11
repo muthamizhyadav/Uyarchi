@@ -80,6 +80,9 @@ const getGroupdetails = async () => {
 
   const getstatus = async (id)=>{
     let details = await ShopOrderClone.aggregate([
+
+
+
       {
         $match: {
           $and: [
@@ -89,13 +92,29 @@ const getGroupdetails = async () => {
         },
       },
       {
-        $lookup: {
+        $lookup:{
           from: 'wardAdminGroup',
-          localField: 'ShopOrderClone.deliveryExecutiveId',
+          localField: 'deliveryExecutiveId',
           foreignField: 'deliveryExecutiveId',
           as: 'deliveryExecutiveStatus'
         }
-      },
+      }
+      // {
+      //   $lookup: {
+      //     from: 'shoporderclones',
+      //     localField: 'deliveryExecutiveId',
+      //     foreignField: 'deliveryExecutiveId',
+      //     pipeline: [{
+      //       $match: {
+      //             $and: [
+      //               {deliveryExecutiveId: { $eq: id }},
+      //             {status: { $eq: "Assigned" }},
+      //             ]
+      //           },
+      //     }],
+      //     as: 'deliveryExecutiveStatus'
+      //   }
+      // },
 
      
     ]);
