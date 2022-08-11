@@ -1482,4 +1482,5 @@ module.exports = {
   getshopWardStreetNamesWithAggregation_withfilter_daily,
   getshopWardStreetNamesWithAggregation_withfilter_all,
   getshopWardStreetNamesWithAggregation_withfilter_daily_all,
+  perdeleteShopById,
 };

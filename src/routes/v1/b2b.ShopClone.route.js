@@ -70,4 +70,5 @@ router.route('/update/data/approved/:id').put(b2bShopCloneController.updateShopS
 router.route('/update/phone/approved/:id').put(b2bShopCloneController.updateShopStatusphoneapproved);
 router.route('/update/kyc/approved/:id').put(b2bShopCloneController.updateShopStatuskycapproved);
 router.route('/getshopData/:id').get(b2bShopCloneController.getshopDataById);
+router.route('/deleteshop/permenent').delete(b2bShopCloneController.perdeleteShopById);
 module.exports = router;
