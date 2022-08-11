@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Shop, AttendanceClone } = require('../models/b2b.ShopClone.model');
+const { Shop, AttendanceClone, AttendanceClonenew } = require('../models/b2b.ShopClone.model');
 const { MarketShopsClone, MarketClone } = require('../models/market.model');
 const { Users } = require('../models/B2Busers.model');
 const ApiError = require('../utils/ApiError');
@@ -975,6 +975,15 @@ const createAttendanceClone = async (shopBody) => {
   return attendance;
 };
 
+const createAttendanceClone_new = async (shopBody) => {
+  let servertime = moment().format('HHmm');
+  let servercreatetime = moment().format('hh:mm a');
+  let serverdate = moment().format('DD-MM-yyy');
+  let values = { ...shopBody, ...{ date: serverdate, time: servertime, created: servercreatetime } };
+  const attendance = await AttendanceClonenew.create(values);
+  return attendance;
+};
+
 const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
   let match;
   let to;
@@ -1483,4 +1492,5 @@ module.exports = {
   getshopWardStreetNamesWithAggregation_withfilter_all,
   getshopWardStreetNamesWithAggregation_withfilter_daily_all,
   perdeleteShopById,
+  createAttendanceClone_new,
 };
