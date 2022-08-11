@@ -227,11 +227,11 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await Shop.find({type: 'shop' }).count();
-  
+  let total = await Shop.find({ type: 'shop' }).count();
+
   return {
     values: values,
-    total:total,
+    total: total,
   };
 };
 
@@ -257,7 +257,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_all = async (district, zo
   let values = await Shop.aggregate([
     {
       $match: {
-        $and: [ wardMatch, streetMatch],
+        $and: [wardMatch, streetMatch],
       },
     },
     {
@@ -1442,6 +1442,15 @@ const getshopDataById = async (id) => {
   } else {
     return shop;
   }
+};
+
+const perdeleteShopById = async (id) => {
+  let shop = await getShopById(id);
+  if (!shop) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop Not Found');
+  }
+  shop = await Shop.findByIdAndDelete(id);
+  return shop;
 };
 
 module.exports = {
