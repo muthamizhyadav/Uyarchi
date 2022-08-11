@@ -8,9 +8,12 @@ const { ProductorderClone } = require('../models/shopOrder.model');
 const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 
-const createGroup = async (body, userid) => {
-  let serverdates = moment().format('DD-MM-yyyy');
-  const group = await wardAdminGroup.find({ date: serverdates });
+const createGroup = async (body) => {
+  console.log(body)
+  let serverdates = moment().format('YYYY-MM-DD');
+  let servertime = moment().format('hh:mm a');
+  const group = await wardAdminGroup.find({ assignDate: serverdates  });
+
   let center = '';
 
   if (group.length < 9) {
@@ -29,30 +32,9 @@ const createGroup = async (body, userid) => {
   let totalcount = group.length + 1;
   console.log(totalcount);
   userId = 'G' + center + totalcount;
-  let { product } = body;
-  let values = { ...body, ...{ Uid: userId } };
+
+  let values = { ...body, ...{ groupId: userId, assignDate: serverdates, assignTime:servertime} };
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
-  let serverdate = moment().format('DD-MM-yyyy');
-  let servertime = moment().format('hh:mm a');
-  if (product.length == 0) {
-    throw new ApiError(httpStatus.NO_CONTENT, 'Fields Missing');
-  }
-  console.log(wardAdminGroupcreate);
-  product.forEach(async (e) => {
-    wardAdminGroupDetails.create({
-      shopId: e.shopId,
-      // OrderId: OrderId,
-      // assignDate: assignDate,
-      // assignTime: assignTime,
-      // groupId: values.Uid,
-      productid: e.productid,
-      quantity: e.quantity,
-      priceperkg: e.priceperkg,
-      orderedTime: servertime,
-      date: serverdate,
-      wardadmingroupsId: wardAdminGroupcreate.id,
-    });
-  });
   return wardAdminGroupcreate;
 };
 
