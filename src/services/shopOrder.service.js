@@ -290,7 +290,7 @@ const deleteShopOrderById = async (shopOrderId) => {
 const getAll = async () => {
   return ShopOrderClone.find();
 };
-
+21
 
 const createOrderId = async (body)=>{
   return ShopOrderClone.create(body);

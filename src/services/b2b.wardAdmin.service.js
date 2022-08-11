@@ -89,41 +89,6 @@ const getdetails = async (page) => {
     },
   ]);
 
-    // let total = await ShopOrderClone.aggregate([
-
-    //     {
-    //         $lookup: {
-    //             from: 'b2bshopclones',
-    //             localField: 'shopId', //Uid
-    //             foreignField: '_id', //Uid
-    //             as: 'userData',
-    //         },
-    //     },
-    //     {
-    //         $unwind: '$userData'
-    //     },
-    //     {
-    //         $lookup: {
-    //             from: 'productorderclones',
-    //             localField: '_id',
-    //             foreignField: 'orderId',
-    //             as: 'orderData',
-    //         }
-    //     },
-    //     {
-    //         $lookup: {
-    //             from: 'b2busers',
-    //             localField: 'Uid',
-    //             foreignField: '_id',
-    //             as: 'userNameData',
-    //         }
-
-    //     },
-
-
-    // ])
-
-
   return { values: values, total: total.length };
 };
 
@@ -138,6 +103,11 @@ const getdetails = async (page) => {
 const getproductdetails = async(id)=>{
   let values = await ShopOrderClone.aggregate([
     {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
       $lookup:{
         from: 'b2bshopclones',
         localField: 'shopId',
@@ -145,7 +115,10 @@ const getproductdetails = async(id)=>{
         as: 'shopData'
       }
     },
-    {$unwind:'$shopData'},
+    {
+      $unwind: '$shopData'
+    },
+   
   {
     $project: {
       shopName: '$shopData.SName',
@@ -153,6 +126,7 @@ const getproductdetails = async(id)=>{
       shopId:1,
       status:1,
       OrderId:1,
+      overallTotal:1,
       // deliveryExecutiveId:1,
     }
   }

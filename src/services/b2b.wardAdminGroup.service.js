@@ -72,22 +72,35 @@ const getPettyStock = async (id) => {
 
 
 
-const getGroupdetails = async(page)=>{
-  let values = await wardAdminGroup.aggregate([
-         {
-      $lookup: {
-          from: 'productorderclones',
-          localField: '_id',
-          foreignField: 'orderId',
-          pipeline: [
-              { $group: { _id: null, totalOrders: { $sum: '$Orderdatas' }, } },
-          ],
-          as: 'orderData',
-      }
-    }
-  ])
-  return values;
-}
+const getGroupdetails = async () => {
+  return wardAdminGroup.find();
+};
+
+// GET ASSIGN DATA BY DEVIVERY EXECUTIVE NAME
+
+  const getstatus = async (id)=>{
+    let details = await ShopOrderClone.aggregate([
+      {
+        $match: {
+          $and: [
+            {deliveryExecutiveId: { $eq: id }},
+          {status: { $eq: "Assigned" }},
+          ]
+        },
+      },
+      {
+        $lookup: {
+          from: 'wardAdminGroup',
+          localField: 'ShopOrderClone.deliveryExecutiveId',
+          foreignField: 'deliveryExecutiveId',
+          as: 'deliveryExecutiveStatus'
+        }
+      },
+
+     
+    ]);
+    return details;
+  }
 
 module.exports = {
   createGroup,
@@ -101,4 +114,6 @@ module.exports = {
 
   // DELEIVERY DETAILS
   // getDeliveryDetails,
+
+  getstatus,
 };
