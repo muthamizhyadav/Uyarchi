@@ -34,6 +34,10 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: String,
   },
 
+  totalOrders: {
+    type: Number,
+  },
+
 });
 
 const wardAdminGroupModel = mongoose.model('wardAdminGroup', wardAdminGroupSchema);

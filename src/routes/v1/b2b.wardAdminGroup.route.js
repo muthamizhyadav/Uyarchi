@@ -20,6 +20,9 @@ router.route('/getDetails/groupIdFromOrderId/:id').get(wardAdminGroupController.
 
 router.route('/getdetails/product/:id').get(wardAdminGroupController.getproductDetails);
 
+
+router.route('/getGroup/details/:page').get(wardAdminGroupController.getGroupDetails);
+
 // DELIVERY EXECUTIVE
 
 // router.route('/get/getDeliveryDetails/:page').get(wardAdminGroupController.getDeliveryDetails);
