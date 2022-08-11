@@ -93,28 +93,22 @@ const getGroupdetails = async () => {
       },
       {
         $lookup:{
-          from: 'wardAdminGroup',
+          from: 'wardadmingroups',
           localField: 'deliveryExecutiveId',
           foreignField: 'deliveryExecutiveId',
           as: 'deliveryExecutiveStatus'
         }
+      },
+     {$unwind : '$deliveryExecutiveStatus'},
+     {
+      $project:{
+        groupId: '$deliveryExecutiveStatus.groupId',
+        assignTime: '$deliveryExecutiveStatus.assignTime',
+        assignDate: '$deliveryExecutiveStatus.assignDate',
+        totalOrders: '$deliveryExecutiveStatus.totalOrders',
+        status:1,
       }
-      // {
-      //   $lookup: {
-      //     from: 'shoporderclones',
-      //     localField: 'deliveryExecutiveId',
-      //     foreignField: 'deliveryExecutiveId',
-      //     pipeline: [{
-      //       $match: {
-      //             $and: [
-      //               {deliveryExecutiveId: { $eq: id }},
-      //             {status: { $eq: "Assigned" }},
-      //             ]
-      //           },
-      //     }],
-      //     as: 'deliveryExecutiveStatus'
-      //   }
-      // },
+     }
 
      
     ]);
