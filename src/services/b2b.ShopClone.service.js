@@ -971,6 +971,8 @@ const getAllAttendanceCloneforMapView = async (id, date, fromtime, totime) => {
       $project: {
         Alat: 1,
         Along: 1,
+        created: 1,
+        date: 1,
       },
     },
   ]);
