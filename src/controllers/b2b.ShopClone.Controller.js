@@ -241,6 +241,11 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily_all = catchAsync(as
   res.send(shops);
 });
 
+const perdeleteShopById = catchAsync(async (req, res) => {
+  const shops = await b2bCloneService.perdeleteShopById(req.params.id);
+  res.send(shops);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -272,4 +277,5 @@ module.exports = {
   getshopWardStreetNamesWithAggregation_withfilter_daily,
   getshopWardStreetNamesWithAggregation_withfilter_all,
   getshopWardStreetNamesWithAggregation_withfilter_daily_all,
+  perdeleteShopById,
 };
