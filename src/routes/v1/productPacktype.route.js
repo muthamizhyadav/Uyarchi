@@ -11,4 +11,7 @@ router
   .delete(productpackTypeController.deleteproductpack)
   .put(productpackTypeController.updateproductpackById);
 
+
+  router.route('/All/:page').get(productpackTypeController.getAllproductpackrById);
+
 module.exports = router;

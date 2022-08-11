@@ -15,6 +15,14 @@ const getproductpackrById = catchAsync(async (req, res) => {
     res.send(postorder);
 });
 
+
+const getAllproductpackrById = catchAsync(async (req, res) => {
+    const postorder = await productpackTypeService.getALLproductpackTypeById(req.params.page);
+    console.log(req.params.page)
+    res.send(postorder);
+});
+
+
 const getproductpackShowById = catchAsync(async (req, res) => {
     const postorder = await productpackTypeService.getproductpackTypeshow(req.params.id);
     res.send(postorder);
@@ -29,4 +37,4 @@ const deleteproductpack = catchAsync(async (req, res) => {
     res.status(httpStatus.NO_CONTENT).send();
 });
 
-module.exports = { createproductpack, getproductpackrById, updateproductpackById, deleteproductpack, getproductpackShowById };
+module.exports = { createproductpack, getproductpackrById, updateproductpackById, deleteproductpack, getproductpackShowById, getAllproductpackrById };
