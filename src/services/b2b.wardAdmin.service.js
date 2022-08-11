@@ -126,6 +126,7 @@ const getproductdetails = async(id)=>{
       shopId:1,
       status:1,
       OrderId:1,
+      overallTotal:1,
       // deliveryExecutiveId:1,
     }
   }
