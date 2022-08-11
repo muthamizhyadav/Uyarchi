@@ -81,8 +81,6 @@ const getGroupdetails = async () => {
   const getstatus = async (id)=>{
     let details = await wardAdminGroup.aggregate([
 
-
-
       {
         $match: {
           $and: [
