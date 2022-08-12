@@ -297,10 +297,10 @@ const getShop = async (date, status, page, userId, userRole) => {
     {
       $unwind: '$shoplists',
     },
-  ]);
+  ]).length;
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
-  return { values: values, total: total.length, RoleName: role.roleName, userName: user.name };
+  return { values: values, total: total, RoleName: role.roleName, userName: user.name };
 };
 
 const updateCallingStatus = async (id, updatebody) => {
