@@ -1133,7 +1133,7 @@ const getAllAttendanceCloneforMapView = async (id, date, fromtime, totime) => {
   } else {
     match = [{ Uid: { $ne: null } }, { active: { $eq: true } }];
   }
-  const data = await AttendanceClone.aggregate([
+  const data = await AttendanceClonenew.aggregate([
     { $sort: { date: -1, time: -1 } },
     {
       $match: {
