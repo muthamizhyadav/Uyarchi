@@ -139,7 +139,7 @@ const getShop = async (date, status, page, userId, userRole) => {
   if (status == 'null') {
     match = [{ active: { $eq: true } }];
   } else {
-    match = [{ callingStatus: { $in: [status] } }];
+    match = [{ callingStatus: { $in: [status, 'On Call'] } }];
   }
   let values = await Shop.aggregate([
     {
