@@ -1062,7 +1062,7 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
         date: 1,
         time: 1,
         created: 1,
-        image:1,
+        image: 1,
         userName: '$b2busersData.name',
         phoneNumber: '$b2busersData.phoneNumber',
       },
@@ -1460,7 +1460,9 @@ const perdeleteShopById = async (id) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Shop Not Found');
   }
   shop = await Shop.findByIdAndDelete(id);
-  return shop;
+  return {
+    message: 'Deleted',
+  };
 };
 
 module.exports = {
