@@ -9,7 +9,7 @@ const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 
 const createGroup = async (body) => {
-  console.log(body)
+
   let serverdates = moment().format('YYYY-MM-DD');
   let servertime = moment().format('hh:mm a');
   const group = await wardAdminGroup.find({ assignDate: serverdates  });
@@ -34,6 +34,10 @@ const createGroup = async (body) => {
   userId = 'G' + center + totalcount;
 
   let values = { ...body, ...{ groupId: userId, assignDate: serverdates, assignTime:servertime} };
+  body.Orderdatas.forEach(async (e) => {
+   let productId = e._id
+    await ShopOrderClone.findByIdAndUpdate({ _id:productId }, { status: "Assigned" }, { new: true });
+  });
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
   return wardAdminGroupcreate;
 };
@@ -65,6 +69,11 @@ const getPettyStock = async (id) => {
         _id: { $eq: id },
       },
     },
+    { $unwind: "$Orderdatas" },
+    { $group : {
+        _id : "$Orderdatas.",
+        "Total quantity sum" : {$sum : "$arrlstdetails.quantity"}
+    }}
   ]);
   // console.log(values);
   return values;
@@ -113,6 +122,32 @@ const getGroupdetails = async () => {
     return details;
   }
 
+
+  const getBillDetails = async(id)=>{
+    let values = await wardAdminGroup.aggregate([
+      {
+        $match: {
+          deliveryExecutiveId: { $eq: id },
+        },
+      },
+      {
+        $lookup: {
+          from: 'shoporderclones',
+          localField: 'deliveryExecutiveId',
+          foreignField: 'deliveryExecutiveId',
+          as: 'delivery',
+        }
+      },
+      {
+        $unwind : '$delivery'
+      }
+
+
+
+    ])
+    return values;
+  }
+
 module.exports = {
   createGroup,
   updateOrderStatus,
@@ -127,4 +162,5 @@ module.exports = {
   // getDeliveryDetails,
 
   getstatus,
+  getBillDetails,
 };
