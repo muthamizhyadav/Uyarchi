@@ -139,7 +139,7 @@ const getShop = async (date, status, page, userId, userRole) => {
   if (status == 'null') {
     match = [{ active: { $eq: true } }];
   } else {
-    match = [{ callingStatus: { $in: [status, 'On Call'] } }];
+    match = [{ callingStatus: { $in: [status] } }];
   }
   let values = await Shop.aggregate([
     {
@@ -248,56 +248,57 @@ const getShop = async (date, status, page, userId, userRole) => {
         $and: match,
       },
     },
-    {
-      $match: {
-        callingStatus: { $nin: ['accept', 'declined'] },
-      },
-    },
-    {
-      $lookup: {
-        from: 'callhistories',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline: [
-          {
-            $match: {
-              date: { $eq: date },
-            },
-          },
-        ],
-        as: 'shopData',
-      },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopData.shopId',
-        foreignField: '_id',
-        // pipeline: [
-        //   {
-        //     $match: {
-        //       $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
-        //     },
-        //   },
-        // ],
-        as: 'shopclones',
-      },
-    },
     // {
-    //   $unwind: '$shopclones',
+    //   $match: {
+    //     callingStatus: { $nin: ['accept', 'declined'] },
+    //   },
     // },
-    {
-      $lookup: {
-        from: 'shoplists',
-        localField: 'SType',
-        foreignField: '_id',
-        as: 'shoplists',
-      },
-    },
-    {
-      $unwind: '$shoplists',
-    },
+    // {
+    //   $lookup: {
+    //     from: 'callhistories',
+    //     localField: '_id',
+    //     foreignField: 'shopId',
+    //     pipeline: [
+    //       {
+    //         $match: {
+    //           date: { $eq: date },
+    //         },
+    //       },
+    //     ],
+    //     as: 'shopData',
+    //   },
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'b2bshopclones',
+    //     localField: 'shopData.shopId',
+    //     foreignField: '_id',
+    //     // pipeline: [
+    //     //   {
+    //     //     $match: {
+    //     //       $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
+    //     //     },
+    //     //   },
+    //     // ],
+    //     as: 'shopclones',
+    //   },
+    // },
+    // // {
+    // //   $unwind: '$shopclones',
+    // // },
+    // {
+    //   $lookup: {
+    //     from: 'shoplists',
+    //     localField: 'SType',
+    //     foreignField: '_id',
+    //     as: 'shoplists',
+    //   },
+    // },
+    // {
+    //   $unwind: '$shoplists',
+    // },
   ]);
+
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
   return { values: values, total: total.length, RoleName: role.roleName, userName: user.name };

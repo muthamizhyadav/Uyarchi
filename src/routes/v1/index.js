@@ -78,13 +78,18 @@ const manageSalary = require('./manage.salary.route');
 const wardAdminRouter = require('./b2b.wardAdmin.routes');
 const usableStock = require('./usableStock.route');
 const AssignStock = require('./AssignStock.route');
-const packTypeRoute = require('./packType.route')
-const productpackTypeRoute = require('./productPacktype.route')
+const packTypeRoute = require('./packType.route');
+const productpackTypeRoute = require('./productPacktype.route');
 const wardAdminGroup = require('./b2b.wardAdminGroup.route');
+const slowCheck = require('./slow.sample.route');
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/summa',
+    route: slowCheck,
   },
   {
     path: '/usableStock',
@@ -382,9 +387,9 @@ const defaultRoutes = [
     route: packTypeRoute,
   },
   {
-    path:'/productpackType',
+    path: '/productpackType',
     route: productpackTypeRoute,
-  }
+  },
   // {
   //   path: '/sales',
   //   route: salesApp,

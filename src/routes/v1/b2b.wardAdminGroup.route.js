@@ -20,6 +20,15 @@ router.route('/getDetails/groupIdFromOrderId/:id').get(wardAdminGroupController.
 
 router.route('/getdetails/product/:id').get(wardAdminGroupController.getproductDetails);
 
+
+router.route('/getGroup/details').get(wardAdminGroupController.getGroupDetails);
+
+
+router.route('/getDeliveryExecutivestatus/:id').get(wardAdminGroupController.getDeliveryExecutivestatus);
+
+
+router.route('/get/billDetails/:id').get(wardAdminGroupController.getBillDetails);
+
 // DELIVERY EXECUTIVE
 
 // router.route('/get/getDeliveryDetails/:page').get(wardAdminGroupController.getDeliveryDetails);

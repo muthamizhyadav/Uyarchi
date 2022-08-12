@@ -17,26 +17,31 @@ const wardAdminGroupSchema = new mongoose.Schema({
   assignTime: {
     type: String,
   },
-  OrderId: {
-    type: String,
-  },
-  status: {
-    type: String,
-    default: 'Pending',
-  },
-  product: {
+  Orderdatas:{
     type: Array,
     default: [],
   },
-  totalItems: {
+  active: {
+    type: Boolean,
+    default: true,
+  },
+
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+  deliveryExecutiveId: {
+    type: String,
+  },
+
+  totalOrders: {
     type: Number,
   },
-  street: {
+  status: {
     type: String,
+    default: "Assigned",
   },
-  orderedTime: {
-    type: String,
-  },
+
 });
 
 const wardAdminGroupModel = mongoose.model('wardAdminGroup', wardAdminGroupSchema);

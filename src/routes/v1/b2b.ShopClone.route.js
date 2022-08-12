@@ -18,6 +18,15 @@ router
 router
   .route('/aggregation/filter/daily/:user/:startdata/:enddate/:starttime/:endtime/:page')
   .get(b2bShopCloneController.getshopWardStreetNamesWithAggregation_withfilter_daily);
+
+// clone
+router
+  .route('/aggregationgetAll/filter/:district/:zone/:ward/:street')
+  .get(b2bShopCloneController.getshopWardStreetNamesWithAggregation_withfilter_all);
+router
+  .route('/aggregationdaily/filter/daily/:user/:startdata/:enddate/:starttime/:endtime')
+  .get(b2bShopCloneController.getshopWardStreetNamesWithAggregation_withfilter_daily_all);
+
 router
   .route('/:id')
   .get(b2bShopCloneController.getB2BShopById)
@@ -25,10 +34,10 @@ router
   .delete(b2bShopCloneController.deleteB2BShopById);
 
 // Attendance Clone
-
+router.route('/attendance/create/new').post(authorization, AttendanceImage.array('image'), b2bShopCloneController.creatAttendanceClone_new)
 router
   .route('/attendance/create')
-  .post(authorization, AttendanceImage.array('photoCapture'), b2bShopCloneController.creatAttendanceClone)
+  .post(authorization, AttendanceImage.array('image'), b2bShopCloneController.creatAttendanceClone)
   .get(authorization, b2bShopCloneController.getAlAttendanceClone);
 router.route('/attendanceClone/Admin/:id/:date/:fromtime/:totime/:page').get(b2bShopCloneController.getAlAttendanceClone);
 router
@@ -61,4 +70,5 @@ router.route('/update/data/approved/:id').put(b2bShopCloneController.updateShopS
 router.route('/update/phone/approved/:id').put(b2bShopCloneController.updateShopStatusphoneapproved);
 router.route('/update/kyc/approved/:id').put(b2bShopCloneController.updateShopStatuskycapproved);
 router.route('/getshopData/:id').get(b2bShopCloneController.getshopDataById);
+router.route('/deleteshop/permenent').delete(b2bShopCloneController.perdeleteShopById);
 module.exports = router;
