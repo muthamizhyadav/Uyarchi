@@ -37,7 +37,7 @@ const groupMapService = catchAsync(async (req, res) => {
 });
 
 const WardApi = catchAsync(async (req, res) => {
-  const user = await apartmentTableService.WardNoApi(req.params.location, req.params.id);
+  const user = await apartmentTableService.WardNoApi(req.params.location);
   res.send(user);
 });
 

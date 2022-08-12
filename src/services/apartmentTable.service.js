@@ -60,8 +60,8 @@ const latitudeMap = async (location, radius, type, keyword, id) => {
   return response.data;
 };
 
-const WardNoApi = async (location, id) => {
-  let response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location}&key=${id}`);
+const WardNoApi = async (location) => {
+  let response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`);
   return response.data;
 };
 
