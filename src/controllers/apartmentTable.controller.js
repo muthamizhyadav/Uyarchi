@@ -32,7 +32,7 @@ const getAllCount = catchAsync(async (req, res) => {
 // thirdPartyApis
 
 const groupMapService = catchAsync(async (req, res) => {
-  const user = await apartmentTableService.groupMap(req.params.from, req.params.to, req.params.id);
+  const user = await apartmentTableService.groupMap(req.params.from, req.params.to);
   res.send(user);
 });
 
@@ -72,8 +72,7 @@ const locationMapService = catchAsync(async (req, res) => {
     req.params.location,
     req.params.radius,
     req.params.type,
-    req.params.keyword,
-    req.params.id
+    req.params.keyword
   );
   res.send(user);
 });
