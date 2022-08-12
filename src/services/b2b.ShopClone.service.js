@@ -1062,6 +1062,7 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
         date: 1,
         time: 1,
         created: 1,
+        image:1,
         userName: '$b2busersData.name',
         phoneNumber: '$b2busersData.phoneNumber',
       },
