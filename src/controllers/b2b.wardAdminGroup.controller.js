@@ -12,7 +12,7 @@ const createGroupOrder = catchAsync(async (req, res) => {
 });
 
 const updateOrderPickedStatus = catchAsync(async (req, res) => {
-  const orderPicked = await wardAdminGroupService.updateOrderStatus(req.params.id, 'Order Picked');
+  const orderPicked = await wardAdminGroupService.updateOrderStatus(req.params.id, ' OrderPicked');
   res.send(orderPicked);
 });
 
@@ -71,6 +71,12 @@ const getBillDetails = catchAsync(async (req, res) => {
   res.send(details)
 });
 
+const getAssigned = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.assignOnly(req.params.page);
+  res.send(details)
+});
+
+
 
 
 
@@ -95,4 +101,6 @@ module.exports = {
 
   getDeliveryExecutivestatus,
   getBillDetails,
+
+  getAssigned,
 };

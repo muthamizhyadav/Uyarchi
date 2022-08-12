@@ -12,7 +12,7 @@ const createGroup = async (body) => {
 
   let serverdates = moment().format('YYYY-MM-DD');
   let servertime = moment().format('hh:mm a');
-  const group = await wardAdminGroup.find({ assignDate: serverdates  });
+  const group = await wardAdminGroup.find({ assignDate: serverdates });
 
   let center = '';
 
@@ -33,10 +33,10 @@ const createGroup = async (body) => {
   console.log(totalcount);
   userId = 'G' + center + totalcount;
 
-  let values = { ...body, ...{ groupId: userId, assignDate: serverdates, assignTime:servertime} };
+  let values = { ...body, ...{ groupId: userId, assignDate: serverdates, assignTime: servertime } };
   body.Orderdatas.forEach(async (e) => {
-   let productId = e._id
-    await ShopOrderClone.findByIdAndUpdate({ _id:productId }, { status: "Assigned" }, { new: true });
+    let productId = e._id
+    await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: "Assigned" }, { new: true });
   });
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
   return wardAdminGroupcreate;
@@ -48,7 +48,7 @@ const updateOrderStatus = async (id, status) => {
   if (!deliveryStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  deliveryStatus = await wardAdminGroup.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
+  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ deliveryExecutiveId: id }, { status: status }, { new: true });
   console.log(deliveryStatus);
   return deliveryStatus;
 };
@@ -66,16 +66,36 @@ const getPettyStock = async (id) => {
   let values = await wardAdminGroup.aggregate([
     {
       $match: {
-        _id: { $eq: id },
+        $and: [{ _id: { $eq: id } }],
       },
     },
-    { $unwind: "$Orderdatas" },
-    { $group : {
-        _id : "$Orderdatas.",
-        "Total quantity sum" : {$sum : "$arrlstdetails.quantity"}
-    }}
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'deliveryExecutiveId',
+        foreignField: 'deliveryExecutiveId',
+        as: 'productDatas'
+      }
+    },
+    {
+      $unwind: '$productDatas'
+
+    },
+    {
+      $group: {
+       _id : null,
+       TotalBalance:{$sum:"$product.quantity"}
+      }
+      
+    },
+    {
+      $project: {
+        product: '$productDatas.product'
+      }
+    }
+
   ]);
-  // console.log(values);
+
   return values;
 };
 
@@ -87,166 +107,182 @@ const getGroupdetails = async () => {
 
 // GET ASSIGN DATA BY DEVIVERY EXECUTIVE NAME
 
-  const getstatus = async (id)=>{
-    let details = await wardAdminGroup.aggregate([
+const getstatus = async (id) => {
+  let details = await wardAdminGroup.aggregate([
 
-      {
+    {
 
-      }
-      // {
-      //   $lookup:{
-      //     from: '',
-      //     localField: '',
-      //     foreignField: '',
-      //     as: '',
-      //   }
+    }
+    // {
+    //   $lookup:{
+    //     from: '',
+    //     localField: '',
+    //     foreignField: '',
+    //     as: '',
+    //   }
 
-      // }
+    // }
 
-    ]);
-    return details;
-  }
+  ]);
+  return details;
+}
 
 
-  const getBillDetails = async(id)=>{
-    let values = await wardAdminGroup.aggregate([
-      {
+const getBillDetails = async (id) => {
+  let values = await wardAdminGroup.aggregate([
+    {
       $match: {
         $and: [{ _id: { $eq: id } }],
       },
     },
-      {
-        $lookup: {
-          from: 'shoporderclones',
-          localField: 'deliveryExecutiveId',
-          foreignField: 'deliveryExecutiveId',
-          as: 'delivery',
-        }
-      },
-      {
-        $unwind : '$delivery'
-      },
-      {
-        $lookup: {
-          from: 'b2busers',
-          localField: 'deliveryExecutiveId',
-          foreignField: '_id',
-          as: 'b2busersData',
-        }
-      },
-      {
-        $unwind : '$b2busersData'
-      },
-      {
-        $unwind: '$Orderdatas'
-      },
-      {
-        $lookup: {
-          from: 'productorderclones',
-          localField: 'delivery._id',
-          foreignField: 'orderId',
-          as: 'datas',
-        }
-      },
-      {
-        $lookup:{
-          from: 'b2busers',
-          localField: 'delivery.Uid',
-          foreignField: '_id',
-          as: 'UserName'
-        }
-      },
-      {
-        $unwind: '$UserName'
-      },
-     
-
-     
-      {
-        $project: {
-          // Orderdatas:1,
-          assignDate:1,
-          assignTime:1,
-          groupId:1,
-          product: '$delivery.product',
-          orderId: '$delivery.OrderId',
-          deliveryExecutiveId: '$delivery.deliveryExecutiveId',
-          shopId: '$delivery.shopId',
-          street: '$Orderdatas.street',
-          overAllTotal: '$delivery.overallTotal',
-          // totalItems: '$Orderdatas.totalItems',
-          type: '$Orderdatas.type',
-          // Quantity: '$Orderdatas.Qty',
-          shopName: '$Orderdatas.shopName',
-          // totalproduct: '$delivery.Qty'
-          totalItems: { $size: "$datas" },
-          // totalAmount: '$datas.totalAmount',
-      customerName: '$UserName.name',
-      deliveryExecutiveName:'$b2busersData.name'
-          
-
-        }
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'deliveryExecutiveId',
+        foreignField: 'deliveryExecutiveId',
+        as: 'delivery',
       }
+    },
+    {
+      $unwind: '$delivery'
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      }
+    },
+    {
+      $unwind: '$b2busersData'
+    },
+    {
+      $unwind: '$Orderdatas'
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'delivery._id',
+        foreignField: 'orderId',
+        as: 'datas',
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'delivery.Uid',
+        foreignField: '_id',
+        as: 'UserName'
+      }
+    },
+    {
+      $unwind: '$UserName'
+    },
 
 
 
-    ]);
+    {
+      $project: {
+        // Orderdatas:1,
+        assignDate: 1,
+        assignTime: 1,
+        groupId: 1,
+        product: '$delivery.product',
+        orderId: '$delivery.OrderId',
+        deliveryExecutiveId: '$delivery.deliveryExecutiveId',
+        shopId: '$delivery.shopId',
+        street: '$Orderdatas.street',
+        overAllTotal: '$delivery.overallTotal',
+        // totalItems: '$Orderdatas.totalItems',
+        type: '$Orderdatas.type',
+        // Quantity: '$Orderdatas.Qty',
+        shopName: '$Orderdatas.shopName',
+        // totalproduct: '$delivery.Qty'
+        totalItems: { $size: "$datas" },
+        // totalAmount: '$datas.totalAmount',
+        customerName: '$UserName.name',
+        deliveryExecutiveName: '$b2busersData.name'
 
-    let total = await wardAdminGroup.aggregate([
-      {
-        $match: {
-          $and: [{ _id: { $eq: id } }],
-        },
+
+      }
+    }
+
+
+
+  ]);
+
+  let total = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
       },
-        {
-          $lookup: {
-            from: 'shoporderclones',
-            localField: 'deliveryExecutiveId',
-            foreignField: 'deliveryExecutiveId',
-            as: 'delivery',
-          }
-        },
-        {
-          $unwind : '$delivery'
-        },
-        {
-          $lookup: {
-            from: 'b2busers',
-            localField: 'deliveryExecutiveId',
-            foreignField: '_id',
-            as: 'b2busersData',
-          }
-        },
-        {
-          $unwind : '$b2busersData'
-        },
-        {
-          $unwind: '$Orderdatas'
-        },
-        {
-          $lookup: {
-            from: 'productorderclones',
-            localField: 'delivery._id',
-            foreignField: 'orderId',
-            as: 'datas',
-          }
-        },
-        {
-          $lookup:{
-            from: 'b2busers',
-            localField: 'delivery.Uid',
-            foreignField: '_id',
-            as: 'UserName'
-          }
-        },
-        {
-          $unwind: '$UserName'
-        },
-       
-  
-    ])
-    return {values: values, total: total.length}
-  }
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'deliveryExecutiveId',
+        foreignField: 'deliveryExecutiveId',
+        as: 'delivery',
+      }
+    },
+    {
+      $unwind: '$delivery'
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      }
+    },
+    {
+      $unwind: '$b2busersData'
+    },
+    {
+      $unwind: '$Orderdatas'
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'delivery._id',
+        foreignField: 'orderId',
+        as: 'datas',
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'delivery.Uid',
+        foreignField: '_id',
+        as: 'UserName'
+      }
+    },
+    {
+      $unwind: '$UserName'
+    },
+
+
+  ])
+  return { values: values, total: total.length }
+}
+
+
+const assignOnly = async(page)=>{
+  let values = await wardAdminGroup.aggregate([
+    {
+      $match:{
+        status: {
+          $in: ['Assigned'],
+      }
+    }
+  },
+  { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  return values;
+}
 
 module.exports = {
   createGroup,
@@ -263,4 +299,5 @@ module.exports = {
 
   getstatus,
   getBillDetails,
+  assignOnly,
 };
