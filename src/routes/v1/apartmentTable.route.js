@@ -44,9 +44,9 @@ router.route('/apartment/streetIdAll/IdAndStreet/uid/:id/:streetId').get(apartme
 router.route('/shop/streetIdAll/IdAndStreet/uid/:id/:streetId').get(apartmentController.getShopUserAndStreet);
 router.route('/attendance/Allattendance').get(apartmentController.getAllAttendance);
 // thirdpartyapi
-router.route('/groupmap/:from/:to/:id').get(apartmentController.groupMapService);
-router.route('/locationmap/:location/:radius/:type/:keyword/:id').get(apartmentController.locationMapService);
-router.route('/data/:location/:id').get(apartmentController.WardApi);
+router.route('/groupmap/:from/:to').get(apartmentController.groupMapService);
+router.route('/locationmap/:location/:radius/:type/:keyword').get(apartmentController.locationMapService);
+router.route('/data/:location').get(apartmentController.WardApi);
 router.route('/data/:longi/:lati/:data').get(apartmentController.WardNoApi2);
 router.route('/data/try/catch').get(apartmentController.getWardDataForDB);
 router.route('/streetSearch/:searchArea').get(apartmentController.getAllSearchApi);
