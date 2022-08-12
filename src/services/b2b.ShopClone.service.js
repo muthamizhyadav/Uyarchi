@@ -1307,7 +1307,7 @@ const getMarkeShop = async (marketId, page) => {
     },
     {
       $project: {
-        _id:1,
+        _id: 1,
         street: '$StreetData.street',
         ward: '$WardData.ward',
         username: '$UsersData.name',
@@ -1328,7 +1328,7 @@ const getMarkeShop = async (marketId, page) => {
         Locality: '$StreetData.locality',
         type: 1,
         mobile: 1,
-        active:1,
+        active: 1,
         date: 1,
       },
     },
