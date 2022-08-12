@@ -34,10 +34,10 @@ router
   .delete(b2bShopCloneController.deleteB2BShopById);
 
 // Attendance Clone
-
+router.route('/attendance/create/new').post(authorization, AttendanceImage.array('image'), b2bShopCloneController.creatAttendanceClone_new)
 router
   .route('/attendance/create')
-  .post(authorization, AttendanceImage.array('photoCapture'), b2bShopCloneController.creatAttendanceClone)
+  .post(authorization, AttendanceImage.array('image'), b2bShopCloneController.creatAttendanceClone)
   .get(authorization, b2bShopCloneController.getAlAttendanceClone);
 router.route('/attendanceClone/Admin/:id/:date/:fromtime/:totime/:page').get(b2bShopCloneController.getAlAttendanceClone);
 router

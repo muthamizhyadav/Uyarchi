@@ -171,8 +171,58 @@ const attendanceSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  image: {
+    type: String,
+  },
 });
-
 const AttendanceClone = mongoose.model('AttendanceClone', attendanceSchema);
 
-module.exports = { Shop, AttendanceClone };
+const attendanceSchemaclone = new mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  Alat: {
+    type: String,
+  },
+  Along: {
+    type: String,
+  },
+  photoCapture: {
+    type: Array,
+  },
+  Uid: {
+    type: String,
+  },
+  wardId: {
+    type: String,
+  },
+  created: {
+    type: String,
+  },
+  date: {
+    type: String,
+  },
+  time: {
+    type: Number,
+  },
+  type: {
+    type: String,
+  },
+
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+  image: {
+    type: String,
+  },
+});
+
+const AttendanceClonenew = mongoose.model('AttendanceClonenew', attendanceSchemaclone);
+
+module.exports = { Shop, AttendanceClone,AttendanceClonenew };
