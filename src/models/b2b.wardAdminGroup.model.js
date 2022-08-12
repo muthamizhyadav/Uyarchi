@@ -37,10 +37,10 @@ const wardAdminGroupSchema = new mongoose.Schema({
   totalOrders: {
     type: Number,
   },
-  // status: {
-  //   type: String,
-  //   default: "Assigned",
-  // },
+  status: {
+    type: String,
+    default: "Assigned",
+  },
 
 });
 

@@ -66,6 +66,12 @@ const getDeliveryExecutivestatus = catchAsync(async (req, res) => {
   res.send(details)
 });
 
+const getBillDetails = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.getBillDetails(req.params.id);
+  res.send(details)
+});
+
+
 
 
 
@@ -88,4 +94,5 @@ module.exports = {
 
 
   getDeliveryExecutivestatus,
+  getBillDetails,
 };
