@@ -44,17 +44,17 @@ const getAllAttendance = async () => {
   return user;
 };
 
-const groupMap = async (from, to, id) => {
+const groupMap = async (from, to) => {
   let response = await axios.get(
-    `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${from}&destinations=${to}&key=${id}`
+    `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${from}&destinations=${to}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
   );
   // console.log(response.data)
   return response.data;
 };
 
-const latitudeMap = async (location, radius, type, keyword, id) => {
+const latitudeMap = async (location, radius, type, keyword) => {
   let response = await axios.get(
-    `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location}&radius=${radius}&&type=${type}&keyword=${keyword}&key=${id}`
+    `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location}&radius=${radius}&&type=${type}&keyword=${keyword}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
   );
 
   return response.data;
