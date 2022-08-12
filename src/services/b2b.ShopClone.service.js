@@ -1031,7 +1031,7 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
   } else {
     match = [{ Uid: { $ne: null } }, { active: { $eq: true } }];
   }
-  const data = await AttendanceClone.aggregate([
+  const data = await AttendanceClonenew.aggregate([
     { $sort: { date: -1, time: -1 } },
     {
       $match: {
@@ -1067,7 +1067,7 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
       },
     },
   ]);
-  const count = await AttendanceClone.aggregate([
+  const count = await AttendanceClonenew.aggregate([
     {
       $match: {
         $and: match,
