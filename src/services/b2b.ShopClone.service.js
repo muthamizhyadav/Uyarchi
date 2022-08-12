@@ -1062,7 +1062,7 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
         date: 1,
         time: 1,
         created: 1,
-        image:1,
+        image: 1,
         userName: '$b2busersData.name',
         phoneNumber: '$b2busersData.phoneNumber',
       },
@@ -1307,8 +1307,7 @@ const getMarkeShop = async (marketId, page) => {
     },
     {
       $project: {
-        // _id:1,
-        // created:1,
+        _id:1,
         street: '$StreetData.street',
         ward: '$WardData.ward',
         username: '$UsersData.name',
@@ -1322,8 +1321,14 @@ const getMarkeShop = async (marketId, page) => {
         SOwner: 1,
         shopNo: 1,
         marketId: 1,
+        status: 1,
+        kyc_status: 1,
+        Uid: 1,
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
         type: 1,
         mobile: 1,
+        active:1,
         date: 1,
       },
     },
@@ -1460,7 +1465,9 @@ const perdeleteShopById = async (id) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Shop Not Found');
   }
   shop = await Shop.findByIdAndDelete(id);
-  return shop;
+  return {
+    message: 'Deleted',
+  };
 };
 
 module.exports = {

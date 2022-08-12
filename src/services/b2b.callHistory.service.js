@@ -298,7 +298,13 @@ const getShop = async (date, status, page, userId, userRole) => {
   //   $unwind: '$shoplists',
   // },
   // ]);
-  let total = await Shop.find().count();
+  let total;
+  if (status == 'null') {
+    total = await Shop.find().count();
+  }
+  if (status != 'null') {
+    total = await Shop.find({ callingStatus: status }).count();
+  }
   console.log(total);
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
