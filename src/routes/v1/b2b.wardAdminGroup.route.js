@@ -31,6 +31,8 @@ router.route('/get/billDetails/:id').get(wardAdminGroupController.getBillDetails
 
 router.route('/get/assignedOnle/:page').get(wardAdminGroupController.getAssigned)
 
+router.route('/statusChange/:id').put(wardAdminGroupController.updateManageStatus)
+
 // DELIVERY EXECUTIVE
 
 // router.route('/get/getDeliveryDetails/:page').get(wardAdminGroupController.getDeliveryDetails);

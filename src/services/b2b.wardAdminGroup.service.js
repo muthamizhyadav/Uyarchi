@@ -52,6 +52,20 @@ const updateOrderStatus = async (id, status) => {
   console.log(deliveryStatus);
   return deliveryStatus;
 };
+const getById = async (id) => {
+  return wardAdminGroup.findById(id);
+};
+
+
+const updateManageStatus = async (id, updateBody) => {
+  let Manage = await getById(id);
+
+  if (!Manage) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Data not found');
+  }
+  Manage = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return Manage;
+};
 
 // GET ORDER DETAILS FROM GROUP BY ID
 
@@ -300,4 +314,5 @@ module.exports = {
   getstatus,
   getBillDetails,
   assignOnly,
+  updateManageStatus,
 };

@@ -46,6 +46,11 @@ const getproductDetails = catchAsync(async (req, res) => {
   res.send(details);
 });
 
+const updateManageStatus = catchAsync(async (req, res) => {
+  const data = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  res.send(data);
+});
+
 // const getDeliveryDetails = catchAsync(async (req, res) => {
 //   const deliveryDetails = await wardAdminGroupService.getDeliveryDetails(req.params.page);
 //   res.send(deliveryDetails);
@@ -103,4 +108,5 @@ module.exports = {
   getBillDetails,
 
   getAssigned,
+  updateManageStatus,
 };

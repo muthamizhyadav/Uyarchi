@@ -41,6 +41,10 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: String,
     default: "Assigned",
   },
+  manageDeliveryStatus:{
+    type:String,
+    default:"Pending",
+  },
 
 });
 
