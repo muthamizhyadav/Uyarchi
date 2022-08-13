@@ -82,6 +82,9 @@ const filterShopwithNameAndContact = async (key) => {
       $unwind: '$streetData',
     },
     {
+      $limit: 500,
+    },
+    {
       $project: {
         SName: 1,
         mobile: 1,
