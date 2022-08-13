@@ -432,7 +432,7 @@ const getcallHistorylastFivedays = async (id) => {
         date: 1,
         time: 1,
         historytime: 1,
-        reason:1,
+        reason: 1,
         userName: '$data.name',
         userContact: '$data.phoneNumber',
         shopName: '$shops.SName',
@@ -638,6 +638,13 @@ const resethistory = async () => {
   return { dayfresh: true };
 };
 
+const previouscallBackAnd_Reshedule = async () => {
+  let currentDate = moment().format('DD-MM-yyyy');
+  let callback = await Shop.find({ callingStatus: 'callback', date: { $ne: currentDate } });
+  let reschedule = await Shop.find({ callingStatus: 'reshedule', date: { $ne: currentDate } });
+  return { callback: callback, reschedule: reschedule };
+};
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -656,4 +663,5 @@ module.exports = {
   getcallHistorylastFivedays,
   getacceptDeclined,
   resethistory,
+  previouscallBackAnd_Reshedule,
 };

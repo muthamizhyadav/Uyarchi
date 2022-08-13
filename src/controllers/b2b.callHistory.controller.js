@@ -111,6 +111,11 @@ const resethistory = catchAsync(async (req, res) => {
   res.send(callhistories);
 });
 
+const previouscallBackAnd_Reshedule = catchAsync(async (req, res) => {
+  const shops = await callHistoryService.previouscallBackAnd_Reshedule();
+  res.send(shops);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -130,4 +135,5 @@ module.exports = {
   getcallHistorylastFivedays,
   getacceptDeclined,
   resethistory,
+  previouscallBackAnd_Reshedule,
 };
