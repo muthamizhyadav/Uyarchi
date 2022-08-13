@@ -396,6 +396,17 @@ const getcallHistorylastFivedays = async (id) => {
     },
     {
       $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+    {
+      $lookup: {
         from: 'b2busers',
         localField: 'userId',
         foreignField: '_id',
@@ -405,6 +416,7 @@ const getcallHistorylastFivedays = async (id) => {
     {
       $unwind: '$data',
     },
+
     {
       $limit: 10,
     },
@@ -420,8 +432,11 @@ const getcallHistorylastFivedays = async (id) => {
         date: 1,
         time: 1,
         historytime: 1,
+        reason:1,
         userName: '$data.name',
-        userContact:'$data.phoneNumber'
+        userContact: '$data.phoneNumber',
+        shopName: '$shops.SName',
+        callingStatus: '$shops.callingStatus',
       },
     },
   ]);
