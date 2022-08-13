@@ -87,6 +87,12 @@ const groupIdClick = catchAsync(async (req, res) => {
 });
 
 
+const orderIdClickGetProduct = catchAsync(async (req, res) => {
+  console.log(req.params.id)
+  const details = await wardAdminGroupService.orderIdClickGetProduct(req.params.id);
+  res.send(details)
+});
+
 
 
 module.exports = {
@@ -113,4 +119,5 @@ module.exports = {
   getAssigned,
   updateManageStatus,
   groupIdClick,
+  orderIdClickGetProduct,
 };
