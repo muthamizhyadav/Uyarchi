@@ -308,6 +308,50 @@ const groupIdClick = async(id)=>{
   return data;
 }
 
+const orderIdClickGetProduct = async(id)=>{
+  console.log(id)
+
+  let getDetails = await ProductorderClone.aggregate([
+    {
+      $match: {
+        $and: [{ orderId: { $eq: id } }],
+      },
+    },
+    // {
+    //   $lookup: {
+    //     from: 'productorderclones',
+    //     localField: '_id',
+    //     foreignField: 'orderId',
+    //     as: 'productorderclonesData',
+    //   }
+    // },
+    // {
+    //   $unwind: '$productorderclonesData'
+    // },
+    {
+      $lookup: {
+        from: 'products',
+        localField:'productid',
+        foreignField: '_id',
+        as: 'productsData',
+      }
+    },
+    {
+      $unwind: '$productsData'
+    },
+    {
+      $project: {
+        quantity: 1,
+        priceperkg: 1,
+        product:'$productsData.productTitle',
+        productId:'$productsData._id',
+      }
+    }
+
+  ]);
+
+  return getDetails;
+}
 
 module.exports = {
   createGroup,
@@ -327,4 +371,5 @@ module.exports = {
   assignOnly,
   updateManageStatus,
   groupIdClick,
+  orderIdClickGetProduct,
 };
