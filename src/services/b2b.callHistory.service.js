@@ -656,7 +656,7 @@ const getOncallShops = async () => {
 };
 
 const oncallstatusByUser = async (userId) => {
-  let oncall = await Shop.find({ callingStatus: 'On Call', Uid: userId });
+  let oncall = await Shop.find({ callingStatus: 'On Call', callingUserId: userId });
   if (oncall.length == 0) {
     return { status: true };
   } else {
