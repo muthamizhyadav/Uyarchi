@@ -81,7 +81,10 @@ const getAssigned = catchAsync(async (req, res) => {
   res.send(details)
 });
 
-
+const groupIdClick = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.groupIdClick(req.params.id);
+  res.send(details)
+});
 
 
 
@@ -109,4 +112,5 @@ module.exports = {
 
   getAssigned,
   updateManageStatus,
+  groupIdClick,
 };

@@ -298,6 +298,17 @@ const assignOnly = async(page)=>{
   return values;
 }
 
+const groupIdClick = async(id)=>{
+  let data = []
+  let getDetails = await wardAdminGroup.findById(id);
+  getDetails.Orderdatas.forEach((e) =>{
+ 
+    data.push(e)
+  })
+  return data;
+}
+
+
 module.exports = {
   createGroup,
   updateOrderStatus,
@@ -315,4 +326,5 @@ module.exports = {
   getBillDetails,
   assignOnly,
   updateManageStatus,
+  groupIdClick,
 };

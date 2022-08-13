@@ -33,6 +33,8 @@ router.route('/get/assignedOnle/:page').get(wardAdminGroupController.getAssigned
 
 router.route('/statusChange/:id').put(wardAdminGroupController.updateManageStatus)
 
+router.route('/groupIdClick/:id').get(wardAdminGroupController.groupIdClick)
+
 // DELIVERY EXECUTIVE
 
 // router.route('/get/getDeliveryDetails/:page').get(wardAdminGroupController.getDeliveryDetails);
