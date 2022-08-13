@@ -383,8 +383,9 @@ const checkvisitOncallStatus = async (id) => {
 };
 
 const getcallHistorylastFivedays = async (id) => {
-  let values = await callHistoryModel.find({ shopId: id }).sort({ sortTime: -1 }).limit(5);
-  return values;
+  let shops = await Shop.findById(id);
+  let values = await callHistoryModel.find({ shopId: id }).sort({ sortTime: -1 }).limit(10);
+  return { values: values, shops: shops.SName };
 };
 
 const getshopsOrderWise = async (status) => {
