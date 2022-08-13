@@ -82,7 +82,7 @@ const filterShopwithNameAndContact = async (key) => {
       $unwind: '$streetData',
     },
     {
-      $limit: 500,
+      $limit: 50,
     },
     {
       $project: {
