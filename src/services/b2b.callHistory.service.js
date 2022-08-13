@@ -383,8 +383,64 @@ const checkvisitOncallStatus = async (id) => {
 };
 
 const getcallHistorylastFivedays = async (id) => {
-  let values = await callHistoryModel.find({ shopId: id }).sort({ sortTime: -1 }).limit(5);
-  return values;
+  let shops = await Shop.findById(id);
+  // let values = await callHistoryModel.find({ shopId: id }).sort({ sortTime: -1 }).limit(10);
+  let values = await callHistoryModel.aggregate([
+    {
+      $match: {
+        $and: [{ shopId: { $eq: id } }],
+      },
+    },
+    {
+      $sort: { sortTime: -1 },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'data',
+      },
+    },
+    {
+      $unwind: '$data',
+    },
+
+    {
+      $limit: 10,
+    },
+    {
+      $project: {
+        _id: 1,
+        active: 1,
+        archive: 1,
+        status: 1,
+        noOfCalls: 1,
+        shopId: 1,
+        selectStatus: 1,
+        date: 1,
+        time: 1,
+        historytime: 1,
+        reason:1,
+        userName: '$data.name',
+        userContact: '$data.phoneNumber',
+        shopName: '$shops.SName',
+        callingStatus: '$shops.callingStatus',
+      },
+    },
+  ]);
+  return { values: values, shops: shops.SName };
 };
 
 const getshopsOrderWise = async (status) => {
