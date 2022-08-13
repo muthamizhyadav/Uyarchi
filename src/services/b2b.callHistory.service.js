@@ -139,7 +139,7 @@ const getShop = async (date, status, page, userId, userRole) => {
   if (status == 'null') {
     match = [{ active: { $eq: true } }];
   } else {
-    match = [{ callingStatus: { $in: [status, 'On Call'] } }];
+    match = [{ callingStatus: { $in: [status] } }];
   }
   let values = await Shop.aggregate([
     {
@@ -442,7 +442,6 @@ const getcallHistorylastFivedays = async (id) => {
   ]);
   return { values: values, shops: shops.SName };
 };
-
 const getshopsOrderWise = async (status) => {
   let serverdate = moment().format('DD-MM-yyyy');
   let pending = await Shop.find({ callingStatus: 'Pending' });
@@ -645,6 +644,11 @@ const previouscallBackAnd_Reshedule = async () => {
   return { callback: callback, reschedule: reschedule };
 };
 
+const getOncallShops = async () => {
+  let oncall = await Shop.find({ callingStatus: 'On Call' });
+  return oncall;
+};
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -664,4 +668,5 @@ module.exports = {
   getacceptDeclined,
   resethistory,
   previouscallBackAnd_Reshedule,
+  getOncallShops,
 };

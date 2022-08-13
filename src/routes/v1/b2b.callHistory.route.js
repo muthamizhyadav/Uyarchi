@@ -24,4 +24,5 @@ router.route('/getcallhistory/lastfivedays/:id').get(callHistoryController.getca
 router.route('/getacceptDeclined/:status/:date/:page').get(authorization, callHistoryController.getacceptDeclined);
 router.route('/reset/callingStatus').get(callHistoryController.resethistory);
 router.route('/previous/callback/reshedule').get(callHistoryController.previouscallBackAnd_Reshedule);
+router.route('/oncallshops').get(callHistoryController.getOncallShops)
 module.exports = router;
