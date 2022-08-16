@@ -439,6 +439,7 @@ const getcallHistorylastFivedays = async (id) => {
         time: 1,
         historytime: 1,
         reason: 1,
+        callStatus:1,
         userName: '$data.name',
         userContact: '$data.phoneNumber',
         shopName: '$shops.SName',
