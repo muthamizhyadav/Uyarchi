@@ -43,13 +43,14 @@ const createcallHistoryWithType = async (body, userId) => {
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
   if (callStatus != '') {
-    if (shopdata.callingStatus != 'accept') {
+    if (callStatus != 'accept') {
       await Shop.findByIdAndUpdate(
         { _id: shopId },
         { callingStatus: callStatus, sortdate: date, sorttime: time, historydate: currentdate, callingStatusSort: sort },
         { new: true }
       );
-      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, historydate: currentdate });
+    } else {
+      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatusSort: sort, historydate: currentdate });
     }
   }
   let callHistory = await callHistoryModel.create(values);
@@ -439,7 +440,7 @@ const getcallHistorylastFivedays = async (id) => {
         time: 1,
         historytime: 1,
         reason: 1,
-        callStatus:1,
+        callStatus: 1,
         userName: '$data.name',
         userContact: '$data.phoneNumber',
         shopName: '$shops.SName',
