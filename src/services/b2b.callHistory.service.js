@@ -9,7 +9,7 @@ const moment = require('moment');
 const createCallHistory = async (body) => {
   await Shop.findByIdAndUpdate({ _id: body.shopId }, { CallStatus: body.callStatus }, { new: true });
   let time = moment().format('HHmmss');
-  let serverdate = moment().format('DD-MM-yyyy');
+  let serverdate = moment().format('yyyy-MM-DD');
   let values = { ...body, ...{ sortTime: time, historydate: serverdate } };
   let callHistory = await callHistoryModel.create(values);
   return callHistory;
