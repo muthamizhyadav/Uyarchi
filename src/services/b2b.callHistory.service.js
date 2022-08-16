@@ -399,7 +399,7 @@ const getcallHistorylastFivedays = async (id) => {
       },
     },
     {
-      $sort: {date:-1, historytime: -1 },
+      $sort: { date: -1, historytime:-1 },
     },
     {
       $lookup: {
@@ -491,7 +491,7 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
     match = [{ callingStatus: { $in: [status] } }];
   }
   let values = await Shop.aggregate([
-    // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
+    { $sort: {filterDate: -1, time: -1 } },
     {
       $match: {
         $and: match,
