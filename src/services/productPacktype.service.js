@@ -263,10 +263,10 @@ const get_product_withpacktype = async (search, page) => {
       },
     },
     {
-      $limit: 2,
+      $limit: 10,
     },
     {
-      $skip: 2 * page,
+      $skip: 10 * page,
     },
   ]);
   let total = await Product.aggregate([
