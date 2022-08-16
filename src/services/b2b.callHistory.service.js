@@ -9,7 +9,7 @@ const moment = require('moment');
 const createCallHistory = async (body) => {
   await Shop.findByIdAndUpdate({ _id: body.shopId }, { CallStatus: body.callStatus }, { new: true });
   let time = moment().format('HHmmss');
-  let serverdate = moment().format('yyyy-MM-DD');
+  let serverdate = moment().format('DD-MM-yyyy');
   let values = { ...body, ...{ sortTime: time, historydate: serverdate } };
   let callHistory = await callHistoryModel.create(values);
   return callHistory;
@@ -17,9 +17,9 @@ const createCallHistory = async (body) => {
 
 const createcallHistoryWithType = async (body, userId) => {
   let time = moment().format('HHmmss');
-  let date = moment().format('yyy-MM-DD');
+  let date = moment().format('yyyy-MM-DD');
   let servertime = moment().format('hh:mm a');
-  let serverdate = moment().format('DD-MM-yyyy');
+  let serverdate = moment().format('yyyy-MM-DD');
 
   const { callStatus, shopId } = body;
   let sort;
@@ -399,7 +399,7 @@ const getcallHistorylastFivedays = async (id) => {
       },
     },
     {
-      $sort: { sortTime: -1 },
+      $sort: {date:-1, historytime: -1 },
     },
     {
       $lookup: {
