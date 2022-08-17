@@ -399,7 +399,7 @@ const getcallHistorylastFivedays = async (id) => {
       },
     },
     {
-      $sort: { date: -1, historytime:-1 },
+      $sort: { date: -1, historytime: -1 },
     },
     {
       $lookup: {
@@ -491,7 +491,7 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
     match = [{ callingStatus: { $in: [status] } }];
   }
   let values = await Shop.aggregate([
-    { $sort: {filterDate: -1, time: -1 } },
+    // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $match: {
         $and: match,
@@ -503,6 +503,7 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
         localField: '_id',
         foreignField: 'shopId',
         pipeline: [
+          // { $sort: { date: -1, historytime: -1 } },
           {
             $match: {
               date: { $eq: date },
@@ -641,7 +642,10 @@ const resethistory = async () => {
   let currentDate = moment().format('DD-MM-yyyy');
   let today = '';
   today = currentDate;
-  await Shop.updateMany({ historydate: { $ne: today } }, { $set: { callingStatus: 'Pending', callingStatusSort: 0 } });
+  await Shop.updateMany(
+    { historydate: { $ne: today }, callingStatus: { $ne: 'callback' }, callingStatus: { $ne: 'reshedule' } },
+    { $set: { callingStatus: 'Pending', callingStatusSort: 0 } }
+  );
   return { dayfresh: true };
 };
 
