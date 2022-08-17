@@ -45,6 +45,13 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type:String,
     default:"Pending",
   },
+  pettyCash: {
+    type: Number,
+  },
+  pettyStock: {
+    type: Array,
+    default: [],
+  },
 
 });
 

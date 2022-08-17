@@ -101,6 +101,11 @@ const orderIdClickGetProduct = catchAsync(async (req, res) => {
   res.send(details)
 });
 
+const getDetailsAfterDeliveryCompletion = catchAsync(async (req, res) => {
+  const getdetails = await wardAdminGroupService.getDetailsAfterDeliveryCompletion(req.params.id);
+  res.send(getdetails);
+});
+
 
 
 module.exports = {
@@ -132,5 +137,7 @@ module.exports = {
   updateManageStatus,
   groupIdClick,
   orderIdClickGetProduct,
+
+  getDetailsAfterDeliveryCompletion,
 
 };
