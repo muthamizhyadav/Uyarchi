@@ -138,6 +138,7 @@ const B2bUsersAdminLogin = async (userBody) => {
       { userRole: '57243437-a1d4-426f-a705-5da92a630d15' },
       { userRole: '24a28b34-ae15-4f3a-a3e8-24cf5b7be5a1' },
       { userRole: '569d9d3f-285c-434d-99e7-0c415245c40c' },
+      { userRole: '719d9f71-8388-4534-9bfe-3f47faed62ac' },
     ],
     stepTwo: true,
     active: true,
@@ -171,7 +172,8 @@ const forgotPassword = async (body) => {
       { userRole: '36151bdd-a8ce-4f80-987e-1f454cd0993f' },
       { userRole: '57243437-a1d4-426f-a705-5da92a630d15' },
       { userRole: '24a28b34-ae15-4f3a-a3e8-24cf5b7be5a1' },
-      { userRole: '569d9d3f-285c-434d-99e7-0c415245c40c' },
+      { userRole: '569d9d3f-285c-434d-99e7-0c415245c40c' }, // 719d9f71-8388-4534-9bfe-3f47faed62ac
+      { userRole: '719d9f71-8388-4534-9bfe-3f47faed62ac' },
     ],
   });
   if (!users) {
@@ -193,6 +195,7 @@ const otpVerfiy = async (body) => {
       { userRole: '57243437-a1d4-426f-a705-5da92a630d15' },
       { userRole: '24a28b34-ae15-4f3a-a3e8-24cf5b7be5a1' },
       { userRole: '569d9d3f-285c-434d-99e7-0c415245c40c' },
+      { userRole: '719d9f71-8388-4534-9bfe-3f47faed62ac' },
     ],
   });
   if (!users) {
