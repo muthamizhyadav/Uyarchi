@@ -76,6 +76,12 @@ const streetSchema = mongoose.Schema({
   sort: {
     type: Number,
   },
+  lat:{
+    type:Number,
+  },
+  lng:{
+    type:Number,
+  },
 });
 streetSchema.plugin(toJSON);
 streetSchema.plugin(paginate);
