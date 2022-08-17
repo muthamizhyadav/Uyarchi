@@ -10,4 +10,5 @@ router.route('/wardByZone/:zoneId').get(wardController.getWardByZoneId);
 router.route('/getWard/ForManageTrends').get(wardController.getAllWardsForManageTrends);
 router.route('/shopOrder/metadata').get(authorization, wardController.getmetaData);
 router.route('/create/DummyStreet').get(wardController.createDummyStreet);
+router.route('/getAll/ward').get(wardController.getAll)
 module.exports = router;

@@ -130,6 +130,10 @@ const renameStreet = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(street);
 });
 
+const getwardBystreetAngular = catchAsync(async (req, res) => {
+  const street = await StreetService.getwardBystreetAngular(req.params.wardId);
+  res.send(street);
+});
 module.exports = {
   createStreet,
   getStreetDetailsById,
@@ -152,4 +156,5 @@ module.exports = {
   getDummyStreet,
   getStreetWard,
   renameStreet,
+  getwardBystreetAngular,
 };
