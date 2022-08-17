@@ -116,6 +116,12 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   deliveryExecutiveId: {
     type: String,
   },
+  reason: {
+    type: String,
+  },
+  payType: {
+    type: String,
+  },
   
 });
 
