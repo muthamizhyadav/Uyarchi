@@ -119,6 +119,20 @@ const getAllShopClone = async () => {
   return Shop.find();
 };
 
+const searchShops = async (key) => {
+  let values = await Shop.aggregate([
+    {
+      $match: {
+        $or: [{ SName: { $regex: key, $options: 'i' } }],
+      },
+    },
+    {
+      $limit: 90,
+    },
+  ]);
+  return values;
+};
+
 const getshopWardStreetNamesWithAggregation = async (page) => {
   let values = await Shop.aggregate([
     {
@@ -1504,4 +1518,5 @@ module.exports = {
   getshopWardStreetNamesWithAggregation_withfilter_daily_all,
   perdeleteShopById,
   createAttendanceClone_new,
+  searchShops,
 };

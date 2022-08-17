@@ -365,6 +365,11 @@ const perdeleteShopById = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const searchShops = catchAsync(async (req, res) => {
+  const shops = await b2bCloneService.searchShops(req.params.key);
+  res.send(shops);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -398,4 +403,5 @@ module.exports = {
   getshopWardStreetNamesWithAggregation_withfilter_daily_all,
   perdeleteShopById,
   creatAttendanceClone_new,
+  searchShops,
 };
