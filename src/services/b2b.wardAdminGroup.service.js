@@ -93,36 +93,19 @@ const getOrderFromGroupById = async (id) => {
 
 
 const getPettyStock = async (id) => {
-  let values = await wardAdminGroup.aggregate([
+  let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }],
+        $and: [{ deliveryExecutiveId: { $eq: id } }],
       },
     },
     {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'deliveryExecutiveId',
-        foreignField: 'deliveryExecutiveId',
-        as: 'productDatas'
-      }
+      $unwind: '$product'
     },
-    {
-      $unwind: '$productDatas'
-
-    },
-    {
-      $group: {
-       _id : null,
-       TotalBalance:{$sum:"$product.quantity"}
-      }
-      
-    },
-    {
-      $project: {
-        product: '$productDatas.product'
-      }
-    }
+    { $group : {
+      _id : "$product.productName",
+      "Total quantity" : {$sum : "$product.quantity"}
+  }}
 
   ]);
 
@@ -472,6 +455,28 @@ const orderIdClickGetProduct = async(id)=>{
 
 }
 
+
+const getDetailsAfterDeliveryCompletion = async (id) =>{
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{deliveryExecutiveId : { $eq: id } }],
+      },
+    },
+    // {
+    //   $lookup: {
+    //     from: 'wardadmingroups',
+    //     localField: 'deliveryExecutiveId',
+    //     foreignField: 'deliveryExecutiveId',
+    //     as: 'datas'
+    //   }
+    // },
+    // { $unwind: '$datas'},
+  ]);
+  return values;
+
+}
+
 module.exports = {
   createGroup,
   // updateOrderStatus,
@@ -500,5 +505,7 @@ module.exports = {
 
 
   updateOrderStatus,
+
+  getDetailsAfterDeliveryCompletion,
 
 };

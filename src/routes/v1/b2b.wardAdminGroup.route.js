@@ -38,7 +38,11 @@ router.route('/statusChange/:id').put(wardAdminGroupController.updateManageStatu
 
 router.route('/groupIdClick/:id').get(wardAdminGroupController.groupIdClick)
 
-router.route('/orderIdClickGetProduct/:id').get(wardAdminGroupController.orderIdClickGetProduct)
+router.route('/orderIdClickGetProduct/:id').get(wardAdminGroupController.orderIdClickGetProduct);
+
+
+
+router.route('/get/getDetailsAfterDeliveryCompletion/:id').get(wardAdminGroupController.getDetailsAfterDeliveryCompletion);
 
 // DELIVERY EXECUTIVE
 
