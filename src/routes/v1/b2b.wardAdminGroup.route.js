@@ -12,7 +12,7 @@ router.route('/update/pickedPettyCash/:id').put(wardAdminGroupController.updateP
 
 router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
 
-router.route('/update/deliveryCompleted/:id').put(wardAdminGroupController.updateDeliveryCompleted);
+router.route('/update/delivered/:id').put(wardAdminGroupController.updateDeliveryCompleted);
 
 router.route('/update/unDelivered/:id').put(wardAdminGroupController.UpdateUnDeliveredStatus);
 
