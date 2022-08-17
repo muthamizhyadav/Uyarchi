@@ -67,6 +67,11 @@ const createDummyStreet = catchAsync(async (req, res) => {
   res.send(ward);
 });
 
+const getAll = catchAsync(async (req, res) => {
+  const ward = await wardService.getAllWard();
+  res.send(ward);
+});
+
 module.exports = {
   createWard,
   getAllWard,
@@ -78,4 +83,5 @@ module.exports = {
   wardPagination,
   getmetaData,
   createDummyStreet,
+  getAll,
 };

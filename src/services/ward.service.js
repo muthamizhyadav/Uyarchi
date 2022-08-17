@@ -193,6 +193,10 @@ const createDummyStreet = async () => {
   return await Street.find({ dommy: true }).sort({ sort: 1 });
 };
 
+const getAllward = async () => {
+  return await Ward.find();
+};
+
 module.exports = {
   createWard,
   getWardByZoneId,
@@ -204,4 +208,5 @@ module.exports = {
   getAllWardsForManageTrends,
   createDummyStreet,
   getWardByZoneIdBySalesman,
+  getAllward,
 };
