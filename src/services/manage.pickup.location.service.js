@@ -16,6 +16,28 @@ const createManagePickupLocation = async (body) => {
   return createpickuplocations;
 };
 
+const getAllManagepickup = async () => {
+
+  let values = await PickupLocation.aggregate([
+    // { $skip: page },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await PickupLocation.find().count();
+  return { values: values, total: total };
+};
+
+const getManagePickupById = async (id) => {
+  let getpickup = await PickupLocation.findById(id);
+  if (!getpickup) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Pickup Not Found');
+  }
+  return getpickup;
+};
+
 module.exports = {
   createManagePickupLocation,
+  getAllManagepickup,
+  getManagePickupById,
 };
