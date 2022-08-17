@@ -46,7 +46,7 @@ const getAllManagepickup = async (page) => {
       $project: {
         _id: 1,
         ward: '$wardData.ward',
-        street: '$StreetData.street',
+        street: '$streetData.street',
         locationName: 1,
         ownerName: 1,
         address: 1,
