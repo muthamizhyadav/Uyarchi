@@ -32,12 +32,12 @@ const updateDeliveryStarted = catchAsync(async (req, res) => {
 });
 
 const updateDeliveryCompleted = catchAsync(async (req, res) => {
-  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, 'Delivered');
+  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, req.body);
   res.send(deliveryCompleted);
 });
 
 const UpdateUnDeliveredStatus = catchAsync(async (req, res) => {
-  const deliveryStatus = await wardAdminGroupService.updateOrderStatus(req.params.id, 'UnDelivered');
+  const deliveryStatus = await wardAdminGroupService.updateOrderStatus(req.params.id, 'UnDelivered' , req.body);
   res.send(deliveryStatus);
 });
 

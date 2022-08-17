@@ -42,13 +42,13 @@ const createGroup = async (body) => {
   return wardAdminGroupcreate;
 };
 
-const updateOrderStatus = async (id, status) => {
+const updateOrderStatus = async (id,  updateBody ) => {
   let deliveryStatus = await ShopOrderClone.findById(id);
   console.log(deliveryStatus);
   if (!deliveryStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
+  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody,{ new: true });
   console.log(deliveryStatus);
   return deliveryStatus;
 };
