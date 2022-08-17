@@ -50,6 +50,7 @@ const getAllManagepickup = async (page) => {
         locationName: 1,
         ownerName: 1,
         address: 1,
+        photoCapture: 1,
         landMark: 1,
         latitude: 1,
         date: 1,
