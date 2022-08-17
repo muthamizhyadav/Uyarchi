@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.route('/craeteGroupId').post(wardAdminGroupController.createGroupOrder);
 
-router.route('/update/orderpicked/:id').put(wardAdminGroupController.updateOrderPickedStatus);
+router.route('/update/orderpicked/:deliveryExecutiveId').put(wardAdminGroupController.updateOrderPickedStatus);
 
 router.route('/update/pickedPettyStock/:id').put(wardAdminGroupController.updatePickedPettyStock);
 
@@ -29,7 +29,10 @@ router.route('/getDeliveryExecutivestatus/:id').get(wardAdminGroupController.get
 
 router.route('/get/billDetails/:id').get(wardAdminGroupController.getBillDetails);
 
-router.route('/get/assignedOnle/:page').get(wardAdminGroupController.getAssigned)
+router.route('/get/assignedOnle/:page').get(wardAdminGroupController.getAssigned);
+
+
+router.route('/get/details/deliveryExecutive/:id/:page').get(wardAdminGroupController.getDeliveryOrderSeparate);
 
 // DELIVERY EXECUTIVE
 

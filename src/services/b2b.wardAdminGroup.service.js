@@ -42,15 +42,31 @@ const createGroup = async (body) => {
   return wardAdminGroupcreate;
 };
 
-const updateOrderStatus = async (id, status) => {
-  let deliveryStatus = await wardAdminGroup.findById(id);
-  console.log(deliveryStatus);
-  if (!deliveryStatus) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+// const updateOrderStatus = async (id, status) => {
+//   let deliveryStatus = await wardAdminGroup.findById(id);
+//   console.log(deliveryStatus);
+//   if (!deliveryStatus) {
+//     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+//   }
+//   deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ deliveryExecutiveId: id }, { status: status }, { new: true });
+//   console.log(deliveryStatus);
+//   return deliveryStatus;
+// };
+
+const orderPicked =async (deliveryExecutiveId) => {
+  let orderPicked = await ShopOrderClone.find({deliveryExecutiveId:deliveryExecutiveId});
+  console.log(orderPicked)
+  if (orderPicked.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, ' id not found');
   }
-  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ deliveryExecutiveId: id }, { status: status }, { new: true });
-  console.log(deliveryStatus);
-  return deliveryStatus;
+ 
+  
+  orderPicked.forEach(async (e) =>{
+     let statusUpdate = e.deliveryExecutiveId 
+     await ShopOrderClone.findByIdAndUpdate({ deliveryExecutiveId:statusUpdate} , {status: "Order Picked"},{ new: true})
+  })
+  
+  return "success";
 };
 
 // GET ORDER DETAILS FROM GROUP BY ID
@@ -284,9 +300,109 @@ const assignOnly = async(page)=>{
   return values;
 }
 
+const getDeliveryOrderSeparate = async (id, page)=>{
+  let datas = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{deliveryExecutiveId : { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+
+      }
+    },
+    { $unwind: '$shopData' },
+        {
+            $lookup: {
+                from: 'streets',
+                localField: 'shopData.Strid',
+                foreignField: '_id',
+                as: 'streetsData',
+            }
+        },
+        { $unwind: '$streetsData' },
+        {
+          $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              // pipeline: [
+              //     { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
+              // ],
+              as: 'orderData',
+          }
+      },
+      // { $unwind: '$orderData' },
+      {
+        $project: {
+          OrderId:1,
+          shopId:1,
+          date:1,
+          time:1,
+          OrderId:1,
+          deliveryExecutiveId:1,
+          streetName: '$streetsData.street',
+          // Qty: "$orderData.Qty",
+          type: '$shopData.type',
+          // product:1,
+          totalItems: { $size: '$orderData' },
+
+        }
+      },
+      
+      { $skip: 10 * page },
+      { $limit: 10 },
+    
+  ]);
+  let total = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{deliveryExecutiveId : { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+
+      }
+    },
+    { $unwind: '$shopData' },
+        {
+            $lookup: {
+                from: 'streets',
+                localField: 'shopData.Strid',
+                foreignField: '_id',
+                as: 'streetsData',
+            }
+        },
+        { $unwind: '$streetsData' },
+        {
+          $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                  { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
+              ],
+              as: 'orderData',
+          }
+      },
+      { $unwind: '$orderData' },
+  ])
+  return {datas: datas, total: total.length};
+}
+
 module.exports = {
   createGroup,
-  updateOrderStatus,
+  // updateOrderStatus,
   getOrderFromGroupById,
 
   getPettyStock,
@@ -300,4 +416,8 @@ module.exports = {
   getstatus,
   getBillDetails,
   assignOnly,
+
+  orderPicked,
+
+  getDeliveryOrderSeparate,
 };
