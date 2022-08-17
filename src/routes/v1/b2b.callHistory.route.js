@@ -13,7 +13,7 @@ router.route('/update/StatusCall/:id').put(callHistoryController.updateStatuscal
 router.route('/getCallCount/:id').get(callHistoryController.getById);
 router.route('/createByOwner/shop').post(callHistoryController.createShopByOwner);
 router.route('/callHistory/report/callingStatus').get(callHistoryController.callingStatusreport);
-// router.route('/craeteCallStatus').post(callHistoryController.createcallHistoryWithTypes);s
+// router.route('/craeteCallStatus').post(callHistoryController.createcallHistoryWithTypes);
 router.route('/craeteCallStatus').post(authorization, callHistoryController.createcallHistoryWithTypes);
 router.route('/updateOrderedStatus/:id').put(callHistoryController.updateOrderedStatus);
 router.route('/oncallcheck').get(authorization, callHistoryController.getOncallfromshops);
@@ -23,4 +23,7 @@ router.route('/getshop/bystatus/:status').get(callHistoryController.getshopsOrde
 router.route('/getcallhistory/lastfivedays/:id').get(callHistoryController.getcallHistorylastFivedays);
 router.route('/getacceptDeclined/:status/:date/:page').get(authorization, callHistoryController.getacceptDeclined);
 router.route('/reset/callingStatus').get(callHistoryController.resethistory);
+router.route('/previous/callback/reshedule').get(callHistoryController.previouscallBackAnd_Reshedule);
+router.route('/oncallshops').get(callHistoryController.getOncallShops);
+router.route('/oncall/status/Byuser').get(authorization, callHistoryController.oncallstatusByUser);
 module.exports = router;

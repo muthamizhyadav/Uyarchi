@@ -17,9 +17,9 @@ const createCallHistory = async (body) => {
 
 const createcallHistoryWithType = async (body, userId) => {
   let time = moment().format('HHmmss');
-  let date = moment().format('yyy-MM-DD');
+  let date = moment().format('yyyy-MM-DD');
   let servertime = moment().format('hh:mm a');
-  let serverdate = moment().format('DD-MM-yyyy');
+  let serverdate = moment().format('yyyy-MM-DD');
 
   const { callStatus, shopId } = body;
   let sort;
@@ -43,13 +43,14 @@ const createcallHistoryWithType = async (body, userId) => {
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
   if (callStatus != '') {
-    if (shopdata.callingStatus != 'accept') {
+    if (callStatus != 'accept') {
       await Shop.findByIdAndUpdate(
         { _id: shopId },
         { callingStatus: callStatus, sortdate: date, sorttime: time, historydate: currentdate, callingStatusSort: sort },
         { new: true }
       );
-      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, historydate: currentdate });
+    } else {
+      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatusSort: sort, historydate: currentdate });
     }
   }
   let callHistory = await callHistoryModel.create(values);
@@ -66,13 +67,19 @@ const callingStatusreport = async () => {
   let callbackCount = await Shop.find({ callingStatus: 'callback', historydate: serverdate }).count();
   let rescheduleCount = await Shop.find({ callingStatus: 'reschedule', historydate: serverdate }).count();
   let pendingCount = await Shop.find({ callingStatus: 'Pending' }).count();
+  let oncall = await Shop.find({ callingStatus: 'On Call' }).count();
   let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate }).count();
+  let oldcallbackCount = await Shop.find({ callingStatus: 'callback', historydate: { $ne: serverdate } }).count();
+  let oldrescheduleCount = await Shop.find({ callingStatus: 'reschedule', historydate: { $ne: serverdate } }).count();
   return {
     acceptCount: acceptCount,
     callbackCount: callbackCount,
     rescheduleCount: rescheduleCount,
     pendingCount: pendingCount,
     declinedCount: declinedCount,
+    Oncall: oncall,
+    oldcallbackCount: oldcallbackCount,
+    oldrescheduleCount: oldrescheduleCount,
   };
 };
 
@@ -139,7 +146,7 @@ const getShop = async (date, status, page, userId, userRole) => {
   if (status == 'null') {
     match = [{ active: { $eq: true } }];
   } else {
-    match = [{ callingStatus: { $in: [status, 'On Call'] } }];
+    match = [{ callingStatus: { $in: [status] } }];
   }
   let values = await Shop.aggregate([
     {
@@ -383,10 +390,66 @@ const checkvisitOncallStatus = async (id) => {
 };
 
 const getcallHistorylastFivedays = async (id) => {
-  let values = await callHistoryModel.find({ shopId: id }).sort({ sortTime: -1 }).limit(5);
-  return values;
-};
+  let shops = await Shop.findById(id);
+  // let values = await callHistoryModel.find({ shopId: id }).sort({ sortTime: -1 }).limit(10);
+  let values = await callHistoryModel.aggregate([
+    {
+      $match: {
+        $and: [{ shopId: { $eq: id } }],
+      },
+    },
+    {
+      $sort: { date: -1, historytime: -1 },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'data',
+      },
+    },
+    {
+      $unwind: '$data',
+    },
 
+    {
+      $limit: 10,
+    },
+    {
+      $project: {
+        _id: 1,
+        active: 1,
+        archive: 1,
+        status: 1,
+        noOfCalls: 1,
+        shopId: 1,
+        selectStatus: 1,
+        date: 1,
+        time: 1,
+        historytime: 1,
+        reason: 1,
+        callStatus: 1,
+        userName: '$data.name',
+        userContact: '$data.phoneNumber',
+        shopName: '$shops.SName',
+        callingStatus: '$shops.callingStatus',
+      },
+    },
+  ]);
+  return { values: values, shops: shops.SName };
+};
 const getshopsOrderWise = async (status) => {
   let serverdate = moment().format('DD-MM-yyyy');
   let pending = await Shop.find({ callingStatus: 'Pending' });
@@ -425,21 +488,22 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
   if (status == 'null') {
     match = [{ active: { $eq: true } }];
   } else {
-    match = [{ callingStatus: { $in: [status, 'On Call'] } }];
+    match = [{ callingStatus: { $in: [status] } }];
   }
   let values = await Shop.aggregate([
-    // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $match: {
         $and: match,
       },
     },
+    // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
         localField: '_id',
         foreignField: 'shopId',
         pipeline: [
+          // { $sort: { date: -1, historytime: -1 } },
           {
             $match: {
               date: { $eq: date },
@@ -504,6 +568,8 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
         status: 1,
         Uid: 1,
         shopData: 1,
+        filterDate: 1,
+        sortdate:1,
         // shopclones: '$shopclones',
         shopData: '$shopData',
         shoptypeName: '$shoplists.shopList',
@@ -578,8 +644,32 @@ const resethistory = async () => {
   let currentDate = moment().format('DD-MM-yyyy');
   let today = '';
   today = currentDate;
-  await Shop.updateMany({ historydate: { $ne: today } }, { $set: { callingStatus: 'Pending', callingStatusSort: 0 } });
+  await Shop.updateMany(
+    { historydate: { $ne: today }, callingStatus: { $ne: 'callback' }, callingStatus: { $ne: 'reshedule' } },
+    { $set: { callingStatus: 'Pending', callingStatusSort: 0 } }
+  );
   return { dayfresh: true };
+};
+
+const previouscallBackAnd_Reshedule = async () => {
+  let currentDate = moment().format('DD-MM-yyyy');
+  let callback = await Shop.find({ callingStatus: 'callback', date: { $ne: currentDate } });
+  let reschedule = await Shop.find({ callingStatus: 'reshedule', date: { $ne: currentDate } });
+  return { callback: callback, reschedule: reschedule };
+};
+
+const getOncallShops = async () => {
+  let oncall = await Shop.find({ callingStatus: 'On Call' });
+  return oncall;
+};
+
+const oncallstatusByUser = async (userId) => {
+  let oncall = await Shop.find({ callingStatus: 'On Call', callingUserId: userId });
+  if (oncall.length == 0) {
+    return { status: true };
+  } else {
+    return { status: false };
+  }
 };
 
 module.exports = {
@@ -600,4 +690,7 @@ module.exports = {
   getcallHistorylastFivedays,
   getacceptDeclined,
   resethistory,
+  previouscallBackAnd_Reshedule,
+  getOncallShops,
+  oncallstatusByUser,
 };

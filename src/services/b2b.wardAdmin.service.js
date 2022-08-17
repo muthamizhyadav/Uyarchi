@@ -165,20 +165,20 @@ const updateRejected = async (id, status) => {
 const wardloadExecutive = async (page) => {
   let data = await ShopOrderClone.aggregate([
     {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId', //Uid
-        foreignField: '_id', //Uid
-        as: 'b2bshopclonesData',
-      },
-    },
-    {
-      $unwind: '$b2bshopclonesData',
-    },
-    {
       $match: {
-        $or: [{ status: { $eq: 'Approved' } }, { status: { $eq: 'Modified' } }, { status: { $eq: 'Packed' } }],
+        $or: [{ status: { $eq: 'Approved' } }, { status: { $eq: 'Modified' } }, { status: { $eq: 'Packed' } }, { status: { $eq: 'Billed' } },{ status: { $eq: 'Assigned' } }],
       },
+    },
+    {
+      $lookup: {
+        from:'b2bshopclones',
+        localField:'shopId', //Uid
+        foreignField:'_id', //Uid
+        as:'b2bshopclonesData',
+      },
+    },
+    {
+      $unwind:'$b2bshopclonesData',
     },
 
     {
@@ -197,6 +197,11 @@ const wardloadExecutive = async (page) => {
 
 
     let total = await ShopOrderClone.aggregate([
+      {
+        $match: {
+          $or: [{ status: { $eq: 'Approved' } }, { status: { $eq: 'Modified' } }, { status: { $eq: 'Packed' } }, { status: { $eq: 'Billed' } },{ status: { $eq: 'Assigned' } }],
+        },
+      },
         {
             $lookup: {
                 from: 'b2bshopclones',
@@ -208,14 +213,7 @@ const wardloadExecutive = async (page) => {
         {
             $unwind: '$b2bshopclonesData'
         },
-        {
-
-            $match: {
-                $or: [{ status: { $eq: 'Approved' } }, { status: { $eq: 'Modified' } }, { status: { $eq: 'Packed' } }],
-            }
-        },
-
-        {
+       {
             $project: {
                 shopId: 1,
                 status: 1,

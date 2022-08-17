@@ -111,6 +111,21 @@ const resethistory = catchAsync(async (req, res) => {
   res.send(callhistories);
 });
 
+const previouscallBackAnd_Reshedule = catchAsync(async (req, res) => {
+  const shops = await callHistoryService.previouscallBackAnd_Reshedule();
+  res.send(shops);
+});
+const getOncallShops = catchAsync(async (req, res) => {
+  const shops = await callHistoryService.getOncallShops();
+  res.send(shops);
+});
+
+const oncallstatusByUser = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const shops = await callHistoryService.oncallstatusByUser(userId);
+  res.send(shops);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -130,4 +145,7 @@ module.exports = {
   getcallHistorylastFivedays,
   getacceptDeclined,
   resethistory,
+  previouscallBackAnd_Reshedule,
+  getOncallShops,
+  oncallstatusByUser,
 };

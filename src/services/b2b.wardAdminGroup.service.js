@@ -68,6 +68,20 @@ const orderPicked =async (deliveryExecutiveId) => {
   
   return "success";
 };
+const getById = async (id) => {
+  return wardAdminGroup.findById(id);
+};
+
+
+const updateManageStatus = async (id, updateBody) => {
+  let Manage = await getById(id);
+
+  if (!Manage) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Data not found');
+  }
+  Manage = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return Manage;
+};
 
 // GET ORDER DETAILS FROM GROUP BY ID
 
@@ -300,6 +314,7 @@ const assignOnly = async(page)=>{
   return values;
 }
 
+
 const getDeliveryOrderSeparate = async (id, page)=>{
   let datas = await ShopOrderClone.aggregate([
     {
@@ -398,6 +413,63 @@ const getDeliveryOrderSeparate = async (id, page)=>{
       { $unwind: '$orderData' },
   ])
   return {datas: datas, total: total.length};
+};
+
+
+const groupIdClick = async(id)=>{
+  let data = []
+  let getDetails = await wardAdminGroup.findById(id);
+  getDetails.Orderdatas.forEach((e) =>{
+ 
+    data.push(e)
+  })
+  return data;
+}
+
+const orderIdClickGetProduct = async(id)=>{
+  console.log(id)
+
+  let getDetails = await ProductorderClone.aggregate([
+    {
+      $match: {
+        $and: [{ orderId: { $eq: id } }],
+      },
+    },
+    // {
+    //   $lookup: {
+    //     from: 'productorderclones',
+    //     localField: '_id',
+    //     foreignField: 'orderId',
+    //     as: 'productorderclonesData',
+    //   }
+    // },
+    // {
+    //   $unwind: '$productorderclonesData'
+    // },
+    {
+      $lookup: {
+        from: 'products',
+        localField:'productid',
+        foreignField: '_id',
+        as: 'productsData',
+      }
+    },
+    {
+      $unwind: '$productsData'
+    },
+    {
+      $project: {
+        quantity: 1,
+        priceperkg: 1,
+        product:'$productsData.productTitle',
+        productId:'$productsData._id',
+      }
+    }
+
+  ]);
+
+  return getDetails;
+
 }
 
 module.exports = {
@@ -417,7 +489,13 @@ module.exports = {
   getBillDetails,
   assignOnly,
 
+
   orderPicked,
 
   getDeliveryOrderSeparate,
+
+  updateManageStatus,
+  groupIdClick,
+  orderIdClickGetProduct,
+
 };

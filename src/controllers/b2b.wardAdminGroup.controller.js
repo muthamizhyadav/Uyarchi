@@ -46,6 +46,11 @@ const getproductDetails = catchAsync(async (req, res) => {
   res.send(details);
 });
 
+const updateManageStatus = catchAsync(async (req, res) => {
+  const data = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  res.send(data);
+});
+
 // const getDeliveryDetails = catchAsync(async (req, res) => {
 //   const deliveryDetails = await wardAdminGroupService.getDeliveryDetails(req.params.page);
 //   res.send(deliveryDetails);
@@ -76,13 +81,25 @@ const getAssigned = catchAsync(async (req, res) => {
   res.send(details)
 });
 
+
 const getDeliveryOrderSeparate = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.getDeliveryOrderSeparate(req.params.id, req.params.page);
   res.send(details);
 })
 
 
+const groupIdClick = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.groupIdClick(req.params.id);
+  res.send(details)
+});
 
+
+
+const orderIdClickGetProduct = catchAsync(async (req, res) => {
+  console.log(req.params.id)
+  const details = await wardAdminGroupService.orderIdClickGetProduct(req.params.id);
+  res.send(details)
+});
 
 
 
@@ -109,5 +126,11 @@ module.exports = {
 
   getAssigned,
 
+
   getDeliveryOrderSeparate,
+
+  updateManageStatus,
+  groupIdClick,
+  orderIdClickGetProduct,
+
 };

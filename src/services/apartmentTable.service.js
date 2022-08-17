@@ -88,10 +88,10 @@ const WardApi2 = async (longi, lati, data1) => {
       const first2Num = first2Str;
       const second2Num = second2Str;
       if (first2Num == latitude && second2Num == longitude) {
-        // console.log(second2Num)
-        // console.log(Number(longitude))
-        // console.log(first2Num)
-        //  console.log(Number(latitude))
+        console.log(second2Num)
+        console.log(Number(longitude))
+        console.log(first2Num)
+         console.log(Number(latitude))
         data = response.data.features[i].properties;
         break;
       }
