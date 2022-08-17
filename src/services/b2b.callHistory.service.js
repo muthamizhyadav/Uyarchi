@@ -491,12 +491,12 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
     match = [{ callingStatus: { $in: [status] } }];
   }
   let values = await Shop.aggregate([
-    // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $match: {
         $and: match,
       },
     },
+    // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
@@ -568,6 +568,8 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
         status: 1,
         Uid: 1,
         shopData: 1,
+        filterDate: 1,
+        sortdate:1,
         // shopclones: '$shopclones',
         shopData: '$shopData',
         shoptypeName: '$shoplists.shopList',
