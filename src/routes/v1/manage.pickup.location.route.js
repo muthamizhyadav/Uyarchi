@@ -5,7 +5,7 @@ const pickup = require('../../middlewares/pickup');
 
 router.route('/').post(pickup.array('photoCapture'), managePickupController.createManagePickupLocation);
 
-router.route('/getAll').get(managePickupController.getAllManagepickup);
+router.route('/getAll/:page').get(managePickupController.getAllManagepickup);
 router.route('/:id').get(managePickupController.getManagePickupById);
 
 module.exports = router;

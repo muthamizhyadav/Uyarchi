@@ -16,14 +16,8 @@ const createManagePickupLocation = async (body) => {
   return createpickuplocations;
 };
 
-const getAllManagepickup = async () => {
-
-  let values = await PickupLocation.aggregate([
-    // { $skip: page },
-    {
-      $limit: 10,
-    },
-  ]);
+const getAllManagepickup = async (page) => {
+  let values = await PickupLocation.aggregate([{ $skip: 10 * page }, { $limit: 10 }]);
   let total = await PickupLocation.find().count();
   return { values: values, total: total };
 };
