@@ -503,7 +503,7 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
         localField: '_id',
         foreignField: 'shopId',
         pipeline: [
-          // { $sort: { date: -1, historytime: -1 } },
+          { $sort: { date: -1, historytime: -1 } },
           {
             $match: {
               date: { $eq: date },
