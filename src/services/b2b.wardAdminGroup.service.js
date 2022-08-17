@@ -42,16 +42,16 @@ const createGroup = async (body) => {
   return wardAdminGroupcreate;
 };
 
-// const updateOrderStatus = async (id, status) => {
-//   let deliveryStatus = await wardAdminGroup.findById(id);
-//   console.log(deliveryStatus);
-//   if (!deliveryStatus) {
-//     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
-//   }
-//   deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ deliveryExecutiveId: id }, { status: status }, { new: true });
-//   console.log(deliveryStatus);
-//   return deliveryStatus;
-// };
+const updateOrderStatus = async (id, status) => {
+  let deliveryStatus = await ShopOrderClone.findById(id);
+  console.log(deliveryStatus);
+  if (!deliveryStatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
+  console.log(deliveryStatus);
+  return deliveryStatus;
+};
 
 const orderPicked =async (deliveryExecutiveId) => {
   let orderPicked = await ShopOrderClone.find({deliveryExecutiveId:deliveryExecutiveId});
@@ -497,5 +497,8 @@ module.exports = {
   updateManageStatus,
   groupIdClick,
   orderIdClickGetProduct,
+
+
+  updateOrderStatus,
 
 };
