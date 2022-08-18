@@ -42,18 +42,14 @@ const createcallHistoryWithType = async (body, userId) => {
   let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
-  if (callStatus != '') {
-    if (shopdata.historydate != currentdate || !shopdata.historydate) {
-      await Shop.findByIdAndUpdate(
-        { _id: shopId },
-        { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort },
-        { new: true }
-      );
-      await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
-    } else {
-      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatusSort: sort, historydate: currentdate });
-    }
-  }
+
+  await Shop.findByIdAndUpdate(
+    { _id: shopId },
+    { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort },
+    { new: true }
+  );
+  await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
+
   let callHistory = await callHistoryModel.create(values);
   return callHistory;
 };
@@ -498,7 +494,7 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
         $and: match,
       },
     },
-    { $sort: {  historydate: -1, sorttime: -1 } },
+    { $sort: { historydate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
