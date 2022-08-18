@@ -42,17 +42,14 @@ const createcallHistoryWithType = async (body, userId) => {
   let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
-  if (callStatus != '') {
-    if (callStatus != 'accept') {
-      await Shop.findByIdAndUpdate(
-        { _id: shopId },
-        { callingStatus: callStatus, sortdate: date, sorttime: time, historydate: currentdate, callingStatusSort: sort },
-        { new: true }
-      );
-    } else {
-      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatusSort: sort, historydate: currentdate });
-    }
-  }
+
+  await Shop.findByIdAndUpdate(
+    { _id: shopId },
+    { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort },
+    { new: true }
+  );
+  await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
+
   let callHistory = await callHistoryModel.create(values);
   return callHistory;
 };
@@ -65,7 +62,7 @@ const callingStatusreport = async () => {
   let serverdate = moment().format('DD-MM-yyyy');
   let acceptCount = await Shop.find({ callingStatus: 'accept', historydate: serverdate }).count();
   let callbackCount = await Shop.find({ callingStatus: 'callback', historydate: serverdate }).count();
-  let rescheduleCount = await Shop.find({ callingStatus: 'reschedule', historydate: serverdate }).count();
+  let rescheduleCount = await Shop.find({ callingStatus: 'reschedule' }).count();
   let pendingCount = await Shop.find({ callingStatus: 'Pending' }).count();
   let oncall = await Shop.find({ callingStatus: 'On Call' }).count();
   let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate }).count();
@@ -141,20 +138,30 @@ const getById = async (id) => {
   return historys;
 };
 
-const getShop = async (date, status, page, userId, userRole) => {
+const getShop = async (date, status, key, page, userId, userRole) => {
   let match;
+  ``;
   if (status == 'null') {
     match = [{ active: { $eq: true } }];
   } else {
     match = [{ callingStatus: { $in: [status] } }];
   }
+  let keys = { active: { $eq: true } };
+  if (key != 'null') {
+    keys = { SName: { $regex: key, $options: 'i' } };
+  }
   let values = await Shop.aggregate([
+    {
+      $match: {
+        $and: [keys],
+      },
+    },
     {
       $match: {
         $and: match,
       },
     },
-    { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
+    { $sort: { historydate: -1, sorttime: -1 } },
     {
       $match: {
         callingStatus: { $nin: ['accept', 'declined'] },
@@ -176,6 +183,7 @@ const getShop = async (date, status, page, userId, userRole) => {
               date: { $eq: date },
             },
           },
+          // { $sort: { date: -1, time: -1 } },
         ],
         as: 'shopData',
       },
@@ -248,74 +256,89 @@ const getShop = async (date, status, page, userId, userRole) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
+  // let total;
+  // if (status == 'null') {
+  //   let declined = await Shop.find({ callingStatus: { $eq: 'declined' } }).count();
+  //   let accept = await Shop.find({ callingStatus: { $eq: 'accept' } }).count();
+  //   let tot = await Shop.find().count();
 
-  // let total = await Shop.aggregate([
-  //   {
-  //     $match: {
-  //       $and: match,
-  //     },
-  //   },
-  // {
-  //   $match: {
-  //     callingStatus: { $nin: ['accept', 'declined'] },
-  //   },
-  // },
-  // {
-  //   $lookup: {
-  //     from: 'callhistories',
-  //     localField: '_id',
-  //     foreignField: 'shopId',
-  //     pipeline: [
-  //       {
-  //         $match: {
-  //           date: { $eq: date },
-  //         },
-  //       },
-  //     ],
-  //     as: 'shopData',
-  //   },
-  // },
-  // {
-  //   $lookup: {
-  //     from: 'b2bshopclones',
-  //     localField: 'shopData.shopId',
-  //     foreignField: '_id',
-  //     // pipeline: [
-  //     //   {
-  //     //     $match: {
-  //     //       $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
-  //     //     },
-  //     //   },
-  //     // ],
-  //     as: 'shopclones',
-  //   },
-  // },
-  // // {
-  // //   $unwind: '$shopclones',
-  // // },
-  // {
-  //   $lookup: {
-  //     from: 'shoplists',
-  //     localField: 'SType',
-  //     foreignField: '_id',
-  //     as: 'shoplists',
-  //   },
-  // },
-  // {
-  //   $unwind: '$shoplists',
-  // },
-  // ]);
-  let total;
-  if (status == 'null') {
-    total = await Shop.find().count();
-  }
-  if (status != 'null') {
-    total = await Shop.find({ callingStatus: status }).count();
-  }
-  console.log(total);
+  //   subt = declined + accept;
+  //   total = tot - subt;
+  // }
+  // if (status != 'null') {
+  //   total = await Shop.find({ callingStatus: status }).count();
+  // }
+  let total = await Shop.aggregate([
+    {
+      $match: {
+        $and: [keys],
+      },
+    },
+    {
+      $match: {
+        $and: match,
+      },
+    },
+    { $sort: { historydate: -1, sorttime: -1 } },
+    {
+      $match: {
+        callingStatus: { $nin: ['accept', 'declined'] },
+      },
+    },
+    // {
+    //   $match: {
+    //     callingStatus: { $in: ['On Call'] },
+    //   },
+    // },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              date: { $eq: date },
+            },
+          },
+          // { $sort: { date: -1, time: -1 } },
+        ],
+        as: 'shopData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopData.shopId',
+        foreignField: '_id',
+        // pipeline: [
+        //   {
+        //     $match: {
+        //       $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
+        //     },
+        //   },
+        // ],
+        as: 'shopclones',
+      },
+    },
+    // {
+    //   $unwind: '$shopclones',
+    // },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplists',
+      },
+    },
+    {
+      $unwind: '$shoplists',
+    },
+  ]);
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
-  return { values: values, total: total, RoleName: role.roleName, userName: user.name };
+  return { values: values, total: total.length, RoleName: role.roleName, userName: user.name };
 };
 
 const updateCallingStatus = async (id, updatebody) => {
@@ -483,27 +506,36 @@ const getshopsOrderWise = async (status) => {
   }
 };
 
-const getacceptDeclined = async (status, date, page, userId, userRole) => {
+const getacceptDeclined = async (status, date, key, page, userId, userRole) => {
   let match;
   if (status == 'null') {
     match = [{ active: { $eq: true } }];
   } else {
     match = [{ callingStatus: { $in: [status] } }];
   }
+  let keys = { active: { $eq: true } };
+  if (key != 'null') {
+    keys = { SName: { $regex: key, $options: 'i' } };
+  }
   let values = await Shop.aggregate([
+    {
+      $match: {
+        $and: [keys],
+      },
+    },
     {
       $match: {
         $and: match,
       },
     },
-    // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
+    { $sort: { historydate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
         localField: '_id',
         foreignField: 'shopId',
         pipeline: [
-          { $sort: { date: -1, historytime: -1 } },
+          { $sort: { historytime: -1 } },
           {
             $match: {
               date: { $eq: date },
@@ -545,7 +577,6 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
     {
       $project: {
         _id: 1,
-        _id: 1,
         photoCapture: 1,
         callingStatus: 1,
         callingStatusSort: 1,
@@ -569,7 +600,7 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
         Uid: 1,
         shopData: 1,
         filterDate: 1,
-        sortdate:1,
+        sortdate: 1,
         // shopclones: '$shopclones',
         shopData: '$shopData',
         shoptypeName: '$shoplists.shopList',
@@ -587,15 +618,22 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
   let total = await Shop.aggregate([
     {
       $match: {
+        $and: [keys],
+      },
+    },
+    {
+      $match: {
         $and: match,
       },
     },
+    { $sort: { historydate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
         localField: '_id',
         foreignField: 'shopId',
         pipeline: [
+          { $sort: { historytime: -1 } },
           {
             $match: {
               date: { $eq: date },
@@ -645,10 +683,10 @@ const resethistory = async () => {
   let today = '';
   today = currentDate;
   await Shop.updateMany(
-    { historydate: { $ne: today }, callingStatus: { $ne: 'callback' }, callingStatus: { $ne: 'reshedule' } },
-    { $set: { callingStatus: 'Pending', callingStatusSort: 0 } }
+    { sortdate: { $ne: today }, callingStatus: { $ne: 'callback' }, callingStatus: { $ne: 'reshedule' } },
+    { $set: { callingStatus: 'Pending', callingStatusSort: 0, sortdate: currentDate } }
   );
-  return { dayfresh: true };
+  return { dayfresh: 'Reset Successfully' };
 };
 
 const previouscallBackAnd_Reshedule = async () => {

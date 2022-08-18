@@ -450,7 +450,7 @@ const streetPagination = async (key, id) => {
 
 const getStreetByWardId = async (wardId) => {
   console.log(wardId);
-  const street = await Street.find({ wardId });
+  const street = await Street.find({ wardId }).sort({ street: 1 });
   if (!street === null) {
     throw new ApiError(httpStatus.NOT_FOUND, 'WardId Is Incorrect');
   }

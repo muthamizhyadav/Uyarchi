@@ -28,6 +28,7 @@ router
   .get(b2bShopCloneController.getshopWardStreetNamesWithAggregation_withfilter_daily_all);
 
 router
+
   .route('/:id')
   .get(b2bShopCloneController.getB2BShopById)
   .put(b2bShopCloneController.updateB2BShopById)
@@ -73,4 +74,7 @@ router.route('/update/phone/approved/:id').put(b2bShopCloneController.updateShop
 router.route('/update/kyc/approved/:id').put(b2bShopCloneController.updateShopStatuskycapproved);
 router.route('/getshopData/:id').get(b2bShopCloneController.getshopDataById);
 router.route('/deleteshop/permenent/:id').delete(b2bShopCloneController.perdeleteShopById);
+// shop search by shop Name
+
+router.route('/shopSearch/:key').get(b2bShopCloneController.searchShops);
 module.exports = router;

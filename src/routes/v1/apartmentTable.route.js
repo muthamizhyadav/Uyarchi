@@ -50,5 +50,7 @@ router.route('/data/:location').get(apartmentController.WardApi);
 router.route('/data/:longi/:lati/:data').get(apartmentController.WardNoApi2);
 router.route('/data/try/catch').get(apartmentController.getWardDataForDB);
 router.route('/streetSearch/:searchArea').get(apartmentController.getAllSearchApi);
-router.route('/map/:searching').get(apartmentController.getAllSearchApi2);
+router.route('/wardApi/:location').get(apartmentController.wardApiWardApi);
+router.route('/getAllLatLang/AllStreet').get(apartmentController.getAllLATLONG);
+
 module.exports = router;

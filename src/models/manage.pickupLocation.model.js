@@ -37,6 +37,12 @@ const managepickupLocationSchema = new mongoose.Schema({
   langitude: {
     type: String,
   },
+  date: {
+    type: String,
+  },
+  time: {
+    type: String,
+  },
   active: {
     type: Boolean,
     default: true,
