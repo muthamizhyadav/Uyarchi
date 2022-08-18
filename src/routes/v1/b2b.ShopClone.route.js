@@ -28,6 +28,7 @@ router
   .get(b2bShopCloneController.getshopWardStreetNamesWithAggregation_withfilter_daily_all);
 
 router
+
   .route('/:id')
   .get(b2bShopCloneController.getB2BShopById)
   .put(b2bShopCloneController.updateB2BShopById)

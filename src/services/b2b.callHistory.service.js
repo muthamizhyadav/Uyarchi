@@ -43,12 +43,13 @@ const createcallHistoryWithType = async (body, userId) => {
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
   if (callStatus != '') {
-    if (callStatus != 'accept') {
+    if (shopdata.historydate != currentdate || !shopdata.historydate) {
       await Shop.findByIdAndUpdate(
         { _id: shopId },
         { callingStatus: callStatus, sortdate: date, sorttime: time, historydate: currentdate, callingStatusSort: sort },
         { new: true }
       );
+      await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
     } else {
       await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatusSort: sort, historydate: currentdate });
     }
@@ -154,7 +155,7 @@ const getShop = async (date, status, page, userId, userRole) => {
         $and: match,
       },
     },
-    { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
+    { $sort: { sortdate: -1, sorttime: -1 } },
     {
       $match: {
         callingStatus: { $nin: ['accept', 'declined'] },
@@ -176,7 +177,7 @@ const getShop = async (date, status, page, userId, userRole) => {
               date: { $eq: date },
             },
           },
-          { $sort: {date: -1, time: -1 } },
+          // { $sort: { date: -1, time: -1 } },
         ],
         as: 'shopData',
       },
@@ -497,14 +498,14 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
         $and: match,
       },
     },
-    { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
+    // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
         localField: '_id',
         foreignField: 'shopId',
         pipeline: [
-          { $sort: { date: -1, historytime: -1 } },
+          { $sort: { historytime: -1 } },
           {
             $match: {
               date: { $eq: date },
@@ -545,7 +546,6 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
     },
     {
       $project: {
-        _id: 1,
         _id: 1,
         photoCapture: 1,
         callingStatus: 1,
@@ -646,8 +646,8 @@ const resethistory = async () => {
   let today = '';
   today = currentDate;
   await Shop.updateMany(
-    { historydate: { $ne: today }, callingStatus: { $ne: 'callback' }, callingStatus: { $ne: 'reshedule' } },
-    { $set: { callingStatus: 'Pending', callingStatusSort: 0 } }
+    { sortdate: { $ne: today }, callingStatus: { $ne: 'callback' }, callingStatus: { $ne: 'reshedule' } },
+    { $set: { callingStatus: 'Pending', callingStatusSort: 0, sortdate: currentDate } }
   );
   return { dayfresh: 'Reset Successfully' };
 };
