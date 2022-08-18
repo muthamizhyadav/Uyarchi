@@ -122,6 +122,16 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   payType: {
     type: String,
   },
+  billNo: {
+    type: String,
+  },
+  billTime: {
+    type: String,
+  },
+  billDate: {
+    type: String,
+  },
+
   
 });
 

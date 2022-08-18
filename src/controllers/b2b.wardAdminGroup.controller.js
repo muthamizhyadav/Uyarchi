@@ -93,8 +93,6 @@ const groupIdClick = catchAsync(async (req, res) => {
   res.send(details)
 });
 
-
-
 const orderIdClickGetProduct = catchAsync(async (req, res) => {
   console.log(req.params.id)
   const details = await wardAdminGroupService.orderIdClickGetProduct(req.params.id);
@@ -106,6 +104,16 @@ const getDetailsAfterDeliveryCompletion = catchAsync(async (req, res) => {
   res.send(getdetails);
 });
 
+
+const getBillDetailsPerOrder = catchAsync(async (req, res) => {
+  const getdetails = await wardAdminGroupService.getBillDetailsPerOrder(req.params.id);
+  res.send(getdetails);
+});
+
+// const createBillNo = catchAsync(async (req, res) => {
+//   const billNo = await wardAdminGroupService.createBillNo(req.params.id);
+//   res.send(billNo);
+// })
 
 
 module.exports = {
@@ -139,5 +147,8 @@ module.exports = {
   orderIdClickGetProduct,
 
   getDetailsAfterDeliveryCompletion,
+  getBillDetailsPerOrder,
+
+  // createBillNo,
 
 };
