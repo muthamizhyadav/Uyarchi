@@ -35,6 +35,7 @@ const getAllPage = catchAsync(async (req, res) => {
   const call = await callHistoryService.getShop(
     req.params.date,
     req.params.status,
+    req.params.key,
     req.params.page,
     userId,
     userRole

@@ -138,14 +138,23 @@ const getById = async (id) => {
   return historys;
 };
 
-const getShop = async (date, status, page, userId, userRole) => {
+const getShop = async (date, status, key, page, userId, userRole) => {
   let match;
   if (status == 'null') {
     match = [{ active: { $eq: true } }];
   } else {
     match = [{ callingStatus: { $in: [status] } }];
   }
+  let keys = { active: { $eq: true } };
+  if(keys != 'null'){
+    keys = { SName: { $regex: key, $options: 'i' } };
+  }
   let values = await Shop.aggregate([
+    {
+      $match: {
+        $and: [keys],
+      },
+    },
     {
       $match: {
         $and: match,
@@ -247,7 +256,6 @@ const getShop = async (date, status, page, userId, userRole) => {
     { $limit: 10 },
   ]);
   let total;
-  console.log(status);
   if (status == 'null') {
     let declined = await Shop.find({ callingStatus: { $eq: 'declined' } }).count();
     let accept = await Shop.find({ callingStatus: { $eq: 'accept' } }).count();
