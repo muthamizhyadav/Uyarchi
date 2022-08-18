@@ -106,6 +106,7 @@ const getacceptDeclined = catchAsync(async (req, res) => {
   const callhistories = await callHistoryService.getacceptDeclined(
     req.params.status,
     req.params.date,
+    req.params.key,
     req.params.page,
     userId,
     userRole

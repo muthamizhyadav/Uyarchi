@@ -139,14 +139,15 @@ const getById = async (id) => {
 };
 
 const getShop = async (date, status, key, page, userId, userRole) => {
-  let match;``
+  let match;
+  ``;
   if (status == 'null') {
     match = [{ active: { $eq: true } }];
   } else {
     match = [{ callingStatus: { $in: [status] } }];
   }
   let keys = { active: { $eq: true } };
-  if(key != 'null'){
+  if (key != 'null') {
     keys = { SName: { $regex: key, $options: 'i' } };
   }
   let values = await Shop.aggregate([
@@ -256,7 +257,6 @@ const getShop = async (date, status, key, page, userId, userRole) => {
     { $limit: 10 },
   ]);
   let total;
-  if(key)
   if (status == 'null') {
     let declined = await Shop.find({ callingStatus: { $eq: 'declined' } }).count();
     let accept = await Shop.find({ callingStatus: { $eq: 'accept' } }).count();
@@ -438,14 +438,23 @@ const getshopsOrderWise = async (status) => {
   }
 };
 
-const getacceptDeclined = async (status, date, page, userId, userRole) => {
+const getacceptDeclined = async (status, date, key, page, userId, userRole) => {
   let match;
   if (status == 'null') {
     match = [{ active: { $eq: true } }];
   } else {
     match = [{ callingStatus: { $in: [status] } }];
   }
+  let keys = { active: { $eq: true } };
+  if (key != 'null') {
+    keys = { SName: { $regex: key, $options: 'i' } };
+  }
   let values = await Shop.aggregate([
+    {
+      $match: {
+        $and: [keys],
+      },
+    },
     {
       $match: {
         $and: match,
