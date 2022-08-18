@@ -171,6 +171,7 @@ const getShop = async (date, status, page, userId, userRole) => {
         localField: '_id',
         foreignField: 'shopId',
         pipeline: [
+          { $sort: {date: -1, time: -1 } },
           {
             $match: {
               date: { $eq: date },
