@@ -171,12 +171,12 @@ const getShop = async (date, status, page, userId, userRole) => {
         localField: '_id',
         foreignField: 'shopId',
         pipeline: [
-          { $sort: {date: -1, time: -1 } },
           {
             $match: {
               date: { $eq: date },
             },
           },
+          { $sort: {date: -1, time: -1 } },
         ],
         as: 'shopData',
       },
@@ -497,7 +497,7 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
         $and: match,
       },
     },
-    // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
+    { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
