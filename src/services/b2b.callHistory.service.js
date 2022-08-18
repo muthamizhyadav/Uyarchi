@@ -246,63 +246,6 @@ const getShop = async (date, status, page, userId, userRole) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-
-  // let total = await Shop.aggregate([
-  //   {
-  //     $match: {
-  //       $and: match,
-  //     },
-  //   },
-  // {
-  //   $match: {
-  //     callingStatus: { $nin: ['accept', 'declined'] },
-  //   },
-  // },
-  // {
-  //   $lookup: {
-  //     from: 'callhistories',
-  //     localField: '_id',
-  //     foreignField: 'shopId',
-  //     pipeline: [
-  //       {
-  //         $match: {
-  //           date: { $eq: date },
-  //         },
-  //       },
-  //     ],
-  //     as: 'shopData',
-  //   },
-  // },
-  // {
-  //   $lookup: {
-  //     from: 'b2bshopclones',
-  //     localField: 'shopData.shopId',
-  //     foreignField: '_id',
-  //     // pipeline: [
-  //     //   {
-  //     //     $match: {
-  //     //       $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
-  //     //     },
-  //     //   },
-  //     // ],
-  //     as: 'shopclones',
-  //   },
-  // },
-  // // {
-  // //   $unwind: '$shopclones',
-  // // },
-  // {
-  //   $lookup: {
-  //     from: 'shoplists',
-  //     localField: 'SType',
-  //     foreignField: '_id',
-  //     as: 'shoplists',
-  //   },
-  // },
-  // {
-  //   $unwind: '$shoplists',
-  // },
-  // ]);
   let total;
   console.log(status);
   if (status == 'null') {
@@ -316,7 +259,6 @@ const getShop = async (date, status, page, userId, userRole) => {
   if (status != 'null') {
     total = await Shop.find({ callingStatus: status }).count();
   }
-  console.log(total);
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
   return { values: values, total: total, RoleName: role.roleName, userName: user.name };
