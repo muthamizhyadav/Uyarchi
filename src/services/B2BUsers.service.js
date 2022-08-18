@@ -8,14 +8,10 @@ const Textlocal = require('../config/textLocal');
 const Verfy = require('../config/OtpVerify');
 const WardAssign = require('../models/wardAssign.model');
 const moment = require('moment');
+
 const createUser = async (userBody) => {
-  // let OTPCODE = Math.floor(1000000 + Math.random() * 9000000);
-  // let password = { password: OTPCODE };
-  // let bodyData = { ...userBody, ...password };
   let value = Users.create(userBody);
-  // if (value) {
-  //   await Textlocal.sendPwd(userBody.phoneNumber, userBody.name, OTPCODE);
-  // }
+
   return value;
 };
 
@@ -130,7 +126,6 @@ const B2bUsersAdminLogin = async (userBody) => {
   console.log(passwor);
   let userName = await Users.findOne({
     phoneNumber: phoneNumber,
-    // userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
     $or: [
       { userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' },
       { userRole: '33a2ff87-400c-4c15-b607-7730a79b49a9' },
@@ -160,12 +155,9 @@ const createMetaUsers = async (userBody) => {
   return user;
 };
 const forgotPassword = async (body) => {
-  // const { phoneNumber } = body;
-  // await Textlocal.Otp(body);
   let users = await Users.findOne({
     phoneNumber: body.mobileNumber,
     active: true,
-    // userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
     $or: [
       { userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' },
       { userRole: '33a2ff87-400c-4c15-b607-7730a79b49a9' },
@@ -182,12 +174,9 @@ const forgotPassword = async (body) => {
   return await Textlocal.Otp(body, users);
 };
 const otpVerfiy = async (body) => {
-  // const { phoneNumber } = body;
-  // await Textlocal.Otp(body);
   let users = await Users.findOne({
     phoneNumber: body.mobileNumber,
     active: true,
-    // userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
     $or: [
       { userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' },
       { userRole: '33a2ff87-400c-4c15-b607-7730a79b49a9' },
@@ -229,6 +218,7 @@ const getForMyAccount = async (userId) => {
         email: 1,
         phoneNumber: 1,
         roleName: '$RoleData.roleName',
+        description: '$RoleData.description',
       },
     },
   ]);
@@ -236,7 +226,9 @@ const getForMyAccount = async (userId) => {
 };
 
 const getsalesExecuteRolesUsers = async () => {
-      let users = await Users.find({ userRole: ['fb0dd028-c608-4caa-a7a9-b700389a098d','719d9f71-8388-4534-9bfe-3f47faed62ac'] });
+  let users = await Users.find({
+    userRole: ['fb0dd028-c608-4caa-a7a9-b700389a098d', '719d9f71-8388-4534-9bfe-3f47faed62ac'],
+  });
   return users;
 };
 
