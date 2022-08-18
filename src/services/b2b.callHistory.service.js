@@ -618,15 +618,22 @@ const getacceptDeclined = async (status, date, key, page, userId, userRole) => {
   let total = await Shop.aggregate([
     {
       $match: {
+        $and: [keys],
+      },
+    },
+    {
+      $match: {
         $and: match,
       },
     },
+    { $sort: { historydate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
         localField: '_id',
         foreignField: 'shopId',
         pipeline: [
+          { $sort: { historytime: -1 } },
           {
             $match: {
               date: { $eq: date },
