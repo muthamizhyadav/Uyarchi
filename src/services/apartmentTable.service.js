@@ -4,6 +4,7 @@ const manageUser = require('../models/manageUser.model');
 const ApiError = require('../utils/ApiError');
 const Street = require('../models/street.model');
 const { Market } = require('../models/market.model');
+const street = require('../models/street.model')
 const axios = require('axios');
 
 const createApartment = async (apartmentBody) => {
@@ -65,6 +66,12 @@ const WardNoApi = async (location) => {
   return response.data;
 };
 
+const WardApi = async (location) => {
+  let response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${location}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`);
+  return response.data;
+};
+
+
 const WardApi2 = async (longi, lati, data1) => {
   let longitude = longi;
   let latitude = lati;
@@ -91,7 +98,7 @@ const WardApi2 = async (longi, lati, data1) => {
         console.log(second2Num)
         console.log(Number(longitude))
         console.log(first2Num)
-         console.log(Number(latitude))
+        console.log(Number(latitude))
         data = response.data.features[i].properties;
         break;
       }
@@ -113,6 +120,36 @@ const streetSearchApi2 = async (searchArea) => {
     `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchArea}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
   );
   return response.data;
+};
+
+const getAllStreetLatLang = async () => {
+  // let count = 0;
+
+  // const data = await street.find().limit(30).skip(1)
+  // data.forEach(async (e) => {
+  //   let streetId = e._id
+  //   let streets = e.street
+  //   let area = e.area
+  //   let t = "tamilnadu"
+  //   let i = "india"
+  //   // let response = await axios.get(
+  //   //   `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${streets, area, t, i}&inputtype=textquery&fields=formatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
+  //   // );
+  //   axios.get(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${streets + " " + area + " ," + t + " ," + i}&inputtype=textquery&fields=formatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`).then(resp => {
+  //     // console.log(resp.data.candidates[0]);
+  //     count++;
+  //     if (resp.data.candidates[0].geometry.location.lat != undefined) {
+  //       console.log(count + "-", resp.data.candidates[0].geometry.location.lat, streets, area)
+  //       console.log(count + "-", resp.data.candidates[0].geometry.location.lng)
+  //     }
+
+  //   });
+
+  //   // await street.findByIdAndUpdate({ _id: streetId }, {lat:response.data.candidates[0].geometry.location.lat, lng:response.data.candidates[0].geometry.location.lng}, { new: true });
+  // });
+  //  console.log(response.data.candidates[0].geometry.location.lat)
+  //  console.log(response.data.candidates[0].geometry.location.lng)
+  return "data";
 };
 
 
@@ -4322,6 +4359,8 @@ module.exports = {
   WardApi2,
   streetSearchApi,
   streetSearchApi2,
+  WardApi,
+  getAllStreetLatLang,
 
   // paginationManageUserAttendance,
 };
