@@ -165,8 +165,22 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         foreignField: '_id',
         pipeline: [
           {
+            $lookup: {
+              from: 'zones',
+              localField: 'zoneId',
+              foreignField: '_id',
+
+              as: 'zonedata',
+            },
+          },
+          {
+            $unwind: '$zonedata',
+          },
+          {
             $project: {
               ward: 1,
+              zone: '$zonedata.zone',
+              zoneCode: '$zoneData.zoneCode',
             },
           },
         ],
@@ -215,6 +229,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
     {
       $unwind: '$shoptype',
     },
+
     {
       $project: {
         // _id:1,
@@ -235,7 +250,8 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         SOwner: 1,
         kyc_status: 1,
         Uid: 1,
-
+        zone: '$WardData.zone',
+        zoneCode: '$WardData.zoneCode',
         active: 1,
         mobile: 1,
         date: 1,

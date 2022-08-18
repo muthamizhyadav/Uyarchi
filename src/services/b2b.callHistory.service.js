@@ -62,7 +62,7 @@ const callingStatusreport = async () => {
   let serverdate = moment().format('DD-MM-yyyy');
   let acceptCount = await Shop.find({ callingStatus: 'accept', historydate: serverdate }).count();
   let callbackCount = await Shop.find({ callingStatus: 'callback', historydate: serverdate }).count();
-  let rescheduleCount = await Shop.find({ callingStatus: 'reschedule', historydate: serverdate }).count();
+  let rescheduleCount = await Shop.find({ callingStatus: 'reschedule' }).count();
   let pendingCount = await Shop.find({ callingStatus: 'Pending' }).count();
   let oncall = await Shop.find({ callingStatus: 'On Call' }).count();
   let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate }).count();
@@ -304,8 +304,9 @@ const getShop = async (date, status, page, userId, userRole) => {
   // },
   // ]);
   let total;
+  console.log(status);
   if (status == 'null') {
-    total = await Shop.find().count();
+    total = await Shop.find({ callingStatus: { $ne: 'accept' }, callingStatus: { $ne: 'declined' } }).count();
   }
   if (status != 'null') {
     total = await Shop.find({ callingStatus: status }).count();
