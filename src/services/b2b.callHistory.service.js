@@ -155,7 +155,7 @@ const getShop = async (date, status, page, userId, userRole) => {
         $and: match,
       },
     },
-    { $sort: { sortdate: -1, sorttime: -1 } },
+    { $sort: { historydate: -1, sorttime: -1 } },
     {
       $match: {
         callingStatus: { $nin: ['accept', 'declined'] },
