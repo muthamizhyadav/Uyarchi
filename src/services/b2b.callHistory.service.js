@@ -46,7 +46,7 @@ const createcallHistoryWithType = async (body, userId) => {
     if (shopdata.historydate != currentdate || !shopdata.historydate) {
       await Shop.findByIdAndUpdate(
         { _id: shopId },
-        { callingStatus: callStatus, sortdate: date, sorttime: time, historydate: currentdate, callingStatusSort: sort },
+        { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort },
         { new: true }
       );
       await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
@@ -498,7 +498,7 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
         $and: match,
       },
     },
-    // { $sort: { callingStatusSort: 1, sortdate: -1, sorttime: -1 } },
+    { $sort: {  historydate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
