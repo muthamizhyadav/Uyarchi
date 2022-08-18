@@ -61,17 +61,17 @@ const wardloadExecutive = catchAsync(async (req, res) => {
 });
 
 const updatePacked = catchAsync(async (req, res) => {
-  const packed = await wardAdminService.updateBilled(req.params.id, 'Packed');
+  const packed = await wardAdminService.updateStatusForAssugnedAndPacked(req.params.id, "Packed");
   res.send(packed);
 });
 
 const updateAssigned = catchAsync(async (req, res) => {
-  const assign = await wardAdminService.updateBilled(req.params.id, 'Assigned');
+  const assign = await wardAdminService.updateStatusForAssugnedAndPacked(req.params.id, "Assigned");
   res.send(assign);
 });
 
 const updateBilled = catchAsync(async (req, res) => {
-  const billed = await wardAdminService.updateBilled(req.params.id, 'Billed');
+  const billed = await wardAdminService.updateBilled(req.params.id);
   res.send(billed);
 });
 

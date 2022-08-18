@@ -42,30 +42,30 @@ const createGroup = async (body) => {
   return wardAdminGroupcreate;
 };
 
-const updateOrderStatus = async (id,  updateBody ) => {
+const updateOrderStatus = async (id, updateBody) => {
   let deliveryStatus = await ShopOrderClone.findById(id);
   console.log(deliveryStatus);
   if (!deliveryStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody,{ new: true });
+  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   console.log(deliveryStatus);
   return deliveryStatus;
 };
 
-const orderPicked =async (deliveryExecutiveId) => {
-  let orderPicked = await ShopOrderClone.find({deliveryExecutiveId:deliveryExecutiveId});
+const orderPicked = async (deliveryExecutiveId) => {
+  let orderPicked = await ShopOrderClone.find({ deliveryExecutiveId: deliveryExecutiveId });
   console.log(orderPicked)
   if (orderPicked.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, ' id not found');
   }
- 
-  
-  orderPicked.forEach(async (e) =>{
-     let statusUpdate = e.deliveryExecutiveId 
-     await ShopOrderClone.findByIdAndUpdate({ deliveryExecutiveId:statusUpdate} , {status: "Order Picked"},{ new: true})
+
+
+  orderPicked.forEach(async (e) => {
+    let statusUpdate = e.deliveryExecutiveId
+    await ShopOrderClone.findByIdAndUpdate({ deliveryExecutiveId: statusUpdate }, { status: "Order Picked" }, { new: true })
   })
-  
+
   return "success";
 };
 const getById = async (id) => {
@@ -102,10 +102,12 @@ const getPettyStock = async (id) => {
     {
       $unwind: '$product'
     },
-    { $group : {
-      _id : "$product.productName",
-      "Total quantity" : {$sum : "$product.quantity"}
-  }}
+    {
+      $group: {
+        _id: "$product.productName",
+        "Total quantity": { $sum: "$product.quantity" }
+      }
+    }
 
   ]);
 
@@ -282,27 +284,27 @@ const getBillDetails = async (id) => {
 }
 
 
-const assignOnly = async(page)=>{
+const assignOnly = async (page) => {
   let values = await wardAdminGroup.aggregate([
     {
-      $match:{
+      $match: {
         status: {
           $in: ['Assigned'],
+        }
       }
-    }
-  },
-  { $skip: 10 * page },
+    },
+    { $skip: 10 * page },
     { $limit: 10 },
   ]);
   return values;
 }
 
 
-const getDeliveryOrderSeparate = async (id, page)=>{
+const getDeliveryOrderSeparate = async (id, page) => {
   let datas = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{deliveryExecutiveId : { $eq: id } }],
+        $and: [{ deliveryExecutiveId: { $eq: id } }],
       },
     },
     {
@@ -315,52 +317,52 @@ const getDeliveryOrderSeparate = async (id, page)=>{
       }
     },
     { $unwind: '$shopData' },
-        {
-            $lookup: {
-                from: 'streets',
-                localField: 'shopData.Strid',
-                foreignField: '_id',
-                as: 'streetsData',
-            }
-        },
-        { $unwind: '$streetsData' },
-        {
-          $lookup: {
-              from: 'productorderclones',
-              localField: '_id',
-              foreignField: 'orderId',
-              // pipeline: [
-              //     { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
-              // ],
-              as: 'orderData',
-          }
-      },
-      // { $unwind: '$orderData' },
-      {
-        $project: {
-          OrderId:1,
-          shopId:1,
-          date:1,
-          time:1,
-          OrderId:1,
-          deliveryExecutiveId:1,
-          streetName: '$streetsData.street',
-          // Qty: "$orderData.Qty",
-          type: '$shopData.type',
-          // product:1,
-          totalItems: { $size: '$orderData' },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'shopData.Strid',
+        foreignField: '_id',
+        as: 'streetsData',
+      }
+    },
+    { $unwind: '$streetsData' },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        // pipeline: [
+        //     { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
+        // ],
+        as: 'orderData',
+      }
+    },
+    // { $unwind: '$orderData' },
+    {
+      $project: {
+        OrderId: 1,
+        shopId: 1,
+        date: 1,
+        time: 1,
+        OrderId: 1,
+        deliveryExecutiveId: 1,
+        streetName: '$streetsData.street',
+        // Qty: "$orderData.Qty",
+        type: '$shopData.type',
+        // product:1,
+        totalItems: { $size: '$orderData' },
 
-        }
-      },
-      
-      { $skip: 10 * page },
-      { $limit: 10 },
-    
+      }
+    },
+
+    { $skip: 10 * page },
+    { $limit: 10 },
+
   ]);
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{deliveryExecutiveId : { $eq: id } }],
+        $and: [{ deliveryExecutiveId: { $eq: id } }],
       },
     },
     {
@@ -373,43 +375,43 @@ const getDeliveryOrderSeparate = async (id, page)=>{
       }
     },
     { $unwind: '$shopData' },
-        {
-            $lookup: {
-                from: 'streets',
-                localField: 'shopData.Strid',
-                foreignField: '_id',
-                as: 'streetsData',
-            }
-        },
-        { $unwind: '$streetsData' },
-        {
-          $lookup: {
-              from: 'productorderclones',
-              localField: '_id',
-              foreignField: 'orderId',
-              pipeline: [
-                  { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
-              ],
-              as: 'orderData',
-          }
-      },
-      { $unwind: '$orderData' },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'shopData.Strid',
+        foreignField: '_id',
+        as: 'streetsData',
+      }
+    },
+    { $unwind: '$streetsData' },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
+        ],
+        as: 'orderData',
+      }
+    },
+    { $unwind: '$orderData' },
   ])
-  return {datas: datas, total: total.length};
+  return { datas: datas, total: total.length };
 };
 
 
-const groupIdClick = async(id)=>{
+const groupIdClick = async (id) => {
   let data = []
   let getDetails = await wardAdminGroup.findById(id);
-  getDetails.Orderdatas.forEach((e) =>{
- 
+  getDetails.Orderdatas.forEach((e) => {
+
     data.push(e)
   })
   return data;
 }
 
-const orderIdClickGetProduct = async(id)=>{
+const orderIdClickGetProduct = async (id) => {
   console.log(id)
 
   let getDetails = await ProductorderClone.aggregate([
@@ -432,7 +434,7 @@ const orderIdClickGetProduct = async(id)=>{
     {
       $lookup: {
         from: 'products',
-        localField:'productid',
+        localField: 'productid',
         foreignField: '_id',
         as: 'productsData',
       }
@@ -444,8 +446,8 @@ const orderIdClickGetProduct = async(id)=>{
       $project: {
         quantity: 1,
         priceperkg: 1,
-        product:'$productsData.productTitle',
-        productId:'$productsData._id',
+        product: '$productsData.productTitle',
+        productId: '$productsData._id',
       }
     }
 
@@ -456,11 +458,11 @@ const orderIdClickGetProduct = async(id)=>{
 }
 
 
-const getDetailsAfterDeliveryCompletion = async (id) =>{
+const getDetailsAfterDeliveryCompletion = async (id) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{deliveryExecutiveId : { $eq: id } }],
+        $and: [{ deliveryExecutiveId: { $eq: id } }],
       },
     },
     // {
@@ -476,6 +478,116 @@ const getDetailsAfterDeliveryCompletion = async (id) =>{
   return values;
 
 }
+
+
+const getBillDetailsPerOrder = async (id) => {
+  let datas = await ProductorderClone.aggregate([
+    {
+      $match: {
+        $and: [{
+          orderId
+            : { $eq: id }
+        }],
+      },
+    },
+    
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        as: 'productData'
+      }
+    },
+    { $unwind: '$productData'},
+    {
+      $lookup :{
+        from: 'productorderclones',
+        localField: 'productData._id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
+        ],
+        as: 'quantityData',
+      }
+    },
+    { $unwind: '$quantityData'},
+    {
+      $lookup:{
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'hsnData',
+      }
+    },
+    {$unwind: '$hsnData'},
+   
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'productData.Uid',
+        foreignField: '_id',
+        as: 'usersData',
+      }
+    },
+    { $unwind: '$usersData'},
+    {
+      $lookup:{
+        from: 'b2bshopclones',
+        localField: 'usersData._id',
+        foreignField: 'Uid',
+        as: 'details',
+      }
+    },
+    { $unwind: '$details'},
+    {
+      $lookup:{
+        from: 'b2busers',
+        localField: 'productData.deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'data'
+      }
+    },
+    { $unwind: '$data'},
+    {
+      $lookup: {
+        from : 'hsns',
+        localField: 'hsnData.HSN_Code',
+        foreignField: '_id',
+        as: 'hsnCode',
+      }
+    },
+    { $unwind: '$hsnCode'},
+
+    {
+      $project: {
+       productName:'$hsnData.productTitle',
+       GST: '$hsnData.GST_Number',
+       HSN:'$hsnCode.HSN_code',
+       TotalAmount:'$productData.product.totalAmount',
+       productid:1,
+       quantity:1,
+       priceperkg:1,
+       total:'$productData.overallTotal',
+       name : '$usersData.name',
+       phoneNumber: '$usersData.phoneNumber',
+       shopName: '$details.SName',
+       Address: '$details.address',
+       deliveryExecutiveName: '$data.name',
+       BillNumber: '$productData.billNo',
+       BillTime: '$productData.billTime',
+       BillDate : '$productData.billDate',
+      //  Nos: { $size: '$productData.product' },
+       product: '$productData.product',
+       Qty: '$quantityData.Qty',
+      }
+    }
+
+  ]);
+  return datas;
+}
+
+
 
 module.exports = {
   createGroup,
@@ -507,5 +619,14 @@ module.exports = {
   updateOrderStatus,
 
   getDetailsAfterDeliveryCompletion,
+  getBillDetailsPerOrder,
+
+
 
 };
+// 626931f6-c32c-4b42-a3cc-94c30aeabc70
+
+
+// 2028cf31-8c9d-4e1f-a820-bd1ccb0add36
+
+// 622ddffe-2da3-4f62-a986-ec5faad2fe6b

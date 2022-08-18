@@ -44,6 +44,10 @@ router.route('/orderIdClickGetProduct/:id').get(wardAdminGroupController.orderId
 
 router.route('/get/getDetailsAfterDeliveryCompletion/:id').get(wardAdminGroupController.getDetailsAfterDeliveryCompletion);
 
+router.route('/get/BillDetails/perOrder/:id').get(wardAdminGroupController.getBillDetailsPerOrder);
+
+// router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
+
 // DELIVERY EXECUTIVE
 
 // router.route('/get/getDeliveryDetails/:page').get(wardAdminGroupController.getDeliveryDetails);
