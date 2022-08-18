@@ -256,21 +256,89 @@ const getShop = async (date, status, key, page, userId, userRole) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total;
-  if (status == 'null') {
-    let declined = await Shop.find({ callingStatus: { $eq: 'declined' } }).count();
-    let accept = await Shop.find({ callingStatus: { $eq: 'accept' } }).count();
-    let tot = await Shop.find().count();
+  // let total;
+  // if (status == 'null') {
+  //   let declined = await Shop.find({ callingStatus: { $eq: 'declined' } }).count();
+  //   let accept = await Shop.find({ callingStatus: { $eq: 'accept' } }).count();
+  //   let tot = await Shop.find().count();
 
-    subt = declined + accept;
-    total = tot - subt;
-  }
-  if (status != 'null') {
-    total = await Shop.find({ callingStatus: status }).count();
-  }
+  //   subt = declined + accept;
+  //   total = tot - subt;
+  // }
+  // if (status != 'null') {
+  //   total = await Shop.find({ callingStatus: status }).count();
+  // }
+  let total = await Shop.aggregate([
+    {
+      $match: {
+        $and: [keys],
+      },
+    },
+    {
+      $match: {
+        $and: match,
+      },
+    },
+    { $sort: { historydate: -1, sorttime: -1 } },
+    {
+      $match: {
+        callingStatus: { $nin: ['accept', 'declined'] },
+      },
+    },
+    // {
+    //   $match: {
+    //     callingStatus: { $in: ['On Call'] },
+    //   },
+    // },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              date: { $eq: date },
+            },
+          },
+          // { $sort: { date: -1, time: -1 } },
+        ],
+        as: 'shopData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopData.shopId',
+        foreignField: '_id',
+        // pipeline: [
+        //   {
+        //     $match: {
+        //       $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
+        //     },
+        //   },
+        // ],
+        as: 'shopclones',
+      },
+    },
+    // {
+    //   $unwind: '$shopclones',
+    // },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplists',
+      },
+    },
+    {
+      $unwind: '$shoplists',
+    },
+  ]);
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
-  return { values: values, total: total, RoleName: role.roleName, userName: user.name };
+  return { values: values, total: total.length, RoleName: role.roleName, userName: user.name };
 };
 
 const updateCallingStatus = async (id, updatebody) => {
