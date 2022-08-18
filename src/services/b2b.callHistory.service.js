@@ -569,7 +569,7 @@ const getacceptDeclined = async (status, date, page, userId, userRole) => {
         Uid: 1,
         shopData: 1,
         filterDate: 1,
-        sortdate:1,
+        sortdate: 1,
         // shopclones: '$shopclones',
         shopData: '$shopData',
         shoptypeName: '$shoplists.shopList',
@@ -648,7 +648,7 @@ const resethistory = async () => {
     { historydate: { $ne: today }, callingStatus: { $ne: 'callback' }, callingStatus: { $ne: 'reshedule' } },
     { $set: { callingStatus: 'Pending', callingStatusSort: 0 } }
   );
-  return { dayfresh: true };
+  return { dayfresh: 'Reset Successfully' };
 };
 
 const previouscallBackAnd_Reshedule = async () => {
