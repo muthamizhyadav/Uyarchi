@@ -306,7 +306,12 @@ const getShop = async (date, status, page, userId, userRole) => {
   let total;
   console.log(status);
   if (status == 'null') {
-    total = await Shop.find({ callingStatus: { $ne: 'accept' }, callingStatus: { $ne: 'declined' } }).count();
+    let declined = await Shop.find({ callingStatus: { $eq: 'declined' } }).count();
+    let accept = await Shop.find({ callingStatus: { $eq: 'accept' } }).count();
+    let tot = await Shop.find().count();
+
+    subt = declined + accept;
+    total = tot - subt;
   }
   if (status != 'null') {
     total = await Shop.find({ callingStatus: status }).count();
