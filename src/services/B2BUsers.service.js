@@ -229,6 +229,7 @@ const getForMyAccount = async (userId) => {
         email: 1,
         phoneNumber: 1,
         roleName: '$RoleData.roleName',
+        description: '$RoleData.description',
       },
     },
   ]);
@@ -236,7 +237,9 @@ const getForMyAccount = async (userId) => {
 };
 
 const getsalesExecuteRolesUsers = async () => {
-      let users = await Users.find({ userRole: ['fb0dd028-c608-4caa-a7a9-b700389a098d','719d9f71-8388-4534-9bfe-3f47faed62ac'] });
+  let users = await Users.find({
+    userRole: ['fb0dd028-c608-4caa-a7a9-b700389a098d', '719d9f71-8388-4534-9bfe-3f47faed62ac'],
+  });
   return users;
 };
 
