@@ -57,6 +57,7 @@ const getshopWardStreetNamesWithAggregation_withfilter = catchAsync(async (req, 
     req.params.zone,
     req.params.ward,
     req.params.street,
+    req.params.status,
     req.params.page
   );
   res.send(shop);
@@ -71,6 +72,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = catchAsync(async 
     req.params.enddate,
     req.params.starttime,
     req.params.endtime,
+    req.params.status,
     req.params.page
   );
   res.send(shop);
