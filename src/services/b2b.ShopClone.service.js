@@ -15,7 +15,7 @@ const createShopClone = async (shopBody) => {
   let servertime = moment().format('HHmm');
   let serverdate = moment().format('DD-MM-yyy');
   let filterDate = moment().format('yyy-MM-DD');
-  let values = { ...shopBody, ...{ date: serverdate, time: servertime, filterDate: filterDate } };
+  let values = { ...shopBody, ...{ date: serverdate, time: servertime, filterDate: filterDate, status: 'Pending' } };
   const shop = await Shop.create(values);
   return shop;
 };
@@ -393,6 +393,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_all = async (district, zo
 };
 
 const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, ward, street, status, page) => {
+  // await Shop.updateMany({ active: true }, { $set: { status: 'Pending' } });
   let districtMatch = { active: true };
   let zoneMatch = { active: true };
   let wardMatch = { active: true };
