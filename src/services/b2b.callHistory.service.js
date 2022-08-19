@@ -680,10 +680,14 @@ const getacceptDeclined = async (status, date, key, page, userId, userRole) => {
 
 const resethistory = async () => {
   let currentDate = moment().format('DD-MM-yyyy');
+  let yersterday =  moment().subtract(1, "days").format('DD-MM-yyyy');
+  console.log(yersterday)
   let today = '';
   today = currentDate;
+  let reshedule = await Shop.find({ callingStatus: 'reschedule' }).count();
+  // console.log(reshedule);
   await Shop.updateMany(
-    { callingStatus: { $ne: 'callback' }, callingStatus: { $ne: 'reshedule' }, sortdate: { $ne: today } },
+    { callingStatus: { $ne: 'callback' }, callingStatus: { $ne: 'reschedule' }, sortdate: { $eq: yersterday } },
     { $set: { callingStatus: 'Pending', callingStatusSort: 0 } }
   );
   return { dayfresh: 'Reset Successfully' };
