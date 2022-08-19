@@ -21,7 +21,7 @@ const createcallHistoryWithType = async (body, userId) => {
   let servertime = moment().format('hh:mm a');
   let serverdate = moment().format('yyyy-MM-DD');
 
-  const { callStatus, shopId } = body;
+  const { callStatus, shopId, reason } = body;
   let sort;
   if (callStatus == 'reschedule') {
     sort = 2;
@@ -29,9 +29,6 @@ const createcallHistoryWithType = async (body, userId) => {
   if (callStatus == 'callback') {
     sort = 3;
   }
-  // if (callStatus == 'under_the_call') {
-  //   sort = 4;
-  // }
   if (callStatus == 'declined') {
     sort = 5;
   }
@@ -42,14 +39,21 @@ const createcallHistoryWithType = async (body, userId) => {
   let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
-
-  await Shop.findByIdAndUpdate(
-    { _id: shopId },
-    { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort },
-    { new: true }
-  );
-  await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
-
+  if (callStatus == 'reschedule') {
+    await Shop.findByIdAndUpdate(
+      { _id: shopId },
+      { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort, sortDate: reason },
+      { new: true }
+    );
+    await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
+  } else {
+    await Shop.findByIdAndUpdate(
+      { _id: shopId },
+      { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort },
+      { new: true }
+    );
+    await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
+  }
   let callHistory = await callHistoryModel.create(values);
   return callHistory;
 };
@@ -680,15 +684,15 @@ const getacceptDeclined = async (status, date, key, page, userId, userRole) => {
 
 const resethistory = async () => {
   let currentDate = moment().format('DD-MM-yyyy');
-  let yersterday =  moment().subtract(1, "days").format('DD-MM-yyyy');
-  console.log(yersterday)
+  let yersterday = moment().subtract(1, 'days').format('DD-MM-yyyy');
+  console.log(yersterday);
   let today = '';
   today = currentDate;
   let reshedule = await Shop.find({ callingStatus: 'reschedule' }).count();
   // console.log(reshedule);
   await Shop.updateMany(
     { callingStatus: { $ne: 'callback' }, callingStatus: { $ne: 'reschedule' }, sortdate: { $eq: yersterday } },
-    { $set: { callingStatus: 'Pending', callingStatusSort: 0 } }
+    { $set: { callingStatus: 'Pending', callingStatusSort: 0, sortdate: today } }
   );
   return { dayfresh: 'Reset Successfully' };
 };
