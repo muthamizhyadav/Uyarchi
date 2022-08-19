@@ -340,6 +340,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
     // { $unwind: '$orderData' },
     {
       $project: {
+        status:1,
         OrderId: 1,
         shopId: 1,
         date: 1,
