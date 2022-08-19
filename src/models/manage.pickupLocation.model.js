@@ -43,7 +43,7 @@ const managepickupLocationSchema = new mongoose.Schema({
   time: {
     type: String,
   },
-  pick_Up_Type: {
+  pick_Up_ype: {
     type: String,
   },
   picku_Up_Mode: {
