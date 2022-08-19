@@ -44,7 +44,7 @@ const createcallHistoryWithType = async (body, userId) => {
   if (callStatus == 'reschedule') {
     await Shop.findByIdAndUpdate(
       { _id: shopId },
-      { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort, sortDate: dateSlice },
+      { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort, sortdate: dateSlice },
       { new: true }
     );
     await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
