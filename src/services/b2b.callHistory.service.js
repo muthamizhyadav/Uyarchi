@@ -22,6 +22,7 @@ const createcallHistoryWithType = async (body, userId) => {
   let serverdate = moment().format('yyyy-MM-DD');
 
   const { callStatus, shopId, reason } = body;
+  console.log(reason)
   let sort;
   if (callStatus == 'reschedule') {
     sort = 2;
