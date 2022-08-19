@@ -39,7 +39,7 @@ const createGroup = async (body) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: "Assigned" }, { new: true });
   });
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
-  await ShopOrderClone.findByIdAndUpdate({_id:productId}, { GroupId: wardAdminGroupcreate.id }, {new:true})
+  await ShopOrderClone.findByIdAndUpdate({_id:productId}, { GroupId: wardAdminGroupcreate._id }, {new:true})
   return wardAdminGroupcreate;
 };
 
