@@ -39,6 +39,7 @@ const createGroup = async (body) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: "Assigned" }, { new: true });
   });
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
+  await ShopOrderClone.findByIdAndUpdate({_id:productId}, { GroupId: wardAdminGroupcreate.id }, {new:true})
   return wardAdminGroupcreate;
 };
 
@@ -92,27 +93,68 @@ const getOrderFromGroupById = async (id) => {
 
 
 
+// const getPettyStock = async (id) => {
+//   let values = await ShopOrderClone.aggregate([
+//     {
+//       $match: {
+//         $and: [{ deliveryExecutiveId: { $eq: id } }],
+//       },
+//     },
+//     {
+//       $unwind: '$product'
+//     },
+//     {
+//       $group: {
+//         _id: "$product.productName",
+//         "Total quantity": { $sum: "$product.quantity" }
+//       }
+//     }
+
+//   ]);
+
+//   return values;
+// };
+
+
 const getPettyStock = async (id) => {
-  let values = await ShopOrderClone.aggregate([
+  let values = await wardAdminGroup.aggregate([
     {
       $match: {
         $and: [{ deliveryExecutiveId: { $eq: id } }],
       },
     },
     {
-      $unwind: '$product'
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'deliveryExecutiveId',
+        foreignField: 'deliveryExecutiveId',
+        as: 'datas',
+      }
     },
+    { $unwind: '$datas'},
     {
-      $group: {
-        _id: "$product.productName",
-        "Total quantity": { $sum: "$product.quantity" }
+      $project: {
+        datas:'$datas.product',
+        groupId:1,
       }
     }
+    // {
+    //   $unwind: '$product'
+    // },
+    // {
+    //   $group: {
+    //     _id: "$product.productName",
+    //     "Total quantity": { $sum: "$product.quantity" }
+    //   }
+    // }
 
   ]);
 
   return values;
 };
+
+
+
 
 
 
@@ -598,6 +640,27 @@ const getBillDetailsPerOrder = async (id) => {
   return datas;
 }
 
+const getReturnWDEtoWLE = async (id , page) =>{
+  let datas = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ deliveryExecutiveId: { $eq: id } }],
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ deliveryExecutiveId: { $eq: id } }],
+      },
+    },
+  ])
+  return {datas: datas, total: total.length};
+}
+
+
 
 
 module.exports = {
@@ -631,6 +694,8 @@ module.exports = {
 
   getDetailsAfterDeliveryCompletion,
   getBillDetailsPerOrder,
+
+  getReturnWDEtoWLE
 
 
 

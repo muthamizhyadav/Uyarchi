@@ -110,6 +110,11 @@ const getBillDetailsPerOrder = catchAsync(async (req, res) => {
   res.send(getdetails);
 });
 
+const getReturnWDEtoWLE = catchAsync(async (req, res) => {
+  const getReturnDetails = await wardAdminGroupService.getReturnWDEtoWLE(req.params.id , req.params.page);
+  res.send(getReturnDetails);
+})
+
 // const createBillNo = catchAsync(async (req, res) => {
 //   const billNo = await wardAdminGroupService.createBillNo(req.params.id);
 //   res.send(billNo);
@@ -148,6 +153,9 @@ module.exports = {
 
   getDetailsAfterDeliveryCompletion,
   getBillDetailsPerOrder,
+
+
+  getReturnWDEtoWLE,
 
   // createBillNo,
 

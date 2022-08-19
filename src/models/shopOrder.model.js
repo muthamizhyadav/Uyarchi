@@ -135,6 +135,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     type: String,
     default: "Pending"
   },
+  GroupId: {
+    type: String,
+    
+  },
 
   
 });
