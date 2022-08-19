@@ -688,10 +688,10 @@ const resethistory = async () => {
   console.log(yersterday);
   let today = '';
   today = currentDate;
-  let reshedule = await Shop.find({ callingStatus: 'reschedule' }).count();
+  // let reshedule = await Shop.find({ callingStatus: 'reschedule' }).count();
   // console.log(reshedule);
   await Shop.updateMany(
-    { callingStatus: { $ne: 'reschedule' }, sortdate: { $eq: yersterday } },
+    { sortdate: { $eq: yersterday }, callingStatus: { $ne: 'reschedule' } },
     { $set: { callingStatus: 'Pending', callingStatusSort: 0, sortdate: today } }
   );
   return { dayfresh: 'Reset Successfully' };
