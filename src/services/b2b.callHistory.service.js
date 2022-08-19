@@ -46,6 +46,7 @@ const createcallHistoryWithType = async (body, userId) => {
       { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort, sortDate: dateSlice },
       { new: true }
     );
+    console.log("reshedule clicked")
     await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
   } else {
     await Shop.findByIdAndUpdate(
