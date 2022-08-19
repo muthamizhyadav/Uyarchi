@@ -103,7 +103,10 @@ const shopSchema = mongoose.Schema({
   shopMobile: {
     type: String,
   },
-
+  secondShop: {
+    type: String,
+    default: 'false',
+  },
   CallStatus: {
     type: String,
   },
@@ -225,4 +228,4 @@ const attendanceSchemaclone = new mongoose.Schema({
 
 const AttendanceClonenew = mongoose.model('AttendanceClonenew', attendanceSchemaclone);
 
-module.exports = { Shop, AttendanceClone,AttendanceClonenew };
+module.exports = { Shop, AttendanceClone, AttendanceClonenew };
