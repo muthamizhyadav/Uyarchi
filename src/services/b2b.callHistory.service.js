@@ -35,11 +35,11 @@ const createcallHistoryWithType = async (body, userId) => {
   if (callStatus == 'accept') {
     sort = 6;
   }
-  let dateSlice = reason.slice(0, 10);
   let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
   if (callStatus == 'reschedule') {
+    let dateSlice = reason.slice(0, 10);
     await Shop.findByIdAndUpdate(
       { _id: shopId },
       { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort, sortdate: dateSlice },
@@ -691,7 +691,7 @@ const resethistory = async () => {
   let reshedule = await Shop.find({ callingStatus: 'reschedule' }).count();
   // console.log(reshedule);
   await Shop.updateMany(
-    {callingStatus: { $ne: 'reschedule' }, sortdate: { $eq: yersterday } },
+    { callingStatus: { $ne: 'reschedule' }, sortdate: { $eq: yersterday } },
     { $set: { callingStatus: 'Pending', callingStatusSort: 0, sortdate: today } }
   );
   return { dayfresh: 'Reset Successfully' };
