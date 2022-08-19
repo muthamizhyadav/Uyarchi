@@ -37,7 +37,7 @@ const createcallHistoryWithType = async (body, userId) => {
     sort = 6;
   }
   let dateSlice = reason.slice(5, 16);
-  console.log(callStatus);
+  console.log(dateSlice);
   let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
