@@ -46,6 +46,9 @@ router.route('/get/getDetailsAfterDeliveryCompletion/:id').get(wardAdminGroupCon
 
 router.route('/get/BillDetails/perOrder/:id').get(wardAdminGroupController.getBillDetailsPerOrder);
 
+
+router.route('/get/returnWDEtoWLE/:id/:page').get(wardAdminGroupController.getReturnWDEtoWLE);
+
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE
