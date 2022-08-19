@@ -35,6 +35,7 @@ const createcallHistoryWithType = async (body, userId) => {
   if (callStatus == 'accept') {
     sort = 6;
   }
+  let dateSlice = reason.slice(5, 16);
   console.log(callStatus);
   let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
   let shopdata = await Shop.findOne({ _id: shopId });
@@ -42,7 +43,7 @@ const createcallHistoryWithType = async (body, userId) => {
   if (callStatus == 'reschedule') {
     await Shop.findByIdAndUpdate(
       { _id: shopId },
-      { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort, sortDate: reason },
+      { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort, sortDate: dateSlice },
       { new: true }
     );
     await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
