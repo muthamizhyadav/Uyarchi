@@ -38,21 +38,29 @@ const createcallHistoryWithType = async (body, userId) => {
   let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
-  if (callStatus == 'reschedule') {
-    let dateSlice = reason.slice(0, 10);
-    await Shop.findByIdAndUpdate(
-      { _id: shopId },
-      { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort, sortdate: dateSlice },
-      { new: true }
-    );
-    await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
-  } else {
-    await Shop.findByIdAndUpdate(
-      { _id: shopId },
-      { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort },
-      { new: true }
-    );
-    await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
+  if (shopdata.callingStatus != 'accept') {
+    if (callStatus == 'reschedule') {
+      let dateSlice = reason.slice(0, 10);
+      await Shop.findByIdAndUpdate(
+        { _id: shopId },
+        {
+          callingStatus: callStatus,
+          sorttime: time,
+          historydate: currentdate,
+          callingStatusSort: sort,
+          sortdate: dateSlice,
+        },
+        { new: true }
+      );
+      await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
+    } else {
+      await Shop.findByIdAndUpdate(
+        { _id: shopId },
+        { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort },
+        { new: true }
+      );
+      await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
+    }
   }
   let callHistory = await callHistoryModel.create(values);
   return callHistory;

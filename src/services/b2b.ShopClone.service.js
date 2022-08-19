@@ -226,9 +226,9 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         as: 'shoptype',
       },
     },
-    {
-      $unwind: '$shoptype',
-    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
 
     {
       $project: {
@@ -237,7 +237,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         street: '$StreetData.street',
         ward: '$WardData.ward',
         username: '$UsersData.name',
-        shoptype: '$shoptype.shopList',
+        shoptype: { $cond: { if: { $isArray: '$shoptype' }, then: '$shoptype.shopList', else: [] } },
         Area: '$StreetData.area',
         Locality: '$StreetData.locality',
         photoCapture: 1,
@@ -261,7 +261,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await Shop.find({ type: 'shop' }).count();
+  let total = await Shop.find().count();
 
   return {
     values: values,
@@ -525,7 +525,7 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [ wardMatch, streetMatch, statusMatch],
+        $and: [wardMatch, streetMatch, statusMatch],
       },
     },
     {
@@ -877,7 +877,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
     },
     {
       $match: {
-        $and: [ userMatch, dateMatch, timeMatch, streetMatch],
+        $and: [userMatch, dateMatch, timeMatch, streetMatch],
       },
     },
     {
