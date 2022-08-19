@@ -4,15 +4,15 @@ const router = express.Router();
 
 router.route('/craeteGroupId').post(wardAdminGroupController.createGroupOrder);
 
-router.route('/update/orderpicked/:deliveryExecutiveId').put(wardAdminGroupController.updateOrderPickedStatus);
+// router.route('/update/orderpicked/:deliveryExecutiveId').put(wardAdminGroupController.updateOrderPickedStatus);
 
-router.route('/update/pickedPettyStock/:id').put(wardAdminGroupController.updatePickedPettyStock);
+// router.route('/update/pickedPettyStock/:id').put(wardAdminGroupController.updatePickedPettyStock);
 
-router.route('/update/pickedPettyCash/:id').put(wardAdminGroupController.updatePickedPettyCash);
+// router.route('/update/pickedPettyCash/:id').put(wardAdminGroupController.updatePickedPettyCash);
 
-router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
+// router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
 
-router.route('/update/delivered/:id').put(wardAdminGroupController.updateDeliveryCompleted);
+// router.route('/update/delivered/:id').put(wardAdminGroupController.updateDeliveryCompleted);
 
 router.route('/update/unDelivered/:id').put(wardAdminGroupController.UpdateUnDeliveredStatus);
 
@@ -48,6 +48,20 @@ router.route('/get/BillDetails/perOrder/:id').get(wardAdminGroupController.getBi
 
 
 router.route('/get/returnWDEtoWLE/:id/:page').get(wardAdminGroupController.getReturnWDEtoWLE);
+
+router.route('/submit/pettyStockSubmit/:id').put(wardAdminGroupController.pettyStockSubmit);
+
+router.route('/submit/pettyCashSubmit/:id').put(wardAdminGroupController.pettyCashSubmit);
+
+router.route('/Update/orderCompleted/:id').put(wardAdminGroupController.orderCompleted);
+
+router.route('/update/Deliverystart/:id').put(wardAdminGroupController.Deliverystart);
+
+router.route('/update/deliveryCompleted/:id').put(wardAdminGroupController.deliveryCompleted);
+
+router.route('/get/getPettyStockDetails/:id/:page').get(wardAdminGroupController.getPettyStockDetails);
+
+router.route('/get/getdetailsAboutPettyStockByGroupId/:id/:page').get(wardAdminGroupController.getdetailsAboutPettyStockByGroupId);
 
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 

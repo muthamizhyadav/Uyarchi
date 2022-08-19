@@ -55,6 +55,10 @@ const wardAdminGroupSchema = new mongoose.Schema({
   totalQtyIncludingPettyStock: {
     type: Number,
   },
+  receiveStatus: {
+    type: String,
+    default: "Pending"
+  },
 
 
 });
