@@ -13,7 +13,7 @@ const { verfiy } = require('../config/registerOTP.Verify');
 
 const createShopClone = async (shopBody) => {
   let servertime = moment().format('HHmm');
-  let createdtime = moment().format('HH:mm a');
+  let createdtime = moment().format('hh:mm a');
   let serverdate = moment().format('DD-MM-yyy');
   let filterDate = moment().format('yyy-MM-DD');
   let values = {
