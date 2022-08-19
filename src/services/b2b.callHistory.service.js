@@ -35,24 +35,34 @@ const createcallHistoryWithType = async (body, userId) => {
   if (callStatus == 'accept') {
     sort = 6;
   }
-  console.log(callStatus);
   let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
   if (callStatus == 'reschedule') {
+    let dateSlice = reason.slice(0, 10);
     await Shop.findByIdAndUpdate(
       { _id: shopId },
-      { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort, sortDate: reason },
+      {
+        callingStatus: callStatus,
+        sorttime: time,
+        historydate: currentdate,
+        callingStatusSort: sort,
+        sortdate: dateSlice,
+      },
       { new: true }
     );
     await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
   } else {
-    await Shop.findByIdAndUpdate(
-      { _id: shopId },
-      { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort },
-      { new: true }
-    );
-    await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
+    if (callStatus != 'accept') {
+      await Shop.findByIdAndUpdate(
+        { _id: shopId },
+        { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort },
+        { new: true }
+      );
+      // await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
+    }else{
+      await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate,  callingStatusSort: sort  }, { new: true });
+    }
   }
   let callHistory = await callHistoryModel.create(values);
   return callHistory;
@@ -688,10 +698,10 @@ const resethistory = async () => {
   console.log(yersterday);
   let today = '';
   today = currentDate;
-  let reshedule = await Shop.find({ callingStatus: 'reschedule' }).count();
+  // let reshedule = await Shop.find({ callingStatus: 'reschedule' }).count();
   // console.log(reshedule);
   await Shop.updateMany(
-    { callingStatus: { $ne: 'callback' }, callingStatus: { $ne: 'reschedule' }, sortdate: { $eq: yersterday } },
+    { sortdate: { $eq: yersterday }, callingStatus: { $ne: 'reschedule' } },
     { $set: { callingStatus: 'Pending', callingStatusSort: 0, sortdate: today } }
   );
   return { dayfresh: 'Reset Successfully' };
