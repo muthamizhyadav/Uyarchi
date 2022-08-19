@@ -1231,7 +1231,10 @@ const totalCount = async (userId) => {
   const moment = require('moment');
   let datenow = moment(new Date()).format('DD-MM-YYYY');
   const Totalcount = await Shop.find({ Uid: userId, type: 'shop' }).count();
+  const Secondtotal = await Shop.find({ Uid: userId, type: 'second' }).count();
   const todayCount = await Shop.find({ date: datenow, Uid: userId, type: 'shop' }).count();
+  const secontodayCount = await Shop.find({ date: datenow, Uid: userId, type: 'second' }).count();
+
   const marketTotalcount = await MarketClone.find({ Uid: userId }).count();
   const markettodayCount = await MarketClone.find({ date: datenow, Uid: userId }).count();
   const marketshopTotalcount = await Shop.find({ Uid: userId, type: 'market' }).count();
@@ -1244,6 +1247,8 @@ const totalCount = async (userId) => {
     marketToday: markettodayCount,
     marketShopTotal: marketshopTotalcount,
     marketShopToday: marketshoptodayCount,
+    Secondtotal: Secondtotal,
+    secontodayCount: secontodayCount,
   };
 };
 
