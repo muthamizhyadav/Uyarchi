@@ -491,9 +491,9 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
         as: 'shoptype',
       },
     },
-    {
-      $unwind: '$shoptype',
-    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
     {
       $project: {
         // _id:1,
@@ -503,7 +503,8 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
         Locality: '$StreetData.locality',
         ward: '$WardData.ward',
         username: '$UsersData.name',
-        shoptype: '$shoptype.shopList',
+        // shoptype: '$shoptype.shopList',
+        shoptype: { $cond: { if: { $isArray: '$shoptype' }, then: '$shoptype.shopList', else: [] } },
         photoCapture: 1,
         SName: 1,
         address: 1,
@@ -594,9 +595,9 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
         as: 'shoptype',
       },
     },
-    {
-      $unwind: '$shoptype',
-    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
   ]);
   return {
     values: values,
@@ -840,9 +841,9 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         as: 'shoptype',
       },
     },
-    {
-      $unwind: '$shoptype',
-    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
     {
       $project: {
         // _id:1,
@@ -852,7 +853,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         Locality: '$StreetData.locality',
         ward: '$WardData.ward',
         username: '$UsersData.name',
-        shoptype: '$shoptype.shopList',
+        shoptype: { $cond: { if: { $isArray: '$shoptype' }, then: '$shoptype.shopList', else: [] } },
         photoCapture: 1,
         SName: 1,
         address: 1,
@@ -943,9 +944,9 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         as: 'shoptype',
       },
     },
-    {
-      $unwind: '$shoptype',
-    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
   ]);
   return {
     values: values,
