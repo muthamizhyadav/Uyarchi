@@ -346,6 +346,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
         date: 1,
         time: 1,
         OrderId: 1,
+        customerDeliveryStatus:1,
         deliveryExecutiveId: 1,
         streetName: '$streetsData.street',
         // Qty: "$orderData.Qty",

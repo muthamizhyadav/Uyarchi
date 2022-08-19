@@ -131,6 +131,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   billDate: {
     type: String,
   },
+  customerDeliveryStatus: {
+    type: String,
+    default: "Pending"
+  },
 
   
 });
