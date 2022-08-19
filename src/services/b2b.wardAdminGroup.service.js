@@ -296,7 +296,16 @@ const assignOnly = async (page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  return values;
+  let total = await wardAdminGroup.aggregate([
+      {
+        $match: {
+          status: {
+            $in: ['Assigned'],
+          }
+        }
+      },
+  ])
+  return {values: values, total: total.length};
 }
 
 
@@ -346,6 +355,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
         date: 1,
         time: 1,
         OrderId: 1,
+        customerDeliveryStatus:1,
         deliveryExecutiveId: 1,
         streetName: '$streetsData.street',
         // Qty: "$orderData.Qty",
