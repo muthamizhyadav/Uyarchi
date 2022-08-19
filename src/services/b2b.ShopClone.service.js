@@ -701,9 +701,9 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily_all = async (user, 
         as: 'shoptype',
       },
     },
-    {
-      $unwind: '$shoptype',
-    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
     {
       $project: {
         // _id:1,
