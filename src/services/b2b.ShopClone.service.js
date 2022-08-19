@@ -392,11 +392,15 @@ const getshopWardStreetNamesWithAggregation_withfilter_all = async (district, zo
   return values;
 };
 
-const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, ward, street, page) => {
+const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, ward, street, status, page) => {
   let districtMatch = { active: true };
   let zoneMatch = { active: true };
   let wardMatch = { active: true };
   let streetMatch = { active: true };
+  let statusMatch = { active: true };
+  if (status != 'null') {
+    streetMatch = { status: status };
+  }
   if (district != 'null') {
     districtMatch = { ...districtMatch, ...{ district: district } };
   }
@@ -414,7 +418,7 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
   let values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch],
+        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch, statusMatch],
       },
     },
     {
@@ -518,7 +522,7 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch],
+        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch, statusMatch],
       },
     },
     {
@@ -730,6 +734,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   enddate,
   starttime,
   endtime,
+  status,
   page
 ) => {
   ///:user/:startdata/:enddate/:starttime/:endtime/:page
@@ -739,6 +744,10 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   let streetMatch = { active: true };
   let startTime = 0;
   let endTime = 2400;
+  let statusMatch = { active: true };
+  if (status != 'null') {
+    streetMatch = { status: status };
+  }
   if (user != 'null') {
     userMatch = { Uid: user };
   }
@@ -759,7 +768,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
     },
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, userMatch, dateMatch, timeMatch],
+        $and: [{ type: { $eq: 'shop' } }, userMatch, dateMatch, timeMatch, streetMatch],
       },
     },
     {
@@ -863,7 +872,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
     },
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, userMatch, dateMatch, timeMatch],
+        $and: [{ type: { $eq: 'shop' } }, userMatch, dateMatch, timeMatch, streetMatch],
       },
     },
     {
