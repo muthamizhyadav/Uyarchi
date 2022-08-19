@@ -135,11 +135,11 @@ const searchShops = async (key) => {
 
 const getshopWardStreetNamesWithAggregation = async (page) => {
   let values = await Shop.aggregate([
-    {
-      $match: {
-        $and: [{ type: { $eq: 'shop' } }],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [{ type: { $eq: 'shop' } }],
+    //   },
+    // },
     {
       $lookup: {
         from: 'b2busers',
@@ -245,6 +245,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         address: 1,
         Slat: 1,
         Slong: 1,
+        type: 1,
         status: 1,
         created: 1,
         SOwner: 1,
@@ -419,7 +420,7 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
   let values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch, statusMatch],
+        $and: [wardMatch, streetMatch, statusMatch],
       },
     },
     {
@@ -507,6 +508,7 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
         SName: 1,
         address: 1,
         Slat: 1,
+        type: 1,
         Slong: 1,
         status: 1,
         created: 1,
@@ -523,7 +525,7 @@ const getshopWardStreetNamesWithAggregation_withfilter = async (district, zone, 
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, wardMatch, streetMatch, statusMatch],
+        $and: [ wardMatch, streetMatch, statusMatch],
       },
     },
     {
@@ -767,9 +769,10 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
     {
       $sort: { filterDate: -1 },
     },
+    // { type: { $eq: 'shop' } },
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, userMatch, dateMatch, timeMatch, streetMatch],
+        $and: [userMatch, dateMatch, timeMatch, streetMatch],
       },
     },
     {
@@ -859,6 +862,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         created: 1,
         SOwner: 1,
         kyc_status: 1,
+        type: 1,
         active: 1,
         mobile: 1,
         date: 1,
@@ -873,7 +877,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
     },
     {
       $match: {
-        $and: [{ type: { $eq: 'shop' } }, userMatch, dateMatch, timeMatch, streetMatch],
+        $and: [ userMatch, dateMatch, timeMatch, streetMatch],
       },
     },
     {
