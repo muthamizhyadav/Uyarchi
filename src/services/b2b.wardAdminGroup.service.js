@@ -93,65 +93,65 @@ const getOrderFromGroupById = async (id) => {
 
 
 
-// const getPettyStock = async (id) => {
-//   let values = await ShopOrderClone.aggregate([
-//     {
-//       $match: {
-//         $and: [{ deliveryExecutiveId: { $eq: id } }],
-//       },
-//     },
-//     {
-//       $unwind: '$product'
-//     },
-//     {
-//       $group: {
-//         _id: "$product.productName",
-//         "Total quantity": { $sum: "$product.quantity" }
-//       }
-//     }
-
-//   ]);
-
-//   return values;
-// };
-
-
 const getPettyStock = async (id) => {
-  let values = await wardAdminGroup.aggregate([
+  let values = await ShopOrderClone.aggregate([
     {
       $match: {
         $and: [{ deliveryExecutiveId: { $eq: id } }],
       },
     },
     {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'deliveryExecutiveId',
-        foreignField: 'deliveryExecutiveId',
-        as: 'datas',
-      }
+      $unwind: '$product'
     },
-    { $unwind: '$datas'},
     {
-      $project: {
-        datas:'$datas.product',
-        groupId:1,
+      $group: {
+        _id: "$product.productName",
+        "Total quantity": { $sum: "$product.quantity" }
       }
     }
-    // {
-    //   $unwind: '$product'
-    // },
-    // {
-    //   $group: {
-    //     _id: "$product.productName",
-    //     "Total quantity": { $sum: "$product.quantity" }
-    //   }
-    // }
 
   ]);
 
   return values;
 };
+
+
+// const getPettyStock = async (id) => {
+//   let values = await ShopOrderClone.aggregate([
+//     {
+//       $match: {
+//         $and: [{ GroupId: { $eq: id } }],
+//       },
+//     },
+//     {
+//       $lookup: {
+//         from: 'wardadmingroups',
+//         localField: 'deliveryExecutiveId',
+//         foreignField: 'deliveryExecutiveId',
+//         as: 'datas',
+//       }
+//     },
+//     // { $unwind: '$datas'},
+//     // {
+//     //   $project: {
+//     //     datas:'$datas.product',
+//     //     groupId:1,
+//     //   }
+//     // }
+//     // {
+//     //   $unwind: '$product'
+//     // },
+//     // {
+//     //   $group: {
+//     //     _id: "$product.productName",
+//     //     "Total quantity": { $sum: "$product.quantity" }
+//     //   }
+//     // }
+
+//   ]);
+
+//   return values;
+// };
 
 
 
