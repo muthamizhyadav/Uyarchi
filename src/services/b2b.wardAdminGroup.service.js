@@ -296,7 +296,16 @@ const assignOnly = async (page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  return values;
+  let total = await wardAdminGroup.aggregate([
+      {
+        $match: {
+          status: {
+            $in: ['Assigned'],
+          }
+        }
+      },
+  ])
+  return {values: values, total: total.length};
 }
 
 
