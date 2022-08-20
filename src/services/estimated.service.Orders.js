@@ -547,7 +547,7 @@ const updateEstimateById = async (id, updateBody) => {
 
 const getEstimated_Orders_By_Id_And_date = async (id) => {
   let currentDate = moment().format('DD-MM-YYYY');
-  let estimate = await Estimated.find({ productId: id, date: currentDate });
+  let estimate = await Estimated.find({ productId: id, date: currentDate, estimatedStatus: { $eq: 'Estimated' } });
   if (!estimate) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Estimated Order Not Found');
   }
