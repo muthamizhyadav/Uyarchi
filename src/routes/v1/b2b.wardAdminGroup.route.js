@@ -65,6 +65,8 @@ router.route('/get/getdetailsAboutPettyStockByGroupId/:id/:page').get(wardAdminG
 
 router.route('/upload/imgae/wastage/').post(wardAdminGroupController.uploadWastageImage);
 
+router.route('/update/')
+
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE

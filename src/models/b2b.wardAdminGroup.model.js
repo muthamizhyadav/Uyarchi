@@ -21,6 +21,10 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
+  pettyStockData: {
+    type: Array,
+    default: [],
+  },
   active: {
     type: Boolean,
     default: true,
