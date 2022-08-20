@@ -193,6 +193,11 @@ const uploadWastageImage = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(otherExp);
 });
 
+const createData = catchAsync(async (req, res) => {
+  const data = await wardAdminGroupService.createpettyStockData( req.body);
+  res.send(data)
+})
+
 
 
 
@@ -254,6 +259,8 @@ module.exports = {
   updateDontAllocate,
 
   updateAllocate,
+
+  createData,
 
   // createBillNo,
 

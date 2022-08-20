@@ -708,6 +708,16 @@ const uploadWastageImage = async (expBody) => {
   return wardAdminGroup.create(expBody);
 };
 
+const createpettyStockData = async( body)=>{
+  // let data = await wardAdminGroup.find();
+  // console.log(data);
+  // let values = body
+  // body.pettyStockData.forEach(async (e) =>{
+    let craete = await wardAdminGroup.findByIdAndUpdate( body, { new: true });
+    return craete;
+  
+}
+
 module.exports = {
   createGroup,
   // updateOrderStatus,
@@ -749,6 +759,7 @@ module.exports = {
   getdetailsAboutPettyStockByGroupId,
 
   uploadWastageImage,
+  createpettyStockData,
 
 
 
