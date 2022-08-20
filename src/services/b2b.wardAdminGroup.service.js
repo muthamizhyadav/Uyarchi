@@ -672,6 +672,12 @@ const getdetailsAboutPettyStockByGroupId = async (id , page) =>{
         $and: [{ _id: { $eq: id } }]
       }
     },
+    {
+      $project: {
+        pettyStock: 1,
+        totalQtyIncludingPettyStock:1,
+      }
+    },
 
     { $skip: 10 * page },
     { $limit: 10 },
@@ -685,12 +691,22 @@ const getdetailsAboutPettyStockByGroupId = async (id , page) =>{
     },
   ])
 
-  return {details: details, total: total.length};
+  return { details: details, total: total.length };
 
 }
 
+// const uploadWastageImage = async (id, body) => {
+//   let cate = await wardAdminGroup.findById(id);
+//   if (!cate) {
+//     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+//   }
+//   cate = await wardAdminGroup.findByIdAndUpdate({ _id: id }, body, { new: true });
+//   return cate;
+// };
 
-
+const uploadWastageImage = async (expBody) => {
+  return wardAdminGroup.create(expBody);
+};
 
 module.exports = {
   createGroup,
@@ -731,6 +747,8 @@ module.exports = {
 
   getPettyStockDetails,
   getdetailsAboutPettyStockByGroupId,
+
+  uploadWastageImage,
 
 
 

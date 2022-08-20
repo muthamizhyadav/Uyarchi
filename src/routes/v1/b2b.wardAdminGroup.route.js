@@ -63,6 +63,8 @@ router.route('/get/getPettyStockDetails/:id/:page').get(wardAdminGroupController
 
 router.route('/get/getdetailsAboutPettyStockByGroupId/:id/:page').get(wardAdminGroupController.getdetailsAboutPettyStockByGroupId);
 
+router.route('/upload/imgae/wastage/').post(wardAdminGroupController.uploadWastageImage);
+
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE
