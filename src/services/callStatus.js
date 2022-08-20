@@ -238,6 +238,31 @@ const suddenOrdersDisplay = async (productId) => {
         ],
       },
     },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        as: 'supplierdata',
+      },
+    },
+    {
+      $unwind: '$supplierdata',
+    },
+    {
+      $project: {
+        StockReceived: 1,
+        _id: 1,
+        orderType: 1,
+        confirmOrder: 1,
+        confirmcallstatus: 1,
+        confirmprice: 1,
+        exp_date: 1,
+        date: 1,
+        time: 1,
+        supplierName: '$supplierdata.primaryContactName',
+      },
+    },
   ]);
   return values;
 };
