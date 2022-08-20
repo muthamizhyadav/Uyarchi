@@ -542,7 +542,7 @@ const getacceptDeclined = async (status, date, key, page, userId, userRole) => {
         $and: match,
       },
     },
-    { $sort: { historydate: 1, sorttime: 1 } },
+    { $sort: { historydate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
@@ -605,11 +605,11 @@ const getacceptDeclined = async (status, date, key, page, userId, userRole) => {
         Slat: 1,
         Strid: 1,
         sortdatetime: 1,
-        historydate:1,
+        historydate: 1,
         Slong: 1,
         address: 1,
         date: 1,
-        sorttime:1,
+        sorttime: 1,
         time: 1,
         created: 1,
         status: 1,
