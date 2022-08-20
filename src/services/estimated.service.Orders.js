@@ -3,6 +3,7 @@ const Estimated = require('../models/estimatedOrders.mode');
 const { ProductorderClone } = require('../models/shopOrder.model');
 const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise, ManageBill, ShopList } = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
+const moment = require('moment');
 
 const createEstimatedOrders = async (body) => {
   let estimate = await Estimated.create(body);
@@ -544,10 +545,20 @@ const updateEstimateById = async (id, updateBody) => {
   return estimate;
 };
 
+const getEstimated_Orders_By_Id_And_date = async (id) => {
+  let currentDate = moment().format('DD-MM-YYYY');
+  let estimate = await Estimated.find({ productId: id, date: currentDate, estimatedStatus: { $eq: 'Estimated' } });
+  if (!estimate) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Estimated Order Not Found');
+  }
+  return estimate;
+};
+
 module.exports = {
   createEstimatedOrders,
   getEstimatedByDate,
   getSingleProductEstimations,
   updateEstimateById,
   getEstimatedByDateforPH,
+  getEstimated_Orders_By_Id_And_date,
 };

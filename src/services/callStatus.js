@@ -3,6 +3,8 @@ const { CallStatus } = require('../models');
 const Supplier = require('../models/supplier.model');
 const ApiError = require('../utils/ApiError');
 const { Product } = require('../models/product.model');
+const moment = require('moment');
+
 const createCallStatus = async (callStatusBody) => {
   return CallStatus.create(callStatusBody);
 };
@@ -224,6 +226,22 @@ const getCallstatusForSuddenOrders = async (page) => {
   return { values: values, total: total.length };
 };
 
+const suddenOrdersDisplay = async (productId) => {
+  let currentDate = moment().format('DD-MM-YYYY');
+  let values = await CallStatus.aggregate([
+    {
+      $match: {
+        $and: [
+          { date: { $eq: currentDate } },
+          { productid: { $eq: productId } },
+          { confirmcallstatus: { $eq: 'Accepted' } },
+        ],
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createCallStatus,
   getCallStatusById,
@@ -233,4 +251,5 @@ module.exports = {
   getDataWithSupplierId,
   finishOrder,
   getCallstatusForSuddenOrders,
+  suddenOrdersDisplay,
 };

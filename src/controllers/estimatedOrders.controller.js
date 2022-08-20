@@ -28,10 +28,16 @@ const getSingleProductEstimations = catchAsync(async (req, res) => {
   res.send(estimate);
 });
 
+const getEstimated_Orders_By_Id_And_date = catchAsync(async (req, res) => {
+  const estimate = await EstimatedOrderService.getEstimated_Orders_By_Id_And_date(req.params.id);
+  res.send(estimate);
+});
+
 module.exports = {
   createEstimatedOrders,
   getEstimatedByDate,
   getSingleProductEstimations,
   updateEstimatedOrders,
   getEstimatedByDateforPH,
+  getEstimated_Orders_By_Id_And_date,
 };
