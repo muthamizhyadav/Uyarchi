@@ -150,6 +150,38 @@ const getdetailsAboutPettyStockByGroupId =  catchAsync(async (req, res) => {
   res.send(datas)
 });
 
+// const  uploadWastageImage = catchAsync(async (req, res) => {
+//   const wallet = await wardAdminGroupService.uploadWastageImage(req.params.id, req.body);
+//   if (req.files) {
+//     let path = '';
+//     path = 'images/wallet/';
+//     console.log(path)
+//     if (req.files.wastageImageUpload != null) {
+//       wallet.wastageImageUpload =
+//         path +
+//         req.files.wastageImageUpload.map((e) => {
+//           return e.filename;
+//         });
+//     }
+//   await wallet.save();
+//   res.status(httpStatus.CREATED).send(wallet);
+//   }
+// });
+
+const uploadWastageImage = catchAsync(async (req, res) => {
+  const { body } = req;
+  const otherExp = await wardAdminGroupService.uploadWastageImage(body);
+  if (req.files) {
+    let path = '';
+    req.files.forEach(function (files, index, arr) {
+      path = 'images/bills/' + files.filename;
+    });
+    otherExp.wastageImageUpload = path;
+  }
+  await otherExp.save();
+  res.status(httpStatus.CREATED).send(otherExp);
+});
+
 
 
 
@@ -205,6 +237,8 @@ module.exports = {
 
   getPettyStockDetails,
   getdetailsAboutPettyStockByGroupId,
+
+  uploadWastageImage,
 
   // createBillNo,
 
