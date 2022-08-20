@@ -105,7 +105,7 @@ const getPettyStock = async (id) => {
     {
       $group: {
         _id: "$product.productName",
-        "Total quantity": { $sum: "$product.quantity" }
+        "Totalquantity": { $sum: "$product.quantity" }
       }
     }
 
