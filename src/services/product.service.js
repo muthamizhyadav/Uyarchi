@@ -1341,28 +1341,28 @@ const rateSetSellingPrice = async (productId, date) => {
         _id: { $eq: productId },
       },
     },
-    {
-      $lookup: {
-        from: 'receivedstocks',
-        localField: '_id',
-        foreignField: 'productId',
-        pipeline: [
-          { $match: { date: date } },
-          {
-            $group: {
-              _id: null,
-              low: { $min: '$billingPrice' },
-              High: { $max: '$billingPrice' },
-              Avg: { $avg: '$billingPrice' },
-            },
-          },
-        ],
-        as: 'receivedstocks',
-      },
-    },
-    {
-      $unwind: '$receivedstocks',
-    },
+    // {
+    //   $lookup: {
+    //     from: 'receivedstocks',
+    //     localField: '_id',
+    //     foreignField: 'productId',
+    //     pipeline: [
+    //       { $match: { date: date } },
+    //       {
+    //         $group: {
+    //           _id: null,
+    //           low: { $min: '$billingPrice' },
+    //           High: { $max: '$billingPrice' },
+    //           Avg: { $avg: '$billingPrice' },
+    //         },
+    //       },
+    //     ],
+    //     as: 'receivedstocks',
+    //   },
+    // },
+    // {
+    //   $unwind: '$receivedstocks',
+    // },
     {
       $lookup: {
         from: 'trendproductsclones',
@@ -1389,16 +1389,16 @@ const rateSetSellingPrice = async (productId, date) => {
       $project: {
         productTitle: 1,
         stock: 1,
-        GST_Number: 1,
-        startPriceAvg: { $avg: '$salesmanPrice.start' },
-        startPriceHigh: { $max: '$salesmanPrice.start' },
-        startPriceLow: { $min: '$salesmanPrice.start' },
-        endPriceAvg: { $avg: '$salesmanPrice.end' },
-        endPriceHigh: { $max: '$salesmanPrice.end' },
-        endPriceLow: { $min: '$salesmanPrice.end' },
-        costPricewLow: '$receivedstocks.low',
-        costPricewHigh: '$receivedstocks.High',
-        costPricewAvg: '$receivedstocks.Avg',
+        // GST_Number: 1,
+        // startPriceAvg: { $avg: '$salesmanPrice.start' },
+        // startPriceHigh: { $max: '$salesmanPrice.start' },
+        // startPriceLow: { $min: '$salesmanPrice.start' },
+        // endPriceAvg: { $avg: '$salesmanPrice.end' },
+        // endPriceHigh: { $max: '$salesmanPrice.end' },
+        // endPriceLow: { $min: '$salesmanPrice.end' },
+        // costPricewLow: '$receivedstocks.low',
+        // costPricewHigh: '$receivedstocks.High',
+        // costPricewAvg: '$receivedstocks.Avg',
         marketTrendLow: '$marketTrend.low',
         marketTrendHigh: '$marketTrend.High',
         marketTrendAvg: '$marketTrend.Avg',
