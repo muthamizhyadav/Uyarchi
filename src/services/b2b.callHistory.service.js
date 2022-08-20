@@ -60,8 +60,8 @@ const createcallHistoryWithType = async (body, userId) => {
         { new: true }
       );
       // await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
-    }else{
-      await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate,  callingStatusSort: sort  }, { new: true });
+    } else {
+      await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate, callingStatusSort: sort }, { new: true });
     }
   }
   let callHistory = await callHistoryModel.create(values);
@@ -76,7 +76,7 @@ const callingStatusreport = async () => {
   let serverdate = moment().format('DD-MM-yyyy');
   let acceptCount = await Shop.find({ callingStatus: 'accept', historydate: serverdate }).count();
   let callbackCount = await Shop.find({ callingStatus: 'callback', historydate: serverdate }).count();
-  let rescheduleCount = await Shop.find({ callingStatus: 'reschedule' }).count();
+  let rescheduleCount = await Shop.find({ callingStatus: 'reschedule', historydate: serverdate }).count();
   let pendingCount = await Shop.find({ callingStatus: 'Pending' }).count();
   let oncall = await Shop.find({ callingStatus: 'On Call' }).count();
   let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate }).count();
@@ -491,7 +491,7 @@ const getshopsOrderWise = async (status) => {
   let serverdate = moment().format('DD-MM-yyyy');
   let pending = await Shop.find({ callingStatus: 'Pending' });
   let accept = await Shop.find({ callingStatus: 'accept' });
-  let reschedule = await Shop.find({ callingStatus: 'reshedule' , historydate: serverdate});
+  let reschedule = await Shop.find({ callingStatus: 'reshedule' });
   let callback = await Shop.find({ callingStatus: 'callback' });
   let declined = await Shop.find({ callingStatus: 'declined' });
   let oncall = await Shop.find({ callingStatus: 'On Call' });
