@@ -26,6 +26,17 @@ const updatePickedPettyCash = catchAsync(async (req, res) => {
   res.send(pickedPettyCash);
 });
 
+const updateDontAllocate = catchAsync(async (req, res) => {
+  const  notAloocate= await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  res.send(notAloocate);
+});
+
+const updateAllocate = catchAsync(async (req, res) => {
+  const  notAloocate= await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  res.send(notAloocate);
+});
+
+
 const updateDeliveryStarted = catchAsync(async (req, res) => {
   const deleiveryStarted = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
   res.send(deleiveryStarted);
@@ -239,6 +250,10 @@ module.exports = {
   getdetailsAboutPettyStockByGroupId,
 
   uploadWastageImage,
+
+  updateDontAllocate,
+
+  updateAllocate,
 
   // createBillNo,
 
