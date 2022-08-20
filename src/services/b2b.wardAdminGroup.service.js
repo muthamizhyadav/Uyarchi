@@ -61,7 +61,6 @@ const orderPicked = async (deliveryExecutiveId) => {
     throw new ApiError(httpStatus.NOT_FOUND, ' id not found');
   }
 
-
   orderPicked.forEach(async (e) => {
     let statusUpdate = e.deliveryExecutiveId
     await ShopOrderClone.findByIdAndUpdate({ deliveryExecutiveId: statusUpdate }, { status: "Order Picked" }, { new: true })
@@ -93,70 +92,49 @@ const getOrderFromGroupById = async (id) => {
 
 
 
-// const getPettyStock = async (id) => {
-//   let values = await ShopOrderClone.aggregate([
-//     {
-//       $match: {
-//         $and: [{ deliveryExecutiveId: { $eq: id } }],
-//       },
-//     },
-//     {
-//       $unwind: '$product'
-//     },
-//     {
-//       $group: {
-//         _id: "$product.productName",
-//         "Total quantity": { $sum: "$product.quantity" }
-//       }
-//     }
-
-//   ]);
-
-//   return values;
-// };
-
-
 const getPettyStock = async (id) => {
-  let values = await wardAdminGroup.aggregate([
+  let values = await ShopOrderClone.aggregate([
     {
       $match: {
         $and: [{ deliveryExecutiveId: { $eq: id } }],
       },
     },
     {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'deliveryExecutiveId',
-        foreignField: 'deliveryExecutiveId',
-        as: 'datas',
-      }
+      $unwind: '$product'
     },
-    { $unwind: '$datas'},
     {
-      $project: {
-        datas:'$datas.product',
-        groupId:1,
+      $group: {
+        _id: "$product.productName",
+        "Total quantity": { $sum: "$product.quantity" }
       }
     }
-    // {
-    //   $unwind: '$product'
-    // },
-    // {
-    //   $group: {
-    //     _id: "$product.productName",
-    //     "Total quantity": { $sum: "$product.quantity" }
-    //   }
-    // }
 
   ]);
 
   return values;
 };
 
+const pettyStockSubmit= async (id, updateBody) => {
+  let deliveryStatus = await wardAdminGroup.findById(id);
+  console.log(deliveryStatus);
+  if (!deliveryStatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  deliveryStatus = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  console.log(deliveryStatus);
+  return deliveryStatus;
+};
 
-
-
-
+// const  pettyCashSubmit= async (id, updateBody) => {
+//   let deliveryStatus = await wardAdminGroup.findById(id);
+//   console.log(deliveryStatus);
+//   if (!deliveryStatus) {
+//     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+//   }
+//   deliveryStatus = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+//   console.log(deliveryStatus);
+//   return deliveryStatus;
+// };
 
 const getGroupdetails = async () => {
   return wardAdminGroup.find();
@@ -658,6 +636,57 @@ const getReturnWDEtoWLE = async (id , page) =>{
     },
   ])
   return {datas: datas, total: total.length};
+};
+
+
+const getPettyStockDetails = async (id , page) =>{
+  let details = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    { $unwind: '$pettyStock'},
+    {
+      $project: {
+        pettyStock:1,
+      }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+  ]);
+  return { details: details, total: total.length}
+}
+
+const getdetailsAboutPettyStockByGroupId = async (id , page) =>{
+  let details = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }]
+      }
+    },
+
+    { $skip: 10 * page },
+    { $limit: 10 },
+
+  ]);
+  let total = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }]
+      }
+    },
+  ])
+
+  return {details: details, total: total.length};
+
 }
 
 
@@ -695,7 +724,13 @@ module.exports = {
   getDetailsAfterDeliveryCompletion,
   getBillDetailsPerOrder,
 
-  getReturnWDEtoWLE
+  getReturnWDEtoWLE,
+
+  pettyStockSubmit,
+  // pettyCashSubmit,
+
+  getPettyStockDetails,
+  getdetailsAboutPettyStockByGroupId,
 
 
 
