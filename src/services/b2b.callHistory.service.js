@@ -491,7 +491,7 @@ const getshopsOrderWise = async (status) => {
   let serverdate = moment().format('DD-MM-yyyy');
   let pending = await Shop.find({ callingStatus: 'Pending' });
   let accept = await Shop.find({ callingStatus: 'accept' });
-  let reschedule = await Shop.find({ callingStatus: 'reshedule' });
+  let reschedule = await Shop.find({ callingStatus: 'reshedule' , historydate: serverdate});
   let callback = await Shop.find({ callingStatus: 'callback' });
   let declined = await Shop.find({ callingStatus: 'declined' });
   let oncall = await Shop.find({ callingStatus: 'On Call' });

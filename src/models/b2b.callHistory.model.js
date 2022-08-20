@@ -43,6 +43,9 @@ const callHistorySchema = mongoose.Schema({
     type: String,
     // default: moment().format('DD-MM-yyy'),
   },
+  calldate: {
+    type: String,
+  },
   time: {
     type: String,
     // default: moment().format('hh:mm a'),
