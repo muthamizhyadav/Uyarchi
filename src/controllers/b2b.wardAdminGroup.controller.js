@@ -186,7 +186,7 @@ const createData = catchAsync(async (req, res) => {
 });
 
 const getPettyCashDetails = catchAsync(async (req, res) => {
-  const data = await wardAdminGroupService.getPettyCashDetails(req.params.id);
+  const data = await wardAdminGroupService.getPettyCashDetails(req.params.id, req.params.page);
   res.send(data)
 });
 

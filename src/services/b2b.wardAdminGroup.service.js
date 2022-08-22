@@ -718,24 +718,69 @@ const getdetailsAboutPettyStockByGroupId = async (id , page) =>{
 //   return wardAdminGroup.create(expBody);
 // };
 
-const getPettyCashDetails = async (id) =>{
+const getPettyCashDetails = async (id, page) =>{
   let values = await wardAdminGroup.aggregate([
     {
       $match: {
         $and: [{ _id: { $eq: id } }]
       }
     },
+    
+    { $unwind: "$Orderdatas"},
     {
       $lookup: {
         from: 'shoporderclones',
         localField: 'Orderdatas.OrderId',
         foreignField: 'OrderId',
+        // pipeline: [
+        //   {
+        //           "$group": {
+        //            "_id": null,
+        //          "total": { "$sum": "$overallTotal" }
+        //         }
+        //      },
+        // ],
         as: 'datas'
       }
     },{$unwind: '$datas'},
+    { $skip: 10 * page },
+    { $limit: 10 },
+    
+    {
+      $project: {
+        groupId:1,
+        orderId: "$datas.OrderId",
+        Amount: "$datas.overallTotal",
+        shopType: "$Orderdatas.type",
+        shopName: "$Orderdatas.shopName",
+        Deliverystatus: "$datas.status",
+        // total : "$datas.total"
+      }
+    }
   
   ]);
-  return values;
+  let total = await wardAdminGroup.aggregate([
+   
+      {
+        $match: {
+          $and: [{ _id: { $eq: id } }]
+        }
+      },
+      
+      { $unwind: "$Orderdatas"},
+      {
+        $lookup: {
+          from: 'shoporderclones',
+          localField: 'Orderdatas.OrderId',
+          foreignField: 'OrderId',
+          // pipeline: [
+          //   { $group: { _id: null, Total: { $sum: '$datas.overallTotal' }, } },
+          // ],
+          as: 'datas'
+        }
+      },{$unwind: '$datas'},
+  ])
+  return { values:values , total:total.length };
 }
 
 

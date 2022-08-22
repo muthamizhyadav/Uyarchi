@@ -12,7 +12,7 @@ router.route('/craeteGroupId').post(wardAdminGroupController.createGroupOrder);
 
 // router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
 
-// router.route('/update/delivered/:id').put(wardAdminGroupController.updateDeliveryCompleted);
+router.route('/update/delivered/:id').put(wardAdminGroupController.updateDeliveryCompleted);
 
 router.route('/update/unDelivered/:id').put(wardAdminGroupController.UpdateUnDeliveredStatus);
 
@@ -71,7 +71,7 @@ router.route('/update/status/allocateStatus/:id').put(wardAdminGroupController.u
 
 router.route('/update/status/notAloocate/:id').put(wardAdminGroupController.updateDontAllocate);
 
-router.route('/get/getPettyCashDetails/:id').get(wardAdminGroupController.getPettyCashDetails);
+router.route('/get/getPettyCashDetails/:id/:page').get(wardAdminGroupController.getPettyCashDetails);
 
 router.route('/get/AllGroup/details/:page').get(  wardAdminGroupController.getAllGroup);
 
