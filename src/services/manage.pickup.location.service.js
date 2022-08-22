@@ -61,8 +61,31 @@ const getAllManagepickup = async (page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await PickupLocation.find().count();
-  return { values: values, total: total };
+  let total = await PickupLocation.aggregate([
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'wardId',
+        foreignField: '_id',
+        as: 'wardData',
+      },
+    },
+    {
+      $unwind: '$wardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'streetId',
+        foreignField: '_id',
+        as: 'streetData',
+      },
+    },
+    {
+      $unwind: '$streetData',
+    },
+  ])
+  return { values: values, total: total.length };
 };
 
 const getManagePickupById = async (id) => {

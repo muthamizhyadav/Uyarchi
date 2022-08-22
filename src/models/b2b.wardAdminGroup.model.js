@@ -81,11 +81,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
   },
   stockReturnedByWDE: {
     type: Number,
-  
   },
   wastageReturnedByWDE: {
     type: Number,
-   
   },
   wastageImageUpload: {
     type: String,
@@ -94,13 +92,11 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: Number,
   },
   DeliverAsPerSystem: {
-
     type: Number,
   },
   UnDeliveredAsPerSystem: {
     type: Number,
   },
-
 
 });
 

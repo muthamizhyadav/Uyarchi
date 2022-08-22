@@ -71,6 +71,10 @@ router.route('/update/status/allocateStatus/:id').put(wardAdminGroupController.u
 
 router.route('/update/status/notAloocate/:id').put(wardAdminGroupController.updateDontAllocate);
 
+router.route('/get/getPettyCashDetails/:id').get(wardAdminGroupController.getPettyCashDetails);
+
+router.route('/get/AllGroup/details/:page').get(  wardAdminGroupController.getAllGroup);
+
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE

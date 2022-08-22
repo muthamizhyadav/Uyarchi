@@ -185,6 +185,16 @@ const createData = catchAsync(async (req, res) => {
   res.send(data)
 });
 
+const getPettyCashDetails = catchAsync(async (req, res) => {
+  const data = await wardAdminGroupService.getPettyCashDetails(req.params.id);
+  res.send(data)
+});
+
+const getAllGroup = catchAsync(async (req, res) => {
+  const group = await wardAdminGroupService.getAllGroup(req.params.page)
+  res.send(group)
+})
+
 
 module.exports = {
   createGroupOrder,
@@ -239,5 +249,7 @@ module.exports = {
   updateAllocate,
 
   createData,
+  getPettyCashDetails,
+  getAllGroup,
 
 };
