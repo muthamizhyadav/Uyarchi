@@ -61,10 +61,10 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: String,
     default: "Pending",
   },
-  NotAllocateStatus: {
-    type: String,
-    default: "Pending",
-  },
+  // NotAllocateStatus: {
+  //   type: String,
+  //   default: "Pending",
+  // },
   pettyCash: {
     type: Number,
   },
