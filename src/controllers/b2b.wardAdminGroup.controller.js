@@ -151,33 +151,20 @@ const deliveryCompleted =  catchAsync(async (req, res) => {
   res.send(completed)
 });
 
+
 const getPettyStockDetails =  catchAsync(async (req, res) => {
   const completed = await wardAdminGroupService.getPettyStockDetails(req.params.id, req.params.page);
   res.send(completed)
 });
+
+
 
 const getdetailsAboutPettyStockByGroupId =  catchAsync(async (req, res) => {
   const datas = await wardAdminGroupService.getdetailsAboutPettyStockByGroupId(req.params.id, req.params.page);
   res.send(datas)
 });
 
-// const  uploadWastageImage = catchAsync(async (req, res) => {
-//   const wallet = await wardAdminGroupService.uploadWastageImage(req.params.id, req.body);
-//   if (req.files) {
-//     let path = '';
-//     path = 'images/wallet/';
-//     console.log(path)
-//     if (req.files.wastageImageUpload != null) {
-//       wallet.wastageImageUpload =
-//         path +
-//         req.files.wastageImageUpload.map((e) => {
-//           return e.filename;
-//         });
-//     }
-//   await wallet.save();
-//   res.status(httpStatus.CREATED).send(wallet);
-//   }
-// });
+
 
 const uploadWastageImage = catchAsync(async (req, res) => {
   const { body } = req;
@@ -194,18 +181,9 @@ const uploadWastageImage = catchAsync(async (req, res) => {
 });
 
 const createData = catchAsync(async (req, res) => {
-  const data = await wardAdminGroupService.createpettyStockData( req.body);
+  const data = await wardAdminGroupService.getpettyStockData( req.params.id, req.body);
   res.send(data)
-})
-
-
-
-
-
-// const createBillNo = catchAsync(async (req, res) => {
-//   const billNo = await wardAdminGroupService.createBillNo(req.params.id);
-//   res.send(billNo);
-// })
+});
 
 
 module.exports = {
@@ -261,7 +239,5 @@ module.exports = {
   updateAllocate,
 
   createData,
-
-  // createBillNo,
 
 };

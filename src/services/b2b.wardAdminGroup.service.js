@@ -442,6 +442,16 @@ const groupIdClick = async (id) => {
   return data;
 }
 
+
+const getpettyStockData = async (id, body) =>{
+  let data = []
+  let pettyStockData = await wardAdminGroup.findByIdAndUpdate({_id:id},body , { new: true });
+  pettyStockData.pettyStockData.forEach((e) => {
+
+    data.push(e)
+  })
+  return data;
+}
 const orderIdClickGetProduct = async (id) => {
   console.log(id)
 
@@ -708,15 +718,8 @@ const uploadWastageImage = async (expBody) => {
   return wardAdminGroup.create(expBody);
 };
 
-const createpettyStockData = async( body)=>{
-  // let data = await wardAdminGroup.find();
-  // console.log(data);
-  // let values = body
-  // body.pettyStockData.forEach(async (e) =>{
-    let craete = await wardAdminGroup.findByIdAndUpdate( body, { new: true });
-    return craete;
-  
-}
+
+
 
 module.exports = {
   createGroup,
@@ -759,7 +762,8 @@ module.exports = {
   getdetailsAboutPettyStockByGroupId,
 
   uploadWastageImage,
-  createpettyStockData,
+
+  getpettyStockData
 
 
 

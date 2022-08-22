@@ -67,6 +67,10 @@ router.route('/upload/imgae/wastage/').post(wardAdminGroupController.uploadWasta
 
 router.route('/create/array/pettyStockData/:id').put(wardAdminGroupController.createData);
 
+router.route('/update/status/allocateStatus/:id').put(wardAdminGroupController.updateAllocate);
+
+router.route('/update/status/notAloocate/:id').put(wardAdminGroupController.updateDontAllocate);
+
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE
