@@ -727,6 +727,7 @@ const getPettyCashDetails = async (id, page) =>{
     },
     
     { $unwind: "$Orderdatas"},
+  
     {
       $lookup: {
         from: 'shoporderclones',
@@ -734,15 +735,16 @@ const getPettyCashDetails = async (id, page) =>{
         foreignField: 'OrderId',
         // pipeline: [
         //   {
-        //           "$group": {
-        //            "_id": null,
-        //          "total": { "$sum": "$overallTotal" }
+        //           $group: {
+        //            _id: null,
+        //          total: { "$sum": "$overallTotal" }
         //         }
         //      },
         // ],
         as: 'datas'
       }
-    },{$unwind: '$datas'},
+    },
+    {$unwind: '$datas'},
     { $skip: 10 * page },
     { $limit: 10 },
     
@@ -754,7 +756,11 @@ const getPettyCashDetails = async (id, page) =>{
         shopType: "$Orderdatas.type",
         shopName: "$Orderdatas.shopName",
         Deliverystatus: "$datas.status",
-        // total : "$datas.total"
+        // Total: { $sum: '$datas.overallTotal' },
+        // "TotalMarks": {
+        //      "$sum": "$values.Amount"
+        //       }
+             
       }
     }
   
