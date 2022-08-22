@@ -765,8 +765,6 @@ module.exports = {
 
   getpettyStockData
 
-
-
 };
 // 626931f6-c32c-4b42-a3cc-94c30aeabc70
 

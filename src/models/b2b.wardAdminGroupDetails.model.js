@@ -40,6 +40,13 @@ const wardAdminGroupDetailsSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  pettyStockData: {
+    type: Array,
+    default: [],
+  },
+  groupId: {
+    type: String,
+  },
 });
 
 const wardAdminGroupDetailsModel = mongoose.model('wardAdminGroupDetails', wardAdminGroupDetailsSchema);
