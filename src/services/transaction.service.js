@@ -1,9 +1,13 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const Transaction = require('../models/transaction.model');
+const moment = require('moment');
 
 const createTransaction = async (body) => {
-  const transaction = await Transaction.create(body);
+  let currentDate = moment().format('YYYY-MM-DD');
+  let currentTime = moment().format('HHmmss');
+  let values = { ...body, ...{ date: currentDate, created: moment(), time: currentTime } };
+  const transaction = await Transaction.create(values);
   return transaction;
 };
 
