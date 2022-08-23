@@ -26,7 +26,7 @@ const transactionSchema = new mongoose.Schema({
     type: String,
   },
   time: {
-    type: String,
+    type: Number,
   },
   created: {
     type: Date,
