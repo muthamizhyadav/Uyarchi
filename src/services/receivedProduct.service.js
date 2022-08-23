@@ -143,6 +143,17 @@ const getAllWithPaginationBilled = async (page, status) => {
     },
     {
       $lookup: {
+        from: 'expensesbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Counts: { $sum: '$Amount' } } }],
+        as: 'totalAmt',
+      },
+    },
+    { $unwind: { path: '$totalAmt', preserveNullAndEmptyArrays: true } },
+
+    {
+      $lookup: {
         from: 'transportbills',
         localField: '_id',
         foreignField: 'groupId',
@@ -162,6 +173,9 @@ const getAllWithPaginationBilled = async (page, status) => {
         as: 'TotalPaidExpensesData',
       },
     },
+    // {
+
+    // },
     {
       $project: {
         _id: 1,
@@ -171,6 +185,7 @@ const getAllWithPaginationBilled = async (page, status) => {
         driverName: 1,
         driverNumber: 1,
         weighBridgeEmpty: 1,
+        totalAmt: { $ne: ['$totalAmt.Counts', '$TotalExpenseData.Counts'] },
         weighBridgeLoadedProduct: 1,
         supplierId: 1,
         date: 1,
@@ -184,6 +199,7 @@ const getAllWithPaginationBilled = async (page, status) => {
         TotalPaidExpensesData: '$TotalPaidExpensesData',
       },
     },
+    { $match: { totalAmt: { $eq: true } } },
     {
       $limit: 10,
     },
@@ -381,6 +397,16 @@ const getSupplierBillsDetails = async (page) => {
         pipeline: [
           {
             $lookup: {
+              from: 'supplierbills',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$Amount' } } }],
+              as: 'supplierbills',
+            },
+          },
+          { $unwind: { path: '$supplierbills', preserveNullAndEmptyArrays: true } },
+          {
+            $lookup: {
               from: 'receivedstocks',
               localField: '_id',
               foreignField: 'groupId',
@@ -393,8 +419,14 @@ const getSupplierBillsDetails = async (page) => {
           },
           {
             $project: {
-              pendingData: '$pendingData',
+              pendingData: '$pendingData.billingTotal',
+              supplierbills: '$supplierbills.billingTotal',
+              totalAmt: { $ne: ['$pendingData.billingTotal', '$supplierbills.billingTotal'] },
             },
+          },
+
+          {
+            $match: { totalAmt: true },
           },
         ],
         as: 'pendingDataall',
@@ -434,9 +466,9 @@ const getSupplierBillsDetails = async (page) => {
         as: 'receivedData',
       },
     },
-    // {
-    //   $unwind: '$receivedData',
-    // },
+    {
+      $unwind: { path: '$receivedData', preserveNullAndEmptyArrays: true },
+    },
     {
       $lookup: {
         from: 'receivedproducts',
@@ -460,15 +492,17 @@ const getSupplierBillsDetails = async (page) => {
     },
     {
       $project: {
-        PaymentData: { $sum: '$receivedData.PaymentData.Amount' },
-        receivedData: { $sum: '$pendingDataall.pendingData.billingTotal' },
+        // PaymentDatasss: '$pendingDataall',
+        PaymentData: { $sum: '$pendingDataall.pendingData' },
+        paidamount: { $sum: '$pendingDataall.supplierbills' },
+        // receivedData: '$receivedDatacount',
         primaryContactName: 1,
         receivedDatacount: '$receivedDatacount.total',
         primaryContactNumber: 1,
-        // totalprice: { $sum: "$receivedData.pendingData.billingTotal" },
         _id: 1,
       },
     },
+    { $match: { PaymentData: { $ne: 0 } } },
     {
       $limit: 10,
     },
