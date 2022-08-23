@@ -407,6 +407,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         shopData: 1,
         shoptypeName: '$shoplists',
         match: { $ne: ['$b2bshopclones._id', null] },
+        matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
       },
     },
     {
@@ -500,7 +501,10 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
       $match: { match: true },
     },
   ]);
-  return { values: values, total: total.length };
+  let role = await Role.findOne({ _id: userRole });
+  let user = await Users.findOne({ _id: userId });
+  return { values: values, total: total.length, RoleName: role.roleName, userName: user.name };
+  // return { values: values, total: total.length };
 };
 
 const getShop_callback = async (date, status, key, page, userId, userRole) => {
@@ -540,6 +544,35 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         as: 'shoplists',
       },
     },
+    {
+      $project: {
+        _id: 1,
+        photoCapture: 1,
+        callingStatus: 1,
+        callingStatusSort: 1,
+        active: 1,
+        archive: 1,
+        Wardid: 1,
+        type: 1,
+        SName: 1,
+        SType: 1,
+        SOwner: 1,
+        mobile: 1,
+        Slat: 1,
+        Strid: 1,
+        sortdatetime: 1,
+        Slong: 1,
+        address: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        status: 1,
+        Uid: 1,
+        shopData: 1,
+        shoptypeName: '$shoplists',
+        matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
+      },
+    },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -565,7 +598,9 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
     },
   ]);
 
-  return { values: values, total: total.length };
+  let role = await Role.findOne({ _id: userRole });
+  let user = await Users.findOne({ _id: userId });
+  return { values: values, total: total.length, RoleName: role.roleName, userName: user.name };
 };
 
 const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
@@ -608,6 +643,35 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         as: 'shoplists',
       },
     },
+    {
+      $project: {
+        _id: 1,
+        photoCapture: 1,
+        callingStatus: 1,
+        callingStatusSort: 1,
+        active: 1,
+        archive: 1,
+        Wardid: 1,
+        type: 1,
+        SName: 1,
+        SType: 1,
+        SOwner: 1,
+        mobile: 1,
+        Slat: 1,
+        Strid: 1,
+        sortdatetime: 1,
+        Slong: 1,
+        address: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        status: 1,
+        Uid: 1,
+        shopData: 1,
+        shoptypeName: '$shoplists',
+        matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
+      },
+    },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -637,7 +701,9 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
     },
   ]);
 
-  return { values: values, total: total.length };
+  let role = await Role.findOne({ _id: userRole });
+  let user = await Users.findOne({ _id: userId });
+  return { values: values, total: total.length, RoleName: role.roleName, userName: user.name };
 };
 
 const updateCallingStatus = async (id, updatebody) => {
