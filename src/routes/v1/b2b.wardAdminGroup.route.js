@@ -75,6 +75,8 @@ router.route('/get/getPettyCashDetails/:id/:page').get(wardAdminGroupController.
 
 router.route('/get/AllGroup/details/:page').get(  wardAdminGroupController.getAllGroup);
 
+router.route("/update/pettycash/return/:id").put(wardAdminGroupController.updatePettyCashReturnStatus);
+
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE

@@ -42,6 +42,11 @@ const updateDeliveryStarted = catchAsync(async (req, res) => {
   res.send(deleiveryStarted);
 });
 
+const updatePettyCashReturnStatus = catchAsync(async (req, res) => {
+  const status = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  res.send(status);
+})
+
 const updateDeliveryCompleted = catchAsync(async (req, res) => {
   const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, req.body);
   res.send(deliveryCompleted);
@@ -251,5 +256,7 @@ module.exports = {
   createData,
   getPettyCashDetails,
   getAllGroup,
+
+  updatePettyCashReturnStatus,
 
 };
