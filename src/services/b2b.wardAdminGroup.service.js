@@ -83,14 +83,13 @@ const updateManageStatus = async (id, updateBody) => {
   return Manage;
 };
 
-const updatePettyCashReturnStatus = async (id, updateBody) => {
-  let Manage = await getById(id);
-
-  if (!Manage) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Data not found');
+const updateShopOrderCloneById = async (id, updatebody) => {
+  let shoporderClone = await ShopOrderClone.findById(id);
+  if (!shoporderClone) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'ShopOrderClone Not Found');
   }
-  Manage = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-  return Manage;
+  shoporderClone = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  return shoporderClone;
 };
 
 // GET ORDER DETAILS FROM GROUP BY ID
@@ -913,7 +912,7 @@ module.exports = {
   getPettyCashDetails,
   getAllGroup,
 
-  updatePettyCashReturnStatus,
+  updateShopOrderCloneById,
 
 };
 // 626931f6-c32c-4b42-a3cc-94c30aeabc70

@@ -43,12 +43,12 @@ const updateDeliveryStarted = catchAsync(async (req, res) => {
 });
 
 const updatePettyCashReturnStatus = catchAsync(async (req, res) => {
-  const status = await wardAdminGroupService.updatePettyCashReturnStatus(req.params.id, req.body);
+  const status = await wardAdminGroupService.updateShopOrderCloneById(req.params.id, req.body);
   res.send(status);
 })
 
 const updateDeliveryCompleted = catchAsync(async (req, res) => {
-  const deliveryCompleted = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, req.body);
   res.send(deliveryCompleted);
 });
 
