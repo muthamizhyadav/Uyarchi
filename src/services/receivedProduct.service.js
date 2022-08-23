@@ -467,7 +467,7 @@ const getSupplierBillsDetails = async (page) => {
       },
     },
     {
-      $unwind: '$receivedData',
+      $unwind: { path: '$receivedData', preserveNullAndEmptyArrays: true },
     },
     {
       $lookup: {
@@ -502,7 +502,7 @@ const getSupplierBillsDetails = async (page) => {
         _id: 1,
       },
     },
-
+    { $match: { PaymentData: { $ne: 0 } } },
     {
       $limit: 10,
     },
