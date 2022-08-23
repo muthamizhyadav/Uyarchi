@@ -33,6 +33,11 @@ const getEstimated_Orders_By_Id_And_date = catchAsync(async (req, res) => {
   res.send(estimate);
 });
 
+const liveStockInfo = catchAsync(async (req, res) => {
+  const estimate = await EstimatedOrderService.liveStockInfo(req.params.id);
+  res.send(estimate);
+});
+
 module.exports = {
   createEstimatedOrders,
   getEstimatedByDate,
@@ -40,4 +45,5 @@ module.exports = {
   updateEstimatedOrders,
   getEstimatedByDateforPH,
   getEstimated_Orders_By_Id_And_date,
+  liveStockInfo,
 };

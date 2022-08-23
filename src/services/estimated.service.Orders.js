@@ -524,7 +524,7 @@ const getSingleProductEstimations = async (id) => {
         time: 1,
         productTitle: '$productDetails.productTitle',
         stock: '$productDetails.stock',
-        stock: '$productDetails.stock',
+        // stock: '$productDetails.stock',
         image: '$productDetails.image',
         liveStock: '$productorders.Qty',
         liveAvg: '$productorders.Avg',
@@ -554,6 +554,39 @@ const getEstimated_Orders_By_Id_And_date = async (id) => {
   return estimate;
 };
 
+const liveStockInfo = async (id) => {
+  let currentDate = moment().format('DD-MM-YYYY');
+
+  let values = await Product.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          { $match: { date: currentDate } },
+          { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
+        ],
+        as: 'productorders',
+      },
+    },
+    {
+      $unwind: '$productorders',
+    },
+    {
+      $project: {
+        _id: 1,
+        livestock: '$productorders.Qty',
+        price: '$productorders.price',
+      },
+    },
+  ]);
+  return values.length != 0 ? values[0] : [];
+};
+
 module.exports = {
   createEstimatedOrders,
   getEstimatedByDate,
@@ -561,4 +594,5 @@ module.exports = {
   updateEstimateById,
   getEstimatedByDateforPH,
   getEstimated_Orders_By_Id_And_date,
+  liveStockInfo,
 };
