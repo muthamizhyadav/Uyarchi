@@ -238,8 +238,6 @@ const getBillDetails = async (id) => {
         // totalAmount: '$datas.totalAmount',
         customerName: '$UserName.name',
         deliveryExecutiveName: '$b2busersData.name'
-
-
       }
     }
 
@@ -632,7 +630,7 @@ const getReturnWDEtoWLE = async (id , page) =>{
   let datas = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ deliveryExecutiveId: { $eq: id } }],
+        $and: [{ _id: { $eq: id } }],
       },
     },
     { $skip: 10 * page },
@@ -641,7 +639,7 @@ const getReturnWDEtoWLE = async (id , page) =>{
   let total = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ deliveryExecutiveId: { $eq: id } }],
+        $and: [{ _id: { $eq: id } }],
       },
     },
   ])
