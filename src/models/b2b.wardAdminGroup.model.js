@@ -80,6 +80,10 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: String,
     default: "Pending"
   },
+  pettyCashReceiveStatus: {
+    type: String,
+    default: "Pending",
+  },
   stockReturnedByWDE: {
     type: Number,
   },

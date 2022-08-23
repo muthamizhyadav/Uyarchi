@@ -92,24 +92,69 @@ const getOrderFromGroupById = async (id) => {
 
 
 
-const getPettyStock = async (id) => {
-  let values = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [{ deliveryExecutiveId: { $eq: id } }],
-      },
-    },
-    {
-      $unwind: '$product'
-    },
-    {
-      $group: {
-        _id: "$product.productName",
-        "Totalquantity": { $sum: "$product.quantity" }
-      }
-    }
+// const getPettyStock = async (id ) => {
 
-  ]);
+  const getPettyStock = async (id) => {
+    let values = await ShopOrderClone.aggregate([
+      {
+        $match: {
+          $and: [{ deliveryExecutiveId: { $eq: id } }],
+        },
+      },
+      {
+        $unwind: '$product'
+      },
+      {
+        $group: {
+          _id: "$product.productName",
+          "Totalquantity": { $sum: "$product.quantity" }
+        }
+      }
+  
+    ]);
+  
+  
+    // {
+    //   $lookup: {
+    //     from: 'shoporderclones',
+    //     localField: 'Orderdatas._id',
+    //     foreignField: '_id',
+    //     as: 'datas'
+    //   }
+    // },
+    // { $unwind: "$datas"},
+    // {
+    //   $lookup: {
+    //     from: 'productorderclones',
+    //     localField: 'datas._id',
+    //     foreignField: 'orderId',
+    //     as: 'productdetails'
+    //   }
+    // },
+    // {
+    //   $unwind: '$productdetails'
+    // },
+  
+    // // {
+    // //   $lookup: {
+    // //     from:  'products',
+    // //     localField: 'productdetails.productid',
+    // //     foreignField: '_id',
+    // //     as: 'details',
+
+    // //   }
+    // // },
+    // // {
+    // //   $unwind: '$details'
+    // // },
+    // {
+    //   $group: {
+    //     _id: "$productdetails.productid",
+    //     "Totalquantity": { $sum: "$productdetails.quantity" }
+    //   }
+    // }
+
+  
 
   return values;
 };
@@ -633,6 +678,14 @@ const getReturnWDEtoWLE = async (id , page) =>{
         $and: [{ _id: { $eq: id } }],
       },
     },
+    // {
+    //   $lookup: {
+    //     from: 'shoporderclones',
+    //     localField: 'Orderdatas._id',
+    //     foreignField: '_id',
+    //     as: 'datas',
+    //   }
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -731,14 +784,6 @@ const getPettyCashDetails = async (id, page) =>{
         from: 'shoporderclones',
         localField: 'Orderdatas.OrderId',
         foreignField: 'OrderId',
-        // pipeline: [
-        //   {
-        //           $group: {
-        //            _id: null,
-        //          total: { "$sum": "$overallTotal" }
-        //         }
-        //      },
-        // ],
         as: 'datas'
       }
     },
