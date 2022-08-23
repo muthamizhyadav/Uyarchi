@@ -57,6 +57,7 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: String,
     default: "Pending",
   },
+  
   AllocateStatus: {
     type: String,
     default: "Assigned",
