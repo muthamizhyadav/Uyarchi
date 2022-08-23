@@ -22,11 +22,9 @@ const supplierbillsSchema = new mongoose.Schema({
   },
   date: {
     type: String,
-    default: moment().utcOffset(331).format('DD-MM-yyy'),
   },
   time: {
-    type: String,
-    default: moment().utcOffset(331).format('h:mm a'),
+    type: Number,
   },
   PaymentMethod: {
     type: String,
@@ -34,6 +32,9 @@ const supplierbillsSchema = new mongoose.Schema({
   status: {
     type: String,
     default: 'Paid',
+  },
+  created: {
+    type: Date,
   },
   active: {
     type: Boolean,
