@@ -532,6 +532,14 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         as: 'callhistories',
       },
     },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplists',
+      },
+    },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -590,6 +598,14 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
           { $limit: 10 },
         ],
         as: 'callhistories',
+      },
+    },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplists',
       },
     },
     { $skip: 10 * page },
