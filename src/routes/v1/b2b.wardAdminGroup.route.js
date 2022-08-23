@@ -10,7 +10,7 @@ router.route('/craeteGroupId').post(wardAdminGroupController.createGroupOrder);
 
 // router.route('/update/pickedPettyCash/:id').put(wardAdminGroupController.updatePickedPettyCash);
 
-// router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
+router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
 
 router.route('/update/delivered/:id').put(wardAdminGroupController.updateDeliveryCompleted);
 
