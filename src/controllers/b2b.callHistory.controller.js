@@ -32,14 +32,36 @@ const getById = catchAsync(async (req, res) => {
 const getAllPage = catchAsync(async (req, res) => {
   let userId = req.userId;
   let userRole = req.userRole;
-  const call = await callHistoryService.getShop(
-    req.params.date,
-    req.params.status,
-    req.params.key,
-    req.params.page,
-    userId,
-    userRole
-  );
+  let call;
+  if (req.params.status == 'Pending') {
+    call = await callHistoryService.getShop_pending(
+      req.params.date,
+      req.params.status,
+      req.params.key,
+      req.params.page,
+      userId,
+      userRole
+    );
+  } else if (req.params.status == 'callback' ||req.params.status == 'accept' ||req.params.status == 'declined') {
+    call = await callHistoryService.getShop_callback(
+      req.params.date,
+      req.params.status,
+      req.params.key,
+      req.params.page,
+      userId,
+      userRole
+    );
+  }
+  else if (req.params.status == 'reshedule') {
+    call = await callHistoryService.getShop_reshedule(
+      req.params.date,
+      req.params.status,
+      req.params.key,
+      req.params.page,
+      userId,
+      userRole
+    );
+  }
   res.send(call);
 });
 
