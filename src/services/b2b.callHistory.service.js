@@ -59,7 +59,6 @@ const createcallHistoryWithType = async (body, userId) => {
         { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort },
         { new: true }
       );
-      // await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
     } else {
       await Shop.findByIdAndUpdate(
         { _id: shopId },
@@ -185,11 +184,6 @@ const getShop = async (date, status, key, page, userId, userRole) => {
         callingStatus: { $nin: ['accept', 'declined'] },
       },
     },
-    // {
-    //   $match: {
-    //     callingStatus: { $in: ['On Call'] },
-    //   },
-    // },
     {
       $lookup: {
         from: 'callhistories',
@@ -201,7 +195,6 @@ const getShop = async (date, status, key, page, userId, userRole) => {
               date: { $eq: date },
             },
           },
-          // { $sort: { date: -1, time: -1 } },
         ],
         as: 'shopData',
       },
@@ -211,19 +204,9 @@ const getShop = async (date, status, key, page, userId, userRole) => {
         from: 'b2bshopclones',
         localField: 'shopData.shopId',
         foreignField: '_id',
-        // pipeline: [
-        //   {
-        //     $match: {
-        //       $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
-        //     },
-        //   },
-        // ],
         as: 'shopclones',
       },
     },
-    // {
-    //   $unwind: '$shopclones',
-    // },
     {
       $lookup: {
         from: 'shoplists',
@@ -261,31 +244,14 @@ const getShop = async (date, status, key, page, userId, userRole) => {
         status: 1,
         Uid: 1,
         shopData: 1,
-        // shopclones: '$shopclones',
         shopData: '$shopData',
         shoptypeName: '$shoplists.shopList',
-        // matching: { $and: { $eq: ['$callingUserId', userId], $eq: ['$callingStatus', 'On Call'] } },
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
-        // callingUserId: 1,
-
-        // shopclones: '$shopclones',
       },
     },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  // let total;
-  // if (status == 'null') {
-  //   let declined = await Shop.find({ callingStatus: { $eq: 'declined' } }).count();
-  //   let accept = await Shop.find({ callingStatus: { $eq: 'accept' } }).count();
-  //   let tot = await Shop.find().count();
-
-  //   subt = declined + accept;
-  //   total = tot - subt;
-  // }
-  // if (status != 'null') {
-  //   total = await Shop.find({ callingStatus: status }).count();
-  // }
   let total = await Shop.aggregate([
     {
       $match: {
@@ -303,11 +269,6 @@ const getShop = async (date, status, key, page, userId, userRole) => {
         callingStatus: { $nin: ['accept', 'declined'] },
       },
     },
-    // {
-    //   $match: {
-    //     callingStatus: { $in: ['On Call'] },
-    //   },
-    // },
     {
       $lookup: {
         from: 'callhistories',
@@ -319,7 +280,6 @@ const getShop = async (date, status, key, page, userId, userRole) => {
               date: { $eq: date },
             },
           },
-          // { $sort: { date: -1, time: -1 } },
         ],
         as: 'shopData',
       },
@@ -329,19 +289,9 @@ const getShop = async (date, status, key, page, userId, userRole) => {
         from: 'b2bshopclones',
         localField: 'shopData.shopId',
         foreignField: '_id',
-        // pipeline: [
-        //   {
-        //     $match: {
-        //       $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
-        //     },
-        //   },
-        // ],
         as: 'shopclones',
       },
     },
-    // {
-    //   $unwind: '$shopclones',
-    // },
     {
       $lookup: {
         from: 'shoplists',
@@ -432,7 +382,6 @@ const checkvisitOncallStatus = async (id) => {
 
 const getcallHistorylastFivedays = async (id) => {
   let shops = await Shop.findById(id);
-  // let values = await callHistoryModel.find({ shopId: id }).sort({ sortTime: -1 }).limit(10);
   let values = await callHistoryModel.aggregate([
     {
       $match: {
@@ -568,19 +517,9 @@ const getacceptDeclined = async (status, date, key, page, userId, userRole) => {
         from: 'b2bshopclones',
         localField: 'shopData.shopId',
         foreignField: '_id',
-        // pipeline: [
-        //   {
-        //     $match: {
-        //       $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
-        //     },
-        //   },
-        // ],
         as: 'shopclones',
       },
     },
-    // {
-    //   $unwind: '$shopclones',
-    // },
     {
       $lookup: {
         from: 'shoplists',
@@ -621,14 +560,9 @@ const getacceptDeclined = async (status, date, key, page, userId, userRole) => {
         shopData: 1,
         filterDate: 1,
         sortdate: 1,
-        // shopclones: '$shopclones',
         shopData: '$shopData',
         shoptypeName: '$shoplists.shopList',
-        // matching: { $and: { $eq: ['$callingUserId', userId], $eq: ['$callingStatus', 'On Call'] } },
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
-        // callingUserId: 1,
-
-        // shopclones: '$shopclones',
       },
     },
     { $skip: 10 * page },
@@ -668,19 +602,9 @@ const getacceptDeclined = async (status, date, key, page, userId, userRole) => {
         from: 'b2bshopclones',
         localField: 'shopData.shopId',
         foreignField: '_id',
-        // pipeline: [
-        //   {
-        //     $match: {
-        //       $and: [{ callingStatus: { $ne: ['accept', 'declined'] } }],
-        //     },
-        //   },
-        // ],
         as: 'shopclones',
       },
     },
-    // {
-    //   $unwind: '$shopclones',
-    // },
     {
       $lookup: {
         from: 'shoplists',
