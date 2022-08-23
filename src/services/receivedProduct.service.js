@@ -466,9 +466,9 @@ const getSupplierBillsDetails = async (page) => {
         as: 'receivedData',
       },
     },
-    // {
-    //   $unwind: '$receivedData',
-    // },
+    {
+      $unwind: '$receivedData',
+    },
     {
       $lookup: {
         from: 'receivedproducts',
