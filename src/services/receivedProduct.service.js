@@ -397,6 +397,16 @@ const getSupplierBillsDetails = async (page) => {
         pipeline: [
           {
             $lookup: {
+              from: 'supplierbills',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$Amount' } } }],
+              as: 'supplierbills',
+            },
+          },
+          { $unwind: { path: '$supplierbills', preserveNullAndEmptyArrays: true } },
+          {
+            $lookup: {
               from: 'receivedstocks',
               localField: '_id',
               foreignField: 'groupId',
@@ -409,8 +419,14 @@ const getSupplierBillsDetails = async (page) => {
           },
           {
             $project: {
-              pendingData: '$pendingData',
+              pendingData: '$pendingData.billingTotal',
+              supplierbills: '$supplierbills.billingTotal',
+              totalAmt: { $ne: ['$pendingData.billingTotal', '$supplierbills.billingTotal'] },
             },
+          },
+
+          {
+            $match: { totalAmt: true },
           },
         ],
         as: 'pendingDataall',
@@ -476,15 +492,17 @@ const getSupplierBillsDetails = async (page) => {
     },
     {
       $project: {
-        PaymentData: { $sum: '$receivedData.PaymentData.Amount' },
-        receivedData: { $sum: '$pendingDataall.pendingData.billingTotal' },
+        // PaymentDatasss: '$pendingDataall',
+        PaymentData: { $sum: '$pendingDataall.pendingData' },
+        paidamount: { $sum: '$pendingDataall.supplierbills' },
+        // receivedData: '$receivedDatacount',
         primaryContactName: 1,
         receivedDatacount: '$receivedDatacount.total',
         primaryContactNumber: 1,
-        // totalprice: { $sum: "$receivedData.pendingData.billingTotal" },
         _id: 1,
       },
     },
+
     {
       $limit: 10,
     },

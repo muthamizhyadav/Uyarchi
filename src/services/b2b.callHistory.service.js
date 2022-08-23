@@ -22,7 +22,7 @@ const createcallHistoryWithType = async (body, userId) => {
   let serverdate = moment().format('yyyy-MM-DD');
 
   const { callStatus, shopId, reason } = body;
-  console.log(body.currentdate);
+  console.log(body.currentdate)
   let sort;
   if (callStatus == 'reschedule') {
     sort = 2;
@@ -630,7 +630,7 @@ const resethistory = async () => {
   let today = '';
   today = currentDate;
   await Shop.updateMany(
-    { $or: [{ sortdate: { $eq: yersterday }, callingStatus: { $ne: 'reschedule' } }] },
+    { sortdate: { $eq: yersterday } },
     { $set: { callingStatus: 'Pending', callingStatusSort: 0, sortdate: today } }
   );
   return { dayfresh: 'Reset Successfully' };
