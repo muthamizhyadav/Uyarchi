@@ -579,12 +579,12 @@ const liveStockInfo = async (id) => {
     {
       $project: {
         _id: 1,
-        livestock:"$productorders.Qty",
-        price:"$productorders.price"
-      }
-    }
+        livestock: '$productorders.Qty',
+        price: '$productorders.price',
+      },
+    },
   ]);
-  return values.length !=0?values[0]:[];
+  return values.length != 0 ? values[0] : [];
 };
 
 module.exports = {
