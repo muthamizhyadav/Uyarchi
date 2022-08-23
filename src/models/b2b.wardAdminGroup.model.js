@@ -76,14 +76,7 @@ const wardAdminGroupSchema = new mongoose.Schema({
   totalQtyIncludingPettyStock: {
     type: Number,
   },
-  receiveStatus: {
-    type: String,
-    default: "Pending"
-  },
-  pettyCashReceiveStatus: {
-    type: String,
-    default: "Pending",
-  },
+ 
   stockReturnedByWDE: {
     type: Number,
   },

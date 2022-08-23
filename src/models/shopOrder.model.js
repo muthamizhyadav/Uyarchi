@@ -139,6 +139,14 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     type: String,
     
   },
+  receiveStatus: {
+    type: String,
+    default: "Pending"
+  },
+  pettyCashReceiveStatus: {
+    type: String,
+    default: "Pending",
+  },
 
   
 });

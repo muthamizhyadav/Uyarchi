@@ -83,6 +83,15 @@ const updateManageStatus = async (id, updateBody) => {
   return Manage;
 };
 
+const updateShopOrderCloneById = async (id, updatebody) => {
+  let shoporderClone = await ShopOrderClone.findById(id);
+  if (!shoporderClone) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'ShopOrderClone Not Found');
+  }
+  shoporderClone = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  return shoporderClone;
+};
+
 // GET ORDER DETAILS FROM GROUP BY ID
 
 const getOrderFromGroupById = async (id) => {
@@ -902,6 +911,8 @@ module.exports = {
   getpettyStockData,
   getPettyCashDetails,
   getAllGroup,
+
+  updateShopOrderCloneById,
 
 };
 // 626931f6-c32c-4b42-a3cc-94c30aeabc70
