@@ -705,7 +705,7 @@ const resethistory = async () => {
   let today = '';
   today = currentDate;
   await Shop.updateMany(
-    { sortdate: { $eq: yersterday }, callingStatus: { $ne: 'reschedule' } },
+    { $and: [{ sortdate: { $eq: yersterday }, callingStatus: { $ne: 'reschedule' } }] },
     { $set: { callingStatus: 'Pending', callingStatusSort: 0, sortdate: today } }
   );
   return { dayfresh: 'Reset Successfully' };
