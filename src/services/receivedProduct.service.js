@@ -143,6 +143,17 @@ const getAllWithPaginationBilled = async (page, status) => {
     },
     {
       $lookup: {
+        from: 'expensesbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Counts: { $sum: '$Amount' } } }],
+        as: 'totalAmt',
+      },
+    },
+    { $unwind: { path: '$totalAmt', preserveNullAndEmptyArrays: true } },
+
+    {
+      $lookup: {
         from: 'transportbills',
         localField: '_id',
         foreignField: 'groupId',
@@ -162,6 +173,9 @@ const getAllWithPaginationBilled = async (page, status) => {
         as: 'TotalPaidExpensesData',
       },
     },
+    // {
+
+    // },
     {
       $project: {
         _id: 1,
@@ -171,6 +185,7 @@ const getAllWithPaginationBilled = async (page, status) => {
         driverName: 1,
         driverNumber: 1,
         weighBridgeEmpty: 1,
+        totalAmt: { $ne: ['$totalAmt.Counts', '$TotalExpenseData.Counts'] },
         weighBridgeLoadedProduct: 1,
         supplierId: 1,
         date: 1,
@@ -184,6 +199,7 @@ const getAllWithPaginationBilled = async (page, status) => {
         TotalPaidExpensesData: '$TotalPaidExpensesData',
       },
     },
+    { $match: { totalAmt: { $eq: true } } },
     {
       $limit: 10,
     },
