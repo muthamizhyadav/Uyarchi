@@ -442,6 +442,16 @@ const groupIdClick = async (id) => {
   return data;
 }
 
+
+const getpettyStockData = async (id, body) =>{
+  let data = []
+  let pettyStockData = await wardAdminGroup.findByIdAndUpdate({_id:id},body , { new: true });
+  pettyStockData.pettyStockData.forEach((e) => {
+
+    data.push(e)
+  })
+  return data;
+}
 const orderIdClickGetProduct = async (id) => {
   console.log(id)
 
@@ -704,9 +714,105 @@ const getdetailsAboutPettyStockByGroupId = async (id , page) =>{
 //   return cate;
 // };
 
-const uploadWastageImage = async (expBody) => {
-  return wardAdminGroup.create(expBody);
+// const uploadWastageImage = async (expBody) => {
+//   return wardAdminGroup.create(expBody);
+// };
+
+const getPettyCashDetails = async (id, page) =>{
+  let values = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }]
+      }
+    },
+    
+    { $unwind: "$Orderdatas"},
+  
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'Orderdatas.OrderId',
+        foreignField: 'OrderId',
+        // pipeline: [
+        //   {
+        //           $group: {
+        //            _id: null,
+        //          total: { "$sum": "$overallTotal" }
+        //         }
+        //      },
+        // ],
+        as: 'datas'
+      }
+    },
+    {$unwind: '$datas'},
+    { $skip: 10 * page },
+    { $limit: 10 },
+    
+    {
+      $project: {
+        groupId:1,
+        orderId: "$datas.OrderId",
+        Amount: "$datas.overallTotal",
+        shopType: "$Orderdatas.type",
+        shopName: "$Orderdatas.shopName",
+        Deliverystatus: "$datas.status",
+        // Total: { $sum: '$datas.overallTotal' },
+        // "TotalMarks": {
+        //      "$sum": "$values.Amount"
+        //       }
+             
+      }
+    }
+  
+  ]);
+  let total = await wardAdminGroup.aggregate([
+   
+      {
+        $match: {
+          $and: [{ _id: { $eq: id } }]
+        }
+      },
+      
+      { $unwind: "$Orderdatas"},
+      {
+        $lookup: {
+          from: 'shoporderclones',
+          localField: 'Orderdatas.OrderId',
+          foreignField: 'OrderId',
+          // pipeline: [
+          //   { $group: { _id: null, Total: { $sum: '$datas.overallTotal' }, } },
+          // ],
+          as: 'datas'
+        }
+      },{$unwind: '$datas'},
+  ])
+  return { values:values , total:total.length };
+}
+
+
+const getAllGroup = async (page) => {
+  let values = await wardAdminGroup.aggregate([
+    {
+      $project:{
+        groupId:1,
+        assignDate:1,
+        assignTime:1,
+        deliveryExecutiveId:1,
+        manageDeliveryStatus:1,
+        totalOrders:1,
+        pettyCash:1,
+        status:1,
+      }
+    },
+
+    { $skip: 10 * page }, 
+    { $limit: 10 }
+  ]);
+  let total = await wardAdminGroup.find().count();
+  return { values: values, total: total };
 };
+
+
 
 module.exports = {
   createGroup,
@@ -748,9 +854,11 @@ module.exports = {
   getPettyStockDetails,
   getdetailsAboutPettyStockByGroupId,
 
-  uploadWastageImage,
+  // uploadWastageImage,
 
-
+  getpettyStockData,
+  getPettyCashDetails,
+  getAllGroup,
 
 };
 // 626931f6-c32c-4b42-a3cc-94c30aeabc70

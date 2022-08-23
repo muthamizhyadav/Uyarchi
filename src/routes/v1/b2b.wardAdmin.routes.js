@@ -37,4 +37,6 @@ router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliv
 
 router.route('/delivery/Executive/Name/:id').put(wardAdminController.deliveryexecutive);
 
+router.route('/Array/craeteArrayData').post(wardAdminController.createArrayData);
+
 module.exports = router;

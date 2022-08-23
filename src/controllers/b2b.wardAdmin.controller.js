@@ -9,6 +9,11 @@ const createdata = catchAsync(async (req, res) => {
     res.send(data);
   });
 
+const createArrayData = catchAsync(async (req, res)=>{
+  const data = await wardAdminService.createArrayData(req.body);
+  res.send(data);
+});
+
 const getDetails = catchAsync(async (req, res) => {
   const details = await wardAdminService.getdetails(req.params.page);
   res.send(details);
@@ -109,4 +114,5 @@ module.exports = {
 
 
   createdata,
+  createArrayData,
 };

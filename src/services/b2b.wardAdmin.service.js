@@ -7,6 +7,7 @@ const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
 const Roles = require('../models/roles.model');
 const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
+const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 
 // GET DETAILS
 
@@ -303,6 +304,20 @@ const createdata = async (Orderdatas) => {
   return "success";
 }
 
+
+const createArrayData = async (pettyStockData) => {
+  var Orderdatass = [];
+  var groupId ;
+  // const { Orderdatass, _id } = pettyStockData;
+  console.log(pettyStockData);
+  Orderdatass.forEach(async (e) => {
+    await wardAdminGroupDetails.findByIdAndUpdate({ _id: e._id }, { groupId: groupId, status: "Assigned" })
+  })
+  const data = await wardAdminGroupDetails.create(pettyStockData)
+  return "success";
+}
+
+
 // AFTER PACKED BY WARD LOADING EXECUTE
 
 const wardloadExecutivePacked = async (page) => {
@@ -502,6 +517,7 @@ module.exports = {
 
   // create data
   createdata,
+  createArrayData,
   updateStatusForAssugnedAndPacked,
 };
 

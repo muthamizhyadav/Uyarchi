@@ -57,6 +57,14 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: String,
     default: "Pending",
   },
+  AllocateStatus: {
+    type: String,
+    default: "Assigned",
+  },
+  // NotAllocateStatus: {
+  //   type: String,
+  //   default: "Pending",
+  // },
   pettyCash: {
     type: Number,
   },
@@ -73,16 +81,20 @@ const wardAdminGroupSchema = new mongoose.Schema({
   },
   stockReturnedByWDE: {
     type: Number,
-  
   },
   wastageReturnedByWDE: {
     type: Number,
-   
   },
   wastageImageUpload: {
     type: String,
   },
   mismatch: {
+    type: Number,
+  },
+  DeliverAsPerSystem: {
+    type: Number,
+  },
+  UnDeliveredAsPerSystem: {
     type: Number,
   },
 
