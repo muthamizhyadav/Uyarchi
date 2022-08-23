@@ -52,7 +52,7 @@ const getAllPage = catchAsync(async (req, res) => {
       userRole
     );
   }
-  else if (req.params.status == 'reshedule') {
+  else if (req.params.status == 'reschedule') {
     call = await callHistoryService.getShop_reshedule(
       req.params.date,
       req.params.status,
