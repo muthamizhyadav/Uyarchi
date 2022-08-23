@@ -700,8 +700,6 @@ const resethistory = async () => {
   console.log(yersterday);
   let today = '';
   today = currentDate;
-  // let reshedule = await Shop.find({ callingStatus: 'reschedule' }).count();
-  // console.log(reshedule);
   await Shop.updateMany(
     { sortdate: { $eq: yersterday }, callingStatus: { $ne: 'reschedule' } },
     { $set: { callingStatus: 'Pending', callingStatusSort: 0, sortdate: today } }
