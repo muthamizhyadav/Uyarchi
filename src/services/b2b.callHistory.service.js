@@ -204,7 +204,7 @@ const callingStatusreport = async (date) => {
     },
   ]);
   let oncall = await Shop.find({ callingStatus: 'On Call' }).count();
-  let oldReschedule = await Shop.find({ callingStatus: 'reschedule', historydate: yesterday }).count();
+  let oldReschedule = await Shop.find({ callingStatus: 'reschedule', historydate: { $ne: date } }).count();
   // let Reschedule = await Shop.find({ callingStatus: 'reschedule', historydate: date }).count();
   let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate }).count();
   return {
@@ -713,7 +713,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [ keys, { callingStatus: { $eq: status } }],
+        $and: [keys, { callingStatus: { $eq: status } }],
       },
     },
     {
