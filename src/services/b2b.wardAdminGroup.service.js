@@ -5,6 +5,7 @@ let currentDate = moment().format('DD-MM-YYYY');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { ShopOrderClone } = require('../models/shopOrder.model');
 const { ProductorderClone } = require('../models/shopOrder.model');
+const pettyStockModel = require('../models/b2b.pettyStock.model')
 const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 
@@ -40,7 +41,7 @@ const createGroup = async (body) => {
   });
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
   // await ShopOrderClone.findByIdAndUpdate({_id:productId}, { GroupId: wardAdminGroupcreate._id }, {new:true})
-  return wardAdminGroupcreate;
+  return wardAdminGroupcreate;                                                                                                                                             
 };
 
 const updateOrderStatus = async (id, updateBody) => {
@@ -687,14 +688,14 @@ const getReturnWDEtoWLE = async (id , page) =>{
         $and: [{ _id: { $eq: id } }],
       },
     },
-    // {
-    //   $lookup: {
-    //     from: 'shoporderclones',
-    //     localField: 'Orderdatas._id',
-    //     foreignField: '_id',
-    //     as: 'datas',
-    //   }
-    // },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'Orderdatas._id',
+        foreignField: '_id',
+        as: 'datas',
+      }
+    },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -807,11 +808,9 @@ const getPettyCashDetails = async (id, page) =>{
         Amount: "$datas.overallTotal",
         shopType: "$Orderdatas.type",
         shopName: "$Orderdatas.shopName",
-        Deliverystatus: "$datas.status",
-        // Total: { $sum: '$datas.overallTotal' },
-        // "TotalMarks": {
-        //      "$sum": "$values.Amount"
-        //       }
+        Deliverystatus: "$datas.customerDeliveryStatus",
+        FinalPaymentType: "$datas.payType",
+  
              
       }
     }
@@ -866,6 +865,62 @@ const getAllGroup = async (page) => {
 
 
 
+const pettyStockCreate = async (pettyStockBody)=>{
+
+  console.log(pettyStockBody)
+  let body = { ...pettyStockBody};
+  let createPetty = await wardAdminGroup.create(body);
+  let { pettyStock } = pettyStockBody;
+  pettyStock.forEach(async (e) =>{
+    
+    pettyStockModel.create({
+    wardAdminId:createPetty.id,
+    product: e.product,
+    QTY: e.QTY,
+    pettyStock: e.pettyStock,
+    totalQtyIncludingPettyStock: e.totalQtyIncludingPettyStock,
+  });
+})
+}
+
+
+const getcashAmountViewFromDB = async (id, page)=>{
+  let values = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }]
+      }
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'Orderdatas._id',
+        foreignField: '_id',
+        as: 'datas'
+      }
+    },
+    {
+      $unwind: '$datas'
+    },
+    {
+      $group:{
+        _id: "$datas.payType",
+        totalCash: { $sum: "$datas.overallTotal"}
+      }
+    },
+    { $skip: 10 * page }, 
+    { $limit: 10 },
+    // {
+    //   $project: {
+
+    //   }
+    // }
+  ]);
+  return values;
+}
+
+
+
 module.exports = {
   createGroup,
   // updateOrderStatus,
@@ -913,6 +968,9 @@ module.exports = {
   getAllGroup,
 
   updateShopOrderCloneById,
+  pettyStockCreate,
+  getcashAmountViewFromDB,
+  
 
 };
 // 626931f6-c32c-4b42-a3cc-94c30aeabc70

@@ -4,6 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const wardAdminGroupService = require('../services/b2b.wardAdminGroup.service');
 const { ProductorderClone } = require('../models/shopOrder.model');
 const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
+const pettyStockModel = require('../models/b2b.pettyStock.model')
 
 const createGroupOrder = catchAsync(async (req, res) => {
   let userid = req.userId;
@@ -198,7 +199,22 @@ const getPettyCashDetails = catchAsync(async (req, res) => {
 const getAllGroup = catchAsync(async (req, res) => {
   const group = await wardAdminGroupService.getAllGroup(req.params.page)
   res.send(group)
-})
+});
+
+const pettyStockCreate = catchAsync(async (req, res) => {
+  // let userid = req.userId;
+  const shopOrder = await wardAdminGroupService.pettyStockCreate(req.body);
+  if (!shopOrder) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'product Not Fount.');
+  }
+  res.status(httpStatus.CREATED).send(shopOrder);
+});
+
+
+const getcashAmountViewFromDB = catchAsync(async (req, res) => {
+  const getcashFromDb = await wardAdminGroupService.getcashAmountViewFromDB(req.params.id, req.params.page);
+  res.send(getcashFromDb)
+});
 
 
 module.exports = {
@@ -258,5 +274,7 @@ module.exports = {
   getAllGroup,
 
   updatePettyCashReturnStatus,
+  pettyStockCreate,
+  getcashAmountViewFromDB,
 
 };
