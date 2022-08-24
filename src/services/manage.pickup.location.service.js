@@ -12,6 +12,9 @@ const createManagePickupLocation = async (body) => {
   );
   let servertime = moment().format('HHmm');
   let serverdate = moment().format('DD-MM-yyy');
+  if(latlan.data.results.length == 0){
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Address Not Valid');
+  }
   let locations = latlan.data.results[0].geometry;
   let latitude = locations.location.lat;
   let langitude = locations.location.lng;
