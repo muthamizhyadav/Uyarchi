@@ -53,17 +53,14 @@ const createcallHistoryWithType = async (body, userId) => {
       { _id: shopId },
       {
         sortdate: reason,
+        callingStatus: callStatus,
       },
       { new: true }
     );
   } else {
     if (callStatus != 'accept') {
-      await Shop.findByIdAndUpdate(
-        { _id: shopId },
-        { callingStatus: callStatus},
-        { new: true }
-      );
-    } 
+      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus }, { new: true });
+    }
   }
   let callHistory = await callHistoryModel.create(values);
   return callHistory;
