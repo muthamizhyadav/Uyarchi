@@ -16,7 +16,8 @@ const createManagePickupLocation = catchAsync(async (req, res) => {
 });
 
 const getAllManagepickup = catchAsync(async (req, res) => {
-  const pickuplocation = await ManagePickupService.getAllManagepickup(req.params.page);
+  let userId = req.userId;
+  const pickuplocation = await ManagePickupService.getAllManagepickup(req.params.page, userId);
   res.send(pickuplocation);
 });
 
