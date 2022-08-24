@@ -437,21 +437,9 @@ const getById = async (id) => {
 const getShop_pending = async (date, status, key, page, userId, userRole) => {
   let keys = { active: { $eq: true } };
   if (key != 'null') {
-    keys = { SName: { $regex: key, $options: 'i' } };
+    keys = { $or: [{ SName: { $regex: key, $options: 'i' } },{ mobile: { $regex: key, $options: 'i' } }] };
   }
   let values;
-  reshedule = await Shop.aggregate([
-    {
-      $match: {
-        $and: [
-          { sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') } },
-          { callingStatus: { $eq: 'reschedule' } },
-        ],
-      },
-    },
-    { $group: { _id: { team: '$_id', position: '$position' }, count: { $sum: 1 } } },
-  ]);
-  console.log(reshedule);
   values = await Shop.aggregate([
     {
       $match: {
@@ -646,7 +634,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
   console.log(status);
   let keys = { active: { $eq: true } };
   if (key != 'null') {
-    keys = { SName: { $regex: key, $options: 'i' } };
+    keys = { $or: [{ SName: { $regex: key, $options: 'i' } },{ mobile: { $regex: key, $options: 'i' } }] };
   }
 
   let values;
@@ -752,7 +740,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
 const getShop_callback = async (date, status, key, page, userId, userRole) => {
   let keys = { active: { $eq: true } };
   if (key != 'null') {
-    keys = { SName: { $regex: key, $options: 'i' } };
+    keys = { $or: [{ SName: { $regex: key, $options: 'i' } },{ mobile: { $regex: key, $options: 'i' } }] };
   }
 
   let values;
