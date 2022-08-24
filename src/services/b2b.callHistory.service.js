@@ -649,7 +649,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
   values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ callingUserId: { $eq: userId } }, keys, { callingStatus: { $eq: status } }],
+        $and: [keys, { callingStatus: { $eq: status } }],
       },
     },
 
@@ -713,7 +713,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ callingUserId: { $eq: userId } }, keys, { callingStatus: { $eq: status } }],
+        $and: [ keys, { callingStatus: { $eq: status } }],
       },
     },
     {
