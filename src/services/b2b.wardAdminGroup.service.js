@@ -810,6 +810,8 @@ const getPettyCashDetails = async (id, page) =>{
         shopName: "$Orderdatas.shopName",
         Deliverystatus: "$datas.customerDeliveryStatus",
         FinalPaymentType: "$datas.payType",
+        pettyCashApporvedStatus: "$datas.pettyCashReceiveStatus",
+        
   
              
       }
