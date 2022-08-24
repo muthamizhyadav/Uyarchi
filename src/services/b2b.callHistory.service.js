@@ -71,7 +71,7 @@ const getAll = async () => {
 };
 
 const callingStatusreport = async (date) => {
-  // let serverdate = moment().format('DD-MM-yyyy');
+  let yesterday = moment().add(-1, 'days');
   let serverdate = date;
   let acceptCount = await Shop.find({ callingStatus: 'accept', historydate: serverdate }).count();
   let callbackCount = await Shop.find({ callingStatus: 'callback', historydate: serverdate }).count();
@@ -202,6 +202,7 @@ const callingStatusreport = async (date) => {
     },
   ]);
   let oncall = await Shop.find({ callingStatus: 'On Call' }).count();
+  let oldReschedule = await Shop.find({ callingStatus: 'reschedule', yesterday }).count();
   let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate }).count();
   return {
     acceptCount: acceptCount,
@@ -210,6 +211,7 @@ const callingStatusreport = async (date) => {
     pendingCount: pendingCount.length != 0 ? pendingCount[0].count : 0,
     declinedCount: declinedCount,
     Oncall: oncall,
+    oldReschedule: oldReschedule,
   };
 };
 
@@ -516,7 +518,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         address: 1,
         date: 1,
         time: 1,
-        historydate:1,
+        historydate: 1,
         created: 1,
         status: 1,
         Uid: 1,
@@ -605,7 +607,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         Slong: 1,
         address: 1,
         date: 1,
-        historydate:1,
+        historydate: 1,
         time: 1,
         created: 1,
         status: 1,
@@ -682,7 +684,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         Wardid: 1,
         type: 1,
         SName: 1,
-        historydate:1,
+        historydate: 1,
         SType: 1,
         SOwner: 1,
         mobile: 1,
@@ -796,7 +798,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         sortdatetime: 1,
         Slong: 1,
         address: 1,
-        historydate:1,
+        historydate: 1,
         date: 1,
         time: 1,
         created: 1,
@@ -906,7 +908,7 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         Slong: 1,
         address: 1,
         date: 1,
-        historydate:1,
+        historydate: 1,
         time: 1,
         created: 1,
         status: 1,
