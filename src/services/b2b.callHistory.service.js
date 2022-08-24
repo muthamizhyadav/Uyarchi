@@ -61,7 +61,7 @@ const createcallHistoryWithType = async (body, userId) => {
     } else {
       await Shop.findByIdAndUpdate(
         { _id: shopId },
-        {callingStatusSort: sort, sortdate: date},
+        {callingStatusSort: sort},
         { new: true }
       );
     }
