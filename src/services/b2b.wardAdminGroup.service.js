@@ -905,17 +905,26 @@ const getcashAmountViewFromDB = async (id, page)=>{
     {
       $group:{
         _id: "$datas.payType",
-        totalCash: { $sum: "$datas.overallTotal"}
-      }
+        totalCash: { $sum: "$datas.overallTotal"},
+        
+      },
     },
+  
+   
     { $skip: 10 * page }, 
     { $limit: 10 },
     // {
     //   $project: {
+    //     totalCash:1,
+    //     _id:1,
+    //   //  totalCash: { $sum: "$cashTotal.overallTotal"}
 
-    //   }
-    // }
+    //   },
+     
+    // },
+   
   ]);
+
   return values;
 }
 
