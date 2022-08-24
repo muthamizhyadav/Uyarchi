@@ -3,6 +3,8 @@ const ApiError = require('../utils/ApiError');
 const PickupLocation = require('../models/manage.pickupLocation.model');
 const axios = require('axios');
 const moment = require('moment');
+const { UserBindingPage } = require('twilio/lib/rest/ipMessaging/v2/service/user/userBinding');
+const { Users } = require('../models/B2Busers.model');
 
 const createManagePickupLocation = async (body) => {
   let latlan = await axios.get(
@@ -18,7 +20,7 @@ const createManagePickupLocation = async (body) => {
   return createpickuplocations;
 };
 
-const getAllManagepickup = async (page) => {
+const getAllManagepickup = async (page, userId) => {
   let values = await PickupLocation.aggregate([
     {
       $lookup: {
@@ -56,6 +58,8 @@ const getAllManagepickup = async (page) => {
         date: 1,
         time: 1,
         langitude: 1,
+        pick_Up_ype: 1,
+        picku_Up_Mode: 1,
       },
     },
     { $skip: 10 * page },
@@ -84,8 +88,9 @@ const getAllManagepickup = async (page) => {
     {
       $unwind: '$streetData',
     },
-  ])
-  return { values: values, total: total.length };
+  ]);
+  let users = await Users.findOne({ _id: userId });
+  return { values: values, total: total.length, userName: users.name };
 };
 
 const getManagePickupById = async (id) => {
