@@ -63,7 +63,7 @@ const createcallHistoryWithType = async (body, userId) => {
     } else {
       await Shop.findByIdAndUpdate(
         { _id: shopId },
-        { historydate: body.currentdate, callingStatusSort: sort, sortdate: date },
+        { historydate: body.currentdate, callingStatusSort: sort, sortdate: date, historydate: currentdate },
         { new: true }
       );
     }
@@ -638,7 +638,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
   // return { values: values, total: total.length };
 };
 const getShop_oncall = async (date, status, key, page, userId, userRole) => {
-  console.log(status)
+  console.log(status);
   let keys = { active: { $eq: true } };
   if (key != 'null') {
     keys = { SName: { $regex: key, $options: 'i' } };
