@@ -59,11 +59,7 @@ const createcallHistoryWithType = async (body, userId) => {
         { new: true }
       );
     } else {
-      await Shop.findByIdAndUpdate(
-        { _id: shopId },
-        {callingStatusSort: sort},
-        { new: true }
-      );
+      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatusSort: sort }, { new: true });
     }
   }
   let callHistory = await callHistoryModel.create(values);
@@ -977,7 +973,7 @@ const updateStatuscall = async (id, userId, date) => {
   }
   status = await Shop.findByIdAndUpdate(
     { _id: id },
-    { callingStatus: 'On Call', callingUserId: userId, historydate: date },
+    { callingStatus: 'On Call', callingUserId: userId, historydate: date, sortdate: '' },
     { new: true }
   );
   return status;
