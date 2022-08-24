@@ -71,7 +71,7 @@ const getAll = async () => {
 };
 
 const callingStatusreport = async (date) => {
-  let yesterday = moment().add(-1, 'days').format('DD-MM-yyyy');
+  let yesterday = moment(date, 'DD-MM-YYYY').add(-1, 'days').format('DD-MM-yyyy');
   console.log(yesterday);
   let serverdate = date;
   let acceptCount = await Shop.find({ callingStatus: 'accept', historydate: serverdate }).count();
@@ -81,6 +81,7 @@ const callingStatusreport = async (date) => {
       $match: {
         $and: [
           { sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') } },
+          { historydate: { $eq: date } },
           { callingStatus: { $eq: 'reschedule' } },
         ],
       },
@@ -204,6 +205,7 @@ const callingStatusreport = async (date) => {
   ]);
   let oncall = await Shop.find({ callingStatus: 'On Call' }).count();
   let oldReschedule = await Shop.find({ callingStatus: 'reschedule', historydate: yesterday }).count();
+  // let Reschedule = await Shop.find({ callingStatus: 'reschedule', historydate: date }).count();
   let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate }).count();
   return {
     acceptCount: acceptCount,
