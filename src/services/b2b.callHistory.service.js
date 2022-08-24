@@ -204,7 +204,7 @@ const callingStatusreport = async (date) => {
     },
   ]);
   let oncall = await Shop.find({ callingStatus: 'On Call' }).count();
-  let oldReschedule = await Shop.find({ callingStatus: 'reschedule', historydate: { $ne: date } }).count();
+  let oldReschedule = await Shop.find({ callingStatus: 'reschedule', historydate: { $ne: date } , sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') }}).count();
   // let Reschedule = await Shop.find({ callingStatus: 'reschedule', historydate: date }).count();
   let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate }).count();
   return {
