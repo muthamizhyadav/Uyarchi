@@ -59,7 +59,7 @@ const createcallHistoryWithType = async (body, userId) => {
         { new: true }
       );
     } else {
-      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatusSort: sort }, { new: true });
+      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatusSort: sort , sorttime: time}, { new: true });
     }
   }
   let callHistory = await callHistoryModel.create(values);
