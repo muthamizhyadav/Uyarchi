@@ -39,14 +39,19 @@ const createcallHistoryWithType = async (body, userId) => {
   let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
+  await Shop.findByIdAndUpdate(
+    { _id: shopId },
+    {
+      sorttime: time,
+      callingStatusSort: sort,
+    },
+    { new: true }
+  );
   if (callStatus == 'reschedule') {
     // let dateSlice = reason.slice(0, 10);
     await Shop.findByIdAndUpdate(
       { _id: shopId },
       {
-        callingStatus: callStatus,
-        sorttime: time,
-        callingStatusSort: sort,
         sortdate: reason,
       },
       { new: true }
@@ -55,13 +60,10 @@ const createcallHistoryWithType = async (body, userId) => {
     if (callStatus != 'accept') {
       await Shop.findByIdAndUpdate(
         { _id: shopId },
-        { callingStatus: callStatus, sorttime: time, callingStatusSort: sort },
+        { callingStatus: callStatus},
         { new: true }
       );
-    } else {
-      console.log(time)
-      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatusSort: sort , sorttime: time}, { new: true });
-    }
+    } 
   }
   let callHistory = await callHistoryModel.create(values);
   return callHistory;
@@ -205,7 +207,11 @@ const callingStatusreport = async (date) => {
     },
   ]);
   let oncall = await Shop.find({ callingStatus: 'On Call' }).count();
-  let oldReschedule = await Shop.find({ callingStatus: 'reschedule', historydate: { $ne: date } , sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') }}).count();
+  let oldReschedule = await Shop.find({
+    callingStatus: 'reschedule',
+    historydate: { $ne: date },
+    sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
+  }).count();
   // let Reschedule = await Shop.find({ callingStatus: 'reschedule', historydate: date }).count();
   let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate }).count();
   return {
