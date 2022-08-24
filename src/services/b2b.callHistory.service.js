@@ -46,24 +46,24 @@ const createcallHistoryWithType = async (body, userId) => {
       {
         callingStatus: callStatus,
         sorttime: time,
-        historydate: body.currentdate,
+        historydate: currentdate,
         callingStatusSort: sort,
         sortdate: dateSlice,
       },
       { new: true }
     );
-    await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: body.currentdate }, { new: true });
+    await Shop.findByIdAndUpdate({ _id: shopId }, { historydate: currentdate }, { new: true });
   } else {
     if (callStatus != 'accept') {
       await Shop.findByIdAndUpdate(
         { _id: shopId },
-        { callingStatus: callStatus, sorttime: time, historydate: body.currentdate, callingStatusSort: sort },
+        { callingStatus: callStatus, sorttime: time, historydate: currentdate, callingStatusSort: sort },
         { new: true }
       );
     } else {
       await Shop.findByIdAndUpdate(
         { _id: shopId },
-        { historydate: body.currentdate, callingStatusSort: sort, sortdate: body.currentdate },
+        { historydate: body.currentdate, callingStatusSort: sort, sortdate: date },
         { new: true }
       );
     }
