@@ -40,14 +40,14 @@ const createcallHistoryWithType = async (body, userId) => {
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
   if (callStatus == 'reschedule') {
-    let dateSlice = reason.slice(0, 10);
+    // let dateSlice = reason.slice(0, 10);
     await Shop.findByIdAndUpdate(
       { _id: shopId },
       {
         callingStatus: callStatus,
         sorttime: time,
         callingStatusSort: sort,
-        sortdate: dateSlice,
+        sortdate: reason,
       },
       { new: true }
     );
