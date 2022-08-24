@@ -62,13 +62,24 @@ const getAllPage = catchAsync(async (req, res) => {
       userRole
     );
   }
+  else if (req.params.status == 'oncall') {
+
+    call = await callHistoryService.getShop_oncall(
+      req.params.date,
+      'On Call',
+      req.params.key,
+      req.params.page,
+      userId,
+      userRole
+    );
+  }
   res.send(call);
 });
 
 const updateCallingStatus = catchAsync(async (req, res) => {
   let userId = req.userId;
   console.log(userId);
-  const callingStatus = await callHistoryService.updateStatuscall(req.params.id, userId, req.body);
+  const callingStatus = await callHistoryService.updateStatuscall(req.params.id, userId, req.params.date);
   // throw new ApiError(httpStatus.UNAUTHORIZED, 'OnCall');
   res.send(callingStatus);
 });
@@ -89,7 +100,7 @@ const createShopByOwner = catchAsync(async (req, res) => {
 });
 
 const callingStatusreport = catchAsync(async (req, res) => {
-  const shops = await callHistoryService.callingStatusreport();
+  const shops = await callHistoryService.callingStatusreport(req.params.date);
   res.send(shops);
 });
 
