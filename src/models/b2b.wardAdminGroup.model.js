@@ -95,6 +95,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
   UnDeliveredAsPerSystem: {
     type: Number,
   },
+  cashAsGivenByWDE: {
+    type: Number,
+  },
 
 });
 
