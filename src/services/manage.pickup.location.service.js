@@ -61,7 +61,7 @@ const getAllManagepickup = async (page, userId) => {
         date: 1,
         time: 1,
         langitude: 1,
-        pick_Up_ype: 1,
+        pick_Up_Type: 1,
         picku_Up_Mode: 1,
       },
     },
