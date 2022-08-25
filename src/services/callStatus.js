@@ -25,7 +25,7 @@ const getProductAndSupplierDetails = async (page) => {
           { $group: { _id: null, myCount: { $sum: 1 } } },
         ],
         as: 'CallstatusData',
-      },
+    },
     },
     {
       $unwind: '$CallstatusData',

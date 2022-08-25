@@ -67,6 +67,37 @@ const getDataByLoading = async (id) => {
     },
     {
       $unwind: '$callstatusData',
+    }, //supplierId
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'supplierdata',
+      },
+    },
+    {
+      $unwind: '$supplierdata',
+    },
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ groupId: { $eq: id } }, { status: { $eq: 'Loaded' } }],
+            },
+          },
+          { $group: { _id: null, myCount: { $sum: 1 } } },
+        ],
+        as: 'receivedStocks',
+      },
+    },
+    {
+      $unwind: {
+        path: '$receivedStocks',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $project: {
@@ -79,6 +110,9 @@ const getDataByLoading = async (id) => {
         incomingQuantity: 1,
         confirmOrder: '$callstatusData.confirmOrder',
         confirmprice: '$callstatusData.confirmprice',
+        supplierName: '$supplierdata.primaryContactName',
+        receivedStockCount: '$receivedStocks.myCount',
+        supplierContact: '$supplierdata.primaryContactNumber',
       },
     },
   ]);
