@@ -78,6 +78,33 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   oldBalance: {
     type: Number,
   },
+  paymentmode: {
+    type: String,
+  },
+  subtotal: {
+    type: Number,
+  },
+  GST: {
+    type: Array,
+  },
+  SGST: {
+    type: Number,
+  },
+  CGST: {
+    type: Number,
+  },
+  paidamount: {
+    type: Number,
+  },
+  gsttotal: {
+    type: Number,
+  },
+  delivery_type: {
+    type: String,
+  },
+  time_of_delivery: {
+    type: String,
+  },
   status: {
     type: String,
     default: 'ordered',
@@ -133,22 +160,19 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   customerDeliveryStatus: {
     type: String,
-    default: "Pending"
+    default: 'Pending',
   },
   GroupId: {
     type: String,
-    
   },
   receiveStatus: {
     type: String,
-    default: "Pending"
+    default: 'Pending',
   },
   pettyCashReceiveStatus: {
     type: String,
-    default: "Pending",
+    default: 'Pending',
   },
-
-  
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
@@ -213,6 +237,21 @@ const productorderCloneSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  GST_Number: {
+    type: Number,
+  },
+  HSN_Code: {
+    type: String,
+  },
+  packtypeId: {
+    type: String,
+  },
+  unit: {
+    type: String,
+  },
+  packKg: {
+    type: String,
+  },
   quantity: {
     type: Number,
   },
@@ -252,8 +291,6 @@ const productorderCloneSchema = new mongoose.Schema({
     type: String,
     default: 'ordered',
   },
-
-  
 });
 
 productorderCloneSchema.plugin(toJSON);

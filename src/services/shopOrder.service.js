@@ -55,9 +55,14 @@ const createshopOrderClone = async (body, userid) => {
   product.forEach(async (e) => {
     ProductorderClone.create({
       orderId: createShopOrderClone.id,
-      productid: e.productid,
+      productid: e._id,
       quantity: e.quantity,
       priceperkg: e.priceperkg,
+      GST_Number: e.GST_Number,
+      HSN_Code: e.HSN_Code,
+      packtypeId: e.packtypeId,
+      packKg: e.packKg,
+      unit: e.unit,
       date: date,
       time: time,
       customerId: shopId,
@@ -65,6 +70,22 @@ const createshopOrderClone = async (body, userid) => {
   });
   return createShopOrderClone;
 };
+
+// GST_Number: {
+//   type: Number,
+// },
+// HSN_Code: {
+//   type: String,
+// },
+// packtypeId: {
+//   type: String,
+// },
+// unit: {
+//   type: String,
+// },
+// packKg: {
+//   type: String,
+// },
 
 const getAllShopOrderClone = async (date, page) => {
   let values = await ShopOrderClone.aggregate([
@@ -290,9 +311,9 @@ const deleteShopOrderById = async (shopOrderId) => {
 const getAll = async () => {
   return ShopOrderClone.find();
 };
-21
+21;
 
-const createOrderId = async (body)=>{
+const createOrderId = async (body) => {
   return ShopOrderClone.create(body);
 };
 
