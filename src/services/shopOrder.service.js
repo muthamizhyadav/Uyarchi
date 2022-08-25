@@ -119,6 +119,7 @@ const getAllShopOrderClone = async (date, page) => {
 };
 
 const getShopOrderCloneById = async (id) => {
+  console.log();
   let Values = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -166,7 +167,7 @@ const getShopOrderCloneById = async (id) => {
               packtypeId: 1,
               packKg: 1,
               unit: 1,
-              productName: '$products',
+              productName: '$products.productTitle',
               created: 1,
             },
           },
@@ -174,12 +175,24 @@ const getShopOrderCloneById = async (id) => {
         as: 'productData',
       },
     },
-    // {
-    //   $project:{
-    //     _id:1,
-
-    //   }
-    // }
+    {
+      $project: {
+        _id: 1,
+        status: 1,
+        delivery_type: 1,
+        time_of_delivery: 1,
+        total: 1,
+        gsttotal: 1,
+        subtotal: 1,
+        SGST: 1,
+        CGST: 1,
+        paidamount: 1,
+        OrderId: 1,
+        created: 1,
+        productData: '$productData',
+        shopName: '$shopData.SName',
+      },
+    },
   ]);
   return Values;
 };
