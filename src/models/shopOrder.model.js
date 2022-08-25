@@ -282,6 +282,9 @@ const productorderCloneSchema = new mongoose.Schema({
   time: {
     type: String,
   },
+  productpacktypeId: {
+    type: String,
+  },
   active: {
     type: Boolean,
     default: true,

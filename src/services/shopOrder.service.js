@@ -57,12 +57,13 @@ const createshopOrderClone = async (body, userid) => {
   product.forEach(async (e) => {
     ProductorderClone.create({
       orderId: createShopOrderClone.id,
-      productid: e._id,
+      productid: e.productId,
       quantity: e.quantity,
       priceperkg: e.priceperkg,
       GST_Number: e.GST_Number,
       HSN_Code: e.HSN_Code,
       packtypeId: e.packtypeId,
+      productpacktypeId: e._id,
       packKg: e.packKg,
       unit: e.unit,
       date: currentDate,
@@ -133,13 +134,52 @@ const getShopOrderCloneById = async (id) => {
       },
     },
     {
+      $unwind: '$shopData',
+    },
+    {
       $lookup: {
-        from: 'marketshopsclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        as: 'marketshopData',
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              packKg: 1,
+              unit: 1,
+              productName: '$products',
+              created: 1,
+            },
+          },
+        ],
+        as: 'productData',
       },
     },
+    // {
+    //   $project:{
+    //     _id:1,
+
+    //   }
+    // }
   ]);
   return Values;
 };
@@ -253,8 +293,8 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         subtotal: 1,
         SGST: 1,
         CGST: 1,
-        OrderId:1,
-        productTotal: {  $size:'$product' },
+        OrderId: 1,
+        productTotal: { $size: '$product' },
         paidamount: 1,
         shopName: '$shopData.SName',
         contact: '$shopData.mobile',
