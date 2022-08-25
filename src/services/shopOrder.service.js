@@ -221,7 +221,11 @@ const getShopNameWithPagination = async (page, userId) => {
 };
 
 const getShopNameCloneWithPagination = async (page, userId) => {
+  console.log();
   let value = await ShopOrderClone.aggregate([
+    {
+      $sort: { date: -1, time: -1 },
+    },
     {
       $match: {
         $and: [{ Uid: { $eq: userId } }],
@@ -236,11 +240,23 @@ const getShopNameCloneWithPagination = async (page, userId) => {
       },
     },
     {
-      $lookup: {
-        from: 'marketshopsclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        as: 'marketshopData',
+      $unwind: '$shopData',
+    },
+    {
+      $project: {
+        _id: 1,
+        created: 1,
+        delivery_type: 1,
+        time_of_delivery: 1,
+        total: 1,
+        gsttotal: 1,
+        subtotal: 1,
+        SGST: 1,
+        CGST: 1,
+        paidamount: 1,
+        shopName: '$shopData.SName',
+        contact: '$shopData.mobile',
+        status:1,
       },
     },
     //b2busers
