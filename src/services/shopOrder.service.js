@@ -42,15 +42,17 @@ const createshopOrderClone = async (body, userid) => {
     center = '0';
   }
   // console.log(center, 0);
+  let currentDate = moment().format('YYYY-MM-DD');
+  let currenttime = moment().format('HHmmss');
   let userId = '';
   let totalcount = Buy.length + 1;
 
   userId = 'OD' + center + totalcount;
-  let bod = { ...body, ...{ Uid: userid, OrderId: userId } };
+  let bod = { ...body, ...{ Uid: userid, OrderId: userId, date: currentDate, time: currenttime, created: moment() } };
   console.log(bod);
 
   let createShopOrderClone = await ShopOrderClone.create(bod);
-  let { product, date, time, shopId } = body;
+  let { product, time, shopId } = body;
   await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: 'accept', callingStatusSort: 6 }, { new: true });
   product.forEach(async (e) => {
     ProductorderClone.create({
@@ -63,9 +65,10 @@ const createshopOrderClone = async (body, userid) => {
       packtypeId: e.packtypeId,
       packKg: e.packKg,
       unit: e.unit,
-      date: date,
-      time: time,
+      date: currentDate,
+      time: currenttime,
       customerId: shopId,
+      created: moment(),
     });
   });
   return createShopOrderClone;

@@ -90,6 +90,9 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   SGST: {
     type: Number,
   },
+  created: {
+    type: Date,
+  },
   CGST: {
     type: Number,
   },
@@ -286,6 +289,9 @@ const productorderCloneSchema = new mongoose.Schema({
   archive: {
     type: Boolean,
     default: false,
+  },
+  created: {
+    type: Date,
   },
   status: {
     type: String,
