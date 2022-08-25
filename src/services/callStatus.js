@@ -98,6 +98,17 @@ const getDataWithSupplierId = async (id, page) => {
       $unwind: '$ProductData',
     },
     {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        as: 'supplierData',
+      },
+    },
+    {
+      $unwind: '$supplierData',
+    },
+    {
       $project: {
         _id: 1,
         active: 1,
@@ -121,6 +132,8 @@ const getDataWithSupplierId = async (id, page) => {
         confirmcallDetail: 1,
         confirmcallstatus: 1,
         confirmprice: 1,
+        supplierContact:'$supplierData.primaryContactNumber',
+        supplierName:'$supplierData.primaryContactName',
         productTitle: '$ProductData.productTitle',
       },
     },
