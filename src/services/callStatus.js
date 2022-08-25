@@ -117,6 +117,7 @@ const getDataWithSupplierId = async (id, page) => {
         phStatus: 1,
         phreason: 1,
         confirmOrder: 1,
+        orderType:1,
         confirmcallDetail: 1,
         confirmcallstatus: 1,
         confirmprice: 1,
