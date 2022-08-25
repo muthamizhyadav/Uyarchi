@@ -85,7 +85,7 @@ const getDataByLoading = async (id) => {
         pipeline: [
           {
             $match: {
-              $and: [{ groupId: { $eq: id } }, { status: { $eq: 'Loaded' } }],
+              $and: [{ groupId: { $eq: id } }, { status: { $eq: 'Billed' } }],
             },
           },
           { $group: { _id: null, myCount: { $sum: 1 } } },
