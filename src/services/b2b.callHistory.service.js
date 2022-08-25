@@ -961,6 +961,33 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
     },
     {
       $lookup: {
+        from: 'callhistories',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: { date: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
+          },
+          {
+            $group: {
+              _id: null,
+              count: {
+                $sum: 1,
+              },
+            },
+          },
+        ],
+        as: 'callhistoriestoday',
+      },
+    },
+    {
+      $unwind: {
+        path: '$callhistoriestoday',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
         from: 'shoplists',
         localField: 'SType',
         foreignField: '_id',
@@ -994,6 +1021,7 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         Uid: 1,
         shopData: 1,
         shopData: '$callhistories',
+        callhistoriestoday: '$callhistoriestoday.count',
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
       },
