@@ -30,6 +30,26 @@ const getAllWithPagination = async (page, status) => {
     },
     {
       $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          {
+            $match: { status: { $eq: 'Billed' } },
+          },
+          { $group: { _id: null, Count: { $sum: 1 } } },
+        ],
+        as: 'billedCount',
+      },
+    },
+    {
+      $unwind: {
+        path: '$billedCount',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
         from: 'suppliers',
         localField: 'supplierId',
         foreignField: '_id',
@@ -55,6 +75,7 @@ const getAllWithPagination = async (page, status) => {
         supplierName: '$supplierData.primaryContactName',
         supplierContact: '$supplierData.primaryContactNumber',
         Count: '$ReceivedData.Count',
+        billedCount: '$billedCount.Count',
       },
     },
     { $skip: 10 * page },
