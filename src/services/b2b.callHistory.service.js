@@ -21,8 +21,7 @@ const createcallHistoryWithType = async (body, userId) => {
   let servertime = moment().format('hh:mm a');
   let serverdate = moment().format('yyyy-MM-DD');
 
-  const { callStatus, shopId, reason } = body;
-  console.log(body.currentdate);
+  const { callStatus, shopId, reason, type, lat, lang } = body;
   let sort;
   if (callStatus == 'reschedule') {
     sort = 2;
@@ -36,7 +35,11 @@ const createcallHistoryWithType = async (body, userId) => {
   if (callStatus == 'accept') {
     sort = 6;
   }
-  let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
+
+  let values = {
+    ...body,
+    ...{ userId: userId, date: serverdate, time: servertime, historytime: time, type: type, lat: lat, lang: lang },
+  };
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
   await Shop.findByIdAndUpdate(
@@ -545,7 +548,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         status: 1,
         Uid: 1,
         shopData: 1,
-        callhistoriestoday:'0',
+        callhistoriestoday: '0',
         shopData: '$callhistories',
         shoptypeName: '$shoplists',
         match: { $ne: ['$b2bshopclones._id', null] },
