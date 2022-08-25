@@ -253,6 +253,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         subtotal: 1,
         SGST: 1,
         CGST: 1,
+        OrderId:1,
         productTotal: {  $size:'$product' },
         paidamount: 1,
         shopName: '$shopData.SName',
