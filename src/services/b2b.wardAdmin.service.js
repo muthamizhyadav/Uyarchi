@@ -269,7 +269,7 @@ const updateBilled = async (id) => {
   billId = concat
   await ShopOrderClone.findByIdAndUpdate(
     { _id: id },
-    { billNo: billId, billDate: serverdates, billTime: servertime, status: "Billed" },
+    { billNo: billId, billDate: serverdates, billTime: servertime, status: "Billed",AssignedStatus: "Billed" },
     { new: true },
   )
   return productOrderBilled;
