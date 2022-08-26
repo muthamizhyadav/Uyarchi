@@ -220,4 +220,20 @@ const getDetailsByProductId = async (productId, date, page) => {
   return { values: values, product: product.productTitle, date: date };
 };
 
-module.exports = { getDataById, updateReceivedStockById, getDataByLoading, getDetailsByProductId, updatesegrecation };
+const uploadImageById = async (id, body) => {
+  let receivedStock = await ReceivedStock.findById(id);
+  if (!receivedStock) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  receivedStock = await ReceivedStock.findByIdAndUpdate({ _id: id }, body, { new: true });
+  return receivedStock;
+};
+
+module.exports = {
+  getDataById,
+  updateReceivedStockById,
+  getDataByLoading,
+  getDetailsByProductId,
+  updatesegrecation,
+  uploadImageById,
+};

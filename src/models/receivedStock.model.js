@@ -64,6 +64,9 @@ const receivedStockSchema = new mongoose.Schema({
     type: String,
     default: 'Pending',
   },
+  wastageImg: {
+    type: Array,
+  },
   billingQuantity: {
     type: Number,
   },

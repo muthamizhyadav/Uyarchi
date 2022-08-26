@@ -40,12 +40,12 @@ const uploadImageById = catchAsync(async (req, res) => {
   if (req.files) {
     let path = '';
     path = 'images/receivedproductimage/';
-    if (req.files.weighBridgeBillImg != null) {
+    if (req.files.weighBridgeBillImg.length != 0) {
       req.files.weighBridgeBillImg.map((e) => {
         receivedProduct.weighBridgeBillImg.push(path + e.filename);
       });
     }
-    if (req.files.supplierBillImg != null) {
+    if (req.files.supplierBillImg.length != 0) {
       req.files.supplierBillImg.map((e) => {
         receivedProduct.supplierBillImg.push(path + e.filename);
       });
