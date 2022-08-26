@@ -192,6 +192,9 @@ const getCallstatusForSuddenOrders = async (page) => {
       },
     },
     {
+      $sort: { date: -1, time: -1 },
+    },
+    {
       $lookup: {
         from: 'suppliers',
         localField: 'supplierid',
@@ -238,6 +241,9 @@ const getCallstatusForSuddenOrders = async (page) => {
       $match: {
         $and: [{ orderType: { $eq: 'sudden' } }, { confirmcallstatus: { $eq: 'Accepted' } }],
       },
+    },
+    {
+      $sort: { date: -1, time: -1 },
     },
   ]);
   return { values: values, total: total.length };
