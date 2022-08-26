@@ -1,6 +1,7 @@
 const express = require('express');
 const receivedProductController = require('../../controllers/receivedProduct.Controller');
 const router = express.Router();
+const receivedproductimage = require('../../middlewares/receivedproductimage');
 
 router.route('/').post(receivedProductController.createReceivedProduct);
 
@@ -14,4 +15,11 @@ router
   .delete(receivedProductController.deleteReceivedOrdersById);
 router.route('/BillNumber/:id').put(receivedProductController.BillNumber);
 router.route('/getSupplierBills/:page').get(receivedProductController.getSupplierBillsDetails);
+router
+  .route('/upload/image/:id')
+  .put(
+    receivedproductimage.fields([{ name: 'weighBridgeBillImg' }, { name: 'supplierBillImg' }]),
+    receivedProductController.uploadImageById
+  );
+router.route('/getproducts/BySupplier/:page').get(receivedProductController.getreceivedProductBySupplier);
 module.exports = router;

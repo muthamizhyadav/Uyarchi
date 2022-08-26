@@ -16,6 +16,12 @@ const callHistorySchema = mongoose.Schema({
   callStatus: {
     type: String,
   },
+  lat: {
+    type: Number,
+  },
+  lang: {
+    type: Number,
+  },
   orderedStatus: {
     type: String,
   },
@@ -41,14 +47,12 @@ const callHistorySchema = mongoose.Schema({
   },
   date: {
     type: String,
-    // default: moment().format('DD-MM-yyy'),
   },
   calldate: {
     type: String,
   },
   time: {
     type: String,
-    // default: moment().format('hh:mm a'),
   },
   status: {
     type: String,
@@ -61,13 +65,6 @@ const callHistorySchema = mongoose.Schema({
   reason: {
     type: String,
   },
-  // reSchedule:{
-  //   type: String,
-  // },
-  // callBackReason: {
-  //   type: String,
-  // },
-
   select: {
     type: String,
   },
@@ -80,9 +77,6 @@ const callHistorySchema = mongoose.Schema({
   sortTime: {
     type: Number,
   },
-  // orderedStatus: {
-  //   type: String,
-  // },
 });
 
 const callHistory = mongoose.model('callHistory', callHistorySchema);

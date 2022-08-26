@@ -3,9 +3,20 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const ReceivedStockService = require('../services/receivedStock.service');
+const ReceivedStock = require('../models/receivedStock.model');
 
 const getDataById = catchAsync(async (req, res) => {
   const receivedStock = await ReceivedStockService.getDataById(req.params.id);
+  res.send(receivedStock);
+});
+
+const uploadImageById = catchAsync(async (req, res) => {
+  let receivedStock = await ReceivedStockService.uploadImageById(req.params.id, req.body);
+  if (req.files.length != 0) {
+    req.files.forEach((element) => {
+      receivedStock.wastageImg.push('images/receivedstockimg/' + element.filename);
+    });
+  }
   res.send(receivedStock);
 });
 
@@ -28,4 +39,11 @@ const getDetailsByProductId = catchAsync(async (req, res) => {
   res.send(receivedStock);
 });
 
-module.exports = { getDataById, updateReceivedStockById, getDataByLoading, getDetailsByProductId, updatesegrecation };
+module.exports = {
+  getDataById,
+  updateReceivedStockById,
+  getDataByLoading,
+  getDetailsByProductId,
+  updatesegrecation,
+  uploadImageById,
+};

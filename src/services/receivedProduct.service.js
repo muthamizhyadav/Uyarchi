@@ -3,9 +3,19 @@ const ApiError = require('../utils/ApiError');
 const ReceivedProduct = require('../models/receivedProduct.model');
 const transportbill = require('../models/transportbill.model');
 const Supplier = require('../models/supplier.model');
+const ReceivedStock = require('../models/receivedStock.model');
 
 const createReceivedProduct = async (body) => {
   let Rproduct = await ReceivedProduct.create(body);
+  return Rproduct;
+};
+
+const uploadImageById = async (id, body) => {
+  let Rproduct = await ReceivedProduct.findById(id);
+  if (!Rproduct) {
+    throw new ApiError(404, 'ReceivedProduct not found');
+  }
+  Rproduct = await ReceivedProduct.findByIdAndUpdate({ _id: id }, body, { new: true });
   return Rproduct;
 };
 
@@ -27,6 +37,26 @@ const getAllWithPagination = async (page, status) => {
     },
     {
       $unwind: '$ReceivedData',
+    },
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          {
+            $match: { status: { $eq: 'Billed' } },
+          },
+          { $group: { _id: null, Count: { $sum: 1 } } },
+        ],
+        as: 'billedCount',
+      },
+    },
+    {
+      $unwind: {
+        path: '$billedCount',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $lookup: {
@@ -55,6 +85,7 @@ const getAllWithPagination = async (page, status) => {
         supplierName: '$supplierData.primaryContactName',
         supplierContact: '$supplierData.primaryContactNumber',
         Count: '$ReceivedData.Count',
+        billedCount: '$billedCount.Count',
       },
     },
     { $skip: 10 * page },
@@ -173,9 +204,6 @@ const getAllWithPaginationBilled = async (page, status) => {
         as: 'TotalPaidExpensesData',
       },
     },
-    // {
-
-    // },
     {
       $project: {
         _id: 1,
@@ -513,6 +541,71 @@ const getSupplierBillsDetails = async (page) => {
   return values;
 };
 
+const getreceivedProductBySupplier = async (page) => {
+  let values = await ReceivedStock.aggregate([
+    // {
+    //   $lookup: {
+    //     from: 'receivedstocks',
+    //     localField: '_id',
+    //     foreignField: 'supplierId',
+    //     pipeline: [
+    //       {
+    //         $lookup: {
+    //           from: 'products',
+    //           localField: 'productId',
+    //           foreignField: '_id',
+    //           as: 'productData',
+    //         },
+    //       },
+    //       {
+    //         $unwind: '$productData',
+    //       },
+    //       {
+    //         $project:{
+    //           productName:'$productData.productTitle',
+    //           billingQuantity:1,
+    //           billingTotal:1,
+    //           status:1,
+    //           date:1,
+    //           Net_Amount: { $multiply: [ "$billingQuantity", "$billingTotal" ] }
+    //         }
+    //       }
+    //     ],
+    //     as: 'ReceivedData',
+    //   },
+    // },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'supplierData',
+      },
+    },
+    {
+      $unwind: '$supplierData',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productId',
+        foreignField: '_id',
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: '$productData',
+    },
+    // {
+    //   $project: {
+    //     _id:1,
+
+    //   }
+    // }
+  ]);
+  return values;
+};
+
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,
@@ -522,4 +615,6 @@ module.exports = {
   getAllWithPaginationBilled,
   getAllWithPaginationBilled_Supplier,
   getSupplierBillsDetails,
+  uploadImageById,
+  getreceivedProductBySupplier,
 };

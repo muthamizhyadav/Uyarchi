@@ -67,6 +67,37 @@ const getDataByLoading = async (id) => {
     },
     {
       $unwind: '$callstatusData',
+    }, //supplierId
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'supplierdata',
+      },
+    },
+    {
+      $unwind: '$supplierdata',
+    },
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ groupId: { $eq: id } }, { status: { $eq: 'Billed' } }],
+            },
+          },
+          { $group: { _id: null, myCount: { $sum: 1 } } },
+        ],
+        as: 'receivedStocks',
+      },
+    },
+    {
+      $unwind: {
+        path: '$receivedStocks',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $project: {
@@ -79,6 +110,9 @@ const getDataByLoading = async (id) => {
         incomingQuantity: 1,
         confirmOrder: '$callstatusData.confirmOrder',
         confirmprice: '$callstatusData.confirmprice',
+        supplierName: '$supplierdata.primaryContactName',
+        receivedStockCount: '$receivedStocks.myCount',
+        supplierContact: '$supplierdata.primaryContactNumber',
       },
     },
   ]);
@@ -186,4 +220,20 @@ const getDetailsByProductId = async (productId, date, page) => {
   return { values: values, product: product.productTitle, date: date };
 };
 
-module.exports = { getDataById, updateReceivedStockById, getDataByLoading, getDetailsByProductId, updatesegrecation };
+const uploadImageById = async (id, body) => {
+  let receivedStock = await ReceivedStock.findById(id);
+  if (!receivedStock) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  receivedStock = await ReceivedStock.findByIdAndUpdate({ _id: id }, body, { new: true });
+  return receivedStock;
+};
+
+module.exports = {
+  getDataById,
+  updateReceivedStockById,
+  getDataByLoading,
+  getDetailsByProductId,
+  updatesegrecation,
+  uploadImageById,
+};

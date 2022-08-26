@@ -21,8 +21,7 @@ const createcallHistoryWithType = async (body, userId) => {
   let servertime = moment().format('hh:mm a');
   let serverdate = moment().format('yyyy-MM-DD');
 
-  const { callStatus, shopId, reason } = body;
-  console.log(body.currentdate);
+  const { callStatus, shopId, reason, type, lat, lang } = body;
   let sort;
   if (callStatus == 'reschedule') {
     sort = 2;
@@ -36,30 +35,34 @@ const createcallHistoryWithType = async (body, userId) => {
   if (callStatus == 'accept') {
     sort = 6;
   }
-  let values = { ...body, ...{ userId: userId, date: serverdate, time: servertime, historytime: time } };
+
+  let values = {
+    ...body,
+    ...{ userId: userId, date: serverdate, time: servertime, historytime: time, type: type, lat: lat, lang: lang },
+  };
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
+  await Shop.findByIdAndUpdate(
+    { _id: shopId },
+    {
+      sorttime: time,
+      callingStatusSort: sort,
+    },
+    { new: true }
+  );
   if (callStatus == 'reschedule') {
     // let dateSlice = reason.slice(0, 10);
     await Shop.findByIdAndUpdate(
       { _id: shopId },
       {
-        callingStatus: callStatus,
-        sorttime: time,
-        callingStatusSort: sort,
         sortdate: reason,
+        callingStatus: callStatus,
       },
       { new: true }
     );
   } else {
     if (callStatus != 'accept') {
-      await Shop.findByIdAndUpdate(
-        { _id: shopId },
-        { callingStatus: callStatus, sorttime: time, callingStatusSort: sort },
-        { new: true }
-      );
-    } else {
-      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatusSort: sort }, { new: true });
+      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus }, { new: true });
     }
   }
   let callHistory = await callHistoryModel.create(values);
@@ -204,7 +207,11 @@ const callingStatusreport = async (date) => {
     },
   ]);
   let oncall = await Shop.find({ callingStatus: 'On Call' }).count();
-  let oldReschedule = await Shop.find({ callingStatus: 'reschedule', historydate: yesterday }).count();
+  let oldReschedule = await Shop.find({
+    callingStatus: 'reschedule',
+    historydate: { $ne: date },
+    sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
+  }).count();
   // let Reschedule = await Shop.find({ callingStatus: 'reschedule', historydate: date }).count();
   let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate }).count();
   return {
@@ -433,21 +440,9 @@ const getById = async (id) => {
 const getShop_pending = async (date, status, key, page, userId, userRole) => {
   let keys = { active: { $eq: true } };
   if (key != 'null') {
-    keys = { SName: { $regex: key, $options: 'i' } };
+    keys = { $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }] };
   }
   let values;
-  reshedule = await Shop.aggregate([
-    {
-      $match: {
-        $and: [
-          { sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') } },
-          { callingStatus: { $eq: 'reschedule' } },
-        ],
-      },
-    },
-    { $group: { _id: { team: '$_id', position: '$position' }, count: { $sum: 1 } } },
-  ]);
-  console.log(reshedule);
   values = await Shop.aggregate([
     {
       $match: {
@@ -467,6 +462,33 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
           { $limit: 10 },
         ],
         as: 'callhistories',
+      },
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: { date: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
+          },
+          {
+            $group: {
+              _id: null,
+              count: {
+                $sum: 1,
+              },
+            },
+          },
+        ],
+        as: 'callhistoriestoday',
+      },
+    },
+    {
+      $unwind: {
+        path: '$callhistoriestoday',
+        preserveNullAndEmptyArrays: true,
       },
     },
     {
@@ -526,6 +548,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         status: 1,
         Uid: 1,
         shopData: 1,
+        callhistoriestoday: '0',
         shopData: '$callhistories',
         shoptypeName: '$shoplists',
         match: { $ne: ['$b2bshopclones._id', null] },
@@ -642,7 +665,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
   console.log(status);
   let keys = { active: { $eq: true } };
   if (key != 'null') {
-    keys = { SName: { $regex: key, $options: 'i' } };
+    keys = { $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }] };
   }
 
   let values;
@@ -677,6 +700,33 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
       },
     },
     {
+      $lookup: {
+        from: 'callhistories',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: { date: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
+          },
+          {
+            $group: {
+              _id: null,
+              count: {
+                $sum: 1,
+              },
+            },
+          },
+        ],
+        as: 'callhistoriestoday',
+      },
+    },
+    {
+      $unwind: {
+        path: '$callhistoriestoday',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -703,6 +753,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         Uid: 1,
         shopData: 1,
         shopData: '$callhistories',
+        callhistoriestoday: '$callhistoriestoday.count',
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
       },
@@ -713,7 +764,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [ keys, { callingStatus: { $eq: status } }],
+        $and: [keys, { callingStatus: { $eq: status } }],
       },
     },
     {
@@ -748,7 +799,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
 const getShop_callback = async (date, status, key, page, userId, userRole) => {
   let keys = { active: { $eq: true } };
   if (key != 'null') {
-    keys = { SName: { $regex: key, $options: 'i' } };
+    keys = { $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }] };
   }
 
   let values;
@@ -783,6 +834,33 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
       },
     },
     {
+      $lookup: {
+        from: 'callhistories',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: { date: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
+          },
+          {
+            $group: {
+              _id: null,
+              count: {
+                $sum: 1,
+              },
+            },
+          },
+        ],
+        as: 'callhistoriestoday',
+      },
+    },
+    {
+      $unwind: {
+        path: '$callhistoriestoday',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -809,6 +887,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         Uid: 1,
         shopData: 1,
         shopData: '$callhistories',
+        callhistoriestoday: '$callhistoriestoday.count',
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
       },
@@ -885,6 +964,33 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
     },
     {
       $lookup: {
+        from: 'callhistories',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: { date: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
+          },
+          {
+            $group: {
+              _id: null,
+              count: {
+                $sum: 1,
+              },
+            },
+          },
+        ],
+        as: 'callhistoriestoday',
+      },
+    },
+    {
+      $unwind: {
+        path: '$callhistoriestoday',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
         from: 'shoplists',
         localField: 'SType',
         foreignField: '_id',
@@ -918,6 +1024,7 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         Uid: 1,
         shopData: 1,
         shopData: '$callhistories',
+        callhistoriestoday: '$callhistoriestoday.count',
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
       },

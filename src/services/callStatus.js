@@ -6,7 +6,10 @@ const { Product } = require('../models/product.model');
 const moment = require('moment');
 
 const createCallStatus = async (callStatusBody) => {
-  return CallStatus.create(callStatusBody);
+  const serverdate = moment().format('YYYY-MM-DD');
+  const servertime = moment().format('HHmmss');
+  let values = { ...callStatusBody, ...{ date: serverdate, time: servertime, created: moment() } };
+  return CallStatus.create(values);
 };
 
 const getCallStatusById = async (id) => {
@@ -98,6 +101,17 @@ const getDataWithSupplierId = async (id, page) => {
       $unwind: '$ProductData',
     },
     {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        as: 'supplierData',
+      },
+    },
+    {
+      $unwind: '$supplierData',
+    },
+    {
       $project: {
         _id: 1,
         active: 1,
@@ -117,9 +131,12 @@ const getDataWithSupplierId = async (id, page) => {
         phStatus: 1,
         phreason: 1,
         confirmOrder: 1,
+        orderType: 1,
         confirmcallDetail: 1,
         confirmcallstatus: 1,
         confirmprice: 1,
+        supplierContact: '$supplierData.primaryContactNumber',
+        supplierName: '$supplierData.primaryContactName',
         productTitle: '$ProductData.productTitle',
       },
     },
@@ -175,6 +192,9 @@ const getCallstatusForSuddenOrders = async (page) => {
       },
     },
     {
+      $sort: { date: -1, time: -1 },
+    },
+    {
       $lookup: {
         from: 'suppliers',
         localField: 'supplierid',
@@ -221,6 +241,9 @@ const getCallstatusForSuddenOrders = async (page) => {
       $match: {
         $and: [{ orderType: { $eq: 'sudden' } }, { confirmcallstatus: { $eq: 'Accepted' } }],
       },
+    },
+    {
+      $sort: { date: -1, time: -1 },
     },
   ]);
   return { values: values, total: total.length };

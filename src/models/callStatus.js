@@ -61,7 +61,7 @@ const callStatusSchema = mongoose.Schema({
     default: false,
   },
   time: {
-    type: String,
+    type: Number,
   },
   active: {
     type: Boolean,
@@ -80,6 +80,9 @@ const callStatusSchema = mongoose.Schema({
   archive: {
     type: Boolean,
     default: false,
+  },
+  created: {
+    type: Date,
   },
 });
 

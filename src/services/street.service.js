@@ -299,6 +299,7 @@ const getwardBystreetAngular = async (wardId) => {
         $and: match,
       },
     },
+    { $sort: { street: 1 } },
   ]);
   return ress;
 };
