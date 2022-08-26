@@ -6,7 +6,10 @@ const { Product } = require('../models/product.model');
 const moment = require('moment');
 
 const createCallStatus = async (callStatusBody) => {
-  return CallStatus.create(callStatusBody);
+  const serverdate = moment().format('YYYY-MM-DD');
+  const servertime = moment().format('HHmmss');
+  let values = { ...callStatusBody, ...{ date: serverdate, time: servertime, created: moment() } };
+  return CallStatus.create(values);
 };
 
 const getCallStatusById = async (id) => {
@@ -25,7 +28,7 @@ const getProductAndSupplierDetails = async (page) => {
           { $group: { _id: null, myCount: { $sum: 1 } } },
         ],
         as: 'CallstatusData',
-    },
+      },
     },
     {
       $unwind: '$CallstatusData',
@@ -128,12 +131,12 @@ const getDataWithSupplierId = async (id, page) => {
         phStatus: 1,
         phreason: 1,
         confirmOrder: 1,
-        orderType:1,
+        orderType: 1,
         confirmcallDetail: 1,
         confirmcallstatus: 1,
         confirmprice: 1,
-        supplierContact:'$supplierData.primaryContactNumber',
-        supplierName:'$supplierData.primaryContactName',
+        supplierContact: '$supplierData.primaryContactNumber',
+        supplierName: '$supplierData.primaryContactName',
         productTitle: '$ProductData.productTitle',
       },
     },

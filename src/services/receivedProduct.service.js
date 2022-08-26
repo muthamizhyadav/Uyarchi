@@ -194,9 +194,6 @@ const getAllWithPaginationBilled = async (page, status) => {
         as: 'TotalPaidExpensesData',
       },
     },
-    // {
-
-    // },
     {
       $project: {
         _id: 1,
