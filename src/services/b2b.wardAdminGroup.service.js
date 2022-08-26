@@ -685,7 +685,7 @@ const getReturnWDEtoWLE = async (id , page) =>{
   let datas = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }],
+        $and: [{ _id: { $eq: id } }, ],
       },
     },
     {
@@ -693,9 +693,22 @@ const getReturnWDEtoWLE = async (id , page) =>{
         from: 'shoporderclones',
         localField: 'Orderdatas._id',
         foreignField: '_id',
-        as: 'datas',
+        as: 'detailsData',
       }
     },
+    // { $unwind: "$detailsData"},
+    // { $unwind: "$product"},
+    // {
+    //   $project: {
+    //     groupId:1,
+    //     manageDeliveryStatus:1,
+    //     pettyStock:1,
+    //     product: "$detailsData.product",
+    //     deleiveryStatus: "$detailsData.customerDeliveryStatus",
+    //   }
+    // },
+    
+    
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -811,7 +824,7 @@ const getPettyCashDetails = async (id, page) =>{
         Deliverystatus: "$datas.customerDeliveryStatus",
         FinalPaymentType: "$datas.payType",
         pettyCashApporvedStatus: "$datas.pettyCashReceiveStatus",
-        
+
   
              
       }
@@ -846,6 +859,11 @@ const getPettyCashDetails = async (id, page) =>{
 const getAllGroup = async (page) => {
   let values = await wardAdminGroup.aggregate([
     {
+      $match: {
+        $and: [{ manageDeliveryStatus: { $eq: "Delivery Complete" }}]
+      }
+    },
+    {
       $project:{
         groupId:1,
         assignDate:1,
@@ -861,8 +879,14 @@ const getAllGroup = async (page) => {
     { $skip: 10 * page }, 
     { $limit: 10 }
   ]);
-  let total = await wardAdminGroup.find().count();
-  return { values: values, total: total };
+  let total = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ manageDeliveryStatus: { $eq: "Delivery Complete" }}]
+      }
+    },
+  ])
+  return { values: values, total: total.length };
 };
 
 
