@@ -27,6 +27,30 @@ const createReceivedProduct = catchAsync(async (req, res) => {
   res.send(receivedProduct);
 });
 
+const uploadImageById = catchAsync(async (req, res) => {
+  let receivedProduct = await ReceivedProductService.uploadImageById(req.params.id, req.body);
+  if (req.files) {
+    let path = '';
+    path = 'images/receivedproductimage/';
+    if (req.files.weighBridgeBillImg != null) {
+      receivedProduct.weighBridgeBillImg =
+        path +
+        req.files.weighBridgeBillImg.map((e) => {
+          return e.filename;
+        });
+    }
+    if (req.files.supplierBillImg != null) {
+      receivedProduct.supplierBillImg =
+        path +
+        req.files.supplierBillImg.map((e) => {
+          return e.filename;
+        });
+    }
+  }
+  await receivedProduct.save();
+  res.send(receivedProduct);
+});
+
 const getAllWithPagination = catchAsync(async (req, res) => {
   let receivedProduct = await ReceivedProductService.getAllWithPagination(req.params.page, 'Acknowledged');
   res.send(receivedProduct);
@@ -77,4 +101,5 @@ module.exports = {
   getAllWithPagination_billed,
   getAllWithPagination_billed_supplier,
   getSupplierBillsDetails,
+  uploadImageById,
 };

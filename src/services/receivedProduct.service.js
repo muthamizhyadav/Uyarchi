@@ -9,6 +9,15 @@ const createReceivedProduct = async (body) => {
   return Rproduct;
 };
 
+const uploadImageById = async (id, body) => {
+  let Rproduct = await ReceivedProduct.findById(id);
+  if (!Rproduct) {
+    throw new ApiError(404, 'ReceivedProduct not found');
+  }
+  Rproduct = await ReceivedProduct.findByIdAndUpdate({ _id: id }, body, { new: true });
+  return Rproduct;
+};
+
 const getAllWithPagination = async (page, status) => {
   let value = await ReceivedProduct.aggregate([
     {
@@ -540,4 +549,5 @@ module.exports = {
   getAllWithPaginationBilled,
   getAllWithPaginationBilled_Supplier,
   getSupplierBillsDetails,
+  uploadImageById,
 };

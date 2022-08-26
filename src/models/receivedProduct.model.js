@@ -50,6 +50,18 @@ const receivedProducrSchema = new mongoose.Schema({
   BillNo: {
     type: String,
   },
+  supplierBillNo: {
+    type: String,
+  },
+  weighBridgeBillImg: {
+    type: Array,
+  },
+  supplierBilldate: {
+    type: String,
+  },
+  supplierBillImg: {
+    type: Array,
+  },
   pendingAmount: {
     type: Number,
   },
