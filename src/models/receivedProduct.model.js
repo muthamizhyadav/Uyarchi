@@ -27,7 +27,7 @@ const receivedProducrSchema = new mongoose.Schema({
     type: String,
   },
   time: {
-    type: String,
+    type: Number,
   },
   vehicleNumber: {
     type: String,
@@ -68,6 +68,9 @@ const receivedProducrSchema = new mongoose.Schema({
   active: {
     type: Boolean,
     default: true,
+  },
+  created: {
+    type: Date,
   },
   archive: {
     type: Boolean,

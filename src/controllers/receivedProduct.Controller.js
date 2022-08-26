@@ -5,9 +5,16 @@ const catchAsync = require('../utils/catchAsync');
 const ReceivedProductService = require('../services/receivedProduct.service');
 const ReceivedStock = require('../models/receivedStock.model');
 const CallStatus = require('../models/callStatus');
+const moment = require('moment');
 
 const createReceivedProduct = catchAsync(async (req, res) => {
-  let receivedProduct = await ReceivedProductService.createReceivedProduct(req.body);
+  const currentDate = moment().format('YYYY-MM-DD');
+  const currentTime = moment().format('HHmmss');
+
+  let receivedProduct = await ReceivedProductService.createReceivedProduct({
+    ...req.body,
+    ...{ date: currentDate, time: currentTime, created: moment() },
+  });
   if (receivedProduct) {
     req.body.callstatus.forEach(async (e) => {
       let callstatus = await CallStatus.findById(e.callstatusid);
@@ -15,10 +22,11 @@ const createReceivedProduct = catchAsync(async (req, res) => {
         callstatusId: e.callstatusid,
         supplierId: req.body.supplierId,
         productId: callstatus.productid,
-        date: req.body.date,
-        time: req.body.time,
+        date: currentDate,
+        time: currentTime,
         groupId: receivedProduct.id,
         status: 'Acknowledged',
+        created: moment(),
       };
       await ReceivedStock.create(row);
       await CallStatus.findByIdAndUpdate({ _id: e.callstatusid }, { StockReceived: 'Received' }, { new: true });
@@ -33,18 +41,14 @@ const uploadImageById = catchAsync(async (req, res) => {
     let path = '';
     path = 'images/receivedproductimage/';
     if (req.files.weighBridgeBillImg != null) {
-      receivedProduct.weighBridgeBillImg =
-        path +
-        req.files.weighBridgeBillImg.map((e) => {
-          return e.filename;
-        });
+      req.files.weighBridgeBillImg.map((e) => {
+        receivedProduct.weighBridgeBillImg.push(path + e.filename);
+      });
     }
     if (req.files.supplierBillImg != null) {
-      receivedProduct.supplierBillImg =
-        path +
-        req.files.supplierBillImg.map((e) => {
-          return e.filename;
-        });
+      req.files.supplierBillImg.map((e) => {
+        receivedProduct.supplierBillImg.push(path + e.filename);
+      });
     }
   }
   await receivedProduct.save();
@@ -91,6 +95,11 @@ const getSupplierBillsDetails = catchAsync(async (req, res) => {
   res.send(receivedProduct);
 });
 
+const getreceivedProductBySupplier = catchAsync(async (req, res) => {
+  const receivedProduct = await ReceivedProductService.getreceivedProductBySupplier(req.params.page);
+  res.send(receivedProduct);
+});
+
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,
@@ -102,4 +111,5 @@ module.exports = {
   getAllWithPagination_billed_supplier,
   getSupplierBillsDetails,
   uploadImageById,
+  getreceivedProductBySupplier,
 };

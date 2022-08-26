@@ -3,6 +3,7 @@ const ApiError = require('../utils/ApiError');
 const ReceivedProduct = require('../models/receivedProduct.model');
 const transportbill = require('../models/transportbill.model');
 const Supplier = require('../models/supplier.model');
+const ReceivedStock = require('../models/receivedStock.model');
 
 const createReceivedProduct = async (body) => {
   let Rproduct = await ReceivedProduct.create(body);
@@ -540,6 +541,71 @@ const getSupplierBillsDetails = async (page) => {
   return values;
 };
 
+const getreceivedProductBySupplier = async (page) => {
+  let values = await ReceivedStock.aggregate([
+    // {
+    //   $lookup: {
+    //     from: 'receivedstocks',
+    //     localField: '_id',
+    //     foreignField: 'supplierId',
+    //     pipeline: [
+    //       {
+    //         $lookup: {
+    //           from: 'products',
+    //           localField: 'productId',
+    //           foreignField: '_id',
+    //           as: 'productData',
+    //         },
+    //       },
+    //       {
+    //         $unwind: '$productData',
+    //       },
+    //       {
+    //         $project:{
+    //           productName:'$productData.productTitle',
+    //           billingQuantity:1,
+    //           billingTotal:1,
+    //           status:1,
+    //           date:1,
+    //           Net_Amount: { $multiply: [ "$billingQuantity", "$billingTotal" ] }
+    //         }
+    //       }
+    //     ],
+    //     as: 'ReceivedData',
+    //   },
+    // },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'supplierData',
+      },
+    },
+    {
+      $unwind: '$supplierData',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productId',
+        foreignField: '_id',
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: '$productData',
+    },
+    // {
+    //   $project: {
+    //     _id:1,
+
+    //   }
+    // }
+  ]);
+  return values;
+};
+
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,
@@ -550,4 +616,5 @@ module.exports = {
   getAllWithPaginationBilled_Supplier,
   getSupplierBillsDetails,
   uploadImageById,
+  getreceivedProductBySupplier,
 };

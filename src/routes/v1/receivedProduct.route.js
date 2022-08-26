@@ -21,4 +21,5 @@ router
     receivedproductimage.fields([{ name: 'weighBridgeBillImg' }, { name: 'supplierBillImg' }]),
     receivedProductController.uploadImageById
   );
+router.route('/getproducts/BySupplier/:page').get(receivedProductController.getreceivedProductBySupplier);
 module.exports = router;
