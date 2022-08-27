@@ -35,21 +35,34 @@ const createGroup = async (body) => {
   userId = 'G' + center + totalcount;
 
   let values = { ...body, ...{ groupId: userId, assignDate: serverdates, assignTime: servertime } };
+  
  
   body.Orderdatas.forEach(async (e) => {
     console.log(body.deliveryExecutiveId)
     let productId = e._id;
-    let shopOrderCloneID= e._id ;
-    console.log(shopOrderCloneID)
+   
  
     await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: "Assigned" , deliveryExecutiveId:body.deliveryExecutiveId} , { new: true });
-    let wardAdminGroupcreate = await wardAdminGroup.create(values,{shopOrderCloneID:shopOrderCloneID});
-    return wardAdminGroupcreate;
+   
   });
+  let wardAdminGroupcreate = await wardAdminGroup.create(values);
+  return wardAdminGroupcreate;
   // let wardAdminGroupcreate = await wardAdminGroup.create(values);
   
   // return wardAdminGroupcreate;
 };
+
+// const craeteAnotherData = async (body)=>{
+//  let { Orderdatas} = body;
+//  Orderdatas.forEach(async (e) => {
+//   wardAdminGroupDetails.create({
+
+//     shopOrderCloneID: e._id,
+//     OrderId: e.OrderId,
+
+//   })
+//  });
+// }
 
 const updateOrderStatus = async (id, updateBody) => {
   let deliveryStatus = await ShopOrderClone.findById(id);
@@ -613,31 +626,61 @@ const getBillDetailsPerOrder = async (id) => {
       }
     },
     { $unwind: '$details' },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'deliveryExecutiveName'
+      }
+    },
+    {
+      $unwind: "$deliveryExecutiveName"
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
+        ],
+        as: 'TotalQuantityData'
+      }
+    },
+    {
+      $unwind: "$TotalQuantityData"
+    },
 
-    // {
-    //   $project: {
-    //     total: 1,
-    //     productName: "$product.productTitle",
-    //     Qty: "$product.quantity",
-    //     rate: "$product.priceperkg",
-    //     HSN_Code: "$product.HSN_Code",
-    //     GST_Number: "$product.GST_Number",
-    //     OrderId: 1,
-    //     billNo: 1,
-    //     billDate: 1,
-    //     billTime: 1,
-    //     shopName: "$details.SName",
-    //     address: "$details.address",
-    //     mobile: "$details.mobile",
-    //     shopType: "$details.type",
-    //     SOwner: "$details.SOwner",
-        // "value": { "$multiply": [
-        //   { "$ifNull": [ "$product.quantity", 0 ] }, 
-        //   { "$ifNull": [ "$product.priceperkg", 0 ] } 
-      //   ]
-      // }
-    // }
-  // }
+    {
+      $project: {
+        total: 1,
+        productName: "$product.productTitle",
+        Qty: "$product.quantity",
+        rate: "$product.priceperkg",
+        HSN_Code: "$product.HSN_Code",
+        GST_Number: "$product.GST_Number",
+        OrderId: 1,
+        billNo: 1,
+        billDate: 1,
+        billTime: 1,
+        shopName: "$details.SName",
+        address: "$details.address",
+        mobile: "$details.mobile",
+        shopType: "$details.type",
+        SOwner: "$details.SOwner",
+        Amount: { "$multiply": [
+          { $toInt:  "$product.quantity"  }, 
+          { $toInt:  "$product.priceperkg"  } 
+        ]
+      },
+      totalQuantity : "$TotalQuantityData.Qty",
+      OperatorName: "$deliveryExecutiveName.name",
+
+    }
+  },
+ 
+  
 
 
 
