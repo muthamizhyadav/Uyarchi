@@ -9,9 +9,7 @@ const pettyStockModel = require('../models/b2b.pettyStock.model')
 const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 
-const createGroup = async (
-  
-) => {
+const createGroup = async (body) => {
 
   let serverdates = moment().format('YYYY-MM-DD');
   let servertime = moment().format('hh:mm a');
