@@ -543,62 +543,62 @@ const getSupplierBillsDetails = async (page) => {
 
 const getreceivedProductBySupplier = async (page) => {
   let values = await ReceivedStock.aggregate([
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productId',
+              foreignField: '_id',
+              as: 'productData',
+            },
+          },
+          {
+            $unwind: '$productData',
+          },
+          // {
+          //   $project:{
+          //     productName:'$productData.productTitle',
+          //     billingQuantity:1,
+          //     billingTotal:1,
+          //     status:1,
+          //     date:1,
+          //     Net_Amount: { $multiply: [ "$billingQuantity", "$billingTotal" ] }
+          //   }
+          // }
+        ],
+        as: 'ReceivedData',
+      },
+    },
     // {
     //   $lookup: {
-    //     from: 'receivedstocks',
-    //     localField: '_id',
-    //     foreignField: 'supplierId',
-    //     pipeline: [
-    //       {
-    //         $lookup: {
-    //           from: 'products',
-    //           localField: 'productId',
-    //           foreignField: '_id',
-    //           as: 'productData',
-    //         },
-    //       },
-    //       {
-    //         $unwind: '$productData',
-    //       },
-    //       {
-    //         $project:{
-    //           productName:'$productData.productTitle',
-    //           billingQuantity:1,
-    //           billingTotal:1,
-    //           status:1,
-    //           date:1,
-    //           Net_Amount: { $multiply: [ "$billingQuantity", "$billingTotal" ] }
-    //         }
-    //       }
-    //     ],
-    //     as: 'ReceivedData',
+    //     from: 'suppliers',
+    //     localField: 'supplierId',
+    //     foreignField: '_id',
+    //     as: 'supplierData',
     //   },
     // },
-    {
-      $lookup: {
-        from: 'suppliers',
-        localField: 'supplierId',
-        foreignField: '_id',
-        as: 'supplierData',
-      },
-    },
-    {
-      $unwind: '$supplierData',
-    },
-    {
-      $lookup: {
-        from: 'products',
-        localField: 'productId',
-        foreignField: '_id',
-        as: 'productData',
-      },
-    },
-    {
-      $unwind: '$productData',
-    },
+    // {
+    //   $unwind: '$supplierData',
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'products',
+    //     localField: 'productId',
+    //     foreignField: '_id',
+    //     as: 'productData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$productData',
+    // },
     // {
     //   $project: {
-    //     _id:1,
+    //     ReceivedData:'$ReceivedData',
 
     //   }
     // }

@@ -183,9 +183,9 @@ const getTrendsData = async (date, wardId, street, page) => {
         localField: '_id',
         foreignField: 'productId',
         pipeline: [
-          {
-            $match: { date: date },
-          },
+          // {
+          //   $match: { date: date },
+          // },
           {
             $match: { $and: [match] },
           },
@@ -225,19 +225,14 @@ const getTrendsData = async (date, wardId, street, page) => {
           },
           {
             $lookup: {
-              from: 'marketshopsclones',
-              localField: 'shopId',
-              foreignField: '_id',
-              as: 'marketshop',
-            },
-          },
-          {
-            $lookup: {
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
               as: 'b2bshop',
             },
+          },
+          {
+            $unwind: '$b2bshop',
           },
           {
             $lookup: {
@@ -260,23 +255,14 @@ const getTrendsData = async (date, wardId, street, page) => {
               shopId: 1,
               steetId: 1,
               UserId: 1,
+              longitude: '$b2bshop.Slong',
+              latitude: '$b2bshop.Slat',
+              ShopName: '$b2bshop.SName',
               date: 1,
-              marketshop: '$marketshop',
-              b2bshop: '$b2bshop',
             },
           },
         ],
         as: 'Productdetails',
-      },
-    },
-    {
-      $project: {
-        productDetails: '$Productdetails',
-        Avg: '$Productdata.Avg',
-        Max: '$Productdata.Max',
-        Min: '$Productdata.Min',
-        productTitle: 1,
-        _id: 1,
       },
     },
   ]);
