@@ -98,6 +98,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
   cashAsGivenByWDE: {
     type: Number,
   },
+  shopOrderCloneID: {
+    type: String,
+  },
 
 });
 

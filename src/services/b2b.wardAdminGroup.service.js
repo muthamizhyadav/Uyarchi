@@ -40,10 +40,13 @@ const createGroup = async (
  
   body.Orderdatas.forEach(async (e) => {
     console.log(body.deliveryExecutiveId)
-    let productId = e._id
+    let productId = e._id;
+ 
     await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: "Assigned" , deliveryExecutiveId:body.deliveryExecutiveId} , { new: true });
   });
-  let wardAdminGroupcreate = await wardAdminGroup.create(values);
+  let wardAdminGroupcreate = await wardAdminGroup.create(values,
+    // shopOrderCloneID: e._id 
+    );
   // await ShopOrderClone.findByIdAndUpdate({_id:productId}, { GroupId: wardAdminGroupcreate._id }, {new:true})
   return wardAdminGroupcreate;
 };
