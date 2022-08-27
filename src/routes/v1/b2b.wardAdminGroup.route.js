@@ -4,11 +4,11 @@ const router = express.Router();
 
 router.route('/craeteGroupId').post(wardAdminGroupController.createGroupOrder);
 
-// router.route('/update/orderpicked/:deliveryExecutiveId').put(wardAdminGroupController.updateOrderPickedStatus);
+router.route('/update/orderpicked/:deliveryExecutiveId').put(wardAdminGroupController.updateOrderPickedStatus);
 
-// router.route('/update/pickedPettyStock/:id').put(wardAdminGroupController.updatePickedPettyStock);
+router.route('/update/pickedPettyStock/:id').put(wardAdminGroupController.updatePickedPettyStock);
 
-// router.route('/update/pickedPettyCash/:id').put(wardAdminGroupController.updatePickedPettyCash);
+router.route('/update/pickedPettyCash/:id').put(wardAdminGroupController.updatePickedPettyCash);
 
 router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
 

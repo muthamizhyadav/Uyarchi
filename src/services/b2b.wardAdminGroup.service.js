@@ -9,7 +9,9 @@ const pettyStockModel = require('../models/b2b.pettyStock.model')
 const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 
-const createGroup = async (body) => {
+const createGroup = async (
+  
+) => {
 
   let serverdates = moment().format('YYYY-MM-DD');
   let servertime = moment().format('hh:mm a');
@@ -35,9 +37,11 @@ const createGroup = async (body) => {
   userId = 'G' + center + totalcount;
 
   let values = { ...body, ...{ groupId: userId, assignDate: serverdates, assignTime: servertime } };
+ 
   body.Orderdatas.forEach(async (e) => {
+    console.log(body.deliveryExecutiveId)
     let productId = e._id
-    await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: "Assigned" }, { new: true });
+    await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: "Assigned" , deliveryExecutiveId:body.deliveryExecutiveId} , { new: true });
   });
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
   // await ShopOrderClone.findByIdAndUpdate({_id:productId}, { GroupId: wardAdminGroupcreate._id }, {new:true})
@@ -575,6 +579,7 @@ const getDetailsAfterDeliveryCompletion = async (id) => {
 
 
 const getBillDetailsPerOrder = async (id) => {
+
   let datas = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -606,32 +611,126 @@ const getBillDetailsPerOrder = async (id) => {
     },
     { $unwind: '$details' },
 
-    {
-      $project: {
-        total: 1,
-        productName: "$product.productTitle",
-        Qty: "$product.quantity",
-        rate: "$product.priceperkg",
-        HSN_Code: "$product.HSN_Code",
-        GST_Number: "$product.GST_Number",
-        OrderId: 1,
-        billNo: 1,
-        billDate: 1,
-        billTime: 1,
-
-
-        shopName: "$details.SName",
-        address: "$details.address",
-        mobile: "$details.mobile",
-        shopType: "$details.type",
-        SOwner: "$details.SOwner",
+    // {
+    //   $project: {
+    //     total: 1,
+    //     productName: "$product.productTitle",
+    //     Qty: "$product.quantity",
+    //     rate: "$product.priceperkg",
+    //     HSN_Code: "$product.HSN_Code",
+    //     GST_Number: "$product.GST_Number",
+    //     OrderId: 1,
+    //     billNo: 1,
+    //     billDate: 1,
+    //     billTime: 1,
+    //     shopName: "$details.SName",
+    //     address: "$details.address",
+    //     mobile: "$details.mobile",
+    //     shopType: "$details.type",
+    //     SOwner: "$details.SOwner",
         // "value": { "$multiply": [
         //   { "$ifNull": [ "$product.quantity", 0 ] }, 
         //   { "$ifNull": [ "$product.priceperkg", 0 ] } 
       //   ]
       // }
-    }
-  }
+    // }
+  // }
+
+
+
+
+  // let datas = await ProductorderClone.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [{
+  //         orderId
+  //           : { $eq: id }
+  //       }],
+  //     },
+  //   },
+  //   {
+  //     $lookup:{
+  //       from: 'shoporderclones',
+  //       localField: 'orderId',
+  //       foreignField: '_id',
+  //       as: 'details'
+  //     }
+  //   },
+  //   {
+  //     $unwind: '$details'
+  //   },
+  //   {
+  //     $lookup:{
+  //       from: 'products',
+  //       localField: 'productid',
+  //       foreignField: '_id',
+  //       as: 'datas'
+  //     }
+  //   },
+  //   {
+  //     $unwind: '$datas'
+  //   },
+    
+
+  //   // {
+  //   //   $project: {
+  //   //     orderId:1,
+  //   //     priceperkg:1,
+  //   //     quantity:1,
+  //   //     HSN_Code:1,
+  //   //     GST_Number:1,
+  //   //     productName: "$datas.productTitle",
+       
+  //   //   }
+  //   // }
+  //   // {
+  //   //   $unwind: "$product"
+  //   // },
+  //   // {
+  //   //   $lookup: {
+  //   //     from: 'b2busers',
+  //   //     localField: 'Uid',
+  //   //     foreignField: '_id',
+  //   //     as: 'usersData',
+  //   //   }
+  //   // },
+  //   // { $unwind: '$usersData' },
+  //   // {
+  //   //   $lookup: {
+  //   //     from: 'b2bshopclones',
+  //   //     localField: 'usersData._id',
+  //   //     foreignField: 'Uid',
+  //   //     as: 'details',
+  //   //   }
+  //   // },
+  //   // { $unwind: '$detailsData' },
+   
+
+  // //   {
+  // //     $project: {
+  // //       total: 1,
+  // //       productName: "$product.productTitle",
+  // //       Qty: "$product.quantity",
+  // //       rate: "$product.priceperkg",
+  // //       HSN_Code: "$product.HSN_Code",
+  // //       GST_Number: "$product.GST_Number",
+  // //       OrderId: 1,
+  // //       billNo: 1,
+  // //       billDate: 1,
+  // //       billTime: 1,
+  // //       shopName: "$details.SName",
+  // //       address: "$details.address",
+  // //       mobile: "$details.mobile",
+  // //       shopType: "$details.type",
+  // //       SOwner: "$details.SOwner",
+  // //       "Amount": { "$multiply": [
+  // //         { "$ifNull": [ "$dataForMul.quantity", 0 ] }, 
+  // //         { "$ifNull": [ "$dataForMul.priceperkg", 0 ] } 
+  // //       ]
+  // //     }
+  // //   }
+  // // }
+
 
   ]);
   return datas;
