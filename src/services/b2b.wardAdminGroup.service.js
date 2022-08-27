@@ -39,14 +39,16 @@ const createGroup = async (body) => {
   body.Orderdatas.forEach(async (e) => {
     console.log(body.deliveryExecutiveId)
     let productId = e._id;
+    let shopOrderCloneID= e._id ;
+    console.log(shopOrderCloneID)
  
     await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: "Assigned" , deliveryExecutiveId:body.deliveryExecutiveId} , { new: true });
+    let wardAdminGroupcreate = await wardAdminGroup.create(values,{shopOrderCloneID:shopOrderCloneID});
+    return wardAdminGroupcreate;
   });
-  let wardAdminGroupcreate = await wardAdminGroup.create(values,
-    // shopOrderCloneID: e._id 
-    );
-  // await ShopOrderClone.findByIdAndUpdate({_id:productId}, { GroupId: wardAdminGroupcreate._id }, {new:true})
-  return wardAdminGroupcreate;
+  // let wardAdminGroupcreate = await wardAdminGroup.create(values);
+  
+  // return wardAdminGroupcreate;
 };
 
 const updateOrderStatus = async (id, updateBody) => {
