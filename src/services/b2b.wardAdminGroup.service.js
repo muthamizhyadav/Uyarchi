@@ -5,12 +5,12 @@ let currentDate = moment().format('DD-MM-YYYY');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { ShopOrderClone } = require('../models/shopOrder.model');
 const { ProductorderClone } = require('../models/shopOrder.model');
-const pettyStockModel = require('../models/b2b.pettyStock.model')
+const pettyStockModel = require('../models/b2b.pettyStock.model');
 const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
+const { Product } = require('../models/product.model');
 
 const createGroup = async (body) => {
-
   let serverdates = moment().format('YYYY-MM-DD');
   let servertime = moment().format('hh:mm a');
   const group = await wardAdminGroup.find({ assignDate: serverdates });
@@ -35,20 +35,21 @@ const createGroup = async (body) => {
   userId = 'G' + center + totalcount;
 
   let values = { ...body, ...{ groupId: userId, assignDate: serverdates, assignTime: servertime } };
-  
- 
+
   body.Orderdatas.forEach(async (e) => {
-    console.log(body.deliveryExecutiveId)
+    console.log(body.deliveryExecutiveId);
     let productId = e._id;
-   
- 
-    await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: "Assigned" , deliveryExecutiveId:body.deliveryExecutiveId} , { new: true });
-   
+
+    await ShopOrderClone.findByIdAndUpdate(
+      { _id: productId },
+      { status: 'Assigned', deliveryExecutiveId: body.deliveryExecutiveId },
+      { new: true }
+    );
   });
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
   return wardAdminGroupcreate;
   // let wardAdminGroupcreate = await wardAdminGroup.create(values);
-  
+
   // return wardAdminGroupcreate;
 };
 
@@ -67,33 +68,32 @@ const createGroup = async (body) => {
 const updateOrderStatus = async (id, updateBody) => {
   let deliveryStatus = await ShopOrderClone.findById(id);
   console.log(deliveryStatus);
-  if (ShopOrderClone.customerDeliveryStatus === "Pending") {
+  if (ShopOrderClone.customerDeliveryStatus === 'Pending') {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
-  }else{
-  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-  console.log(deliveryStatus);
+  } else {
+    deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+    console.log(deliveryStatus);
   }
   return deliveryStatus;
 };
 
 const orderPicked = async (deliveryExecutiveId) => {
   let orderPicked = await ShopOrderClone.find({ deliveryExecutiveId: deliveryExecutiveId });
-  console.log(orderPicked)
+  console.log(orderPicked);
   if (orderPicked.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, ' id not found');
   }
 
   orderPicked.forEach(async (e) => {
-    let statusUpdate = e.deliveryExecutiveId
-    await ShopOrderClone.findByIdAndUpdate({ deliveryExecutiveId: statusUpdate }, { status: "Order Picked" }, { new: true })
-  })
+    let statusUpdate = e.deliveryExecutiveId;
+    await ShopOrderClone.findByIdAndUpdate({ deliveryExecutiveId: statusUpdate }, { status: 'Order Picked' }, { new: true });
+  });
 
-  return "success";
+  return 'success';
 };
 const getById = async (id) => {
   return wardAdminGroup.findById(id);
 };
-
 
 const updateManageStatus = async (id, updateBody) => {
   let Manage = await getById(id);
@@ -121,105 +121,67 @@ const getOrderFromGroupById = async (id) => {
   return getDetails;
 };
 
-
-
 // const getPettyStock = async (id ) => {
 
 const getPettyStock = async (id) => {
-  let values = await wardAdminGroup.aggregate([
-    {
-      $match: {
-        $and: [{ _id: { $eq: id } }],
-      },
-    },
-    {
-      $unwind:"$Orderdatas"
-    },
+  console.log(id);
+  let values = await Product.aggregate([
     {
       $lookup: {
-        from:'shoporderclones',
-        localField: 'Orderdatas._id',
-        foreignField: '_id',
-        as: 'details'
-      }
+        from: 'wardadmingroups',
+        pipeline: [
+          { $match: { _id: id } },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'Orderdatas._id',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: { customerDeliveryStatus: 'Un Delivered' },
+                },
+                {
+                  $lookup: {
+                    from: 'productorderclones',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    as: 'productorderclones',
+                  },
+                },
+              ],
+              as: 'Delivered',
+            },
+          },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'Orderdatas._id',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: { customerDeliveryStatus: 'Un Delivered' },
+                },
+                {
+                  $lookup: {
+                    from: 'productorderclones',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    as: 'productorderclones',
+                  },
+                },
+              ],
+              as: 'unDelivered',
+            },
+          },
+        ],
+        as: 'wardadmingroups',
+      },
     },
+    { $unwind: '$wardadmingroups' },
     {
-      $unwind: "$details"
+      $limit: 10,
     },
-  
-    {
-      $project: {
-        product: "$details.product",
-         
-        
-      }
-    },
-    {$group : {
-      _id : "$product.productTitle",
-      totalPettyStock : {$sum : "$product.quantity"}
-  }},
-    
-  //      { $group : {
-  //     _id : "$product.productTitle",
-  //     totalPettyStock : {$sum : "$product.quantity"}
-  // }}
-   
-    // {
-    //   $unwind: '$product'
-    // },
-    
-
-  //   { $group : {
-  //     _id : "$details.product.productTitle",
-  //     "totalPettyStock" : {$sum : "$details.product.quantity"}
-  // }}
-    
-   
-
   ]);
-
-
-  // {
-  //   $lookup: {
-  //     from: 'shoporderclones',
-  //     localField: 'Orderdatas._id',
-  //     foreignField: '_id',
-  //     as: 'datas'
-  //   }
-  // },
-  // { $unwind: "$datas"},
-  // {
-  //   $lookup: {
-  //     from: 'productorderclones',
-  //     localField: 'datas._id',
-  //     foreignField: 'orderId',
-  //     as: 'productdetails'
-  //   }
-  // },
-  // {
-  //   $unwind: '$productdetails'
-  // },
-
-  // // {
-  // //   $lookup: {
-  // //     from:  'products',
-  // //     localField: 'productdetails.productid',
-  // //     foreignField: '_id',
-  // //     as: 'details',
-
-  // //   }
-  // // },
-  // // {
-  // //   $unwind: '$details'
-  // // },
-  // {
-  //   $group: {
-  //     _id: "$productdetails.productid",
-  //     "Totalquantity": { $sum: "$productdetails.quantity" }
-  //   }
-  // }
-
-
 
   return values;
 };
@@ -254,10 +216,7 @@ const getGroupdetails = async () => {
 
 const getstatus = async (id) => {
   let details = await wardAdminGroup.aggregate([
-
-    {
-
-    }
+    {},
     // {
     //   $lookup:{
     //     from: '',
@@ -267,11 +226,9 @@ const getstatus = async (id) => {
     //   }
 
     // }
-
   ]);
   return details;
-}
-
+};
 
 const getBillDetails = async (id) => {
   let values = await wardAdminGroup.aggregate([
@@ -286,10 +243,10 @@ const getBillDetails = async (id) => {
         localField: 'deliveryExecutiveId',
         foreignField: 'deliveryExecutiveId',
         as: 'delivery',
-      }
+      },
     },
     {
-      $unwind: '$delivery'
+      $unwind: '$delivery',
     },
     {
       $lookup: {
@@ -297,13 +254,13 @@ const getBillDetails = async (id) => {
         localField: 'deliveryExecutiveId',
         foreignField: '_id',
         as: 'b2busersData',
-      }
+      },
     },
     {
-      $unwind: '$b2busersData'
+      $unwind: '$b2busersData',
     },
     {
-      $unwind: '$Orderdatas'
+      $unwind: '$Orderdatas',
     },
     {
       $lookup: {
@@ -311,21 +268,19 @@ const getBillDetails = async (id) => {
         localField: 'delivery._id',
         foreignField: 'orderId',
         as: 'datas',
-      }
+      },
     },
     {
       $lookup: {
         from: 'b2busers',
         localField: 'delivery.Uid',
         foreignField: '_id',
-        as: 'UserName'
-      }
+        as: 'UserName',
+      },
     },
     {
-      $unwind: '$UserName'
+      $unwind: '$UserName',
     },
-
-
 
     {
       $project: {
@@ -344,15 +299,12 @@ const getBillDetails = async (id) => {
         // Quantity: '$Orderdatas.Qty',
         shopName: '$Orderdatas.shopName',
         // totalproduct: '$delivery.Qty'
-        totalItems: { $size: "$datas" },
+        totalItems: { $size: '$datas' },
         // totalAmount: '$datas.totalAmount',
         customerName: '$UserName.name',
-        deliveryExecutiveName: '$b2busersData.name'
-      }
-    }
-
-
-
+        deliveryExecutiveName: '$b2busersData.name',
+      },
+    },
   ]);
 
   let total = await wardAdminGroup.aggregate([
@@ -367,10 +319,10 @@ const getBillDetails = async (id) => {
         localField: 'deliveryExecutiveId',
         foreignField: 'deliveryExecutiveId',
         as: 'delivery',
-      }
+      },
     },
     {
-      $unwind: '$delivery'
+      $unwind: '$delivery',
     },
     {
       $lookup: {
@@ -378,13 +330,13 @@ const getBillDetails = async (id) => {
         localField: 'deliveryExecutiveId',
         foreignField: '_id',
         as: 'b2busersData',
-      }
+      },
     },
     {
-      $unwind: '$b2busersData'
+      $unwind: '$b2busersData',
     },
     {
-      $unwind: '$Orderdatas'
+      $unwind: '$Orderdatas',
     },
     {
       $lookup: {
@@ -392,25 +344,22 @@ const getBillDetails = async (id) => {
         localField: 'delivery._id',
         foreignField: 'orderId',
         as: 'datas',
-      }
+      },
     },
     {
       $lookup: {
         from: 'b2busers',
         localField: 'delivery.Uid',
         foreignField: '_id',
-        as: 'UserName'
-      }
+        as: 'UserName',
+      },
     },
     {
-      $unwind: '$UserName'
+      $unwind: '$UserName',
     },
-
-
-  ])
-  return { values: values, total: total.length }
-}
-
+  ]);
+  return { values: values, total: total.length };
+};
 
 const assignOnly = async (page) => {
   let values = await wardAdminGroup.aggregate([
@@ -418,8 +367,8 @@ const assignOnly = async (page) => {
       $match: {
         status: {
           $in: ['Assigned'],
-        }
-      }
+        },
+      },
     },
     { $skip: 10 * page },
     { $limit: 10 },
@@ -429,13 +378,12 @@ const assignOnly = async (page) => {
       $match: {
         status: {
           $in: ['Assigned'],
-        }
-      }
+        },
+      },
     },
-  ])
+  ]);
   return { values: values, total: total.length };
-}
-
+};
 
 const getDeliveryOrderSeparate = async (id, page) => {
   let datas = await ShopOrderClone.aggregate([
@@ -450,8 +398,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
         localField: 'shopId',
         foreignField: '_id',
         as: 'shopData',
-
-      }
+      },
     },
     { $unwind: '$shopData' },
     {
@@ -460,7 +407,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
         localField: 'shopData.Strid',
         foreignField: '_id',
         as: 'streetsData',
-      }
+      },
     },
     { $unwind: '$streetsData' },
     {
@@ -472,7 +419,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
         //     { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
         // ],
         as: 'orderData',
-      }
+      },
     },
     // { $unwind: '$orderData' },
     {
@@ -490,13 +437,11 @@ const getDeliveryOrderSeparate = async (id, page) => {
         type: '$shopData.type',
         // product:1,
         totalItems: { $size: '$orderData' },
-
-      }
+      },
     },
 
     { $skip: 10 * page },
     { $limit: 10 },
-
   ]);
   let total = await ShopOrderClone.aggregate([
     {
@@ -510,8 +455,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
         localField: 'shopId',
         foreignField: '_id',
         as: 'shopData',
-
-      }
+      },
     },
     { $unwind: '$shopData' },
     {
@@ -520,7 +464,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
         localField: 'shopData.Strid',
         foreignField: '_id',
         as: 'streetsData',
-      }
+      },
     },
     { $unwind: '$streetsData' },
     {
@@ -528,40 +472,34 @@ const getDeliveryOrderSeparate = async (id, page) => {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
-        pipeline: [
-          { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
-        ],
+        pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
         as: 'orderData',
-      }
+      },
     },
     { $unwind: '$orderData' },
-  ])
+  ]);
   return { datas: datas, total: total.length };
 };
 
-
 const groupIdClick = async (id) => {
-  let data = []
+  let data = [];
   let getDetails = await wardAdminGroup.findById(id);
   getDetails.Orderdatas.forEach((e) => {
-
-    data.push(e)
-  })
+    data.push(e);
+  });
   return data;
-}
-
+};
 
 const getpettyStockData = async (id, body) => {
-  let data = []
+  let data = [];
   let pettyStockData = await wardAdminGroup.findByIdAndUpdate({ _id: id }, body, { new: true });
   pettyStockData.pettyStockData.forEach((e) => {
-
-    data.push(e)
-  })
+    data.push(e);
+  });
   return data;
-}
+};
 const orderIdClickGetProduct = async (id) => {
-  console.log(id)
+  console.log(id);
 
   let getDetails = await ProductorderClone.aggregate([
     {
@@ -586,10 +524,10 @@ const orderIdClickGetProduct = async (id) => {
         localField: 'productid',
         foreignField: '_id',
         as: 'productsData',
-      }
+      },
     },
     {
-      $unwind: '$productsData'
+      $unwind: '$productsData',
     },
     {
       $project: {
@@ -597,15 +535,12 @@ const orderIdClickGetProduct = async (id) => {
         priceperkg: 1,
         product: '$productsData.productTitle',
         productId: '$productsData._id',
-      }
-    }
-
+      },
+    },
   ]);
 
   return getDetails;
-
-}
-
+};
 
 const getDetailsAfterDeliveryCompletion = async (id) => {
   let values = await ShopOrderClone.aggregate([
@@ -625,23 +560,21 @@ const getDetailsAfterDeliveryCompletion = async (id) => {
     // { $unwind: '$datas'},
   ]);
   return values;
-
-}
-
+};
 
 const getBillDetailsPerOrder = async (id) => {
-
   let datas = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{
-          _id
-            : { $eq: id }
-        }],
+        $and: [
+          {
+            _id: { $eq: id },
+          },
+        ],
       },
     },
     {
-      $unwind: "$product"
+      $unwind: '$product',
     },
     {
       $lookup: {
@@ -649,7 +582,7 @@ const getBillDetailsPerOrder = async (id) => {
         localField: 'Uid',
         foreignField: '_id',
         as: 'usersData',
-      }
+      },
     },
     { $unwind: '$usersData' },
     {
@@ -658,7 +591,7 @@ const getBillDetailsPerOrder = async (id) => {
         localField: 'usersData._id',
         foreignField: 'Uid',
         as: 'details',
-      }
+      },
     },
     { $unwind: '$details' },
     {
@@ -666,63 +599,56 @@ const getBillDetailsPerOrder = async (id) => {
         from: 'b2busers',
         localField: 'deliveryExecutiveId',
         foreignField: '_id',
-        as: 'deliveryExecutiveName'
-      }
+        as: 'deliveryExecutiveName',
+      },
     },
     {
-      $unwind: "$deliveryExecutiveName"
+      $unwind: '$deliveryExecutiveName',
     },
     {
       $lookup: {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
-        pipeline: [
-          { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
-        ],
-        as: 'TotalQuantityData'
-      }
+        pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
+        as: 'TotalQuantityData',
+      },
     },
     {
-      $unwind: "$TotalQuantityData"
+      $unwind: '$TotalQuantityData',
     },
 
     {
       $project: {
         total: 1,
-        productName: "$product.productTitle",
-        Qty: "$product.quantity",
-        rate: "$product.priceperkg",
-        HSN_Code: "$product.HSN_Code",
-        GST_Number: "$product.GST_Number",
+        productName: '$product.productTitle',
+        Qty: '$product.quantity',
+        rate: '$product.priceperkg',
+        HSN_Code: '$product.HSN_Code',
+        GST_Number: '$product.GST_Number',
         OrderId: 1,
         billNo: 1,
         billDate: 1,
         billTime: 1,
-        shopName: "$details.SName",
-        address: "$details.address",
-        mobile: "$details.mobile",
-        shopType: "$details.type",
-        SOwner: "$details.SOwner",
-        Amount: { "$multiply": [
-          { $toInt:  "$product.quantity"  }, 
-          { $toInt:  "$product.priceperkg"  } 
-        ]
+        shopName: '$details.SName',
+        address: '$details.address',
+        mobile: '$details.mobile',
+        shopType: '$details.type',
+        SOwner: '$details.SOwner',
+        Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
+        totalQuantity: '$TotalQuantityData.Qty',
+        OperatorName: '$deliveryExecutiveName.name',
       },
-        totalQuantity : "$TotalQuantityData.Qty",
-        OperatorName: "$deliveryExecutiveName.name",
-
-    }
-  },
+    },
   ]);
   return datas;
-}
+};
 
 const getReturnWDEtoWLE = async (id, page) => {
   let datas = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } },],
+        $and: [{ _id: { $eq: id } }],
       },
     },
     {
@@ -731,7 +657,7 @@ const getReturnWDEtoWLE = async (id, page) => {
         localField: 'Orderdatas._id',
         foreignField: '_id',
         as: 'detailsData',
-      }
+      },
     },
     // { $unwind: "$detailsData"},
     // { $unwind: "$product"},
@@ -745,7 +671,6 @@ const getReturnWDEtoWLE = async (id, page) => {
     //   }
     // },
 
-
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -755,10 +680,9 @@ const getReturnWDEtoWLE = async (id, page) => {
         $and: [{ _id: { $eq: id } }],
       },
     },
-  ])
+  ]);
   return { datas: datas, total: total.length };
 };
-
 
 const getPettyStockDetails = async (id, page) => {
   let details = await wardAdminGroup.aggregate([
@@ -771,7 +695,7 @@ const getPettyStockDetails = async (id, page) => {
     {
       $project: {
         pettyStock: 1,
-      }
+      },
     },
     { $skip: 10 * page },
     { $limit: 10 },
@@ -783,38 +707,36 @@ const getPettyStockDetails = async (id, page) => {
       },
     },
   ]);
-  return { details: details, total: total.length }
-}
+  return { details: details, total: total.length };
+};
 
 const getdetailsAboutPettyStockByGroupId = async (id, page) => {
   let details = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }]
-      }
+        $and: [{ _id: { $eq: id } }],
+      },
     },
     {
       $project: {
         pettyStock: 1,
         totalQtyIncludingPettyStock: 1,
-      }
+      },
     },
 
     { $skip: 10 * page },
     { $limit: 10 },
-
   ]);
   let total = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }]
-      }
+        $and: [{ _id: { $eq: id } }],
+      },
     },
-  ])
+  ]);
 
   return { details: details, total: total.length };
-
-}
+};
 
 // const uploadWastageImage = async (id, body) => {
 //   let cate = await wardAdminGroup.findById(id);
@@ -833,19 +755,19 @@ const getPettyCashDetails = async (id, page) => {
   let values = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }]
-      }
+        $and: [{ _id: { $eq: id } }],
+      },
     },
 
-    { $unwind: "$Orderdatas" },
+    { $unwind: '$Orderdatas' },
 
     {
       $lookup: {
         from: 'shoporderclones',
         localField: 'Orderdatas.OrderId',
         foreignField: 'OrderId',
-        as: 'datas'
-      }
+        as: 'datas',
+      },
     },
     { $unwind: '$datas' },
     { $skip: 10 * page },
@@ -854,29 +776,24 @@ const getPettyCashDetails = async (id, page) => {
     {
       $project: {
         groupId: 1,
-        orderId: "$datas.OrderId",
-        Amount: "$datas.overallTotal",
-        shopType: "$Orderdatas.type",
-        shopName: "$Orderdatas.shopName",
-        Deliverystatus: "$datas.customerDeliveryStatus",
-        FinalPaymentType: "$datas.payType",
-        pettyCashApporvedStatus: "$datas.pettyCashReceiveStatus",
-
-
-
-      }
-    }
-
+        orderId: '$datas.OrderId',
+        Amount: '$datas.overallTotal',
+        shopType: '$Orderdatas.type',
+        shopName: '$Orderdatas.shopName',
+        Deliverystatus: '$datas.customerDeliveryStatus',
+        FinalPaymentType: '$datas.payType',
+        pettyCashApporvedStatus: '$datas.pettyCashReceiveStatus',
+      },
+    },
   ]);
   let total = await wardAdminGroup.aggregate([
-
     {
       $match: {
-        $and: [{ _id: { $eq: id } }]
-      }
+        $and: [{ _id: { $eq: id } }],
+      },
     },
 
-    { $unwind: "$Orderdatas" },
+    { $unwind: '$Orderdatas' },
     {
       $lookup: {
         from: 'shoporderclones',
@@ -885,20 +802,20 @@ const getPettyCashDetails = async (id, page) => {
         // pipeline: [
         //   { $group: { _id: null, Total: { $sum: '$datas.overallTotal' }, } },
         // ],
-        as: 'datas'
-      }
-    }, { $unwind: '$datas' },
-  ])
+        as: 'datas',
+      },
+    },
+    { $unwind: '$datas' },
+  ]);
   return { values: values, total: total.length };
-}
-
+};
 
 const getAllGroup = async (page) => {
   let values = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ manageDeliveryStatus: { $eq: "Delivery Complete" } }]
-      }
+        $and: [{ manageDeliveryStatus: { $eq: 'Delivery Complete' } }],
+      },
     },
     {
       $project: {
@@ -910,32 +827,28 @@ const getAllGroup = async (page) => {
         totalOrders: 1,
         pettyCash: 1,
         status: 1,
-      }
+      },
     },
 
     { $skip: 10 * page },
-    { $limit: 10 }
+    { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ manageDeliveryStatus: { $eq: "Delivery Complete" } }]
-      }
+        $and: [{ manageDeliveryStatus: { $eq: 'Delivery Complete' } }],
+      },
     },
-  ])
+  ]);
   return { values: values, total: total.length };
 };
 
-
-
 const pettyStockCreate = async (pettyStockBody) => {
-
-  console.log(pettyStockBody)
+  console.log(pettyStockBody);
   let body = { ...pettyStockBody };
   let createPetty = await wardAdminGroup.create(body);
   let { pettyStock } = pettyStockBody;
   pettyStock.forEach(async (e) => {
-
     pettyStockModel.create({
       wardAdminId: createPetty.id,
       product: e.product,
@@ -943,36 +856,33 @@ const pettyStockCreate = async (pettyStockBody) => {
       pettyStock: e.pettyStock,
       totalQtyIncludingPettyStock: e.totalQtyIncludingPettyStock,
     });
-  })
-}
-
+  });
+};
 
 const getcashAmountViewFromDB = async (id, page) => {
   let values = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }]
-      }
+        $and: [{ _id: { $eq: id } }],
+      },
     },
     {
       $lookup: {
         from: 'shoporderclones',
         localField: 'Orderdatas._id',
         foreignField: '_id',
-        as: 'datas'
-      }
+        as: 'datas',
+      },
     },
     {
-      $unwind: '$datas'
+      $unwind: '$datas',
     },
     {
       $group: {
-        _id: "$datas.payType",
-        totalCash: { $sum: "$datas.overallTotal" },
-
+        _id: '$datas.payType',
+        totalCash: { $sum: '$datas.overallTotal' },
       },
     },
-
 
     { $skip: 10 * page },
     { $limit: 10 },
@@ -985,13 +895,10 @@ const getcashAmountViewFromDB = async (id, page) => {
     //   },
 
     // },
-
   ]);
 
   return values;
-}
-
-
+};
 
 module.exports = {
   createGroup,
