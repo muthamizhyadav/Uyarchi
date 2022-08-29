@@ -55,7 +55,7 @@ const updateModified = catchAsync(async (req, res) => {
 });
 
 const updateRejected = catchAsync(async (req, res) => {
-  const rejected = await wardAdminService.updateRejected(req.params.id, );
+  const rejected = await wardAdminService.updateStatusApprovedOrModified(req.params.id, req.body );
   res.send(rejected);
 });
 
