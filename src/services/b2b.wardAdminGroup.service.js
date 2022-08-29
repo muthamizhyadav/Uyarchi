@@ -146,17 +146,23 @@ const getPettyStock = async (id) => {
     {
       $unwind: "$details"
     },
+  
     {
       $project: {
         product: "$details.product",
+         
         
       }
     },
-    
-       { $group : {
+    {$group : {
       _id : "$product.productTitle",
-      "totalPettyStock" : {$sum : "$product.quantity"}
-  }}
+      totalPettyStock : {$sum : "$product.quantity"}
+  }},
+    
+  //      { $group : {
+  //     _id : "$product.productTitle",
+  //     totalPettyStock : {$sum : "$product.quantity"}
+  // }}
    
     // {
     //   $unwind: '$product'

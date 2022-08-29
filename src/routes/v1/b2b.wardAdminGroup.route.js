@@ -18,7 +18,7 @@ router.route('/update/unDelivered/:id').put(wardAdminGroupController.UpdateUnDel
 
 router.route('/getDetails/groupIdFromOrderId/:id').get(wardAdminGroupController.getByIdGroupOrderDetails);
 
-router.route('/getdetails/product/:id').get(wardAdminGroupController.getproductDetails);
+router.route('/getdetails/product/:id').get(wardAdminGroupController.getproductDetailsPettyStock);
 
 
 router.route('/getGroup/details').get(wardAdminGroupController.getGroupDetails);

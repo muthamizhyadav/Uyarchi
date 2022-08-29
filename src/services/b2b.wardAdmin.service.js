@@ -11,7 +11,7 @@ const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model
 
 // GET DETAILS
 
-const getdetails = async (page) => {
+const getdetails = async (limit,page) => {
   let values = await ShopOrderClone.aggregate([
     {
       $lookup: {
@@ -58,9 +58,13 @@ const getdetails = async (page) => {
         totalItems: { $size: '$orderData' },
       },
     },
+    { $limit: (parseInt(limit)) },
+    // { $limit: (parseInt(limit)) },
     { $skip: 10 * page },
     { $limit: 10 },
-  ]);
+   
+   
+  ]).limit(parseInt(limit));
 
   let total = await ShopOrderClone.aggregate([
     {
@@ -90,7 +94,7 @@ const getdetails = async (page) => {
         as: 'userNameData',
       },
     },
-  ]);
+  ]).limit(parseInt(limit));
 
   return { values: values, total: total.length };
 };

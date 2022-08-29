@@ -15,7 +15,7 @@ const createArrayData = catchAsync(async (req, res)=>{
 });
 
 const getDetails = catchAsync(async (req, res) => {
-  const details = await wardAdminService.getdetails(req.params.page);
+  const details = await wardAdminService.getdetails( req.params.limit, req.params.page);
   res.send(details);
 });
 

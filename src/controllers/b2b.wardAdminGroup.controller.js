@@ -58,7 +58,7 @@ const UpdateUnDeliveredStatus = catchAsync(async (req, res) => {
   res.send(deliveryStatus);
 });
 
-const getproductDetails = catchAsync(async (req, res) => {
+const getproductDetailsPettyStock = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.getPettyStock(req.params.id);
   res.send(details);
 });
@@ -231,7 +231,7 @@ module.exports = {
   getByIdGroupOrderDetails,
   UpdateUnDeliveredStatus,
 
-  getproductDetails,
+  getproductDetailsPettyStock,
   getGroupDetails,
 
 
