@@ -11,7 +11,7 @@ const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model
 
 // GET DETAILS
 
-const getdetails = async (limit,page) => {
+const getdetails =async (limit,page) => {
   let values = await ShopOrderClone.aggregate([
     {
       $lookup: {
@@ -152,6 +152,15 @@ const updateProduct = async (id, updateBody) => {
   product = await ProductorderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return product;
 };
+
+const updateStatusApprovedOrModified = async (id , updateBody) =>{
+  let product = await ShopOrderClone.findById(id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
+  }
+  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return product;
+}
 
 //  UPDATE STATUS REJECTION
 
@@ -542,6 +551,8 @@ module.exports = {
   createdata,
   createArrayData,
   updateStatusForAssugnedAndPacked,
+
+  updateStatusApprovedOrModified,
 };
 
 

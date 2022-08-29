@@ -45,17 +45,17 @@ const updateAcknowledge = catchAsync(async (req, res) => {
 });
 
 const updateApproved = catchAsync(async (req, res) => {
-  const approved = await wardAdminService.updateRejected(req.params.id, 'Approved');
+  const approved = await wardAdminService.updateStatusApprovedOrModified(req.params.id, req.body);
   res.send(approved);
 });
 
 const updateModified = catchAsync(async (req, res) => {
-  const modified = await wardAdminService.updateRejected(req.params.id, 'Modified');
+  const modified = await wardAdminService.updateStatusApprovedOrModified(req.params.id, req.body);
   res.send(modified);
 });
 
 const updateRejected = catchAsync(async (req, res) => {
-  const rejected = await wardAdminService.updateRejected(req.params.id, 'Rejected');
+  const rejected = await wardAdminService.updateRejected(req.params.id, );
   res.send(rejected);
 });
 
