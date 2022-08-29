@@ -151,7 +151,7 @@ const updateProduct = async (id, updateBody) => {
 
 //  UPDATE STATUS REJECTION
 
-const updateRejected = async () => {
+const updateRejected = async (body) => {
   // let rejected = await ShopOrderClone.findById(id);
   // console.log(rejected);
   // if (!rejected) {
@@ -160,8 +160,25 @@ const updateRejected = async () => {
   // rejected = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
   // console.log(rejected);
   // return rejected;
-  statusUpdate = await ShopOrderClone.updateMany(  { $set: { status: "Acknowledged"}})
-  return statusUpdate;
+  // statusUpdate = await ShopOrderClone.updateMany(  { $set: { status: "Acknowledged"}})
+  // return statusUpdate;
+
+  // var IdDatas = [];
+  // IdDatas.forEach(async (e) =>{
+  //   await ShopOrderClone.findByIdAndUpdate( {status: "Acknowledged"});
+
+  // });
+  // return "successfully Updated";
+
+ let { arr} =JSON.stringify(body);;
+  console.log(body)
+   body.arr.forEach(async (e) => {
+    await ShopOrderClone.findByIdAndUpdate({_id: e},{status: "Acknowledged" }, { new: true });
+  });
+
+  return "status updated successfully";
+
+
 };
 
 //WARD LOADING EXECUTIVE

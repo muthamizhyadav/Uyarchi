@@ -40,7 +40,7 @@ const deliveryexecutive = catchAsync(async (req, res) => {
 });
 
 const updateAcknowledge = catchAsync(async (req, res) => {
-  const acknowledgement = await wardAdminService.updateRejected();
+  const acknowledgement = await wardAdminService.updateRejected(req.body);
   res.send(acknowledgement);
 });
 
