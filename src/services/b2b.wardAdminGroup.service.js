@@ -901,6 +901,20 @@ const getAllGroup = async (page) => {
       }
     },
     {
+      $unwind: '$Orderdatas'
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'Orderdatas._id',
+        foreignField: '_id',
+        as: 'shopIDDatas'
+      }
+    },
+    {
+      $unwind: '$shopIDDatas'
+    },
+    {
       $project: {
         groupId: 1,
         assignDate: 1,
@@ -910,6 +924,7 @@ const getAllGroup = async (page) => {
         totalOrders: 1,
         pettyCash: 1,
         status: 1,
+        shoporderclonesId: "$shopIDDatas._id"
       }
     },
 
