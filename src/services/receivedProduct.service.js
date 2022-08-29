@@ -542,7 +542,7 @@ const getSupplierBillsDetails = async (page) => {
 };
 
 const getreceivedProductBySupplier = async (page) => {
-  let values = await ReceivedStock.aggregate([
+  let values = await Supplier.aggregate([
     {
       $lookup: {
         from: 'receivedstocks',

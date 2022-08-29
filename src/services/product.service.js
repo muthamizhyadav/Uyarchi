@@ -30,7 +30,6 @@ const doplicte_check = async (req, res, next) => {
   const product = await Product.findOne({
     SubCatId: req.body.SubCatId,
     category: req.body.category,
-    // $text:{$search:req.body.productTitle, $caseSensitive:false}
     productTitle: req.body.productTitle,
   }).collation({ locale: 'en', strength: 2 });
   console.log(product);
@@ -80,9 +79,6 @@ const getTrendsData = async (date, wardId, street, page) => {
         localField: '_id',
         foreignField: 'productId',
         pipeline: [
-          // {
-          //   $match: { date: date },
-          // },
           {
             $match: { $and: [match] },
           },
@@ -183,9 +179,6 @@ const getTrendsData = async (date, wardId, street, page) => {
         localField: '_id',
         foreignField: 'productId',
         pipeline: [
-          // {
-          //   $match: { date: date },
-          // },
           {
             $match: { $and: [match] },
           },
@@ -454,7 +447,7 @@ const productDateTimeFilter = async (date) => {
           {
             $match: {
               $expr: {
-                $eq: ['$$productIds', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                $eq: ['$$productIds', '$productid'],
               },
             },
           },
@@ -477,7 +470,7 @@ const productDateTimeFilter = async (date) => {
           {
             $match: {
               $expr: {
-                $eq: ['$$productid', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                $eq: ['$$productid', '$productid'], 
               },
             },
           },
@@ -492,9 +485,7 @@ const productDateTimeFilter = async (date) => {
         as: 'callStatusData',
       },
     },
-    // {
-    //     $unwind:"$callStatusData"
-    // },
+
     {
       $lookup: {
         from: 'status',
@@ -503,7 +494,7 @@ const productDateTimeFilter = async (date) => {
           {
             $match: {
               $expr: {
-                $eq: ['$$productid', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                $eq: ['$$productid', '$productid'], 
               },
             },
           },
