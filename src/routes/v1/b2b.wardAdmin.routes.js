@@ -6,11 +6,11 @@ router.route('/create/data').post(wardAdminController.createdata);
 
 router.route('/getDetails/:page').get(wardAdminController.getDetails);
 
-router.route('/getProductDetails/:id/').get(wardAdminController.getproductDetails);
+router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 
 router.route('/updateProductById/:id').put(wardAdminController.updateProduct);
 
-router.route('/updateAcknowledge/:id').put(wardAdminController.updateAcknowledge);
+router.route('/updateAcknowledge').put(wardAdminController.updateAcknowledge);
 
 router.route('/updateApproved/:id').put(wardAdminController.updateApproved);
 

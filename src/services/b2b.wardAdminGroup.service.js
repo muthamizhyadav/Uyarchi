@@ -67,11 +67,12 @@ const createGroup = async (body) => {
 const updateOrderStatus = async (id, updateBody) => {
   let deliveryStatus = await ShopOrderClone.findById(id);
   console.log(deliveryStatus);
-  if (!deliveryStatus) {
+  if (ShopOrderClone.customerDeliveryStatus === "Pending") {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
-  }
+  }else{
   deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   console.log(deliveryStatus);
+  }
   return deliveryStatus;
 };
 
@@ -125,21 +126,49 @@ const getOrderFromGroupById = async (id) => {
 // const getPettyStock = async (id ) => {
 
 const getPettyStock = async (id) => {
-  let values = await ShopOrderClone.aggregate([
+  let values = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ deliveryExecutiveId: { $eq: id } }],
+        $and: [{ _id: { $eq: id } }],
       },
     },
     {
-      $unwind: '$product'
+      $unwind:"$Orderdatas"
     },
     {
-      $group: {
-        _id: "$product.productName",
-        "Totalquantity": { $sum: "$product.quantity" }
+      $lookup: {
+        from:'shoporderclones',
+        localField: 'Orderdatas._id',
+        foreignField: '_id',
+        as: 'details'
       }
-    }
+    },
+    {
+      $unwind: "$details"
+    },
+    {
+      $project: {
+        product: "$details.product",
+        
+      }
+    },
+    
+       { $group : {
+      _id : "$product.productTitle",
+      "totalPettyStock" : {$sum : "$product.quantity"}
+  }}
+   
+    // {
+    //   $unwind: '$product'
+    // },
+    
+
+  //   { $group : {
+  //     _id : "$details.product.productTitle",
+  //     "totalPettyStock" : {$sum : "$details.product.quantity"}
+  // }}
+    
+   
 
   ]);
 
@@ -674,110 +703,11 @@ const getBillDetailsPerOrder = async (id) => {
           { $toInt:  "$product.priceperkg"  } 
         ]
       },
-      totalQuantity : "$TotalQuantityData.Qty",
-      OperatorName: "$deliveryExecutiveName.name",
+        totalQuantity : "$TotalQuantityData.Qty",
+        OperatorName: "$deliveryExecutiveName.name",
 
     }
   },
- 
-  
-
-
-
-
-  // let datas = await ProductorderClone.aggregate([
-  //   {
-  //     $match: {
-  //       $and: [{
-  //         orderId
-  //           : { $eq: id }
-  //       }],
-  //     },
-  //   },
-  //   {
-  //     $lookup:{
-  //       from: 'shoporderclones',
-  //       localField: 'orderId',
-  //       foreignField: '_id',
-  //       as: 'details'
-  //     }
-  //   },
-  //   {
-  //     $unwind: '$details'
-  //   },
-  //   {
-  //     $lookup:{
-  //       from: 'products',
-  //       localField: 'productid',
-  //       foreignField: '_id',
-  //       as: 'datas'
-  //     }
-  //   },
-  //   {
-  //     $unwind: '$datas'
-  //   },
-    
-
-  //   // {
-  //   //   $project: {
-  //   //     orderId:1,
-  //   //     priceperkg:1,
-  //   //     quantity:1,
-  //   //     HSN_Code:1,
-  //   //     GST_Number:1,
-  //   //     productName: "$datas.productTitle",
-       
-  //   //   }
-  //   // }
-  //   // {
-  //   //   $unwind: "$product"
-  //   // },
-  //   // {
-  //   //   $lookup: {
-  //   //     from: 'b2busers',
-  //   //     localField: 'Uid',
-  //   //     foreignField: '_id',
-  //   //     as: 'usersData',
-  //   //   }
-  //   // },
-  //   // { $unwind: '$usersData' },
-  //   // {
-  //   //   $lookup: {
-  //   //     from: 'b2bshopclones',
-  //   //     localField: 'usersData._id',
-  //   //     foreignField: 'Uid',
-  //   //     as: 'details',
-  //   //   }
-  //   // },
-  //   // { $unwind: '$detailsData' },
-   
-
-  // //   {
-  // //     $project: {
-  // //       total: 1,
-  // //       productName: "$product.productTitle",
-  // //       Qty: "$product.quantity",
-  // //       rate: "$product.priceperkg",
-  // //       HSN_Code: "$product.HSN_Code",
-  // //       GST_Number: "$product.GST_Number",
-  // //       OrderId: 1,
-  // //       billNo: 1,
-  // //       billDate: 1,
-  // //       billTime: 1,
-  // //       shopName: "$details.SName",
-  // //       address: "$details.address",
-  // //       mobile: "$details.mobile",
-  // //       shopType: "$details.type",
-  // //       SOwner: "$details.SOwner",
-  // //       "Amount": { "$multiply": [
-  // //         { "$ifNull": [ "$dataForMul.quantity", 0 ] }, 
-  // //         { "$ifNull": [ "$dataForMul.priceperkg", 0 ] } 
-  // //       ]
-  // //     }
-  // //   }
-  // // }
-
-
   ]);
   return datas;
 }
@@ -1061,57 +991,33 @@ module.exports = {
   createGroup,
   // updateOrderStatus,
   getOrderFromGroupById,
-
   getPettyStock,
-
   // group Details
   getGroupdetails,
-
   // DELEIVERY DETAILS
   // getDeliveryDetails,
 
   getstatus,
   getBillDetails,
   assignOnly,
-
-
   orderPicked,
-
   getDeliveryOrderSeparate,
-
   updateManageStatus,
   groupIdClick,
   orderIdClickGetProduct,
-
-
   updateOrderStatus,
-
   getDetailsAfterDeliveryCompletion,
   getBillDetailsPerOrder,
-
   getReturnWDEtoWLE,
-
   pettyStockSubmit,
   // pettyCashSubmit,
-
   getPettyStockDetails,
   getdetailsAboutPettyStockByGroupId,
-
   // uploadWastageImage,
-
   getpettyStockData,
   getPettyCashDetails,
   getAllGroup,
-
   updateShopOrderCloneById,
   pettyStockCreate,
   getcashAmountViewFromDB,
-
-
 };
-// 626931f6-c32c-4b42-a3cc-94c30aeabc70
-
-
-// 2028cf31-8c9d-4e1f-a820-bd1ccb0add36
-
-// 622ddffe-2da3-4f62-a986-ec5faad2fe6b

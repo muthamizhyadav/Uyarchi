@@ -151,15 +151,17 @@ const updateProduct = async (id, updateBody) => {
 
 //  UPDATE STATUS REJECTION
 
-const updateRejected = async (id, status) => {
-  let rejected = await ShopOrderClone.findById(id);
-  console.log(rejected);
-  if (!rejected) {
-    throw new ApiError(httpStatus.NOT_FOUND, ' not found');
-  }
-  rejected = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
-  console.log(rejected);
-  return rejected;
+const updateRejected = async () => {
+  // let rejected = await ShopOrderClone.findById(id);
+  // console.log(rejected);
+  // if (!rejected) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, ' not found');
+  // }
+  // rejected = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
+  // console.log(rejected);
+  // return rejected;
+  statusUpdate = await ShopOrderClone.updateMany(  { $set: { status: "Acknowledged"}})
+  return statusUpdate;
 };
 
 //WARD LOADING EXECUTIVE
