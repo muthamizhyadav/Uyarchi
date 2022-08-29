@@ -11,7 +11,8 @@ const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model
 
 // GET DETAILS
 
-const getdetails = async (limit, page) => {
+
+const getdetails =async (limit,page) => {
   let values = await ShopOrderClone.aggregate([
     {
       $lookup: {
@@ -61,37 +62,37 @@ const getdetails = async (limit, page) => {
     { $limit: parseInt(limit) },
   ]);
 
-  let total = await ShopOrderClone.aggregate([
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId', //Uid
-        foreignField: '_id', //Uid
-        as: 'userData',
-      },
-    },
-    {
-      $unwind: '$userData',
-    },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'orderId',
-        as: 'orderData',
-      },
-    },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'Uid',
-        foreignField: '_id',
-        as: 'userNameData',
-      },
-    },
-  ]).limit(parseInt(limit));
+  let total = await ShopOrderClone.find().count();
+  //   {
+  //     $lookup: {
+  //       from: 'b2bshopclones',
+  //       localField: 'shopId', //Uid
+  //       foreignField: '_id', //Uid
+  //       as: 'userData',
+  //     },
+  //   },
+  //   {
+  //     $unwind: '$userData',
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'productorderclones',
+  //       localField: '_id',
+  //       foreignField: 'orderId',
+  //       as: 'orderData',
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'b2busers',
+  //       localField: 'Uid',
+  //       foreignField: '_id',
+  //       as: 'userNameData',
+  //     },
+  //   },
+  // ]).limit(parseInt(limit));
 
-  return { values: values, total: total.length };
+  return { values: values, total: total };
 };
 
 // GET PRODUCT DETAILS
@@ -145,6 +146,15 @@ const updateProduct = async (id, updateBody) => {
   product = await ProductorderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return product;
 };
+
+const updateStatusApprovedOrModified = async (id , updateBody) =>{
+  let product = await ShopOrderClone.findById(id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
+  }
+  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return product;
+}
 
 //  UPDATE STATUS REJECTION
 
@@ -530,4 +540,6 @@ module.exports = {
   createdata,
   createArrayData,
   updateStatusForAssugnedAndPacked,
+
+  updateStatusApprovedOrModified,
 };
