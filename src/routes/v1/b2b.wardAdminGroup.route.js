@@ -82,6 +82,10 @@ router.route("/craete/pettyStock/create").post(wardAdminGroupController.pettySto
 
 router.route('/get/cashDetails/fromDB/:id').get(wardAdminGroupController.getcashAmountViewFromDB);
 router.route('/submitPEttyCashGivenByWDE/submit/:id').put(wardAdminGroupController.submitPEttyCashGivenByWDE);
+
+router.route('/Update/create/pettyStock/details/:id').put(wardAdminGroupController.createDatasInPettyStockModel);
+
+router.route('/get/details/pettyCash/:id').get(wardAdminGroupController.getPEttyCashQuantity);
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE

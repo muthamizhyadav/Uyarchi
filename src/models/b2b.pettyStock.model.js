@@ -21,13 +21,13 @@ const pettyStockSchema = new mongoose.Schema({
         type: String,
     },
     totalQtyIncludingPettyStock: {
-        type: String,
+        type: Number,
     },
     pettyStockReceiveStatus: {
         type: String,
         default: "Pending"
     },
-    stockReturnedByWDE: {
+      stockReturnedByWDE: {
         type: Number,
       },
       wastageReturnedByWDE: {

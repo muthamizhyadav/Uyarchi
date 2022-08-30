@@ -211,6 +211,17 @@ const getcashAmountViewFromDB = catchAsync(async (req, res) => {
   res.send(getcashFromDb);
 });
 
+const createDatasInPettyStockModel = catchAsync(async (req, res) => {
+  const createAndUpdateDataINPettyStock = await wardAdminGroupService.createDatasInPettyStockModel(req.params.id, req.body);
+  res.send(createAndUpdateDataINPettyStock);
+});
+
+const getPEttyCashQuantity = catchAsync(async (req, res) => {
+  const createAndUpdateDataINPettyStock = await wardAdminGroupService.getPEttyCashQuantity(req.params.id);
+  res.send(createAndUpdateDataINPettyStock);
+});
+
+
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -268,4 +279,7 @@ module.exports = {
   getcashAmountViewFromDB,
 
   submitPEttyCashGivenByWDE,
+  createDatasInPettyStockModel,
+
+  getPEttyCashQuantity,
 };

@@ -386,97 +386,106 @@ const assignOnly = async (page) => {
 };
 
 const getDeliveryOrderSeparate = async (id, page) => {
-  let datas = await ShopOrderClone.aggregate([
+  let datas = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ deliveryExecutiveId: { $eq: id } }],
+        $and: [{ _id: { $eq: id } }],
       },
     },
     {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        as: 'shopData',
-      },
+      $unwind: "$Orderdatas"
     },
-    { $unwind: '$shopData' },
-    {
-      $lookup: {
-        from: 'streets',
-        localField: 'shopData.Strid',
-        foreignField: '_id',
-        as: 'streetsData',
+      {
+        $lookup: {
+          from: 'shoporderclones',
+          localField: 'Orderdatas._id',
+          foreignField: '_id',
+          as: 'shopDatas'
+        }
       },
-    },
-    { $unwind: '$streetsData' },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'orderId',
-        // pipeline: [
-        //     { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
-        // ],
-        as: 'orderData',
+      { $unwind: '$shopDatas'},
+      {
+        $project: {
+          type: "$Orderdatas.type",
+          orderId: "$Orderdatas.OrderId",
+          orderedDate: "$Orderdatas.date",
+          orderedTime: "$Orderdatas.time",
+          streetName: "$Orderdatas.street",
+          totalItems: "$Orderdatas.totalItems",
+          shopName: '$Orderdatas.shopName',
+          customerDeliveryStatus: "$shopDatas.customerDeliveryStatus",
+        }
       },
-    },
-    // { $unwind: '$orderData' },
-    {
-      $project: {
-        status: 1,
-        OrderId: 1,
-        shopId: 1,
-        date: 1,
-        time: 1,
-        OrderId: 1,
-        customerDeliveryStatus: 1,
-        deliveryExecutiveId: 1,
-        streetName: '$streetsData.street',
-        // Qty: "$orderData.Qty",
-        type: '$shopData.type',
-        // product:1,
-        totalItems: { $size: '$orderData' },
-      },
-    },
+      
+  //   {
+  //     $lookup: {
+  //       from: 'b2bshopclones',
+  //       localField: 'shopId',
+  //       foreignField: '_id',
+  //       as: 'shopData',
+  //     },
+  //   },
+  //   { $unwind: '$shopData' },
+  //   {
+  //     $lookup: {
+  //       from: 'streets',
+  //       localField: 'shopData.Strid',
+  //       foreignField: '_id',
+  //       as: 'streetsData',
+  //     },
+  //   },
+  //   { $unwind: '$streetsData' },
+  //   {
+  //     $lookup: {
+  //       from: 'productorderclones',
+  //       localField: '_id',
+  //       foreignField: 'orderId',
+  //       // pipeline: [
+  //       //     { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
+  //       // ],
+  //       as: 'orderData',
+  //     },
+  //   },
+  //   // { $unwind: '$orderData' },
+  //   {
+  //     $project: {
+  //       status: 1,
+  //       OrderId: 1,
+  //       shopId: 1,
+  //       date: 1,
+  //       time: 1,
+  //       OrderId: 1,
+  //       customerDeliveryStatus: 1,
+  //       deliveryExecutiveId: 1,
+  //       streetName: '$streetsData.street',
+  //       // Qty: "$orderData.Qty",
+  //       type: '$shopData.type',
+  //       // product:1,
+  //       totalItems: { $size: '$orderData' },
+  //     },
+  //   },
 
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await ShopOrderClone.aggregate([
+  let total = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ deliveryExecutiveId: { $eq: id } }],
+        $and: [{ _id: { $eq: id } }],
       },
     },
     {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        as: 'shopData',
-      },
+      $unwind: "$Orderdatas"
     },
-    { $unwind: '$shopData' },
-    {
-      $lookup: {
-        from: 'streets',
-        localField: 'shopData.Strid',
-        foreignField: '_id',
-        as: 'streetsData',
+      {
+        $lookup: {
+          from: 'shoporderclones',
+          localField: 'Orderdatas._id',
+          foreignField: '_id',
+          as: 'shopDatas'
+        }
       },
-    },
-    { $unwind: '$streetsData' },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'orderId',
-        pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
-        as: 'orderData',
-      },
-    },
-    { $unwind: '$orderData' },
+      { $unwind: '$shopDatas'},
   ]);
   return { datas: datas, total: total.length };
 };
@@ -638,6 +647,8 @@ const getBillDetailsPerOrder = async (id) => {
         Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
         totalQuantity: '$TotalQuantityData.Qty',
         OperatorName: '$deliveryExecutiveName.name',
+        CGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
+        SGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
       },
     },
   ]);
@@ -909,23 +920,65 @@ const getcashAmountViewFromDB = async (id) => {
         totalCash: { $sum: '$datas.total' },
       },
     },
-
-   
-    // {
-    //   $project: {
-    //     totalCash:1,
-    //     _id:1,
-    //   //  totalCash: { $sum: "$cashTotal.overallTotal"}
-
-    //   },
-
-    // },
   ]);
 
   return values;
 };
 
+const createDatasInPettyStockModel = async( id, updateBody) =>{
+  let datas = await getById(id);
+
+  if(!datas) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'not found')
+  }
+  datas = await pettyStockModel.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return datas;
+
+};
+
+
+const getPEttyCashQuantity = async (id) =>{
+  let values = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
+      $unwind: '$Orderdatas'
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'Orderdatas._id',
+        foreignField: '_id',
+        as: 'datas'
+      }
+    },
+    {
+      $unwind: '$datas'
+    },
+    
+    {
+      $project: {
+        product: "$datas.product"
+      }
+    },
+    {
+      $unwind: '$product'
+    },
+    
+      { $group : {
+      _id : "$product.productTitle",
+      "Totalquantitysum" : { $sum : "$product.quantity" }
+  }}
+  
+  ]);
+  return values;
+}
+
 module.exports = {
+  getPEttyCashQuantity,
   createGroup,
   // updateOrderStatus,
   getOrderFromGroupById,
@@ -934,7 +987,6 @@ module.exports = {
   getGroupdetails,
   // DELEIVERY DETAILS
   // getDeliveryDetails,
-
   getstatus,
   getBillDetails,
   assignOnly,
@@ -958,4 +1010,6 @@ module.exports = {
   updateShopOrderCloneById,
   pettyStockCreate,
   getcashAmountViewFromDB,
+
+  createDatasInPettyStockModel,
 };
