@@ -17,7 +17,7 @@ const wardAdminGroupSchema = new mongoose.Schema({
   assignTime: {
     type: String,
   },
-  Orderdatas:{
+  Orderdatas: {
     type: Array,
     default: [],
   },
@@ -43,24 +43,24 @@ const wardAdminGroupSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: "Assigned",
+    default: 'Assigned',
   },
-  manageDeliveryStatus:{
-    type:String,
-    default:"Pending",
+  manageDeliveryStatus: {
+    type: String,
+    default: 'Pending',
   },
   pettyCashAllocateStatus: {
     type: String,
-    default: "Pending",
+    default: 'Pending',
   },
   pettyStockAllocateStatus: {
     type: String,
-    default: "Pending",
+    default: 'Pending',
   },
-  
+
   AllocateStatus: {
     type: String,
-    default: "Assigned",
+    default: 'Assigned',
   },
   // NotAllocateStatus: {
   //   type: String,
@@ -76,7 +76,7 @@ const wardAdminGroupSchema = new mongoose.Schema({
   totalQtyIncludingPettyStock: {
     type: Number,
   },
- 
+
   stockReturnedByWDE: {
     type: Number,
   },
@@ -101,9 +101,26 @@ const wardAdminGroupSchema = new mongoose.Schema({
   shopOrderCloneID: {
     type: String,
   },
-
 });
 
-const wardAdminGroupModel = mongoose.model('wardAdminGroup', wardAdminGroupSchema);
+const wardAdminGroup = mongoose.model('wardAdminGroup', wardAdminGroupSchema);
 
-module.exports = wardAdminGroupModel;
+const wardAdminGroupSchema_ORDER = new mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  orderId: {
+    type: String,
+  },
+  wardAdminGroupID: {
+    type: String,
+  },
+  status: {
+    type: String,
+    default: 'Assigned',
+  },
+});
+
+const wardAdminGroupModel_ORDERS = mongoose.model('orderAssign', wardAdminGroupSchema_ORDER);
+module.exports = { wardAdminGroup, wardAdminGroupModel_ORDERS };

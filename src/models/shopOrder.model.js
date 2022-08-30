@@ -139,6 +139,12 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   paymentStatus: {
     type: String,
   },
+  devevery_mode: {
+    type: String,
+  },
+  Payment: {
+    type: String,
+  },
   selfPickup: {
     type: String,
   },
@@ -179,10 +185,8 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
 
   AssignedStatus: {
     type: String,
-    default: "Pending"
+    default: 'Pending',
   },
-
-
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
