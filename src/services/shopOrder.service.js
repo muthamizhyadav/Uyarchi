@@ -4,7 +4,6 @@ const { Product } = require('../models/product.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const ApiError = require('../utils/ApiError');
 const moment = require('moment');
-let currentDate = moment().format('DD-MM-YYYY');
 
 const createshopOrder = async (shopOrderBody, userid) => {
   let body = { ...shopOrderBody, ...{ Uid: userid } };
@@ -26,9 +25,10 @@ const createshopOrder = async (shopOrderBody, userid) => {
 };
 
 const createshopOrderClone = async (body, userid) => {
-  const Buy = await ShopOrderClone.find();
+  let currentDate = moment().format('YYYY-MM-DD');
+  let currenttime = moment().format('HHmmss');
+  const Buy = await ShopOrderClone.find({ date: currentDate });
   let center = '';
-  // console.log(Buy.length);
   if (Buy.length < 9) {
     center = '0000';
   }
@@ -41,9 +41,6 @@ const createshopOrderClone = async (body, userid) => {
   if (Buy.length < 9999 && Buy.length >= 999) {
     center = '0';
   }
-  // console.log(center, 0);
-  let currentDate = moment().format('YYYY-MM-DD');
-  let currenttime = moment().format('HHmmss');
   let userId = '';
   let totalcount = Buy.length + 1;
 
@@ -74,22 +71,6 @@ const createshopOrderClone = async (body, userid) => {
   });
   return createShopOrderClone;
 };
-
-// GST_Number: {
-//   type: Number,
-// },
-// HSN_Code: {
-//   type: String,
-// },
-// packtypeId: {
-//   type: String,
-// },
-// unit: {
-//   type: String,
-// },
-// packKg: {
-//   type: String,
-// },
 
 const getAllShopOrderClone = async (date, page) => {
   let values = await ShopOrderClone.aggregate([
@@ -267,7 +248,6 @@ const getShopNameWithPagination = async (page, userId) => {
         as: 'shopData',
       },
     },
-    //b2busers
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -314,7 +294,6 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         status: 1,
       },
     },
-    //b2busers
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
