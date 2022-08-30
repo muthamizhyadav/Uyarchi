@@ -835,14 +835,12 @@ const getPettyCashDetails = async (id, page) => {
     },
 
     { $unwind: '$Orderdatas' },
+
     {
       $lookup: {
         from: 'shoporderclones',
         localField: 'Orderdatas.OrderId',
         foreignField: 'OrderId',
-        // pipeline: [
-        //   { $group: { _id: null, Total: { $sum: '$datas.overallTotal' }, } },
-        // ],
         as: 'datas',
       },
     },
@@ -850,6 +848,17 @@ const getPettyCashDetails = async (id, page) => {
   ]);
   return { values: values, total: total.length };
 };
+
+// const getStatus = async (id)=>{
+//   let data = await ShopOrderClone.aggregate([
+//     {
+//       $group: {
+//         _id: '$data.'
+//       }
+//     }
+
+//   ])
+// }
 
 const getAllGroup = async (page) => {
   let values = await wardAdminGroup.aggregate([
@@ -915,7 +924,7 @@ const pettyStockCreate = async (pettyStockBody) => {
   });
 };
 
-const getcashAmountViewFromDB = async (id, page) => {
+const getcashAmountViewFromDB = async (id) => {
   let values = await wardAdminGroup.aggregate([
     {
       $match: {
@@ -936,12 +945,11 @@ const getcashAmountViewFromDB = async (id, page) => {
     {
       $group: {
         _id: '$datas.payType',
-        totalCash: { $sum: '$datas.overallTotal' },
+        totalCash: { $sum: '$datas.total' },
       },
     },
 
-    { $skip: 10 * page },
-    { $limit: 10 },
+   
     // {
     //   $project: {
     //     totalCash:1,
