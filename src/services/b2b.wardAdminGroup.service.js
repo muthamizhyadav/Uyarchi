@@ -128,56 +128,96 @@ const getPettyStock = async (id) => {
   let values = await Product.aggregate([
     {
       $lookup: {
-        from: 'wardadmingroups',
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
         pipeline: [
-          { $match: { _id: id } },
           {
             $lookup: {
               from: 'shoporderclones',
-              localField: 'Orderdatas._id',
+              localField: 'orderId',
               foreignField: '_id',
               pipeline: [
-                {
-                  $match: { customerDeliveryStatus: 'Un Delivered' },
-                },
+                { $match: { customerDeliveryStatus: 'Delivered' } },
                 {
                   $lookup: {
-                    from: 'productorderclones',
+                    from: 'wardadmingroups',
                     localField: '_id',
-                    foreignField: 'orderId',
-                    as: 'productorderclones',
+                    foreignField: 'Orderdatas',
+                    pipeline: [{ $match: { _id: id } }],
+                    as: 'wardadmingroups',
                   },
                 },
+                { $unwind: '$wardadmingroups' },
               ],
-              as: 'Delivered',
+              as: 'shoporderclones',
             },
           },
-          {
-            $lookup: {
-              from: 'shoporderclones',
-              localField: 'Orderdatas._id',
-              foreignField: '_id',
-              pipeline: [
-                {
-                  $match: { customerDeliveryStatus: 'Un Delivered' },
-                },
-                {
-                  $lookup: {
-                    from: 'productorderclones',
-                    localField: '_id',
-                    foreignField: 'orderId',
-                    as: 'productorderclones',
-                  },
-                },
-              ],
-              as: 'unDelivered',
-            },
-          },
+          { $unwind: '$shoporderclones' },
+
+          { $group: { _id: null, Qty: { $sum: '$quantity' } } },
         ],
-        as: 'wardadmingroups',
+
+        as: 'productorderclones',
       },
     },
-    { $unwind: '$wardadmingroups' },
+    // {
+    //   $unwind: {
+    //     path: '$productorderclones',
+    //     preserveNullAndEmptyArrays: true,
+    //   },
+    // },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'wardadmingroups',
+              localField: 'orderId',
+              foreignField: 'Orderdatas',
+              pipeline: [
+                { $match: { _id: id } },
+                {
+                  $lookup: {
+                    from: 'shoporderclones',
+                    localField: 'Orderdatas',
+                    foreignField: '_id',
+                    pipeline: [{ $match: { customerDeliveryStatus: 'UnDelivered' } }],
+                    as: 'shoporderclones',
+                  },
+                },
+                { $unwind: '$shoporderclones' },
+              ],
+              as: 'wardadmingroups',
+            },
+          },
+          // { $unwind: '$wardadmingroups' },
+
+          { $group: { _id: null, Qty: { $sum: '$quantity' } } },
+        ],
+
+        as: 'unproductorderclones',
+      },
+    },
+    // {
+    //   $unwind: {
+    //     path: '$unproductorderclones',
+    //     preserveNullAndEmptyArrays: true,
+    //   },
+    // },
+    {
+      $project: {
+        productorderclones: '$productorderclones',
+        unproductorderclones: '$unproductorderclones',
+        productTitle: 1,
+      },
+    },
+    {
+      $match: { $or: [{ productorderclones: { $ne: null } }, { unproductorderclones: { $ne: null } }] },
+    },
     {
       $limit: 10,
     },
@@ -783,7 +823,7 @@ const getPettyCashDetails = async (id, page) => {
         Deliverystatus: '$datas.customerDeliveryStatus',
         FinalPaymentType: '$datas.payType',
         pettyCashApporvedStatus: '$datas.pettyCashReceiveStatus',
-        shopordercloneID: "$datas._id",
+        shopordercloneID: '$datas._id',
       },
     },
   ]);
@@ -819,18 +859,18 @@ const getAllGroup = async (page) => {
       },
     },
     {
-      $unwind: '$Orderdatas'
+      $unwind: '$Orderdatas',
     },
     {
       $lookup: {
         from: 'shoporderclones',
         localField: 'Orderdatas._id',
         foreignField: '_id',
-        as: 'shopIDDatas'
-      }
+        as: 'shopIDDatas',
+      },
     },
     {
-      $unwind: '$shopIDDatas'
+      $unwind: '$shopIDDatas',
     },
     {
       $project: {
@@ -842,10 +882,9 @@ const getAllGroup = async (page) => {
         totalOrders: 1,
         pettyCash: 1,
         status: 1,
-        shoporderclonesId: "$shopIDDatas._id"
-      }
-
+        shoporderclonesId: '$shopIDDatas._id',
       },
+    },
 
     { $skip: 10 * page },
     { $limit: 10 },
