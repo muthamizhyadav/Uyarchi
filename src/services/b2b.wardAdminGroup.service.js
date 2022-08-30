@@ -117,88 +117,45 @@ const getPettyStock = async (id) => {
               localField: 'orderId',
               foreignField: '_id',
               pipeline: [
-                { $match: { customerDeliveryStatus: 'Delivered' } },
                 {
                   $lookup: {
-                    from: 'wardadmingroups',
+                    from: 'orderassigns',
                     localField: '_id',
-                    foreignField: 'Orderdatas',
-                    pipeline: [{ $match: { _id: id } }],
-                    as: 'wardadmingroups',
+                    foreignField: 'orderId',
+                    pipeline: [{ $match: { wardAdminGroupID: id } }],
+                    as: 'orderassigns',
                   },
                 },
-                { $unwind: '$wardadmingroups' },
+                {
+                  $unwind: '$orderassigns',
+                },
               ],
               as: 'shoporderclones',
             },
           },
-          { $unwind: '$shoporderclones' },
-
+          {
+            $unwind: '$shoporderclones',
+          },
           { $group: { _id: null, Qty: { $sum: '$quantity' } } },
         ],
-
         as: 'productorderclones',
       },
     },
-    // {
-    //   $unwind: {
-    //     path: '$productorderclones',
-    //     preserveNullAndEmptyArrays: true,
-    //   },
-    // },
     {
-      $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'productid',
-        pipeline: [
-          {
-            $lookup: {
-              from: 'wardadmingroups',
-              localField: 'orderId',
-              foreignField: 'Orderdatas',
-              pipeline: [
-                { $match: { _id: id } },
-                {
-                  $lookup: {
-                    from: 'shoporderclones',
-                    localField: 'Orderdatas',
-                    foreignField: '_id',
-                    pipeline: [{ $match: { customerDeliveryStatus: 'UnDelivered' } }],
-                    as: 'shoporderclones',
-                  },
-                },
-                { $unwind: '$shoporderclones' },
-              ],
-              as: 'wardadmingroups',
-            },
-          },
-          // { $unwind: '$wardadmingroups' },
-
-          { $group: { _id: null, Qty: { $sum: '$quantity' } } },
-        ],
-
-        as: 'unproductorderclones',
+      $unwind: '$productorderclones',
+    },
+    {
+      $unwind: {
+        path: '$productorderclones',
+        preserveNullAndEmptyArrays: true,
       },
     },
-    // {
-    //   $unwind: {
-    //     path: '$unproductorderclones',
-    //     preserveNullAndEmptyArrays: true,
-    //   },
-    // },
     {
       $project: {
-        productorderclones: '$productorderclones',
-        unproductorderclones: '$unproductorderclones',
+        _id: 1,
         productTitle: 1,
+        overAllQuantity: '$productorderclones.Qty',
       },
-    },
-    {
-      $match: { $or: [{ productorderclones: { $ne: null } }, { unproductorderclones: { $ne: null } }] },
-    },
-    {
-      $limit: 10,
     },
   ]);
 
