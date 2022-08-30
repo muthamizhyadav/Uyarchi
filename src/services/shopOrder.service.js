@@ -26,7 +26,9 @@ const createshopOrder = async (shopOrderBody, userid) => {
 };
 
 const createshopOrderClone = async (body, userid) => {
-  const Buy = await ShopOrderClone.find();
+  let currentDate = moment().format('YYYY-MM-DD');
+  let currenttime = moment().format('HHmmss');
+  const Buy = await ShopOrderClone.find({ date: currentDate });
   let center = '';
   // console.log(Buy.length);
   if (Buy.length < 9) {
@@ -42,8 +44,6 @@ const createshopOrderClone = async (body, userid) => {
     center = '0';
   }
   // console.log(center, 0);
-  let currentDate = moment().format('YYYY-MM-DD');
-  let currenttime = moment().format('HHmmss');
   let userId = '';
   let totalcount = Buy.length + 1;
 
