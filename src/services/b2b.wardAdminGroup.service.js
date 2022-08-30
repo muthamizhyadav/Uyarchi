@@ -885,7 +885,7 @@ const pettyStockCreate = async (pettyStockBody) => {
   });
 };
 
-const getcashAmountViewFromDB = async (id, page) => {
+const getcashAmountViewFromDB = async (id) => {
   let values = await wardAdminGroup.aggregate([
     {
       $match: {
@@ -910,8 +910,7 @@ const getcashAmountViewFromDB = async (id, page) => {
       },
     },
 
-    { $skip: 10 * page },
-    { $limit: 10 },
+   
     // {
     //   $project: {
     //     totalCash:1,

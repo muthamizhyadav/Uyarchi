@@ -80,7 +80,8 @@ router.route("/update/pettycash/return/:id").put(wardAdminGroupController.update
 router.route("/craete/pettyStock/create").post(wardAdminGroupController.pettyStockCreate);
 
 
-router.route('/get/cashDetails/fromDB/:id/:page').get(wardAdminGroupController.getcashAmountViewFromDB);
+router.route('/get/cashDetails/fromDB/:id').get(wardAdminGroupController.getcashAmountViewFromDB);
+router.route('/submitPEttyCashGivenByWDE/submit/:id').put(wardAdminGroupController.submitPEttyCashGivenByWDE);
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE

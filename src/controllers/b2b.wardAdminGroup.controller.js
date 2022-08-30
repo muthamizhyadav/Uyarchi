@@ -17,6 +17,11 @@ const updateOrderPickedStatus = catchAsync(async (req, res) => {
   res.send(orderPicked);
 });
 
+const submitPEttyCashGivenByWDE = catchAsync(async (req, res) => {
+  const cashAsGivenByWDE = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  res.send(cashAsGivenByWDE);
+});
+
 const updatePickedPettyStock = catchAsync(async (req, res) => {
   const pickedPettyStock = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
   res.send(pickedPettyStock);
@@ -202,7 +207,7 @@ const pettyStockCreate = catchAsync(async (req, res) => {
 });
 
 const getcashAmountViewFromDB = catchAsync(async (req, res) => {
-  const getcashFromDb = await wardAdminGroupService.getcashAmountViewFromDB(req.params.id, req.params.page);
+  const getcashFromDb = await wardAdminGroupService.getcashAmountViewFromDB(req.params.id);
   res.send(getcashFromDb);
 });
 
@@ -261,4 +266,6 @@ module.exports = {
   updatePettyCashReturnStatus,
   pettyStockCreate,
   getcashAmountViewFromDB,
+
+  submitPEttyCashGivenByWDE,
 };
