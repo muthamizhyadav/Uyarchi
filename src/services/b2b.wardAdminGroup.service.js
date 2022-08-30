@@ -783,6 +783,7 @@ const getPettyCashDetails = async (id, page) => {
         Deliverystatus: '$datas.customerDeliveryStatus',
         FinalPaymentType: '$datas.payType',
         pettyCashApporvedStatus: '$datas.pettyCashReceiveStatus',
+        shopordercloneID: "$datas._id",
       },
     },
   ]);
