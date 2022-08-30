@@ -27,6 +27,25 @@ const pettyStockSchema = new mongoose.Schema({
         type: String,
         default: "Pending"
     },
+    stockReturnedByWDE: {
+        type: Number,
+      },
+      wastageReturnedByWDE: {
+        type: Number,
+      },
+      wastageImageUpload: {
+        type: String,
+      },
+      mismatch: {
+        type: Number,
+      },
+      DeliverAsPerSystem: {
+        type: Number,
+      },
+      UnDeliveredAsPerSystem: {
+        type: Number,
+      },
+ 
 
 
 });
