@@ -6,7 +6,7 @@ const { Shop } = require('../models/b2b.ShopClone.model');
 const { ShopOrderClone } = require('../models/shopOrder.model');
 const { ProductorderClone } = require('../models/shopOrder.model');
 const pettyStockModel = require('../models/b2b.pettyStock.model');
-const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
+const { wardAdminGroup, wardAdminGroupModel_ORDERS } = require('../models/b2b.wardAdminGroup.model');
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 const { Product } = require('../models/product.model');
 
@@ -35,35 +35,14 @@ const createGroup = async (body) => {
   userId = 'G' + center + totalcount;
 
   let values = { ...body, ...{ groupId: userId, assignDate: serverdates, assignTime: servertime } };
-
-  body.Orderdatas.forEach(async (e) => {
-    console.log(body.deliveryExecutiveId);
-    let productId = e._id;
-
-    await ShopOrderClone.findByIdAndUpdate(
-      { _id: productId },
-      { status: 'Assigned', deliveryExecutiveId: body.deliveryExecutiveId },
-      { new: true }
-    );
-  });
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
+  body.Orderdatas.forEach(async (e) => {
+    let productId = e._id;
+    await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: 'Assigned' }, { new: true });
+    await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: wardAdminGroupcreate._id });
+  });
   return wardAdminGroupcreate;
-  // let wardAdminGroupcreate = await wardAdminGroup.create(values);
-
-  // return wardAdminGroupcreate;
 };
-
-// const craeteAnotherData = async (body)=>{
-//  let { Orderdatas} = body;
-//  Orderdatas.forEach(async (e) => {
-//   wardAdminGroupDetails.create({
-
-//     shopOrderCloneID: e._id,
-//     OrderId: e.OrderId,
-
-//   })
-//  });
-// }
 
 const updateOrderStatus = async (id, updateBody) => {
   let deliveryStatus = await ShopOrderClone.findById(id);
@@ -949,7 +928,6 @@ const getcashAmountViewFromDB = async (id) => {
       },
     },
 
-   
     // {
     //   $project: {
     //     totalCash:1,
