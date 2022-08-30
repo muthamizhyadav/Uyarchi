@@ -390,6 +390,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
           totalItems: "$Orderdatas.totalItems",
           shopName: '$Orderdatas.shopName',
           customerDeliveryStatus: "$shopDatas.customerDeliveryStatus",
+          shopordercloneId: "$shopDatas._id"
         }
       },
       
