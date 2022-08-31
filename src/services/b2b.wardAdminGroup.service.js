@@ -410,6 +410,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
         shopName: '$Orderdatas.shopName',
         customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
         shopordercloneId: '$shopDatas._id',
+        inititalPaymentType: "$shopDatas.Payment",
       },
     },
 
