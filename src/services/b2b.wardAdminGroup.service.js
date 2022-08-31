@@ -38,7 +38,8 @@ const createGroup = async (body) => {
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
   body.Orderdatas.forEach(async (e) => {
     let productId = e._id;
-    await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: 'Assigned' },{deliveryExecutiveId:deliveryExecutiveId}, { new: true });
+
+    await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: 'Assigned' },{ deliveryExecutiveId: body.deliveryExecutiveId }, { new: true });
     await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: wardAdminGroupcreate._id });
   });
   return wardAdminGroupcreate;
