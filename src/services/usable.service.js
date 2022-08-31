@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { usableStock } = require('../models/usableStock.model');
+const { UsableStock } = require('../models/usableStock.model');
 const ApiError = require('../utils/ApiError');
 
 const createUsableStock = async (body) => {

@@ -229,6 +229,15 @@ const uploadImageById = async (id, body) => {
   return receivedStock;
 };
 
+const updateusableStock = async (id, updateBody) => {
+  let usablestocks = await Stockhistory.findById(id);
+  if (!usablestocks) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  usablestocks = await Stockhistory.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return usablestocks;
+};
+
 module.exports = {
   getDataById,
   updateReceivedStockById,
@@ -236,4 +245,5 @@ module.exports = {
   getDetailsByProductId,
   updatesegrecation,
   uploadImageById,
+  updateusableStock,
 };
