@@ -39,7 +39,7 @@ const createGroup = async (body) => {
   body.Orderdatas.forEach(async (e) => {
     let productId = e._id;
 
-    await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: 'Assigned' },{ deliveryExecutiveId: body.deliveryExecutiveId }, { new: true });
+    await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: 'Assigned' ,deliveryExecutiveId: body.deliveryExecutiveId}, { new: true });
     await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: wardAdminGroupcreate._id });
   });
   return wardAdminGroupcreate;
@@ -614,31 +614,6 @@ const getBillDetailsPerOrder = async (id) => {
     },
 
 
-    {
-      $project: {
-        total: 1,
-        productName: '$product.productTitle',
-        Qty: '$product.quantity',
-        rate: '$product.priceperkg',
-        HSN_Code: '$product.HSN_Code',
-        GST_Number: '$product.GST_Number',
-        OrderId: 1,
-        billNo: 1,
-        billDate: 1,
-        billTime: 1,
-        shopName: '$details.SName',
-        address: '$details.address',
-        mobile: '$details.mobile',
-        shopType: '$details.type',
-        SOwner: '$details.SOwner',
-        Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
-        totalQuantity: '$TotalQuantityData.Qty',
-        OperatorName: '$deliveryExecutiveName.name',
-        CGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
-        SGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
-      },
-    },
-
     // {
     //   $project: {
     //     total: 1,
@@ -659,10 +634,12 @@ const getBillDetailsPerOrder = async (id) => {
     //     Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
     //     totalQuantity: '$TotalQuantityData.Qty',
     //     OperatorName: '$deliveryExecutiveName.name',
-    //     CGSTAmount: { $divide: ['$product.GST_Number', 2] },
-    //     SGSTAmount: { $divide: ['$product.GST_Number', 2] },
+    //     CGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
+    //     SGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
     //   },
     // },
+
+    
 
   ]);
   return datas;
@@ -952,6 +929,11 @@ const getPEttyCashQuantity = async (id) => {
   return values;
 };
 
+// const createProduct = async (body) => {
+//   let detailsAndCreate = await .create(body)
+//   return detailsAndCreate;
+// }
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -987,4 +969,5 @@ module.exports = {
   getcashAmountViewFromDB,
 
   createDatasInPettyStockModel,
+  // createProduct,
 };

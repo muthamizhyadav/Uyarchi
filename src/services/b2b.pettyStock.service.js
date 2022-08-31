@@ -7,6 +7,8 @@ const pettyStockSubmit = async (body) => {
     let sample = await pettyStockModel.create(body)
     return sample;
   }
+
+  
   
 module.exports = {
     pettyStockSubmit,

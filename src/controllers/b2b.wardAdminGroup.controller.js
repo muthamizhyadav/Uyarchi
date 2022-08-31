@@ -7,8 +7,8 @@ const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
 const pettyStockModel = require('../models/b2b.pettyStock.model');
 
 const createGroupOrder = catchAsync(async (req, res) => {
-  let userid = req.userId;
-  const shopOrderClone = await wardAdminGroupService.createGroup(req.body, userid);
+
+  const shopOrderClone = await wardAdminGroupService.createGroup(req.body);
   res.send(shopOrderClone);
 });
 
@@ -221,6 +221,28 @@ const getPEttyCashQuantity = catchAsync(async (req, res) => {
   res.send(createAndUpdateDataINPettyStock);
 });
 
+const createImageUploadAndDetails = catchAsync(async (req, res) => {
+  const { body } = req;
+  const product = await wardAdminGroupService.createProduct(body);
+  
+  if (req.files) {
+    let path = '';
+    path = 'images/';
+    if (req.files.image != null) {
+      product.image = path + req.files.image[0].filename;
+    }
+
+    if (req.files.galleryImages != null) {
+      req.files.galleryImages.forEach((e) => {
+        product.galleryImages.push(path + e.filename);
+      });
+    }
+  }
+  await product.save();
+  res.status(httpStatus.CREATED).send(product);
+});
+
+
 
 module.exports = {
   createGroupOrder,
@@ -282,4 +304,6 @@ module.exports = {
   createDatasInPettyStockModel,
 
   getPEttyCashQuantity,
+
+  createImageUploadAndDetails,
 };
