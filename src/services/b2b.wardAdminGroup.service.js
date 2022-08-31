@@ -352,6 +352,7 @@ const assignOnly = async (page) => {
         },
       },
     },
+   
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -614,30 +615,30 @@ const getBillDetailsPerOrder = async (id) => {
     },
 
 
-    // {
-    //   $project: {
-    //     total: 1,
-    //     productName: '$product.productTitle',
-    //     Qty: '$product.quantity',
-    //     rate: '$product.priceperkg',
-    //     HSN_Code: '$product.HSN_Code',
-    //     GST_Number: '$product.GST_Number',
-    //     OrderId: 1,
-    //     billNo: 1,
-    //     billDate: 1,
-    //     billTime: 1,
-    //     shopName: '$details.SName',
-    //     address: '$details.address',
-    //     mobile: '$details.mobile',
-    //     shopType: '$details.type',
-    //     SOwner: '$details.SOwner',
-    //     Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
-    //     totalQuantity: '$TotalQuantityData.Qty',
-    //     OperatorName: '$deliveryExecutiveName.name',
-    //     CGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
-    //     SGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
-    //   },
-    // },
+    {
+      $project: {
+        total: 1,
+        productName: '$product.productTitle',
+        Qty: '$product.quantity',
+        rate: '$product.priceperkg',
+        HSN_Code: '$product.HSN_Code',
+        GST_Number: '$product.GST_Number',
+        OrderId: 1,
+        billNo: 1,
+        billDate: 1,
+        billTime: 1,
+        shopName: '$details.SName',
+        address: '$details.address',
+        mobile: '$details.mobile',
+        shopType: '$details.type',
+        SOwner: '$details.SOwner',
+        Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
+        totalQuantity: '$TotalQuantityData.Qty',
+        OperatorName: '$deliveryExecutiveName.name',
+        CGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
+        SGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
+      },
+    },
 
     
 
