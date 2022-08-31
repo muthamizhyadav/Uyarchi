@@ -380,18 +380,31 @@ const getDeliveryOrderSeparate = async (id, page) => {
       },
     },
     { $unwind: '$shopDatas' },
-    {
-      $project: {
-        type: '$Orderdatas.type',
-        orderId: '$Orderdatas.OrderId',
-        orderedDate: '$Orderdatas.date',
-        orderedTime: '$Orderdatas.time',
-        streetName: '$Orderdatas.street',
-        totalItems: '$Orderdatas.totalItems',
-        shopName: '$Orderdatas.shopName',
-        customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
+    // {
+    //   $project: {
+    //     type: '$Orderdatas.type',
+    //     orderId: '$Orderdatas.OrderId',
+    //     orderedDate: '$Orderdatas.date',
+    //     orderedTime: '$Orderdatas.time',
+    //     streetName: '$Orderdatas.street',
+    //     totalItems: '$Orderdatas.totalItems',
+    //     shopName: '$Orderdatas.shopName',
+    //     customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
+    //   { $unwind: '$shopDatas'},
+    //   }
+      {
+        $project: {
+          type: "$Orderdatas.type",
+          orderId: "$Orderdatas.OrderId",
+          orderedDate: "$Orderdatas.date",
+          orderedTime: "$Orderdatas.time",
+          streetName: "$Orderdatas.street",
+          totalItems: "$Orderdatas.totalItems",
+          shopName: '$Orderdatas.shopName',
+          customerDeliveryStatus: "$shopDatas.customerDeliveryStatus",
+          shopordercloneId: "$shopDatas._id"
+        }
       },
-    },
 
     //   {
     //     $lookup: {
