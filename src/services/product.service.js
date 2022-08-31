@@ -470,7 +470,7 @@ const productDateTimeFilter = async (date) => {
           {
             $match: {
               $expr: {
-                $eq: ['$$productid', '$productid'], 
+                $eq: ['$$productid', '$productid'],
               },
             },
           },
@@ -494,7 +494,7 @@ const productDateTimeFilter = async (date) => {
           {
             $match: {
               $expr: {
-                $eq: ['$$productid', '$productid'], 
+                $eq: ['$$productid', '$productid'],
               },
             },
           },
