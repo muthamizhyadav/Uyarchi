@@ -95,6 +95,9 @@ const usableStockhistory = new mongoose.Schema({
   usableStock: {
     type: String,
   },
+  wastageImage:{
+    type: String,
+  },
   active: {
     type: Boolean,
     default: true,

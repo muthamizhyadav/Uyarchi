@@ -39,6 +39,19 @@ const getDetailsByProductId = catchAsync(async (req, res) => {
   res.send(receivedStock);
 });
 
+const updateusableStock = catchAsync(async (req, res) => {
+  const receivedStock = await ReceivedStockService.updateusableStock(req.params.id, req.body);
+  if (req.files.length != 0) {
+    let path = '';
+    req.files.forEach(function (files, index, arr) {
+      path = 'images/usablestock/' + files.filename;
+    });
+    receivedStock.wastageImage = path;
+  }
+  await stock.save();
+  res.send(receivedStock);
+});
+
 module.exports = {
   getDataById,
   updateReceivedStockById,
@@ -46,4 +59,5 @@ module.exports = {
   getDetailsByProductId,
   updatesegrecation,
   uploadImageById,
+  updateusableStock,
 };
