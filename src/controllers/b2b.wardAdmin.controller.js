@@ -92,6 +92,10 @@ const wardDeliveryExecutive = catchAsync(async (req, res) => {
   res.send(name);
 });
 
+const updateAcknowledgeSingle = catchAsync(async (req, res) => {
+  const Acknowledged = await wardAdminService.updateAcknowledgeSingle(req.params.id, req.body );
+  res.send(Acknowledged);
+});
 module.exports = {
   getDetails,
   getproductDetails,
@@ -115,4 +119,6 @@ module.exports = {
 
   createdata,
   createArrayData,
+
+  updateAcknowledgeSingle,
 };

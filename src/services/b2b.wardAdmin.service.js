@@ -186,6 +186,15 @@ const updateRejected = async (body) => {
   return 'status updated successfully';
 };
 
+const updateAcknowledgeSingle = async (id, updateBody) => {
+  let product = await ShopOrderClone.findById(id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
+  }
+  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return product;
+};
+
 //WARD LOADING EXECUTIVE
 
 const wardloadExecutive = async (page) => {
@@ -542,4 +551,6 @@ module.exports = {
   updateStatusForAssugnedAndPacked,
 
   updateStatusApprovedOrModified,
+
+  updateAcknowledgeSingle,
 };

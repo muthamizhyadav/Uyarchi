@@ -39,4 +39,6 @@ router.route('/delivery/Executive/Name/:id').put(wardAdminController.deliveryexe
 
 router.route('/Array/craeteArrayData').post(wardAdminController.createArrayData);
 
+router.route('/update/acknowleded/status/single/:id').put(wardAdminController.updateAcknowledgeSingle)
+
 module.exports = router;
