@@ -328,7 +328,7 @@ const createdata = async (Orderdatas) => {
   Orderdatass.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e._id }, { deliveryExecutiveId: deliveryExecutiveId, status: 'Assigned' });
   });
-  // const data = await ShopOrderClone.create(Orderdatas)
+  
   return 'success';
 };
 

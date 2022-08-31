@@ -38,7 +38,7 @@ const createGroup = async (body) => {
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
   body.Orderdatas.forEach(async (e) => {
     let productId = e._id;
-    await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: 'Assigned' }, { new: true });
+    await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: 'Assigned' },{deliveryExecutiveId:deliveryExecutiveId}, { new: true });
     await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: wardAdminGroupcreate._id });
   });
   return wardAdminGroupcreate;
@@ -162,7 +162,23 @@ const getPettyStock = async (id) => {
   return values;
 };
 
-const pettyStockSubmit = async (id, updateBody) => {
+// const pettyStockSubmit = async (id, updateBody) => {
+//   let deliveryStatus = await wardAdminGroup.findById(id);
+//   console.log(deliveryStatus);
+//   if (!deliveryStatus) {
+//     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+//   }
+//   deliveryStatus = await wardAdminGroup.create({ _id: id }, updateBody, { new: true });
+//   console.log(deliveryStatus);
+//   return deliveryStatus;
+// };
+
+// const pettyStockSubmit = async (body) => {
+//   let sample = await pettyStockModel.create(body)
+//   return sample;
+// }
+
+const pettyCashSubmit = async (id, updateBody) => {
   let deliveryStatus = await wardAdminGroup.findById(id);
   console.log(deliveryStatus);
   if (!deliveryStatus) {
@@ -172,17 +188,6 @@ const pettyStockSubmit = async (id, updateBody) => {
   console.log(deliveryStatus);
   return deliveryStatus;
 };
-
-// const  pettyCashSubmit= async (id, updateBody) => {
-//   let deliveryStatus = await wardAdminGroup.findById(id);
-//   console.log(deliveryStatus);
-//   if (!deliveryStatus) {
-//     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
-//   }
-//   deliveryStatus = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-//   console.log(deliveryStatus);
-//   return deliveryStatus;
-// };
 
 const getGroupdetails = async () => {
   return wardAdminGroup.find();
@@ -588,46 +593,46 @@ const getBillDetailsPerOrder = async (id) => {
         as: 'deliveryExecutiveName',
       },
     },
-    {
-      $unwind: '$deliveryExecutiveName',
-    },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'orderId',
-        pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
-        as: 'TotalQuantityData',
-      },
-    },
-    {
-      $unwind: '$TotalQuantityData',
-    },
+    // {
+    //   $unwind: '$deliveryExecutiveName',
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'productorderclones',
+    //     localField: '_id',
+    //     foreignField: 'orderId',
+    //     pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
+    //     as: 'TotalQuantityData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$TotalQuantityData',
+    // },
 
-    {
-      $project: {
-        total: 1,
-        productName: '$product.productTitle',
-        Qty: '$product.quantity',
-        rate: '$product.priceperkg',
-        HSN_Code: '$product.HSN_Code',
-        GST_Number: '$product.GST_Number',
-        OrderId: 1,
-        billNo: 1,
-        billDate: 1,
-        billTime: 1,
-        shopName: '$details.SName',
-        address: '$details.address',
-        mobile: '$details.mobile',
-        shopType: '$details.type',
-        SOwner: '$details.SOwner',
-        Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
-        totalQuantity: '$TotalQuantityData.Qty',
-        OperatorName: '$deliveryExecutiveName.name',
-        CGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
-        SGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
-      },
-    },
+    // {
+    //   $project: {
+    //     total: 1,
+    //     productName: '$product.productTitle',
+    //     Qty: '$product.quantity',
+    //     rate: '$product.priceperkg',
+    //     HSN_Code: '$product.HSN_Code',
+    //     GST_Number: '$product.GST_Number',
+    //     OrderId: 1,
+    //     billNo: 1,
+    //     billDate: 1,
+    //     billTime: 1,
+    //     shopName: '$details.SName',
+    //     address: '$details.address',
+    //     mobile: '$details.mobile',
+    //     shopType: '$details.type',
+    //     SOwner: '$details.SOwner',
+    //     Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
+    //     totalQuantity: '$TotalQuantityData.Qty',
+    //     OperatorName: '$deliveryExecutiveName.name',
+    //     CGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
+    //     SGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
+    //   },
+    // },
   ]);
   return datas;
 };
@@ -987,8 +992,8 @@ module.exports = {
   getDetailsAfterDeliveryCompletion,
   getBillDetailsPerOrder,
   getReturnWDEtoWLE,
-  pettyStockSubmit,
-  // pettyCashSubmit,
+  // pettyStockSubmit,
+  pettyCashSubmit,
   getPettyStockDetails,
   getdetailsAboutPettyStockByGroupId,
   // uploadWastageImage,

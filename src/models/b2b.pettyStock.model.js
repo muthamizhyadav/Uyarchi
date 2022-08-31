@@ -45,8 +45,6 @@ const pettyStockSchema = new mongoose.Schema({
       UnDeliveredAsPerSystem: {
         type: Number,
       },
- 
-
 
 });
 

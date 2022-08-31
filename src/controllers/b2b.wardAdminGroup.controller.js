@@ -133,13 +133,13 @@ const getReturnWDEtoWLE = catchAsync(async (req, res) => {
   res.send(getReturnDetails);
 });
 
-const pettyStockSubmit = catchAsync(async (req, res) => {
-  const pettystock = await wardAdminGroupService.pettyStockSubmit(req.params.id, req.body);
-  res.send(pettystock);
-});
+// const pettyStockSubmit = catchAsync(async (req, res) => {
+//   const pettystock = await wardAdminGroupService.pettyStockSubmit( req.body);
+//   res.send(pettystock);
+// });
 
 const pettyCashSubmit = catchAsync(async (req, res) => {
-  const pettystock = await wardAdminGroupService.pettyStockSubmit(req.params.id, req.body);
+  const pettystock = await wardAdminGroupService.pettyCashSubmit(req.params.id, req.body);
   res.send(pettystock);
 });
 
@@ -255,7 +255,7 @@ module.exports = {
 
   getReturnWDEtoWLE,
 
-  pettyStockSubmit,
+  // pettyStockSubmit,
   pettyCashSubmit,
   orderCompleted,
   Deliverystart,

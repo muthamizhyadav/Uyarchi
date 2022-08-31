@@ -49,7 +49,7 @@ router.route('/get/BillDetails/perOrder/:id').get(wardAdminGroupController.getBi
 
 router.route('/get/returnWDEtoWLE/:id/:page').get(wardAdminGroupController.getReturnWDEtoWLE);
 
-router.route('/submit/pettyStockSubmit/:id').put(wardAdminGroupController.pettyStockSubmit);
+// router.route('/submit/pettyStockSubmit').post(wardAdminGroupController.pettyStockSubmit);
 
 router.route('/submit/pettyCashSubmit/:id').put(wardAdminGroupController.pettyCashSubmit);
 
