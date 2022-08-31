@@ -48,12 +48,12 @@ const createGroup = async (body) => {
 const updateOrderStatus = async (id, updateBody) => {
   let deliveryStatus = await ShopOrderClone.findById(id);
   console.log(deliveryStatus);
-  if (ShopOrderClone.customerDeliveryStatus === 'Pending') {
+  if (!deliveryStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
-  } else {
+  } 
     deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
     console.log(deliveryStatus);
-  }
+  
   return deliveryStatus;
 };
 
