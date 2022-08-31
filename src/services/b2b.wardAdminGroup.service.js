@@ -392,19 +392,19 @@ const getDeliveryOrderSeparate = async (id, page) => {
     //     customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
     //   { $unwind: '$shopDatas'},
     //   }
-      {
-        $project: {
-          type: "$Orderdatas.type",
-          orderId: "$Orderdatas.OrderId",
-          orderedDate: "$Orderdatas.date",
-          orderedTime: "$Orderdatas.time",
-          streetName: "$Orderdatas.street",
-          totalItems: "$Orderdatas.totalItems",
-          shopName: '$Orderdatas.shopName',
-          customerDeliveryStatus: "$shopDatas.customerDeliveryStatus",
-          shopordercloneId: "$shopDatas._id"
-        }
+    {
+      $project: {
+        type: '$Orderdatas.type',
+        orderId: '$Orderdatas.OrderId',
+        orderedDate: '$Orderdatas.date',
+        orderedTime: '$Orderdatas.time',
+        streetName: '$Orderdatas.street',
+        totalItems: '$Orderdatas.totalItems',
+        shopName: '$Orderdatas.shopName',
+        customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
+        shopordercloneId: '$shopDatas._id',
       },
+    },
 
     //   {
     //     $lookup: {
@@ -547,15 +547,6 @@ const getDetailsAfterDeliveryCompletion = async (id) => {
         $and: [{ deliveryExecutiveId: { $eq: id } }],
       },
     },
-    // {
-    //   $lookup: {
-    //     from: 'wardadmingroups',
-    //     localField: 'deliveryExecutiveId',
-    //     foreignField: 'deliveryExecutiveId',
-    //     as: 'datas'
-    //   }
-    // },
-    // { $unwind: '$datas'},
   ]);
   return values;
 };
@@ -659,17 +650,6 @@ const getReturnWDEtoWLE = async (id, page) => {
         as: 'detailsData',
       },
     },
-    // { $unwind: "$detailsData"},
-    // { $unwind: "$product"},
-    // {
-    //   $project: {
-    //     groupId:1,
-    //     manageDeliveryStatus:1,
-    //     pettyStock:1,
-    //     product: "$detailsData.product",
-    //     deleiveryStatus: "$detailsData.customerDeliveryStatus",
-    //   }
-    // },
 
     { $skip: 10 * page },
     { $limit: 10 },
@@ -737,20 +717,6 @@ const getdetailsAboutPettyStockByGroupId = async (id, page) => {
 
   return { details: details, total: total.length };
 };
-
-// const uploadWastageImage = async (id, body) => {
-//   let cate = await wardAdminGroup.findById(id);
-//   if (!cate) {
-//     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
-//   }
-//   cate = await wardAdminGroup.findByIdAndUpdate({ _id: id }, body, { new: true });
-//   return cate;
-// };
-
-// const uploadWastageImage = async (expBody) => {
-//   return wardAdminGroup.create(expBody);
-// };
-
 const getPettyCashDetails = async (id, page) => {
   let values = await wardAdminGroup.aggregate([
     {
@@ -808,17 +774,6 @@ const getPettyCashDetails = async (id, page) => {
   ]);
   return { values: values, total: total.length };
 };
-
-// const getStatus = async (id)=>{
-//   let data = await ShopOrderClone.aggregate([
-//     {
-//       $group: {
-//         _id: '$data.'
-//       }
-//     }
-
-//   ])
-// }
 
 const getAllGroup = async (page) => {
   let values = await wardAdminGroup.aggregate([
@@ -908,16 +863,6 @@ const getcashAmountViewFromDB = async (id) => {
         totalCash: { $sum: '$datas.total' },
       },
     },
-
-    // {
-    //   $project: {
-    //     totalCash:1,
-    //     _id:1,
-    //   //  totalCash: { $sum: "$cashTotal.overallTotal"}
-
-    //   },
-
-    // },
   ]);
 
   return values;
