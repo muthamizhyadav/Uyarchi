@@ -414,7 +414,7 @@ const createStock = async (stockbody) => {
 const getByBillId = async (billId) => {
   const bills = Stock.find({ billId });
   console.log(billId);
-  if (bills === null) {
+  if (bills === null || !bills) {
     throw new ApiError(httpStatus.NOT_FOUND, 'InCorrect BillId');
   }
   return bills;
@@ -470,7 +470,7 @@ const productDateTimeFilter = async (date) => {
           {
             $match: {
               $expr: {
-                $eq: ['$$productid', '$productid'], 
+                $eq: ['$$productid', '$productid'],
               },
             },
           },
@@ -494,7 +494,7 @@ const productDateTimeFilter = async (date) => {
           {
             $match: {
               $expr: {
-                $eq: ['$$productid', '$productid'], 
+                $eq: ['$$productid', '$productid'],
               },
             },
           },

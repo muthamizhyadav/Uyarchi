@@ -374,78 +374,90 @@ const getDeliveryOrderSeparate = async (id, page) => {
       },
     },
     {
-      $unwind: "$Orderdatas"
+      $unwind: '$Orderdatas',
     },
-      {
-        $lookup: {
-          from: 'shoporderclones',
-          localField: 'Orderdatas._id',
-          foreignField: '_id',
-          as: 'shopDatas'
-        }
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'Orderdatas._id',
+        foreignField: '_id',
+        as: 'shopDatas',
       },
-      { $unwind: '$shopDatas'},
-      {
-        $project: {
-          type: "$Orderdatas.type",
-          orderId: "$Orderdatas.OrderId",
-          orderedDate: "$Orderdatas.date",
-          orderedTime: "$Orderdatas.time",
-          streetName: "$Orderdatas.street",
-          totalItems: "$Orderdatas.totalItems",
-          shopName: '$Orderdatas.shopName',
-          customerDeliveryStatus: "$shopDatas.customerDeliveryStatus",
-          shopordercloneId: "$shopDatas._id"
-        }
+    },
+    { $unwind: '$shopDatas' },
+    // {
+    //   $project: {
+    //     type: '$Orderdatas.type',
+    //     orderId: '$Orderdatas.OrderId',
+    //     orderedDate: '$Orderdatas.date',
+    //     orderedTime: '$Orderdatas.time',
+    //     streetName: '$Orderdatas.street',
+    //     totalItems: '$Orderdatas.totalItems',
+    //     shopName: '$Orderdatas.shopName',
+    //     customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
+    //   { $unwind: '$shopDatas'},
+    //   }
+    {
+      $project: {
+        type: '$Orderdatas.type',
+        orderId: '$Orderdatas.OrderId',
+        orderedDate: '$Orderdatas.date',
+        orderedTime: '$Orderdatas.time',
+        streetName: '$Orderdatas.street',
+        totalItems: '$Orderdatas.totalItems',
+        shopName: '$Orderdatas.shopName',
+        customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
+        shopordercloneId: '$shopDatas._id',
       },
-      
-  //   {
-  //     $lookup: {
-  //       from: 'b2bshopclones',
-  //       localField: 'shopId',
-  //       foreignField: '_id',
-  //       as: 'shopData',
-  //     },
-  //   },
-  //   { $unwind: '$shopData' },
-  //   {
-  //     $lookup: {
-  //       from: 'streets',
-  //       localField: 'shopData.Strid',
-  //       foreignField: '_id',
-  //       as: 'streetsData',
-  //     },
-  //   },
-  //   { $unwind: '$streetsData' },
-  //   {
-  //     $lookup: {
-  //       from: 'productorderclones',
-  //       localField: '_id',
-  //       foreignField: 'orderId',
-  //       // pipeline: [
-  //       //     { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
-  //       // ],
-  //       as: 'orderData',
-  //     },
-  //   },
-  //   // { $unwind: '$orderData' },
-  //   {
-  //     $project: {
-  //       status: 1,
-  //       OrderId: 1,
-  //       shopId: 1,
-  //       date: 1,
-  //       time: 1,
-  //       OrderId: 1,
-  //       customerDeliveryStatus: 1,
-  //       deliveryExecutiveId: 1,
-  //       streetName: '$streetsData.street',
-  //       // Qty: "$orderData.Qty",
-  //       type: '$shopData.type',
-  //       // product:1,
-  //       totalItems: { $size: '$orderData' },
-  //     },
-  //   },
+    },
+
+    //   {
+    //     $lookup: {
+    //       from: 'b2bshopclones',
+    //       localField: 'shopId',
+    //       foreignField: '_id',
+    //       as: 'shopData',
+    //     },
+    //   },
+    //   { $unwind: '$shopData' },
+    //   {
+    //     $lookup: {
+    //       from: 'streets',
+    //       localField: 'shopData.Strid',
+    //       foreignField: '_id',
+    //       as: 'streetsData',
+    //     },
+    //   },
+    //   { $unwind: '$streetsData' },
+    //   {
+    //     $lookup: {
+    //       from: 'productorderclones',
+    //       localField: '_id',
+    //       foreignField: 'orderId',
+    //       // pipeline: [
+    //       //     { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
+    //       // ],
+    //       as: 'orderData',
+    //     },
+    //   },
+    //   // { $unwind: '$orderData' },
+    //   {
+    //     $project: {
+    //       status: 1,
+    //       OrderId: 1,
+    //       shopId: 1,
+    //       date: 1,
+    //       time: 1,
+    //       OrderId: 1,
+    //       customerDeliveryStatus: 1,
+    //       deliveryExecutiveId: 1,
+    //       streetName: '$streetsData.street',
+    //       // Qty: "$orderData.Qty",
+    //       type: '$shopData.type',
+    //       // product:1,
+    //       totalItems: { $size: '$orderData' },
+    //     },
+    //   },
 
     { $skip: 10 * page },
     { $limit: 10 },
@@ -457,17 +469,17 @@ const getDeliveryOrderSeparate = async (id, page) => {
       },
     },
     {
-      $unwind: "$Orderdatas"
+      $unwind: '$Orderdatas',
     },
-      {
-        $lookup: {
-          from: 'shoporderclones',
-          localField: 'Orderdatas._id',
-          foreignField: '_id',
-          as: 'shopDatas'
-        }
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'Orderdatas._id',
+        foreignField: '_id',
+        as: 'shopDatas',
       },
-      { $unwind: '$shopDatas'},
+    },
+    { $unwind: '$shopDatas' },
   ]);
   return { datas: datas, total: total.length };
 };
@@ -540,15 +552,6 @@ const getDetailsAfterDeliveryCompletion = async (id) => {
         $and: [{ deliveryExecutiveId: { $eq: id } }],
       },
     },
-    // {
-    //   $lookup: {
-    //     from: 'wardadmingroups',
-    //     localField: 'deliveryExecutiveId',
-    //     foreignField: 'deliveryExecutiveId',
-    //     as: 'datas'
-    //   }
-    // },
-    // { $unwind: '$datas'},
   ]);
   return values;
 };
@@ -593,21 +596,47 @@ const getBillDetailsPerOrder = async (id) => {
         as: 'deliveryExecutiveName',
       },
     },
-    // {
-    //   $unwind: '$deliveryExecutiveName',
-    // },
-    // {
-    //   $lookup: {
-    //     from: 'productorderclones',
-    //     localField: '_id',
-    //     foreignField: 'orderId',
-    //     pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
-    //     as: 'TotalQuantityData',
-    //   },
-    // },
-    // {
-    //   $unwind: '$TotalQuantityData',
-    // },
+    {
+      $unwind: '$deliveryExecutiveName',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
+        as: 'TotalQuantityData',
+      },
+    },
+    {
+      $unwind: '$TotalQuantityData',
+    },
+
+
+    {
+      $project: {
+        total: 1,
+        productName: '$product.productTitle',
+        Qty: '$product.quantity',
+        rate: '$product.priceperkg',
+        HSN_Code: '$product.HSN_Code',
+        GST_Number: '$product.GST_Number',
+        OrderId: 1,
+        billNo: 1,
+        billDate: 1,
+        billTime: 1,
+        shopName: '$details.SName',
+        address: '$details.address',
+        mobile: '$details.mobile',
+        shopType: '$details.type',
+        SOwner: '$details.SOwner',
+        Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
+        totalQuantity: '$TotalQuantityData.Qty',
+        OperatorName: '$deliveryExecutiveName.name',
+        CGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
+        SGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
+      },
+    },
 
     // {
     //   $project: {
@@ -629,10 +658,11 @@ const getBillDetailsPerOrder = async (id) => {
     //     Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
     //     totalQuantity: '$TotalQuantityData.Qty',
     //     OperatorName: '$deliveryExecutiveName.name',
-    //     CGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
-    //     SGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
+    //     CGSTAmount: { $divide: ['$product.GST_Number', 2] },
+    //     SGSTAmount: { $divide: ['$product.GST_Number', 2] },
     //   },
     // },
+
   ]);
   return datas;
 };
@@ -652,17 +682,6 @@ const getReturnWDEtoWLE = async (id, page) => {
         as: 'detailsData',
       },
     },
-    // { $unwind: "$detailsData"},
-    // { $unwind: "$product"},
-    // {
-    //   $project: {
-    //     groupId:1,
-    //     manageDeliveryStatus:1,
-    //     pettyStock:1,
-    //     product: "$detailsData.product",
-    //     deleiveryStatus: "$detailsData.customerDeliveryStatus",
-    //   }
-    // },
 
     { $skip: 10 * page },
     { $limit: 10 },
@@ -730,20 +749,6 @@ const getdetailsAboutPettyStockByGroupId = async (id, page) => {
 
   return { details: details, total: total.length };
 };
-
-// const uploadWastageImage = async (id, body) => {
-//   let cate = await wardAdminGroup.findById(id);
-//   if (!cate) {
-//     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
-//   }
-//   cate = await wardAdminGroup.findByIdAndUpdate({ _id: id }, body, { new: true });
-//   return cate;
-// };
-
-// const uploadWastageImage = async (expBody) => {
-//   return wardAdminGroup.create(expBody);
-// };
-
 const getPettyCashDetails = async (id, page) => {
   let values = await wardAdminGroup.aggregate([
     {
@@ -801,17 +806,6 @@ const getPettyCashDetails = async (id, page) => {
   ]);
   return { values: values, total: total.length };
 };
-
-// const getStatus = async (id)=>{
-//   let data = await ShopOrderClone.aggregate([
-//     {
-//       $group: {
-//         _id: '$data.'
-//       }
-//     }
-
-//   ])
-// }
 
 const getAllGroup = async (page) => {
   let values = await wardAdminGroup.aggregate([
@@ -901,36 +895,22 @@ const getcashAmountViewFromDB = async (id) => {
         totalCash: { $sum: '$datas.total' },
       },
     },
-
-
-    // {
-    //   $project: {
-    //     totalCash:1,
-    //     _id:1,
-    //   //  totalCash: { $sum: "$cashTotal.overallTotal"}
-
-    //   },
-
-    // },
-
   ]);
 
   return values;
 };
 
-const createDatasInPettyStockModel = async( id, updateBody) =>{
+const createDatasInPettyStockModel = async (id, updateBody) => {
   let datas = await getById(id);
 
-  if(!datas) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'not found')
+  if (!datas) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'not found');
   }
   datas = await pettyStockModel.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return datas;
-
 };
 
-
-const getPEttyCashQuantity = async (id) =>{
+const getPEttyCashQuantity = async (id) => {
   let values = await wardAdminGroup.aggregate([
     {
       $match: {
@@ -938,37 +918,38 @@ const getPEttyCashQuantity = async (id) =>{
       },
     },
     {
-      $unwind: '$Orderdatas'
+      $unwind: '$Orderdatas',
     },
     {
       $lookup: {
         from: 'shoporderclones',
         localField: 'Orderdatas._id',
         foreignField: '_id',
-        as: 'datas'
-      }
+        as: 'datas',
+      },
     },
     {
-      $unwind: '$datas'
+      $unwind: '$datas',
     },
-    
+
     {
       $project: {
-        product: "$datas.product"
-      }
+        product: '$datas.product',
+      },
     },
     {
-      $unwind: '$product'
+      $unwind: '$product',
     },
-    
-      { $group : {
-      _id : "$product.productTitle",
-      "Totalquantitysum" : { $sum : "$product.quantity" }
-  }}
-  
+
+    {
+      $group: {
+        _id: '$product.productTitle',
+        Totalquantitysum: { $sum: '$product.quantity' },
+      },
+    },
   ]);
   return values;
-}
+};
 
 module.exports = {
   getPEttyCashQuantity,
