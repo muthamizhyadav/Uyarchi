@@ -575,23 +575,23 @@ const getBillDetailsPerOrder = async (id) => {
         $and: [
           {
             _id: { $eq: id },
-          },``
+          },
         ],
       },
     },
     {
       $unwind: '$product',
     },
-    // {
+    {
       
-    //   $lookup: {
-    //     from: 'b2busers',
-    //     localField: 'Uid',
-    //     foreignField: '_id',
-    //     as: 'usersData',
-    //   },
-    // },
-    // { $unwind: '$usersData' },
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'usersData',
+      },
+    },
+    { $unwind: '$usersData' },
     {
       $lookup: {
         from: 'b2bshopclones',
@@ -601,55 +601,55 @@ const getBillDetailsPerOrder = async (id) => {
       },
     },
     { $unwind: '$details' },
-    // {
-    //   $lookup: {
-    //     from: 'b2busers',
-    //     localField: 'deliveryExecutiveId',
-    //     foreignField: '_id',
-    //     as: 'deliveryExecutiveName',
-    //   },
-    // },
-    // {
-    //   $unwind: '$deliveryExecutiveName',
-    // },
-    // {
-    //   $lookup: {
-    //     from: 'productorderclones',
-    //     localField: '_id',
-    //     foreignField: 'orderId',
-    //     pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
-    //     as: 'TotalQuantityData',
-    //   },
-    // },
-    // {
-    //   $unwind: '$TotalQuantityData',
-    // },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'deliveryExecutiveName',
+      },
+    },
+    {
+      $unwind: '$deliveryExecutiveName',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
+        as: 'TotalQuantityData',
+      },
+    },
+    {
+      $unwind: '$TotalQuantityData',
+    },
 
 
-    // {
-    //   $project: {
-    //     total: 1,
-    //     productName: '$product.productTitle',
-    //     Qty: '$product.quantity',
-    //     rate: '$product.priceperkg',
-    //     HSN_Code: '$product.HSN_Code',
-    //     GST_Number: '$product.GST_Number',
-    //     OrderId: 1,
-    //     billNo: 1,
-    //     billDate: 1,
-    //     billTime: 1,
-    //     shopName: '$details.SName',
-    //     address: '$details.address',
-    //     mobile: '$details.mobile',
-    //     shopType: '$details.type',
-    //     SOwner: '$details.SOwner',
-    //     Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
-    //     totalQuantity: '$TotalQuantityData.Qty',
-    //     OperatorName: '$deliveryExecutiveName.name',
-    //     CGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
-    //     SGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
-    //   },
-    // },
+    {
+      $project: {
+        total: 1,
+        productName: '$product.productTitle',
+        Qty: '$product.quantity',
+        rate: '$product.priceperkg',
+        HSN_Code: '$product.HSN_Code',
+        GST_Number: '$product.GST_Number',
+        OrderId: 1,
+        billNo: 1,
+        billDate: 1,
+        billTime: 1,
+        shopName: '$details.SName',
+        address: '$details.address',
+        mobile: '$details.mobile',
+        shopType: '$details.type',
+        SOwner: '$details.SOwner',
+        Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
+        totalQuantity: '$TotalQuantityData.Qty',
+        OperatorName: '$deliveryExecutiveName.name',
+        CGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
+        SGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
+      },
+    },
 
     
 
@@ -869,6 +869,9 @@ const getcashAmountViewFromDB = async (id) => {
       },
     },
     {
+      $unwind: '$Orderdatas'
+    },
+    {
       $lookup: {
         from: 'shoporderclones',
         localField: 'Orderdatas._id',
@@ -879,12 +882,24 @@ const getcashAmountViewFromDB = async (id) => {
     {
       $unwind: '$datas',
     },
+    
+    // {
+    //   $group: {
+    //     _id: '$datas.payType',
+    //     totalCash: { $sum: '$datas.total' },
+    //   },
+    // },
+    
     {
-      $group: {
-        _id: '$datas.payType',
-        totalCash: { $sum: '$datas.total' },
-      },
+      $project:{
+        pettyCash:1,
+        total: {
+          _id: '$datas.payType',
+              totalCash: { $sum: '$datas.total' },
+        }
+      }
     },
+   
   ]);
 
   return values;

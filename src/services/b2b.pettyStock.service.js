@@ -8,8 +8,6 @@ const pettyStockSubmit = async (body) => {
     return sample;
   }
 
-  
-  
 module.exports = {
     pettyStockSubmit,
 
