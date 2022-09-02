@@ -23,7 +23,7 @@ const createManagePickupLocation = async (body) => {
   return createpickuplocations;
 };
 
-const getAllManagepickup = async (page, userId) => {
+const getAllManagepickup = async (page) => {
   let values = await PickupLocation.aggregate([
     {
       $lookup: {
@@ -92,8 +92,8 @@ const getAllManagepickup = async (page, userId) => {
       $unwind: '$streetData',
     },
   ]);
-  let users = await Users.findOne({ _id: userId });
-  return { values: values, total: total.length, userName: users.name };
+
+  return { values: values, total: total.length };
 };
 
 const getManagePickupById = async (id) => {
