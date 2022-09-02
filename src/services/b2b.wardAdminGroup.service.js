@@ -575,7 +575,7 @@ const getBillDetailsPerOrder = async (id) => {
         $and: [
           {
             _id: { $eq: id },
-          },``
+          },
         ],
       },
     },
