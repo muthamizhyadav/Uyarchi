@@ -187,6 +187,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     type: String,
     default: 'Pending',
   },
+  completeStatus: {
+    type: String,
+    default: "Pending"
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
