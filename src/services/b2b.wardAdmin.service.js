@@ -112,21 +112,28 @@ const getproductdetails = async (id) => {
       },
     },
     {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        as: 'shopData',
-      },
+      $unwind: '$product',
     },
-    {
-      $unwind: '$shopData',
-    },
+    // {
+    //   $lookup: {
+    //     from: 'b2bshopclones',
+    //     localField: 'shopId',
+    //     foreignField: '_id',
+    //     as: 'shopData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$shopData',
+    // },
 
     {
       $project: {
         shopName: '$shopData.SName',
-        product: 1,
+        // product: 1,
+        productName: '$product.productTitle',
+        productId: "$product.productId",
+        priceperkg: "$product.priceperkg",
+        quantity:"$product.quantity",
         shopId: 1,
         status: 1,
         OrderId: 1,
@@ -157,12 +164,11 @@ const updateProduct = async (id, updateBody) => {
 
   await ProductorderClone.findByIdAndUpdate({ orderId: id }, updateBody, { new: true });
 
-  updateBody.datas.forEach(async (e) => {
-    let quantity = e.quantity;
-    let priceperkg = e.priceperkg;
-    await ShopOrderClone.findByIdAndUpdate({ quantity:quantity, priceperkg:priceperkg  }, { new: true });
-  
-  });
+  // updateBody.datas.forEach(async (e) => {
+  //   let quantity = e.quantity;
+  //   let priceperkg = e.priceperkg;
+  //   await ShopOrderClone.findByIdAndUpdate({ quantity:quantity, priceperkg:priceperkg  }, { new: true });
+  // });
   return product;
 }
 
