@@ -79,6 +79,7 @@ const getAllWithPagination = async (page, status) => {
         driverNumber: 1,
         weighBridgeEmpty: 1,
         weighBridgeLoadedProduct: 1,
+        created: 1,
         supplierId: 1,
         date: 1,
         time: 1,
