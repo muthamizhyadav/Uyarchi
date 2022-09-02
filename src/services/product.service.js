@@ -10,6 +10,9 @@ const moment = require('moment');
 const { isDate } = require('moment');
 let datenow = moment(new Date()).format('DD-MM-YYYY');
 const ReceivedProduct = require('../models/receivedProduct.model');
+const { MarketClone } = require('../models/market.model');
+const Trendproductsclones = require('../models/trendsProduct.clocne.model');
+
 const createProduct = async (productBody) => {
   let { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime, maxBidAomunt, minBidAmount } =
     productBody;
@@ -1312,6 +1315,8 @@ const removeImage = async (pid, index) => {
 };
 
 const rateSetSellingPrice = async (productId, date) => {
+  let dateFrom = moment(Date.now() - 7 * 24 * 3600 * 1000).format('DD-MM-YYYY');
+  console.log(dateFrom);
   let prod = await Product.aggregate([
     {
       $match: {
@@ -1345,17 +1350,17 @@ const rateSetSellingPrice = async (productId, date) => {
         from: 'trendproductsclones',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [
-          { $match: { date: date } },
-          {
-            $group: {
-              _id: null,
-              low: { $min: '$Rate' },
-              High: { $max: '$Rate' },
-              Avg: { $avg: '$Rate' },
-            },
-          },
-        ],
+        // pipeline: [
+        //   { $match: { date: {$gte: dateFrom } } },
+        //   // {
+        //   //   $group: {
+        //   //     _id: null,
+        //   //     low: { $min: '$Rate' },
+        //   //     High: { $max: '$Rate' },
+        //   //     Avg: { $avg: '$Rate' },
+        //   //   },
+        //   // },
+        // ],
         as: 'marketTrend',
       },
     },
@@ -1366,7 +1371,7 @@ const rateSetSellingPrice = async (productId, date) => {
       $project: {
         productTitle: 1,
         stock: 1,
-        // GST_Number: 1,
+        GST_Number: 1,
         // startPriceAvg: { $avg: '$salesmanPrice.start' },
         // startPriceHigh: { $max: '$salesmanPrice.start' },
         // startPriceLow: { $min: '$salesmanPrice.start' },
@@ -1376,12 +1381,15 @@ const rateSetSellingPrice = async (productId, date) => {
         // costPricewLow: '$receivedstocks.low',
         // costPricewHigh: '$receivedstocks.High',
         // costPricewAvg: '$receivedstocks.Avg',
-        marketTrendLow: '$marketTrend.low',
-        marketTrendHigh: '$marketTrend.High',
-        marketTrendAvg: '$marketTrend.Avg',
+        // marketTrendLow: '$marketTrend.low',
+        // marketTrendHigh: '$marketTrend.High',
+        marketTrend: '$marketTrend',
+        // marketTrendAvg: '$marketTrend.Avg',
       },
     },
   ]);
+  // let trens = await Trendproductsclones.find({ productId: productId });
+  // console.log(trens);
   return prod;
 };
 

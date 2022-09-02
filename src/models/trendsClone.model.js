@@ -55,6 +55,9 @@ const trendsCloneSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  timestamps: {
+    type: Date,
+  },
 });
 
 trendsCloneSchema.plugin(toJSON);

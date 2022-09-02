@@ -6,7 +6,7 @@ const moment = require('moment');
 const createTrendsClone = async (body) => {
   let servertime = moment().format('HHmm');
   let serverdate = moment().format('DD-MM-yyy');
-  let values = { ...body, ...{ date: serverdate, time: servertime } };
+  let values = { ...body, ...{ date: serverdate, time: servertime, timestamps: moment() } };
   const trendsClone = await TrendsClone.create(values);
   return trendsClone;
 };
