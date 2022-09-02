@@ -150,17 +150,20 @@ const getproductdetails = async (id) => {
 // };
 
 const updateProduct = async (id, updateBody) => {
-  let product = await getById(id);
+  let product = await ShopOrderClone.findById(id);
   if (!product){
     throw new ApiError(httpStatus.NOT_FOUND, 'not found');
   }
-  product = await ProductorderClone.findByIdAndUpdate({ orderId: id }, updateBody, { new: true });
-  updateBody.forEach(async (e) => {
+
+  await ProductorderClone.findByIdAndUpdate({ orderId: id }, updateBody, { new: true });
+
+  updateBody.datas.forEach(async (e) => {
     let quantity = e.quantity;
-   
-    
-    await ShopOrderClone.findByIdAndUpdate({ quantity:quantity  }, { new: true });
-  })
+    let priceperkg = e.priceperkg;
+    await ShopOrderClone.findByIdAndUpdate({ quantity:quantity, priceperkg:priceperkg  }, { new: true });
+  
+  });
+  return product;
 }
 
 

@@ -288,64 +288,68 @@ const getBillDetails = async (id) => {
         // totalAmount: '$datas.totalAmount',
         customerName: '$UserName.name',
         deliveryExecutiveName: '$b2busersData.name',
-        initialPaymentType: "$delivery.Payment"
+        initialPaymentType: "$delivery.Payment",
+        Amount : "$delivery.total",
       },
     },
   ]);
 
-//   let total = await wardAdminGroup.aggregate([
-//     {
-//       $match: {
-//         $and: [{ _id: { $eq: id } }],
-//       },
-//     },
-//     {
-//       $lookup: {
-//         from: 'shoporderclones',
-//         localField: 'deliveryExecutiveId',
-//         foreignField: 'deliveryExecutiveId',
-//         as: 'delivery',
-//       },
-//     },
-//     {
-//       $unwind: '$delivery',
-//     },
-//     {
-//       $lookup: {
-//         from: 'b2busers',
-//         localField: 'deliveryExecutiveId',
-//         foreignField: '_id',
-//         as: 'b2busersData',
-//       },
-//     },
-//     {
-//       $unwind: '$b2busersData',
-//     },
-//     {
-//       $unwind: '$Orderdatas',
-//     },
-//     {
-//       $lookup: {
-//         from: 'productorderclones',
-//         localField: 'delivery._id',
-//         foreignField: 'orderId',
-//         as: 'datas',
-//       },
-//     },
-//     {
-//       $lookup: {
-//         from: 'b2busers',
-//         localField: 'delivery.Uid',
-//         foreignField: '_id',
-//         as: 'UserName',
-//       },
-//     },
-//     {
-//       $unwind: '$UserName',
-//     },
-//   ]);
-//   return { values: values, total: total.length };
-return values;
+  let total = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
+      $unwind: '$Orderdatas',
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'Orderdatas._id',
+        foreignField: '_id',
+        as: 'delivery',
+      },
+    },
+    {
+      $unwind: '$delivery',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    // {
+    //   $unwind: '$Orderdatas',
+    // },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'delivery._id',
+        foreignField: 'orderId',
+        as: 'datas',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'delivery.Uid',
+        foreignField: '_id',
+        as: 'UserName',
+      },
+    },
+    {
+      $unwind: '$UserName',
+    },
+  ]);
+  return { values: values, total: total.length };
+// return values;
 };
 
 const assignOnly = async (page) => {
