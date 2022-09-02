@@ -869,6 +869,9 @@ const getcashAmountViewFromDB = async (id) => {
       },
     },
     {
+      $unwind: '$Orderdatas'
+    },
+    {
       $lookup: {
         from: 'shoporderclones',
         localField: 'Orderdatas._id',
@@ -879,12 +882,24 @@ const getcashAmountViewFromDB = async (id) => {
     {
       $unwind: '$datas',
     },
+    
+    // {
+    //   $group: {
+    //     _id: '$datas.payType',
+    //     totalCash: { $sum: '$datas.total' },
+    //   },
+    // },
+    
     {
-      $group: {
-        _id: '$datas.payType',
-        totalCash: { $sum: '$datas.total' },
-      },
+      $project:{
+        pettyCash:1,
+        total: {
+          _id: '$datas.payType',
+              totalCash: { $sum: '$datas.total' },
+        }
+      }
     },
+   
   ]);
 
   return values;
