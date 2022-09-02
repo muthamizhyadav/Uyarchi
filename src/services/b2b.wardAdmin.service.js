@@ -48,6 +48,8 @@ const getdetails =async (limit,page) => {
         shopId: 1,
         OrderId: 1,
         status: 1,
+        Payment: 1,
+        delivery_type:1,
         overallTotal: 1,
         name: '$userNameData.name',
 
@@ -138,14 +140,30 @@ const getproductdetails = async (id) => {
 
 // UPDATE PRODUCT DETAILS
 
+// const updateProduct = async (id, updateBody) => {
+//   let product = await ProductorderClone.findById(id);
+//   if (!product) {
+//     throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
+//   }
+//   product = await ProductorderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+//   return product;
+// };
+
 const updateProduct = async (id, updateBody) => {
-  let product = await ProductorderClone.findById(id);
-  if (!product) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
+  let product = await getById(id);
+  if (!product){
+    throw new ApiError(httpStatus.NOT_FOUND, 'not found');
   }
-  product = await ProductorderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-  return product;
-};
+  product = await ProductorderClone.findByIdAndUpdate({ orderId: id }, updateBody, { new: true });
+  updateBody.forEach(async (e) => {
+    let quantity = e.quantity;
+   
+    
+    await ShopOrderClone.findByIdAndUpdate({ quantity:quantity  }, { new: true });
+  })
+}
+
+
 
 const updateStatusApprovedOrModified = async (id , updateBody) =>{
   let product = await ShopOrderClone.findById(id);

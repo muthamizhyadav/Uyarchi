@@ -220,10 +220,13 @@ const getBillDetails = async (id) => {
       },
     },
     {
+      $unwind: '$Orderdatas',
+    },
+    {
       $lookup: {
         from: 'shoporderclones',
-        localField: 'deliveryExecutiveId',
-        foreignField: 'deliveryExecutiveId',
+        localField: 'Orderdatas._id',
+        foreignField: '_id',
         as: 'delivery',
       },
     },
@@ -241,9 +244,9 @@ const getBillDetails = async (id) => {
     {
       $unwind: '$b2busersData',
     },
-    {
-      $unwind: '$Orderdatas',
-    },
+    // {
+    //   $unwind: '$Orderdatas',
+    // },
     {
       $lookup: {
         from: 'productorderclones',
@@ -285,62 +288,64 @@ const getBillDetails = async (id) => {
         // totalAmount: '$datas.totalAmount',
         customerName: '$UserName.name',
         deliveryExecutiveName: '$b2busersData.name',
+        initialPaymentType: "$delivery.Payment"
       },
     },
   ]);
 
-  let total = await wardAdminGroup.aggregate([
-    {
-      $match: {
-        $and: [{ _id: { $eq: id } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'deliveryExecutiveId',
-        foreignField: 'deliveryExecutiveId',
-        as: 'delivery',
-      },
-    },
-    {
-      $unwind: '$delivery',
-    },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'deliveryExecutiveId',
-        foreignField: '_id',
-        as: 'b2busersData',
-      },
-    },
-    {
-      $unwind: '$b2busersData',
-    },
-    {
-      $unwind: '$Orderdatas',
-    },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: 'delivery._id',
-        foreignField: 'orderId',
-        as: 'datas',
-      },
-    },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'delivery.Uid',
-        foreignField: '_id',
-        as: 'UserName',
-      },
-    },
-    {
-      $unwind: '$UserName',
-    },
-  ]);
-  return { values: values, total: total.length };
+//   let total = await wardAdminGroup.aggregate([
+//     {
+//       $match: {
+//         $and: [{ _id: { $eq: id } }],
+//       },
+//     },
+//     {
+//       $lookup: {
+//         from: 'shoporderclones',
+//         localField: 'deliveryExecutiveId',
+//         foreignField: 'deliveryExecutiveId',
+//         as: 'delivery',
+//       },
+//     },
+//     {
+//       $unwind: '$delivery',
+//     },
+//     {
+//       $lookup: {
+//         from: 'b2busers',
+//         localField: 'deliveryExecutiveId',
+//         foreignField: '_id',
+//         as: 'b2busersData',
+//       },
+//     },
+//     {
+//       $unwind: '$b2busersData',
+//     },
+//     {
+//       $unwind: '$Orderdatas',
+//     },
+//     {
+//       $lookup: {
+//         from: 'productorderclones',
+//         localField: 'delivery._id',
+//         foreignField: 'orderId',
+//         as: 'datas',
+//       },
+//     },
+//     {
+//       $lookup: {
+//         from: 'b2busers',
+//         localField: 'delivery.Uid',
+//         foreignField: '_id',
+//         as: 'UserName',
+//       },
+//     },
+//     {
+//       $unwind: '$UserName',
+//     },
+//   ]);
+//   return { values: values, total: total.length };
+return values;
 };
 
 const assignOnly = async (page) => {
@@ -566,7 +571,7 @@ const getBillDetailsPerOrder = async (id) => {
         $and: [
           {
             _id: { $eq: id },
-          },
+          },``
         ],
       },
     },
@@ -574,6 +579,7 @@ const getBillDetailsPerOrder = async (id) => {
       $unwind: '$product',
     },
     // {
+      
     //   $lookup: {
     //     from: 'b2busers',
     //     localField: 'Uid',
@@ -582,15 +588,15 @@ const getBillDetailsPerOrder = async (id) => {
     //   },
     // },
     // { $unwind: '$usersData' },
-    // {
-    //   $lookup: {
-    //     from: 'b2bshopclones',
-    //     localField: 'usersData._id',
-    //     foreignField: 'Uid',
-    //     as: 'details',
-    //   },
-    // },
-    // { $unwind: '$details' },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'Uid',
+        foreignField: 'Uid',
+        as: 'details',
+      },
+    },
+    { $unwind: '$details' },
     // {
     //   $lookup: {
     //     from: 'b2busers',
