@@ -24,7 +24,30 @@ const createManagePickupLocation = async (body, userId) => {
 };
 
 const getAllManagepickup = async (userId, date, page) => {
+  let datematch = { active: { $eq: true } };
+  let usermatch = { active: { $eq: true } };
+  if (userId != 'null') {
+    usermatch = {
+      userId:  { $eq: userId },
+    };
+  }
+  if (date != 'null') {
+    datematch = {
+      date:  { $eq: date },
+    };
+  }
   let values = await PickupLocation.aggregate([
+    {
+      $sort: {
+        date: -1,
+        time: -1,
+      },
+    },
+    {
+      $match: {
+        $and: [datematch, usermatch],
+      },
+    },
     {
       $lookup: {
         from: 'wards',
@@ -69,6 +92,17 @@ const getAllManagepickup = async (userId, date, page) => {
     { $limit: 10 },
   ]);
   let total = await PickupLocation.aggregate([
+    {
+      $sort: {
+        date: -1,
+        time: -1,
+      },
+    },
+    {
+      $match: {
+        $and: [datematch, usermatch],
+      },
+    },
     {
       $lookup: {
         from: 'wards',
