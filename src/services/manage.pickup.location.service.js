@@ -6,7 +6,7 @@ const moment = require('moment');
 const { UserBindingPage } = require('twilio/lib/rest/ipMessaging/v2/service/user/userBinding');
 const { Users } = require('../models/B2Busers.model');
 
-const createManagePickupLocation = async (body) => {
+const createManagePickupLocation = async (body, userId) => {
   // let latlan = await axios.get(
   //   `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${body.address}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
   // );
@@ -18,7 +18,7 @@ const createManagePickupLocation = async (body) => {
   // let locations = latlan.data.results[0].geometry;
   // let latitude = locations.location.lat;
   // let langitude = locations.location.lng;
-  let values = { ...body, ...{ date: serverdate, time: servertime, created: moment() } };
+  let values = { ...body, ...{ date: serverdate, time: servertime, created: moment(), userId: userId } };
   const createpickuplocations = await PickupLocation.create(values);
   return createpickuplocations;
 };

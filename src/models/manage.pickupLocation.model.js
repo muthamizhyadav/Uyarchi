@@ -60,6 +60,9 @@ const managepickupLocationSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  userId: {
+    type: String,
+  },
 });
 
 const ManagePickupLocations = mongoose.model('ManagePickupLocations', managepickupLocationSchema);

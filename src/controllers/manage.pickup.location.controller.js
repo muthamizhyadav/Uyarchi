@@ -5,18 +5,20 @@ const catchAsync = require('../utils/catchAsync');
 const ManagePickupService = require('../services/manage.pickup.location.service');
 
 const createManagePickupLocation = catchAsync(async (req, res) => {
-  const pickuplocation = await ManagePickupService.createManagePickupLocation(req.body);
+  let userId = req.userId;
+  const pickuplocation = await ManagePickupService.createManagePickupLocation(req.body, userId);
   if (req.files) {
     req.files.forEach(function (files, index, arr) {
       pickuplocation.photoCapture.push('images/pickup/' + files.filename);
     });
   }
+
   res.send(pickuplocation);
   await pickuplocation.save();
 });
 
 const getAllManagepickup = catchAsync(async (req, res) => {
-    const pickuplocation = await ManagePickupService.getAllManagepickup(req.params.page);
+  const pickuplocation = await ManagePickupService.getAllManagepickup(req.params.page);
   res.send(pickuplocation);
 });
 
