@@ -1351,17 +1351,17 @@ const rateSetSellingPrice = async (productId, date, sedate) => {
         from: 'trendproductsclones',
         localField: '_id',
         foreignField: 'productId',
-        // pipeline: [
-        //   { $match: { date: sedate } },
-        //   {
-        //     $group: {
-        //       _id: null,
-        //       low: { $min: '$Rate' },
-        //       High: { $max: '$Rate' },
-        //       Avg: { $avg: '$Rate' },
-        //     },
-        //   },
-        // ],
+        pipeline: [
+          { $match: { date: sedate } },
+          {
+            $group: {
+              _id: null,
+              low: { $min: '$Rate' },
+              High: { $max: '$Rate' },
+              Avg: { $avg: '$Rate' },
+            },
+          },
+        ],
         as: 'marketTrend',
       },
     },
@@ -1383,7 +1383,7 @@ const rateSetSellingPrice = async (productId, date, sedate) => {
         costPricewAvg: '$receivedstocks.Avg',
         marketTrendLow: '$marketTrend.low',
         marketTrendHigh: '$marketTrend.High',
-        // historypacktypes: '$historypacktypes',
+        // historypacktypes: '$marketTrend',
         marketTrendAvg: '$marketTrend.Avg',
         receivedstocks: '$receivedstocks',
       },
