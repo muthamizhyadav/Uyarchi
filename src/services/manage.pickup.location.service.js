@@ -28,12 +28,12 @@ const getAllManagepickup = async (userId, date, page) => {
   let usermatch = { active: { $eq: true } };
   if (userId != 'null') {
     usermatch = {
-      userId:  { $eq: userId },
+      userId: { $eq: userId },
     };
   }
   if (date != 'null') {
     datematch = {
-      date:  { $eq: date },
+      date: { $eq: date },
     };
   }
   let values = await PickupLocation.aggregate([
@@ -78,6 +78,7 @@ const getAllManagepickup = async (userId, date, page) => {
         locationName: 1,
         ownerName: 1,
         address: 1,
+        contact: 1,
         photoCapture: 1,
         landMark: 1,
         latitude: 1,
