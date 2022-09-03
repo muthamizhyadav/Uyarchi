@@ -11,7 +11,7 @@ const createManagePickupLocation = async (body) => {
   //   `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${body.address}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
   // );
   let servertime = moment().format('HHmmss');
-  let serverdate = moment().format('YYY-MM-DD');
+  let serverdate = moment().format('YYYY-MM-DD');
   // if(latlan.data.results.length == 0){
   //   throw new ApiError(httpStatus.BAD_REQUEST, 'Address Not Valid');
   // }
