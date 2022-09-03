@@ -79,6 +79,7 @@ const getAllManagepickup = async (userId, date, page) => {
         ownerName: 1,
         address: 1,
         contact: 1,
+        created: 1,
         photoCapture: 1,
         landMark: 1,
         latitude: 1,
