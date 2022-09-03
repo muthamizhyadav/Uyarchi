@@ -1383,7 +1383,6 @@ const rateSetSellingPrice = async (productId, date, sedate) => {
         costPricewAvg: '$receivedstocks.Avg',
         marketTrendLow: '$marketTrend.low',
         marketTrendHigh: '$marketTrend.High',
-        // historypacktypes: '$marketTrend',
         marketTrendAvg: '$marketTrend.Avg',
         receivedstocks: '$receivedstocks',
       },

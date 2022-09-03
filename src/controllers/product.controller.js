@@ -438,8 +438,8 @@ const rateSetSellingPrice = catchAsync(async (req, res) => {
   res.send(values);
 });
 function compare(a, b) {
-  if (a.sadate > b.sadate) return 1;
-  if (a.sadate < b.sadate) return -1;
+  if (a.sadate > b.sadate) return -1;
+  if (a.sadate < b.sadate) return 1;
   return 0;
 }
 const productaggregateFilter = catchAsync(async (req, res) => {
