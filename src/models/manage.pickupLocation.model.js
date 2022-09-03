@@ -41,7 +41,7 @@ const managepickupLocationSchema = new mongoose.Schema({
     type: String,
   },
   time: {
-    type: String,
+    type: Number,
   },
   pick_Up_Type: {
     type: String,
@@ -52,6 +52,9 @@ const managepickupLocationSchema = new mongoose.Schema({
   active: {
     type: Boolean,
     default: true,
+  },
+  created: {
+    type: Date,
   },
   archive: {
     type: Boolean,

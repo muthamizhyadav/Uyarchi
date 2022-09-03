@@ -10,20 +10,20 @@ const createManagePickupLocation = async (body) => {
   // let latlan = await axios.get(
   //   `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${body.address}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
   // );
-  let servertime = moment().format('HHmm');
-  let serverdate = moment().format('DD-MM-yyy');
+  let servertime = moment().format('HHmmss');
+  let serverdate = moment().format('YYY-MM-DD');
   // if(latlan.data.results.length == 0){
   //   throw new ApiError(httpStatus.BAD_REQUEST, 'Address Not Valid');
   // }
   // let locations = latlan.data.results[0].geometry;
   // let latitude = locations.location.lat;
   // let langitude = locations.location.lng;
-  let values = { ...body, ...{ date: serverdate, time: servertime } };
+  let values = { ...body, ...{ date: serverdate, time: servertime, created: moment() } };
   const createpickuplocations = await PickupLocation.create(values);
   return createpickuplocations;
 };
 
-const getAllManagepickup = async (page) => {
+const getAllManagepickup = async (userId, date, page) => {
   let values = await PickupLocation.aggregate([
     {
       $lookup: {

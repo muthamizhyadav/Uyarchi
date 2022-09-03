@@ -1315,7 +1315,9 @@ const removeImage = async (pid, index) => {
 };
 
 const rateSetSellingPrice = async (productId, date) => {
+  let values = [];
   let dateFrom = moment(Date.now() - 7 * 24 * 3600 * 1000).format('DD-MM-YYYY');
+  
   console.log(dateFrom);
   let prod = await Product.aggregate([
     {
@@ -1350,17 +1352,17 @@ const rateSetSellingPrice = async (productId, date) => {
         from: 'trendproductsclones',
         localField: '_id',
         foreignField: 'productId',
-        // pipeline: [
-        //   { $match: { date: {$gte: dateFrom } } },
-        //   // {
-        //   //   $group: {
-        //   //     _id: null,
-        //   //     low: { $min: '$Rate' },
-        //   //     High: { $max: '$Rate' },
-        //   //     Avg: { $avg: '$Rate' },
-        //   //   },
-        //   // },
-        // ],
+        pipeline: [
+          { $match: { date: date } },
+          {
+            $group: {
+              _id: null,
+              low: { $min: '$Rate' },
+              High: { $max: '$Rate' },
+              Avg: { $avg: '$Rate' },
+            },
+          },
+        ],
         as: 'marketTrend',
       },
     },
@@ -1381,14 +1383,23 @@ const rateSetSellingPrice = async (productId, date) => {
         // costPricewLow: '$receivedstocks.low',
         // costPricewHigh: '$receivedstocks.High',
         // costPricewAvg: '$receivedstocks.Avg',
-        // marketTrendLow: '$marketTrend.low',
-        // marketTrendHigh: '$marketTrend.High',
-        marketTrend: '$marketTrend',
-        // marketTrendAvg: '$marketTrend.Avg',
+        marketTrendLow: '$marketTrend.low',
+        marketTrendHigh: '$marketTrend.High',
+        // marketTrend: '$marketTrend',
+        marketTrendAvg: '$marketTrend.Avg',
       },
     },
   ]);
-  // let trens = await Trendproductsclones.find({ productId: productId });
+
+  // let trens = await Trendproductsclones.find({
+  //   productId: productId,
+  //   timestamp: {
+  //     $gte: new Date(new Date() - 7 * 60 * 60 * 24 * 1000),
+  //   },
+  //   timestamp: {
+  //     $lte: new Date(new Date()),
+  //   },
+  // });
   // console.log(trens);
   return prod;
 };
