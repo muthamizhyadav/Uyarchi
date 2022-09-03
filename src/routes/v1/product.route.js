@@ -91,7 +91,7 @@ router.route('/AccountsDetails/:date/:page').get(productController.AccountDetail
 
 // rateSetSellingPrice
 
-router.route('/rateSetSellingPrice/consolidate/:productId/:date').get(productController.rateSetSellingPrice);
+router.route('/rateSetSellingPrice/consolidate/:productId').get(productController.rateSetSellingPrice);
 router.route('/product/existCheck/filter/:key').get(productController.productaggregateFilter);
 
 // stock segregation flow
