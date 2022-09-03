@@ -1314,7 +1314,7 @@ const removeImage = async (pid, index) => {
   return updateproduct;
 };
 
-const rateSetSellingPrice = async (productId, date, sedate) => {
+const rateSetSellingPrice = async (productId, date, sedate, day) => {
   return await Product.aggregate([
     {
       $match: {
@@ -1376,6 +1376,7 @@ const rateSetSellingPrice = async (productId, date, sedate) => {
       $project: {
         productTitle: 1,
         stock: 1,
+        day: day,
         date: sedate,
         sadate: date,
         costPricewLow: '$receivedstocks.low',

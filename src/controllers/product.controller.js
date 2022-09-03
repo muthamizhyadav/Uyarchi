@@ -430,7 +430,8 @@ const rateSetSellingPrice = catchAsync(async (req, res) => {
     let val = await productService.rateSetSellingPrice(
       req.params.productId,
       moment(daylist[i]).format('YYYY-MM-DD'),
-      moment(daylist[i]).format('DD-MM-YYYY')
+      moment(daylist[i]).format('DD-MM-YYYY'),
+      daylist[i]
     );
     values.push(val[0]);
   }
