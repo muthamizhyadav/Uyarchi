@@ -29,7 +29,7 @@ const updateUsableStockbyId = async (id, updateBody) => {
 };
 
 const getAssignStockbyId = async (id) => {
-  return await usableStock.aggregate([
+  return await UsableStock.aggregate([
     {
       $match: {
         $and: [{ _id: { $eq: id } }],
