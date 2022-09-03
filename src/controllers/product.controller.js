@@ -4,7 +4,7 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const productService = require('../services/product.service');
 const { Stock } = require('../models/product.model');
-
+const moment = require('moment');
 const createProduct = catchAsync(async (req, res) => {
   const { body } = req;
   const product = await productService.createProduct(body);
@@ -31,6 +31,12 @@ const createProduct = catchAsync(async (req, res) => {
   await product.save();
   res.status(httpStatus.CREATED).send(product);
 });
+var getDaysArray = function (start, end) {
+  for (var arr = [], dt = new Date(start); dt <= new Date(end); dt.setDate(dt.getDate() + 1)) {
+    arr.push(new Date(dt));
+  }
+  return arr;
+};
 
 const setTrendsValueforProduct = catchAsync(async (req, res) => {
   const product = await productService.setTrendsValueforProduct(req.params.id, req.body);
@@ -416,10 +422,26 @@ const removeImage = catchAsync(async (req, res) => {
 });
 
 const rateSetSellingPrice = catchAsync(async (req, res) => {
-  const product = await productService.rateSetSellingPrice(req.params.productId, req.params.date);
-  res.send(product);
+  let values = [];
+  let dateFrom = moment(Date.now() - 6 * 24 * 3600 * 1000).format('YYYY-MM-DD');
+  var daylist = getDaysArray(new Date(dateFrom), new Date(moment().format('YYYY-MM-DD')));
+  daylist.map((v) => v.toISOString().slice(0, 10)).join('');
+  for (let i = 0; i < daylist.length; i++) {
+    let val = await productService.rateSetSellingPrice(
+      req.params.productId,
+      moment(daylist[i]).format('YYYY-MM-DD'),
+      moment(daylist[i]).format('DD-MM-YYYY')
+    );
+    values.push(val[0]);
+  }
+  values.sort(compare);
+  res.send(values);
 });
-
+function compare(a, b) {
+  if (a.sadate > b.sadate) return 1;
+  if (a.sadate < b.sadate) return -1;
+  return 0;
+}
 const productaggregateFilter = catchAsync(async (req, res) => {
   const product = await productService.productaggregateFilter(req.params.key);
   res.send(product);

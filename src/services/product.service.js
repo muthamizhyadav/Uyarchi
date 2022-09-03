@@ -1314,94 +1314,81 @@ const removeImage = async (pid, index) => {
   return updateproduct;
 };
 
-const rateSetSellingPrice = async (productId, date) => {
-  let values = [];
-  let dateFrom = moment(Date.now() - 7 * 24 * 3600 * 1000).format('DD-MM-YYYY');
-  
-  console.log(dateFrom);
-  let prod = await Product.aggregate([
+const rateSetSellingPrice = async (productId, date, sedate) => {
+  return await Product.aggregate([
     {
       $match: {
         _id: { $eq: productId },
       },
     },
-    // {
-    //   $lookup: {
-    //     from: 'receivedstocks',
-    //     localField: '_id',
-    //     foreignField: 'productId',
-    //     pipeline: [
-    //       { $match: { date: date } },
-    //       {
-    //         $group: {
-    //           _id: null,
-    //           low: { $min: '$billingPrice' },
-    //           High: { $max: '$billingPrice' },
-    //           Avg: { $avg: '$billingPrice' },
-    //         },
-    //       },
-    //     ],
-    //     as: 'receivedstocks',
-    //   },
-    // },
-    // {
-    //   $unwind: '$receivedstocks',
-    // },
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          { $match: { date: date, status: 'Billed' } },
+          {
+            $group: {
+              _id: null,
+              low: { $min: '$billingPrice' },
+              High: { $max: '$billingPrice' },
+              Avg: { $avg: '$billingPrice' },
+            },
+          },
+        ],
+        as: 'receivedstocks',
+      },
+    },
+    {
+      $unwind: {
+        path: '$receivedstocks',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $lookup: {
         from: 'trendproductsclones',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [
-          { $match: { date: date } },
-          {
-            $group: {
-              _id: null,
-              low: { $min: '$Rate' },
-              High: { $max: '$Rate' },
-              Avg: { $avg: '$Rate' },
-            },
-          },
-        ],
+        // pipeline: [
+        //   { $match: { date: sedate } },
+        //   {
+        //     $group: {
+        //       _id: null,
+        //       low: { $min: '$Rate' },
+        //       High: { $max: '$Rate' },
+        //       Avg: { $avg: '$Rate' },
+        //     },
+        //   },
+        // ],
         as: 'marketTrend',
       },
     },
     {
-      $unwind: '$marketTrend',
+      $unwind: {
+        path: '$marketTrend',
+        preserveNullAndEmptyArrays: true,
+      },
     },
+
     {
       $project: {
         productTitle: 1,
         stock: 1,
-        GST_Number: 1,
-        // startPriceAvg: { $avg: '$salesmanPrice.start' },
-        // startPriceHigh: { $max: '$salesmanPrice.start' },
-        // startPriceLow: { $min: '$salesmanPrice.start' },
-        // endPriceAvg: { $avg: '$salesmanPrice.end' },
-        // endPriceHigh: { $max: '$salesmanPrice.end' },
-        // endPriceLow: { $min: '$salesmanPrice.end' },
-        // costPricewLow: '$receivedstocks.low',
-        // costPricewHigh: '$receivedstocks.High',
-        // costPricewAvg: '$receivedstocks.Avg',
+        date: sedate,
+        sadate: date,
+        costPricewLow: '$receivedstocks.low',
+        costPricewHigh: '$receivedstocks.High',
+        costPricewAvg: '$receivedstocks.Avg',
         marketTrendLow: '$marketTrend.low',
         marketTrendHigh: '$marketTrend.High',
-        // marketTrend: '$marketTrend',
+        // historypacktypes: '$historypacktypes',
         marketTrendAvg: '$marketTrend.Avg',
+        receivedstocks: '$receivedstocks',
       },
     },
   ]);
-
-  // let trens = await Trendproductsclones.find({
-  //   productId: productId,
-  //   timestamp: {
-  //     $gte: new Date(new Date() - 7 * 60 * 60 * 24 * 1000),
-  //   },
-  //   timestamp: {
-  //     $lte: new Date(new Date()),
-  //   },
-  // });
-  // console.log(trens);
-  return prod;
 };
 
 const productaggregateFilter = async (key) => {
