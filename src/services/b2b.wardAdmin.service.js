@@ -12,8 +12,24 @@ const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model
 // GET DETAILS
 
 
-const getdetails =async (limit,page) => {
+const getdetails =async (limit,page,status) => {
+  let statusMatch = { active: { $eq: true }};
+  if(status != 'null'){
+    statusMatch = {
+      status: { $eq: status}
+    };
+  }
   let values = await ShopOrderClone.aggregate([
+    {
+      $sort: {
+        status: 1,
+      }
+    },
+    {
+      $match: {
+        $and: [statusMatch]
+      }
+    },
     {
       $lookup: {
         from: 'b2bshopclones',
@@ -156,21 +172,46 @@ const getproductdetails = async (id) => {
 //   return product;
 // };
 
-const updateProduct = async (id, updateBody) => {
-  let product = await ShopOrderClone.findById(id);
-  if (!product){
-    throw new ApiError(httpStatus.NOT_FOUND, 'not found');
-  }
+// const updateProduct = async (id, updateBody) => {
+//   let product = await ProductorderClone.findById(id);
+//   console.log(updateBody)
+//   // if (!product){
+//   //   console.log(product)
+//   //   throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
+//   // }
+//   let products = await ProductorderClone.findByIdAndUpdate({ orderId: id },updateBody, { new: true });
 
-  await ProductorderClone.findByIdAndUpdate({ orderId: id }, updateBody, { new: true });
+//   updateBody.forEach(async (e) => {
+//     let quantity = e.quantity;
+//     let priceperkg = e.priceperkg;
+//     await ShopOrderClone.findByIdAndUpdate({ quantity:quantity, priceperkg:priceperkg  }, { new: true });
+//   });
+//   return products;
+// }
 
-  // updateBody.datas.forEach(async (e) => {
-  //   let quantity = e.quantity;
-  //   let priceperkg = e.priceperkg;
-  //   await ShopOrderClone.findByIdAndUpdate({ quantity:quantity, priceperkg:priceperkg  }, { new: true });
-  // });
-  return product;
-}
+
+// const updateProduct = async(  orderId ,id , updateBody) =>{
+  
+//   let products = await ProductorderClone.update( { orderId:orderId , productid:id  } ,  { $set: { quantity:updateBody.quantity, priceperkg: updateBody.priceperkg} }, { new: true});
+//   console.log(products)
+//   updateBody.product.forEach(async (e) =>{
+//     let quantity = e.quantity; 
+//     let priceperkg = e.priceperkg;
+//    await ShopOrderClone.update( { _id:orderId , productid:id }, { $set: { quantity:quantity, priceperkg: priceperkg} }, { new: true});
+//   })
+
+//  return products;
+// }
+
+const updateProduct = async (orderId,id, updateBody) => {
+  // let productModify = await ProductorderClone.update(orderId,id );
+  //   if (!productModify) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
+  // }
+  productModify = await ProductorderClone.update({ orderId: orderId ,productid:id  }, updateBody, { new: true });
+  return productModify;
+};
+
 
 
 
@@ -186,24 +227,6 @@ const updateStatusApprovedOrModified = async (id , updateBody) =>{
 //  UPDATE STATUS REJECTION
 
 const updateRejected = async (body) => {
-  // let rejected = await ShopOrderClone.findById(id);
-  // console.log(rejected);
-  // if (!rejected) {
-  //   throw new ApiError(httpStatus.NOT_FOUND, ' not found');
-  // }
-  // rejected = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
-  // console.log(rejected);
-  // return rejected;
-  // statusUpdate = await ShopOrderClone.updateMany(  { $set: { status: "Acknowledged"}})
-  // return statusUpdate;
-
-  // var IdDatas = [];
-  // IdDatas.forEach(async (e) =>{
-  //   await ShopOrderClone.findByIdAndUpdate( {status: "Acknowledged"});
-
-  // });
-  // return "successfully Updated";
-
   let { arr } = JSON.stringify(body);
   console.log(body);
   body.arr.forEach(async (e) => {
@@ -212,6 +235,26 @@ const updateRejected = async (body) => {
 
   return 'status updated successfully';
 };
+
+const updateApprovedMultiSelect = async(body)=>{
+  let {arr} = JSON.stringify(body);
+  console.log(body);
+  body.arr.forEach(async (e) => {
+    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Approved' }, { new: true });
+  });
+
+  return 'status updated successfully';
+}
+
+const updateRejectMultiSelect = async (body) =>{
+  let {arr} = JSON.stringify(body);
+  console.log(body);
+  body.arr.forEach(async (e) => {
+    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Rejected' }, { new: true });
+  });
+
+  return 'status updated successfully';
+}
 
 const updateAcknowledgeSingle = async (id, updateBody) => {
   let product = await ShopOrderClone.findById(id);
@@ -581,4 +624,6 @@ module.exports = {
   updateStatusApprovedOrModified,
 
   updateAcknowledgeSingle,
+  updateApprovedMultiSelect,
+  updateRejectMultiSelect,
 };

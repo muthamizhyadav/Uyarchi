@@ -8,45 +8,87 @@ const wardAdminGroupDetailsSchema = new mongoose.Schema({
     type: String,
     default: v4,
   },
-  productid: {
+  wardAdminId: {
     type: String,
-  },
-  quantity: {
+},
+product: {
+    type: String,
+},
+
+
+totalQtyIncludingPettyStock: {
+    type: Number,
+},
+pettyStockReceiveStatus: {
+    type: String,
+    default: "Pending"
+},
+  stockReturnedByWDE: {
     type: Number,
   },
-  priceperkg: {
+  wastageReturnedByWDE: {
     type: Number,
   },
-  wardadmingroupsId: {
+  wastageImageUpload: {
     type: String,
   },
-  userId: {
-    type: String,
+  mismatch: {
+    type: Number,
+  },
+  DeliverAsPerSystem: {
+    type: Number,
+  },
+  UnDeliveredAsPerSystem: {
+    type: Number,
   },
   date: {
     type: String,
+    default: moment().utcOffset(331).format('DD-MM-yyy'),
   },
   time: {
     type: String,
+    default: moment().utcOffset(331).format('h:mm a'),
   },
-  active: {
-    type: Boolean,
-    default: true,
-  },
-  orderedTime: {
-    type: String,
-  },
-  archive: {
-    type: Boolean,
-    default: false,
-  },
-  pettyStockData: {
-    type: Array,
-    default: [],
-  },
-  groupId: {
-    type: String,
-  },
+
+  // productid: {
+  //   type: String,
+  // },
+  // quantity: {
+  //   type: Number,
+  // },
+  // priceperkg: {
+  //   type: Number,
+  // },
+  // wardadmingroupsId: {
+  //   type: String,
+  // },
+  // userId: {
+  //   type: String,
+  // },
+  // date: {
+  //   type: String,
+  // },
+  // time: {
+  //   type: String,
+  // },
+  // active: {
+  //   type: Boolean,
+  //   default: true,
+  // },
+  // orderedTime: {
+  //   type: String,
+  // },
+  // archive: {
+  //   type: Boolean,
+  //   default: false,
+  // },
+  // // pettyStockData: {
+  // //   type: Array,
+  // //   default: [],
+  // // },
+  // // groupId: {
+  // //   type: String,
+  // // },
 });
 
 const wardAdminGroupDetailsModel = mongoose.model('wardAdminGroupDetails', wardAdminGroupDetailsSchema);

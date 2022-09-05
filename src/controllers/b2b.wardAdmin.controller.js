@@ -15,7 +15,7 @@ const createArrayData = catchAsync(async (req, res)=>{
 });
 
 const getDetails = catchAsync(async (req, res) => {
-  const details = await wardAdminService.getdetails( req.params.limit, req.params.page);
+  const details = await wardAdminService.getdetails( req.params.limit, req.params.page,req.params.status);
   res.send(details);
 });
 
@@ -30,7 +30,7 @@ const getproductDetails = catchAsync(async (req, res) => {
 // })
 
 const updateProduct = catchAsync(async (req, res) => {
-  const product = await wardAdminService.updateProduct(req.params.id, req.body);
+  const product = await wardAdminService.updateProduct(req.params.orderId,req.params.id, req.body);
   res.send(product);
 });
 
@@ -42,6 +42,14 @@ const deliveryexecutive = catchAsync(async (req, res) => {
 const updateAcknowledge = catchAsync(async (req, res) => {
   const acknowledgement = await wardAdminService.updateRejected(req.body);
   res.send(acknowledgement);
+});
+const updateApproval = catchAsync(async (req, res) => {
+  const approval = await wardAdminService.updateApprovedMultiSelect(req.body);
+  res.send(approval);
+});
+const updateRejectionStatus = catchAsync(async (req, res) => {
+  const rejected = await wardAdminService.updateRejectMultiSelect(req.body);
+  res.send(rejected);
 });
 
 const updateApproved = catchAsync(async (req, res) => {
@@ -121,4 +129,6 @@ module.exports = {
   createArrayData,
 
   updateAcknowledgeSingle,
+  updateApproval,
+  updateRejectionStatus,
 };

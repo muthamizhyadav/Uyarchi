@@ -4,13 +4,17 @@ const router = express.Router();
 
 router.route('/create/data').post(wardAdminController.createdata);
 
-router.route('/getDetails/:limit/:page').get(wardAdminController.getDetails);
+router.route('/getDetails/:limit/:page/:status').get(wardAdminController.getDetails);
 
 router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 
-router.route('/updateProductById/:id').put(wardAdminController.updateProduct);
+router.route('/updateProductById/:orderId/:id').put(wardAdminController.updateProduct);
 
 router.route('/updateAcknowledge').put(wardAdminController.updateAcknowledge);
+
+router.route('/updateApproved').put(wardAdminController.updateApproval);
+
+router.route('/updateRejected').put(wardAdminController.updateRejectionStatus);
 
 router.route('/updateApproved/:id').put(wardAdminController.updateApproved);
 
@@ -28,8 +32,6 @@ router.route('/wardloadingExecutive/getdetails/:page').get(wardAdminController.w
 
 
 router.route('/wardloadingExecutive/getPackedProductDetails/:page').get(wardAdminController.wardloadExecutivePacked)
-
-
 
 router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
 
