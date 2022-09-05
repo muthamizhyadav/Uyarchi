@@ -224,24 +224,16 @@ const returnStock = catchAsync(async (req, res) => {
 });
 
 const uploadWastageImage = catchAsync(async (req, res) => {
-  const { body } = req;
-  const product = await wardAdminGroupService.uploadWastageImage(body);
-  
+ 
+  const returnStock = await wardAdminGroupService.uploadWastageImage(req.body);
   if (req.files) {
-    let path = '';
-    path = 'images/';
-    if (req.files.image != null) {
-      product.image = path + req.files.image[0].filename;
-    }
-
-    if (req.files.galleryImages != null) {
-      req.files.galleryImages.forEach((e) => {
-        product.galleryImages.push(path + e.filename);
-      });
-    }
+    req.files.forEach(function (files, index, arr) {
+      returnStock.wastageImageUpload.push('images/returnStockWastage/' + files.filename);
+    });
   }
-  await product.save();
-  res.  status(httpStatus.CREATED).send(product);
+
+  res.send(returnStock);
+  await returnStock.save();
 });
 
 

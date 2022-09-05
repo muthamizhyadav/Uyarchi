@@ -30,7 +30,7 @@ pettyStockReceiveStatus: {
     type: Number,
   },
   wastageImageUpload: {
-    type: String,
+    type: Array,
   },
   mismatch: {
     type: Number,
@@ -49,6 +49,10 @@ pettyStockReceiveStatus: {
     type: String,
     default: moment().utcOffset(331).format('h:mm a'),
   },
+
+  wardAdminGroupModelId: {
+    type: String,
+  }
 
   // productid: {
   //   type: String,

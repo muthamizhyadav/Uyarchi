@@ -127,29 +127,53 @@ const getproductdetails = async (id) => {
         $and: [{ _id: { $eq: id } }],
       },
     },
+    // {
+    //   $unwind: '$product',
+    // },
     {
-      $unwind: '$product',
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'productData'
+      }
     },
-    // {
-    //   $lookup: {
-    //     from: 'b2bshopclones',
-    //     localField: 'shopId',
-    //     foreignField: '_id',
-    //     as: 'shopData',
-    //   },
-    // },
-    // {
-    //   $unwind: '$shopData',
-    // },
+    {
+      $unwind: '$productData'
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productData.productid',
+        foreignField: '_id',
+        as: 'nameData'
+      }
+    },
+    {
+      $unwind: '$nameData'
+
+    },
+   
 
     {
       $project: {
         shopName: '$shopData.SName',
         // product: 1,
-        productName: '$product.productTitle',
-        productId: "$product.productId",
-        priceperkg: "$product.priceperkg",
-        quantity:"$product.quantity",
+        productName: '$nameData.productTitle',
+        productId: "$productData.productId",
+        finalPricePerKg: "$productData.finalPricePerKg",
+        finalQuantity:"$productData.finalQuantity",
         shopId: 1,
         status: 1,
         OrderId: 1,

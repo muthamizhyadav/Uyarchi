@@ -1,6 +1,8 @@
 const express = require('express');
 const wardAdminGroupController = require('../../controllers/b2b.wardAdminGroup.controller');
+const returnStockWastage = require('../../middlewares/returnStockWastage');
 const router = express.Router();
+
 
 router.route('/craeteGroupId').post(wardAdminGroupController.createGroupOrder);
 
@@ -87,7 +89,7 @@ router.route('/Update/create/pettyStock/details/:id').put(wardAdminGroupControll
 
 router.route('/get/details/pettyCash/:id').get(wardAdminGroupController.getPEttyCashQuantity);
 
-router.route('/create/detatisl/About/pettyStock/returnstock').post(wardAdminGroupController.uploadWastageImage);
+router.route('/create/detatisl/About/pettyStock/returnstock').post(returnStockWastage.array('wastageImageUpload'),wardAdminGroupController.uploadWastageImage);
 
 router.route('/get/return/stock/:id').get(wardAdminGroupController.returnStock);
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
