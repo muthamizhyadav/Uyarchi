@@ -1,30 +1,30 @@
 const httpStatus = require('http-status');
-const { UsableStock } = require('../models/usableStock.model');
+const { usableStock } = require('../models/usableStock.model');
 const ApiError = require('../utils/ApiError');
 
-const createUsableStock = async (body) => {
-  let usable = await UsableStock.create(body);
+const createusableStock = async (body) => {
+  let usable = await usableStock.create(body);
   return usable;
 };
 
-const getAllUsableStock = async () => {
-  return await UsableStock.find();
+const getAllusableStock = async () => {
+  return await usableStock.find();
 };
 
-const getUsableStockById = async (id) => {
-  let usable = await UsableStock.findById(id);
+const getusableStockById = async (id) => {
+  let usable = await usableStock.findById(id);
   if (!usable || usable.active == false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Usable Stock Not Found');
   }
   return usable;
 };
 
-const updateUsableStockbyId = async (id, updateBody) => {
-  let usable = await UsableStock.findById(id);
+const updateusableStockbyId = async (id, updateBody) => {
+  let usable = await usableStock.findById(id);
   if (!usable || usable.active == false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Usable Stock Not Found');
   }
-  usable = await UsableStock.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  usable = await usableStock.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return usable;
 };
 
@@ -39,7 +39,7 @@ const getAssignStockbyId = async (id) => {
       $lookup: {
         from: 'assignstocks',
         localField: '_id',
-        foreignField: 'usablestockId',
+        foreignField: 'usableStockId',
         pipeline: [{ $match: { type: 'b2b' } }, { $group: { _id: null, Total: { $sum: '$quantity' } } }],
         as: 'b2bAssign',
       },
@@ -48,7 +48,7 @@ const getAssignStockbyId = async (id) => {
       $lookup: {
         from: 'assignstocks',
         localField: '_id',
-        foreignField: 'usablestockId',
+        foreignField: 'usableStockId',
         pipeline: [{ $match: { type: 'b2c' } }, { $group: { _id: null, Total: { $sum: '$quantity' } } }],
         as: 'b2cAssign',
       },
@@ -57,7 +57,7 @@ const getAssignStockbyId = async (id) => {
       $lookup: {
         from: 'assignstocks',
         localField: '_id',
-        foreignField: 'usablestockId',
+        foreignField: 'usableStockId',
         as: 'assignHistory',
       },
     },
@@ -95,9 +95,9 @@ const getAssignStockbyId = async (id) => {
 };
 
 module.exports = {
-  createUsableStock,
-  getAllUsableStock,
-  getUsableStockById,
-  updateUsableStockbyId,
+  createusableStock,
+  getAllusableStock,
+  getusableStockById,
+  updateusableStockbyId,
   getAssignStockbyId,
 };
