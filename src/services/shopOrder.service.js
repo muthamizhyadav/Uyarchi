@@ -147,6 +147,8 @@ const getShopOrderCloneById = async (id) => {
               HSN_Code: 1,
               packtypeId: 1,
               packKg: 1,
+              Uid: 1,
+              shopId: 1,
               unit: 1,
               productName: '$products.productTitle',
               created: 1,
