@@ -178,6 +178,18 @@ const returnStock = async (id) => {
 
     {
       $lookup: {
+        from: 'pettystockmodels',
+        localField:'_id',
+        foreignField: 'productId',
+        as: 'totalpetty',
+      }
+    },
+    {
+      $unwind: "$totalpetty"
+    },
+
+    {
+      $lookup: {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'productid',
@@ -199,7 +211,7 @@ const returnStock = async (id) => {
                     from: 'orderassigns',
                     localField: '_id',
                     foreignField: 'orderId',
-                    pipeline: [{ $match: { wardAdminGroupID: id } }],
+                    pipeline: [{ $match: { wardAdminGroupID: id }}, ],
                     as: 'orderassigns',
                   },
                 },
@@ -214,14 +226,21 @@ const returnStock = async (id) => {
           {
             $unwind: "$shoporderclones"
           },
-
           {
             $group: {
               _id: null,
-              Qty: { $sum: '$quantity' },
+              Qty: { $sum: '$finalQuantity' },
               finalQuantity: { $sum: '$finalPricePerKg' }
             }
           },
+        //   {
+        //     $group: { _id: null, Qty: { 
+        //         $sum: { 
+        //                 $eq: ['$finalQuantity', 0] 
+        //             }
+        //     }
+        //   }
+        // }
         ],
         as: 'productorderclones',
       },
@@ -235,6 +254,19 @@ const returnStock = async (id) => {
     },
 
     //  Un Delivered count
+
+
+    {
+      $lookup: {
+        from: 'pettystockmodels',
+        localField:'_id',
+        foreignField: 'productId',
+        as: 'totalpetty',
+      }
+    },
+    {
+      $unwind: "$totalpetty"
+    },
 
     {
       $lookup: {
@@ -259,13 +291,16 @@ const returnStock = async (id) => {
                     from: 'orderassigns',
                     localField: '_id',
                     foreignField: 'orderId',
-                    pipeline: [{ $match: { wardAdminGroupID: id } }],
+                    pipeline: [{ $match: { wardAdminGroupID: id } },
+
+                    ],
                     as: 'orderassigns',
                   },
                 },
                 {
                   $unwind: "$orderassigns"
                 },
+
 
               ],
               as: 'shoporderclonesData',
@@ -275,14 +310,21 @@ const returnStock = async (id) => {
             $unwind: "$shoporderclonesData"
           },
 
-
           {
             $group: {
               _id: null,
-              UnQty: { $sum: '$quantity' },
+              UnQty: { $sum: '$finalQuantity' },
               UnfinalQuantity: { $sum: '$finalPricePerKg' }
             }
           },
+        //   {
+        //     $group: { _id: null, UnQty: { 
+        //         $sum: { 
+        //                 $eq: ['$finalQuantity', 0] 
+        //             }
+        //     }
+        //   }
+        // }
         ],
         as: 'productorderclonesData',
       },
@@ -299,21 +341,32 @@ const returnStock = async (id) => {
       $project: {
         _id: 1,
         productTitle: 1,
-        initialQuantity: '$productorderclones.Qty',
-        finalQuantity: "$productorderclones.finalQuantity",
+        productid:1,
+        pettyStock: "$totalpetty.pettyStock",
+        custoQtyPetty: "$totalpetty.totalQtyIncludingPettyStock",
+        DeliveryQuantity: '$productorderclones.Qty'   ,
+       
         productorderclones: { $eq: ['$productorderclones._id', null] },
-        UndelQty: "$productorderclonesData.UnQty",
-        UndelfinalQuantity: "$productorderclonesData.UnfinalQuantity",
+        UndeliveryQuantity: "$productorderclonesData.UnQty" ,
+      //   UndeliveryQuantity:{ 
+      //     $sum: { 
+      //             $or: ['$productorderclonesData.UnQty', 0] 
+      //         }
+      // },
+        
+        // UndeliveredPerSystem: { $subtract: [ "$totalpetty.totalQtyIncludingPettyStock", "$productorderclones.Qty"] }, 
+        
+   
+        
         productorderclonesData: { $eq: ['$productorderclonesData._id', null] }
 
       },
     },
     {
       $match: {
-        $or: [{ productorderclones: true},{productorderclonesData: true }]
+        $or: [{ productorderclones: true }, { productorderclonesData: true }]
       }
     },
-    
   ]);
 
   return values;
@@ -552,18 +605,6 @@ const getDeliveryOrderSeparate = async (id, page) => {
       },
     },
     { $unwind: '$shopDatas' },
-    // {
-    //   $project: {
-    //     type: '$Orderdatas.type',
-    //     orderId: '$Orderdatas.OrderId',
-    //     orderedDate: '$Orderdatas.date',
-    //     orderedTime: '$Orderdatas.time',
-    //     streetName: '$Orderdatas.street',
-    //     totalItems: '$Orderdatas.totalItems',
-    //     shopName: '$Orderdatas.shopName',
-    //     customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
-    //   { $unwind: '$shopDatas'},
-    //   }
     {
       $project: {
         type: '$Orderdatas.type',
@@ -578,55 +619,6 @@ const getDeliveryOrderSeparate = async (id, page) => {
         inititalPaymentType: "$shopDatas.Payment",
       },
     },
-
-    //   {
-    //     $lookup: {
-    //       from: 'b2bshopclones',
-    //       localField: 'shopId',
-    //       foreignField: '_id',
-    //       as: 'shopData',
-    //     },
-    //   },
-    //   { $unwind: '$shopData' },
-    //   {
-    //     $lookup: {
-    //       from: 'streets',
-    //       localField: 'shopData.Strid',
-    //       foreignField: '_id',
-    //       as: 'streetsData',
-    //     },
-    //   },
-    //   { $unwind: '$streetsData' },
-    //   {
-    //     $lookup: {
-    //       from: 'productorderclones',
-    //       localField: '_id',
-    //       foreignField: 'orderId',
-    //       // pipeline: [
-    //       //     { $group: { _id: null, Qty: { $sum: '$quantity' }, } },
-    //       // ],
-    //       as: 'orderData',
-    //     },
-    //   },
-    //   // { $unwind: '$orderData' },
-    //   {
-    //     $project: {
-    //       status: 1,
-    //       OrderId: 1,
-    //       shopId: 1,
-    //       date: 1,
-    //       time: 1,
-    //       OrderId: 1,
-    //       customerDeliveryStatus: 1,
-    //       deliveryExecutiveId: 1,
-    //       streetName: '$streetsData.street',
-    //       // Qty: "$orderData.Qty",
-    //       type: '$shopData.type',
-    //       // product:1,
-    //       totalItems: { $size: '$orderData' },
-    //     },
-    //   },
-
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -725,276 +717,91 @@ const getDetailsAfterDeliveryCompletion = async (id) => {
 };
 
 const getBillDetailsPerOrder = async (id) => {
-  let datas = await ShopOrderClone.aggregate([
+
+  let datas = await ProductorderClone.aggregate([
     {
       $match: {
-        $and: [
-          {
-            _id: { $eq: id },
-          },
-        ],
-      },
+        $and: [{ orderId: { $eq: id } }],
+      }
     },
     {
-      $unwind: '$product',
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        as: 'shopData'
+      }
     },
-    {
 
+    { $unwind: "$shopData" },
+    {
       $lookup: {
         from: 'b2busers',
-        localField: 'Uid',
+        localField: 'shopData.deliveryExecutiveId',
         foreignField: '_id',
-        as: 'usersData',
-      },
+        as: 'deliveryExecutiveName',
+      }
     },
-    { $unwind: '$usersData' },
+    { $unwind: "$deliveryExecutiveName" },
     {
       $lookup: {
         from: 'b2bshopclones',
-        localField: 'Uid',
-        foreignField: 'Uid',
-        as: 'details',
-      },
-    },
-    { $unwind: '$details' },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'deliveryExecutiveId',
+        localField: 'shopData.shopId',
         foreignField: '_id',
-        as: 'deliveryExecutiveName',
-      },
+        as: 'b2bshopclonedatas'
+      }
     },
-    {
-      $unwind: '$deliveryExecutiveName',
-    },
+    { $unwind: '$b2bshopclonedatas' },
     {
       $lookup: {
         from: 'productorderclones',
-        localField: '_id',
+        localField: 'shopData._id',
         foreignField: 'orderId',
-        pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
+        pipeline: [{ $group: { _id: null, Qty: { $sum: '$finalQuantity' } } }],
         as: 'TotalQuantityData',
       },
     },
+    { $unwind: "$TotalQuantityData" },
     {
-      $unwind: '$TotalQuantityData',
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'productName',
+      }
     },
-
+    { $unwind: "$productName" },
 
     {
       $project: {
-        total: 1,
-        productName: '$product.productTitle',
-        Qty: '$product.quantity',
-        rate: '$product.priceperkg',
-        HSN_Code: '$product.HSN_Code',
-        GST_Number: '$product.GST_Number',
-        OrderId: 1,
-        billNo: 1,
-        billDate: 1,
-        billTime: 1,
-        shopName: '$details.SName',
-        address: '$details.address',
-        mobile: '$details.mobile',
-        shopType: '$details.type',
-        SOwner: '$details.SOwner',
-        Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
+        productid: 1,
+        finalPricePerKg: 1,
+        finalQuantity: 1,
+        GST_Number: 1,
+        HSN_Code: 1,
+        productTitle: "$productName.productTitle",
+        billNo: "$shopData.billNo",
+        billDate: "$shopData.billDate",
+        billTime: "$shopData.billTime",
+        OrderId: "$shopData.OrderId",
+        shopName: "$b2bshopclonedatas.SName",
+        address: '$b2bshopclonedatas.address',
+        mobile: '$b2bshopclonedatas.mobile',
+        shopType: '$b2bshopclonedatas.type',
+        SOwner: '$b2bshopclonedatas.SOwner',
+        Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+        // total: { $sum: "$Amount"},
         totalQuantity: '$TotalQuantityData.Qty',
         OperatorName: '$deliveryExecutiveName.name',
-        CGSTAmount: { $divide: ["$product.GST_Number", 2] },
-        SGSTAmount: { $divide: ["$product.GST_Number", 2] },
-      },
-    },
-
-
-
+        CGSTAmount: { $divide: ["$GST_Number", 2] },
+        SGSTAmount: { $divide: ["$GST_Number", 2] },
+      }
+    }
   ]);
   return datas;
 };
 
-  // let datas = await ShopOrderClone.aggregate([
-  //   {
-  //     $match: {
-  //       $and: [
-  //         {
-  //           _id: { $eq: id },
-  //         },
-  //       ],
-  //     },
-  //   },
-  //   // {
-  //   //   $unwind: '$product',
-  //   // },
-  //   {
 
-  //     $lookup: {
-  //       from: 'b2busers',
-  //       localField: 'Uid',
-  //       foreignField: '_id',
-  //       as: 'usersData',
-  //     },
-  //   },
-  //   { $unwind: '$usersData' },
-  //   {
-  //     $lookup: {
-  //       from: 'b2bshopclones',
-  //       localField: 'Uid',
-  //       foreignField: 'Uid',
-  //       as: 'details',
-  //     },
-  //   },
-  //   { $unwind: '$details' },
-  //   {
-  //     $lookup: {
-  //       from: 'b2busers',
-  //       localField: 'deliveryExecutiveId',
-  //       foreignField: '_id',
-  //       as: 'deliveryExecutiveName',
-  //     },
-  //   },
-  //   {
-  //     $unwind: '$deliveryExecutiveName',
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'productorderclones',
-  //       localField: '_id',
-  //       foreignField: 'orderId',
-  //       pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
-  //       as: 'TotalQuantityData',
-  //     },
-  //   },
-  //   {
-  //     $unwind: '$TotalQuantityData',
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'productorderclones',
-  //       localField: '_id',
-  //       foreignField: 'orderId',
-  //       as: 'productDetailsData',
-  //     },
-  //   },
-  //   {
-  //     $unwind: '$productDetailsData',
-  //   },
-
-
-  //   // {
-  //   //   $project: {
-  //   //     total: 1,
-  //   //     productName: '$TotalQuantityData.productTitle',
-  //   //     Qty: '$TotalQuantityData.quantity',
-  //   //     rate: '$TotalQuantityData.priceperkg',
-  //   //     // HSN_Code: '$product.HSN_Code',
-  //   //     // GST_Number: '$product.GST_Number',
-  //   //     OrderId: 1,
-  //   //     billNo: 1,
-  //   //     billDate: 1,
-  //   //     billTime: 1,
-  //   //     shopName: '$details.SName',
-  //   //     address: '$details.address',
-  //   //     mobile: '$details.mobile',
-  //   //     shopType: '$details.type',
-  //   //     SOwner: '$details.SOwner',
-  //   //     // Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
-  //   //     totalQuantity: '$TotalQuantityData.Qty',
-  //   //     OperatorName: '$deliveryExecutiveName.name',
-  //   //     // CGSTAmount: { $divide: ["$product.GST_Number", 2] },
-  //   //     // SGSTAmount: { $divide: ["$product.GST_Number", 2] },
-  //   //   },
-  //   // },
-
-
-
-//   ]);
-//   return datas;
-// };
-
-
-
-  // let datas = await ShopOrderClone.aggregate([
-  //   {
-  //     $match: {
-  //       $and: [
-  //         {
-  //           _id: { $eq: id },
-  //         },
-  //       ],
-  //     },
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'b2bshopclones',
-  //       localField: 'Uid',
-  //       foreignField: 'Uid',
-  //       as: 'details',
-  //     },
-  //   },
-  //   { $unwind: '$details' },
-  //   {
-  //     $lookup: {
-  //       from: 'b2busers',
-  //       localField: 'deliveryExecutiveId',
-  //       foreignField: '_id',
-  //       as: 'deliveryExecutiveName',
-  //     },
-  //   },
-  //   {
-  //     $unwind: '$deliveryExecutiveName',
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'productorderclones',
-  //       localField: '_id',
-  //       foreignField: 'orderId',
-  //       pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
-  //       as: 'TotalQuantityData',
-  //     },
-  //   },
-  //   {
-  //     $unwind: '$TotalQuantityData',
-  //   },
-   
-
-  //   // {
-  //   //   $project: {
-
-
-
-
-  //   //   }
-  //   // }
-
-
-  // //   {
-  // //     $project: {
-  // //       total: 1,
-  // //       productName: '$product.productTitle',
-  // //       Qty: '$product.quantity',
-  // //       rate: '$product.priceperkg',
-  // //       HSN_Code: '$product.HSN_Code',
-  // //       GST_Number: '$product.GST_Number',
-  // //       OrderId: 1,
-  // //       billNo: 1,
-  // //       billDate: 1,
-  // //       billTime: 1,
-  // //       shopName: '$details.SName',
-  // //       address: '$details.address',
-  // //       mobile: '$details.mobile',
-  // //       shopType: '$details.type',
-  // //       SOwner: '$details.SOwner',
-  // //       Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
-  // //       totalQuantity: '$TotalQuantityData.Qty',
-  // //       OperatorName: '$deliveryExecutiveName.name',
-  // //       CGSTAmount: { $divide: ["$product.GST_Number", 2] },
-  // //       SGSTAmount: { $divide: ["$product.GST_Number", 2] },
-  // //     },
-  // //   },
-  // ]);
-  // return datas;
-// };
 
 
 const getReturnWDEtoWLE = async (id, page) => {
