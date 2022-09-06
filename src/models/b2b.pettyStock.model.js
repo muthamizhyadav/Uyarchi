@@ -45,6 +45,14 @@ const pettyStockSchema = new mongoose.Schema({
       UnDeliveredAsPerSystem: {
         type: Number,
       },
+      date: {
+        type: String,
+        default: moment().utcOffset(331).format('DD-MM-yyy'),
+      },
+      time: {
+        type: String,
+        default: moment().utcOffset(331).format('h:mm a'),
+      },
 
 });
 

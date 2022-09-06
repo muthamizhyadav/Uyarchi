@@ -168,19 +168,19 @@ const getdetailsAboutPettyStockByGroupId = catchAsync(async (req, res) => {
   res.send(datas);
 });
 
-const uploadWastageImage = catchAsync(async (req, res) => {
-  const { body } = req;
-  const otherExp = await wardAdminGroupService.uploadWastageImage(body);
-  if (req.files) {
-    let path = '';
-    req.files.forEach(function (files, index, arr) {
-      path = 'images/bills/' + files.filename;
-    });
-    otherExp.wastageImageUpload = path;
-  }
-  await otherExp.save();
-  res.status(httpStatus.CREATED).send(otherExp);
-});
+// const uploadWastageImage = catchAsync(async (req, res) => {
+//   const { body } = req;
+//   const otherExp = await wardAdminGroupService.uploadWastageImage(req);
+//   if (req.files) {
+//     let path = '';
+//     req.files.forEach(function (files, index, arr) {
+//       path = 'images/wastageProduct/' + files.filename;
+//     });
+//     otherExp.wastageImageUpload = path;
+//   }
+//   await otherExp.save();
+//   res.status(httpStatus.CREATED).send(otherExp);
+// });
 
 const createData = catchAsync(async (req, res) => {
   const data = await wardAdminGroupService.getpettyStockData(req.params.id, req.body);
@@ -199,11 +199,8 @@ const getAllGroup = catchAsync(async (req, res) => {
 
 const pettyStockCreate = catchAsync(async (req, res) => {
   // let userid = req.userId;
-  const shopOrder = await wardAdminGroupService.pettyStockCreate(req.body);
-  if (!shopOrder) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'product Not Fount.');
-  }
-  res.status(httpStatus.CREATED).send(shopOrder);
+  const shopOrder = await wardAdminGroupService.pettyStockCreate(req.params.id,req.body);
+res.send(shopOrder);
 });
 
 const getcashAmountViewFromDB = catchAsync(async (req, res) => {
@@ -221,25 +218,22 @@ const getPEttyCashQuantity = catchAsync(async (req, res) => {
   res.send(createAndUpdateDataINPettyStock);
 });
 
-const createImageUploadAndDetails = catchAsync(async (req, res) => {
-  const { body } = req;
-  const product = await wardAdminGroupService.createProduct(body);
-  
-  if (req.files) {
-    let path = '';
-    path = 'images/';
-    if (req.files.image != null) {
-      product.image = path + req.files.image[0].filename;
-    }
+const returnStock = catchAsync(async (req, res) => {
+  const returnStock = await wardAdminGroupService.returnStock(req.params.id);
+  res.send(returnStock);
+});
 
-    if (req.files.galleryImages != null) {
-      req.files.galleryImages.forEach((e) => {
-        product.galleryImages.push(path + e.filename);
-      });
-    }
+const uploadWastageImage = catchAsync(async (req, res) => {
+ 
+  const returnStock = await wardAdminGroupService.uploadWastageImage(req.body);
+  if (req.files) {
+    req.files.forEach(function (files, index, arr) {
+      returnStock.wastageImageUpload.push('images/returnStockWastage/' + files.filename);
+    });
   }
-  await product.save();
-  res.status(httpStatus.CREATED).send(product);
+
+  res.send(returnStock);
+  await returnStock.save();
 });
 
 
@@ -305,5 +299,7 @@ module.exports = {
 
   getPEttyCashQuantity,
 
-  createImageUploadAndDetails,
+  returnStock,
+
+  // createImageUploadAndDetails,
 };

@@ -315,6 +315,12 @@ const productorderCloneSchema = new mongoose.Schema({
     type: String,
     default: 'ordered',
   },
+  finalQuantity: {
+    type: Number,
+  },
+  finalPricePerKg: {
+    type: Number,
+  },
 });
 
 productorderCloneSchema.plugin(toJSON);

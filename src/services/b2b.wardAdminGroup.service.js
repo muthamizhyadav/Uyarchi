@@ -10,6 +10,7 @@ const { wardAdminGroup, wardAdminGroupModel_ORDERS } = require('../models/b2b.wa
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 const { Product } = require('../models/product.model');
 
+
 const createGroup = async (body) => {
   let serverdates = moment().format('YYYY-MM-DD');
   let servertime = moment().format('hh:mm a');
@@ -39,7 +40,7 @@ const createGroup = async (body) => {
   body.Orderdatas.forEach(async (e) => {
     let productId = e._id;
 
-    await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: 'Assigned' ,deliveryExecutiveId: body.deliveryExecutiveId}, { new: true });
+    await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { status: 'Assigned', deliveryExecutiveId: body.deliveryExecutiveId }, { new: true });
     await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: wardAdminGroupcreate._id });
   });
   return wardAdminGroupcreate;
@@ -50,10 +51,10 @@ const updateOrderStatus = async (id, updateBody) => {
   console.log(deliveryStatus);
   if (!deliveryStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
-  } 
-    deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-    console.log(deliveryStatus);
-  
+  }
+  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  console.log(deliveryStatus);
+
   return deliveryStatus;
 };
 
@@ -101,8 +102,6 @@ const getOrderFromGroupById = async (id) => {
   return getDetails;
 };
 
-// const getPettyStock = async (id ) => {
-
 const getPettyStock = async (id) => {
   console.log(id);
   let values = await Product.aggregate([
@@ -137,7 +136,13 @@ const getPettyStock = async (id) => {
           {
             $unwind: '$shoporderclones',
           },
-          { $group: { _id: null, Qty: { $sum: '$quantity' } } },
+          {
+            $group: {
+              _id: null,
+              Qty: { $sum: '$quantity' },
+              finalQuantity: { $sum: '$finalPricePerKg' }
+            }
+          },
         ],
         as: 'productorderclones',
       },
@@ -156,8 +161,159 @@ const getPettyStock = async (id) => {
         _id: 1,
         productTitle: 1,
         overAllQuantity: '$productorderclones.Qty',
+        finalQuantity: "$productorderclones.finalQuantity"
       },
     },
+  ]);
+
+  return values;
+};
+
+
+const returnStock = async (id) => {
+  console.log(id);
+  let values = await Product.aggregate([
+
+    // Delivered count
+
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+
+                  $match: {
+                    $and: [{ customerDeliveryStatus: { $eq: "Delivered" } }],
+                  },
+                },
+                {
+                  $lookup: {
+                    from: 'orderassigns',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    pipeline: [{ $match: { wardAdminGroupID: id } }],
+                    as: 'orderassigns',
+                  },
+                },
+                {
+                  $unwind: "$orderassigns"
+                },
+
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: "$shoporderclones"
+          },
+
+          {
+            $group: {
+              _id: null,
+              Qty: { $sum: '$quantity' },
+              finalQuantity: { $sum: '$finalPricePerKg' }
+            }
+          },
+        ],
+        as: 'productorderclones',
+      },
+    },
+
+    {
+      $unwind: {
+        path: '$productorderclones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    //  Un Delivered count
+
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+
+                  $match: {
+                    $and: [{ customerDeliveryStatus: { $eq: "Un Delivered" } }],
+                  },
+                },
+                {
+                  $lookup: {
+                    from: 'orderassigns',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    pipeline: [{ $match: { wardAdminGroupID: id } }],
+                    as: 'orderassigns',
+                  },
+                },
+                {
+                  $unwind: "$orderassigns"
+                },
+
+              ],
+              as: 'shoporderclonesData',
+            },
+          },
+          {
+            $unwind: "$shoporderclonesData"
+          },
+
+
+          {
+            $group: {
+              _id: null,
+              UnQty: { $sum: '$quantity' },
+              UnfinalQuantity: { $sum: '$finalPricePerKg' }
+            }
+          },
+        ],
+        as: 'productorderclonesData',
+      },
+    },
+
+    {
+      $unwind: {
+        path: '$productorderclonesData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $project: {
+        _id: 1,
+        productTitle: 1,
+        initialQuantity: '$productorderclones.Qty',
+        finalQuantity: "$productorderclones.finalQuantity",
+        productorderclones: { $eq: ['$productorderclones._id', null] },
+        UndelQty: "$productorderclonesData.UnQty",
+        UndelfinalQuantity: "$productorderclonesData.UnfinalQuantity",
+        productorderclonesData: { $eq: ['$productorderclonesData._id', null] }
+
+      },
+    },
+    {
+      $match: {
+        $or: [{ productorderclones: true},{productorderclonesData: true }]
+      }
+    },
+    
   ]);
 
   return values;
@@ -289,7 +445,7 @@ const getBillDetails = async (id) => {
         customerName: '$UserName.name',
         deliveryExecutiveName: '$b2busersData.name',
         initialPaymentType: "$delivery.Payment",
-        Amount : "$delivery.total",
+        Amount: "$delivery.total",
       },
     },
   ]);
@@ -349,7 +505,7 @@ const getBillDetails = async (id) => {
     },
   ]);
   return { values: values, total: total.length };
-// return values;
+  // return values;
 };
 
 const assignOnly = async (page) => {
@@ -361,7 +517,7 @@ const assignOnly = async (page) => {
         },
       },
     },
-   
+
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -583,7 +739,7 @@ const getBillDetailsPerOrder = async (id) => {
       $unwind: '$product',
     },
     {
-      
+
       $lookup: {
         from: 'b2busers',
         localField: 'Uid',
@@ -646,16 +802,200 @@ const getBillDetailsPerOrder = async (id) => {
         Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
         totalQuantity: '$TotalQuantityData.Qty',
         OperatorName: '$deliveryExecutiveName.name',
-        CGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
-        SGSTAmount: { $divide: [ "$product.GST_Number", 2 ] } ,
+        CGSTAmount: { $divide: ["$product.GST_Number", 2] },
+        SGSTAmount: { $divide: ["$product.GST_Number", 2] },
       },
     },
 
-    
+
 
   ]);
   return datas;
 };
+
+  // let datas = await ShopOrderClone.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [
+  //         {
+  //           _id: { $eq: id },
+  //         },
+  //       ],
+  //     },
+  //   },
+  //   // {
+  //   //   $unwind: '$product',
+  //   // },
+  //   {
+
+  //     $lookup: {
+  //       from: 'b2busers',
+  //       localField: 'Uid',
+  //       foreignField: '_id',
+  //       as: 'usersData',
+  //     },
+  //   },
+  //   { $unwind: '$usersData' },
+  //   {
+  //     $lookup: {
+  //       from: 'b2bshopclones',
+  //       localField: 'Uid',
+  //       foreignField: 'Uid',
+  //       as: 'details',
+  //     },
+  //   },
+  //   { $unwind: '$details' },
+  //   {
+  //     $lookup: {
+  //       from: 'b2busers',
+  //       localField: 'deliveryExecutiveId',
+  //       foreignField: '_id',
+  //       as: 'deliveryExecutiveName',
+  //     },
+  //   },
+  //   {
+  //     $unwind: '$deliveryExecutiveName',
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'productorderclones',
+  //       localField: '_id',
+  //       foreignField: 'orderId',
+  //       pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
+  //       as: 'TotalQuantityData',
+  //     },
+  //   },
+  //   {
+  //     $unwind: '$TotalQuantityData',
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'productorderclones',
+  //       localField: '_id',
+  //       foreignField: 'orderId',
+  //       as: 'productDetailsData',
+  //     },
+  //   },
+  //   {
+  //     $unwind: '$productDetailsData',
+  //   },
+
+
+  //   // {
+  //   //   $project: {
+  //   //     total: 1,
+  //   //     productName: '$TotalQuantityData.productTitle',
+  //   //     Qty: '$TotalQuantityData.quantity',
+  //   //     rate: '$TotalQuantityData.priceperkg',
+  //   //     // HSN_Code: '$product.HSN_Code',
+  //   //     // GST_Number: '$product.GST_Number',
+  //   //     OrderId: 1,
+  //   //     billNo: 1,
+  //   //     billDate: 1,
+  //   //     billTime: 1,
+  //   //     shopName: '$details.SName',
+  //   //     address: '$details.address',
+  //   //     mobile: '$details.mobile',
+  //   //     shopType: '$details.type',
+  //   //     SOwner: '$details.SOwner',
+  //   //     // Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
+  //   //     totalQuantity: '$TotalQuantityData.Qty',
+  //   //     OperatorName: '$deliveryExecutiveName.name',
+  //   //     // CGSTAmount: { $divide: ["$product.GST_Number", 2] },
+  //   //     // SGSTAmount: { $divide: ["$product.GST_Number", 2] },
+  //   //   },
+  //   // },
+
+
+
+//   ]);
+//   return datas;
+// };
+
+
+
+  // let datas = await ShopOrderClone.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [
+  //         {
+  //           _id: { $eq: id },
+  //         },
+  //       ],
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'b2bshopclones',
+  //       localField: 'Uid',
+  //       foreignField: 'Uid',
+  //       as: 'details',
+  //     },
+  //   },
+  //   { $unwind: '$details' },
+  //   {
+  //     $lookup: {
+  //       from: 'b2busers',
+  //       localField: 'deliveryExecutiveId',
+  //       foreignField: '_id',
+  //       as: 'deliveryExecutiveName',
+  //     },
+  //   },
+  //   {
+  //     $unwind: '$deliveryExecutiveName',
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'productorderclones',
+  //       localField: '_id',
+  //       foreignField: 'orderId',
+  //       pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
+  //       as: 'TotalQuantityData',
+  //     },
+  //   },
+  //   {
+  //     $unwind: '$TotalQuantityData',
+  //   },
+   
+
+  //   // {
+  //   //   $project: {
+
+
+
+
+  //   //   }
+  //   // }
+
+
+  // //   {
+  // //     $project: {
+  // //       total: 1,
+  // //       productName: '$product.productTitle',
+  // //       Qty: '$product.quantity',
+  // //       rate: '$product.priceperkg',
+  // //       HSN_Code: '$product.HSN_Code',
+  // //       GST_Number: '$product.GST_Number',
+  // //       OrderId: 1,
+  // //       billNo: 1,
+  // //       billDate: 1,
+  // //       billTime: 1,
+  // //       shopName: '$details.SName',
+  // //       address: '$details.address',
+  // //       mobile: '$details.mobile',
+  // //       shopType: '$details.type',
+  // //       SOwner: '$details.SOwner',
+  // //       Amount: { $multiply: [{ $toInt: '$product.quantity' }, { $toInt: '$product.priceperkg' }] },
+  // //       totalQuantity: '$TotalQuantityData.Qty',
+  // //       OperatorName: '$deliveryExecutiveName.name',
+  // //       CGSTAmount: { $divide: ["$product.GST_Number", 2] },
+  // //       SGSTAmount: { $divide: ["$product.GST_Number", 2] },
+  // //     },
+  // //   },
+  // ]);
+  // return datas;
+// };
+
 
 const getReturnWDEtoWLE = async (id, page) => {
   let datas = await wardAdminGroup.aggregate([
@@ -845,10 +1185,26 @@ const getAllGroup = async (page) => {
   return { values: values, total: total.length };
 };
 
-const pettyStockCreate = async (pettyStockBody) => {
+// const pettyStockCreate = async (pettyStockBody) => {
+//   console.log(pettyStockBody);
+//   let body = { ...pettyStockBody };
+//   let createPetty = await wardAdminGroup.findOneAndReplace(body);
+//   let { pettyStock } = pettyStockBody;
+//   pettyStock.forEach(async (e) => {
+//     pettyStockModel.create({
+//       wardAdminId: e.id,
+//       product: e.product,
+//       QTY: e.QTY,
+//       pettyStock: e.pettyStock,
+//       totalQtyIncludingPettyStock: e.totalQtyIncludingPettyStock,
+//     });
+//   });
+//   return createPetty;
+// };
+const pettyStockCreate = async (id, pettyStockBody) => {
   console.log(pettyStockBody);
   let body = { ...pettyStockBody };
-  let createPetty = await wardAdminGroup.create(body);
+  let createPetty = await wardAdminGroup.findByIdAndUpdate({ _id: id }, body, { new: true });
   let { pettyStock } = pettyStockBody;
   pettyStock.forEach(async (e) => {
     pettyStockModel.create({
@@ -882,24 +1238,34 @@ const getcashAmountViewFromDB = async (id) => {
     {
       $unwind: '$datas',
     },
-    
+
     // {
     //   $group: {
     //     _id: '$datas.payType',
     //     totalCash: { $sum: '$datas.total' },
     //   },
     // },
-    
+
     {
-      $project:{
-        pettyCash:1,
-        total: {
+      $project: {
+        pettyCash: 1,
+        totalCashCaculation: {
           _id: '$datas.payType',
-              totalCash: { $sum: '$datas.total' },
-        }
+          totalCash: { $sum: '$datas.total' },
+        },
+
+        amount: {
+          $sum: {
+            $add: [
+              '$pettyCash', '$totalCashCaculation.totalCash'
+            ]
+          }
+        },
+
       }
+
     },
-   
+
   ]);
 
   return values;
@@ -956,10 +1322,11 @@ const getPEttyCashQuantity = async (id) => {
   return values;
 };
 
-// const createProduct = async (body) => {
-//   let detailsAndCreate = await .create(body)
-//   return detailsAndCreate;
-// }
+const uploadWastageImage = async (body) => {
+  let values = await wardAdminGroupDetails.create(body)
+  return values;
+}
+
 
 module.exports = {
   getPEttyCashQuantity,
@@ -987,7 +1354,7 @@ module.exports = {
   pettyCashSubmit,
   getPettyStockDetails,
   getdetailsAboutPettyStockByGroupId,
-  // uploadWastageImage,
+  uploadWastageImage,
   getpettyStockData,
   getPettyCashDetails,
   getAllGroup,
@@ -996,5 +1363,6 @@ module.exports = {
   getcashAmountViewFromDB,
 
   createDatasInPettyStockModel,
+  returnStock,
   // createProduct,
 };

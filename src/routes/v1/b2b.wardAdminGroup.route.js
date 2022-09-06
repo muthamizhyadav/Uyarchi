@@ -1,6 +1,8 @@
 const express = require('express');
 const wardAdminGroupController = require('../../controllers/b2b.wardAdminGroup.controller');
+const returnStockWastage = require('../../middlewares/returnStockWastage');
 const router = express.Router();
+
 
 router.route('/craeteGroupId').post(wardAdminGroupController.createGroupOrder);
 
@@ -77,7 +79,7 @@ router.route('/get/AllGroup/details/:page').get(  wardAdminGroupController.getAl
 
 router.route("/update/pettycash/return/:id").put(wardAdminGroupController.updatePettyCashReturnStatus);
 
-router.route("/craete/pettyStock/create").post(wardAdminGroupController.pettyStockCreate);
+router.route("/craete/pettyStock/create/:id").put(wardAdminGroupController.pettyStockCreate);
 
 
 router.route('/get/cashDetails/fromDB/:id').get(wardAdminGroupController.getcashAmountViewFromDB);
@@ -87,7 +89,9 @@ router.route('/Update/create/pettyStock/details/:id').put(wardAdminGroupControll
 
 router.route('/get/details/pettyCash/:id').get(wardAdminGroupController.getPEttyCashQuantity);
 
-router.route('/create/detatisl/About/pettyStock/returnstock').post(wardAdminGroupController.createImageUploadAndDetails)
+router.route('/create/detatisl/About/pettyStock/returnstock').post(returnStockWastage.array('wastageImageUpload'),wardAdminGroupController.uploadWastageImage);
+
+router.route('/get/return/stock/:id').get(wardAdminGroupController.returnStock);
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE
