@@ -1449,7 +1449,7 @@ const incommingStockQty = async (date, page) => {
           // { $match: { date: date, status: 'Loaded' } },
           {
             $match: {
-              $and: [{ date: { $eq: date } }, { status: { $in: ['Loaded', 'Billed'] } }],
+              $and: [{ status: { $in: ['Loaded', 'Billed'] } }],
             },
           },
           {
@@ -1488,7 +1488,7 @@ const incommingStockQty = async (date, page) => {
           // { $match: { date: date, status: { $in: ['Loaded', 'Billed'] } } },
           {
             $match: {
-              $and: [{ date: { $eq: date } }, { status: { $in: ['Loaded', 'Billed'] } }],
+              $and: [{ status: { $in: ['Loaded', 'Billed'] } }],
             },
           },
           {

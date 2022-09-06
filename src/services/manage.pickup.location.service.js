@@ -140,8 +140,93 @@ const getManagePickupById = async (id) => {
   return getpickup;
 };
 
+const getAllManagepickupLocation = async (userId, date, todate) => {
+  let datematch = { active: { $eq: true } };
+  let usermatch = { active: { $eq: true } };
+  if (userId != 'null') {
+    usermatch = {
+      userId: { $eq: userId },
+    };
+  }
+  if (date != 'null' && todate != 'null') {
+    datematch = {
+      date: { $gte: date, $lte: todate },
+    };
+  }
+  let values = await PickupLocation.aggregate([
+    {
+      $sort: {
+        date: -1,
+        time: -1,
+      },
+    },
+    {
+      $match: {
+        $and: [datematch, usermatch],
+      },
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'wardId',
+        foreignField: '_id',
+        as: 'wardData',
+      },
+    },
+    {
+      $unwind: '$wardData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'streetId',
+        foreignField: '_id',
+        as: 'streetData',
+      },
+    },
+    {
+      $unwind: '$streetData',
+    },
+    {
+      $project: {
+        _id: 1,
+        ward: '$wardData.ward',
+        street: '$streetData.street',
+        locationName: 1,
+        ownerName: 1,
+        address: 1,
+        contact: 1,
+        created: 1,
+        photoCapture: 1,
+        userId: 1,
+        landMark: 1,
+        latitude: 1,
+        date: 1,
+        time: 1,
+        langitude: 1,
+        pick_Up_Type: 1,
+        picku_Up_Mode: 1,
+        userName: '$userData.name',
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createManagePickupLocation,
   getAllManagepickup,
   getManagePickupById,
+  getAllManagepickupLocation,
 };

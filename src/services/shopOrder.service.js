@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone } = require('../models/shopOrder.model');
+const ProductPacktype = require('../models/productPacktype.model');
 const { Product } = require('../models/product.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const ApiError = require('../utils/ApiError');
@@ -148,7 +149,7 @@ const getShopOrderCloneById = async (id) => {
               packtypeId: 1,
               packKg: 1,
               unit: 1,
-              productName: '$products.productTitle',
+              productTitle: '$products.productTitle',
               created: 1,
             },
           },
@@ -166,10 +167,14 @@ const getShopOrderCloneById = async (id) => {
         gsttotal: 1,
         subtotal: 1,
         SGST: 1,
+        Uid: 1,
+        shopId: 1,
         CGST: 1,
         paidamount: 1,
         OrderId: 1,
         created: 1,
+        devevery_mode: 1,
+        Payment: 1,
         productData: '$productData',
         shopName: '$shopData.SName',
       },
@@ -185,6 +190,36 @@ const updateShopOrderCloneById = async (id, updatebody) => {
   }
   shoporderClone = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
   return shoporderClone;
+};
+
+const updateshop_order = async (id, body) => {
+  let shoporder = await ShopOrderClone.findById(id);
+  if (!shoporder) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not found');
+  }
+  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
+  await ProductorderClone.deleteMany({ orderId: id });
+  let { product, date, time, shopId } = body;
+  product.forEach(async (e) => {
+    let packtypeId = await ProductPacktype.findOne({ packtypeId: e.packtypeId, productId: e.productId });
+    await ProductorderClone.create({
+      orderId: id,
+      productid: e.productId,
+      quantity: e.quantity,
+      priceperkg: e.priceperkg,
+      GST_Number: e.GST_Number,
+      HSN_Code: e.HSN_Code,
+      packtypeId: e.packtypeId,
+      productpacktypeId: packtypeId._id,
+      packKg: e.packKg,
+      unit: e.unit,
+      date: shoporder.date,
+      time: shoporder.time,
+      customerId: shopId,
+      created: shoporder.created,
+    });
+  });
+  return shoporder;
 };
 
 const deleteShopOrderCloneById = async (id) => {
@@ -395,7 +430,7 @@ module.exports = {
   deleteShopOrderById,
 
   // Telecaller
-
+  updateshop_order,
   getAll,
   createOrderId,
 };
