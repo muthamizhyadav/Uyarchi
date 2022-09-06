@@ -201,7 +201,7 @@ const updateshop_order = async (id, body) => {
   await ProductorderClone.deleteMany({ orderId: id });
   let { product, date, time, shopId } = body;
   product.forEach(async (e) => {
-    let packtypeId = ProductPacktype.findOne({ packtypeId: e.packtypeId, productId: e.productId });
+    let packtypeId = await ProductPacktype.findOne({ packtypeId: e.packtypeId, productId: e.productId });
     await ProductorderClone.create({
       orderId: id,
       productid: e.productId,
