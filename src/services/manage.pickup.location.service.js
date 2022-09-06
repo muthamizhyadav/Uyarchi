@@ -178,6 +178,17 @@ const getAllManagepickupLocation = async (userId, date, todate) => {
     },
     {
       $lookup: {
+        from: 'b2busers',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
+      $lookup: {
         from: 'streets',
         localField: 'streetId',
         foreignField: '_id',
@@ -198,7 +209,7 @@ const getAllManagepickupLocation = async (userId, date, todate) => {
         contact: 1,
         created: 1,
         photoCapture: 1,
-        userId:1,
+        userId: 1,
         landMark: 1,
         latitude: 1,
         date: 1,
@@ -206,6 +217,7 @@ const getAllManagepickupLocation = async (userId, date, todate) => {
         langitude: 1,
         pick_Up_Type: 1,
         picku_Up_Mode: 1,
+        userName: '$userData.name',
       },
     },
   ]);
