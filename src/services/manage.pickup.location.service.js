@@ -198,6 +198,7 @@ const getAllManagepickupLocation = async (userId, date, todate) => {
         contact: 1,
         created: 1,
         photoCapture: 1,
+        userId:1,
         landMark: 1,
         latitude: 1,
         date: 1,
