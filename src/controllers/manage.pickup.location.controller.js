@@ -27,8 +27,18 @@ const getManagePickupById = catchAsync(async (req, res) => {
   res.send(pickuplocation);
 });
 
+const getAllManagepickupLocation = catchAsync(async (req, res) => {
+  const pickuplocations = await ManagePickupService.getAllManagepickupLocation(
+    req.params.userId,
+    req.params.date,
+    req.params.todate
+  );
+  res.send(pickuplocations);
+});
+
 module.exports = {
   createManagePickupLocation,
   getAllManagepickup,
   getManagePickupById,
+  getAllManagepickupLocation,
 };

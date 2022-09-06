@@ -84,6 +84,11 @@ app.get('/health', (req, res) => {
   res.sendStatus(200);
 });
 
+// GET /ws 404
+
+app.get('/ws', (req, res)=>{
+  res.sendStatus(200)
+})
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
