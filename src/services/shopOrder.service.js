@@ -55,7 +55,7 @@ const createshopOrderClone = async (body, userid) => {
   product.forEach(async (e) => {
     ProductorderClone.create({
       orderId: createShopOrderClone.id,
-      productid: e.productId,
+      productid: e.productid,
       quantity: e.quantity,
       priceperkg: e.priceperkg,
       GST_Number: e.GST_Number,
@@ -204,7 +204,7 @@ const updateshop_order = async (id, body) => {
     let packtypeId = await ProductPacktype.findOne({ packtypeId: e.packtypeId, productId: e.productId });
     await ProductorderClone.create({
       orderId: id,
-      productid: e.productId,
+      productid: e.productid,
       quantity: e.quantity,
       priceperkg: e.priceperkg,
       GST_Number: e.GST_Number,
