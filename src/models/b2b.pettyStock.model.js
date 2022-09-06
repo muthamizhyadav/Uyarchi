@@ -14,6 +14,9 @@ const pettyStockSchema = new mongoose.Schema({
     product: {
         type: String,
     },
+    productId: {
+      type: String,
+    },
     QTY: {
         type: String,
     },
