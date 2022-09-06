@@ -101,7 +101,6 @@ const getAllShopOrderClone = async (date, page) => {
 };
 
 const getShopOrderCloneById = async (id) => {
-  console.log();
   let Values = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -201,7 +200,7 @@ const updateshop_order = async (id, body) => {
   await ProductorderClone.deleteMany({ orderId: id });
   let { product, date, time, shopId } = body;
   product.forEach(async (e) => {
-    let packtypeId = await ProductPacktype.findOne({ packtypeId: e.packtypeId, productId: e.productId });
+    let packtypeId = await ProductPacktype.findOne({ packtypeId: e.packtypeId, productId: e.productid });
     await ProductorderClone.create({
       orderId: id,
       productid: e.productid,
