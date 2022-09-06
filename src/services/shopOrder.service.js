@@ -148,7 +148,7 @@ const getShopOrderCloneById = async (id) => {
               packtypeId: 1,
               packKg: 1,
               unit: 1,
-              productName: '$products.productTitle',
+              productTitle: '$products.productTitle',
               created: 1,
             },
           },
