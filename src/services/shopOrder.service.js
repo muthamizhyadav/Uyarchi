@@ -67,6 +67,8 @@ const createshopOrderClone = async (body, userid) => {
       date: currentDate,
       time: currenttime,
       customerId: shopId,
+      finalQuantity: e.quantity,
+      finalPricePerKg: e.priceperkg,
       created: moment(),
     });
   });
@@ -215,6 +217,8 @@ const updateshop_order = async (id, body) => {
       date: shoporder.date,
       time: shoporder.time,
       customerId: shopId,
+      finalQuantity: e.quantity,
+      finalPricePerKg: e.priceperkg,
       created: shoporder.created,
     });
   });

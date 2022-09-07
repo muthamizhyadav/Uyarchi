@@ -162,7 +162,7 @@ const getproductdetails = async (id) => {
           },
           {
             $project: {
-              quantity: 1,
+              finalQuantity: 1,
               priceperkg: 1,
               productid: 1,
               productTitle: "$nameData.productTitle",
