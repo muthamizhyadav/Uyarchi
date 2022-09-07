@@ -258,6 +258,7 @@ const get_product_withpacktype = async (search, page) => {
           {
             $unwind: '$productDetails',
           },
+
           {
             $project: {
               _id: 1,
@@ -282,10 +283,34 @@ const get_product_withpacktype = async (search, page) => {
       $match: { 'productpacktypes.show': true },
     },
     {
+      $lookup: {
+        from: 'trendproductsclones',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          // { $match: { date: moment().format('DD-MM-YYYY') } },
+          {
+            $group: {
+              _id: null,
+              Avg: { $avg: '$Rate' },
+            },
+          },
+        ],
+        as: 'marketTrend',
+      },
+    },
+    {
+      $unwind: {
+        path: '$marketTrend',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 1,
         productTitle: 1,
         productpacktypes: '$productpacktypes',
+        trendAvg: { $round: ['$marketTrend.Avg', 0] },
       },
     },
     {
