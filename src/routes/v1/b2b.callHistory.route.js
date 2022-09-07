@@ -26,4 +26,5 @@ router.route('/reset/callingStatus').get(callHistoryController.resethistory);
 router.route('/previous/callback/reshedule').get(callHistoryController.previouscallBackAnd_Reshedule);
 router.route('/oncallshops').get(callHistoryController.getOncallShops);
 router.route('/oncall/status/Byuser').get(authorization, callHistoryController.oncallstatusByUser);
+router.route('/call/visit/count').get(callHistoryController.call_visit_Count);
 module.exports = router;

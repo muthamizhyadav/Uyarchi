@@ -167,6 +167,11 @@ const oncallstatusByUser = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const call_visit_Count = catchAsync(async (req, res)=>{
+  const shops = await callHistoryService.call_visit_Count()
+  res.send(shops);
+})
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -189,4 +194,5 @@ module.exports = {
   previouscallBackAnd_Reshedule,
   getOncallShops,
   oncallstatusByUser,
+  call_visit_Count
 };
