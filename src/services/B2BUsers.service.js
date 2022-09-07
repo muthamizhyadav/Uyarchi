@@ -8,6 +8,8 @@ const ApiError = require('../utils/ApiError');
 const Textlocal = require('../config/textLocal');
 const Verfy = require('../config/OtpVerify');
 const WardAssign = require('../models/wardAssign.model');
+const { MarketClone } = require('../models/market.model');
+
 const moment = require('moment');
 
 const createUser = async (userBody) => {
@@ -380,6 +382,7 @@ const deleteB2bUsersbyId = async (id) => {
   }
 
   await Shop.updateMany({ Uid: id }, { $set: { Uid: '3625a112-a7f5-4bd8-b9c3-f86ae03c2f44' } }, { new: true });
+  await MarketClone.updateMany({ Uid: id }, { $set: { Uid: '3625a112-a7f5-4bd8-b9c3-f86ae03c2f44' } });
   users = await Users.deleteOne({ _id: id });
   return users;
 };
