@@ -57,7 +57,7 @@ const getdetails =async (limit,page,status) => {
         as: 'userNameData',
       },
     },
-    //    { unwind: '$userNameData'},
+      //  { unwind: '$userNameData'},
 
     {
       $project: {
@@ -80,37 +80,49 @@ const getdetails =async (limit,page,status) => {
     { $limit: parseInt(limit) },
   ]);
 
-  let total = await ShopOrderClone.find().count();
-  //   {
-  //     $lookup: {
-  //       from: 'b2bshopclones',
-  //       localField: 'shopId', //Uid
-  //       foreignField: '_id', //Uid
-  //       as: 'userData',
-  //     },
-  //   },
-  //   {
-  //     $unwind: '$userData',
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'productorderclones',
-  //       localField: '_id',
-  //       foreignField: 'orderId',
-  //       as: 'orderData',
-  //     },
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'b2busers',
-  //       localField: 'Uid',
-  //       foreignField: '_id',
-  //       as: 'userNameData',
-  //     },
-  //   },
-  // ]).limit(parseInt(limit));
+  let total = await ShopOrderClone.aggregate([
+  
+    {
+      $sort: {
+        status: 1,
+      }
+    },
+    {
+      $match: {
+        $and: [statusMatch]
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId', //Uid
+        foreignField: '_id', //Uid
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'userNameData',
+      },
+    },
+      //  { unwind: '$userNameData'},
+  ]).limit(parseInt(limit));
 
-  return { values: values, total: total };
+  return { values: values, total: total.length };
 };
 
 // GET PRODUCT DETAILS
@@ -164,16 +176,14 @@ const getproductdetails = async (id) => {
       $unwind: '$nameData'
 
     },
-   
-
     {
       $project: {
         shopName: '$shopData.SName',
         // product: 1,
         productName: '$nameData.productTitle',
-        productId: "$productData.productId",
-        finalPricePerKg: "$productData.finalPricePerKg",
-        finalQuantity:"$productData.finalQuantity",
+        productId: "$productData.productid",
+        price: "$productData.priceperkg",
+        Quantity:"$productData.quantity",
         shopId: 1,
         status: 1,
         OrderId: 1,
