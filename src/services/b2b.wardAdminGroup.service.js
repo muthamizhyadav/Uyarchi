@@ -610,7 +610,9 @@ const assignOnly = async (page) => {
         assignDate: 1,
         assignTime: 1,
         manageDeliveryStatus: 1,
-        Pending: "$Pending.pending"
+        Pending: "$Pending.pending",
+        pettyCashAllocateStatus: 1,
+        pettyStockAllocateStatus:1,
       }
     },
 
