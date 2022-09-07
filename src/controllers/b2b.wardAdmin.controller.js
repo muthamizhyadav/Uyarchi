@@ -30,7 +30,7 @@ const getproductDetails = catchAsync(async (req, res) => {
 // })
 
 const updateProduct = catchAsync(async (req, res) => {
-  const product = await wardAdminService.updateProduct(req.params.orderId,req.params.id, req.body);
+  const product = await wardAdminService.updateProduct(req.params.orderId, req.body);
   res.send(product);
 });
 
