@@ -327,7 +327,7 @@ const updateRejectMultiSelect = async (body) => {
   let { arr } = JSON.stringify(body);
   console.log(body);
   body.arr.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Rejected' }, { new: true });
+   let details = await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Rejected' }, { new: true });
   });
 
   return 'status updated successfully';
@@ -507,7 +507,7 @@ const wardloadExecutivePacked = async (page) => {
   let data = await ShopOrderClone.aggregate([
     {
       $match: {
-        status: {
+        completeStatus: {
           $in: ['Packed'],
         },
       },

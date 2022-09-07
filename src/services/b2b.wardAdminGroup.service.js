@@ -563,31 +563,103 @@ const getBillDetails = async (id) => {
 
 const assignOnly = async (page) => {
   let values = await wardAdminGroup.aggregate([
+    
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [ {
+                $match: {
+                  $and: [{ customerDeliveryStatus: { $eq: "Pending"  } }]
+                }
+              },
+              {
+              $group: {
+                  _id : null
+              }
+            },
+            ],
+              as: 'shopdata'
+            }
+          },
+          { $unwind: "$shopdata"},
+          {
+            $project: {
+              pending:  { $eq: ['$shopdata._id', null] },
+            }
+          }
+        ],
+        as: 'dataDetails'
+      }
+    },
+    {
+      $unwind: {
+        path: '$dataDetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     // {
-    //   $match: {
-    //     status: {
-    //       $in: ['Assigned'],
-    //     },
-    //   },
-    // },
-    // {
-    //   $lookup: {
-    //     from: 'shoporderclones',
-    //     localField: '',
-    //     foreignField: '',
-    //     as: ''
+    //   $project: {
+    //     groupId:1,
+    //     totalOrders:1,
+    //     assignDate:1,
+    //     assignTime:1,
+    //     manageDeliveryStatus:1,
+    //     dataDetails:1,
     //   }
-    // }
+    // },
+    
 
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
     {
-      $match: {
-        status: {
-          $in: ['Assigned'],
-        },
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [ {
+                $match: {
+                  $and: [{ customerDeliveryStatus: { $eq: "Pending"  } }]
+                }
+              },
+              {
+              $group: {
+                  _id : null
+              }
+            },
+            ],
+              as: 'shopdata'
+            }
+          },
+          { $unwind: "$shopdata"},
+          {
+            $project: {
+              pending:  { $eq: ['$shopdata._id', null] },
+            }
+          }
+        ],
+        as: 'dataDetails'
+      }
+    },
+    {
+      $unwind: {
+        path: '$dataDetails',
+        preserveNullAndEmptyArrays: true,
       },
     },
   ]);
