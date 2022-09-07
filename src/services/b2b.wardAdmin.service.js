@@ -198,7 +198,10 @@ const getproductdetails = async (id) => {
       },
     },
   ]);
-  return values;
+  if (values.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'order not found');
+  }
+  return values[0];
 };
 
 // UPDATE PRODUCT DETAILS
@@ -257,6 +260,7 @@ const updateProduct = async ( id, updateBody) => {
   //   throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
   // }
   // productModify = await ProductorderClone.update({ orderId: orderId, productid: id }, updateBody, { new: true });
+
   return product;
 };
 
