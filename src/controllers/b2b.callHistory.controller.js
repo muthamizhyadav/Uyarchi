@@ -42,7 +42,7 @@ const getAllPage = catchAsync(async (req, res) => {
       userId,
       userRole
     );
-  } else if (req.params.status == 'callback' ||req.params.status == 'accept' ||req.params.status == 'declined') {
+  } else if (req.params.status == 'callback' || req.params.status == 'accept' || req.params.status == 'declined') {
     call = await callHistoryService.getShop_callback(
       req.params.date,
       req.params.status,
@@ -51,8 +51,7 @@ const getAllPage = catchAsync(async (req, res) => {
       userId,
       userRole
     );
-  }
-  else if (req.params.status == 'reschedule') {
+  } else if (req.params.status == 'reschedule') {
     call = await callHistoryService.getShop_reshedule(
       req.params.date,
       req.params.status,
@@ -61,9 +60,7 @@ const getAllPage = catchAsync(async (req, res) => {
       userId,
       userRole
     );
-  }
-  else if (req.params.status == 'oncall') {
-
+  } else if (req.params.status == 'oncall') {
     call = await callHistoryService.getShop_oncall(
       req.params.date,
       'On Call',
@@ -167,6 +164,12 @@ const oncallstatusByUser = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const call_visit_Count = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const shops = await callHistoryService.call_visit_Count(userId);
+  res.send(shops);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -189,4 +192,5 @@ module.exports = {
   previouscallBackAnd_Reshedule,
   getOncallShops,
   oncallstatusByUser,
+  call_visit_Count,
 };

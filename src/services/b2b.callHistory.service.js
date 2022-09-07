@@ -1422,6 +1422,20 @@ const oncallstatusByUser = async (userId) => {
   }
 };
 
+const call_visit_Count = async (userId) => {
+  let currentDate = moment().format('YYYY-MM-DD');
+  // let values = await callHistoryModel.aggregate([
+  //   {
+  //     $match: { date: currentDate },
+  //   },
+  // ]);
+  let visit_Count = await callHistoryModel
+    .find({ userId: userId, date: currentDate, type: 'call', status: 'ordered' })
+    .count();
+  let call_Count = await callHistoryModel.find({ date: currentDate, type: 'visit', status: 'ordered' }).count();
+  return { visitCount: visit_Count, callCount: call_Count };
+};
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -1446,4 +1460,5 @@ module.exports = {
   getShop_callback,
   getShop_reshedule,
   getShop_oncall,
+  call_visit_Count,
 };
