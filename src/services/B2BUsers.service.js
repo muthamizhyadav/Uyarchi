@@ -382,7 +382,7 @@ const deleteB2bUsersbyId = async (id) => {
   }
 
   await Shop.updateMany({ Uid: id }, { $set: { Uid: '3625a112-a7f5-4bd8-b9c3-f86ae03c2f44' } }, { new: true });
-  await MarketClone.updateMany({ Uid: id }, { $set: { Uid: '3625a112-a7f5-4bd8-b9c3-f86ae03c2f44' } });
+  await MarketClone.updateMany({ Uid: id }, { $set: { Uid: '3625a112-a7f5-4bd8-b9c3-f86ae03c2f44' } }, { new: true });
   users = await Users.deleteOne({ _id: id });
   return users;
 };
