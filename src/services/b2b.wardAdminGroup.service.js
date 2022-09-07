@@ -605,16 +605,16 @@ const assignOnly = async (page) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-    // {
-    //   $project: {
-    //     groupId:1,
-    //     totalOrders:1,
-    //     assignDate:1,
-    //     assignTime:1,
-    //     manageDeliveryStatus:1,
-    //     dataDetails:1,
-    //   }
-    // },
+    {
+      $project: {
+        groupId:1,
+        totalOrders:1,
+        assignDate:1,
+        assignTime:1,
+        manageDeliveryStatus:1,
+        dataDetails:1,
+      }
+    },
     
 
     { $skip: 10 * page },
