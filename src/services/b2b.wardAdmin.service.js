@@ -505,13 +505,17 @@ const createArrayData = async (pettyStockData) => {
 
 const wardloadExecutivePacked = async (page) => {
   let data = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        completeStatus: {
-          $in: ['Packed'],
-        },
-      },
-    },
+    // {
+    //   $match: {
+    //     completeStatus: {
+    //       $in: ['Packed']
+    //     },
+    //   },
+    //   status: {
+    //     $in: ["Assigned"]
+    //   }
+    // },
+    { $match: { completeStatus: 'Packed', status: 'Assigned'} },
     {
       $lookup: {
         from: 'b2bshopclones',
@@ -590,13 +594,7 @@ const wardloadExecutivePacked = async (page) => {
   ]);
 
   let total = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        status: {
-          $in: ['Packed'],
-        },
-      },
-    },
+    { $match: { completeStatus: 'Packed', status: 'Assigned'} },
     {
       $lookup: {
         from: 'b2bshopclones',
