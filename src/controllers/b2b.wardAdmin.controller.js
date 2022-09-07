@@ -30,7 +30,7 @@ const getproductDetails = catchAsync(async (req, res) => {
 // })
 
 const updateProduct = catchAsync(async (req, res) => {
-  const product = await wardAdminService.updateProduct(req.params.orderId,req.params.id, req.body);
+  const product = await wardAdminService.updateProduct(req.params.orderId, req.body);
   res.send(product);
 });
 
@@ -74,7 +74,7 @@ const wardloadExecutive = catchAsync(async (req, res) => {
 });
 
 const updatePacked = catchAsync(async (req, res) => {
-  const packed = await wardAdminService.updateStatusForAssugnedAndPacked(req.params.id, "Packed");
+  const packed = await wardAdminService.updateStatusForAssugnedAndPacked(req.params.id,req.body);
   res.send(packed);
 });
 

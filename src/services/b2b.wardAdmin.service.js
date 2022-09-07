@@ -12,11 +12,11 @@ const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model
 // GET DETAILS
 
 
-const getdetails =async (limit,page,status) => {
-  let statusMatch = { active: { $eq: true }};
-  if(status != 'null'){
+const getdetails = async (limit, page, status) => {
+  let statusMatch = { active: { $eq: true } };
+  if (status != 'null') {
     statusMatch = {
-      status: { $eq: status}
+      status: { $eq: status }
     };
   }
   let values = await ShopOrderClone.aggregate([
@@ -57,7 +57,7 @@ const getdetails =async (limit,page,status) => {
         as: 'userNameData',
       },
     },
-      //  { unwind: '$userNameData'},
+    //  { unwind: '$userNameData'},
 
     {
       $project: {
@@ -65,7 +65,7 @@ const getdetails =async (limit,page,status) => {
         OrderId: 1,
         status: 1,
         Payment: 1,
-        delivery_type:1,
+        delivery_type: 1,
         overallTotal: 1,
         name: '$userNameData.name',
 
@@ -81,7 +81,7 @@ const getdetails =async (limit,page,status) => {
   ]);
 
   let total = await ShopOrderClone.aggregate([
-  
+
     {
       $sort: {
         status: 1,
@@ -119,7 +119,7 @@ const getdetails =async (limit,page,status) => {
         as: 'userNameData',
       },
     },
-      //  { unwind: '$userNameData'},
+    //  { unwind: '$userNameData'},
   ]).limit(parseInt(limit));
 
   return { values: values, total: total.length };
@@ -147,11 +147,57 @@ const getproductdetails = async (id) => {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'nameData'
+            }
+          },
+          {
+            $unwind: '$nameData'
+
+          },
+          {
+            $project: {
+              finalQuantity: 1,
+              priceperkg: 1,
+              productid: 1,
+              productTitle: "$nameData.productTitle",
+              productpacktypeId: 1
+
+            }
+          }
+        ],
         as: 'productData'
       }
     },
     {
-      $unwind: '$productData'
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group : {
+                _id: null,
+                amount: { $sum: { $multiply : [ 
+                    '$finalQuantity', '$priceperkg' 
+                ]}},
+            }
+        },
+     
+        ],
+        as: 'productDatadetails'
+      }
+    },
+    {
+      $unwind: {
+        path: '$productDatadetails',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $lookup: {
@@ -165,34 +211,22 @@ const getproductdetails = async (id) => {
       $unwind: '$shopData',
     },
     {
-      $lookup: {
-        from: 'products',
-        localField: 'productData.productid',
-        foreignField: '_id',
-        as: 'nameData'
-      }
-    },
-    {
-      $unwind: '$nameData'
-
-    },
-    {
       $project: {
+        productData: '$productData',
         shopName: '$shopData.SName',
-        // product: 1,
-        productName: '$nameData.productTitle',
-        productId: "$productData.productid",
-        price: "$productData.priceperkg",
-        Quantity:"$productData.quantity",
         shopId: 1,
         status: 1,
         OrderId: 1,
-         total: 1,
+        total: "$productDatadetails.amount",
+        // productDatadetails: "$productDatadetails"
         // deliveryExecutiveId:1,
       },
     },
   ]);
-  return values;
+  if (values.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'order not found');
+  }
+  return values[0];
 };
 
 // UPDATE PRODUCT DETAILS
@@ -225,7 +259,7 @@ const getproductdetails = async (id) => {
 
 
 // const updateProduct = async(  orderId ,id , updateBody) =>{
-  
+
 //   let products = await ProductorderClone.update( { orderId:orderId , productid:id  } ,  { $set: { quantity:updateBody.quantity, priceperkg: updateBody.priceperkg} }, { new: true});
 //   console.log(products)
 //   updateBody.product.forEach(async (e) =>{
@@ -237,19 +271,28 @@ const getproductdetails = async (id) => {
 //  return products;
 // }
 
-const updateProduct = async (orderId,id, updateBody) => {
+const updateProduct = async ( id, updateBody) => {
+  let product = await ShopOrderClone.findById(id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'order not found');
+  }
+  updateBody.product.forEach(async (e) => {
+    await ProductorderClone.findByIdAndUpdate({ _id: e._id },{finalQuantity: e.quantity}, { new: true });
+  });
+  product= await ShopOrderClone.findByIdAndUpdate({ _id: id },{status:"Modified"},{ new: true});
   // let productModify = await ProductorderClone.update(orderId,id );
   //   if (!productModify) {
   //   throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
   // }
-  productModify = await ProductorderClone.update({ orderId: orderId ,productid:id  }, updateBody, { new: true });
-  return productModify;
+  // productModify = await ProductorderClone.update({ orderId: orderId, productid: id }, updateBody, { new: true });
+
+  return product;
 };
 
 
 
 
-const updateStatusApprovedOrModified = async (id , updateBody) =>{
+const updateStatusApprovedOrModified = async (id, updateBody) => {
   let product = await ShopOrderClone.findById(id);
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
@@ -270,8 +313,8 @@ const updateRejected = async (body) => {
   return 'status updated successfully';
 };
 
-const updateApprovedMultiSelect = async(body)=>{
-  let {arr} = JSON.stringify(body);
+const updateApprovedMultiSelect = async (body) => {
+  let { arr } = JSON.stringify(body);
   console.log(body);
   body.arr.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Approved' }, { new: true });
@@ -280,8 +323,8 @@ const updateApprovedMultiSelect = async(body)=>{
   return 'status updated successfully';
 }
 
-const updateRejectMultiSelect = async (body) =>{
-  let {arr} = JSON.stringify(body);
+const updateRejectMultiSelect = async (body) => {
+  let { arr } = JSON.stringify(body);
   console.log(body);
   body.arr.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Rejected' }, { new: true });
@@ -330,7 +373,7 @@ const wardloadExecutive = async (page) => {
       $project: {
         shopId: 1,
         status: 1,
-        completeStatus:1,
+        completeStatus: 1,
         OrderId: 1,
         SName: '$b2bshopclonesData.SName',
         type: '$b2bshopclonesData.type',
@@ -376,13 +419,13 @@ const wardloadExecutive = async (page) => {
   return { data: data, total: total.length };
 };
 
-const updateStatusForAssugnedAndPacked = async (id, status) => {
+const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
   let statusUpdate = await ShopOrderClone.findById(id);
   console.log(statusUpdate);
   if (!statusUpdate) {
     throw new ApiError(httpStatus.NOT_FOUND, ' not found');
   }
-  statusUpdate = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
+  statusUpdate = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   console.log(statusUpdate);
   return statusUpdate;
 };
@@ -442,7 +485,7 @@ const createdata = async (Orderdatas) => {
   Orderdatass.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e._id }, { deliveryExecutiveId: deliveryExecutiveId, status: 'Assigned' });
   });
-  
+
   return 'success';
 };
 

@@ -8,7 +8,7 @@ router.route('/getDetails/:limit/:page/:status').get(wardAdminController.getDeta
 
 router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 
-router.route('/updateProductById/:orderId/:id').put(wardAdminController.updateProduct);
+router.route('/updateProductById/:orderId').put(wardAdminController.updateProduct);
 
 router.route('/updateAcknowledge').put(wardAdminController.updateAcknowledge);
 
