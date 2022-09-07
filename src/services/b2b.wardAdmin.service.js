@@ -120,7 +120,7 @@ const getdetails = async (limit, page, status) => {
       },
     },
     //  { unwind: '$userNameData'},
-  ]).limit(parseInt(limit));
+  ]);
 
   return { values: values, total: total.length };
 };
