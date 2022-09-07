@@ -563,13 +563,21 @@ const getBillDetails = async (id) => {
 
 const assignOnly = async (page) => {
   let values = await wardAdminGroup.aggregate([
-    {
-      $match: {
-        status: {
-          $in: ['Assigned'],
-        },
-      },
-    },
+    // {
+    //   $match: {
+    //     status: {
+    //       $in: ['Assigned'],
+    //     },
+    //   },
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'shoporderclones',
+    //     localField: '',
+    //     foreignField: '',
+    //     as: ''
+    //   }
+    // }
 
     { $skip: 10 * page },
     { $limit: 10 },

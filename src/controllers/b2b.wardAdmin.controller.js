@@ -74,7 +74,7 @@ const wardloadExecutive = catchAsync(async (req, res) => {
 });
 
 const updatePacked = catchAsync(async (req, res) => {
-  const packed = await wardAdminService.updateStatusForAssugnedAndPacked(req.params.id, "Packed");
+  const packed = await wardAdminService.updateStatusForAssugnedAndPacked(req.params.id,req.body);
   res.send(packed);
 });
 

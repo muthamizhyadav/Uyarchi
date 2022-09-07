@@ -419,13 +419,13 @@ const wardloadExecutive = async (page) => {
   return { data: data, total: total.length };
 };
 
-const updateStatusForAssugnedAndPacked = async (id, status) => {
+const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
   let statusUpdate = await ShopOrderClone.findById(id);
   console.log(statusUpdate);
   if (!statusUpdate) {
     throw new ApiError(httpStatus.NOT_FOUND, ' not found');
   }
-  statusUpdate = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
+  statusUpdate = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   console.log(statusUpdate);
   return statusUpdate;
 };
