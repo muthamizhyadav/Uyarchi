@@ -174,7 +174,31 @@ const getproductdetails = async (id) => {
         as: 'productData'
       }
     },
-
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group : {
+                _id: null,
+                amount: { $sum: { $multiply : [ 
+                    '$finalQuantity', '$priceperkg' 
+                ]}},
+            }
+        },
+     
+        ],
+        as: 'productDatadetails'
+      }
+    },
+    {
+      $unwind: {
+        path: '$productDatadetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $lookup: {
         from: 'b2bshopclones',
@@ -193,7 +217,8 @@ const getproductdetails = async (id) => {
         shopId: 1,
         status: 1,
         OrderId: 1,
-        total: 1,
+        total: "$productDatadetails.amount",
+        // productDatadetails: "$productDatadetails"
         // deliveryExecutiveId:1,
       },
     },
