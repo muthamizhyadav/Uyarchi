@@ -121,6 +121,12 @@ let statusMatching
       req.params.page,
       req.params.status)
   }
+  else if ( req.params.status == "Rejected" ){
+    statusMatching = await wardAdminService.getdetailsDataStatusRejected (
+      req.params.limit,
+      req.params.page,
+      req.params.status)
+  }
   else if ( req.params.status == "Approved" || req.params.status == "Modified"){
     statusMatching = await wardAdminService.getAppOrModifiedStatus (
       req.params.limit,
