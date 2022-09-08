@@ -233,14 +233,7 @@ const returnStock = async (id) => {
               finalQuantity: { $sum: '$finalPricePerKg' }
             }
           },
-          //   {
-          //     $group: { _id: null, Qty: { 
-          //         $sum: { 
-          //                 $eq: ['$finalQuantity', 0] 
-          //             }
-          //     }
-          //   }
-          // }
+          
         ],
         as: 'productorderclones',
       },
@@ -317,14 +310,7 @@ const returnStock = async (id) => {
               UnfinalQuantity: { $sum: '$finalPricePerKg' }
             }
           },
-          //   {
-          //     $group: { _id: null, UnQty: { 
-          //         $sum: { 
-          //                 $eq: ['$finalQuantity', 0] 
-          //             }
-          //     }
-          //   }
-          // }
+          
         ],
         as: 'productorderclonesData',
       },
@@ -388,20 +374,20 @@ const returnStock = async (id) => {
 //   return sample;
 // }
 
-const pettyCashSubmit = async (id, updateBody) => {
-  let deliveryStatus = await wardAdminGroup.findById(id);
-  console.log(deliveryStatus);
-  if (!deliveryStatus) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
-  }
-  deliveryStatus = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-  console.log(deliveryStatus);
-  return deliveryStatus;
-};
+// const pettyCashSubmit = async (id, updateBody) => {
+//   let deliveryStatus = await wardAdminGroup.findById(id);
+//   console.log(deliveryStatus);
+//   if (!deliveryStatus) {
+//     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+//   }
+//   deliveryStatus = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+//   console.log(deliveryStatus);
+//   return deliveryStatus;
+// };
 
-const getGroupdetails = async () => {
-  return wardAdminGroup.find();
-};
+// const getGroupdetails = async () => {
+//   return wardAdminGroup.find();
+// };
 
 // GET ASSIGN DATA BY DEVIVERY EXECUTIVE NAME
 
@@ -1204,7 +1190,7 @@ module.exports = {
   getOrderFromGroupById,
   getPettyStock,
   // group Details
-  getGroupdetails,
+  // getGroupdetails,
   // DELEIVERY DETAILS
   // getDeliveryDetails,
   getstatus,
@@ -1220,7 +1206,7 @@ module.exports = {
   getBillDetailsPerOrder,
   getReturnWDEtoWLE,
   // pettyStockSubmit,
-  pettyCashSubmit,
+  // pettyCashSubmit,
   getPettyStockDetails,
   getdetailsAboutPettyStockByGroupId,
   uploadWastageImage,
