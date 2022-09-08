@@ -1028,9 +1028,9 @@ const createAttendanceClone = async (shopBody) => {
 };
 
 const createAttendanceClone_new = async (shopBody) => {
-  let servertime = moment().format('HHmm');
+  let servertime = moment().format('HHmmss');
   let servercreatetime = moment().format('hh:mm a');
-  let serverdate = moment().format('DD-MM-yyy');
+  let serverdate = moment().format('yyyy-MM-DD');
   let values = { ...shopBody, ...{ date: serverdate, time: servertime, created: servercreatetime } };
   const attendance = await AttendanceClonenew.create(values);
   return attendance;
