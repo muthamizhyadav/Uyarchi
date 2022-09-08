@@ -140,8 +140,8 @@ const getDataWithSupplierId = async (id, page) => {
         productTitle: '$ProductData.productTitle',
       },
     },
-    { $limit: 10 },
     { $skip: 10 * page },
+    { $limit: 10 },
   ]);
   let total = await CallStatus.aggregate([
     {
@@ -153,7 +153,30 @@ const getDataWithSupplierId = async (id, page) => {
         ],
       },
     },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'ProductData',
+      },
+    },
+    {
+      $unwind: '$ProductData',
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        as: 'supplierData',
+      },
+    },
+    {
+      $unwind: '$supplierData',
+    },
   ]);
+  console.log(total);
   let getSupplier = await Supplier.findById(id);
   return { values: values, total: total.length, supplier: getSupplier };
 };
