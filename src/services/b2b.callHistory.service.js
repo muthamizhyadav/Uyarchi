@@ -1430,7 +1430,7 @@ const call_visit_Count = async (userId) => {
   let call_Count = await callHistoryModel
     .find({ userId: userId, date: currentDate, type: 'visit', status: 'ordered' })
     .count();
-  return { visitCount: visit_Count, callCount: call_Count };
+  return { visitCount: call_Count, callCount: visit_Count };
 };
 
 module.exports = {
