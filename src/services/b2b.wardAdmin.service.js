@@ -11,23 +11,41 @@ const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model
 
 // GET DETAILS
 
+const countStatus = async () =>{
+  let AcknowledgedStatusCount = await ShopOrderClone.find({ status: "Acknowledged"}).count();
+  let orderedStatusCount = await ShopOrderClone.find({status:"ordered"}).count();
+  let ApprovedStatusCount = await ShopOrderClone.find({status:"Approved"}).count();
+  let ModifiedStatusCount = await ShopOrderClone.find({status:"Modified"}).count();
+  let rejectedStatusCount = await ShopOrderClone.find({status:"Rejected"}).count();
 
-const getdetails = async (limit, page, status) => {
-  let statusMatch = { active: { $eq: true } };
-  if (status != 'null') {
+  return {
+    AcknowledgedStatusCount: AcknowledgedStatusCount,
+    orderedStatusCount: orderedStatusCount,
+    ApprovedStatusCount: ApprovedStatusCount,
+    ModifiedStatusCount: ModifiedStatusCount,
+    rejectedStatusCount: rejectedStatusCount,
+  }
+};
+
+const getdetailsDataStatusRejected = async (limit, page, status) => {
+  console.log(status)
+  let statusMatch
+  if (status != 'null' ) {
     statusMatch = {
       status: { $eq: status }
     };
   }
   let values = await ShopOrderClone.aggregate([
-    {
-      $sort: {
-        status: 1,
-      }
-    },
+
     {
       $match: {
         $and: [statusMatch]
+      }
+    },
+    {
+      $sort: {
+        date: -1,
+        time: -1,
       }
     },
     {
@@ -79,12 +97,12 @@ const getdetails = async (limit, page, status) => {
     { $skip: parseInt(limit) * page },
     { $limit: parseInt(limit) },
   ]);
-
   let total = await ShopOrderClone.aggregate([
 
     {
       $sort: {
-        status: 1,
+        date: -1,
+        time: -1,
       }
     },
     {
@@ -122,8 +140,481 @@ const getdetails = async (limit, page, status) => {
     //  { unwind: '$userNameData'},
   ]);
 
-  return { values: values, total: total.length };
+  return {values:values, total: total.length};
+}
+
+const getdetailsDataStatusAcknowledged = async (limit,page,status) => {
+  console.log(status)
+  let statusMatch
+  if (status != 'null' ) {
+    statusMatch = {
+      status: { $eq: status }
+    };
+  }
+  let values = await ShopOrderClone.aggregate([
+
+    {
+      $match: {
+        $and: [statusMatch]
+      }
+    },
+    {
+      $sort: {
+        date: -1,
+        time: -1,
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId', //Uid
+        foreignField: '_id', //Uid
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'userNameData',
+      },
+    },
+    //  { unwind: '$userNameData'},
+
+    {
+      $project: {
+        shopId: 1,
+        OrderId: 1,
+        status: 1,
+        Payment: 1,
+        delivery_type: 1,
+        overallTotal: 1,
+        name: '$userNameData.name',
+
+        shopType: '$userData.type',
+        shopName: '$userData.SName',
+        // UserName: '$userData.name',
+        // orderId: '$orderData.orderId',
+        totalItems: { $size: '$orderData' },
+      },
+    },
+    { $skip: parseInt(limit) * page },
+    { $limit: parseInt(limit) },
+  ]);
+  let total = await ShopOrderClone.aggregate([
+
+    {
+      $sort: {
+        date: -1,
+        time: -1,
+      }
+    },
+    {
+      $match: {
+        $and: [statusMatch]
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId', //Uid
+        foreignField: '_id', //Uid
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'userNameData',
+      },
+    },
+    //  { unwind: '$userNameData'},
+  ]);
+
+  return {values:values, total: total.length};
+
+}
+
+
+const getdetailsDataStatusOdered = async (limit, page, status) =>{
+  console.log(status)
+  let statusMatch
+  if (status != 'null' ) {
+    statusMatch = {
+      status: { $eq: status }
+    };
+  }
+  let values = await ShopOrderClone.aggregate([
+
+    {
+      $match: {
+        $and: [statusMatch]
+      }
+    },
+    {
+      $sort: {
+        date: -1,
+        time: -1,
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId', //Uid
+        foreignField: '_id', //Uid
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'userNameData',
+      },
+    },
+    //  { unwind: '$userNameData'},
+
+    {
+      $project: {
+        shopId: 1,
+        OrderId: 1,
+        status: 1,
+        Payment: 1,
+        delivery_type: 1,
+        overallTotal: 1,
+        name: '$userNameData.name',
+
+        shopType: '$userData.type',
+        shopName: '$userData.SName',
+        // UserName: '$userData.name',
+        // orderId: '$orderData.orderId',
+        totalItems: { $size: '$orderData' },
+      },
+    },
+    { $skip: parseInt(limit) * page },
+    { $limit: parseInt(limit) },
+  ]);
+  let total = await ShopOrderClone.aggregate([
+
+    {
+      $sort: {
+        date: -1,
+        time: -1,
+      }
+    },
+    {
+      $match: {
+        $and: [statusMatch]
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId', //Uid
+        foreignField: '_id', //Uid
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'userNameData',
+      },
+    },
+    //  { unwind: '$userNameData'},
+  ]);
+
+  return {values:values, total: total.length};
 };
+
+
+const getAppOrModifiedStatus = async(limit, page, status)=>{
+  console.log(status)
+  let statusMatch
+  if (status != 'null' ) {
+    statusMatch = {
+      // status: { $eq: status }
+      status: {$in: ['Approved', 'Modified'] } 
+    };
+  }
+  let values = await ShopOrderClone.aggregate([
+
+    {
+      $match: {
+        $and: [statusMatch]
+      }
+    },
+    {
+      $sort: {
+        date: -1,
+        time: -1,
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId', //Uid
+        foreignField: '_id', //Uid
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'userNameData',
+      },
+    },
+    //  { unwind: '$userNameData'},
+
+    {
+      $project: {
+        shopId: 1,
+        OrderId: 1,
+        status: 1,
+        Payment: 1,
+        delivery_type: 1,
+        overallTotal: 1,
+        name: '$userNameData.name',
+
+        shopType: '$userData.type',
+        shopName: '$userData.SName',
+        // UserName: '$userData.name',
+        // orderId: '$orderData.orderId',
+        totalItems: { $size: '$orderData' },
+      },
+    },
+    { $skip: parseInt(limit) * page },
+    { $limit: parseInt(limit) },
+  ]);
+  let total = await ShopOrderClone.aggregate([
+
+    {
+      $sort: {
+        date: -1,
+        time: -1,
+      }
+    },
+    {
+      $match: {
+        $and: [statusMatch]
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId', //Uid
+        foreignField: '_id', //Uid
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'userNameData',
+      },
+    },
+    //  { unwind: '$userNameData'},
+  ]);
+
+  return {values:values, total: total.length};
+}
+
+
+// const getdetails = async (limit, page, status) => {
+//   console.log(status)
+//   let statusMatch
+//   if (status != 'null' ) {
+//     statusMatch = {
+//       status: { $eq: status }
+//     };
+//   }
+  
+//   console.log(statusMatch) 
+
+//   let values = await ShopOrderClone.aggregate([
+
+//     {
+//       $match: {
+//         $and: [statusMatch]
+//       }
+//     },
+//     {
+//       $sort: {
+//         date: -1,
+//         time: -1,
+//       }
+//     },
+//     {
+//       $lookup: {
+//         from: 'b2bshopclones',
+//         localField: 'shopId', //Uid
+//         foreignField: '_id', //Uid
+//         as: 'userData',
+//       },
+//     },
+//     {
+//       $unwind: '$userData',
+//     },
+//     {
+//       $lookup: {
+//         from: 'productorderclones',
+//         localField: '_id',
+//         foreignField: 'orderId',
+//         as: 'orderData',
+//       },
+//     },
+//     {
+//       $lookup: {
+//         from: 'b2busers',
+//         localField: 'Uid',
+//         foreignField: '_id',
+//         as: 'userNameData',
+//       },
+//     },
+//     //  { unwind: '$userNameData'},
+
+//     {
+//       $project: {
+//         shopId: 1,
+//         OrderId: 1,
+//         status: 1,
+//         Payment: 1,
+//         delivery_type: 1,
+//         overallTotal: 1,
+//         name: '$userNameData.name',
+
+//         shopType: '$userData.type',
+//         shopName: '$userData.SName',
+//         // UserName: '$userData.name',
+//         // orderId: '$orderData.orderId',
+//         totalItems: { $size: '$orderData' },
+//       },
+//     },
+//     { $skip: parseInt(limit) * page },
+//     { $limit: parseInt(limit) },
+//   ]);
+
+//   let total = await ShopOrderClone.aggregate([
+
+//     {
+//       $sort: {
+//         date: -1,
+//         time: -1,
+//       }
+//     },
+//     {
+//       $match: {
+//         $and: [statusMatch]
+//       }
+//     },
+//     {
+//       $lookup: {
+//         from: 'b2bshopclones',
+//         localField: 'shopId', //Uid
+//         foreignField: '_id', //Uid
+//         as: 'userData',
+//       },
+//     },
+//     {
+//       $unwind: '$userData',
+//     },
+//     {
+//       $lookup: {
+//         from: 'productorderclones',
+//         localField: '_id',
+//         foreignField: 'orderId',
+//         as: 'orderData',
+//       },
+//     },
+//     {
+//       $lookup: {
+//         from: 'b2busers',
+//         localField: 'Uid',
+//         foreignField: '_id',
+//         as: 'userNameData',
+//       },
+//     },
+//     //  { unwind: '$userNameData'},
+//   ]);
+
+//   return { values: values, total: total.length };
+// };
 
 // GET PRODUCT DETAILS
 
@@ -181,14 +672,18 @@ const getproductdetails = async (id) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $group : {
-                _id: null,
-                amount: { $sum: { $multiply : [ 
-                    '$finalQuantity', '$priceperkg' 
-                ]}},
+            $group: {
+              _id: null,
+              amount: {
+                $sum: {
+                  $multiply: [
+                    '$finalQuantity', '$priceperkg'
+                  ]
+                }
+              },
             }
-        },
-     
+          },
+
         ],
         as: 'productDatadetails'
       }
@@ -271,15 +766,15 @@ const getproductdetails = async (id) => {
 //  return products;
 // }
 
-const updateProduct = async ( id, updateBody) => {
+const updateProduct = async (id, updateBody) => {
   let product = await ShopOrderClone.findById(id);
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, 'order not found');
   }
   updateBody.product.forEach(async (e) => {
-    await ProductorderClone.findByIdAndUpdate({ _id: e._id },{finalQuantity: e.quantity}, { new: true });
+    await ProductorderClone.findByIdAndUpdate({ _id: e._id }, { finalQuantity: e.quantity }, { new: true });
   });
-  product= await ShopOrderClone.findByIdAndUpdate({ _id: id },{status:"Modified"},{ new: true});
+  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: "Modified" }, { new: true });
   // let productModify = await ProductorderClone.update(orderId,id );
   //   if (!productModify) {
   //   throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
@@ -327,7 +822,7 @@ const updateRejectMultiSelect = async (body) => {
   let { arr } = JSON.stringify(body);
   console.log(body);
   body.arr.forEach(async (e) => {
-   let details = await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Rejected' }, { new: true });
+    let details = await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Rejected' }, { new: true });
   });
 
   return 'status updated successfully';
@@ -505,11 +1000,10 @@ const createArrayData = async (pettyStockData) => {
 
 const wardloadExecutivePacked = async (page) => {
   let data = await ShopOrderClone.aggregate([
+
     {
       $match: {
-        completeStatus: {
-          $in: ['Packed'],
-        },
+        $and: [{ completeStatus: { $eq: 'Packed' } }, { status: { $nin: ['Assigned'] } }],
       },
     },
     {
@@ -592,9 +1086,7 @@ const wardloadExecutivePacked = async (page) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        status: {
-          $in: ['Packed'],
-        },
+        $and: [{ completeStatus: { $eq: 'Packed' } }, { status: { $nin: ['Assigned'] } }],
       },
     },
     {
@@ -677,7 +1169,7 @@ const wardDeliveryExecutive = async () => {
 };
 
 module.exports = {
-  getdetails,
+  // getdetails,
   getproductdetails,
   updateProduct,
   // updateAcknowledge,
@@ -703,4 +1195,10 @@ module.exports = {
   updateAcknowledgeSingle,
   updateApprovedMultiSelect,
   updateRejectMultiSelect,
+
+  countStatus,
+  getdetailsDataStatusOdered,
+  getdetailsDataStatusAcknowledged,
+  getAppOrModifiedStatus,
+  getdetailsDataStatusRejected,
 };
