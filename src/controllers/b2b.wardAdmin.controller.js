@@ -127,7 +127,7 @@ let statusMatching
       req.params.page,
       req.params.status)
   }
-  else if ( req.params.status == "Approved" || req.params.status == "Modified"){
+  else if ( req.params.status == "Approved" || req.params.status == "Modified"  ||  req.params.status == "Packed"){
     statusMatching = await wardAdminService.getAppOrModifiedStatus (
       req.params.limit,
       req.params.page,
