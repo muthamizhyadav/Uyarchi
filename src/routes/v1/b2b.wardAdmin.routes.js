@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.route('/create/data').post(wardAdminController.createdata);
 
-router.route('/getDetails/:limit/:page/:status').get(wardAdminController.getDetails);
+router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusMatchingAppOrModi);
 
 router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 
@@ -41,6 +41,8 @@ router.route('/delivery/Executive/Name/:id').put(wardAdminController.deliveryexe
 
 router.route('/Array/craeteArrayData').post(wardAdminController.createArrayData);
 
-router.route('/update/acknowleded/status/single/:id').put(wardAdminController.updateAcknowledgeSingle)
+router.route('/update/acknowleded/status/single/:id').put(wardAdminController.updateAcknowledgeSingle);
+
+router.route("/get/status/Count").get(wardAdminController.countStatus);
 
 module.exports = router;

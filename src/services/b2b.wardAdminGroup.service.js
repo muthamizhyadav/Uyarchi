@@ -1069,22 +1069,7 @@ const getAllGroup = async (page) => {
   return { values: values, total: total.length };
 };
 
-// const pettyStockCreate = async (pettyStockBody) => {
-//   console.log(pettyStockBody);
-//   let body = { ...pettyStockBody };
-//   let createPetty = await wardAdminGroup.findOneAndReplace(body);
-//   let { pettyStock } = pettyStockBody;
-//   pettyStock.forEach(async (e) => {
-//     pettyStockModel.create({
-//       wardAdminId: e.id,
-//       product: e.product,
-//       QTY: e.QTY,
-//       pettyStock: e.pettyStock,
-//       totalQtyIncludingPettyStock: e.totalQtyIncludingPettyStock,
-//     });
-//   });
-//   return createPetty;
-// };
+
 const pettyStockCreate = async (id, pettyStockBody) => {
   console.log(pettyStockBody);
   let body = { ...pettyStockBody };

@@ -104,6 +104,36 @@ const updateAcknowledgeSingle = catchAsync(async (req, res) => {
   const Acknowledged = await wardAdminService.updateAcknowledgeSingle(req.params.id, req.body );
   res.send(Acknowledged);
 });
+
+
+const statusMatchingAppOrModi = catchAsync(async (req, res) => {
+ 
+let statusMatching
+  if(req.params.status == "Acknowledged" ){
+    statusMatching = await wardAdminService.getdetailsDataStatusAcknowledged (
+      req.params.limit,
+      req.params.page,
+      req.params.status)
+  }
+  else if ( req.params.status == "ordered" ){
+    statusMatching = await wardAdminService.getdetailsDataStatusOdered (
+      req.params.limit,
+      req.params.page,
+      req.params.status)
+  }
+  else if ( req.params.status == "Approved" || req.params.status == "Modified"){
+    statusMatching = await wardAdminService.getAppOrModifiedStatus (
+      req.params.limit,
+      req.params.page,
+      req.params.status)
+  }
+  res.send(statusMatching);
+});
+
+const countStatus = catchAsync(async (req, res) => {
+  const Acknowledged = await wardAdminService.countStatus(req.params.id, req.body );
+  res.send(Acknowledged);
+});
 module.exports = {
   getDetails,
   getproductDetails,
@@ -131,4 +161,6 @@ module.exports = {
   updateAcknowledgeSingle,
   updateApproval,
   updateRejectionStatus,
+  countStatus,
+  statusMatchingAppOrModi,
 };
