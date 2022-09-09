@@ -645,11 +645,26 @@ const assignOnly = async (page) => {
           {
             $project: {
               pending: { $eq: ['$shopdata._id', null] },
+              shopdata: '$shopdata.deliveryExecutiveId',
             },
           },
         ],
         as: 'dataDetails',
       },
+    },
+
+    { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
+
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'UserName',
+      },
+    },
+    {
+      $unwind: '$UserName',
     },
   ]);
   return { values: values, total: total.length };
