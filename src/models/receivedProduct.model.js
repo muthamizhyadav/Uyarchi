@@ -70,7 +70,10 @@ const receivedProducrSchema = new mongoose.Schema({
     default: true,
   },
   supplierBillAmount: {
-    type: String,
+    type: Number,
+  },
+  supplierBillproductcount: {
+    type: Number,
   },
   created: {
     type: Date,
