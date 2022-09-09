@@ -177,6 +177,11 @@ const getdetailsDataStatusAcknowledged = async (limit, page, status) => {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
+        pipeline:[
+          {
+            $match: {finalQuantity:{$ne:null}}
+          }
+        ],
         as: 'orderData',
       },
     },
@@ -189,7 +194,6 @@ const getdetailsDataStatusAcknowledged = async (limit, page, status) => {
       },
     },
     //  { unwind: '$userNameData'},
-
     {
       $project: {
         shopId: 1,
