@@ -42,5 +42,5 @@ router.route('/telecaller').get(shopOrderController.getAll);
 router.route('/createorderId').post(shopOrderController.createOrderId);
 
 router.route('/update/:id').put(shopOrderController.updateshop_order);
-
+router.route('/getShop/details/:id').get(shopOrderController.getShopDetailsByOrder);
 module.exports = router;
