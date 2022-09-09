@@ -69,6 +69,9 @@ const receivedProducrSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  supplierBillAmount: {
+    type: String,
+  },
   created: {
     type: Date,
   },

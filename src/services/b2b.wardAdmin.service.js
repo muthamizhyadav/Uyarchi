@@ -438,7 +438,6 @@ const getAppOrModifiedStatus = async (limit, page, status) => {
         delivery_type: 1,
         overallTotal: 1,
         name: '$userNameData.name',
-
         shopType: '$userData.type',
         shopName: '$userData.SName',
         // UserName: '$userData.name',
