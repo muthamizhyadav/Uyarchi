@@ -288,7 +288,7 @@ const get_product_withpacktype = async (search, page) => {
         localField: '_id',
         foreignField: 'productId',
         pipeline: [
-          // { $match: { date: moment().format('DD-MM-YYYY') } },
+          { $match: { date: moment().format('DD-MM-YYYY') } },
           {
             $group: {
               _id: null,
