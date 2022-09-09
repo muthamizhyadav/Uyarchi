@@ -149,6 +149,7 @@ const getdetailsDataStatusAcknowledged = async (limit, page, status) => {
       status: { $eq: status },
     };
   }
+  console.log(status);
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -203,11 +204,11 @@ const getdetailsDataStatusAcknowledged = async (limit, page, status) => {
         delivery_type: 1,
         overallTotal: 1,
         name: '$userNameData.name',
-
         shopType: '$userData.type',
         shopName: '$userData.SName',
         // UserName: '$userData.name',
         // orderId: '$orderData.orderId',
+        // orderdata: '$orderData',
         totalItems: { $size: '$orderData' },
       },
     },
@@ -410,6 +411,11 @@ const getAppOrModifiedStatus = async (limit, page, status) => {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
+        pipeline: [
+          {
+            $match: { finalQuantity: { $ne: null } },
+          },
+        ],
         as: 'orderData',
       },
     },
