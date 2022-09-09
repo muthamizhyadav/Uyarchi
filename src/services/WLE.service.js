@@ -12,7 +12,7 @@ const setPackedStatus_By_LoadingExecutice = async (body) => {
       { new: true }
     );
   });
-  return { message: 'Packed Status Updated By Loading Executive' };
+  return { message: 'Packed Status Updated By Ward Loading Executive' };
 };
 
 module.exports = {
