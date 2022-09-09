@@ -54,7 +54,7 @@ const updateRejectionStatus = catchAsync(async (req, res) => {
 
 const updateApproved = catchAsync(async (req, res) => {
   const approved = await wardAdminService.updateStatusApprovedOrModified(req.params.id, req.body);
-  res.send(approved);
+  res.status(200).send(approved);
 });
 
 const updateModified = catchAsync(async (req, res) => {
