@@ -799,8 +799,6 @@ const updateStatusApprovedOrModified = async (id, updateBody) => {
 //  UPDATE STATUS REJECTION
 
 const updateRejected = async (body) => {
-  let { arr } = JSON.stringify(body);
-  console.log(body);
   body.arr.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Acknowledged' }, { new: true });
   });
@@ -809,8 +807,6 @@ const updateRejected = async (body) => {
 };
 
 const updateApprovedMultiSelect = async (body) => {
-  let { arr } = JSON.stringify(body);
-  console.log(body);
   body.arr.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Approved' }, { new: true });
   });
@@ -819,12 +815,9 @@ const updateApprovedMultiSelect = async (body) => {
 }
 
 const updateRejectMultiSelect = async (body) => {
-  let { arr } = JSON.stringify(body);
-  console.log(body);
   body.arr.forEach(async (e) => {
     let details = await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Rejected' }, { new: true });
   });
-
   return 'status updated successfully';
 }
 
