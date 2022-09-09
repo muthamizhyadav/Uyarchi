@@ -189,11 +189,17 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   completeStatus: {
     type: String,
-    default: "Pending"
+    default: 'Pending',
   },
-  finalProductTotal : {
+  WA_assigned_Time: {
+    type: Date,
+  },
+  WL_Packed_Time: {
+    type: Date,
+  },
+  finalProductTotal: {
     type: String,
-  }
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
