@@ -574,6 +574,7 @@ const assignOnly = async (page) => {
           {
             $project: {
               pending: { $eq: ['$shopdata._id', null] },
+              shopdata: '$shopdata.deliveryExecutiveId',
             },
           },
         ],
@@ -584,6 +585,17 @@ const assignOnly = async (page) => {
     { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
 
     {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'UserName',
+      },
+    },
+    {
+      $unwind: '$UserName',
+    },
+    {
       $project: {
         groupId: 1,
         totalOrders: 1,
@@ -591,6 +603,8 @@ const assignOnly = async (page) => {
         assignTime: 1,
         manageDeliveryStatus: 1,
         Pending: '$Pending.pending',
+        deliveryExecutiveId: 1,
+        deliveryExecutiveName: '$UserName.name',
         pettyCashAllocateStatus: 1,
         pettyStockAllocateStatus: 1,
       },
