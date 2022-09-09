@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const { ShopOrderClone } = require('../models/shopOrder.model');
 const ApiError = require('../utils/ApiError');
-const mement = require('moment');
+const moment = require('moment');
 
 const setPackedStatus_By_LoadingExecutice = async (body) => {
   const { arr } = body;
