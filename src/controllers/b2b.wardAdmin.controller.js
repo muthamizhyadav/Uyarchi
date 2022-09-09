@@ -121,7 +121,7 @@ const statusMatchingAppOrModi = catchAsync(async (req, res) => {
       req.params.page,
       req.params.status
     );
-  } else if (req.params.status == 'Approved' || req.params.status == 'Modified' || req.params.status == 'Packed') {
+  } else if (req.params.status == 'Approved' || req.params.status == 'Modified' || req.params.status == 'Packed' || req.params.status == 'Assigned') {
     statusMatching = await wardAdminService.getAppOrModifiedStatus(req.params.limit, req.params.page, req.params.status);
   }
   res.send(statusMatching);
