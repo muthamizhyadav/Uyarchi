@@ -7,7 +7,6 @@ const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
 const pettyStockModel = require('../models/b2b.pettyStock.model');
 
 const createGroupOrder = catchAsync(async (req, res) => {
-
   const shopOrderClone = await wardAdminGroupService.createGroup(req.body);
   res.send(shopOrderClone);
 });
@@ -198,9 +197,8 @@ const getAllGroup = catchAsync(async (req, res) => {
 });
 
 const pettyStockCreate = catchAsync(async (req, res) => {
-  // let userid = req.userId;
-  const shopOrder = await wardAdminGroupService.pettyStockCreate(req.params.id,req.body);
-res.send(shopOrder);
+  const shopOrder = await wardAdminGroupService.pettyStockCreate(req.params.id, req.body);
+  res.send(shopOrder);
 });
 
 const getcashAmountViewFromDB = catchAsync(async (req, res) => {
@@ -224,7 +222,6 @@ const returnStock = catchAsync(async (req, res) => {
 });
 
 const uploadWastageImage = catchAsync(async (req, res) => {
- 
   const returnStock = await wardAdminGroupService.uploadWastageImage(req.body);
   if (req.files) {
     req.files.forEach(function (files, index, arr) {
@@ -235,8 +232,6 @@ const uploadWastageImage = catchAsync(async (req, res) => {
   res.send(returnStock);
   await returnStock.save();
 });
-
-
 
 module.exports = {
   createGroupOrder,

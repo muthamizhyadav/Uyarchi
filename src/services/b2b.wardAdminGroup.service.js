@@ -1073,11 +1073,11 @@ const getAllGroup = async (page) => {
 };
 
 const pettyStockCreate = async (id, pettyStockBody) => {
-  console.log(pettyStockBody);
-  let body = { ...pettyStockBody };
-  let createPetty = await wardAdminGroup.findByIdAndUpdate({ _id: id }, body, { new: true });
-  let { pettyStock } = pettyStockBody;
-  pettyStock.forEach(async (e) => {
+  let { product } = pettyStockBody;
+  let wardadmin = await wardAdminGroup.findById(id);
+  console.log(wardadmin);
+  let createPetty = await wardAdminGroup.findByIdAndUpdate({ _id: id }, { pettyStock: product }, { new: true });
+  product.forEach(async (e) => {
     pettyStockModel.create({
       wardAdminId: createPetty.id,
       product: e.product,
