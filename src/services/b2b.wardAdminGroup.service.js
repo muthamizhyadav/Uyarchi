@@ -577,7 +577,7 @@ const assignOnly = async (page) => {
           { $unwind: '$shopdata' },
           {
             $project: {
-              pending: { $eq: ['$shopdata._id'] },
+              pending: { $eq: ['$shopdata._id', null] },
               shopdata: '$shopdata.deliveryExecutiveId',
             },
           },
