@@ -637,7 +637,7 @@ const getproductdetails = async (id) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $match: { finalQuantity: { $ne: null } },
+            $match: { $or: [{ finalQuantity: { $ne: null } }, { finalQuantity: { $gt: 0 } }] },
           },
           {
             $lookup: {
