@@ -6,7 +6,7 @@ const { ProductorderClone } = require('../models/shopOrder.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
 const Roles = require('../models/roles.model');
-const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
+const { wardAdminGroup } = require('../models/b2b.wardAdminGroup.model');
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 
 // GET DETAILS
@@ -380,7 +380,7 @@ const getAppOrModifiedStatus = async (limit, page, status) => {
   if (status != 'null') {
     statusMatch = {
       // status: { $eq: status }
-      status: { $in: ['Approved', 'Modified', 'Packed','Assigned'] },
+      status: { $in: ['Approved', 'Modified', 'Packed', 'Assigned'] },
     };
   }
   let values = await ShopOrderClone.aggregate([
@@ -1151,6 +1151,34 @@ const wardDeliveryExecutive = async () => {
   return data;
 };
 
+const getAssigned_details = async () => {
+  let values = await wardAdminGroup.aggregate([
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'deliveryExecutiveName',
+      },
+    },
+    { $unwind: '$deliveryExecutiveName' },
+    {
+      $project: {
+        _id: 1,
+        assignDate: 1,
+        assignTime: 1,
+        groupId: 1,
+        totalOrders: 1,
+        deliveryExecutiveId: 1,
+        // manageDeliveryStatus: 1,
+        deliveryExecutiveName: '$deliveryExecutiveName.name',
+        status: 1,
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   // getdetails,
   getproductdetails,
@@ -1174,7 +1202,7 @@ module.exports = {
   updateStatusForAssugnedAndPacked,
 
   updateStatusApprovedOrModified,
-
+  getAssigned_details,
   updateAcknowledgeSingle,
   updateApprovedMultiSelect,
   updateRejectMultiSelect,

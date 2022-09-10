@@ -44,5 +44,5 @@ router.route('/Array/craeteArrayData').post(wardAdminController.createArrayData)
 router.route('/update/acknowleded/status/single/:id').put(wardAdminController.updateAcknowledgeSingle);
 
 router.route("/get/status/Count").get(wardAdminController.countStatus);
-
+router.route("/order/Assign").get(wardAdminController.getAssigned_details)
 module.exports = router;

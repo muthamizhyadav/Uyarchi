@@ -121,7 +121,12 @@ const statusMatchingAppOrModi = catchAsync(async (req, res) => {
       req.params.page,
       req.params.status
     );
-  } else if (req.params.status == 'Approved' || req.params.status == 'Modified' || req.params.status == 'Packed' || req.params.status == 'Assigned') {
+  } else if (
+    req.params.status == 'Approved' ||
+    req.params.status == 'Modified' ||
+    req.params.status == 'Packed' ||
+    req.params.status == 'Assigned'
+  ) {
     statusMatching = await wardAdminService.getAppOrModifiedStatus(req.params.limit, req.params.page, req.params.status);
   }
   res.send(statusMatching);
@@ -131,6 +136,12 @@ const countStatus = catchAsync(async (req, res) => {
   const Acknowledged = await wardAdminService.countStatus(req.params.id, req.body);
   res.send(Acknowledged);
 });
+
+const getAssigned_details = catchAsync(async (req, res) => {
+  const orderAssign = await wardAdminService.getAssigned_details();
+  res.send(orderAssign);
+});
+
 module.exports = {
   getDetails,
   getproductDetails,
@@ -159,4 +170,5 @@ module.exports = {
   updateRejectionStatus,
   countStatus,
   statusMatchingAppOrModi,
+  getAssigned_details,
 };
