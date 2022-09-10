@@ -704,6 +704,7 @@ const getproductdetails = async (id) => {
       $project: {
         productData: '$productData',
         shopName: '$shopData.SName',
+        shopAddress: '$shopData.address',
         shopId: 1,
         status: 1,
         OrderId: 1,
