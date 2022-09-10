@@ -351,16 +351,18 @@ const returnStock = async (id) => {
   return values;
 };
 
-// const pettyStockSubmit = async (id, updateBody) => {
-//   let deliveryStatus = await wardAdminGroup.findById(id);
-//   console.log(deliveryStatus);
-//   if (!deliveryStatus) {
-//     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
-//   }
-//   deliveryStatus = await wardAdminGroup.create({ _id: id }, updateBody, { new: true });
-//   console.log(deliveryStatus);
-//   return deliveryStatus;
-// };
+const pettyStockSubmit = async (id, updateBody) => {
+  let deliveryStatus = await wardAdminGroup.findById(id);
+  if (!deliveryStatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  deliveryStatus = await wardAdminGroup.findByIdAndUpdate(
+    { _id: id },
+    { manageDeliveryStatus: updateBody.manageDeliveryStatus },
+    { new: true }
+  );
+  return deliveryStatus;
+};
 
 // const pettyStockSubmit = async (body) => {
 //   let sample = await pettyStockModel.create(body)
@@ -1224,6 +1226,7 @@ module.exports = {
   getBillDetailsPerOrder,
   getReturnWDEtoWLE,
   // pettyStockSubmit,
+  pettyStockSubmit,
   pettyCashSubmit,
   getPettyStockDetails,
   getdetailsAboutPettyStockByGroupId,
