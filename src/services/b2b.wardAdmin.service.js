@@ -180,7 +180,7 @@ const getdetailsDataStatusAcknowledged = async (limit, page, status) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $match: { finalQuantity: { $ne: null } },
+            $match: { $and: [{ finalQuantity: { $ne: null } }, { finalQuantity: { $ne: 0 } }] },
           },
         ],
         as: 'orderData',
@@ -413,7 +413,7 @@ const getAppOrModifiedStatus = async (limit, page, status) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $match: { finalQuantity: { $ne: null } },
+            $match: { $and: [{ finalQuantity: { $ne: null } }, { finalQuantity: { $ne: 0 } }] },
           },
         ],
         as: 'orderData',
