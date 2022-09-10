@@ -1076,7 +1076,11 @@ const pettyStockCreate = async (id, pettyStockBody) => {
   let { product } = pettyStockBody;
   let wardadmin = await wardAdminGroup.findById(id);
   console.log(wardadmin);
-  let createPetty = await wardAdminGroup.findByIdAndUpdate({ _id: id }, { pettyStock: product }, { new: true });
+  let createPetty = await wardAdminGroup.findByIdAndUpdate(
+    { _id: id },
+    { pettyStock: product, pettyStockAllocateStatus: 'Allocated' },
+    { new: true }
+  );
   product.forEach(async (e) => {
     pettyStockModel.create({
       wardAdminId: createPetty.id,
