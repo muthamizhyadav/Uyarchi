@@ -1084,7 +1084,7 @@ const pettyStockCreate = async (id, pettyStockBody) => {
   product.forEach(async (e) => {
     pettyStockModel.create({
       wardAdminId: createPetty.id,
-      product: e.product,
+      product: e.productName,
       QTY: e.QTY,
       pettyStock: e.pettyStock,
       totalQtyIncludingPettyStock: e.totalQtyIncludingPettyStock,
