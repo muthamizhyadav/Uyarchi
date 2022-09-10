@@ -367,16 +367,14 @@ const returnStock = async (id) => {
 //   return sample;
 // }
 
-// const pettyCashSubmit = async (id, updateBody) => {
-//   let deliveryStatus = await wardAdminGroup.findById(id);
-//   console.log(deliveryStatus);
-//   if (!deliveryStatus) {
-//     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
-//   }
-//   deliveryStatus = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-//   console.log(deliveryStatus);
-//   return deliveryStatus;
-// };
+const pettyCashSubmit = async (id, updateBody) => {
+  let deliveryStatus = await wardAdminGroup.findById(id);
+  if (!deliveryStatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  deliveryStatus = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return deliveryStatus;
+};
 
 // const getGroupdetails = async () => {
 //   return wardAdminGroup.find();
@@ -1222,7 +1220,7 @@ module.exports = {
   getBillDetailsPerOrder,
   getReturnWDEtoWLE,
   // pettyStockSubmit,
-  // pettyCashSubmit,
+  pettyCashSubmit,
   getPettyStockDetails,
   getdetailsAboutPettyStockByGroupId,
   uploadWastageImage,
