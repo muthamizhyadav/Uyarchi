@@ -372,7 +372,11 @@ const pettyCashSubmit = async (id, updateBody) => {
   if (!deliveryStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  deliveryStatus = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  deliveryStatus = await wardAdminGroup.findByIdAndUpdate(
+    { _id: id },
+    { pettyCash: updateBody.pettyCash, pettyCashAllocateStatus: updateBody.pettyCashAllocateStatus },
+    { new: true }
+  );
   return deliveryStatus;
 };
 
