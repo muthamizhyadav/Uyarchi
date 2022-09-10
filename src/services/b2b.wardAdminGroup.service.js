@@ -1086,6 +1086,8 @@ const pettyStockCreate = async (id, pettyStockBody) => {
       totalQtyIncludingPettyStock: e.totalQtyIncludingPettyStock,
     });
   });
+  let afterUpdate = await wardAdminGroup.findById(id);
+  return afterUpdate;
 };
 
 const getcashAmountViewFromDB = async (id) => {
