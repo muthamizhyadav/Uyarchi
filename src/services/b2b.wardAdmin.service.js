@@ -1153,7 +1153,11 @@ const wardDeliveryExecutive = async () => {
 };
 
 const getAssigned_details = async () => {
+  let currentdate = moment().format('YYYY-MM-DD')
   let values = await wardAdminGroup.aggregate([
+    {
+      $match: { status: { $eq: 'Assigned' }, assignDate: { $eq: currentdate } },
+    },
     {
       $lookup: {
         from: 'b2busers',
