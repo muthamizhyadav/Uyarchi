@@ -218,6 +218,14 @@ const productDealingWithsupplier = async (id) => {
               },
             },
           },
+          {
+          
+              $match: {
+                $expr: {
+                  $ne: ['$orderType', 'sudden'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                },
+              },
+          },
         ],
         as: 'callStatus',
       },
