@@ -6,7 +6,7 @@ const moment = require('moment');
 
 const createStatus = async (streetBody) => {
   let currentDate = moment().format('YYYY-MM-DD');
-  let values = { ...body, ...{ date: currentDate, createAt: moment() } };
+  let values = { ...streetBody, ...{ date: currentDate, createAt: moment() } };
   return Status.create(values);
 };
 
