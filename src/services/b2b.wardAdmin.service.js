@@ -1055,6 +1055,7 @@ const wardloadExecutivePacked = async (page) => {
         // orderTime: '$orderDatafortotal.time',
         totalItems: { $size: '$orderDatafortotal' },
         Qty: '$orderData.Qty',
+        
         // totalcount: '$orderData.totalItems'
         shopcloneId: '$shopData._id',
         shopName: '$shopData.SName', //
