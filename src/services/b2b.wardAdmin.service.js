@@ -183,11 +183,11 @@ const wardloadExecutive = async (page) => {
     {
       $unwind: '$b2bshopclonesData',
     },
-
     {
       $project: {
         shopId: 1,
         status: 1,
+        completeStatus: 1,
         OrderId: 1,
         SName: '$b2bshopclonesData.SName',
         type: '$b2bshopclonesData.type',
@@ -196,7 +196,6 @@ const wardloadExecutive = async (page) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -994,7 +993,20 @@ const getAppOrModifiedStatus = async (limit, page, status) => {
   ]);
   return { values: values, total: total.length };
 };
-
+const countStatus = async () => {
+  let AcknowledgedStatusCount = await ShopOrderClone.find({ status: 'Acknowledged' }).count();
+  let orderedStatusCount = await ShopOrderClone.find({ status: 'ordered' }).count();
+  let ApprovedStatusCount = await ShopOrderClone.find({ status: 'Approved' }).count();
+  let ModifiedStatusCount = await ShopOrderClone.find({ status: 'Modified' }).count();
+  let rejectedStatusCount = await ShopOrderClone.find({ status: 'Rejected' }).count();
+  return {
+    AcknowledgedStatusCount: AcknowledgedStatusCount,
+    orderedStatusCount: orderedStatusCount,
+    ApprovedStatusCount: ApprovedStatusCount,
+    ModifiedStatusCount: ModifiedStatusCount,
+    rejectedStatusCount: rejectedStatusCount,
+  };
+};
 module.exports = {
   getdetails,
   getproductdetails,
@@ -1019,4 +1031,5 @@ module.exports = {
   getdetailsDataStatusAcknowledged,
   getdetailsDataStatusRejected,
   getAppOrModifiedStatus,
+  countStatus,
 };
