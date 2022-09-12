@@ -1,21 +1,20 @@
 const httpStatus = require('http-status');
 const { Users } = require('../models/B2Busers.model');
 const metaUsers = require('../models/userMeta.model');
+const { Shop } = require('../models/b2b.ShopClone.model');
 const Role = require('../models/roles.model');
 const bcrypt = require('bcryptjs');
 const ApiError = require('../utils/ApiError');
 const Textlocal = require('../config/textLocal');
 const Verfy = require('../config/OtpVerify');
 const WardAssign = require('../models/wardAssign.model');
+const { MarketClone } = require('../models/market.model');
+
 const moment = require('moment');
+
 const createUser = async (userBody) => {
-  // let OTPCODE = Math.floor(1000000 + Math.random() * 9000000);
-  // let password = { password: OTPCODE };
-  // let bodyData = { ...userBody, ...password };
   let value = Users.create(userBody);
-  // if (value) {
-  //   await Textlocal.sendPwd(userBody.phoneNumber, userBody.name, OTPCODE);
-  // }
+
   return value;
 };
 
@@ -130,7 +129,6 @@ const B2bUsersAdminLogin = async (userBody) => {
   console.log(passwor);
   let userName = await Users.findOne({
     phoneNumber: phoneNumber,
-    // userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
     $or: [
       { userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' },
       { userRole: '33a2ff87-400c-4c15-b607-7730a79b49a9' },
@@ -160,19 +158,16 @@ const createMetaUsers = async (userBody) => {
   return user;
 };
 const forgotPassword = async (body) => {
-  // const { phoneNumber } = body;
-  // await Textlocal.Otp(body);
   let users = await Users.findOne({
     phoneNumber: body.mobileNumber,
     active: true,
-    // userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
     $or: [
       { userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' },
       { userRole: '33a2ff87-400c-4c15-b607-7730a79b49a9' },
       { userRole: '36151bdd-a8ce-4f80-987e-1f454cd0993f' },
       { userRole: '57243437-a1d4-426f-a705-5da92a630d15' },
       { userRole: '24a28b34-ae15-4f3a-a3e8-24cf5b7be5a1' },
-      { userRole: '569d9d3f-285c-434d-99e7-0c415245c40c' }, // 719d9f71-8388-4534-9bfe-3f47faed62ac
+      { userRole: '569d9d3f-285c-434d-99e7-0c415245c40c' },
       { userRole: '719d9f71-8388-4534-9bfe-3f47faed62ac' },
     ],
   });
@@ -182,12 +177,9 @@ const forgotPassword = async (body) => {
   return await Textlocal.Otp(body, users);
 };
 const otpVerfiy = async (body) => {
-  // const { phoneNumber } = body;
-  // await Textlocal.Otp(body);
   let users = await Users.findOne({
     phoneNumber: body.mobileNumber,
     active: true,
-    // userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d',
     $or: [
       { userRole: 'fb0dd028-c608-4caa-a7a9-b700389a098d' },
       { userRole: '33a2ff87-400c-4c15-b607-7730a79b49a9' },
@@ -229,6 +221,7 @@ const getForMyAccount = async (userId) => {
         email: 1,
         phoneNumber: 1,
         roleName: '$RoleData.roleName',
+        description: '$RoleData.description',
       },
     },
   ]);
@@ -236,7 +229,9 @@ const getForMyAccount = async (userId) => {
 };
 
 const getsalesExecuteRolesUsers = async () => {
-      let users = await Users.find({ userRole: ['fb0dd028-c608-4caa-a7a9-b700389a098d','719d9f71-8388-4534-9bfe-3f47faed62ac'] });
+  let users = await Users.find({
+    userRole: ['fb0dd028-c608-4caa-a7a9-b700389a098d', '719d9f71-8388-4534-9bfe-3f47faed62ac'],
+  });
   return users;
 };
 
@@ -385,6 +380,8 @@ const deleteB2bUsersbyId = async (id) => {
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Users Not Found');
   }
+  await Shop.updateMany({ Uid: id }, { $set: { Uid: '3625a112-a7f5-4bd8-b9c3-f86ae03c2f44' } }, { new: true });
+  await MarketClone.updateMany({ Uid: id }, { $set: { Uid: '3625a112-a7f5-4bd8-b9c3-f86ae03c2f44' } }, { new: true });
   users = await Users.deleteOne({ _id: id });
   return users;
 };

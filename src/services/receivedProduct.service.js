@@ -3,9 +3,19 @@ const ApiError = require('../utils/ApiError');
 const ReceivedProduct = require('../models/receivedProduct.model');
 const transportbill = require('../models/transportbill.model');
 const Supplier = require('../models/supplier.model');
+const ReceivedStock = require('../models/receivedStock.model');
 
 const createReceivedProduct = async (body) => {
   let Rproduct = await ReceivedProduct.create(body);
+  return Rproduct;
+};
+
+const uploadImageById = async (id, body) => {
+  let Rproduct = await ReceivedProduct.findById(id);
+  if (!Rproduct) {
+    throw new ApiError(404, 'ReceivedProduct not found');
+  }
+  Rproduct = await ReceivedProduct.findByIdAndUpdate({ _id: id }, body, { new: true });
   return Rproduct;
 };
 
@@ -30,6 +40,26 @@ const getAllWithPagination = async (page, status) => {
     },
     {
       $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          {
+            $match: { status: { $eq: 'Billed' } },
+          },
+          { $group: { _id: null, Count: { $sum: 1 } } },
+        ],
+        as: 'billedCount',
+      },
+    },
+    {
+      $unwind: {
+        path: '$billedCount',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
         from: 'suppliers',
         localField: 'supplierId',
         foreignField: '_id',
@@ -49,12 +79,14 @@ const getAllWithPagination = async (page, status) => {
         driverNumber: 1,
         weighBridgeEmpty: 1,
         weighBridgeLoadedProduct: 1,
+        created: 1,
         supplierId: 1,
         date: 1,
         time: 1,
         supplierName: '$supplierData.primaryContactName',
         supplierContact: '$supplierData.primaryContactNumber',
         Count: '$ReceivedData.Count',
+        billedCount: '$billedCount.Count',
       },
     },
     { $skip: 10 * page },
@@ -143,6 +175,17 @@ const getAllWithPaginationBilled = async (page, status) => {
     },
     {
       $lookup: {
+        from: 'expensesbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Counts: { $sum: '$Amount' } } }],
+        as: 'totalAmt',
+      },
+    },
+    { $unwind: { path: '$totalAmt', preserveNullAndEmptyArrays: true } },
+
+    {
+      $lookup: {
         from: 'transportbills',
         localField: '_id',
         foreignField: 'groupId',
@@ -171,6 +214,7 @@ const getAllWithPaginationBilled = async (page, status) => {
         driverName: 1,
         driverNumber: 1,
         weighBridgeEmpty: 1,
+        totalAmt: { $ne: ['$totalAmt.Counts', '$TotalExpenseData.Counts'] },
         weighBridgeLoadedProduct: 1,
         supplierId: 1,
         date: 1,
@@ -184,6 +228,7 @@ const getAllWithPaginationBilled = async (page, status) => {
         TotalPaidExpensesData: '$TotalPaidExpensesData',
       },
     },
+    { $match: { totalAmt: { $eq: true } } },
     {
       $limit: 10,
     },
@@ -381,6 +426,16 @@ const getSupplierBillsDetails = async (page) => {
         pipeline: [
           {
             $lookup: {
+              from: 'supplierbills',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$Amount' } } }],
+              as: 'supplierbills',
+            },
+          },
+          { $unwind: { path: '$supplierbills', preserveNullAndEmptyArrays: true } },
+          {
+            $lookup: {
               from: 'receivedstocks',
               localField: '_id',
               foreignField: 'groupId',
@@ -393,8 +448,14 @@ const getSupplierBillsDetails = async (page) => {
           },
           {
             $project: {
-              pendingData: '$pendingData',
+              pendingData: '$pendingData.billingTotal',
+              supplierbills: '$supplierbills.billingTotal',
+              totalAmt: { $ne: ['$pendingData.billingTotal', '$supplierbills.billingTotal'] },
             },
+          },
+
+          {
+            $match: { totalAmt: true },
           },
         ],
         as: 'pendingDataall',
@@ -434,9 +495,9 @@ const getSupplierBillsDetails = async (page) => {
         as: 'receivedData',
       },
     },
-    // {
-    //   $unwind: '$receivedData',
-    // },
+    {
+      $unwind: { path: '$receivedData', preserveNullAndEmptyArrays: true },
+    },
     {
       $lookup: {
         from: 'receivedproducts',
@@ -460,21 +521,88 @@ const getSupplierBillsDetails = async (page) => {
     },
     {
       $project: {
-        PaymentData: { $sum: '$receivedData.PaymentData.Amount' },
-        receivedData: { $sum: '$pendingDataall.pendingData.billingTotal' },
+        // PaymentDatasss: '$pendingDataall',
+        PaymentData: { $sum: '$pendingDataall.pendingData' },
+        paidamount: { $sum: '$pendingDataall.supplierbills' },
+        // receivedData: '$receivedDatacount',
         primaryContactName: 1,
         receivedDatacount: '$receivedDatacount.total',
         primaryContactNumber: 1,
-        // totalprice: { $sum: "$receivedData.pendingData.billingTotal" },
         _id: 1,
       },
     },
+    { $match: { PaymentData: { $ne: 0 } } },
     {
       $limit: 10,
     },
     {
       $skip: 10 * page,
     },
+  ]);
+  return values;
+};
+
+const getreceivedProductBySupplier = async (page) => {
+  let values = await Supplier.aggregate([
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productId',
+              foreignField: '_id',
+              as: 'productData',
+            },
+          },
+          {
+            $unwind: '$productData',
+          },
+          // {
+          //   $project:{
+          //     productName:'$productData.productTitle',
+          //     billingQuantity:1,
+          //     billingTotal:1,
+          //     status:1,
+          //     date:1,
+          //     Net_Amount: { $multiply: [ "$billingQuantity", "$billingTotal" ] }
+          //   }
+          // }
+        ],
+        as: 'ReceivedData',
+      },
+    },
+    // {
+    //   $lookup: {
+    //     from: 'suppliers',
+    //     localField: 'supplierId',
+    //     foreignField: '_id',
+    //     as: 'supplierData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$supplierData',
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'products',
+    //     localField: 'productId',
+    //     foreignField: '_id',
+    //     as: 'productData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$productData',
+    // },
+    // {
+    //   $project: {
+    //     ReceivedData:'$ReceivedData',
+
+    //   }
+    // }
   ]);
   return values;
 };
@@ -488,4 +616,6 @@ module.exports = {
   getAllWithPaginationBilled,
   getAllWithPaginationBilled_Supplier,
   getSupplierBillsDetails,
+  uploadImageById,
+  getreceivedProductBySupplier,
 };

@@ -53,6 +53,11 @@ const getCallstatusForSuddenOrders = catchAsync(async (req, res) => {
   res.send(callstatus);
 });
 
+const suddenOrdersDisplay = catchAsync(async (req, res) => {
+  const callstatus = await CallStatusService.suddenOrdersDisplay(req.params.productId);
+  res.send(callstatus);
+});
+
 module.exports = {
   createCallStatus,
   getProductAndSupplierDetails,
@@ -62,4 +67,5 @@ module.exports = {
   getDataWithSupplierId,
   finishOrder,
   getCallstatusForSuddenOrders,
+  suddenOrdersDisplay,
 };

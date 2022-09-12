@@ -302,6 +302,12 @@ const deleteshop = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const chennai_corporation_decodes = catchAsync(async (req, res) => {
+  const decodes = await apartmentTableService.chennai_corporation_decodes();
+  let data = JSON.stringify(decodes);
+  res.json(data);
+});
+
 module.exports = {
   createapartmentTableService,
   createshopTableService,
@@ -335,5 +341,6 @@ module.exports = {
   getAllSearchApi2,
   wardApiWardApi,
   getAllLATLONG,
+  chennai_corporation_decodes,
   // getManageUserAttendance,
 };

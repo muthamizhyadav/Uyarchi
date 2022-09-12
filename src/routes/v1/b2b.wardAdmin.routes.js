@@ -4,13 +4,17 @@ const router = express.Router();
 
 router.route('/create/data').post(wardAdminController.createdata);
 
-router.route('/getDetails/:page').get(wardAdminController.getDetails);
+router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusMatchingAppOrModi);
 
 router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 
-router.route('/updateProductById/:id').put(wardAdminController.updateProduct);
+router.route('/updateProductById/:orderId').put(wardAdminController.updateProduct);
 
-router.route('/updateAcknowledge/:id').put(wardAdminController.updateAcknowledge);
+router.route('/updateAcknowledge').put(wardAdminController.updateAcknowledge);
+
+router.route('/updateApproved').put(wardAdminController.updateApproval);
+
+router.route('/updateRejected').put(wardAdminController.updateRejectionStatus);
 
 router.route('/updateApproved/:id').put(wardAdminController.updateApproved);
 
@@ -29,12 +33,16 @@ router.route('/wardloadingExecutive/getdetails/:page').get(wardAdminController.w
 
 router.route('/wardloadingExecutive/getPackedProductDetails/:page').get(wardAdminController.wardloadExecutivePacked)
 
-
-
 router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
 
 router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
 
 router.route('/delivery/Executive/Name/:id').put(wardAdminController.deliveryexecutive);
 
+router.route('/Array/craeteArrayData').post(wardAdminController.createArrayData);
+
+router.route('/update/acknowleded/status/single/:id').put(wardAdminController.updateAcknowledgeSingle);
+
+router.route("/get/status/Count").get(wardAdminController.countStatus);
+router.route("/order/Assign").get(wardAdminController.getAssigned_details)
 module.exports = router;

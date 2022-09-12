@@ -17,10 +17,14 @@ const wardAdminGroupSchema = new mongoose.Schema({
   assignTime: {
     type: String,
   },
-  Orderdatas:{
+  Orderdatas: {
     type: Array,
     default: [],
   },
+  // pettyStockData: {
+  //   type: Array,
+  //   default: [],
+  // },
   active: {
     type: Boolean,
     default: true,
@@ -39,12 +43,29 @@ const wardAdminGroupSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: "Assigned",
+    default: 'Assigned',
   },
-  manageDeliveryStatus:{
-    type:String,
-    default:"Pending",
+  manageDeliveryStatus: {
+    type: String,
+    default: 'Pending',
   },
+  pettyCashAllocateStatus: {
+    type: String,
+    default: 'Pending',
+  },
+  pettyStockAllocateStatus: {
+    type: String,
+    default: 'Pending',
+  },
+
+  AllocateStatus: {
+    type: String,
+    default: 'Assigned',
+  },
+  // NotAllocateStatus: {
+  //   type: String,
+  //   default: "Pending",
+  // },
   pettyCash: {
     type: Number,
   },
@@ -52,9 +73,54 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
+  totalQtyIncludingPettyStock: {
+    type: Number,
+  },
 
+  stockReturnedByWDE: {
+    type: Number,
+  },
+  wastageReturnedByWDE: {
+    type: Number,
+  },
+  wastageImageUpload: {
+    type: String,
+  },
+  mismatch: {
+    type: Number,
+  },
+  DeliverAsPerSystem: {
+    type: Number,
+  },
+  UnDeliveredAsPerSystem: {
+    type: Number,
+  },
+  cashAsGivenByWDE: {
+    type: Number,
+  },
+  shopOrderCloneID: {
+    type: String,
+  },
 });
 
-const wardAdminGroupModel = mongoose.model('wardAdminGroup', wardAdminGroupSchema);
+const wardAdminGroup = mongoose.model('wardAdminGroup', wardAdminGroupSchema);
 
-module.exports = wardAdminGroupModel;
+const wardAdminGroupSchema_ORDER = new mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  orderId: {
+    type: String,
+  },
+  wardAdminGroupID: {
+    type: String,
+  },
+  status: {
+    type: String,
+    default: 'Assigned',
+  },
+});
+
+const wardAdminGroupModel_ORDERS = mongoose.model('orderAssign', wardAdminGroupSchema_ORDER);
+module.exports = { wardAdminGroup, wardAdminGroupModel_ORDERS };

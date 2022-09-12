@@ -78,6 +78,36 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   oldBalance: {
     type: Number,
   },
+  paymentmode: {
+    type: String,
+  },
+  subtotal: {
+    type: Number,
+  },
+  GST: {
+    type: Array,
+  },
+  SGST: {
+    type: Number,
+  },
+  created: {
+    type: Date,
+  },
+  CGST: {
+    type: Number,
+  },
+  paidamount: {
+    type: Number,
+  },
+  gsttotal: {
+    type: Number,
+  },
+  delivery_type: {
+    type: String,
+  },
+  time_of_delivery: {
+    type: String,
+  },
   status: {
     type: String,
     default: 'ordered',
@@ -109,6 +139,12 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   paymentStatus: {
     type: String,
   },
+  devevery_mode: {
+    type: String,
+  },
+  Payment: {
+    type: String,
+  },
   selfPickup: {
     type: String,
   },
@@ -122,7 +158,51 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   payType: {
     type: String,
   },
-  
+  billNo: {
+    type: String,
+  },
+  billTime: {
+    type: String,
+  },
+  billDate: {
+    type: String,
+  },
+  customerDeliveryStatus: {
+    type: String,
+    default: 'Pending',
+  },
+  GroupId: {
+    type: String,
+  },
+  receiveStatus: {
+    type: String,
+    default: 'Pending',
+  },
+  pettyCashReceiveStatus: {
+    type: String,
+    default: 'Pending',
+  },
+
+  AssignedStatus: {
+    type: String,
+    default: 'Pending',
+  },
+  completeStatus: {
+    type: String,
+    default: 'Pending',
+  },
+  WA_assigned_Time: {
+    type: Date,
+  },
+  WL_Packed_Time: {
+    type: Date,
+  },
+  finalProductTotal: {
+    type: String,
+  },
+  reason: {
+    type: String,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
@@ -187,6 +267,21 @@ const productorderCloneSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  GST_Number: {
+    type: Number,
+  },
+  HSN_Code: {
+    type: String,
+  },
+  packtypeId: {
+    type: String,
+  },
+  unit: {
+    type: String,
+  },
+  packKg: {
+    type: String,
+  },
   quantity: {
     type: Number,
   },
@@ -214,6 +309,9 @@ const productorderCloneSchema = new mongoose.Schema({
   time: {
     type: String,
   },
+  productpacktypeId: {
+    type: String,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -222,12 +320,19 @@ const productorderCloneSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  created: {
+    type: Date,
+  },
   status: {
     type: String,
     default: 'ordered',
   },
-
-  
+  finalQuantity: {
+    type: Number,
+  },
+  finalPricePerKg: {
+    type: Number,
+  },
 });
 
 productorderCloneSchema.plugin(toJSON);

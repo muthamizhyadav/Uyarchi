@@ -69,10 +69,8 @@ const walletPayment = require('./b2b.walletPayment.route');
 const SupplierBillRoute = require('./supplierbills.route');
 const monthlyRecuring = require('./b2b.monthlyRecuring.route');
 const AnnualExpenseRecuring = require('./b2b.expenses.annual.recuring.route');
-// const redirect = require('./b2b.redirect.route');
 const callHistory = require('./b2b.callHistory.route');
 const attendancePayment = require('./b2b.atttendancePayment.route');
-// const salesApp = require('./b2b.sales.route');
 const estimateOrderRoute = require('./estimatedOrders.route');
 const manageSalary = require('./manage.salary.route');
 const wardAdminRouter = require('./b2b.wardAdmin.routes');
@@ -83,10 +81,17 @@ const productpackTypeRoute = require('./productPacktype.route');
 const wardAdminGroup = require('./b2b.wardAdminGroup.route');
 const slowCheck = require('./slow.sample.route');
 const managePickup = require('./manage.pickup.location.route');
+const pettyStockRoute = require('./b2b.pettyStock.route');
+const WLE_Route = require('./WLE.route');
+
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/WLE',
+    route: WLE_Route,
   },
   {
     path: '/pickup',
@@ -394,6 +399,10 @@ const defaultRoutes = [
   {
     path: '/productpackType',
     route: productpackTypeRoute,
+  },
+  {
+    path: '/pettyStock',
+    route: pettyStockRoute,
   },
   // {
   //   path: '/sales',

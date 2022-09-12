@@ -10,6 +10,9 @@ const moment = require('moment');
 const { isDate } = require('moment');
 let datenow = moment(new Date()).format('DD-MM-YYYY');
 const ReceivedProduct = require('../models/receivedProduct.model');
+const { MarketClone } = require('../models/market.model');
+const Trendproductsclones = require('../models/trendsProduct.clocne.model');
+
 const createProduct = async (productBody) => {
   let { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime, maxBidAomunt, minBidAmount } =
     productBody;
@@ -30,7 +33,6 @@ const doplicte_check = async (req, res, next) => {
   const product = await Product.findOne({
     SubCatId: req.body.SubCatId,
     category: req.body.category,
-    // $text:{$search:req.body.productTitle, $caseSensitive:false}
     productTitle: req.body.productTitle,
   }).collation({ locale: 'en', strength: 2 });
   console.log(product);
@@ -60,7 +62,8 @@ const setTrendsValueforProduct = async (id, updateBody) => {
   return product;
 };
 
-const getTrendsData = async (date, wardId, street, page) => {
+const getTrendsData = async (wardId, street, page) => {
+  const date = moment().format('DD-MM-YYYY');
   let match;
   if (street != 'null') {
     match = { steetId: { $eq: street } };
@@ -80,11 +83,8 @@ const getTrendsData = async (date, wardId, street, page) => {
         localField: '_id',
         foreignField: 'productId',
         pipeline: [
-          // {
-          //   $match: { date: date },
-          // },
           {
-            $match: { $and: [match] },
+            $match: { $and: [match], date: date },
           },
           {
             $lookup: {
@@ -184,10 +184,7 @@ const getTrendsData = async (date, wardId, street, page) => {
         foreignField: 'productId',
         pipeline: [
           {
-            $match: { date: date },
-          },
-          {
-            $match: { $and: [match] },
+            $match: { $and: [match], date: date },
           },
           {
             $lookup: {
@@ -225,19 +222,14 @@ const getTrendsData = async (date, wardId, street, page) => {
           },
           {
             $lookup: {
-              from: 'marketshopsclones',
-              localField: 'shopId',
-              foreignField: '_id',
-              as: 'marketshop',
-            },
-          },
-          {
-            $lookup: {
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
               as: 'b2bshop',
             },
+          },
+          {
+            $unwind: '$b2bshop',
           },
           {
             $lookup: {
@@ -260,23 +252,14 @@ const getTrendsData = async (date, wardId, street, page) => {
               shopId: 1,
               steetId: 1,
               UserId: 1,
+              longitude: '$b2bshop.Slong',
+              latitude: '$b2bshop.Slat',
+              ShopName: '$b2bshop.SName',
               date: 1,
-              marketshop: '$marketshop',
-              b2bshop: '$b2bshop',
             },
           },
         ],
         as: 'Productdetails',
-      },
-    },
-    {
-      $project: {
-        productDetails: '$Productdetails',
-        Avg: '$Productdata.Avg',
-        Max: '$Productdata.Max',
-        Min: '$Productdata.Min',
-        productTitle: 1,
-        _id: 1,
       },
     },
   ]);
@@ -435,7 +418,7 @@ const createStock = async (stockbody) => {
 const getByBillId = async (billId) => {
   const bills = Stock.find({ billId });
   console.log(billId);
-  if (bills === null) {
+  if (bills === null || !bills) {
     throw new ApiError(httpStatus.NOT_FOUND, 'InCorrect BillId');
   }
   return bills;
@@ -468,7 +451,7 @@ const productDateTimeFilter = async (date) => {
           {
             $match: {
               $expr: {
-                $eq: ['$$productIds', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                $eq: ['$$productIds', '$productid'],
               },
             },
           },
@@ -491,7 +474,7 @@ const productDateTimeFilter = async (date) => {
           {
             $match: {
               $expr: {
-                $eq: ['$$productid', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                $eq: ['$$productid', '$productid'],
               },
             },
           },
@@ -506,9 +489,7 @@ const productDateTimeFilter = async (date) => {
         as: 'callStatusData',
       },
     },
-    // {
-    //     $unwind:"$callStatusData"
-    // },
+
     {
       $lookup: {
         from: 'status',
@@ -517,7 +498,7 @@ const productDateTimeFilter = async (date) => {
           {
             $match: {
               $expr: {
-                $eq: ['$$productid', '$productid'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                $eq: ['$$productid', '$productid'],
               },
             },
           },
@@ -1334,8 +1315,8 @@ const removeImage = async (pid, index) => {
   return updateproduct;
 };
 
-const rateSetSellingPrice = async (productId, date) => {
-  let prod = await Product.aggregate([
+const rateSetSellingPrice = async (productId, date, sedate, day) => {
+  return await Product.aggregate([
     {
       $match: {
         _id: { $eq: productId },
@@ -1347,7 +1328,7 @@ const rateSetSellingPrice = async (productId, date) => {
         localField: '_id',
         foreignField: 'productId',
         pipeline: [
-          { $match: { date: date } },
+          { $match: { date: date, status: 'Billed' } },
           {
             $group: {
               _id: null,
@@ -1361,7 +1342,10 @@ const rateSetSellingPrice = async (productId, date) => {
       },
     },
     {
-      $unwind: '$receivedstocks',
+      $unwind: {
+        path: '$receivedstocks',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $lookup: {
@@ -1369,7 +1353,7 @@ const rateSetSellingPrice = async (productId, date) => {
         localField: '_id',
         foreignField: 'productId',
         pipeline: [
-          { $match: { date: date } },
+          { $match: { date: sedate } },
           {
             $group: {
               _id: null,
@@ -1383,29 +1367,29 @@ const rateSetSellingPrice = async (productId, date) => {
       },
     },
     {
-      $unwind: '$marketTrend',
+      $unwind: {
+        path: '$marketTrend',
+        preserveNullAndEmptyArrays: true,
+      },
     },
+
     {
       $project: {
         productTitle: 1,
         stock: 1,
-        GST_Number: 1,
-        startPriceAvg: { $avg: '$salesmanPrice.start' },
-        startPriceHigh: { $max: '$salesmanPrice.start' },
-        startPriceLow: { $min: '$salesmanPrice.start' },
-        endPriceAvg: { $avg: '$salesmanPrice.end' },
-        endPriceHigh: { $max: '$salesmanPrice.end' },
-        endPriceLow: { $min: '$salesmanPrice.end' },
+        day: day,
+        date: sedate,
+        sadate: date,
         costPricewLow: '$receivedstocks.low',
         costPricewHigh: '$receivedstocks.High',
         costPricewAvg: '$receivedstocks.Avg',
         marketTrendLow: '$marketTrend.low',
         marketTrendHigh: '$marketTrend.High',
         marketTrendAvg: '$marketTrend.Avg',
+        receivedstocks: '$receivedstocks',
       },
     },
   ]);
-  return prod;
 };
 
 const productaggregateFilter = async (key) => {
@@ -1466,7 +1450,7 @@ const incommingStockQty = async (date, page) => {
           // { $match: { date: date, status: 'Loaded' } },
           {
             $match: {
-              $and: [{ date: { $eq: date } }, { status: { $in: ['Loaded', 'Billed'] } }],
+              $and: [{ status: { $in: ['Loaded', 'Billed'] } }],
             },
           },
           {
@@ -1505,7 +1489,7 @@ const incommingStockQty = async (date, page) => {
           // { $match: { date: date, status: { $in: ['Loaded', 'Billed'] } } },
           {
             $match: {
-              $and: [{ date: { $eq: date } }, { status: { $in: ['Loaded', 'Billed'] } }],
+              $and: [{ status: { $in: ['Loaded', 'Billed'] } }],
             },
           },
           {

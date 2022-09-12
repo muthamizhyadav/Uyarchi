@@ -46,6 +46,9 @@ const trendsProductCloneSchema = new mongoose.Schema({
   created: {
     type: String,
   },
+  timestamp: {
+    type: Date,
+  },
   active: {
     type: Boolean,
     default: true,

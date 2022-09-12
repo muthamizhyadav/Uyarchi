@@ -235,6 +235,31 @@ const get_product_withpacktype = async (search, page) => {
             $unwind: '$historypacktypesData',
           },
           {
+            $lookup: {
+              from: 'products',
+              localField: 'productId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'hsns',
+                    localField: 'HSN_Code',
+                    foreignField: '_id',
+                    as: 'hsnDetails',
+                  },
+                },
+                {
+                  $unwind: '$hsnDetails',
+                },
+              ],
+              as: 'productDetails',
+            },
+          },
+          {
+            $unwind: '$productDetails',
+          },
+
+          {
             $project: {
               _id: 1,
               unit: '$packtypes.unit',
@@ -244,6 +269,8 @@ const get_product_withpacktype = async (search, page) => {
               onlinePrice: 1,
               salesstartPrice: 1,
               salesendPrice: 1,
+              GST_Number: '$productDetails.GST_Number',
+              HSN_Code: '$productDetails.hsnDetails.HSN_code',
               show: 1,
               productId: 1,
             },
@@ -256,10 +283,34 @@ const get_product_withpacktype = async (search, page) => {
       $match: { 'productpacktypes.show': true },
     },
     {
+      $lookup: {
+        from: 'trendproductsclones',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          { $match: { date: moment().format('DD-MM-YYYY') } },
+          {
+            $group: {
+              _id: null,
+              Avg: { $avg: '$Rate' },
+            },
+          },
+        ],
+        as: 'marketTrend',
+      },
+    },
+    {
+      $unwind: {
+        path: '$marketTrend',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 1,
         productTitle: 1,
         productpacktypes: '$productpacktypes',
+        trendAvg: { $round: ['$marketTrend.Avg', 0] },
       },
     },
     {

@@ -351,11 +351,7 @@ const wardloadExecutivePacked = async (page) => {
               unit: 1,
             },
           },
-          // {
-          //   $group: {
-          //     unit: { unit: '$unit',  },
-          //   },
-          // },
+      
         ],
         as: 'productOrderCloneData',
       },

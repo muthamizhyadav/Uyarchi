@@ -27,7 +27,7 @@ const receivedProducrSchema = new mongoose.Schema({
     type: String,
   },
   time: {
-    type: String,
+    type: Number,
   },
   vehicleNumber: {
     type: String,
@@ -50,12 +50,33 @@ const receivedProducrSchema = new mongoose.Schema({
   BillNo: {
     type: String,
   },
+  supplierBillNo: {
+    type: String,
+  },
+  weighBridgeBillImg: {
+    type: Array,
+  },
+  supplierBilldate: {
+    type: String,
+  },
+  supplierBillImg: {
+    type: Array,
+  },
   pendingAmount: {
     type: Number,
   },
   active: {
     type: Boolean,
     default: true,
+  },
+  supplierBillAmount: {
+    type: Number,
+  },
+  supplierBillproductcount: {
+    type: Number,
+  },
+  created: {
+    type: Date,
   },
   archive: {
     type: Boolean,

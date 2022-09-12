@@ -67,6 +67,37 @@ const getDataByLoading = async (id) => {
     },
     {
       $unwind: '$callstatusData',
+    }, //supplierId
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'supplierdata',
+      },
+    },
+    {
+      $unwind: '$supplierdata',
+    },
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ groupId: { $eq: id } }, { status: { $eq: 'Billed' } }],
+            },
+          },
+          { $group: { _id: null, myCount: { $sum: 1 } } },
+        ],
+        as: 'receivedStocks',
+      },
+    },
+    {
+      $unwind: {
+        path: '$receivedStocks',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $project: {
@@ -79,10 +110,15 @@ const getDataByLoading = async (id) => {
         incomingQuantity: 1,
         confirmOrder: '$callstatusData.confirmOrder',
         confirmprice: '$callstatusData.confirmprice',
+        supplierName: '$supplierdata.primaryContactName',
+        receivedStockCount: '$receivedStocks.myCount',
+        supplierContact: '$supplierdata.primaryContactNumber',
       },
     },
   ]);
-  return values;
+  let receivedproduct = await ReceivedProduct.findById(id);
+
+  return { values: values, receivedproduct: receivedproduct };
 };
 
 const updateReceivedStockById = async (id, updateBody) => {
@@ -96,7 +132,6 @@ const updateReceivedStockById = async (id, updateBody) => {
   return receivedStock;
 };
 const updatesegrecation = async (id, updateBody) => {
-  console.log(':sdxdcfvxsdcfxsdf', id);
   let receivedStock = await ReceivedStock.findById(id);
   if (!receivedStock) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
@@ -186,4 +221,30 @@ const getDetailsByProductId = async (productId, date, page) => {
   return { values: values, product: product.productTitle, date: date };
 };
 
-module.exports = { getDataById, updateReceivedStockById, getDataByLoading, getDetailsByProductId, updatesegrecation };
+const uploadImageById = async (id, body) => {
+  let receivedStock = await ReceivedStock.findById(id);
+  if (!receivedStock) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  receivedStock = await ReceivedStock.findByIdAndUpdate({ _id: id }, body, { new: true });
+  return receivedStock;
+};
+
+const updateusableStock = async (id, updateBody) => {
+  let usablestocks = await Stockhistory.findById(id);
+  if (!usablestocks) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  usablestocks = await Stockhistory.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return usablestocks;
+};
+
+module.exports = {
+  getDataById,
+  updateReceivedStockById,
+  getDataByLoading,
+  getDetailsByProductId,
+  updatesegrecation,
+  uploadImageById,
+  updateusableStock,
+};

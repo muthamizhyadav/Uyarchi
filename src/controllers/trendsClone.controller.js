@@ -44,6 +44,7 @@ const createTrends = catchAsync(async (req, res) => {
       time: servertime,
       // fulldate: req.body.fulldate,
       created: created,
+      timestamp: moment(),
     };
     await TrendproductClone.create(row);
   });

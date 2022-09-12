@@ -4,7 +4,7 @@ const manageUser = require('../models/manageUser.model');
 const ApiError = require('../utils/ApiError');
 const Street = require('../models/street.model');
 const { Market } = require('../models/market.model');
-const street = require('../models/street.model')
+const street = require('../models/street.model');
 const axios = require('axios');
 
 const createApartment = async (apartmentBody) => {
@@ -62,15 +62,18 @@ const latitudeMap = async (location, radius, type, keyword) => {
 };
 
 const WardNoApi = async (location) => {
-  let response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`);
+  let response = await axios.get(
+    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
+  );
   return response.data;
 };
 
 const WardApi = async (location) => {
-  let response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${location}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`);
+  let response = await axios.get(
+    `https://maps.googleapis.com/maps/api/geocode/json?address=${location}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
+  );
   return response.data;
 };
-
 
 const WardApi2 = async (longi, lati, data1) => {
   let longitude = longi;
@@ -95,10 +98,10 @@ const WardApi2 = async (longi, lati, data1) => {
       const first2Num = first2Str;
       const second2Num = second2Str;
       if (first2Num == latitude && second2Num == longitude) {
-        console.log(second2Num)
-        console.log(Number(longitude))
-        console.log(first2Num)
-        console.log(Number(latitude))
+        console.log(second2Num);
+        console.log(Number(longitude));
+        console.log(first2Num);
+        console.log(Number(latitude));
         data = response.data.features[i].properties;
         break;
       }
@@ -113,7 +116,6 @@ const streetSearchApi = async (searchArea) => {
   );
   return response.data;
 };
-
 
 const streetSearchApi2 = async (searchArea) => {
   let response = await axios.get(
@@ -149,9 +151,8 @@ const getAllStreetLatLang = async () => {
   // });
   //  console.log(response.data.candidates[0].geometry.location.lat)
   //  console.log(response.data.candidates[0].geometry.location.lng)
-  return "data";
+  return 'data';
 };
-
 
 const AllCount = async () => {
   const userCount = await manageUser.find({ active: true });
@@ -4329,6 +4330,18 @@ const deleteShopById = async (shopId) => {
   return Sho;
 };
 
+const chennai_corporation_decodes = async () => {
+  let response = await axios.get(
+    `https://chennaicorporation.gov.in/gcc/citizen-details/location-service-lb/assets/GCC_DIVISION.geojson`
+  );
+  console.log(
+    response.data.features.array.foreach((element) => {
+      return element.geometry;
+    })
+  );
+  return response.data;
+};
+
 module.exports = {
   createApartment,
   createShop,
@@ -4361,6 +4374,6 @@ module.exports = {
   streetSearchApi2,
   WardApi,
   getAllStreetLatLang,
-
+  chennai_corporation_decodes,
   // paginationManageUserAttendance,
 };

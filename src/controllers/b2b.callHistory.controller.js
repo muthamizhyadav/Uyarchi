@@ -32,14 +32,51 @@ const getById = catchAsync(async (req, res) => {
 const getAllPage = catchAsync(async (req, res) => {
   let userId = req.userId;
   let userRole = req.userRole;
-  const call = await callHistoryService.getShop(req.params.date, req.params.status, req.params.page, userId, userRole);
+  let call;
+  if (req.params.status == 'Pending') {
+    call = await callHistoryService.getShop_pending(
+      req.params.date,
+      req.params.status,
+      req.params.key,
+      req.params.page,
+      userId,
+      userRole
+    );
+  } else if (req.params.status == 'callback' || req.params.status == 'accept' || req.params.status == 'declined') {
+    call = await callHistoryService.getShop_callback(
+      req.params.date,
+      req.params.status,
+      req.params.key,
+      req.params.page,
+      userId,
+      userRole
+    );
+  } else if (req.params.status == 'reschedule') {
+    call = await callHistoryService.getShop_reshedule(
+      req.params.date,
+      req.params.status,
+      req.params.key,
+      req.params.page,
+      userId,
+      userRole
+    );
+  } else if (req.params.status == 'oncall') {
+    call = await callHistoryService.getShop_oncall(
+      req.params.date,
+      'On Call',
+      req.params.key,
+      req.params.page,
+      userId,
+      userRole
+    );
+  }
   res.send(call);
 });
 
 const updateCallingStatus = catchAsync(async (req, res) => {
   let userId = req.userId;
   console.log(userId);
-  const callingStatus = await callHistoryService.updateStatuscall(req.params.id, userId, req.body);
+  const callingStatus = await callHistoryService.updateStatuscall(req.params.id, userId, req.params.date);
   // throw new ApiError(httpStatus.UNAUTHORIZED, 'OnCall');
   res.send(callingStatus);
 });
@@ -60,7 +97,7 @@ const createShopByOwner = catchAsync(async (req, res) => {
 });
 
 const callingStatusreport = catchAsync(async (req, res) => {
-  const shops = await callHistoryService.callingStatusreport();
+  const shops = await callHistoryService.callingStatusreport(req.params.date);
   res.send(shops);
 });
 
@@ -99,6 +136,7 @@ const getacceptDeclined = catchAsync(async (req, res) => {
   const callhistories = await callHistoryService.getacceptDeclined(
     req.params.status,
     req.params.date,
+    req.params.key,
     req.params.page,
     userId,
     userRole
@@ -126,6 +164,12 @@ const oncallstatusByUser = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const call_visit_Count = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const shops = await callHistoryService.call_visit_Count(userId);
+  res.send(shops);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -148,4 +192,5 @@ module.exports = {
   previouscallBackAnd_Reshedule,
   getOncallShops,
   oncallstatusByUser,
+  call_visit_Count,
 };

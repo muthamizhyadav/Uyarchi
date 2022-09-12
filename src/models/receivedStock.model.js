@@ -20,7 +20,10 @@ const receivedStockSchema = new mongoose.Schema({
     type: String,
   },
   time: {
-    type: String,
+    type: Number,
+  },
+  created: {
+    type: Date,
   },
   active: {
     type: Boolean,
@@ -60,6 +63,9 @@ const receivedStockSchema = new mongoose.Schema({
   segStatus: {
     type: String,
     default: 'Pending',
+  },
+  wastageImg: {
+    type: Array,
   },
   billingQuantity: {
     type: Number,

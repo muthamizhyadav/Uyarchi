@@ -1,10 +1,10 @@
 const httpStatus = require('http-status');
 const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone } = require('../models/shopOrder.model');
+const ProductPacktype = require('../models/productPacktype.model');
 const { Product } = require('../models/product.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const ApiError = require('../utils/ApiError');
 const moment = require('moment');
-let currentDate = moment().format('DD-MM-YYYY');
 
 const createshopOrder = async (shopOrderBody, userid) => {
   let body = { ...shopOrderBody, ...{ Uid: userid } };
@@ -26,9 +26,10 @@ const createshopOrder = async (shopOrderBody, userid) => {
 };
 
 const createshopOrderClone = async (body, userid) => {
-  const Buy = await ShopOrderClone.find();
+  let currentDate = moment().format('YYYY-MM-DD');
+  let currenttime = moment().format('HHmmss');
+  const Buy = await ShopOrderClone.find({ date: currentDate });
   let center = '';
-  // console.log(Buy.length);
   if (Buy.length < 9) {
     center = '0000';
   }
@@ -41,16 +42,15 @@ const createshopOrderClone = async (body, userid) => {
   if (Buy.length < 9999 && Buy.length >= 999) {
     center = '0';
   }
-  // console.log(center, 0);
   let userId = '';
   let totalcount = Buy.length + 1;
 
   userId = 'OD' + center + totalcount;
-  let bod = { ...body, ...{ Uid: userid, OrderId: userId } };
+  let bod = { ...body, ...{ Uid: userid, OrderId: userId, date: currentDate, time: currenttime, created: moment() } };
   console.log(bod);
 
   let createShopOrderClone = await ShopOrderClone.create(bod);
-  let { product, date, time, shopId } = body;
+  let { product, time, shopId } = body;
   await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: 'accept', callingStatusSort: 6 }, { new: true });
   product.forEach(async (e) => {
     ProductorderClone.create({
@@ -58,9 +58,18 @@ const createshopOrderClone = async (body, userid) => {
       productid: e.productid,
       quantity: e.quantity,
       priceperkg: e.priceperkg,
-      date: date,
-      time: time,
+      GST_Number: e.GST_Number,
+      HSN_Code: e.HSN_Code,
+      packtypeId: e.packtypeId,
+      productpacktypeId: e._id,
+      packKg: e.packKg,
+      unit: e.unit,
+      date: currentDate,
+      time: currenttime,
       customerId: shopId,
+      finalQuantity: e.quantity,
+      finalPricePerKg: e.priceperkg,
+      created: moment(),
     });
   });
   return createShopOrderClone;
@@ -109,11 +118,66 @@ const getShopOrderCloneById = async (id) => {
       },
     },
     {
+      $unwind: '$shopData',
+    },
+    {
       $lookup: {
-        from: 'marketshopsclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        as: 'marketshopData',
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              packKg: 1,
+              unit: 1,
+              productTitle: '$products.productTitle',
+              created: 1,
+            },
+          },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        status: 1,
+        delivery_type: 1,
+        time_of_delivery: 1,
+        total: 1,
+        gsttotal: 1,
+        subtotal: 1,
+        SGST: 1,
+        Uid: 1,
+        shopId: 1,
+        CGST: 1,
+        paidamount: 1,
+        OrderId: 1,
+        created: 1,
+        devevery_mode: 1,
+        Payment: 1,
+        productData: '$productData',
+        shopName: '$shopData.SName',
       },
     },
   ]);
@@ -127,6 +191,38 @@ const updateShopOrderCloneById = async (id, updatebody) => {
   }
   shoporderClone = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
   return shoporderClone;
+};
+
+const updateshop_order = async (id, body) => {
+  let shoporder = await ShopOrderClone.findById(id);
+  if (!shoporder) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not found');
+  }
+  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
+  await ProductorderClone.deleteMany({ orderId: id });
+  let { product, date, time, shopId } = body;
+  product.forEach(async (e) => {
+    let packtypeId = await ProductPacktype.findOne({ packtypeId: e.packtypeId, productId: e.productid });
+    await ProductorderClone.create({
+      orderId: id,
+      productid: e.productid,
+      quantity: e.quantity,
+      priceperkg: e.priceperkg,
+      GST_Number: e.GST_Number,
+      HSN_Code: e.HSN_Code,
+      packtypeId: e.packtypeId,
+      productpacktypeId: packtypeId._id,
+      packKg: e.packKg,
+      unit: e.unit,
+      date: shoporder.date,
+      time: shoporder.time,
+      customerId: shopId,
+      finalQuantity: e.quantity,
+      finalPricePerKg: e.priceperkg,
+      created: shoporder.created,
+    });
+  });
+  return shoporder;
 };
 
 const deleteShopOrderCloneById = async (id) => {
@@ -190,14 +286,17 @@ const getShopNameWithPagination = async (page, userId) => {
         as: 'shopData',
       },
     },
-    //b2busers
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
 };
 
 const getShopNameCloneWithPagination = async (page, userId) => {
+  console.log();
   let value = await ShopOrderClone.aggregate([
+    {
+      $sort: { date: -1, time: -1 },
+    },
     {
       $match: {
         $and: [{ Uid: { $eq: userId } }],
@@ -212,14 +311,27 @@ const getShopNameCloneWithPagination = async (page, userId) => {
       },
     },
     {
-      $lookup: {
-        from: 'marketshopsclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        as: 'marketshopData',
+      $unwind: '$shopData',
+    },
+    {
+      $project: {
+        _id: 1,
+        created: 1,
+        delivery_type: 1,
+        time_of_delivery: 1,
+        total: 1,
+        gsttotal: 1,
+        subtotal: 1,
+        SGST: 1,
+        CGST: 1,
+        OrderId: 1,
+        productTotal: { $size: '$product' },
+        paidamount: 1,
+        shopName: '$shopData.SName',
+        contact: '$shopData.mobile',
+        status: 1,
       },
     },
-    //b2busers
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -290,10 +402,42 @@ const deleteShopOrderById = async (shopOrderId) => {
 const getAll = async () => {
   return ShopOrderClone.find();
 };
-21
+21;
 
-const createOrderId = async (body)=>{
+const createOrderId = async (body) => {
   return ShopOrderClone.create(body);
+};
+
+const getShopDetailsByOrder = async (id) => {
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclones',
+      },
+    },
+    {
+      $unwind: '$b2bshopclones',
+    },
+    {
+      $project: {
+        _id: 1,
+        shopId: '$b2bshopclones._id',
+        shopName: '$b2bshopclones.SName',
+        shopOwner: '$b2bshopclones.SOwner',
+        shopMobile: '$b2bshopclones.mobile',
+        shoplatitude: '$b2bshopclones.Slat',
+        shoplongitude: '$b2bshopclones.Slong',
+        shopAddress: '$b2bshopclones.address',
+      },
+    },
+  ]);
+  return values;
 };
 
 module.exports = {
@@ -321,7 +465,8 @@ module.exports = {
   deleteShopOrderById,
 
   // Telecaller
-
+  updateshop_order,
   getAll,
   createOrderId,
+  getShopDetailsByOrder,
 };

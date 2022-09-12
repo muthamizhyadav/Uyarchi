@@ -3,6 +3,7 @@ const Estimated = require('../models/estimatedOrders.mode');
 const { ProductorderClone } = require('../models/shopOrder.model');
 const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise, ManageBill, ShopList } = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
+const moment = require('moment');
 
 const createEstimatedOrders = async (body) => {
   let estimate = await Estimated.create(body);
@@ -376,6 +377,7 @@ const getEstimatedByDateforPH = async (date, page) => {
           {
             $match: {
               date: date,
+              orderType: { $ne: 'sudden' },
             },
           },
         ],
@@ -523,7 +525,7 @@ const getSingleProductEstimations = async (id) => {
         time: 1,
         productTitle: '$productDetails.productTitle',
         stock: '$productDetails.stock',
-        stock: '$productDetails.stock',
+        // stock: '$productDetails.stock',
         image: '$productDetails.image',
         liveStock: '$productorders.Qty',
         liveAvg: '$productorders.Avg',
@@ -544,10 +546,54 @@ const updateEstimateById = async (id, updateBody) => {
   return estimate;
 };
 
+const getEstimated_Orders_By_Id_And_date = async (id) => {
+  let currentDate = moment().format('DD-MM-YYYY');
+  let estimate = await Estimated.find({ productId: id, date: currentDate, estimatedStatus: { $eq: 'Estimated' } });
+  if (!estimate) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Estimated Order Not Found');
+  }
+  return estimate;
+};
+
+const liveStockInfo = async (id) => {
+  let currentDate = moment().format('DD-MM-YYYY');
+
+  let values = await Product.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          { $match: { date: currentDate } },
+          { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
+        ],
+        as: 'productorders',
+      },
+    },
+    {
+      $unwind: '$productorders',
+    },
+    {
+      $project: {
+        _id: 1,
+        livestock: '$productorders.Qty',
+        price: '$productorders.price',
+      },
+    },
+  ]);
+  return values.length != 0 ? values[0] : [];
+};
+
 module.exports = {
   createEstimatedOrders,
   getEstimatedByDate,
   getSingleProductEstimations,
   updateEstimateById,
   getEstimatedByDateforPH,
+  getEstimated_Orders_By_Id_And_date,
+  liveStockInfo,
 };

@@ -47,6 +47,9 @@ const productSchema = mongoose.Schema({
   HSN_Code: {
     type: String,
   },
+  cess: {
+    type: Number,
+  },
   TrendspreferredQuantity: {
     type: Number,
   },

@@ -21,6 +21,7 @@ const getWardById = async (id, active) => {
 
 const getAllWard = async () => {
   return Ward.aggregate([
+    { $sort: { ward: 1 } },
     {
       $lookup: {
         from: 'zones',
@@ -58,7 +59,7 @@ const getAllWard = async () => {
 };
 
 const getWardByZoneId = async (zoneId) => {
-  console.log("asrgl;y jkdfn",zoneId);
+  console.log('asrgl;y jkdfn', zoneId);
   const zone = await Ward.aggregate([
     {
       $sort: { ward: 1 },
@@ -73,7 +74,7 @@ const getWardByZoneId = async (zoneId) => {
 };
 
 const getWardByZoneIdBySalesman = async (zoneId) => {
-  console.log("asdfg",zoneId);
+  console.log('asdfg', zoneId);
   const zone = await Ward.aggregate([
     {
       $sort: { ward: 1 },

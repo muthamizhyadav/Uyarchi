@@ -155,6 +155,16 @@ const createOrderId = catchAsync(async (req, res) => {
   await supplierss.save();
 });
 
+const updateshop_order = catchAsync(async (req, res) => {
+  const data = await shopOrderService.updateshop_order(req.params.id, req.body);
+  res.send(data);
+});
+
+const getShopDetailsByOrder = catchAsync(async (req, res) => {
+  const shopOrdes = await shopOrderService.getShopDetailsByOrder(req.params.id);
+  res.send(shopOrdes);
+});
+
 module.exports = {
   createshopOrder,
   getAllShopOrder,
@@ -181,6 +191,7 @@ module.exports = {
 
   // Telecaller
   getAll,
-
+  updateshop_order,
   createOrderId,
+  getShopDetailsByOrder,
 };

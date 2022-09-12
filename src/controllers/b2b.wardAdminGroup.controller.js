@@ -4,10 +4,10 @@ const catchAsync = require('../utils/catchAsync');
 const wardAdminGroupService = require('../services/b2b.wardAdminGroup.service');
 const { ProductorderClone } = require('../models/shopOrder.model');
 const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
+const pettyStockModel = require('../models/b2b.pettyStock.model');
 
 const createGroupOrder = catchAsync(async (req, res) => {
-  let userid = req.userId;
-  const shopOrderClone = await wardAdminGroupService.createGroup(req.body, userid);
+  const shopOrderClone = await wardAdminGroupService.createGroup(req.body);
   res.send(shopOrderClone);
 });
 
@@ -16,19 +16,39 @@ const updateOrderPickedStatus = catchAsync(async (req, res) => {
   res.send(orderPicked);
 });
 
+const submitPEttyCashGivenByWDE = catchAsync(async (req, res) => {
+  const cashAsGivenByWDE = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  res.send(cashAsGivenByWDE);
+});
+
 const updatePickedPettyStock = catchAsync(async (req, res) => {
-  const pickedPettyStock = await wardAdminGroupService.updateOrderStatus(req.params.id, 'Picked Petty Stock');
+  const pickedPettyStock = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
   res.send(pickedPettyStock);
 });
 
 const updatePickedPettyCash = catchAsync(async (req, res) => {
-  const pickedPettyCash = await wardAdminGroupService.updateOrderStatus(req.params.id, 'Picked Petty Cash');
+  const pickedPettyCash = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
   res.send(pickedPettyCash);
 });
 
+const updateDontAllocate = catchAsync(async (req, res) => {
+  const notAloocate = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  res.send(notAloocate);
+});
+
+const updateAllocate = catchAsync(async (req, res) => {
+  const notAloocate = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  res.send(notAloocate);
+});
+
 const updateDeliveryStarted = catchAsync(async (req, res) => {
-  const deleiveryStarted = await wardAdminGroupService.updateOrderStatus(req.params.id, 'Delivery started');
+  const deleiveryStarted = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
   res.send(deleiveryStarted);
+});
+
+const updatePettyCashReturnStatus = catchAsync(async (req, res) => {
+  const status = await wardAdminGroupService.updateShopOrderCloneById(req.params.id, req.body);
+  res.send(status);
 });
 
 const updateDeliveryCompleted = catchAsync(async (req, res) => {
@@ -37,11 +57,11 @@ const updateDeliveryCompleted = catchAsync(async (req, res) => {
 });
 
 const UpdateUnDeliveredStatus = catchAsync(async (req, res) => {
-  const deliveryStatus = await wardAdminGroupService.updateOrderStatus(req.params.id, 'UnDelivered' , req.body);
+  const deliveryStatus = await wardAdminGroupService.updateOrderStatus(req.params.id, 'UnDelivered', req.body);
   res.send(deliveryStatus);
 });
 
-const getproductDetails = catchAsync(async (req, res) => {
+const getproductDetailsPettyStock = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.getPettyStock(req.params.id);
   res.send(details);
 });
@@ -61,49 +81,161 @@ const getByIdGroupOrderDetails = catchAsync(async (req, res) => {
   res.send(sample);
 });
 
-const getGroupDetails = catchAsync(async (req, res) => {
-  const getDetails = await wardAdminGroupService.getGroupdetails();
-  res.send(getDetails);
-});
+// const getGroupDetails = catchAsync(async (req, res) => {
+//   const getDetails = await wardAdminGroupService.getGroupdetails();
+//   res.send(getDetails);
+// });
 
 const getDeliveryExecutivestatus = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.getstatus(req.params.id);
-  res.send(details)
+  res.send(details);
 });
 
 const getBillDetails = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.getBillDetails(req.params.id);
-  res.send(details)
+  res.send(details);
 });
 
 const getAssigned = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.assignOnly(req.params.page);
-  res.send(details)
+  res.send(details);
 });
-
 
 const getDeliveryOrderSeparate = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.getDeliveryOrderSeparate(req.params.id, req.params.page);
   res.send(details);
-})
-
+});
 
 const groupIdClick = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.groupIdClick(req.params.id);
-  res.send(details)
+  res.send(details);
 });
 
-
-
 const orderIdClickGetProduct = catchAsync(async (req, res) => {
-  console.log(req.params.id)
+  console.log(req.params.id);
   const details = await wardAdminGroupService.orderIdClickGetProduct(req.params.id);
-  res.send(details)
+  res.send(details);
 });
 
 const getDetailsAfterDeliveryCompletion = catchAsync(async (req, res) => {
   const getdetails = await wardAdminGroupService.getDetailsAfterDeliveryCompletion(req.params.id);
   res.send(getdetails);
+});
+
+const getBillDetailsPerOrder = catchAsync(async (req, res) => {
+  const getdetails = await wardAdminGroupService.getBillDetailsPerOrder(req.params.id);
+  res.send(getdetails);
+});
+
+const getReturnWDEtoWLE = catchAsync(async (req, res) => {
+  const getReturnDetails = await wardAdminGroupService.getReturnWDEtoWLE(req.params.id, req.params.page);
+  res.send(getReturnDetails);
+});
+
+// const pettyStockSubmit = catchAsync(async (req, res) => {
+//   const pettystock = await wardAdminGroupService.pettyStockSubmit( req.body);
+//   res.send(pettystock);
+// });
+
+const pettyCashSubmit = catchAsync(async (req, res) => {
+  const pettystock = await wardAdminGroupService.pettyCashSubmit(req.params.id, req.body);
+  res.send(pettystock);
+});
+
+const orderCompleted = catchAsync(async (req, res) => {
+  const complete = await wardAdminGroupService.pettyStockSubmit(req.params.id, req.body);
+  res.send(complete);
+});
+
+const Deliverystart = catchAsync(async (req, res) => {
+  const start = await wardAdminGroupService.pettyStockSubmit(req.params.id, req.body);
+  res.send(start);
+});
+
+const deliveryCompleted = catchAsync(async (req, res) => {
+  const completed = await wardAdminGroupService.pettyStockSubmit(req.params.id, req.body);
+  res.send(completed);
+});
+
+const getPettyStockDetails = catchAsync(async (req, res) => {
+  const completed = await wardAdminGroupService.getPettyStockDetails(req.params.id, req.params.page);
+  res.send(completed);
+});
+
+const getdetailsAboutPettyStockByGroupId = catchAsync(async (req, res) => {
+  const datas = await wardAdminGroupService.getdetailsAboutPettyStockByGroupId(req.params.id, req.params.page);
+  res.send(datas);
+});
+
+// const uploadWastageImage = catchAsync(async (req, res) => {
+//   const { body } = req;
+//   const otherExp = await wardAdminGroupService.uploadWastageImage(req);
+//   if (req.files) {
+//     let path = '';
+//     req.files.forEach(function (files, index, arr) {
+//       path = 'images/wastageProduct/' + files.filename;
+//     });
+//     otherExp.wastageImageUpload = path;
+//   }
+//   await otherExp.save();
+//   res.status(httpStatus.CREATED).send(otherExp);
+// });
+
+const createData = catchAsync(async (req, res) => {
+  const data = await wardAdminGroupService.getpettyStockData(req.params.id, req.body);
+  res.send(data);
+});
+
+const getPettyCashDetails = catchAsync(async (req, res) => {
+  const data = await wardAdminGroupService.getPettyCashDetails(req.params.id, req.params.page);
+  res.send(data);
+});
+
+const getAllGroup = catchAsync(async (req, res) => {
+  const group = await wardAdminGroupService.getAllGroup(req.params.page);
+  res.send(group);
+});
+
+const pettyStockCreate = catchAsync(async (req, res) => {
+  const shopOrder = await wardAdminGroupService.pettyStockCreate(req.params.id, req.body);
+  res.send(shopOrder);
+});
+
+const getcashAmountViewFromDB = catchAsync(async (req, res) => {
+  const getcashFromDb = await wardAdminGroupService.getcashAmountViewFromDB(req.params.id);
+  res.send(getcashFromDb);
+});
+
+const createDatasInPettyStockModel = catchAsync(async (req, res) => {
+  const createAndUpdateDataINPettyStock = await wardAdminGroupService.createDatasInPettyStockModel(req.params.id, req.body);
+  res.send(createAndUpdateDataINPettyStock);
+});
+
+const getPEttyCashQuantity = catchAsync(async (req, res) => {
+  const createAndUpdateDataINPettyStock = await wardAdminGroupService.getPEttyCashQuantity(req.params.id);
+  res.send(createAndUpdateDataINPettyStock);
+});
+
+const returnStock = catchAsync(async (req, res) => {
+  const returnStock = await wardAdminGroupService.returnStock(req.params.id);
+  res.send(returnStock);
+});
+
+const uploadWastageImage = catchAsync(async (req, res) => {
+  const returnStock = await wardAdminGroupService.uploadWastageImage(req.body);
+  if (req.files) {
+    req.files.forEach(function (files, index, arr) {
+      returnStock.wastageImageUpload.push('images/returnStockWastage/' + files.filename);
+    });
+  }
+
+  res.send(returnStock);
+  await returnStock.save();
+});
+
+const lastPettyStckAdd = catchAsync(async (req, res) => {
+  const returnStock = await wardAdminGroupService.lastPettyStckAdd(req.params.id, req.body);
+  res.send(returnStock);
 });
 
 
@@ -122,15 +254,13 @@ module.exports = {
   getByIdGroupOrderDetails,
   UpdateUnDeliveredStatus,
 
-  getproductDetails,
-  getGroupDetails,
-
+  getproductDetailsPettyStock,
+  // getGroupDetails,
 
   getDeliveryExecutivestatus,
   getBillDetails,
 
   getAssigned,
-
 
   getDeliveryOrderSeparate,
 
@@ -139,5 +269,41 @@ module.exports = {
   orderIdClickGetProduct,
 
   getDetailsAfterDeliveryCompletion,
+  getBillDetailsPerOrder,
 
+  getReturnWDEtoWLE,
+
+  // pettyStockSubmit,
+  pettyCashSubmit,
+  orderCompleted,
+  Deliverystart,
+  deliveryCompleted,
+
+  getPettyStockDetails,
+  getdetailsAboutPettyStockByGroupId,
+
+  uploadWastageImage,
+
+  updateDontAllocate,
+
+  updateAllocate,
+
+  createData,
+  getPettyCashDetails,
+  getAllGroup,
+
+  updatePettyCashReturnStatus,
+  pettyStockCreate,
+  getcashAmountViewFromDB,
+
+  submitPEttyCashGivenByWDE,
+  createDatasInPettyStockModel,
+
+  getPEttyCashQuantity,
+
+  returnStock,
+
+  lastPettyStckAdd,
+
+  // createImageUploadAndDetails,
 };
