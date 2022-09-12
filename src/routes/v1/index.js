@@ -81,11 +81,17 @@ const productpackTypeRoute = require('./productPacktype.route');
 const wardAdminGroup = require('./b2b.wardAdminGroup.route');
 const slowCheck = require('./slow.sample.route');
 const managePickup = require('./manage.pickup.location.route');
-const pettyStockRoute =  require('./b2b.pettyStock.route');
+const pettyStockRoute = require('./b2b.pettyStock.route');
+const WLE_Route = require('./WLE.route');
+
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/WLE',
+    route: WLE_Route,
   },
   {
     path: '/pickup',

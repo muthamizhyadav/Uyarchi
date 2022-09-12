@@ -408,6 +408,38 @@ const createOrderId = async (body) => {
   return ShopOrderClone.create(body);
 };
 
+const getShopDetailsByOrder = async (id) => {
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclones',
+      },
+    },
+    {
+      $unwind: '$b2bshopclones',
+    },
+    {
+      $project: {
+        _id: 1,
+        shopId: '$b2bshopclones._id',
+        shopName: '$b2bshopclones.SName',
+        shopOwner: '$b2bshopclones.SOwner',
+        shopMobile: '$b2bshopclones.mobile',
+        shoplatitude: '$b2bshopclones.Slat',
+        shoplongitude: '$b2bshopclones.Slong',
+        shopAddress: '$b2bshopclones.address',
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -436,4 +468,5 @@ module.exports = {
   updateshop_order,
   getAll,
   createOrderId,
+  getShopDetailsByOrder,
 };

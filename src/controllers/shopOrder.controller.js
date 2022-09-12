@@ -160,6 +160,11 @@ const updateshop_order = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getShopDetailsByOrder = catchAsync(async (req, res) => {
+  const shopOrdes = await shopOrderService.getShopDetailsByOrder(req.params.id);
+  res.send(shopOrdes);
+});
+
 module.exports = {
   createshopOrder,
   getAllShopOrder,
@@ -188,4 +193,5 @@ module.exports = {
   getAll,
   updateshop_order,
   createOrderId,
+  getShopDetailsByOrder,
 };

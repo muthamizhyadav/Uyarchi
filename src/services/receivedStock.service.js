@@ -116,7 +116,9 @@ const getDataByLoading = async (id) => {
       },
     },
   ]);
-  return values;
+  let receivedproduct = await ReceivedProduct.findById(id);
+
+  return { values: values, receivedproduct: receivedproduct };
 };
 
 const updateReceivedStockById = async (id, updateBody) => {
@@ -130,7 +132,6 @@ const updateReceivedStockById = async (id, updateBody) => {
   return receivedStock;
 };
 const updatesegrecation = async (id, updateBody) => {
-  console.log(':sdxdcfvxsdcfxsdf', id);
   let receivedStock = await ReceivedStock.findById(id);
   if (!receivedStock) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');

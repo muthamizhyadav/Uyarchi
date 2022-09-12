@@ -167,7 +167,7 @@ const forgotPassword = async (body) => {
       { userRole: '36151bdd-a8ce-4f80-987e-1f454cd0993f' },
       { userRole: '57243437-a1d4-426f-a705-5da92a630d15' },
       { userRole: '24a28b34-ae15-4f3a-a3e8-24cf5b7be5a1' },
-      { userRole: '569d9d3f-285c-434d-99e7-0c415245c40c' }, // 719d9f71-8388-4534-9bfe-3f47faed62ac
+      { userRole: '569d9d3f-285c-434d-99e7-0c415245c40c' },
       { userRole: '719d9f71-8388-4534-9bfe-3f47faed62ac' },
     ],
   });
@@ -380,7 +380,6 @@ const deleteB2bUsersbyId = async (id) => {
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Users Not Found');
   }
-
   await Shop.updateMany({ Uid: id }, { $set: { Uid: '3625a112-a7f5-4bd8-b9c3-f86ae03c2f44' } }, { new: true });
   await MarketClone.updateMany({ Uid: id }, { $set: { Uid: '3625a112-a7f5-4bd8-b9c3-f86ae03c2f44' } }, { new: true });
   users = await Users.deleteOne({ _id: id });

@@ -62,7 +62,8 @@ const setTrendsValueforProduct = async (id, updateBody) => {
   return product;
 };
 
-const getTrendsData = async (date, wardId, street, page) => {
+const getTrendsData = async (wardId, street, page) => {
+  const date = moment().format('DD-MM-YYYY');
   let match;
   if (street != 'null') {
     match = { steetId: { $eq: street } };
@@ -83,7 +84,7 @@ const getTrendsData = async (date, wardId, street, page) => {
         foreignField: 'productId',
         pipeline: [
           {
-            $match: { $and: [match] },
+            $match: { $and: [match], date: date },
           },
           {
             $lookup: {
@@ -183,7 +184,7 @@ const getTrendsData = async (date, wardId, street, page) => {
         foreignField: 'productId',
         pipeline: [
           {
-            $match: { $and: [match] },
+            $match: { $and: [match], date: date },
           },
           {
             $lookup: {

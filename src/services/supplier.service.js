@@ -5,6 +5,8 @@ const { Product } = require('../models/product.model');
 const { ProductorderSchema } = require('../models/shopOrder.model');
 const CallStatus = require('../models/callStatus');
 const B2bBillStatus = require('../models/b2bbillStatus.model');
+const moment = require('moment');
+
 const createSupplier = async (supplierBody) => {
   return Supplier.create(supplierBody);
 };
@@ -142,7 +144,9 @@ const updateDisableSupplierById = async (id) => {
   return supplier;
 };
 
-const productDealingWithsupplier = async (id, date) => {
+const productDealingWithsupplier = async (id) => {
+  let currentDate = moment().format('YYYY-MM-DD');
+  let currentDateorder = moment().format('DD-MM-YYYY');
   return Supplier.aggregate([
     {
       $match: {
@@ -183,7 +187,7 @@ const productDealingWithsupplier = async (id, date) => {
           {
             $match: {
               $expr: {
-                $eq: ['$date', date], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                $eq: ['$date', currentDate], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
               },
             },
           },
@@ -203,7 +207,7 @@ const productDealingWithsupplier = async (id, date) => {
           {
             $match: {
               $expr: {
-                $eq: ['$date', date], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+                $eq: ['$date', currentDate], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
               },
             },
           },

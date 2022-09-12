@@ -2,9 +2,12 @@ const httpStatus = require('http-status');
 const { Street } = require('../models');
 const Status = require('../models/status.model');
 const ApiError = require('../utils/ApiError');
+const moment = require('moment');
 
 const createStatus = async (streetBody) => {
-  return Status.create(streetBody);
+  let currentDate = moment().format('YYYY-MM-DD');
+  let values = { ...body, ...{ date: currentDate, createAt: moment() } };
+  return Status.create(values);
 };
 
 const getStreetById = async (statusId) => {

@@ -1028,9 +1028,9 @@ const createAttendanceClone = async (shopBody) => {
 };
 
 const createAttendanceClone_new = async (shopBody) => {
-  let servertime = moment().format('HHmm');
+  let servertime = moment().format('HHmmss');
   let servercreatetime = moment().format('hh:mm a');
-  let serverdate = moment().format('DD-MM-yyy');
+  let serverdate = moment().format('yyyy-MM-DD');
   let values = { ...shopBody, ...{ date: serverdate, time: servertime, created: servercreatetime } };
   const attendance = await AttendanceClonenew.create(values);
   return attendance;
@@ -1050,7 +1050,7 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
   if (id != 'null' && date != 'null' && fromtime != 'null' && totime != 'null') {
     //  match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: from,$lte: to}},{active:{$eq:true}}];
     const d = new Date(date);
-    date = moment(d).format('DD-MM-YYYY');
+    date = moment(d).format('YYYY-MM-DD');
     match = [
       { Uid: { $eq: id } },
       { date: { $eq: date } },
@@ -1068,7 +1068,7 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
     match = [{ time: { $gte: to } }, { time: { $lte: from } }, { active: { $eq: true } }];
   } else if (id == 'null' && date != 'null' && fromtime != 'null' && totime != 'null') {
     const d = new Date(date);
-    date = moment(d).format('DD-MM-YYYY');
+    date = moment(d).format('YYYY-MM-DD');
     //  match=[{ date: { $eq: date }},{ time:{$lte: to ,$gte: from}},{active:{$eq:true}}]
     match = [{ date: { $eq: date } }, { time: { $gte: to } }, { time: { $lte: from } }, { active: { $eq: true } }];
   } else if (id != 'null' && date == 'null' && fromtime != 'null' && totime != 'null') {
@@ -1076,7 +1076,7 @@ const getAllAttendanceClone = async (id, date, fromtime, totime, page) => {
     match = [{ Uid: { $eq: id } }, { time: { $gte: to } }, { time: { $lte: from } }, { active: { $eq: true } }];
   } else if (id != 'null' && date != 'null' && fromtime == 'null' && totime == 'null') {
     const d = new Date(date);
-    date = moment(d).format('DD-MM-YYYY');
+    date = moment(d).format('YYYY-MM-DD');
     match = [{ Uid: { $eq: id } }, { date: { $eq: date } }, { active: { $eq: true } }];
   } else {
     match = [{ Uid: { $ne: null } }, { active: { $eq: true } }];
