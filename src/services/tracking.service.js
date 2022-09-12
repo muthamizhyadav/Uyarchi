@@ -6,13 +6,14 @@ const moment = require('moment');
 
 const createTracking = async (body) => {
   let values = { ...body, ...{ created: moment() } };
+  console.log(values);
   let users = await Users.findById(body.userId);
+
   if (!users) {
     await Tracking.create(values);
   } else {
     await Tracking.findByIdAndUpdate({ _id: body.userId }, values, { new: true });
   }
-
   return 'Success';
 };
 

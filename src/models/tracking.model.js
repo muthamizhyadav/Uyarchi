@@ -11,10 +11,10 @@ const TrackingSchema = new mongoose.Schema({
     type: String,
   },
   lat: {
-    type: Number,
+    type: String,
   },
   lon: {
-    type: Number,
+    type: String,
   },
   active: {
     type: Boolean,
