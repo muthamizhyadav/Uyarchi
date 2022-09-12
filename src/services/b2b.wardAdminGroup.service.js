@@ -1201,7 +1201,20 @@ const getPEttyCashQuantity = async (id) => {
 const uploadWastageImage = async (body) => {
   let values = await wardAdminGroupDetails.create(body);
   return values;
-};
+}
+
+const lastPettyStckAdd = async (id, updateBody) => {
+  let product = await wardAdminGroup.findById(id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, ' not found');
+  }
+  updateBody.product.forEach(async (e) => {
+    await pettyStockModel.create({ _id: e._id }, { productName: e.productName , productId:e.productId , QTY: e.QTY, pettyStock: e.pettyStock, totalQtyIncludingPettyStock: e.totalQtyIncludingPettyStock}, { new: true });
+  });
+  return product;
+}
+
+
 
 module.exports = {
   getPEttyCashQuantity,
@@ -1241,4 +1254,6 @@ module.exports = {
   createDatasInPettyStockModel,
   returnStock,
   // createProduct,
-};
+
+  lastPettyStckAdd,
+}

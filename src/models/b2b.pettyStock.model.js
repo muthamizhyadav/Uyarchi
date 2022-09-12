@@ -11,7 +11,7 @@ const pettyStockSchema = new mongoose.Schema({
     wardAdminId: {
         type: String,
     },
-    product: {
+    productName: {
         type: String,
     },
     productId: {
@@ -30,24 +30,24 @@ const pettyStockSchema = new mongoose.Schema({
         type: String,
         default: "Pending"
     },
-      stockReturnedByWDE: {
-        type: Number,
-      },
-      wastageReturnedByWDE: {
-        type: Number,
-      },
-      wastageImageUpload: {
-        type: String,
-      },
-      mismatch: {
-        type: Number,
-      },
-      DeliverAsPerSystem: {
-        type: Number,
-      },
-      UnDeliveredAsPerSystem: {
-        type: Number,
-      },
+      // stockReturnedByWDE: {
+      //   type: Number,
+      // },
+      // wastageReturnedByWDE: {
+      //   type: Number,
+      // },
+      // wastageImageUpload: {
+      //   type: String,
+      // },
+      // mismatch: {
+      //   type: Number,
+      // },
+      // DeliverAsPerSystem: {
+      //   type: Number,
+      // },
+      // UnDeliveredAsPerSystem: {
+      //   type: Number,
+      // },
       date: {
         type: String,
         default: moment().utcOffset(331).format('DD-MM-yyy'),
