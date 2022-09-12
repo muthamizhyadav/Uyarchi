@@ -13,6 +13,7 @@ const { Product } = require('../models/product.model');
 const createGroup = async (body) => {
   let serverdates = moment().format('YYYY-MM-DD');
   let servertime = moment().format('hh:mm a');
+  let num = 1 ;
   const group = await wardAdminGroup.find({ assignDate: serverdates });
 
   let center = '';
@@ -34,7 +35,7 @@ const createGroup = async (body) => {
   console.log(totalcount);
   userId = 'G' + center + totalcount;
 
-  let values = { ...body, ...{ groupId: userId, assignDate: serverdates, assignTime: servertime } };
+  let values = { ...body, ...{ groupId: userId, assignDate: serverdates, assignTime: servertime, pettyStockAllocateStatusNumber:num} };
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
   body.Orderdatas.forEach(async (e) => {
     let productId = e._id;
@@ -547,6 +548,7 @@ const getBillDetails = async (id) => {
 const assignOnly = async (page) => {
   console.log(page);
   let values = await wardAdminGroup.aggregate([
+    { $sort: { pettyStockAllocateStatusNumber:1} },
     { $match: { status: 'Assigned' } },
     {
       $lookup: {

@@ -57,6 +57,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: String,
     default: 'Pending',
   },
+  pettyStockAllocateStatusNumber: {
+    type: Number,
+  },
 
   AllocateStatus: {
     type: String,
