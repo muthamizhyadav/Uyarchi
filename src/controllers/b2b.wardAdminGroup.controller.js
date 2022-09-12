@@ -82,10 +82,10 @@ const getByIdGroupOrderDetails = catchAsync(async (req, res) => {
   res.send(sample);
 });
 
-const getGroupDetails = catchAsync(async (req, res) => {
-  const getDetails = await wardAdminGroupService.getGroupdetails();
-  res.send(getDetails);
-});
+// const getGroupDetails = catchAsync(async (req, res) => {
+//   const getDetails = await wardAdminGroupService.getGroupdetails();
+//   res.send(getDetails);
+// });
 
 const getDeliveryExecutivestatus = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.getstatus(req.params.id);
@@ -236,6 +236,11 @@ const uploadWastageImage = catchAsync(async (req, res) => {
   await returnStock.save();
 });
 
+const lastPettyStckAdd = catchAsync(async (req, res) => {
+  const returnStock = await wardAdminGroupService.lastPettyStckAdd(req.params.id, req.body);
+  res.send(returnStock);
+});
+
 
 
 module.exports = {
@@ -253,7 +258,7 @@ module.exports = {
   UpdateUnDeliveredStatus,
 
   getproductDetailsPettyStock,
-  getGroupDetails,
+  // getGroupDetails,
 
   getDeliveryExecutivestatus,
   getBillDetails,
@@ -300,6 +305,8 @@ module.exports = {
   getPEttyCashQuantity,
 
   returnStock,
+
+  lastPettyStckAdd,
 
   // createImageUploadAndDetails,
 };
