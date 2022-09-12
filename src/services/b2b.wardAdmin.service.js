@@ -5,8 +5,8 @@ const { ProductorderClone } = require('../models/shopOrder.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
 const Roles = require('../models/roles.model');
-const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
-
+const { wardAdminGroup } = require('../models/b2b.wardAdminGroup.model');
+const moment = require('moment');
 // GET DETAILS
 
 const getdetails = async (page) => {
@@ -351,7 +351,6 @@ const wardloadExecutivePacked = async (page) => {
               unit: 1,
             },
           },
-      
         ],
         as: 'productOrderCloneData',
       },
@@ -375,7 +374,7 @@ const wardloadExecutivePacked = async (page) => {
         // orderTime: '$orderDatafortotal.time',
         totalItems: { $size: '$orderDatafortotal' },
         Qty: '$orderData.Qty',
-        
+
         // totalcount: '$orderData.totalItems'
         shopcloneId: '$shopData._id',
         shopName: '$shopData.SName', //
@@ -476,6 +475,39 @@ const wardDeliveryExecutive = async () => {
   return data;
 };
 
+const getAssigned_details = async () => {
+  const currentDate = moment().format('YYYY-MM-DD');
+  let values = await wardAdminGroup.aggregate([
+    {
+      $match: { assignDate: currentDate, status: 'Assigned' },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'deliveryexecute',
+      },
+    },
+    {
+      $unwind: '$deliveryexecute',
+    },
+    {
+      $project: {
+        _id: 1,
+        status: 1,
+        deliveryExecutiveId: 1,
+        totalOrders: 1,
+        groupId: 1,
+        assignDate: 1,
+        assignTime: 1,
+        deliveryexecuteName: '$deliveryexecute.name',
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   getdetails,
   getproductdetails,
@@ -495,4 +527,5 @@ module.exports = {
 
   // create data
   createdata,
+  getAssigned_details,
 };
