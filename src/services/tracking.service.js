@@ -24,7 +24,16 @@ const updateTrackingById = async (id, body) => {
   return values;
 };
 
+const getTrackingByUserById = async (userId) => {
+  let values = await Tracking.findOne({ userId: userId });
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  return values;
+};
+
 module.exports = {
   createTracking,
   updateTrackingById,
+  getTrackingByUserById,
 };
