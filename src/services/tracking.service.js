@@ -25,6 +25,7 @@ const updateTrackingById = async (id, body) => {
 };
 
 const getTrackingByUserById = async (userId) => {
+  console.log(userId);
   let values = await Tracking.findOne({ userId: userId });
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
