@@ -12,8 +12,12 @@ const updateTrackingById = catchAsync(async (req, res) => {
   const tracking = await TrackingService.updateTrackingById(req.params.id, req.body);
   res.send(tracking);
 });
-
+const getTrackingByUserById = catchAsync(async (req, res) => {
+  const tracking = await TrackingService.getTrackingByUserById(req.params.userId);
+  res.send(tracking);
+});
 module.exports = {
   createTracking,
   updateTrackingById,
+  getTrackingByUserById,
 };
