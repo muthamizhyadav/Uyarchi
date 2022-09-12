@@ -377,6 +377,7 @@ const getEstimatedByDateforPH = async (date, page) => {
           {
             $match: {
               date: date,
+              orderType: { $ne: 'sudden' },
             },
           },
         ],
