@@ -83,11 +83,16 @@ const slowCheck = require('./slow.sample.route');
 const managePickup = require('./manage.pickup.location.route');
 const pettyStockRoute = require('./b2b.pettyStock.route');
 const WLE_Route = require('./WLE.route');
+const TrackingRoute = require('./tracking.route');
 
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/tracking',
+    route: TrackingRoute,
   },
   {
     path: '/WLE',
