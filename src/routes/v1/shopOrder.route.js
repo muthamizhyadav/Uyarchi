@@ -43,4 +43,5 @@ router.route('/createorderId').post(shopOrderController.createOrderId);
 
 router.route('/update/:id').put(shopOrderController.updateshop_order);
 router.route('/getShop/details/:id').get(shopOrderController.getShopDetailsByOrder);
+router.route('/B2b/B2BManageOrders').get(authorization, shopOrderController.B2BManageOrders);
 module.exports = router;

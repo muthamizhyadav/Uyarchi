@@ -341,6 +341,39 @@ const updateReceivedProduct = async (id, updateBody) => {
   return receivedProduct;
 };
 
+const getSupplierDetailByGroupId = async (id) => {
+  let values = await ReceivedProduct.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'suppliers',
+      },
+    },
+    {
+      $unwind: '$suppliers',
+    },
+    {
+      $project: {
+        _id:"$suppliers._id",
+        primaryContactName:"$suppliers.primaryContactName",
+        primaryContactNumber: "$suppliers.primaryContactNumber",
+        secondaryContactName: "$suppliers.secondaryContactName",
+        secondaryContactNumber: "$suppliers.secondaryContactNumber",
+
+      }
+    }
+  ]);
+  if (values.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  return values[0];
+};
+
 const deleteReceivedProduct = async (id) => {
   let receivedProduct = await ReceivedProduct.findById(id);
   if (!receivedProduct) {
@@ -618,4 +651,5 @@ module.exports = {
   getSupplierBillsDetails,
   uploadImageById,
   getreceivedProductBySupplier,
+  getSupplierDetailByGroupId,
 };

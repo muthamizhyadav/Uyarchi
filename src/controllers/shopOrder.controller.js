@@ -165,6 +165,12 @@ const getShopDetailsByOrder = catchAsync(async (req, res) => {
   res.send(shopOrdes);
 });
 
+const B2BManageOrders = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const shoporders = await shopOrderService.B2BManageOrders(userId);
+  res.send(shoporders);
+});
+
 module.exports = {
   createshopOrder,
   getAllShopOrder,
@@ -194,4 +200,5 @@ module.exports = {
   updateshop_order,
   createOrderId,
   getShopDetailsByOrder,
+  B2BManageOrders,
 };

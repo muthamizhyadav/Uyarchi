@@ -440,6 +440,28 @@ const getShopDetailsByOrder = async (id) => {
   return values;
 };
 
+const B2BManageOrders = async (userId) => {
+  console.log(userId);
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        deliveryExecutiveId: userId,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        total: 1,
+        shopId: 1,
+        status: 1,
+        OrderId: 1,
+        date: 1,
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -469,4 +491,5 @@ module.exports = {
   getAll,
   createOrderId,
   getShopDetailsByOrder,
+  B2BManageOrders,
 };
