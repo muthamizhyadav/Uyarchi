@@ -176,9 +176,25 @@ const getDataWithSupplierId = async (id, page) => {
       $unwind: '$supplierData',
     },
   ]);
-  console.log(total);
+  let totalss = await CallStatus.aggregate([
+    {
+      $match: {
+        $and: [
+          { supplierid: { $eq: id } },
+          { StockReceived: { $eq: 'Pending' } },
+          { confirmcallstatus: { $eq: 'Accepted' } },
+        ],
+      },
+    },
+    {
+      $group: {
+        _id: { $dateToString: { format: '%Y-%m-%d', date: '$created' } },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
   let getSupplier = await Supplier.findById(id);
-  return { values: values, total: total.length, supplier: getSupplier };
+  return { values: values, total: total.length, supplier: getSupplier, totalss: totalss };
 };
 
 const updateCallStatusById = async (id, updateBody) => {
