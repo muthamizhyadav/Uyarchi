@@ -22,4 +22,5 @@ router
     receivedProductController.uploadImageById
   );
 router.route('/getproducts/BySupplier/:page').get(receivedProductController.getreceivedProductBySupplier);
+router.route('/supplierDetail/byGroup/:id').get(receivedProductController.getSupplierDetailByGroupId);
 module.exports = router;

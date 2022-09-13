@@ -100,6 +100,11 @@ const getreceivedProductBySupplier = catchAsync(async (req, res) => {
   res.send(receivedProduct);
 });
 
+const getSupplierDetailByGroupId = catchAsync(async (req, res) => {
+  const receicedProduct = await ReceivedProductService.getSupplierDetailByGroupId(req.params.id);
+  res.send(receicedProduct);
+});
+
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,
@@ -112,4 +117,5 @@ module.exports = {
   getSupplierBillsDetails,
   uploadImageById,
   getreceivedProductBySupplier,
+  getSupplierDetailByGroupId,
 };
