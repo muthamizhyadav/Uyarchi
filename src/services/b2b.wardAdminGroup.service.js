@@ -493,53 +493,53 @@ const getBillDetails = async (id) => {
         $and: [{ _id: { $eq: id } }],
       },
     },
-    {
-      $unwind: '$Orderdatas',
-    },
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'Orderdatas._id',
-        foreignField: '_id',
-        as: 'delivery',
-      },
-    },
-    {
-      $unwind: '$delivery',
-    },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'deliveryExecutiveId',
-        foreignField: '_id',
-        as: 'b2busersData',
-      },
-    },
-    {
-      $unwind: '$b2busersData',
-    },
     // {
     //   $unwind: '$Orderdatas',
     // },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: 'delivery._id',
-        foreignField: 'orderId',
-        as: 'datas',
-      },
-    },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'delivery.Uid',
-        foreignField: '_id',
-        as: 'UserName',
-      },
-    },
-    {
-      $unwind: '$UserName',
-    },
+    // {
+    //   $lookup: {
+    //     from: 'shoporderclones',
+    //     localField: 'Orderdatas._id',
+    //     foreignField: '_id',
+    //     as: 'delivery',
+    //   },
+    // },
+    // {
+    //   $unwind: '$delivery',
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'b2busers',
+    //     localField: 'deliveryExecutiveId',
+    //     foreignField: '_id',
+    //     as: 'b2busersData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$b2busersData',
+    // },
+    // // {
+    // //   $unwind: '$Orderdatas',
+    // // },
+    // {
+    //   $lookup: {
+    //     from: 'productorderclones',
+    //     localField: 'delivery._id',
+    //     foreignField: 'orderId',
+    //     as: 'datas',
+    //   },
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'b2busers',
+    //     localField: 'delivery.Uid',
+    //     foreignField: '_id',
+    //     as: 'UserName',
+    //   },
+    // },
+    // {
+    //   $unwind: '$UserName',
+    // },
   ]);
   return { values: values, total: total.length };
   // return values;

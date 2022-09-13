@@ -101,6 +101,14 @@ const updateAcknowledgeSingle = async (id, updateBody) => {
   return product;
 };
 
+const updateApprovedMultiSelect = async (body) => {
+  body.arr.forEach(async (e) => {
+    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Approved' }, { new: true });
+  });
+
+  return 'status updated successfully';
+};
+
 // GET PRODUCT DETAILS
 
 // const getproductdetails = async (id) => {
@@ -1039,4 +1047,5 @@ module.exports = {
   getAppOrModifiedStatus,
   countStatus,
   updateAcknowledgeSingle,
+  updateApprovedMultiSelect,
 };
