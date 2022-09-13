@@ -470,6 +470,36 @@ const getManageordersByOrderId = async (orderId, date, userId) => {
         date: date,
       },
     },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orders',
+      },
+    },
+    {
+      $unwind: '$orders',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'orders.productid',
+        foreignField: '_id',
+        as: 'products',
+      },
+    },
+    {
+      $unwind: '$products',
+    },
+    {
+      $project: {
+        productTitle: '$products.productTitle',
+        Qty: '$orders.quantity',
+        price: '$orders.priceperkg',
+        totalValue: { $multiply: ['$orders.quantity', '$orders.priceperkg'] },
+      },
+    },
   ]);
   return values;
 };
