@@ -362,16 +362,17 @@ const pettyStockSubmit = async (id, updateBody) => {
     { manageDeliveryStatus: updateBody.manageDeliveryStatus },
     { new: true }
   );
+
+  let valueStatus = await wardAdminGroupModel_ORDERS.findById(id);
+  console.log(valueStatus)
+valueStatus.forEach(async (e)=>{
+    await ShopOrderClone.findByIdAndUpdate({ _id: e.id }, { status: 'Delivery Completed' }, { new: true });
+  });
  
-  updateBody.arr.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Delivery Completed' }, { new: true });
-  // await ShopOrderClone.findByIdAndUpdate(
-    
-  //   {_id: shopOrderCloneId},
-  //   { status:updateBody.status },
-  //   { new: true}
-  // );
-  })
+  // updateBody.arr.forEach(async (e) => {
+  //   await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Delivery Completed' }, { new: true });
+ 
+  // })
   return deliveryStatus;
 };
 
@@ -631,6 +632,7 @@ const assignOnly = async (page) => {
       $project: {
         shopOrderCloneId: "$wdfsaf._id",
         groupId: 1,
+        // Orderdatas:1,
         totalOrders: 1,
         assignDate: 1,
         assignTime: 1,
