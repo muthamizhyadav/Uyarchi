@@ -362,6 +362,16 @@ const pettyStockSubmit = async (id, updateBody) => {
     { manageDeliveryStatus: updateBody.manageDeliveryStatus },
     { new: true }
   );
+ 
+  updateBody.arr.forEach(async (e) => {
+    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Delivery Completed' }, { new: true });
+  // await ShopOrderClone.findByIdAndUpdate(
+    
+  //   {_id: shopOrderCloneId},
+  //   { status:updateBody.status },
+  //   { new: true}
+  // );
+  })
   return deliveryStatus;
 };
 
@@ -426,20 +436,20 @@ const getBillDetails = async (id) => {
     {
       $unwind: '$delivery',
     },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'deliveryExecutiveId',
-        foreignField: '_id',
-        as: 'b2busersData',
-      },
-    },
-    {
-      $unwind: '$b2busersData',
-    },
     // {
-    //   $unwind: '$Orderdatas',
+    //   $lookup: {
+    //     from: 'b2busers',
+    //     localField: 'deliveryExecutiveId',
+    //     foreignField: '_id',
+    //     as: 'b2busersData',
+    //   },
     // },
+    // {
+    //   $unwind: '$b2busersData',
+    // },
+    {
+      $unwind: '$Orderdatas',
+    },
     {
       $lookup: {
         from: 'productorderclones',
@@ -448,25 +458,27 @@ const getBillDetails = async (id) => {
         as: 'datas',
       },
     },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'delivery.Uid',
-        foreignField: '_id',
-        as: 'UserName',
-      },
-    },
-    {
-      $unwind: '$UserName',
-    },
+    // {
+    //   $unwind: '$datas'
+    // }
+    // {
+    //   $lookup: {
+    //     from: 'b2busers',
+    //     localField: 'delivery.Uid',
+    //     foreignField: '_id',
+    //     as: 'UserName',
+    //   },
+    // },
+    // {
+    //   $unwind: '$UserName',
+    // },
 
     {
       $project: {
-        // Orderdatas:1,
+        
         assignDate: 1,
         assignTime: 1,
         groupId: 1,
-        product: '$delivery.product',
         orderId: '$delivery.OrderId',
         deliveryExecutiveId: '$delivery.deliveryExecutiveId',
         shopId: '$delivery.shopId',
@@ -479,10 +491,8 @@ const getBillDetails = async (id) => {
         // totalproduct: '$delivery.Qty'
         totalItems: { $size: '$datas' },
         // totalAmount: '$datas.totalAmount',
-        customerName: '$UserName.name',
-        deliveryExecutiveName: '$b2busersData.name',
-        initialPaymentType: '$delivery.Payment',
-        Amount: '$delivery.total',
+       
+        
       },
     },
   ]);
@@ -550,6 +560,7 @@ const assignOnly = async (page) => {
   let values = await wardAdminGroup.aggregate([
     { $sort: { pettyStockAllocateStatusNumber:1} },
     { $match: { status: 'Assigned' } },
+    
     {
       $lookup: {
         from: 'orderassigns',
@@ -581,12 +592,15 @@ const assignOnly = async (page) => {
             $project: {
               pending: { $eq: ['$shopdata._id', null] },
               shopdata: '$shopdata.deliveryExecutiveId',
+            
+
             },
           },
         ],
         as: 'dataDetails',
       },
     },
+    
 
     { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
 
@@ -601,8 +615,21 @@ const assignOnly = async (page) => {
     {
       $unwind: '$UserName',
     },
+    // {
+    //   $lookup: {
+    //     from: 'shoporderclones',
+    //     localField: 'Orderdatas._id',
+    //     foreignField: '_id',
+    //     as: 'wdfsaf'
+
+    //   }
+    // },
+
+   
+   
     {
       $project: {
+        shopOrderCloneId: "$wdfsaf._id",
         groupId: 1,
         totalOrders: 1,
         assignDate: 1,
@@ -613,6 +640,7 @@ const assignOnly = async (page) => {
         deliveryExecutiveName: '$UserName.name',
         pettyCashAllocateStatus: 1,
         pettyStockAllocateStatus: 1,
+        
       },
     },
 
@@ -621,6 +649,7 @@ const assignOnly = async (page) => {
   ]);
   let total = await wardAdminGroup.aggregate([
     { $match: { status: 'Assigned' } },
+    
     {
       $lookup: {
         from: 'orderassigns',

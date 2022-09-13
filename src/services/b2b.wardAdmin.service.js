@@ -233,8 +233,6 @@ const getproductdetails = async (id) => {
         status: 1,
         OrderId: 1,
         total: '$productDatadetails.amount',
-        // productDatadetails: "$productDatadetails"
-        // deliveryExecutiveId:1,
       },
     },
   ]);
