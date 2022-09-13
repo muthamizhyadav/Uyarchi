@@ -496,6 +496,8 @@ const getManageordersByOrderId = async (orderId, date) => {
         productTitle: '$products.productTitle',
         Qty: '$orders.quantity',
         price: '$orders.priceperkg',
+        productId: '$products._id',
+        productOrdersCloneId: '$orders._id',
         totalValue: { $multiply: ['$orders.quantity', '$orders.priceperkg'] },
       },
     },
