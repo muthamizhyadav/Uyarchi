@@ -146,15 +146,12 @@ const updateProduct = async (id, updateBody) => {
 
 //  UPDATE STATUS REJECTION
 
-const updateRejected = async (id, status) => {
-  let rejected = await ShopOrderClone.findById(id);
-  console.log(rejected);
-  if (!rejected) {
-    throw new ApiError(httpStatus.NOT_FOUND, ' not found');
-  }
-  rejected = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
-  console.log(rejected);
-  return rejected;
+const updateRejected = async (body) => {
+  body.arr.forEach(async (e) => {
+    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Acknowledged' }, { new: true });
+  });
+
+  return 'status updated successfully';
 };
 
 //WARD LOADING EXECUTIVE
