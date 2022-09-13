@@ -14,6 +14,8 @@ router.route('/updateAcknowledge').put(wardAdminController.updateAcknowledge);
 
 router.route('/updateApproved').put(wardAdminController.updateApproval);
 
+router.route('/updatePacked').put(wardAdminController.updatePackedStatus);
+
 router.route('/updateRejected').put(wardAdminController.updateRejectionStatus);
 
 router.route('/updateApproved/:id').put(wardAdminController.updateApproved);

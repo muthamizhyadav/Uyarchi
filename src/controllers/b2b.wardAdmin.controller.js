@@ -52,6 +52,11 @@ const updateRejectionStatus = catchAsync(async (req, res) => {
   res.send(rejected);
 });
 
+const updatePackedStatus = catchAsync(async (req, res) => {
+  const rejected = await wardAdminService.updatePackedMultiSelect(req.body);
+  res.send(rejected);
+});
+
 const updateApproved = catchAsync(async (req, res) => {
   const approved = await wardAdminService.updateStatusApprovedOrModified(req.params.id, req.body);
   res.status(200).send(approved);
@@ -171,4 +176,5 @@ module.exports = {
   countStatus,
   statusMatchingAppOrModi,
   getAssigned_details,
+  updatePackedStatus,
 };

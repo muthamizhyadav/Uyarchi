@@ -108,6 +108,39 @@ const updateApprovedMultiSelect = async (body) => {
 
   return 'status updated successfully';
 };
+const updateRejectMultiSelect = async (body) => {
+  body.arr.forEach(async (e) => {
+    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Rejected' }, { new: true });
+  });
+  return 'status updated successfully';
+};
+
+const updatePackedMultiSelect = async (body) => {
+  body.arr.forEach(async (e) => {
+    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Packed' }, { new: true });
+  });
+  return 'status updated successfully';
+};
+
+const updateStatusApprovedOrModified = async (id, updateBody) => {
+  let product = await ShopOrderClone.findById(id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
+  }
+  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return product;
+};
+
+const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
+  let statusUpdate = await ShopOrderClone.findById(id);
+  console.log(statusUpdate);
+  if (!statusUpdate) {
+    throw new ApiError(httpStatus.NOT_FOUND, ' not found');
+  }
+  statusUpdate = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  console.log(statusUpdate);
+  return statusUpdate;
+};
 
 // GET PRODUCT DETAILS
 
@@ -1048,5 +1081,9 @@ module.exports = {
   countStatus,
   updateAcknowledgeSingle,
   updateApprovedMultiSelect,
+  updateRejectMultiSelect,
+  updateStatusApprovedOrModified,
+  updateStatusForAssugnedAndPacked,
+  updatePackedMultiSelect,
   
 };
