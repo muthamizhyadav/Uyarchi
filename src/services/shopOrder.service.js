@@ -461,11 +461,10 @@ const B2BManageOrders = async (shopid) => {
   return values;
 };
 
-const getManageordersByOrderId = async (orderId, date, userId) => {
+const getManageordersByOrderId = async (orderId, date) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        deliveryExecutiveId: userId,
         OrderId: orderId,
         date: date,
       },
