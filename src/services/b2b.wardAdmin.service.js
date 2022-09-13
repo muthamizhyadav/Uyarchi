@@ -92,6 +92,15 @@ const getdetails = async (page) => {
   return { values: values, total: total.length };
 };
 
+const updateAcknowledgeSingle = async (id, updateBody) => {
+  let product = await ShopOrderClone.findById(id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
+  }
+  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return product;
+};
+
 // GET PRODUCT DETAILS
 
 // const getproductdetails = async (id) => {
@@ -1029,4 +1038,5 @@ module.exports = {
   getdetailsDataStatusRejected,
   getAppOrModifiedStatus,
   countStatus,
+  updateAcknowledgeSingle,
 };
