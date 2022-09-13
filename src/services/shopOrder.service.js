@@ -500,8 +500,55 @@ const getManageordersByOrderId = async (orderId, date) => {
         totalValue: { $multiply: ['$orders.quantity', '$orders.priceperkg'] },
       },
     },
+    // {
+    //   $group: { _id: null, Qty: { $sum: '$totalValue' } },
+    // },
   ]);
-  return values;
+  let total = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        OrderId: orderId,
+        date: date,
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orders',
+      },
+    },
+    {
+      $unwind: '$orders',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'orders.productid',
+        foreignField: '_id',
+        as: 'products',
+      },
+    },
+    {
+      $unwind: '$products',
+    },
+    {
+      $project: {
+        productTitle: '$products.productTitle',
+        Qty: '$orders.quantity',
+        price: '$orders.priceperkg',
+        productId: '$products._id',
+        productOrdersCloneId: '$orders._id',
+        totalValue: { $multiply: ['$orders.quantity', '$orders.priceperkg'] },
+      },
+    },
+    {
+      $group: { _id: null, Qty: { $sum: '$totalValue' } },
+    },
+  ]);
+  let totalqty = total[0];
+  return { values: values, total: totalqty.Qty };
 };
 
 module.exports = {
