@@ -441,7 +441,6 @@ const getShopDetailsByOrder = async (id) => {
 };
 
 const B2BManageOrders = async (userId) => {
-  console.log(userId);
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -456,6 +455,19 @@ const B2BManageOrders = async (userId) => {
         status: 1,
         OrderId: 1,
         date: 1,
+      },
+    },
+  ]);
+  return values;
+};
+
+const getManageordersByOrderId = async (orderId, date, userId) => {
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        deliveryExecutiveId: userId,
+        OrderId: orderId,
+        date: date,
       },
     },
   ]);
@@ -492,4 +504,5 @@ module.exports = {
   createOrderId,
   getShopDetailsByOrder,
   B2BManageOrders,
+  getManageordersByOrderId,
 };
