@@ -402,7 +402,6 @@ const deleteShopOrderById = async (shopOrderId) => {
 const getAll = async () => {
   return ShopOrderClone.find();
 };
-21;
 
 const createOrderId = async (body) => {
   return ShopOrderClone.create(body);
@@ -440,11 +439,11 @@ const getShopDetailsByOrder = async (id) => {
   return values;
 };
 
-const B2BManageOrders = async (userId) => {
+const B2BManageOrders = async (shopid) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        deliveryExecutiveId: userId,
+        _id: shopid,
       },
     },
     {
@@ -461,11 +460,10 @@ const B2BManageOrders = async (userId) => {
   return values;
 };
 
-const getManageordersByOrderId = async (orderId, date, userId) => {
+const getManageordersByOrderId = async (orderId, date) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        deliveryExecutiveId: userId,
         OrderId: orderId,
         date: date,
       },
@@ -497,6 +495,8 @@ const getManageordersByOrderId = async (orderId, date, userId) => {
         productTitle: '$products.productTitle',
         Qty: '$orders.quantity',
         price: '$orders.priceperkg',
+        productId: '$products._id',
+        productOrdersCloneId: '$orders._id',
         totalValue: { $multiply: ['$orders.quantity', '$orders.priceperkg'] },
       },
     },
