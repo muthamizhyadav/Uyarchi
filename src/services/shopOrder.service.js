@@ -440,11 +440,11 @@ const getShopDetailsByOrder = async (id) => {
   return values;
 };
 
-const B2BManageOrders = async (userId) => {
+const B2BManageOrders = async (shopid) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        deliveryExecutiveId: userId,
+        _id: shopid,
       },
     },
     {

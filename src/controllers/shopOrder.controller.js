@@ -166,8 +166,7 @@ const getShopDetailsByOrder = catchAsync(async (req, res) => {
 });
 
 const B2BManageOrders = catchAsync(async (req, res) => {
-  let userId = req.userId;
-  const shoporders = await shopOrderService.B2BManageOrders(userId);
+  const shoporders = await shopOrderService.B2BManageOrders(req.params.shopid);
   res.send(shoporders);
 });
 
