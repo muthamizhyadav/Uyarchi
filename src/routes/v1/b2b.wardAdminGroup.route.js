@@ -57,7 +57,7 @@ router.route('/submit/pettyCashSubmit/:id').put(wardAdminGroupController.pettyCa
 
 router.route('/Update/orderCompleted/:id').put(wardAdminGroupController.orderCompleted);
 
-router.route('/update/Deliverystart/:id').put(wardAdminGroupController.Deliverystart);
+// router.route('/update/Deliverystart/:id').put(wardAdminGroupController.Deliverystart);
 
 router.route('/update/deliveryCompleted/:id').put(wardAdminGroupController.deliveryCompleted);
 
@@ -79,7 +79,7 @@ router.route('/get/AllGroup/details/:page').get(  wardAdminGroupController.getAl
 
 // router.route("/update/pettycash/return/:id").put(wardAdminGroupController.updatePettyCashReturnStatus);
 
-// router.route("/craete/pettyStock/create/:id").put(wardAdminGroupController.pettyStockCreate);
+router.route("/craete/pettyStock/create/:id").put(wardAdminGroupController.pettyStockCreate);
 
 
 router.route('/get/cashDetails/fromDB/:id').get(wardAdminGroupController.getcashAmountViewFromDB);
