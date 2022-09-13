@@ -144,16 +144,73 @@ const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
 
 // GET PRODUCT DETAILS
 
-// const getproductdetails = async (id) => {
-//     let getproduct = await ShopOrderClone.findById(id)
-//     return getproduct;
-// }
-
 const getproductdetails = async (id) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
         $and: [{ _id: { $eq: id } }],
+      },
+    },
+    // {
+    //   $unwind: '$product',
+    // },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $match: { $and: [{ finalQuantity: { $ne: null } }, { finalQuantity: { $ne: 0 } }] },
+          },
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'nameData',
+            },
+          },
+          {
+            $unwind: '$nameData',
+          },
+          {
+            $project: {
+              finalQuantity: 1,
+              priceperkg: 1,
+              productid: 1,
+              productTitle: '$nameData.productTitle',
+              productpacktypeId: 1,
+            },
+          },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: {
+                  $multiply: ['$finalQuantity', '$priceperkg'],
+                },
+              },
+            },
+          },
+        ],
+        as: 'productDatadetails',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productDatadetails',
+        preserveNullAndEmptyArrays: true,
       },
     },
     {
@@ -167,20 +224,24 @@ const getproductdetails = async (id) => {
     {
       $unwind: '$shopData',
     },
-
     {
       $project: {
+        productData: '$productData',
         shopName: '$shopData.SName',
-        product: 1,
+        shopAddress: '$shopData.address',
         shopId: 1,
         status: 1,
         OrderId: 1,
-        overallTotal: 1,
+        total: '$productDatadetails.amount',
+        // productDatadetails: "$productDatadetails"
         // deliveryExecutiveId:1,
       },
     },
   ]);
-  return values;
+  if (values.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'order not found');
+  }
+  return values[0];
 };
 
 // UPDATE PRODUCT DETAILS
@@ -1058,19 +1119,13 @@ module.exports = {
   getdetails,
   getproductdetails,
   updateProduct,
-  // updateAcknowledge,
   deliveryExecutive,
-  // updateApproved,
-  // updateModified,
   updateRejected,
-
   //WARD LOADING EXECUTIVE
   wardloadExecutive,
   updateBilled,
-
   wardloadExecutivePacked,
   wardDeliveryExecutive,
-
   // create data
   createdata,
   getAssigned_details,
