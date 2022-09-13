@@ -57,7 +57,7 @@ router.route('/submit/pettyCashSubmit/:id').put(wardAdminGroupController.pettyCa
 
 router.route('/Update/orderCompleted/:id').put(wardAdminGroupController.orderCompleted);
 
-router.route('/update/Deliverystart/:id').put(wardAdminGroupController.Deliverystart);
+// router.route('/update/Deliverystart/:id').put(wardAdminGroupController.Deliverystart);
 
 router.route('/update/deliveryCompleted/:id').put(wardAdminGroupController.deliveryCompleted);
 
