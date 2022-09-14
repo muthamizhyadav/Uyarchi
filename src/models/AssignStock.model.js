@@ -21,15 +21,15 @@ const assignSchema = mongoose.Schema({
   },
   date: {
     type: String,
-    default: moment().format('DD-MM-yyy'),
+    // default: moment().format('DD-MM-yyy'),
   },
   time: {
     type: String,
-    default: moment().format('h:mm a'),
+    // default: moment().format('h:mm a'),
   },
-  timeFilter: {
-    type: String,
-    default: moment().format('Hmm'),
+  created: {
+    type: Date,
+    // default: moment().format('Hmm'),
   },
   usablestockId: {
     type: String,
