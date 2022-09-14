@@ -21,7 +21,7 @@ router.route('/getDetails/groupIdFromOrderId/:id').get(wardAdminGroupController.
 
 router.route('/getdetails/product/:id').get(wardAdminGroupController.getproductDetailsPettyStock);
 
-// router.route('/getGroup/details').get(wardAdminGroupController.getGroupDetails);
+router.route('/getGroup/details').get(wardAdminGroupController.getGroupDetails);
 
 router.route('/getDeliveryExecutivestatus/:id').get(wardAdminGroupController.getDeliveryExecutivestatus);
 

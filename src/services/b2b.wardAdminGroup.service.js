@@ -95,7 +95,8 @@ const updateManageStatus = async (id, updateBody) => {
   }
   Manage = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
-    { status: 'Delivery start', manageDeliveryStatus: 'Delivery start' },
+    updateBody,
+    // { status: 'Delivery start', manageDeliveryStatus: 'Delivery start' },
     { new: true }
   );
   return Manage;
@@ -400,9 +401,9 @@ const pettyCashSubmit = async (id, updateBody) => {
   return deliveryStatus;
 };
 
-// const getGroupdetails = async () => {
-//   return wardAdminGroup.find();
-// };
+const getGroupdetails = async () => {
+  return wardAdminGroup.find();
+};
 
 // GET ASSIGN DATA BY DEVIVERY EXECUTIVE NAME
 
@@ -553,9 +554,7 @@ const getBillDetails = async (id) => {
     //           as: 'datassDEtails'
     //         }
     //       },
-          // {
-          //   $unwind: '$datassDEtails'
-          // },
+         
 
     {
       $project: {
@@ -570,7 +569,8 @@ const getBillDetails = async (id) => {
         customerName: "$UserName.name",
         streetName: "$streetDatasss.street",
         totalProduct: { $size: '$shopDatas.datass' },
-        // totalValue: { $multiply: ['$shopDatas.datass.finalQuantity', '$shopDatas.datass.finalPricePerKg'] },
+        totalValue: { $multiply: ['$datass.finalQuantity', '$datass.finalPricePerKg'] },
+        
         totalAmount: { $sum: '$totalValue' },
       
         
@@ -579,117 +579,7 @@ const getBillDetails = async (id) => {
    
   ]);
 
-  let total = await wardAdminGroup.aggregate([
-    {
-      $match: {
-        $and: [{ wardAdminGroupID: { $eq: id } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'orderId',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $lookup: {
-              from: 'productorderclones',
-              localField: '_id',
-              foreignField: 'orderId',
-              as: 'datass'
-            }
-          },
-
-          // {
-          //   $lookup: {
-          //     from: 'productorderclones',
-          //     localField: '_id',
-          //     foreignField: 'orderId',
-          //     pipeline: [
-          //       {
-          //         $group: {
-          //           _id: null,
-          //           amount: {
-          //             $sum: {
-          //               $multiply: ['$finalQuantity', '$priceperkg'],
-          //             },
-          //           },
-          //         },
-          //       },
-          //     ],
-          //     as: 'datassDEtails'
-          //   }
-          // },
-         
-        ],
-        as: 'shopDatas'
-      },
-     
-    },
-    {
-      $unwind: '$shopDatas'
-    },
-
-
-    {
-      $lookup: {
-        from: 'wardadmingroups',
-        localField: 'wardAdminGroupID',
-        foreignField: '_id',
-        as:'groupdTAad'
-      }
-    },
-    {
-      $unwind: '$groupdTAad'
-    },
-
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'shopDatas.deliveryExecutiveId',
-        foreignField: '_id',
-        as: 'b2busersData',
-      },
-    },
-    {
-      $unwind: '$b2busersData',
-    },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'shopDatas.Uid',
-        foreignField: '_id',
-        as: 'UserName',
-      },
-    },
-    {
-      $unwind: '$UserName',
-    },
-
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopDatas.shopId',
-        foreignField: '_id',
-        as: 'streetData',
-      }
-    },
-    {
-      $unwind: '$streetData'
-    },
-    {
-      $lookup: {
-        from: 'streets',
-        localField: 'streetData.Strid',
-        foreignField: '_id',
-        as: 'streetDatasss',
-      }
-    },
-    {
-      $unwind: '$streetDatasss'
-    },
-  ]);
-  return { values: values, total: total.length };
+ return values;
  
 };
 
@@ -1403,7 +1293,7 @@ module.exports = {
   getOrderFromGroupById,
   getPettyStock,
   // group Details
-  // getGroupdetails,
+  getGroupdetails,
   // DELEIVERY DETAILS
   // getDeliveryDetails,
   getstatus,
