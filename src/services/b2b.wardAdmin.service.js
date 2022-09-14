@@ -465,7 +465,6 @@ const wardloadExecutivePacked = async (page) => {
               unit: 1,
             },
           },
-      
         ],
         as: 'productOrderCloneData',
       },
@@ -582,7 +581,6 @@ const wardloadExecutivePacked = async (page) => {
               unit: 1,
             },
           },
-      
         ],
         as: 'productOrderCloneData',
       },
@@ -1147,5 +1145,4 @@ module.exports = {
   updateStatusApprovedOrModified,
   updateStatusForAssugnedAndPacked,
   updatePackedMultiSelect,
-  
 };
