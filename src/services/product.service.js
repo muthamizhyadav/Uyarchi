@@ -1557,11 +1557,11 @@ const AssignStockGetall = async (date, page) => {
             },
           },
           {
-            $project:{
-              _id:1,
-              assignedQty:'$assignstocks.Qty'
-            }
-          }
+            $project: {
+              _id: 1,
+              assignedQty: '$assignstocks.Qty',
+            },
+          },
         ],
         as: 'assignstocksss',
       },
