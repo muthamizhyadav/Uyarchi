@@ -40,7 +40,7 @@ const uploadImageById = catchAsync(async (req, res) => {
   if (req.files) {
     let path = '';
     path = 'images/receivedproductimage/';
-    console.log(req.files.weighBridgeBillImg)
+    console.log(req.files.weighBridgeBillImg);
     if (req.files.weighBridgeBillImg != null) {
       req.files.weighBridgeBillImg.map((e) => {
         receivedProduct.weighBridgeBillImg.push(path + e.filename);
