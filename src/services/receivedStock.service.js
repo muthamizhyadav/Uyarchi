@@ -175,6 +175,9 @@ const getDetailsByProductId = async (productId, date, page) => {
   console.log('zsdad');
   const values = await ReceivedStock.aggregate([
     {
+        $sort: { created: -1}
+    },
+    {
       $match: {
         $and: [{ productId: { $eq: productId } }, { segStatus: { $eq: 'Pending' } }, { status: { $in: ['Loaded', 'Billed'] } }],
       },
