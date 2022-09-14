@@ -423,26 +423,115 @@ const getstatus = async (id) => {
 };
 
 const getBillDetails = async (id) => {
-  let values = await wardAdminGroup.aggregate([
+  let values = await wardAdminGroupModel_ORDERS.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }],
+        $and: [{ wardAdminGroupID: { $eq: id } }],
       },
-    },
-    {
-      $unwind: '$Orderdatas',
     },
     {
       $lookup: {
         from: 'shoporderclones',
-        localField: 'Orderdatas._id',
+        localField: 'orderId',
         foreignField: '_id',
-        as: 'delivery',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              as: 'datass'
+            }
+          },
+         
+        ],
+        as: 'shopDatas'
+      },
+     
+    },
+    {
+      $unwind: '$shopDatas'
+    },
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: 'wardAdminGroupID',
+        foreignField: '_id',
+        as:'groupdTAad'
+      }
+    },
+    {
+      $unwind: '$groupdTAad'
+    },
+
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'shopDatas.deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
       },
     },
     {
-      $unwind: '$delivery',
+      $unwind: '$b2busersData',
     },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'shopDatas.Uid',
+        foreignField: '_id',
+        as: 'UserName',
+      },
+    },
+    {
+      $unwind: '$UserName',
+    },
+
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopDatas.shopId',
+        foreignField: '_id',
+        as: 'streetData',
+      }
+    },
+    {
+      $unwind: '$streetData'
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'streetData.Strid',
+        foreignField: '_id',
+        as: 'streetDatasss',
+      }
+    },
+    {
+      $unwind: '$streetDatasss'
+    },
+
+    {
+      $project: {
+        orderId: "$shopDatas.OrderId",
+        initialPayment: "$shopDatas.payType",
+        datass:"$shopDatas.datass",
+        groupId: "$groupdTAad.groupId",
+        assignDate:"$groupdTAad.assignDate",
+        assignTime: "$groupdTAad.assignTime",
+        totalOrders: "$groupdTAad.totalOrders",
+        deliveryExecutiveName: '$b2busersData.name',
+        customerName: "$UserName.name",
+        streetName: "$streetDatasss.street",
+        // Amount: { $multiply: ['$shopDatas.datass.finalQuantity', '$shopDatas.datass.finalPricePerKg'] },
+
+
+
+      }
+    },
+    
+
+  
+  
     // {
     //   $lookup: {
     //     from: 'b2busers',
@@ -454,20 +543,10 @@ const getBillDetails = async (id) => {
     // {
     //   $unwind: '$b2busersData',
     // },
-    {
-      $unwind: '$Orderdatas',
-    },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: 'delivery._id',
-        foreignField: 'orderId',
-        as: 'datas',
-      },
-    },
     // {
-    //   $unwind: '$datas'
-    // }
+    //   $unwind: '$Orderdatas',
+    // },
+    
     // {
     //   $lookup: {
     //     from: 'b2busers',
@@ -479,7 +558,6 @@ const getBillDetails = async (id) => {
     // {
     //   $unwind: '$UserName',
     // },
-
     {
       $project: {
         assignDate: 1,
@@ -499,6 +577,7 @@ const getBillDetails = async (id) => {
         // totalAmount: '$datas.totalAmount',
       },
     },
+
   ]);
 
   let total = await wardAdminGroup.aggregate([
@@ -566,6 +645,8 @@ const assignOnly = async (page) => {
     // { $match: { status: 'Assigned' } },
 
     {
+
+
       $lookup: {
         from: 'orderassigns',
         localField: '_id',
@@ -647,9 +728,12 @@ const assignOnly = async (page) => {
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
+    { $sort: { pettyStockAllocateStatusNumber:1} },
     { $match: { status: 'Assigned' } },
 
     {
+
+      
       $lookup: {
         from: 'orderassigns',
         localField: '_id',
@@ -680,12 +764,15 @@ const assignOnly = async (page) => {
             $project: {
               pending: { $eq: ['$shopdata._id', null] },
               shopdata: '$shopdata.deliveryExecutiveId',
+            
+
             },
           },
         ],
         as: 'dataDetails',
       },
     },
+    
 
     { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
 
