@@ -1450,7 +1450,7 @@ const incommingStockQty = async (date, page) => {
           // { $match: { date: date, status: 'Loaded' } },
           {
             $match: {
-              $and: [{ status: { $in: ['Loaded', 'Billed'] } }],
+              $and: [{ status: { $in: ['Loaded', 'Billed'] } }, { segStatus: 'Pending' }],
             },
           },
           {
