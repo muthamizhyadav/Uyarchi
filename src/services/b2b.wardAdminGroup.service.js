@@ -562,8 +562,8 @@ const getBillDetails = async (id) => {
 const assignOnly = async (page) => {
   console.log(page);
   let values = await wardAdminGroup.aggregate([
-    { $sort: { pettyStockAllocateStatusNumber: 1 } },
-    { $match: { status: 'Assigned' } },
+    // { $sort: { pettyStockAllocateStatusNumber: 1 } },
+    // { $match: { status: 'Assigned' } },
 
     {
       $lookup: {
