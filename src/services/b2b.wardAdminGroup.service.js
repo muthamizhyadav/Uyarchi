@@ -370,10 +370,10 @@ const pettyStockSubmit = async (id, updateBody) => {
     { new: true }
   );
 
-  let valueStatus = await wardAdminGroupModel_ORDERS.findById(id);
+  let valueStatus = await wardAdminGroupModel_ORDERS.find({orderId:id});
   console.log(valueStatus);
   valueStatus.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e.id }, { status: 'Delivery Completed' }, { new: true });
+    await ShopOrderClone.findByIdAndUpdate({ _id: e.orderId }, { status: 'Delivery Completed' }, { new: true });
   });
 
   // updateBody.arr.forEach(async (e) => {
@@ -383,10 +383,6 @@ const pettyStockSubmit = async (id, updateBody) => {
   return deliveryStatus;
 };
 
-// const pettyStockSubmit = async (body) => {
-//   let sample = await pettyStockModel.create(body)
-//   return sample;
-// }
 
 const pettyCashSubmit = async (id, updateBody) => {
   let deliveryStatus = await wardAdminGroup.findById(id);
@@ -424,169 +420,214 @@ const getstatus = async (id) => {
 };
 
 const getBillDetails = async (id) => {
-  let values = await wardAdminGroupModel_ORDERS.aggregate([
+
+  let values = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ wardAdminGroupID: { $eq: id } }],
+        $and: [{ _id: { $eq: id } }],
       },
     },
     {
       $lookup: {
-        from: 'shoporderclones',
-        localField: 'orderId',
-        foreignField: '_id',
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
         pipeline: [
           {
             $lookup: {
-              from: 'productorderclones',
-              localField: '_id',
-              foreignField: 'orderId',
-              as: 'datass'
-            }
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'productorderclones',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    pipeline: [
+                      {
+                        $group: {
+                          _id: null,
+                          amount: {
+                            $sum: {
+                              $multiply: ['$finalQuantity', '$priceperkg'],
+                            },
+                          },
+                        },
+                      },
+                    ],
+                    as: 'datass'
+                  }
+                },
+                {
+                  $unwind: "$datass"
+                },
+
+                {
+                  $project: {
+                    totalAmount: "$datass.amount"
+
+                  }
+                }
+              ],
+              as: 'shopDatas'
+            },
+
+          },
+          {
+            $unwind: '$shopDatas'
           },
 
-          // {
-          //   $lookup: {
-          //     from: 'productorderclones',
-          //     localField: '_id',
-          //     foreignField: 'orderId',
-          //     pipeline: [
-          //       {
-          //         $group: {
-          //           _id: null,
-          //           amount: {
-          //             $sum: {
-          //               $multiply: ['$finalQuantity', '$priceperkg'],
-          //             },
-          //           },
-          //         },
-          //       },
-          //     ],
-          //     as: 'datassDEtails'
-          //   }
-          // },
-         
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'productorderclones',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    pipeline: [
+                      {
+                        $lookup: {
+                          from: 'products',
+                          localField: 'productid',
+                          foreignField: '_id',
+                          as: 'productsdata'
+                        }
+                      },
+                      {
+                        $unwind: "$productsdata"
+                      },
+                      {
+                        $project: {
+                          _id: 1,
+                          productTitle: "$productsdata.productTitle",
+                          finalQuantity: 1,
+                          finalPricePerKg: 1,
+                          HSN_Code: 1,
+                          GST_Number: 1,
+                          total: {
+                            $multiply: ['$finalQuantity', '$finalPricePerKg'],
+                          }
+                        }
+                      }
+                    ],
+                    as: 'products'
+                  }
+                },
+
+                {
+                  $lookup: {
+                    from: 'b2bshopclones',
+                    localField: 'shopId',
+                    foreignField: '_id',
+                    pipeline: [
+
+                      {
+                        $lookup: {
+                          from: 'streets',
+                          localField: 'Strid',
+                          foreignField: '_id',
+                          as: 'streetDatasss',
+                        }
+                      },
+                      {
+                        $unwind: '$streetDatasss'
+                      },
+                      {
+                        $project: {
+                          street: "$streetDatasss.street",
+                          _id: 1,
+                          SName: 1,
+                          SOwner: 1,
+                        }
+                      }
+                    ],
+                    as: 'b2bshopclones',
+                  },
+                },
+                {
+                  $unwind: '$b2bshopclones',
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    OrderId: 1,
+                    products: "$products",
+                    b2bshopclones: "$b2bshopclones",
+                    SName: "$b2bshopclones.SName",
+                    SOwner: "$b2bshopclones.SOwner",
+
+                  }
+                }
+
+
+              ],
+              as: 'shopDatasDetails'
+            },
+
+          },
+          {
+            $unwind: '$shopDatasDetails'
+          },
+
+          {
+            $project: {
+              _id: 1,
+              totalAmount: "$shopDatas.totalAmount",
+              OrderId: "$shopDatasDetails.OrderId",
+              product: "$shopDatasDetails.products",
+
+              SName: "$shopDatasDetails.SName",
+              SOwner: "$shopDatasDetails.SOwner",
+              street: "$shopDatasDetails.street",
+
+            }
+          },
         ],
-        as: 'shopDatas'
-      },
-     
-    },
-    {
-      $unwind: '$shopDatas'
-    },
-
-
-    {
-      $lookup: {
-        from: 'wardadmingroups',
-        localField: 'wardAdminGroupID',
-        foreignField: '_id',
-        as:'groupdTAad'
+        as: "orderassigns"
       }
     },
     {
-      $unwind: '$groupdTAad'
-    },
 
-    {
       $lookup: {
         from: 'b2busers',
-        localField: 'shopDatas.deliveryExecutiveId',
+        localField: 'deliveryExecutiveId',
         foreignField: '_id',
-        as: 'b2busersData',
-      },
-    },
-    {
-      $unwind: '$b2busersData',
-    },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'shopDatas.Uid',
-        foreignField: '_id',
-        as: 'UserName',
-      },
-    },
-    {
-      $unwind: '$UserName',
-    },
-
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopDatas.shopId',
-        foreignField: '_id',
-        as: 'streetData',
+        as:"b2bsersData"
       }
     },
     {
-      $unwind: '$streetData'
+      $unwind:"$b2bsersData"
     },
-    {
-      $lookup: {
-        from: 'streets',
-        localField: 'streetData.Strid',
-        foreignField: '_id',
-        as: 'streetDatasss',
-      }
-    },
-    {
-      $unwind: '$streetDatasss'
-    },
-
-    //  {
-    //         $lookup: {
-    //           from: 'productorderclones',
-    //           localField: '_id',
-    //           foreignField: 'orderId',
-    //           pipeline: [
-    //             {
-    //               $group: {
-    //                 _id: null,
-    //                 amount: {
-    //                   $sum: {
-    //                     $multiply: ['$finalQuantity', '$finalPricePerKg'],
-    //                   },
-    //                 },
-    //               },
-    //             },
-    //           ],
-    //           as: 'datassDEtails'
-    //         }
-    //       },
-         
 
     {
       $project: {
-        orderId: "$shopDatas.OrderId",
-        initialPayment: "$shopDatas.payType",
-        datass:"$shopDatas.datass",
-        groupId: "$groupdTAad.groupId",
-        assignDate:"$groupdTAad.assignDate",
-        assignTime: "$groupdTAad.assignTime",
-        totalOrders: "$groupdTAad.totalOrders",
-        deliveryExecutiveName: '$b2busersData.name',
-        customerName: "$UserName.name",
-        streetName: "$streetDatasss.street",
-        totalProduct: { $size: '$shopDatas.datass' },
-        totalValue: { $multiply: ['$datass.finalQuantity', '$datass.finalPricePerKg'] },
-        
-        totalAmount: { $sum: '$totalValue' },
-      
-        
+        groupId: 1,
+        assignDate: 1,
+        assignTime: 1,
+        totalOrders: 1,
+        orderassigns: "$orderassigns",
+        deliveryExecutivename: "$b2bsersData.name"
       }
-    },
-   
-  ]);
+    }
 
- return values;
- 
+
+  ]);
+if(values.length == 0){
+  throw new ApiError(httpStatus.NOT_FOUND, 'not found');
+}
+  return values[0];
+
 };
 
 const assignOnly = async (page) => {
   console.log(page);
   let values = await wardAdminGroup.aggregate([
-    { $sort: { pettyStockAllocateStatusNumber: 1 } },
+    // { $sort: { pettyStockAllocateStatusNumber: 1 } },
     { $match: { status: 'Assigned' } },
 
     {
@@ -673,12 +714,12 @@ const assignOnly = async (page) => {
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
-    { $sort: { pettyStockAllocateStatusNumber:1} },
+    // { $sort: { pettyStockAllocateStatusNumber:1} },
     { $match: { status: 'Assigned' } },
 
     {
 
-      
+
       $lookup: {
         from: 'orderassigns',
         localField: '_id',
@@ -709,7 +750,7 @@ const assignOnly = async (page) => {
             $project: {
               pending: { $eq: ['$shopdata._id', null] },
               shopdata: '$shopdata.deliveryExecutiveId',
-            
+
 
             },
           },
@@ -717,7 +758,7 @@ const assignOnly = async (page) => {
         as: 'dataDetails',
       },
     },
-    
+
 
     { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
 
