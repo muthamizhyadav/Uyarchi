@@ -13,7 +13,7 @@ const { Product } = require('../models/product.model');
 const createGroup = async (body) => {
   let serverdates = moment().format('YYYY-MM-DD');
   let servertime = moment().format('hh:mm a');
-  let num = 1 ;
+  let num = 1;
   const group = await wardAdminGroup.find({ assignDate: serverdates });
 
   let center = '';
@@ -35,7 +35,10 @@ const createGroup = async (body) => {
   console.log(totalcount);
   userId = 'G' + center + totalcount;
 
-  let values = { ...body, ...{ groupId: userId, assignDate: serverdates, assignTime: servertime, pettyStockAllocateStatusNumber:num} };
+  let values = {
+    ...body,
+    ...{ groupId: userId, assignDate: serverdates, assignTime: servertime, pettyStockAllocateStatusNumber: num },
+  };
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
   body.Orderdatas.forEach(async (e) => {
     let productId = e._id;
@@ -87,11 +90,14 @@ const getById = async (id) => {
 
 const updateManageStatus = async (id, updateBody) => {
   let Manage = await getById(id);
-
   if (!Manage) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Data not found');
   }
-  Manage = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  Manage = await wardAdminGroup.findByIdAndUpdate(
+    { _id: id },
+    { status: 'Delivery start', manageDeliveryStatus: 'Delivery start' },
+    { new: true }
+  );
   return Manage;
 };
 
@@ -364,14 +370,14 @@ const pettyStockSubmit = async (id, updateBody) => {
   );
 
   let valueStatus = await wardAdminGroupModel_ORDERS.findById(id);
-  console.log(valueStatus)
-valueStatus.forEach(async (e)=>{
+  console.log(valueStatus);
+  valueStatus.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e.id }, { status: 'Delivery Completed' }, { new: true });
   });
- 
+
   // updateBody.arr.forEach(async (e) => {
   //   await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Delivery Completed' }, { new: true });
- 
+
   // })
   return deliveryStatus;
 };
@@ -476,7 +482,6 @@ const getBillDetails = async (id) => {
 
     {
       $project: {
-        
         assignDate: 1,
         assignTime: 1,
         groupId: 1,
@@ -492,8 +497,6 @@ const getBillDetails = async (id) => {
         // totalproduct: '$delivery.Qty'
         totalItems: { $size: '$datas' },
         // totalAmount: '$datas.totalAmount',
-       
-        
       },
     },
   ]);
@@ -559,9 +562,9 @@ const getBillDetails = async (id) => {
 const assignOnly = async (page) => {
   console.log(page);
   let values = await wardAdminGroup.aggregate([
-    { $sort: { pettyStockAllocateStatusNumber:1} },
+    { $sort: { pettyStockAllocateStatusNumber: 1 } },
     { $match: { status: 'Assigned' } },
-    
+
     {
       $lookup: {
         from: 'orderassigns',
@@ -593,15 +596,12 @@ const assignOnly = async (page) => {
             $project: {
               pending: { $eq: ['$shopdata._id', null] },
               shopdata: '$shopdata.deliveryExecutiveId',
-            
-
             },
           },
         ],
         as: 'dataDetails',
       },
     },
-    
 
     { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
 
@@ -626,11 +626,9 @@ const assignOnly = async (page) => {
     //   }
     // },
 
-   
-   
     {
       $project: {
-        shopOrderCloneId: "$wdfsaf._id",
+        shopOrderCloneId: '$wdfsaf._id',
         groupId: 1,
         // Orderdatas:1,
         totalOrders: 1,
@@ -642,7 +640,6 @@ const assignOnly = async (page) => {
         deliveryExecutiveName: '$UserName.name',
         pettyCashAllocateStatus: 1,
         pettyStockAllocateStatus: 1,
-        
       },
     },
 
@@ -651,7 +648,7 @@ const assignOnly = async (page) => {
   ]);
   let total = await wardAdminGroup.aggregate([
     { $match: { status: 'Assigned' } },
-    
+
     {
       $lookup: {
         from: 'orderassigns',
@@ -1234,7 +1231,7 @@ const getPEttyCashQuantity = async (id) => {
 const uploadWastageImage = async (body) => {
   let values = await wardAdminGroupDetails.create(body);
   return values;
-}
+};
 
 const lastPettyStckAdd = async (id, updateBody) => {
   let product = await wardAdminGroup.findById(id);
@@ -1242,12 +1239,20 @@ const lastPettyStckAdd = async (id, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, ' not found');
   }
   updateBody.product.forEach(async (e) => {
-    await pettyStockModel.create({ _id: e._id }, { productName: e.productName , productId:e.productId , QTY: e.QTY, pettyStock: e.pettyStock, totalQtyIncludingPettyStock: e.totalQtyIncludingPettyStock}, { new: true });
+    await pettyStockModel.create(
+      { _id: e._id },
+      {
+        productName: e.productName,
+        productId: e.productId,
+        QTY: e.QTY,
+        pettyStock: e.pettyStock,
+        totalQtyIncludingPettyStock: e.totalQtyIncludingPettyStock,
+      },
+      { new: true }
+    );
   });
   return product;
-}
-
-
+};
 
 module.exports = {
   getPEttyCashQuantity,
@@ -1289,4 +1294,4 @@ module.exports = {
   // createProduct,
 
   lastPettyStckAdd,
-}
+};
