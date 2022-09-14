@@ -39,7 +39,7 @@ const getAssignStockbyId = async (id) => {
       $lookup: {
         from: 'assignstocks',
         localField: '_id',
-        foreignField: 'usableStockId',
+        foreignField: 'usablestockId',
         pipeline: [{ $match: { type: 'b2b' } }, { $group: { _id: null, Total: { $sum: '$quantity' } } }],
         as: 'b2bAssign',
       },
@@ -48,7 +48,7 @@ const getAssignStockbyId = async (id) => {
       $lookup: {
         from: 'assignstocks',
         localField: '_id',
-        foreignField: 'usableStockId',
+        foreignField: 'usablestockId',
         pipeline: [{ $match: { type: 'b2c' } }, { $group: { _id: null, Total: { $sum: '$quantity' } } }],
         as: 'b2cAssign',
       },
@@ -57,7 +57,7 @@ const getAssignStockbyId = async (id) => {
       $lookup: {
         from: 'assignstocks',
         localField: '_id',
-        foreignField: 'usableStockId',
+        foreignField: 'usablestockId',
         as: 'assignHistory',
       },
     }, 

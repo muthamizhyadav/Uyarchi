@@ -5,6 +5,7 @@ const ReceivedProduct = require('../models/receivedProduct.model');
 const ReceivedStock = require('../models/receivedStock.model');
 const { Product } = require('../models/product.model');
 const { usableStock, Stockhistory } = require('../models/usableStock.model');
+const moment = require('moment');
 
 const getDataById = async (id) => {
   let values = await ReceivedStock.aggregate([
@@ -138,12 +139,13 @@ const updatesegrecation = async (id, updateBody) => {
   }
   receivedStock = await ReceivedStock.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   const date = receivedStock.date;
-  let usable = await usableStock.findOne({ productId: receivedStock.productId, data: date });
+  let usable = await usableStock.findOne({ productId: receivedStock.productId, date: moment().format('DD-MM-YYYY') });
   if (!usable) {
     usable = await usableStock.create({
       productId: receivedStock.productId,
-      date: receivedStock.date,
-      time: receivedStock.time,
+      date: moment().format('DD-MM-YYYY'),
+      time: moment().format('HHmmss'),
+      created: moment(),
     });
   }
   let FQ1 = updateBody.FQ1 != null ? updateBody.FQ1 : 0;
@@ -162,6 +164,9 @@ const updatesegrecation = async (id, updateBody) => {
     FQ2: FQ2,
     FQ3: FQ3,
     wastage: wastage,
+    date: moment().format('DD-MM-YYYY'),
+    time: moment().format('HHmmss'),
+    created: moment(),
   });
   await usableStock.findByIdAndUpdate(
     { _id: usable._id },
@@ -175,8 +180,15 @@ const getDetailsByProductId = async (productId, date, page) => {
   console.log('zsdad');
   const values = await ReceivedStock.aggregate([
     {
+      $sort: { created: -1 },
+    },
+    {
       $match: {
-        $and: [{ productId: { $eq: productId } }, { date: { $eq: date } }, { status: { $in: ['Loaded', 'Billed'] } }],
+        $and: [
+          { productId: { $eq: productId } },
+          { segStatus: { $eq: 'Pending' } },
+          { status: { $in: ['Loaded', 'Billed'] } },
+        ],
       },
     },
     {
@@ -214,6 +226,7 @@ const getDetailsByProductId = async (productId, date, page) => {
         supplierName: '$supplierData.primaryContactName',
         supplierNumber: '$supplierData.primaryContactNumber',
         productName: '$productData.productTitle',
+        created: 1,
       },
     },
   ]);
