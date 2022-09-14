@@ -176,7 +176,7 @@ const getDetailsByProductId = async (productId, date, page) => {
   const values = await ReceivedStock.aggregate([
     {
       $match: {
-        $and: [{ productId: { $eq: productId } }, { date: { $eq: date } }, { status: { $in: ['Loaded', 'Billed'] } }],
+        $and: [{ productId: { $eq: productId } }, { segStatus: { $eq: 'Pending' } }, { status: { $in: ['Loaded', 'Billed'] } }],
       },
     },
     {
