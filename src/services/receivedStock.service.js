@@ -139,7 +139,7 @@ const updatesegrecation = async (id, updateBody) => {
   }
   receivedStock = await ReceivedStock.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   const date = receivedStock.date;
-  let usable = await usableStock.findOne({ productId: receivedStock.productId, data: moment().format('DD-MM-YYYY') });
+  let usable = await usableStock.findOne({ productId: receivedStock.productId, date: moment().format('DD-MM-YYYY') });
   if (!usable) {
     usable = await usableStock.create({
       productId: receivedStock.productId,
