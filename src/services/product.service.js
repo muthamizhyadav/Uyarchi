@@ -1531,6 +1531,48 @@ const AssignStockGetall = async (date, page) => {
       $unwind: '$usablestocks',
     },
     {
+      $lookup: {
+        from: 'usablestocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ date: { $eq: date } }, { totalStock: { $gte: 0 } }],
+            },
+          },
+          {
+            $lookup: {
+              from: 'assignstocks',
+              localField: '_id',
+              foreignField: 'usablestockId',
+              pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
+              as: 'assignstocks',
+            },
+          },
+          {
+            $unwind: {
+              path: '$assignstocks',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project:{
+              _id:1,
+              assignedQty:'$assignstocks.Qty'
+            }
+          }
+        ],
+        as: 'assignstocksss',
+      },
+    },
+    {
+      $unwind: {
+        path: '$assignstocksss',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 1,
         productTitle: 1,
@@ -1539,8 +1581,9 @@ const AssignStockGetall = async (date, page) => {
         wastage: '$usablestocks.wastage',
         b2bStock: '$usablestocks.b2bStock',
         b2cStock: '$usablestocks.b2cStock',
-        usablestocks: '$usablestocks',
+        // usablestocks: '$usablestocks',
         usablestocksID: '$usablestocks._id',
+        assignedQty: '$assignstocksss.assignedQty',
       },
     },
     { $skip: 10 * page },
