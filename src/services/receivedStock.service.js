@@ -214,6 +214,8 @@ const getDetailsByProductId = async (productId, date, page) => {
         supplierName: '$supplierData.primaryContactName',
         supplierNumber: '$supplierData.primaryContactNumber',
         productName: '$productData.productTitle',
+        created:1
+
       },
     },
   ]);
