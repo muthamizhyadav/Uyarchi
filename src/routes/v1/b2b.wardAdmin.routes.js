@@ -19,6 +19,7 @@ router.route('/updatePacked').put(wardAdminController.updatePackedStatus);
 // checked
 router.route('/updateRejected').put(wardAdminController.updateRejectionStatus);
 
+
 // Checked;
 router.route('/updateApproved/:id').put(wardAdminController.updateApproved);
 
