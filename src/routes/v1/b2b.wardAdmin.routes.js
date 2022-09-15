@@ -1,16 +1,14 @@
 const express = require('express');
 const wardAdminController = require('../../controllers/b2b.wardAdmin.controller');
 const router = express.Router();
-
 router.route('/create/data').post(wardAdminController.createdata);
-
 // checked
 router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusMatchingAppOrModi);
 
 router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 // checked modified
 router.route('/updateProductById/:orderId').put(wardAdminController.updateProduct);
-
+   
 // checked
 router.route('/updateAcknowledge').put(wardAdminController.updateAcknowledge);
 // checked
