@@ -151,10 +151,10 @@ const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
   let statusUpdate = await ShopOrderClone.findById(id);
   console.log(statusUpdate);
   if (!statusUpdate) {
-    throw new ApiError(httpStatus.NOT_FOUND, ' not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
-  statusUpdate = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-  console.log(statusUpdate);
+  statusUpdate = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Packed' }, { new: true });
+  // console.log(statusUpdate);
   return statusUpdate;
 };
 
@@ -435,7 +435,6 @@ const wardloadExecutivePacked = async (page) => {
       },
     },
     { $unwind: '$wardData' },
-
     {
       $lookup: {
         from: 'productorderclones',
@@ -446,7 +445,6 @@ const wardloadExecutivePacked = async (page) => {
       },
     },
     { $unwind: '$orderData' },
-
     {
       $lookup: {
         from: 'productorderclones',
@@ -455,7 +453,6 @@ const wardloadExecutivePacked = async (page) => {
         as: 'orderDatafortotal',
       },
     },
-
     {
       $lookup: {
         from: 'productorderclones',
@@ -652,6 +649,37 @@ const getAssigned_details = async () => {
       $unwind: '$deliveryexecute',
     },
     {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: '$unit', value: { $sum: '$finalQuantity' } },
+                },
+              ],
+              as: 'productorderclones',
+            },
+          },
+
+          {
+            $project: {
+              productorderclones: '$productorderclones',
+
+              _id: 1,
+            },
+          },
+        ],
+        as: 'orderassigns',
+      },
+    },
+    {
       $project: {
         _id: 1,
         status: 1,
@@ -661,6 +689,7 @@ const getAssigned_details = async () => {
         assignDate: 1,
         assignTime: 1,
         deliveryexecuteName: '$deliveryexecute.name',
+        orderassigns: '$orderassigns',
       },
     },
   ]);

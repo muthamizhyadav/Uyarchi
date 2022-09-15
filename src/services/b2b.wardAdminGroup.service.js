@@ -37,7 +37,13 @@ const createGroup = async (body) => {
 
   let values = {
     ...body,
-    ...{ groupId: userId, assignDate: serverdates, assignTime: servertime, pettyStockAllocateStatusNumber: num },
+    ...{
+      groupId: userId,
+      assignDate: serverdates,
+      assignTime: servertime,
+      pettyStockAllocateStatusNumber: num,
+      created: moment(),
+    },
   };
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
   body.Orderdatas.forEach(async (e) => {
@@ -91,12 +97,58 @@ const getById = async (id) => {
 const updateManageStatus = async (id, updateBody) => {
   let Manage = await getById(id);
   if (!Manage) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Data not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
   Manage = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
-    updateBody,
-    // { status: 'Delivery start', manageDeliveryStatus: 'Delivery start' },
+    {
+      pettyStockAllocateStatus: 'Un Allocate',
+    },
+    { new: true }
+  );
+  return Manage;
+};
+
+const updateManageStatuscashcollect = async (id, updateBody) => {
+  let Manage = await getById(id);
+  if (!Manage) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  Manage = await wardAdminGroup.findByIdAndUpdate(
+    { _id: id },
+    {
+      manageDeliveryStatus: 'petty cash picked',
+    },
+    { new: true }
+  );
+  return Manage;
+};
+
+const updateManageStatuscollected = async (id, updateBody) => {
+  let Manage = await getById(id);
+  if (!Manage) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  Manage = await wardAdminGroup.findByIdAndUpdate(
+    { _id: id },
+    {
+      manageDeliveryStatus: 'petty stock picked',
+    },
+    { new: true }
+  );
+  return Manage;
+};
+
+const updateManageStatuscash = async (id, updateBody) => {
+  let Manage = await getById(id);
+  if (!Manage) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  Manage = await wardAdminGroup.findByIdAndUpdate(
+    { _id: id },
+    {
+      pettyCashAllocateStatus: 'Un Allocate',
+    },
     { new: true }
   );
   return Manage;
@@ -370,7 +422,7 @@ const pettyStockSubmit = async (id, updateBody) => {
     { new: true }
   );
 
-  let valueStatus = await wardAdminGroupModel_ORDERS.find({orderId:id});
+  let valueStatus = await wardAdminGroupModel_ORDERS.find({ orderId: id });
   console.log(valueStatus);
   valueStatus.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e.orderId }, { status: 'Delivery Completed' }, { new: true });
@@ -383,7 +435,6 @@ const pettyStockSubmit = async (id, updateBody) => {
   return deliveryStatus;
 };
 
-
 const pettyCashSubmit = async (id, updateBody) => {
   let deliveryStatus = await wardAdminGroup.findById(id);
   if (!deliveryStatus) {
@@ -391,7 +442,7 @@ const pettyCashSubmit = async (id, updateBody) => {
   }
   deliveryStatus = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
-    { pettyCash: updateBody.pettyCash, pettyCashAllocateStatus: updateBody.pettyCashAllocateStatus },
+    { pettyCash: updateBody.pettyCash, pettyCashAllocateStatus: 'Allocated' },
     { new: true }
   );
   return deliveryStatus;
@@ -420,7 +471,6 @@ const getstatus = async (id) => {
 };
 
 const getBillDetails = async (id) => {
-
   let values = await wardAdminGroup.aggregate([
     {
       $match: {
@@ -456,26 +506,24 @@ const getBillDetails = async (id) => {
                         },
                       },
                     ],
-                    as: 'datass'
-                  }
+                    as: 'datass',
+                  },
                 },
                 {
-                  $unwind: "$datass"
+                  $unwind: '$datass',
                 },
 
                 {
                   $project: {
-                    totalAmount: "$datass.amount"
-
-                  }
-                }
+                    totalAmount: '$datass.amount',
+                  },
+                },
               ],
-              as: 'shopDatas'
+              as: 'shopDatas',
             },
-
           },
           {
-            $unwind: '$shopDatas'
+            $unwind: '$shopDatas',
           },
 
           {
@@ -495,28 +543,28 @@ const getBillDetails = async (id) => {
                           from: 'products',
                           localField: 'productid',
                           foreignField: '_id',
-                          as: 'productsdata'
-                        }
+                          as: 'productsdata',
+                        },
                       },
                       {
-                        $unwind: "$productsdata"
+                        $unwind: '$productsdata',
                       },
                       {
                         $project: {
                           _id: 1,
-                          productTitle: "$productsdata.productTitle",
+                          productTitle: '$productsdata.productTitle',
                           finalQuantity: 1,
                           finalPricePerKg: 1,
                           HSN_Code: 1,
                           GST_Number: 1,
                           total: {
                             $multiply: ['$finalQuantity', '$finalPricePerKg'],
-                          }
-                        }
-                      }
+                          },
+                        },
+                      },
                     ],
-                    as: 'products'
-                  }
+                    as: 'products',
+                  },
                 },
 
                 {
@@ -525,26 +573,25 @@ const getBillDetails = async (id) => {
                     localField: 'shopId',
                     foreignField: '_id',
                     pipeline: [
-
                       {
                         $lookup: {
                           from: 'streets',
                           localField: 'Strid',
                           foreignField: '_id',
                           as: 'streetDatasss',
-                        }
+                        },
                       },
                       {
-                        $unwind: '$streetDatasss'
+                        $unwind: '$streetDatasss',
                       },
                       {
                         $project: {
-                          street: "$streetDatasss.street",
+                          street: '$streetDatasss.street',
                           _id: 1,
                           SName: 1,
                           SOwner: 1,
-                        }
-                      }
+                        },
+                      },
                     ],
                     as: 'b2bshopclones',
                   },
@@ -556,52 +603,47 @@ const getBillDetails = async (id) => {
                   $project: {
                     _id: 1,
                     OrderId: 1,
-                    products: "$products",
-                    b2bshopclones: "$b2bshopclones",
-                    SName: "$b2bshopclones.SName",
-                    SOwner: "$b2bshopclones.SOwner",
-
-                  }
-                }
-
-
+                    products: '$products',
+                    b2bshopclones: '$b2bshopclones',
+                    SName: '$b2bshopclones.SName',
+                    SOwner: '$b2bshopclones.SOwner',
+                    street: '$b2bshopclones.street',
+                  },
+                },
               ],
-              as: 'shopDatasDetails'
+              as: 'shopDatasDetails',
             },
-
           },
           {
-            $unwind: '$shopDatasDetails'
+            $unwind: '$shopDatasDetails',
           },
 
           {
             $project: {
               _id: 1,
-              totalAmount: "$shopDatas.totalAmount",
-              OrderId: "$shopDatasDetails.OrderId",
-              product: "$shopDatasDetails.products",
+              totalAmount: '$shopDatas.totalAmount',
+              OrderId: '$shopDatasDetails.OrderId',
+              product: '$shopDatasDetails.products',
 
-              SName: "$shopDatasDetails.SName",
-              SOwner: "$shopDatasDetails.SOwner",
-              street: "$shopDatasDetails.street",
-
-            }
+              SName: '$shopDatasDetails.SName',
+              SOwner: '$shopDatasDetails.SOwner',
+              street: '$shopDatasDetails.street',
+            },
           },
         ],
-        as: "orderassigns"
-      }
+        as: 'orderassigns',
+      },
     },
     {
-
       $lookup: {
         from: 'b2busers',
         localField: 'deliveryExecutiveId',
         foreignField: '_id',
-        as:"b2bsersData"
-      }
+        as: 'b2bsersData',
+      },
     },
     {
-      $unwind:"$b2bsersData"
+      $unwind: '$b2bsersData',
     },
 
     {
@@ -610,18 +652,15 @@ const getBillDetails = async (id) => {
         assignDate: 1,
         assignTime: 1,
         totalOrders: 1,
-        orderassigns: "$orderassigns",
-        deliveryExecutivename: "$b2bsersData.name"
-      }
-    }
-
-
+        orderassigns: '$orderassigns',
+        deliveryExecutivename: '$b2bsersData.name',
+      },
+    },
   ]);
-if(values.length == 0){
-  throw new ApiError(httpStatus.NOT_FOUND, 'not found');
-}
+  if (values.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'not found');
+  }
   return values[0];
-
 };
 
 const assignOnly = async (page) => {
@@ -631,8 +670,6 @@ const assignOnly = async (page) => {
     { $match: { status: 'Assigned' } },
 
     {
-
-
       $lookup: {
         from: 'orderassigns',
         localField: '_id',
@@ -697,7 +734,6 @@ const assignOnly = async (page) => {
       $project: {
         shopOrderCloneId: '$wdfsaf._id',
         groupId: 1,
-        // Orderdatas:1,
         totalOrders: 1,
         assignDate: 1,
         assignTime: 1,
@@ -718,8 +754,6 @@ const assignOnly = async (page) => {
     { $match: { status: 'Assigned' } },
 
     {
-
-
       $lookup: {
         from: 'orderassigns',
         localField: '_id',
@@ -750,15 +784,12 @@ const assignOnly = async (page) => {
             $project: {
               pending: { $eq: ['$shopdata._id', null] },
               shopdata: '$shopdata.deliveryExecutiveId',
-
-
             },
           },
         ],
         as: 'dataDetails',
       },
     },
-
 
     { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
 
@@ -1185,20 +1216,25 @@ const pettyStockCreate = async (id, pettyStockBody) => {
   console.log(wardadmin);
   let createPetty = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
-    { pettyStock: product, pettyStockAllocateStatus: 'Allocated' },
+    { pettyStockAllocateStatus: 'Allocated' },
     { new: true }
   );
+  console.log(pettyStockBody);
   product.forEach(async (e) => {
     pettyStockModel.create({
       wardAdminId: createPetty.id,
-      product: e.productName,
+      productName: e.productName,
+      productId: e.id,
+      groupId: id,
       QTY: e.QTY,
       pettyStock: e.pettyStock,
-      totalQtyIncludingPettyStock: e.totalQtyIncludingPettyStock,
+      totalQtyIncludingPettyStock: e.QTY + e.pettyStock,
+      date: moment().format('DD-MM-YYYY'),
+      time: moment().format('hh:mm a'),
+      created: moment(),
     });
   });
-  let afterUpdate = await wardAdminGroup.findById(id);
-  return afterUpdate;
+  return createPetty;
 };
 
 const getcashAmountViewFromDB = async (id) => {
@@ -1309,20 +1345,20 @@ const uploadWastageImage = async (body) => {
 const lastPettyStckAdd = async (id, updateBody) => {
   let product = await wardAdminGroup.findById(id);
   if (!product) {
-    throw new ApiError(httpStatus.NOT_FOUND, ' not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Group not found');
   }
   updateBody.product.forEach(async (e) => {
-    await pettyStockModel.create(
-      { _id: e._id },
-      {
-        productName: e.productName,
-        productId: e.productId,
-        QTY: e.QTY,
-        pettyStock: e.pettyStock,
-        totalQtyIncludingPettyStock: e.totalQtyIncludingPettyStock,
-      },
-      { new: true }
-    );
+    await pettyStockModel.create({
+      productName: e.productName,
+      productId: e.id,
+      groupId: id,
+      QTY: e.QTY,
+      pettyStock: e.pettyStock,
+      totalQtyIncludingPettyStock: e.QTY + e.pettyStock,
+      date: moment.format('DD-MM-YYYY'),
+      time: moment.format('hh:mm a'),
+      created: moment(),
+    });
   });
   return product;
 };
@@ -1367,4 +1403,7 @@ module.exports = {
   // createProduct,
 
   lastPettyStckAdd,
+  updateManageStatuscash,
+  updateManageStatuscollected,
+  updateManageStatuscashcollect,
 };
