@@ -31,6 +31,11 @@ const updatePickedPettyCash = catchAsync(async (req, res) => {
   res.send(pickedPettyCash);
 });
 
+const updatePickedPettystockcollected = catchAsync(async (req, res) => {
+  const pickedPettyCash = await wardAdminGroupService.updateManageStatuscollected(req.params.id, req.body);
+  res.send(pickedPettyCash);
+});
+
 const updateDontAllocate = catchAsync(async (req, res) => {
   const notAloocate = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
   res.send(notAloocate);
@@ -306,5 +311,6 @@ module.exports = {
 
   lastPettyStckAdd,
   updateDontAllocatecash,
+  updatePickedPettystockcollected,
   // createImageUploadAndDetails,
 };

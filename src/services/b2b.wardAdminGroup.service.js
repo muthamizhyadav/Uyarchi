@@ -108,6 +108,22 @@ const updateManageStatus = async (id, updateBody) => {
   );
   return Manage;
 };
+
+const updateManageStatuscollected = async (id, updateBody) => {
+  let Manage = await getById(id);
+  if (!Manage) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  Manage = await wardAdminGroup.findByIdAndUpdate(
+    { _id: id },
+    {
+      manageDeliveryStatus: 'petty stock picked',
+    },
+    { new: true }
+  );
+  return Manage;
+};
+
 const updateManageStatuscash = async (id, updateBody) => {
   let Manage = await getById(id);
   if (!Manage) {
@@ -576,6 +592,7 @@ const getBillDetails = async (id) => {
                     b2bshopclones: '$b2bshopclones',
                     SName: '$b2bshopclones.SName',
                     SOwner: '$b2bshopclones.SOwner',
+                    street: '$b2bshopclones.street',
                   },
                 },
               ],
@@ -1372,4 +1389,5 @@ module.exports = {
 
   lastPettyStckAdd,
   updateManageStatuscash,
+  updateManageStatuscollected,
 };

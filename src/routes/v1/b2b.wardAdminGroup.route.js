@@ -11,6 +11,9 @@ router.route('/update/pickedPettyStock/:id').put(wardAdminGroupController.update
 
 router.route('/update/pickedPettyCash/:id').put(wardAdminGroupController.updatePickedPettyCash);
 
+// new Api
+router.route('/update/pickedPettystock/collected/:id').put(wardAdminGroupController.updatePickedPettystockcollected);
+
 router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
 
 router.route('/update/delivered/:id').put(wardAdminGroupController.updateDeliveryCompleted);
