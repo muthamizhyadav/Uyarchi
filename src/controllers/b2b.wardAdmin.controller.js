@@ -63,12 +63,12 @@ const updateApproved = catchAsync(async (req, res) => {
 });
 
 const updateModified = catchAsync(async (req, res) => {
-  const modified = await wardAdminService.updateStatusApprovedOrModified(req.params.id, req.body);
+  const modified = await wardAdminService.updateStatusModifiedOrModified(req.params.id, req.body);
   res.status(200).send(modified);
 });
 
 const updateRejected = catchAsync(async (req, res) => {
-  const rejected = await wardAdminService.updateStatusApprovedOrModified(req.params.id, req.body);
+  const rejected = await wardAdminService.updateStatusrejectOrModified(req.params.id, req.body);
   res.status(200).send(rejected);
 });
 
