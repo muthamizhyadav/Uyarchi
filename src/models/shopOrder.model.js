@@ -210,7 +210,7 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     type:String,
   },
   RedeliveredTime:{
-    type:Number,
+    type:String,
   },
   UnDeliveredStatus:{
     type:String,
