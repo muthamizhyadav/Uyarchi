@@ -95,9 +95,9 @@ const getdetails = async (page) => {
 const updateAcknowledgeSingle = async (id, updateBody) => {
   let product = await ShopOrderClone.findById(id);
   if (!product) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
-  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Acknowledged' }, { new: true });
   return product;
 };
 
@@ -125,9 +125,25 @@ const updatePackedMultiSelect = async (body) => {
 const updateStatusApprovedOrModified = async (id, updateBody) => {
   let product = await ShopOrderClone.findById(id);
   if (!product) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
-  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Approved' }, { new: true });
+  return product;
+};
+const updateStatusModifiedOrModified = async (id, updateBody) => {
+  let product = await ShopOrderClone.findById(id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Modified' }, { new: true });
+  return product;
+};
+const updateStatusrejectOrModified = async (id) => {
+  let product = await ShopOrderClone.findById(id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Rejected' }, { new: true });
   return product;
 };
 
@@ -250,15 +266,15 @@ const updateProduct = async (id, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'order not found');
   }
   updateBody.product.forEach(async (e) => {
-    await ProductorderClone.findByIdAndUpdate({ _id: e._id }, { finalQuantity: e.quantity }, { new: true });
+    if ((await ProductorderClone.findById(e._id).finalQuantity) != e.quantity) {
+      await ProductorderClone.findByIdAndUpdate(
+        { _id: e._id },
+        { finalQuantity: e.quantity, status: 'Modified' },
+        { new: true }
+      );
+    }
   });
   product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Modified' }, { new: true });
-  // let productModify = await ProductorderClone.update(orderId,id );
-  //   if (!productModify) {
-  //   throw new ApiError(httpStatus.NOT_FOUND, 'product not found');
-  // }
-  // productModify = await ProductorderClone.update({ orderId: orderId, productid: id }, updateBody, { new: true });
-
   return product;
 };
 
@@ -674,8 +690,8 @@ const getdetailsDataStatusOdered = async (limit, page, status) => {
     {
       $lookup: {
         from: 'b2bshopclones',
-        localField: 'shopId', //Uid
-        foreignField: '_id', //Uid
+        localField: 'shopId',
+        foreignField: '_id',
         as: 'userData',
       },
     },
@@ -698,7 +714,6 @@ const getdetailsDataStatusOdered = async (limit, page, status) => {
         as: 'userNameData',
       },
     },
-    //  { unwind: '$userNameData'},
     {
       $project: {
         shopId: 1,
@@ -710,8 +725,6 @@ const getdetailsDataStatusOdered = async (limit, page, status) => {
         name: '$userNameData.name',
         shopType: '$userData.type',
         shopName: '$userData.SName',
-        // UserName: '$userData.name',
-        // orderId: '$orderData.orderId',
         totalItems: { $size: '$orderData' },
       },
     },
@@ -757,7 +770,6 @@ const getdetailsDataStatusOdered = async (limit, page, status) => {
         as: 'userNameData',
       },
     },
-    //  { unwind: '$userNameData'},
   ]);
   return { values: values, total: total.length };
 };
@@ -786,8 +798,8 @@ const getdetailsDataStatusAcknowledged = async (limit, page, status) => {
     {
       $lookup: {
         from: 'b2bshopclones',
-        localField: 'shopId', //Uid
-        foreignField: '_id', //Uid
+        localField: 'shopId',
+        foreignField: '_id',
         as: 'userData',
       },
     },
@@ -815,7 +827,6 @@ const getdetailsDataStatusAcknowledged = async (limit, page, status) => {
         as: 'userNameData',
       },
     },
-    //  { unwind: '$userNameData'},
     {
       $project: {
         shopId: 1,
@@ -827,10 +838,8 @@ const getdetailsDataStatusAcknowledged = async (limit, page, status) => {
         name: '$userNameData.name',
         shopType: '$userData.type',
         shopName: '$userData.SName',
-        // UserName: '$userData.name',
-        // orderId: '$orderData.orderId',
-        // orderdata: '$orderData',
         totalItems: { $size: '$orderData' },
+        created: 1,
       },
     },
     { $skip: parseInt(limit) * page },
@@ -1120,7 +1129,6 @@ const countStatus = async () => {
     rejectedStatusCount: rejectedStatusCount,
   };
 };
-
 module.exports = {
   getdetails,
   getproductdetails,
@@ -1146,4 +1154,6 @@ module.exports = {
   updateStatusApprovedOrModified,
   updateStatusForAssugnedAndPacked,
   updatePackedMultiSelect,
+  updateStatusrejectOrModified,
+  updateStatusModifiedOrModified,
 };
