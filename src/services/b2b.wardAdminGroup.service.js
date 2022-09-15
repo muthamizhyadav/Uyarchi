@@ -120,7 +120,8 @@ const updateordercomplete = async (id, updateBody) => {
     },
     { new: true }
   );
-  await wardAdminGroupModel_ORDERS.find({ wardAdminGroupID: id }).forEach(async (e) => {
+  let assign = await wardAdminGroupModel_ORDERS.find({ wardAdminGroupID: id });
+  assign.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e.orderId }, { status: 'Order Picked' }, { new: true });
   });
   return Manage;
