@@ -290,7 +290,7 @@ const undelivered = async (page) =>{
         street:'$streetsData.street',
         type:'$shopData.type',
         SName:'$shopData.SName',
-        name:'$b2busersData.name',  
+        name:'$b2busersData.name', 
       },
     },
   ])
@@ -664,6 +664,112 @@ const getManageordersByOrderId = async (orderId, date) => {
   return { values: values, total: totalqty.Qty };
 };
 
+// get allProductData
+
+const productData = async(id) =>{
+  let data = await ShopOrderClone.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orders',
+      },
+    },
+    {
+      $unwind: '$orders',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'orders.productid',
+        foreignField: '_id',
+        as: 'products',
+      },
+    },
+    {
+      $unwind: '$products',
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesData',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesData',
+    },
+    
+    {
+      $project: {
+        productTitle: '$products.productTitle',
+        Qty: '$orders.finalQuantity',
+        price: '$orders.finalPricePerKg',
+        productid: '$orders.productid',
+        shop:'$b2bshopclonesData.SName',
+        totalValue: { $multiply: ['$orders.finalQuantity', '$orders.finalPricePerKg'] },
+      },
+    },
+  ])
+  let total = await ShopOrderClone.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orders',
+      },
+    },
+    {
+      $unwind: '$orders',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'orders.productid',
+        foreignField: '_id',
+        as: 'products',
+      },
+    },
+    {
+      $unwind: '$products',
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesData',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesData',
+    },
+    {
+      $project: {
+        productTitle: '$products.productTitle',
+        Qty: '$orders.finalQuantity',
+        price: '$orders.finalPricePerKg',
+        totalValue: { $multiply: ['$orders.finalQuantity', '$orders.finalPricePerKg'] },
+      },
+    },
+    {
+      $group: { _id: null, Qty: { $sum: '$totalValue' } },
+    },
+
+  ])
+  let totalqty = total[0];
+  return {data:data , total:totalqty.Qty, }
+}
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -696,4 +802,5 @@ module.exports = {
   undelivered,
   B2BManageOrders,
   getManageordersByOrderId,
+  productData,
 };

@@ -47,4 +47,5 @@ router.route('/getShop/details/:id').get(shopOrderController.getShopDetailsByOrd
 router.route('/undelivered/data/:page').get(shopOrderController.undelivered);
 router.route('/B2b/B2BManageOrders/:shopid').get(shopOrderController.B2BManageOrders);
 router.route('/B2BManageOrders/:orderId/:date').get(shopOrderController.getManageordersByOrderId);
+router.route('/productData/:id').get(shopOrderController.productData);
 module.exports = router;

@@ -182,6 +182,11 @@ const getManageordersByOrderId = catchAsync(async (req, res) => {
   res.send(shopOrder);
 });
 
+const productData = catchAsync(async (req, res) => {
+  const data = await shopOrderService.productData(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   createshopOrder,
   getAllShopOrder,
@@ -214,4 +219,5 @@ module.exports = {
   undelivered,
   B2BManageOrders,
   getManageordersByOrderId,
+  productData,
 };
