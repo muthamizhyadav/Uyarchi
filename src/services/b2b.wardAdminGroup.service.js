@@ -1172,6 +1172,7 @@ const pettyStockCreate = async (id, pettyStockBody) => {
     { pettyStockAllocateStatus: 'Allocated' },
     { new: true }
   );
+  console.log(pettyStockBody);
   product.forEach(async (e) => {
     pettyStockModel.create({
       wardAdminId: createPetty.id,
