@@ -8,7 +8,7 @@ router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusM
 router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 // checked modified
 router.route('/updateProductById/:orderId').put(wardAdminController.updateProduct);
-   
+
 // checked
 router.route('/updateAcknowledge').put(wardAdminController.updateAcknowledge);
 // checked
@@ -18,7 +18,6 @@ router.route('/updatePacked').put(wardAdminController.updatePackedStatus);
 
 // checked
 router.route('/updateRejected').put(wardAdminController.updateRejectionStatus);
-
 
 // Checked;
 router.route('/updateApproved/:id').put(wardAdminController.updateApproved);
@@ -34,7 +33,7 @@ router.route('/wardloadingExecutive/updatePacked/:id').put(wardAdminController.u
 router.route('/wardloadingExecutive/updateAssign/:id').put(wardAdminController.updateAssigned);
 
 router.route('/wardloadingExecutive/updateProductBilled/:id').put(wardAdminController.updateBilled);
-
+// checked
 router.route('/wardloadingExecutive/getdetails/:page').get(wardAdminController.wardloadExecutive);
 
 router.route('/wardloadingExecutive/getPackedProductDetails/:page').get(wardAdminController.wardloadExecutivePacked);
@@ -50,5 +49,6 @@ router.route('/Array/craeteArrayData').post(wardAdminController.createArrayData)
 router.route('/update/acknowleded/status/single/:id').put(wardAdminController.updateAcknowledgeSingle);
 
 router.route('/get/status/Count').get(wardAdminController.countStatus);
+// checked Modified
 router.route('/order/Assign').get(wardAdminController.getAssigned_details);
 module.exports = router;

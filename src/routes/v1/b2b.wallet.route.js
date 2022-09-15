@@ -9,7 +9,6 @@ router
 // router.route('/getAll').get(walletController.getAll);
 // router.route('/:id').put(walletController.updateWallet);
 // router.route('/:id').delete(walletController.deleteWallet);
-
 router.route('/getAll/:page').get(walletController.getWallet);
 
 router.route('/createAmount').post(walletController.createAmountWallet);

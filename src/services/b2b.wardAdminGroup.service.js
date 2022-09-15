@@ -687,7 +687,6 @@ const assignOnly = async (page) => {
       $project: {
         shopOrderCloneId: '$wdfsaf._id',
         groupId: 1,
-        // Orderdatas:1,
         totalOrders: 1,
         assignDate: 1,
         assignTime: 1,
@@ -1294,20 +1293,20 @@ const uploadWastageImage = async (body) => {
 const lastPettyStckAdd = async (id, updateBody) => {
   let product = await wardAdminGroup.findById(id);
   if (!product) {
-    throw new ApiError(httpStatus.NOT_FOUND, ' not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Group not found');
   }
   updateBody.product.forEach(async (e) => {
-    await pettyStockModel.create(
-      { _id: e._id },
-      {
-        productName: e.productName,
-        productId: e.productId,
-        QTY: e.QTY,
-        pettyStock: e.pettyStock,
-        totalQtyIncludingPettyStock: e.totalQtyIncludingPettyStock,
-      },
-      { new: true }
-    );
+    await pettyStockModel.create({
+      productName: e.productName,
+      productId: e.id,
+      groupId: id,
+      QTY: e.QTY,
+      pettyStock: e.pettyStock,
+      totalQtyIncludingPettyStock: e.QTY + e.pettyStock,
+      date: moment.format('DD-MM-YYYY'),
+      time: moment.format('hh:mm a'),
+      created: moment(),
+    });
   });
   return product;
 };

@@ -27,6 +27,7 @@ router.route('/getDeliveryExecutivestatus/:id').get(wardAdminGroupController.get
 
 router.route('/get/billDetails/:id').get(wardAdminGroupController.getBillDetails);
 
+//checked
 router.route('/get/assignedOnle/:page').get(wardAdminGroupController.getAssigned);
 
 router.route('/get/details/deliveryExecutive/:id/:page').get(wardAdminGroupController.getDeliveryOrderSeparate);
@@ -88,6 +89,7 @@ router
 
 router.route('/get/return/stock/:id').get(wardAdminGroupController.returnStock);
 
+// checked Modified
 router.route('/create/pettyStock/:id').put(wardAdminGroupController.lastPettyStckAdd);
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
