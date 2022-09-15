@@ -1182,8 +1182,8 @@ const pettyStockCreate = async (id, pettyStockBody) => {
       QTY: e.QTY,
       pettyStock: e.pettyStock,
       totalQtyIncludingPettyStock: e.QTY + e.pettyStock,
-      date: moment.format('DD-MM-YYYY'),
-      time: moment.format('hh:mm a'),
+      date: moment().format('DD-MM-YYYY'),
+      time: moment().format('hh:mm a'),
       created: moment(),
     });
   });
