@@ -450,19 +450,19 @@ const returnStock = async (id) => {
 const pettyStockSubmit = async (id, updateBody) => {
   let deliveryStatus = await wardAdminGroup.findById(id);
   if (!deliveryStatus) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Group not found');
   }
   deliveryStatus = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
-    { manageDeliveryStatus: updateBody.manageDeliveryStatus },
+    { manageDeliveryStatus: 'Delivery Completed' },
     { new: true }
   );
 
-  let valueStatus = await wardAdminGroupModel_ORDERS.find({ orderId: id });
-  console.log(valueStatus);
-  valueStatus.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e.orderId }, { status: 'Delivery Completed' }, { new: true });
-  });
+  // let valueStatus = await wardAdminGroupModel_ORDERS.find({ orderId: id });
+  // console.log(valueStatus);
+  // valueStatus.forEach(async (e) => {
+  //   await ShopOrderClone.findByIdAndUpdate({ _id: e.orderId }, { status: 'Delivery Completed' }, { new: true });
+  // });
 
   // updateBody.arr.forEach(async (e) => {
   //   await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Delivery Completed' }, { new: true });
