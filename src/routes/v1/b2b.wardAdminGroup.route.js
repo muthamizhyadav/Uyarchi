@@ -68,7 +68,7 @@ router.route('/update/status/allocateStatus/:id').put(wardAdminGroupController.u
 
 // checked
 router.route('/update/status/notAloocate/:id').put(wardAdminGroupController.updateDontAllocate);
-router.route('/cash/update/status/notAloocate/:id').put(wardAdminGroupController.updateDontAllocate);
+router.route('/cash/update/status/notAloocate/:id').put(wardAdminGroupController.updateDontAllocatecash);
 
 router.route('/get/getPettyCashDetails/:id/:page').get(wardAdminGroupController.getPettyCashDetails);
 
