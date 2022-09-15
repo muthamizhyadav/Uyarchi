@@ -151,10 +151,10 @@ const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
   let statusUpdate = await ShopOrderClone.findById(id);
   console.log(statusUpdate);
   if (!statusUpdate) {
-    throw new ApiError(httpStatus.NOT_FOUND, ' not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
-  statusUpdate = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-  console.log(statusUpdate);
+  statusUpdate = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Packed' }, { new: true });
+  // console.log(statusUpdate);
   return statusUpdate;
 };
 
@@ -446,7 +446,6 @@ const wardloadExecutivePacked = async (page) => {
       },
     },
     { $unwind: '$orderData' },
-
     {
       $lookup: {
         from: 'productorderclones',
@@ -455,7 +454,6 @@ const wardloadExecutivePacked = async (page) => {
         as: 'orderDatafortotal',
       },
     },
-
     {
       $lookup: {
         from: 'productorderclones',

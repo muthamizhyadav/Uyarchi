@@ -123,6 +123,9 @@ const wardAdminGroupSchema_ORDER = new mongoose.Schema({
     type: String,
     default: 'Assigned',
   },
+  created: {
+    type: Date,
+  },
 });
 
 const wardAdminGroupModel_ORDERS = mongoose.model('orderAssign', wardAdminGroupSchema_ORDER);
