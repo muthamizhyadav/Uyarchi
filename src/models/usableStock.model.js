@@ -47,6 +47,9 @@ const usableStockSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  created: {
+    type: Date,
+  },
   b2bStock: {
     type: Number,
     default: 0,
@@ -82,20 +85,23 @@ const usableStockhistory = new mongoose.Schema({
   },
   date: {
     type: String,
-    default: moment().format('DD-MM-yyy'),
+    // default: moment().format('DD-MM-yyy'),
   },
   time: {
     type: String,
-    default: moment().format('h:mm a'),
+    // default: moment().format('h:mm a'),
   },
   timeFilter: {
     type: String,
-    default: moment().format('Hmm'),
+    // default: moment().format('Hmm'),
+  },
+  created: {
+    type: Date,
   },
   usableStock: {
     type: String,
   },
-  wastageImage:{
+  wastageImage: {
     type: String,
   },
   active: {

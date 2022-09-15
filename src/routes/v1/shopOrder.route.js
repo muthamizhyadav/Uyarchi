@@ -45,4 +45,6 @@ router.route('/update/:id').put(shopOrderController.updateshop_order);
 router.route('/getShop/details/:id').get(shopOrderController.getShopDetailsByOrder);
 // data undelivered
 router.route('/undelivered/data/:page').get(shopOrderController.undelivered);
+router.route('/B2b/B2BManageOrders/:shopid').get(shopOrderController.B2BManageOrders);
+router.route('/B2BManageOrders/:orderId/:date').get(shopOrderController.getManageordersByOrderId);
 module.exports = router;

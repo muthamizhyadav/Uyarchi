@@ -3,7 +3,6 @@ const wardAdminGroupController = require('../../controllers/b2b.wardAdminGroup.c
 const returnStockWastage = require('../../middlewares/returnStockWastage');
 const router = express.Router();
 
-
 router.route('/craeteGroupId').post(wardAdminGroupController.createGroupOrder);
 
 router.route('/update/orderpicked/:deliveryExecutiveId').put(wardAdminGroupController.updateOrderPickedStatus);
@@ -22,32 +21,25 @@ router.route('/getDetails/groupIdFromOrderId/:id').get(wardAdminGroupController.
 
 router.route('/getdetails/product/:id').get(wardAdminGroupController.getproductDetailsPettyStock);
 
-
-// router.route('/getGroup/details').get(wardAdminGroupController.getGroupDetails);
-
+router.route('/getGroup/details').get(wardAdminGroupController.getGroupDetails);
 
 router.route('/getDeliveryExecutivestatus/:id').get(wardAdminGroupController.getDeliveryExecutivestatus);
-
 
 router.route('/get/billDetails/:id').get(wardAdminGroupController.getBillDetails);
 
 router.route('/get/assignedOnle/:page').get(wardAdminGroupController.getAssigned);
 
-
 router.route('/get/details/deliveryExecutive/:id/:page').get(wardAdminGroupController.getDeliveryOrderSeparate);
 
-router.route('/statusChange/:id').put(wardAdminGroupController.updateManageStatus)
+router.route('/statusChange/:id').put(wardAdminGroupController.updateManageStatus);
 
-router.route('/groupIdClick/:id').get(wardAdminGroupController.groupIdClick)
+router.route('/groupIdClick/:id').get(wardAdminGroupController.groupIdClick);
 
 router.route('/orderIdClickGetProduct/:id').get(wardAdminGroupController.orderIdClickGetProduct);
-
-
 
 router.route('/get/getDetailsAfterDeliveryCompletion/:id').get(wardAdminGroupController.getDetailsAfterDeliveryCompletion);
 
 router.route('/get/BillDetails/perOrder/:id').get(wardAdminGroupController.getBillDetailsPerOrder);
-
 
 router.route('/get/returnWDEtoWLE/:id/:page').get(wardAdminGroupController.getReturnWDEtoWLE);
 
@@ -57,13 +49,15 @@ router.route('/submit/pettyCashSubmit/:id').put(wardAdminGroupController.pettyCa
 
 router.route('/Update/orderCompleted/:id').put(wardAdminGroupController.orderCompleted);
 
-router.route('/update/Deliverystart/:id').put(wardAdminGroupController.Deliverystart);
+// router.route('/update/Deliverystart/:id').put(wardAdminGroupController.Deliverystart);
 
 router.route('/update/deliveryCompleted/:id').put(wardAdminGroupController.deliveryCompleted);
 
 router.route('/get/getPettyStockDetails/:id/:page').get(wardAdminGroupController.getPettyStockDetails);
 
-router.route('/get/getdetailsAboutPettyStockByGroupId/:id/:page').get(wardAdminGroupController.getdetailsAboutPettyStockByGroupId);
+router
+  .route('/get/getdetailsAboutPettyStockByGroupId/:id/:page')
+  .get(wardAdminGroupController.getdetailsAboutPettyStockByGroupId);
 
 // router.route('/upload/imgae/wastage/').post(wardAdminGroupController.uploadWastageImage);
 
@@ -75,12 +69,11 @@ router.route('/update/status/notAloocate/:id').put(wardAdminGroupController.upda
 
 router.route('/get/getPettyCashDetails/:id/:page').get(wardAdminGroupController.getPettyCashDetails);
 
-router.route('/get/AllGroup/details/:page').get(  wardAdminGroupController.getAllGroup);
+router.route('/get/AllGroup/details/:page').get(wardAdminGroupController.getAllGroup);
 
 // router.route("/update/pettycash/return/:id").put(wardAdminGroupController.updatePettyCashReturnStatus);
 
-// router.route("/craete/pettyStock/create/:id").put(wardAdminGroupController.pettyStockCreate);
-
+router.route('/craete/pettyStock/create/:id').put(wardAdminGroupController.pettyStockCreate);
 
 router.route('/get/cashDetails/fromDB/:id').get(wardAdminGroupController.getcashAmountViewFromDB);
 router.route('/submitPEttyCashGivenByWDE/submit/:id').put(wardAdminGroupController.submitPEttyCashGivenByWDE);
@@ -89,11 +82,13 @@ router.route('/submitPEttyCashGivenByWDE/submit/:id').put(wardAdminGroupControll
 
 router.route('/get/details/pettyCash/:id').get(wardAdminGroupController.getPEttyCashQuantity);
 
-router.route('/create/detatisl/About/pettyStock/returnstock').post(returnStockWastage.array('wastageImageUpload'),wardAdminGroupController.uploadWastageImage);
+router
+  .route('/create/detatisl/About/pettyStock/returnstock')
+  .post(returnStockWastage.array('wastageImageUpload'), wardAdminGroupController.uploadWastageImage);
 
 router.route('/get/return/stock/:id').get(wardAdminGroupController.returnStock);
 
-router.route('/create/pettyStock/:id').put(wardAdminGroupController.lastPettyStckAdd)
+router.route('/create/pettyStock/:id').put(wardAdminGroupController.lastPettyStckAdd);
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE

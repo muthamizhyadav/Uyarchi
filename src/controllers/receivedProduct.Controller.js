@@ -40,12 +40,13 @@ const uploadImageById = catchAsync(async (req, res) => {
   if (req.files) {
     let path = '';
     path = 'images/receivedproductimage/';
-    if (req.files.weighBridgeBillImg.length != 0) {
+    console.log(req.files.weighBridgeBillImg);
+    if (req.files.weighBridgeBillImg != null) {
       req.files.weighBridgeBillImg.map((e) => {
         receivedProduct.weighBridgeBillImg.push(path + e.filename);
       });
     }
-    if (req.files.supplierBillImg.length != 0) {
+    if (req.files.supplierBillImg != null) {
       req.files.supplierBillImg.map((e) => {
         receivedProduct.supplierBillImg.push(path + e.filename);
       });
@@ -100,6 +101,11 @@ const getreceivedProductBySupplier = catchAsync(async (req, res) => {
   res.send(receivedProduct);
 });
 
+const getSupplierDetailByGroupId = catchAsync(async (req, res) => {
+  const receicedProduct = await ReceivedProductService.getSupplierDetailByGroupId(req.params.id);
+  res.send(receicedProduct);
+});
+
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,
@@ -112,4 +118,5 @@ module.exports = {
   getSupplierBillsDetails,
   uploadImageById,
   getreceivedProductBySupplier,
+  getSupplierDetailByGroupId,
 };

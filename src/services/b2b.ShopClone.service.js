@@ -1146,7 +1146,7 @@ const getAllAttendanceCloneforMapView = async (id, date, fromtime, totime) => {
   let to;
   let from;
   const d = new Date(date);
-  date = moment(d).format('DD-MM-YYYY');
+  date = moment(d).format('YYYY-MM-DD');
   if (parseInt(fromtime) <= parseInt(totime)) {
     to = parseInt(fromtime);
     from = parseInt(totime);
@@ -1154,8 +1154,6 @@ const getAllAttendanceCloneforMapView = async (id, date, fromtime, totime) => {
     to = parseInt(totime);
     from = parseInt(fromtime);
   }
-  console.log('les', from);
-  console.log('ge', to);
   if (id != 'null' && date != 'null' && fromtime != 'null' && totime != 'null') {
     //  match=[{ Uid: { $eq: id }},{ date: { $eq: date }},{ time:{ $gte: from,$lte: to}},{active:{$eq:true}}];
     match = [

@@ -81,10 +81,10 @@ const getByIdGroupOrderDetails = catchAsync(async (req, res) => {
   res.send(sample);
 });
 
-// const getGroupDetails = catchAsync(async (req, res) => {
-//   const getDetails = await wardAdminGroupService.getGroupdetails();
-//   res.send(getDetails);
-// });
+const getGroupDetails = catchAsync(async (req, res) => {
+  const getDetails = await wardAdminGroupService.getGroupdetails();
+  res.send(getDetails);
+});
 
 const getDeliveryExecutivestatus = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.getstatus(req.params.id);
@@ -255,7 +255,7 @@ module.exports = {
   UpdateUnDeliveredStatus,
 
   getproductDetailsPettyStock,
-  // getGroupDetails,
+  getGroupDetails,
 
   getDeliveryExecutivestatus,
   getBillDetails,

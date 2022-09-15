@@ -514,7 +514,6 @@ const deleteShopOrderById = async (shopOrderId) => {
 const getAll = async () => {
   return ShopOrderClone.find();
 };
-21;
 
 const createOrderId = async (body) => {
   return ShopOrderClone.create(body);
@@ -552,6 +551,118 @@ const getShopDetailsByOrder = async (id) => {
   return values;
 };
 
+const B2BManageOrders = async (shopid) => {
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        _id: shopid,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        total: 1,
+        shopId: 1,
+        status: 1,
+        OrderId: 1,
+        date: 1,
+      },
+    },
+  ]);
+  return values;
+};
+
+const getManageordersByOrderId = async (orderId, date) => {
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        OrderId: orderId,
+        date: date,
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orders',
+      },
+    },
+    {
+      $unwind: '$orders',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'orders.productid',
+        foreignField: '_id',
+        as: 'products',
+      },
+    },
+    {
+      $unwind: '$products',
+    },
+    {
+      $project: {
+        productTitle: '$products.productTitle',
+        Qty: '$orders.quantity',
+        price: '$orders.priceperkg',
+        productId: '$products._id',
+        productOrdersCloneId: '$orders._id',
+        totalValue: { $multiply: ['$orders.quantity', '$orders.priceperkg'] },
+      },
+    },
+    // {
+    //   $group: { _id: null, Qty: { $sum: '$totalValue' } },
+    // },
+  ]);
+  let total = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        OrderId: orderId,
+        date: date,
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orders',
+      },
+    },
+    {
+      $unwind: '$orders',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'orders.productid',
+        foreignField: '_id',
+        as: 'products',
+      },
+    },
+    {
+      $unwind: '$products',
+    },
+    {
+      $project: {
+        productTitle: '$products.productTitle',
+        Qty: '$orders.quantity',
+        price: '$orders.priceperkg',
+        productId: '$products._id',
+        productOrdersCloneId: '$orders._id',
+        totalValue: { $multiply: ['$orders.quantity', '$orders.priceperkg'] },
+      },
+    },
+    {
+      $group: { _id: null, Qty: { $sum: '$totalValue' } },
+    },
+  ]);
+  let totalqty = total[0];
+  return { values: values, total: totalqty.Qty };
+};
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -582,4 +693,6 @@ module.exports = {
   createOrderId,
   getShopDetailsByOrder,
   undelivered,
+  B2BManageOrders,
+  getManageordersByOrderId,
 };
