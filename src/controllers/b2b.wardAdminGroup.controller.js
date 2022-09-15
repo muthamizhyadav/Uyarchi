@@ -55,7 +55,7 @@ const updateAllocate = catchAsync(async (req, res) => {
 });
 
 const updateDeliveryStarted = catchAsync(async (req, res) => {
-  const deleiveryStarted = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  const deleiveryStarted = await wardAdminGroupService.delevery_start(req.params.id, req.body);
   res.send(deleiveryStarted);
 });
 

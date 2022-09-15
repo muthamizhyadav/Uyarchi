@@ -126,6 +126,24 @@ const updateordercomplete = async (id, updateBody) => {
   });
   return Manage;
 };
+const delevery_start = async (id, updateBody) => {
+  let Manage = await getById(id);
+  if (!Manage) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  Manage = await wardAdminGroup.findByIdAndUpdate(
+    { _id: id },
+    {
+      manageDeliveryStatus: 'Delivery start',
+    },
+    { new: true }
+  );
+  let assign = await wardAdminGroupModel_ORDERS.find({ wardAdminGroupID: id });
+  assign.forEach(async (e) => {
+    await ShopOrderClone.findByIdAndUpdate({ _id: e.orderId }, { status: 'Delivery start' }, { new: true });
+  });
+  return Manage;
+};
 
 const updateManageStatuscashcollect = async (id, updateBody) => {
   let Manage = await getById(id);
@@ -1425,4 +1443,5 @@ module.exports = {
   updateManageStatuscollected,
   updateManageStatuscashcollect,
   updateordercomplete,
+  delevery_start,
 };
