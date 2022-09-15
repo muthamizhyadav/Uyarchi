@@ -1169,20 +1169,24 @@ const pettyStockCreate = async (id, pettyStockBody) => {
   console.log(wardadmin);
   let createPetty = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
-    { pettyStock: product, pettyStockAllocateStatus: 'Allocated' },
+    { pettyStockAllocateStatus: 'Allocated' },
     { new: true }
   );
   product.forEach(async (e) => {
     pettyStockModel.create({
       wardAdminId: createPetty.id,
-      product: e.productName,
+      productName: e.productName,
+      productId: e.id,
+      groupId: id,
       QTY: e.QTY,
       pettyStock: e.pettyStock,
-      totalQtyIncludingPettyStock: e.totalQtyIncludingPettyStock,
+      totalQtyIncludingPettyStock: e.QTY + e.pettyStock,
+      date: moment.format('DD-MM-YYYY'),
+      time: moment.format('hh:mm a'),
+      created: moment(),
     });
   });
-  let afterUpdate = await wardAdminGroup.findById(id);
-  return afterUpdate;
+  return createPetty;
 };
 
 const getcashAmountViewFromDB = async (id) => {
