@@ -117,7 +117,7 @@ const updateManageStatuscashcollect = async (id, updateBody) => {
   Manage = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
     {
-      pettyStockAllocateStatus: 'petty cash picked',
+      manageDeliveryStatus: 'petty cash picked',
     },
     { new: true }
   );
