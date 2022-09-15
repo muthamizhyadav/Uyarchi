@@ -212,6 +212,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   RedeliveredTime:{
     type:Number,
   },
+  UnDeliveredStatus:{
+    type:String,
+    default: 'Pending',
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
