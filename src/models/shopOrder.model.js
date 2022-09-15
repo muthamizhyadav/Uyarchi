@@ -203,6 +203,15 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   reason: {
     type: String,
   },
+  rbRefund:{
+    type:String,
+  },
+  RedeliveredDate:{
+    type:String,
+  },
+  RedeliveredTime:{
+    type:Number,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);

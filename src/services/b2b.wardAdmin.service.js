@@ -1007,6 +1007,7 @@ const countStatus = async () => {
     rejectedStatusCount: rejectedStatusCount,
   };
 };
+
 module.exports = {
   getdetails,
   getproductdetails,

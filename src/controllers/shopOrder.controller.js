@@ -55,6 +55,12 @@ const getAllProductOrderClone = catchAsync(async (req, res) => {
   res.send(productOrderClone);
 });
 
+// undelivered
+const undelivered = catchAsync(async (req, res) => {
+  const data = await shopOrderService.undelivered(req.params.page);
+  res.send(data);
+});
+
 const getProductOrderCloneById = catchAsync(async (req, res) => {
   const productOrderClone = await shopOrderService.getProductOrderCloneById(req.params.id);
   res.send(productOrderClone);
@@ -194,4 +200,5 @@ module.exports = {
   updateshop_order,
   createOrderId,
   getShopDetailsByOrder,
+  undelivered,
 };

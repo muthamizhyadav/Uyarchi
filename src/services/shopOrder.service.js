@@ -184,6 +184,118 @@ const getShopOrderCloneById = async (id) => {
   return Values;
 };
 
+const undelivered = async (page) =>{
+  let data = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{customerDeliveryStatus: { $eq:"UnDelivered"}}],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'shopData.Strid',
+        foreignField: '_id',
+        as: 'streetsData',
+      },
+    },
+    {
+      $unwind: '$streetsData',
+    },
+    {
+      $project: {
+        _id: 1,
+        OrderId: 1,
+        payType:1,
+        street:'$streetsData.street',
+        type:'$shopData.type',
+        SName:'$shopData.SName',
+        name:'$b2busersData.name',  
+      },
+    },
+   {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
+  ])
+  let total = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{customerDeliveryStatus: { $eq:"UnDelivered"}}],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'shopData.Strid',
+        foreignField: '_id',
+        as: 'streetsData',
+      },
+    },
+    {
+      $unwind: '$streetsData',
+    },
+    {
+      $project: {
+        _id: 1,
+        OrderId: 1,
+        payType:1,
+        street:'$streetsData.street',
+        type:'$shopData.type',
+        SName:'$shopData.SName',
+        name:'$b2busersData.name',  
+      },
+    },
+  ])
+  return { data:data , total:total};
+}
+
 const updateShopOrderCloneById = async (id, updatebody) => {
   let shoporderClone = await ShopOrderClone.findById(id);
   if (!shoporderClone) {
@@ -469,4 +581,5 @@ module.exports = {
   getAll,
   createOrderId,
   getShopDetailsByOrder,
+  undelivered,
 };
