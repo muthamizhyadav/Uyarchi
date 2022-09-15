@@ -26,6 +26,11 @@ const updatePickedPettyStock = catchAsync(async (req, res) => {
   res.send(pickedPettyStock);
 });
 
+const updateManageStatuscashcollect = catchAsync(async (req, res) => {
+  const pickedPettyStock = await wardAdminGroupService.updateManageStatuscashcollect(req.params.id, req.body);
+  res.send(pickedPettyStock);
+});
+
 const updatePickedPettyCash = catchAsync(async (req, res) => {
   const pickedPettyCash = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
   res.send(pickedPettyCash);
@@ -313,4 +318,5 @@ module.exports = {
   updateDontAllocatecash,
   updatePickedPettystockcollected,
   // createImageUploadAndDetails,
+  updateManageStatuscashcollect,
 };

@@ -109,6 +109,21 @@ const updateManageStatus = async (id, updateBody) => {
   return Manage;
 };
 
+const updateManageStatuscashcollect = async (id, updateBody) => {
+  let Manage = await getById(id);
+  if (!Manage) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  Manage = await wardAdminGroup.findByIdAndUpdate(
+    { _id: id },
+    {
+      pettyStockAllocateStatus: 'petty cash picked',
+    },
+    { new: true }
+  );
+  return Manage;
+};
+
 const updateManageStatuscollected = async (id, updateBody) => {
   let Manage = await getById(id);
   if (!Manage) {
@@ -1390,4 +1405,5 @@ module.exports = {
   lastPettyStckAdd,
   updateManageStatuscash,
   updateManageStatuscollected,
+  updateManageStatuscashcollect,
 };

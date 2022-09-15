@@ -10,9 +10,10 @@ router.route('/update/orderpicked/:deliveryExecutiveId').put(wardAdminGroupContr
 router.route('/update/pickedPettyStock/:id').put(wardAdminGroupController.updatePickedPettyStock);
 
 router.route('/update/pickedPettyCash/:id').put(wardAdminGroupController.updatePickedPettyCash);
-
 // new Api
 router.route('/update/pickedPettystock/collected/:id').put(wardAdminGroupController.updatePickedPettystockcollected);
+// new Api
+router.route('/update/pickedPettycash/collected/:id').put(wardAdminGroupController.updateManageStatuscashcollect);
 
 router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
 
