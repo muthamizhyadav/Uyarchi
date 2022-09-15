@@ -97,12 +97,13 @@ const getById = async (id) => {
 const updateManageStatus = async (id, updateBody) => {
   let Manage = await getById(id);
   if (!Manage) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Data not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
   Manage = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
-    updateBody,
-    // { status: 'Delivery start', manageDeliveryStatus: 'Delivery start' },
+    {
+      pettyStockAllocateStatus: 'Un Allocate',
+    },
     { new: true }
   );
   return Manage;
