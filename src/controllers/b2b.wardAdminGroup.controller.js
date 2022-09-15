@@ -65,12 +65,18 @@ const updatePettyCashReturnStatus = catchAsync(async (req, res) => {
 });
 
 const updateDeliveryCompleted = catchAsync(async (req, res) => {
-  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, { status: 'Delivered' });
+  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, {
+    status: 'Delivered',
+    customerDeliveryStatus: 'Delivered',
+  });
   res.send(deliveryCompleted);
 });
 
 const UpdateUnDeliveredStatus = catchAsync(async (req, res) => {
-  const deliveryStatus = await wardAdminGroupService.updateOrderStatus(req.params.id, { status: 'UnDelivered' });
+  const deliveryStatus = await wardAdminGroupService.updateOrderStatus(req.params.id, {
+    status: 'UnDelivered',
+    customerDeliveryStatus: 'UnDelivered',
+  });
   res.send(deliveryStatus);
 });
 
