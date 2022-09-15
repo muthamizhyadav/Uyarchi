@@ -435,7 +435,6 @@ const wardloadExecutivePacked = async (page) => {
       },
     },
     { $unwind: '$wardData' },
-
     {
       $lookup: {
         from: 'productorderclones',
@@ -650,6 +649,37 @@ const getAssigned_details = async () => {
       $unwind: '$deliveryexecute',
     },
     {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: '$unit', value: { $sum: '$finalQuantity' } },
+                },
+              ],
+              as: 'productorderclones',
+            },
+          },
+
+          {
+            $project: {
+              productorderclones: '$productorderclones',
+
+              _id: 1,
+            },
+          },
+        ],
+        as: 'orderassigns',
+      },
+    },
+    {
       $project: {
         _id: 1,
         status: 1,
@@ -659,6 +689,7 @@ const getAssigned_details = async () => {
         assignDate: 1,
         assignTime: 1,
         deliveryexecuteName: '$deliveryexecute.name',
+        orderassigns: '$orderassigns',
       },
     },
   ]);
