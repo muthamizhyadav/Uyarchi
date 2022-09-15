@@ -108,6 +108,20 @@ const updateManageStatus = async (id, updateBody) => {
   );
   return Manage;
 };
+const updateManageStatuscash = async (id, updateBody) => {
+  let Manage = await getById(id);
+  if (!Manage) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  Manage = await wardAdminGroup.findByIdAndUpdate(
+    { _id: id },
+    {
+      pettyCashAllocateStatus: 'Un Allocate',
+    },
+    { new: true }
+  );
+  return Manage;
+};
 
 const updateShopOrderCloneById = async (id, updatebody) => {
   let shoporderClone = await ShopOrderClone.findById(id);
@@ -397,7 +411,7 @@ const pettyCashSubmit = async (id, updateBody) => {
   }
   deliveryStatus = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
-    { pettyCash: updateBody.pettyCash, pettyCashAllocateStatus: updateBody.pettyCashAllocateStatus },
+    { pettyCash: updateBody.pettyCash, pettyCashAllocateStatus: 'Allocated' },
     { new: true }
   );
   return deliveryStatus;
@@ -1357,4 +1371,5 @@ module.exports = {
   // createProduct,
 
   lastPettyStckAdd,
+  updateManageStatuscash,
 };

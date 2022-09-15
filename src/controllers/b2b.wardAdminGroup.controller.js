@@ -35,7 +35,10 @@ const updateDontAllocate = catchAsync(async (req, res) => {
   const notAloocate = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
   res.send(notAloocate);
 });
-
+const updateDontAllocatecash = catchAsync(async (req, res) => {
+  const notAloocate = await wardAdminGroupService.updateManageStatuscash(req.params.id, req.body);
+  res.send(notAloocate);
+});
 const updateAllocate = catchAsync(async (req, res) => {
   const notAloocate = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
   res.send(notAloocate);
@@ -238,8 +241,6 @@ const lastPettyStckAdd = catchAsync(async (req, res) => {
   res.send(returnStock);
 });
 
-
-
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -304,6 +305,6 @@ module.exports = {
   returnStock,
 
   lastPettyStckAdd,
-
+  updateDontAllocatecash,
   // createImageUploadAndDetails,
 };
