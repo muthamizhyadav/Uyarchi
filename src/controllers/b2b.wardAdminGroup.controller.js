@@ -55,7 +55,7 @@ const updateAllocate = catchAsync(async (req, res) => {
 });
 
 const updateDeliveryStarted = catchAsync(async (req, res) => {
-  const deleiveryStarted = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  const deleiveryStarted = await wardAdminGroupService.delevery_start(req.params.id, req.body);
   res.send(deleiveryStarted);
 });
 
@@ -65,12 +65,18 @@ const updatePettyCashReturnStatus = catchAsync(async (req, res) => {
 });
 
 const updateDeliveryCompleted = catchAsync(async (req, res) => {
-  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, req.body);
+  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, {
+    status: 'Delivered',
+    customerDeliveryStatus: 'Delivered',
+  });
   res.send(deliveryCompleted);
 });
 
 const UpdateUnDeliveredStatus = catchAsync(async (req, res) => {
-  const deliveryStatus = await wardAdminGroupService.updateOrderStatus(req.params.id, 'UnDelivered', req.body);
+  const deliveryStatus = await wardAdminGroupService.updateOrderStatus(req.params.id, {
+    status: 'UnDelivered',
+    customerDeliveryStatus: 'UnDelivered',
+  });
   res.send(deliveryStatus);
 });
 
@@ -81,6 +87,11 @@ const getproductDetailsPettyStock = catchAsync(async (req, res) => {
 
 const updateManageStatus = catchAsync(async (req, res) => {
   const data = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  res.send(data);
+});
+
+const updateManagecompleted = catchAsync(async (req, res) => {
+  const data = await wardAdminGroupService.updateordercomplete(req.params.id, req.body);
   res.send(data);
 });
 
@@ -319,4 +330,5 @@ module.exports = {
   updatePickedPettystockcollected,
   // createImageUploadAndDetails,
   updateManageStatuscashcollect,
+  updateManagecompleted,
 };

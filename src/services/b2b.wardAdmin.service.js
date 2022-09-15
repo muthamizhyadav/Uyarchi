@@ -1034,7 +1034,9 @@ const getAppOrModifiedStatus = async (limit, page, status) => {
   if (status != 'null') {
     statusMatch = {
       // status: { $eq: status }
-      status: { $in: ['Approved', 'Modified', 'Packed', 'Assigned'] },
+      status: {
+        $in: ['Approved', 'Modified', 'Packed', 'Assigned', 'Order Picked', 'Delivery start', 'Delivered', 'UnDelivered'],
+      },
     };
   }
   let values = await ShopOrderClone.aggregate([

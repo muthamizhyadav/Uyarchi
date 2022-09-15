@@ -38,6 +38,9 @@ router.route('/get/details/deliveryExecutive/:id/:page').get(wardAdminGroupContr
 
 router.route('/statusChange/:id').put(wardAdminGroupController.updateManageStatus);
 
+//  new API
+router.route('/statusChange/completed/:id').put(wardAdminGroupController.updateManagecompleted);
+
 router.route('/groupIdClick/:id').get(wardAdminGroupController.groupIdClick);
 
 router.route('/orderIdClickGetProduct/:id').get(wardAdminGroupController.orderIdClickGetProduct);
