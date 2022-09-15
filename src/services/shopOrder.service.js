@@ -294,7 +294,7 @@ const undelivered = async (page) =>{
       },
     },
   ])
-  return { data:data , total:total};
+  return { data:data , total:total.length};
 }
 
 const updateShopOrderCloneById = async (id, updatebody) => {
