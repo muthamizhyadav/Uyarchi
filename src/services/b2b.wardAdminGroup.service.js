@@ -1401,6 +1401,65 @@ const lastPettyStckAdd = async (id, updateBody) => {
   return product;
 };
 
+
+const getShopDetailsForProj = async (id) =>{
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopData'
+      }
+    },
+    {
+      $unwind:"$b2bshopData"
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'b2bshopData.Strid',
+        foreignField: '_id',
+        as: 'StridData'
+      }
+    },
+    {
+      $unwind:"$StridData"
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'b2bshopData.Wardid',
+        foreignField: '_id',
+        as: 'wardData'
+      }
+    },
+    {
+      $unwind:"$wardData"
+    },
+    {
+      $project: {
+        Payment:1,
+        OrderId:1,
+        shopType:"$b2bshopData.type",
+        shopName:"$b2bshopData.SName",
+        SOwner:"$b2bshopData.SOwner",
+        mobile:"$b2bshopData.mobile",
+        address:"$b2bshopData.address",
+        street:"$StridData.street",
+        ward:"$wardData.ward"
+
+      }
+    }
+  ]);
+  return values;
+}
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -1446,4 +1505,6 @@ module.exports = {
   updateManageStatuscashcollect,
   updateordercomplete,
   delevery_start,
+
+  getShopDetailsForProj,
 };

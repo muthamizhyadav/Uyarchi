@@ -101,6 +101,9 @@ router.route('/get/return/stock/:id').get(wardAdminGroupController.returnStock);
 
 // checked Modified
 router.route('/create/pettyStock/:id').put(wardAdminGroupController.lastPettyStckAdd);
+
+
+router.route('/get/shop/details/:id').get(wardAdminGroupController.getShopDetailsForProj);
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE

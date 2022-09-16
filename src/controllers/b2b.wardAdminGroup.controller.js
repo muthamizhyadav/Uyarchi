@@ -262,6 +262,11 @@ const lastPettyStckAdd = catchAsync(async (req, res) => {
   res.send(returnStock);
 });
 
+const getShopDetailsForProj = catchAsync(async (req, res) => {
+  const getShopDetailsForProj = await wardAdminGroupService.getShopDetailsForProj(req.params.id);
+  res.send(getShopDetailsForProj);
+});
+
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -331,4 +336,7 @@ module.exports = {
   // createImageUploadAndDetails,
   updateManageStatuscashcollect,
   updateManagecompleted,
+
+
+  getShopDetailsForProj,
 };
