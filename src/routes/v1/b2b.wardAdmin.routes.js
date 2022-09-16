@@ -3,7 +3,8 @@ const wardAdminController = require('../../controllers/b2b.wardAdmin.controller'
 const router = express.Router();
 router.route('/create/data').post(wardAdminController.createdata);
 // checked
-router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusMatchingAppOrModi);
+// router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusMatchingAppOrModi);
+router.route('/getDetails/:type/:time/:status/:limit/:page').get(wardAdminController.statusMatchingAppOrModi);
 
 router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 // checked modified
@@ -35,6 +36,7 @@ router.route('/wardloadingExecutive/updateAssign/:id').put(wardAdminController.u
 router.route('/wardloadingExecutive/updateProductBilled/:id').put(wardAdminController.updateBilled);
 // checked
 router.route('/wardloadingExecutive/getdetails/:page').get(wardAdminController.wardloadExecutive);
+router.route('/wardloadingExecutive/getdetails/afterpacked/:status/:date/:page').get(wardAdminController.wardloadExecutivepacked);
 
 router.route('/wardloadingExecutive/getPackedProductDetails/:page').get(wardAdminController.wardloadExecutivePacked);
 

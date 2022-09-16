@@ -290,16 +290,19 @@ const updateRejected = async (body) => {
 
 //WARD LOADING EXECUTIVE
 
-const wardloadExecutive = async (page) => {
+const wardloadExecutivepacked = async (status, date, page) => {
+  if (status == 'null') {
+  } else {
+  }
   let data = await ShopOrderClone.aggregate([
     {
       $match: {
         $or: [
           { status: { $eq: 'Approved' } },
           { status: { $eq: 'Modified' } },
-          { status: { $eq: 'Packed' } },
-          { status: { $eq: 'Billed' } },
-          { status: { $eq: 'Assigned' } },
+          // { status: { $eq: 'Packed' } },
+          // { status: { $eq: 'Billed' } },
+          // { status: { $eq: 'Assigned' } },
         ],
       },
     },
@@ -333,9 +336,81 @@ const wardloadExecutive = async (page) => {
         $or: [
           { status: { $eq: 'Approved' } },
           { status: { $eq: 'Modified' } },
-          { status: { $eq: 'Packed' } },
-          { status: { $eq: 'Billed' } },
-          { status: { $eq: 'Assigned' } },
+          // { status: { $eq: 'Packed' } },
+          // { status: { $eq: 'Billed' } },
+          // { status: { $eq: 'Assigned' } },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId', //Uid
+        foreignField: '_id', //Uid
+        as: 'b2bshopclonesData',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesData',
+    },
+    {
+      $project: {
+        shopId: 1,
+        status: 1,
+        OrderId: 1,
+        SName: '$b2bshopclonesData.SName',
+        type: '$b2bshopclonesData.type',
+      },
+    },
+  ]);
+  return { data: data, total: total.length };
+};
+const wardloadExecutive = async (page) => {
+  let data = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $or: [
+          { status: { $eq: 'Approved' } },
+          { status: { $eq: 'Modified' } },
+          // { status: { $eq: 'Packed' } },
+          // { status: { $eq: 'Billed' } },
+          // { status: { $eq: 'Assigned' } },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId', //Uid
+        foreignField: '_id', //Uid
+        as: 'b2bshopclonesData',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesData',
+    },
+    {
+      $project: {
+        shopId: 1,
+        status: 1,
+        completeStatus: 1,
+        OrderId: 1,
+        SName: '$b2bshopclonesData.SName',
+        type: '$b2bshopclonesData.type',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $or: [
+          { status: { $eq: 'Approved' } },
+          { status: { $eq: 'Modified' } },
+          // { status: { $eq: 'Packed' } },
+          // { status: { $eq: 'Billed' } },
+          // { status: { $eq: 'Assigned' } },
         ],
       },
     },
@@ -696,8 +771,21 @@ const getAssigned_details = async () => {
   return values;
 };
 
-const getdetailsDataStatusOdered = async (limit, page, status) => {
-  console.log(status);
+const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
+  // console.log(status);
+  let today = moment().format('yyyy-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  console.log(yesterday);
+  let dateMatch = { date: { $eq: today } };
+  let typeMatch = { delivery_type: { $eq: type } };
+  if (type == 'All') {
+    typeMatch = { delivery_type: { $in: ['IMD', 'NDD'] } };
+    dateMatch = { date: { $in: [today, yesterday] } };
+  }
+  if (type == 'NDD') {
+    dateMatch = { date: { $eq: yesterday } };
+  }
+  // console.log(dateMatch);
   let statusMatch;
   if (status != 'null') {
     statusMatch = {
@@ -707,7 +795,7 @@ const getdetailsDataStatusOdered = async (limit, page, status) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [statusMatch],
+        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
       },
     },
     {
@@ -770,7 +858,7 @@ const getdetailsDataStatusOdered = async (limit, page, status) => {
     },
     {
       $match: {
-        $and: [statusMatch],
+        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
       },
     },
     {
@@ -803,20 +891,32 @@ const getdetailsDataStatusOdered = async (limit, page, status) => {
   ]);
   return { values: values, total: total.length };
 };
-
-const getdetailsDataStatusAcknowledged = async (limit, page, status) => {
-  console.log(status);
+// req.params.type, req.params.time, req.params.status, req.params.limit, req.params.page;
+const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page) => {
+  let today = moment().format('yyyy-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  console.log(yesterday);
+  let dateMatch = { date: { $eq: today } };
+  let typeMatch = { delivery_type: { $eq: type } };
+  if (type == 'All') {
+    typeMatch = { delivery_type: { $in: ['IMD', 'NDD'] } };
+    dateMatch = { date: { $in: [today, yesterday] } };
+  }
+  if (type == 'NDD') {
+    dateMatch = { date: { $eq: yesterday } };
+  }
+  // console.log(dateMatch);
   let statusMatch;
   if (status != 'null') {
     statusMatch = {
       status: { $eq: status },
     };
   }
-  console.log(status);
+
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [statusMatch],
+        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
       },
     },
     {
@@ -884,7 +984,7 @@ const getdetailsDataStatusAcknowledged = async (limit, page, status) => {
     },
     {
       $match: {
-        $and: [statusMatch],
+        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
       },
     },
     {
@@ -919,9 +1019,20 @@ const getdetailsDataStatusAcknowledged = async (limit, page, status) => {
   return { values: values, total: total.length };
 };
 
-const getdetailsDataStatusRejected = async (limit, page, status) => {
-  let currentDate = moment().format('YYYY-MM-DD');
-  console.log(status);
+const getdetailsDataStatusRejected = async (type, time, status, limit, page) => {
+  let today = moment().format('yyyy-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  console.log(yesterday);
+  let dateMatch = { date: { $eq: today } };
+  let typeMatch = { delivery_type: { $eq: type } };
+  if (type == 'All') {
+    typeMatch = { delivery_type: { $in: ['IMD', 'NDD'] } };
+    dateMatch = { date: { $in: [today, yesterday] } };
+  }
+  if (type == 'NDD') {
+    dateMatch = { date: { $eq: yesterday } };
+  }
+  // console.log(dateMatch);
   let statusMatch;
   if (status != 'null') {
     statusMatch = {
@@ -931,7 +1042,7 @@ const getdetailsDataStatusRejected = async (limit, page, status) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [statusMatch, { date: { $eq: currentDate } }],
+        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
       },
     },
     {
@@ -997,7 +1108,7 @@ const getdetailsDataStatusRejected = async (limit, page, status) => {
     },
     {
       $match: {
-        $and: [statusMatch],
+        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
       },
     },
     {
@@ -1031,9 +1142,20 @@ const getdetailsDataStatusRejected = async (limit, page, status) => {
   ]);
   return { values: values, total: total.length };
 };
-const getAppOrModifiedStatus = async (limit, page, status) => {
-  let currentDate = moment().format('YYYY-MM-DD');
-  // console.log(currentDate);
+const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
+  let today = moment().format('yyyy-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  console.log(yesterday);
+  let dateMatch = { date: { $eq: today } };
+  let typeMatch = { delivery_type: { $eq: type } };
+  if (type == 'All') {
+    typeMatch = { delivery_type: { $in: ['IMD', 'NDD'] } };
+    dateMatch = { date: { $in: [today, yesterday] } };
+  }
+  if (type == 'NDD') {
+    dateMatch = { date: { $eq: yesterday } };
+  }
+
   let statusMatch;
   if (status != 'null') {
     statusMatch = {
@@ -1046,7 +1168,7 @@ const getAppOrModifiedStatus = async (limit, page, status) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [statusMatch, { date: { $eq: currentDate } }],
+        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
       },
     },
     {
@@ -1117,7 +1239,7 @@ const getAppOrModifiedStatus = async (limit, page, status) => {
     },
     {
       $match: {
-        $and: [statusMatch, { date: { $eq: currentDate } }],
+        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
       },
     },
     {
@@ -1192,4 +1314,5 @@ module.exports = {
   updatePackedMultiSelect,
   updateStatusrejectOrModified,
   updateStatusModifiedOrModified,
+  wardloadExecutivepacked,
 };
