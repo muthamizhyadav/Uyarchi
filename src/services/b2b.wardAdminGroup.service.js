@@ -1443,6 +1443,18 @@ const getShopDetailsForProj = async (id) =>{
       $unwind:"$wardData"
     },
     {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'deliveryExecutivename',
+
+      }
+    },
+    {
+      $unwind:'$deliveryExecutivename'
+    },
+    {
       $project: {
         Payment:1,
         OrderId:1,
@@ -1452,7 +1464,8 @@ const getShopDetailsForProj = async (id) =>{
         mobile:"$b2bshopData.mobile",
         address:"$b2bshopData.address",
         street:"$StridData.street",
-        ward:"$wardData.ward"
+        ward:"$wardData.ward",
+        deliveryExecutivename: "$deliveryExecutivename.name"
 
       }
     }
