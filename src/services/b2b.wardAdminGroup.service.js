@@ -639,6 +639,7 @@ const getBillDetails = async (id) => {
                   $project: {
                     _id: 1,
                     OrderId: 1,
+                    Payment:1,
                     products: '$products',
                     b2bshopclones: '$b2bshopclones',
                     SName: '$b2bshopclones.SName',
@@ -659,6 +660,7 @@ const getBillDetails = async (id) => {
               _id: 1,
               totalAmount: '$shopDatas.totalAmount',
               OrderId: '$shopDatasDetails.OrderId',
+              Payment: '$shopDatasDetails.Payment',
               product: '$shopDatasDetails.products',
 
               SName: '$shopDatasDetails.SName',
