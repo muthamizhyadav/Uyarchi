@@ -919,6 +919,7 @@ const getdetailsDataStatusAcknowledged = async (limit, page, status) => {
 };
 
 const getdetailsDataStatusRejected = async (limit, page, status) => {
+  let currentDate = moment().format('YYYY-MM-DD');
   console.log(status);
   let statusMatch;
   if (status != 'null') {
@@ -929,7 +930,7 @@ const getdetailsDataStatusRejected = async (limit, page, status) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [statusMatch],
+        $and: [statusMatch, { date: { $eq: currentDate } }],
       },
     },
     {
