@@ -1204,7 +1204,7 @@ const getAllGroup = async (page) => {
   let values = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ manageDeliveryStatus: { $eq: 'Delivery Complete' } }],
+        $and: [{ manageDeliveryStatus: { $eq: 'Delivery Completed' } }],
       },
     },
     {
