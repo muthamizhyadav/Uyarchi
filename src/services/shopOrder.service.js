@@ -228,7 +228,8 @@ const undelivered = async (page) =>{
       $project: {
         _id: 1,
         OrderId: 1,
-        payType:1,
+        Payment:1,
+        UnDeliveredStatus:1,
         street:'$streetsData.street',
         type:'$shopData.type',
         SName:'$shopData.SName',
