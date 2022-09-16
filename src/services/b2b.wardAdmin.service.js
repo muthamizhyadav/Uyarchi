@@ -1029,7 +1029,8 @@ const getdetailsDataStatusRejected = async (limit, page, status) => {
   return { values: values, total: total.length };
 };
 const getAppOrModifiedStatus = async (limit, page, status) => {
-  console.log(status);
+  let currentDate = moment().format('YYYY-MM-DD');
+  // console.log(currentDate);
   let statusMatch;
   if (status != 'null') {
     statusMatch = {
@@ -1042,7 +1043,7 @@ const getAppOrModifiedStatus = async (limit, page, status) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [statusMatch],
+        $and: [statusMatch, { date: { $eq: currentDate } }],
       },
     },
     {
@@ -1098,6 +1099,7 @@ const getAppOrModifiedStatus = async (limit, page, status) => {
         // UserName: '$userData.name',
         // orderId: '$orderData.orderId',
         totalItems: { $size: '$orderData' },
+        created: 1,
       },
     },
     { $skip: parseInt(limit) * page },
@@ -1112,7 +1114,7 @@ const getAppOrModifiedStatus = async (limit, page, status) => {
     },
     {
       $match: {
-        $and: [statusMatch],
+        $and: [statusMatch, { date: { $eq: currentDate } }],
       },
     },
     {
