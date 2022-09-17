@@ -65,7 +65,7 @@ const updatePettyCashReturnStatus = catchAsync(async (req, res) => {
 });
 
 const updateDeliveryCompleted = catchAsync(async (req, res) => {
-  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, {
+  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id,req.body, {
     status: 'Delivered',
     customerDeliveryStatus: 'Delivered',
   });

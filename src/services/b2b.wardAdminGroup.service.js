@@ -1139,33 +1139,44 @@ const getPettyCashDetails = async (id, page) => {
       },
     },
 
-    { $unwind: '$Orderdatas' },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        as: 'orderassignsdatas',
+      },
+    },
+    { $unwind: '$orderassignsdatas' },
 
     {
       $lookup: {
         from: 'shoporderclones',
-        localField: 'Orderdatas.OrderId',
-        foreignField: 'OrderId',
-        as: 'datas',
+        localField: 'orderassignsdatas.orderId',
+        foreignField: '_id',
+        as: 'shoporderclonesdatas',
       },
     },
-    { $unwind: '$datas' },
-    { $skip: 10 * page },
-    { $limit: 10 },
+    { $unwind: '$shoporderclonesdatas' },
 
     {
       $project: {
         groupId: 1,
-        orderId: '$datas.OrderId',
-        Amount: '$datas.overallTotal',
-        shopType: '$Orderdatas.type',
-        shopName: '$Orderdatas.shopName',
-        Deliverystatus: '$datas.customerDeliveryStatus',
-        FinalPaymentType: '$datas.payType',
-        pettyCashApporvedStatus: '$datas.pettyCashReceiveStatus',
-        shopordercloneID: '$datas._id',
+        orderId: '$shoporderclonesdatas.OrderId',
+        Amount: '$shoporderclonesdatas.overallTotal',
+        // shopType: '$Orderdatas.type',
+        // shopName: '$Orderdatas.shopName',
+        Deliverystatus: '$shoporderclonesdatas.customerDeliveryStatus',
+        FinalPaymentType: '$shoporderclonesdatas.Payment',
+        pettyCashApporvedStatus: '$shoporderclonesdatas.pettyCashReceiveStatus',
+        // shopordercloneID: '$datas._id',
       },
     },
+    
+    { $skip: 10 * page },
+    { $limit: 10 },
+
+    
   ]);
   let total = await wardAdminGroup.aggregate([
     {
