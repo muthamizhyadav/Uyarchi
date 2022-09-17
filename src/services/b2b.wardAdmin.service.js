@@ -779,8 +779,18 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
   let dateMatch = { date: { $eq: today } };
   let typeMatch = { delivery_type: { $eq: type } };
   if (type == 'All') {
-    typeMatch = { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } };
-    dateMatch = { date: { $eq: today }, delivery_type: { $eq: 'IMD' } };
+    typeMatch = {
+      $or: [
+        { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } },
+        { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
+      ],
+    };
+    dateMatch = {
+      $or: [
+        { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } },
+        { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
+      ],
+    };
   }
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
@@ -899,8 +909,18 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
   let dateMatch = { date: { $eq: today } };
   let typeMatch = { delivery_type: { $eq: type } };
   if (type == 'All') {
-    typeMatch = { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } };
-    dateMatch = { date: { $eq: today }, delivery_type: { $eq: 'IMD' } };
+    typeMatch = {
+      $or: [
+        { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } },
+        { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
+      ],
+    };
+    dateMatch = {
+      $or: [
+        { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } },
+        { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
+      ],
+    };
   }
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
@@ -1026,8 +1046,18 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
   let dateMatch = { date: { $eq: today } };
   let typeMatch = { delivery_type: { $eq: type } };
   if (type == 'All') {
-    typeMatch = { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } };
-    dateMatch = { date: { $eq: today }, delivery_type: { $eq: 'IMD' } };
+    typeMatch = {
+      $or: [
+        { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } },
+        { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
+      ],
+    };
+    dateMatch = {
+      $or: [
+        { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } },
+        { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
+      ],
+    };
   }
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
@@ -1149,12 +1179,25 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
   let dateMatch = { date: { $eq: today } };
   let typeMatch = { delivery_type: { $eq: type } };
   if (type == 'All') {
-    typeMatch = { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } };
-    dateMatch = { date: { $eq: today }, delivery_type: { $eq: 'IMD' } };
+    typeMatch = {
+      $or: [
+        { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } },
+        { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
+      ],
+    };
+    dateMatch = {
+      $or: [
+        { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } },
+        { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
+      ],
+    };
   }
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
   }
+  // console.log(typeMatch);
+  // console.log(dateMatch);
+  // console.log({ time_of_delivery: { $eq: time } });
 
   let statusMatch;
   if (status != 'null') {
@@ -1165,6 +1208,8 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
       },
     };
   }
+  console.log(statusMatch);
+
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
