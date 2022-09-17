@@ -1158,6 +1158,31 @@ const getPettyCashDetails = async (id, page) => {
       },
     },
     { $unwind: '$shoporderclonesdatas' },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'shoporderclonesdatas._id',
+        foreignField:'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: {
+                  $add: ['$finalQuantity', '$finalPricePerKg'],
+                },
+              },
+            },
+          },
+        ],
+
+        as: 'productorderclonesData',
+      }
+    },
+    {
+      $unwind: "$productorderclonesData"
+    },
+
 
     {
       $project: {
@@ -1167,9 +1192,10 @@ const getPettyCashDetails = async (id, page) => {
         // shopType: '$Orderdatas.type',
         // shopName: '$Orderdatas.shopName',
         Deliverystatus: '$shoporderclonesdatas.customerDeliveryStatus',
+        initialPaymentType: "$shoporderclonesdatas.payType",
         FinalPaymentType: '$shoporderclonesdatas.Payment',
         pettyCashApporvedStatus: '$shoporderclonesdatas.pettyCashReceiveStatus',
-        // shopordercloneID: '$datas._id',
+        Amount: "$productorderclonesData.amount",
       },
     },
     
@@ -1185,17 +1211,49 @@ const getPettyCashDetails = async (id, page) => {
       },
     },
 
-    { $unwind: '$Orderdatas' },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        as: 'orderassignsdatas',
+      },
+    },
+    { $unwind: '$orderassignsdatas' },
 
     {
       $lookup: {
         from: 'shoporderclones',
-        localField: 'Orderdatas.OrderId',
-        foreignField: 'OrderId',
-        as: 'datas',
+        localField: 'orderassignsdatas.orderId',
+        foreignField: '_id',
+        as: 'shoporderclonesdatas',
       },
     },
-    { $unwind: '$datas' },
+    { $unwind: '$shoporderclonesdatas' },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'shoporderclonesdatas._id',
+        foreignField:'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: {
+                  $add: ['$finalQuantity', '$finalPricePerKg'],
+                },
+              },
+            },
+          },
+        ],
+
+        as: 'productorderclonesData',
+      }
+    },
+    {
+      $unwind: "$productorderclonesData"
+    },
   ]);
   return { values: values, total: total.length };
 };
