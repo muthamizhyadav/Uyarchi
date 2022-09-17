@@ -1187,6 +1187,7 @@ const getPettyCashDetails = async (id, page) => {
     {
       $project: {
         groupId: 1,
+        shopOrderCloneId: "$shoporderclonesdatas._id",
         orderId: '$shoporderclonesdatas.OrderId',
         Amount: '$shoporderclonesdatas.overallTotal',
         // shopType: '$Orderdatas.type',
