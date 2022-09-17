@@ -283,6 +283,13 @@ const returnStock = async (id) => {
         from: 'pettystockmodels',
         localField: '_id',
         foreignField: 'productId',
+        pipeline: [
+          {
+            $match: {
+              wardAdminId: id,
+            },
+          },
+        ],
         as: 'totalpetty',
       },
     },
@@ -347,17 +354,17 @@ const returnStock = async (id) => {
 
     //  Un Delivered count
 
-    {
-      $lookup: {
-        from: 'pettystockmodels',
-        localField: '_id',
-        foreignField: 'productId',
-        as: 'totalpetty',
-      },
-    },
-    {
-      $unwind: '$totalpetty',
-    },
+    // {
+    //   $lookup: {
+    //     from: 'pettystockmodels',
+    //     localField: '_id',
+    //     foreignField: 'productId',
+    //     as: 'totalpetty',
+    //   },
+    // },
+    // {
+    //   $unwind: '$totalpetty',
+    // },
 
     {
       $lookup: {
@@ -373,7 +380,7 @@ const returnStock = async (id) => {
               pipeline: [
                 {
                   $match: {
-                    $and: [{ customerDeliveryStatus: { $eq: 'Un Delivered' } }],
+                    $and: [{ customerDeliveryStatus: { $eq: 'UnDelivered' } }],
                   },
                 },
                 {
@@ -639,7 +646,7 @@ const getBillDetails = async (id) => {
                   $project: {
                     _id: 1,
                     OrderId: 1,
-                    Payment:1,
+                    Payment: 1,
                     products: '$products',
                     b2bshopclones: '$b2bshopclones',
                     SName: '$b2bshopclones.SName',
@@ -1401,8 +1408,7 @@ const lastPettyStckAdd = async (id, updateBody) => {
   return product;
 };
 
-
-const getShopDetailsForProj = async (id) =>{
+const getShopDetailsForProj = async (id) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -1414,33 +1420,33 @@ const getShopDetailsForProj = async (id) =>{
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
-        as: 'b2bshopData'
-      }
+        as: 'b2bshopData',
+      },
     },
     {
-      $unwind:"$b2bshopData"
+      $unwind: '$b2bshopData',
     },
     {
       $lookup: {
         from: 'streets',
         localField: 'b2bshopData.Strid',
         foreignField: '_id',
-        as: 'StridData'
-      }
+        as: 'StridData',
+      },
     },
     {
-      $unwind:"$StridData"
+      $unwind: '$StridData',
     },
     {
       $lookup: {
         from: 'wards',
         localField: 'b2bshopData.Wardid',
         foreignField: '_id',
-        as: 'wardData'
-      }
+        as: 'wardData',
+      },
     },
     {
-      $unwind:"$wardData"
+      $unwind: '$wardData',
     },
     {
       $lookup: {
@@ -1448,30 +1454,28 @@ const getShopDetailsForProj = async (id) =>{
         localField: 'deliveryExecutiveId',
         foreignField: '_id',
         as: 'deliveryExecutivename',
-
-      }
+      },
     },
     {
-      $unwind:'$deliveryExecutivename'
+      $unwind: '$deliveryExecutivename',
     },
     {
       $project: {
-        Payment:1,
-        OrderId:1,
-        shopType:"$b2bshopData.type",
-        shopName:"$b2bshopData.SName",
-        SOwner:"$b2bshopData.SOwner",
-        mobile:"$b2bshopData.mobile",
-        address:"$b2bshopData.address",
-        street:"$StridData.street",
-        ward:"$wardData.ward",
-        deliveryExecutivename: "$deliveryExecutivename.name"
-
-      }
-    }
+        Payment: 1,
+        OrderId: 1,
+        shopType: '$b2bshopData.type',
+        shopName: '$b2bshopData.SName',
+        SOwner: '$b2bshopData.SOwner',
+        mobile: '$b2bshopData.mobile',
+        address: '$b2bshopData.address',
+        street: '$StridData.street',
+        ward: '$wardData.ward',
+        deliveryExecutivename: '$deliveryExecutivename.name',
+      },
+    },
   ]);
   return values;
-}
+};
 
 module.exports = {
   getPEttyCashQuantity,
