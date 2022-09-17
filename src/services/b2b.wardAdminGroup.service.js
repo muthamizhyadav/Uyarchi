@@ -354,17 +354,6 @@ const returnStock = async (id) => {
 
     //  Un Delivered count
 
-    // {
-    //   $lookup: {
-    //     from: 'pettystockmodels',
-    //     localField: '_id',
-    //     foreignField: 'productId',
-    //     as: 'totalpetty',
-    //   },
-    // },
-    // {
-    //   $unwind: '$totalpetty',
-    // },
 
     {
       $lookup: {
@@ -428,19 +417,12 @@ const returnStock = async (id) => {
         productTitle: 1,
         productid: 1,
         pettyStock: '$totalpetty.pettyStock',
-        custoQtyPetty: '$totalpetty.totalQtyIncludingPettyStock',
+        // custoQtyPetty: '$totalpetty.totalQtyIncludingPettyStock',
         DeliveryQuantity: '$productorderclones.Qty',
 
         productorderclones: { $eq: ['$productorderclones._id', null] },
         UndeliveryQuantity: '$productorderclonesData.UnQty',
-        //   UndeliveryQuantity:{
-        //     $sum: {
-        //             $or: ['$productorderclonesData.UnQty', 0]
-        //         }
-        // },
-
-        // UndeliveredPerSystem: { $subtract: [ "$totalpetty.totalQtyIncludingPettyStock", "$productorderclones.Qty"] },
-
+        totalSum : { '$add' : [ '$productorderclones.Qty', '$productorderclonesData.UnQty' ] },
         productorderclonesData: { $eq: ['$productorderclonesData._id', null] },
       },
     },
@@ -1214,20 +1196,20 @@ const getAllGroup = async (page) => {
         $and: [{ manageDeliveryStatus: { $eq: 'Delivery Completed' } }],
       },
     },
-    {
-      $unwind: '$Orderdatas',
-    },
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'Orderdatas._id',
-        foreignField: '_id',
-        as: 'shopIDDatas',
-      },
-    },
-    {
-      $unwind: '$shopIDDatas',
-    },
+    // {
+    //   $unwind: '$Orderdatas',
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'shoporderclones',
+    //     localField: 'Orderdatas._id',
+    //     foreignField: '_id',
+    //     as: 'shopIDDatas',
+    //   },
+    // },
+    // {
+    //   $unwind: '$shopIDDatas',
+    // },
     {
       $project: {
         groupId: 1,
@@ -1248,7 +1230,7 @@ const getAllGroup = async (page) => {
   let total = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ manageDeliveryStatus: { $eq: 'Delivery Complete' } }],
+        $and: [{ manageDeliveryStatus: { $eq: 'Delivery Completed' } }],
       },
     },
   ]);
