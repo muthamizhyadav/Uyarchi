@@ -60,7 +60,9 @@ const updateDeliveryStarted = catchAsync(async (req, res) => {
 });
 
 const updatePettyCashReturnStatus = catchAsync(async (req, res) => {
-  const status = await wardAdminGroupService.updateShopOrderCloneById(req.params.id, req.body);
+  const status = await wardAdminGroupService.updateShopOrderCloneById(req.params.id,{
+    pettyCashReceiveStatus: 'Approved'
+  });
   res.send(status);
 });
 

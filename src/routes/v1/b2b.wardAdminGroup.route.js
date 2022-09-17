@@ -81,7 +81,7 @@ router.route('/get/getPettyCashDetails/:id/:page').get(wardAdminGroupController.
 
 router.route('/get/AllGroup/details/:page').get(wardAdminGroupController.getAllGroup);
 
-// router.route("/update/pettycash/return/:id").put(wardAdminGroupController.updatePettyCashReturnStatus);
+router.route("/update/pettycash/return/:id").put(wardAdminGroupController.updatePettyCashReturnStatus);
 
 // checked Modified
 router.route('/craete/pettyStock/create/:id').put(wardAdminGroupController.pettyStockCreate);
