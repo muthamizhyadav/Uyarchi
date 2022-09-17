@@ -1193,8 +1193,8 @@ const getPettyCashDetails = async (id, page) => {
         // shopType: '$Orderdatas.type',
         // shopName: '$Orderdatas.shopName',
         Deliverystatus: '$shoporderclonesdatas.customerDeliveryStatus',
-        initialPaymentType: "$shoporderclonesdatas.payType",
-        FinalPaymentType: '$shoporderclonesdatas.Payment',
+        FinalPaymentType: "$shoporderclonesdatas.payType",
+        initialPaymentType: '$shoporderclonesdatas.Payment',
         pettyCashApporvedStatus: '$shoporderclonesdatas.pettyCashReceiveStatus',
         Amount: "$productorderclonesData.amount",
       },
@@ -1342,42 +1342,68 @@ const getcashAmountViewFromDB = async (id) => {
       },
     },
     {
-      $unwind: '$Orderdatas',
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        as: 'orderassignsdatas',
+      },
     },
+    { $unwind: '$orderassignsdatas' },
+
     {
       $lookup: {
         from: 'shoporderclones',
-        localField: 'Orderdatas._id',
+        localField: 'orderassignsdatas.orderId',
         foreignField: '_id',
-        as: 'datas',
+        as: 'shoporderclonesdatas',
       },
     },
+    { $unwind: '$shoporderclonesdatas' },
     {
-      $unwind: '$datas',
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'shoporderclonesdatas._id',
+        foreignField:'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: {
+                  $add: ['$finalQuantity', '$finalPricePerKg'],
+                },
+              },
+            },
+          },
+        ],
+
+        as: 'productorderclonesData',
+      }
+    },
+    {
+      $unwind: "$productorderclonesData"
+    },
+    
+
+    {
+      $group: {
+        _id: '$shoporderclonesdatas.payType',
+        totalCash: { $sum: '$productorderclonesData.amount' },
+      },
+      
     },
 
     // {
-    //   $group: {
-    //     _id: '$datas.payType',
-    //     totalCash: { $sum: '$datas.total' },
+    //   $project: {
+    //     pettyCash: 1,
+    //     totalCashCaculation: {
+    //         _id: '$shoporderclonesdatas.payType',
+    //         totalCash: { $sum: '$productorderclonesData.amount' },
+          
+    //     },
     //   },
     // },
-
-    {
-      $project: {
-        pettyCash: 1,
-        totalCashCaculation: {
-          _id: '$datas.payType',
-          totalCash: { $sum: '$datas.total' },
-        },
-
-        amount: {
-          $sum: {
-            $add: ['$pettyCash', '$totalCashCaculation.totalCash'],
-          },
-        },
-      },
-    },
   ]);
 
   return values;
