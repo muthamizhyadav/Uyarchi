@@ -779,8 +779,8 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
   let dateMatch = { date: { $eq: today } };
   let typeMatch = { delivery_type: { $eq: type } };
   if (type == 'All') {
-    typeMatch = { delivery_type: { $in: ['IMD', 'NDD'] } };
-    dateMatch = { date: { $in: [today, yesterday] } };
+    typeMatch = { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } };
+    dateMatch = { date: { $eq: today }, delivery_type: { $eq: 'IMD' } };
   }
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
@@ -1026,8 +1026,8 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
   let dateMatch = { date: { $eq: today } };
   let typeMatch = { delivery_type: { $eq: type } };
   if (type == 'All') {
-    typeMatch = { delivery_type: { $in: ['IMD', 'NDD'] } };
-    dateMatch = { date: { $in: [today, yesterday] } };
+    typeMatch = { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } };
+    dateMatch = { date: { $eq: today }, delivery_type: { $eq: 'IMD' } };
   }
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
@@ -1149,8 +1149,8 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
   let dateMatch = { date: { $eq: today } };
   let typeMatch = { delivery_type: { $eq: type } };
   if (type == 'All') {
-    typeMatch = { delivery_type: { $in: ['IMD', 'NDD'] } };
-    dateMatch = { date: { $in: [today, yesterday] } };
+    typeMatch = { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } };
+    dateMatch = { date: { $eq: today }, delivery_type: { $eq: 'IMD' } };
   }
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
