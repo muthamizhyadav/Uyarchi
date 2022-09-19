@@ -770,7 +770,7 @@ const productData = async (id) => {
   return { data: data, total: totalqty.Qty };
 };
 
-const get_data_for_lapster = async () => {
+const get_data_for_lapster = async (page) => {
   var today = moment().format('YYYY-MM-DD');
   var yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
 
@@ -831,6 +831,8 @@ const get_data_for_lapster = async () => {
         shopName: '$shops.SName',
       },
     },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
   let yersterdaydata = await ShopOrderClone.aggregate([
     {
@@ -888,8 +890,105 @@ const get_data_for_lapster = async () => {
         shopName: '$shops.SName',
       },
     },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
-  return { todaydata: todaydata, yersterdaydata: yersterdaydata };
+  let yersterdaytotal = await ShopOrderClone.aggregate([
+    {
+      $project: {
+        statusupdate: { $dateToString: { format: '%Y-%m-%d', date: '$statusUpdate' } },
+        _id: 1,
+        shopId: 1,
+        OrderId: 1,
+        status: 1,
+        statusUpdate: 1,
+      },
+    },
+    {
+      $match: {
+        statusupdate: { $ne: null },
+        statusupdate: { $eq: yersterday },
+        status: { $ne: 'Assigned' },
+      },
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              date: yersterday,
+            },
+          },
+        ],
+        as: 'callhistory',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+  ]);
+  let todaytotal = await ShopOrderClone.aggregate([
+    {
+      $project: {
+        statusupdate: { $dateToString: { format: '%Y-%m-%d', date: '$statusUpdate' } },
+        _id: 1,
+        shopId: 1,
+        OrderId: 1,
+        status: 1,
+        statusUpdate: 1,
+      },
+    },
+    {
+      $match: {
+        statusupdate: { $ne: null },
+        statusupdate: { $eq: today },
+        status: { $ne: 'Assigned' },
+      },
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              date: today,
+            },
+          },
+        ],
+        as: 'callhistory',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+  ]);
+  return {
+    todaydata: todaydata,
+    yersterdaydata: yersterdaydata,
+    yersterdaytotal: yersterdaytotal.length,
+    todaytotal: todaytotal.length,
+  };
 };
 
 module.exports = {

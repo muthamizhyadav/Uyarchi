@@ -188,7 +188,7 @@ const productData = catchAsync(async (req, res) => {
 });
 
 const get_data_for_lapster = catchAsync(async (req, res) => {
-  const data = await shopOrderService.get_data_for_lapster();
+  const data = await shopOrderService.get_data_for_lapster(req.params.page);
   res.send(data);
 });
 
