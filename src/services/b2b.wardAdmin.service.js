@@ -131,7 +131,11 @@ const updateStatusApprovedOrModified = async (id, updateBody) => {
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
-  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Approved', statusUpdate:moment()  }, { new: true });
+  product = await ShopOrderClone.findByIdAndUpdate(
+    { _id: id },
+    { status: 'Approved', statusUpdate: moment() },
+    { new: true }
+  );
   return product;
 };
 const updateStatusModifiedOrModified = async (id, updateBody) => {
@@ -139,7 +143,11 @@ const updateStatusModifiedOrModified = async (id, updateBody) => {
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
-  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Modified', statusUpdate:moment()  }, { new: true });
+  product = await ShopOrderClone.findByIdAndUpdate(
+    { _id: id },
+    { status: 'Modified', statusUpdate: moment() },
+    { new: true }
+  );
   return product;
 };
 const updateStatusrejectOrModified = async (id) => {
@@ -147,7 +155,11 @@ const updateStatusrejectOrModified = async (id) => {
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
-  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Rejected', statusUpdate:moment()  }, { new: true });
+  product = await ShopOrderClone.findByIdAndUpdate(
+    { _id: id },
+    { status: 'Rejected', statusUpdate: moment() },
+    { new: true }
+  );
   return product;
 };
 
@@ -157,7 +169,11 @@ const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
   if (!statusUpdate) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
-  statusUpdate = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Packed', statusUpdate:moment()  }, { new: true });
+  statusUpdate = await ShopOrderClone.findByIdAndUpdate(
+    { _id: id },
+    { status: 'Packed', statusUpdate: moment() },
+    { new: true }
+  );
   // console.log(statusUpdate);
   return statusUpdate;
 };
@@ -286,7 +302,7 @@ const updateProduct = async (id, updateBody) => {
 
 const updateRejected = async (body) => {
   body.arr.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Acknowledged',  statusUpdate: moment() }, { new: true });
+    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Acknowledged', statusUpdate: moment() }, { new: true });
   });
 
   return 'status updated successfully';
@@ -580,7 +596,8 @@ const wardloadExecutivePacked = async (page) => {
         // orderTime: '$orderDatafortotal.time',
         totalItems: { $size: '$orderDatafortotal' },
         Qty: '$orderData.Qty',
-
+        locality: '$streetsData.locality',
+        area: '$streetsData.area',
         // totalcount: '$orderData.totalItems'
         shopcloneId: '$shopData._id',
         shopName: '$shopData.SName', //

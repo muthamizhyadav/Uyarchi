@@ -187,6 +187,11 @@ const productData = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const get_data_for_lapster = catchAsync(async (req, res) => {
+  const data = await shopOrderService.get_data_for_lapster();
+  res.send(data);
+});
+
 module.exports = {
   createshopOrder,
   getAllShopOrder,
@@ -220,4 +225,5 @@ module.exports = {
   B2BManageOrders,
   getManageordersByOrderId,
   productData,
+  get_data_for_lapster,
 };
