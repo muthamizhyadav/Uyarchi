@@ -269,6 +269,11 @@ const getShopDetailsForProj = catchAsync(async (req, res) => {
   res.send(getShopDetailsForProj);
 });
 
+const submitCashGivenByWDE = catchAsync(async (req, res) => {
+  const cashAsGivenByWDE = await wardAdminGroupService.submitCashGivenByWDE(req.params.id, req.body);
+  res.send(cashAsGivenByWDE);
+});
+
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -341,4 +346,5 @@ module.exports = {
 
 
   getShopDetailsForProj,
+  submitCashGivenByWDE,
 };
