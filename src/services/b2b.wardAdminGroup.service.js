@@ -12,9 +12,22 @@ const { Product } = require('../models/product.model');
 
 const createGroup = async (body) => {
   let serverdates = moment().format('YYYY-MM-DD');
+  console.log(typeof serverdates)
   let servertime = moment().format('hh:mm a');
   let num = 1;
-  const group = await wardAdminGroup.find({ assignDate: serverdates });
+  const group = await wardAdminGroup.find({ assignDate: serverdates  });
+console.log(group)
+  // if(group){
+  //   body.Orderdatas.forEach(async (e) =>{
+  //     let data = e._id;
+
+  //     await wardAdminGroup.create(
+  //       {_id: data},
+
+  //     )
+  //   })
+  // }
+ 
 
   let center = '';
 
@@ -61,8 +74,10 @@ const createGroup = async (body) => {
     );
     await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: wardAdminGroupcreate._id });
   });
-  return wardAdminGroupcreate;
+
+  return "njfgdjgj";
 };
+
 
 const updateOrderStatus = async (id, updateBody) => {
   let deliveryStatus = await ShopOrderClone.findById(id);

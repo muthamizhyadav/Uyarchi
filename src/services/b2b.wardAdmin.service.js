@@ -676,35 +676,106 @@ const wardloadExecutivePacked = async (page) => {
   ]);
   return { data: data, total: total.length };
 };
-const wardDeliveryExecutive = async () => {
-  let data = await Roles.aggregate([
-    {
-      $match: {
-        roleName: {
-          $in: ['Ward delivery execute(WDE)'],
+
+
+  const wardDeliveryExecutive = async () => {
+    let data = await Roles.aggregate([
+      {
+        $match: {
+          roleName: {
+            $in: ['Ward delivery execute(WDE)'],
+          },
         },
       },
-    },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: '_id',
-        foreignField: 'userRole',
-        as: 'deliveryExecutiveName',
+      {
+        $lookup: {
+          from: 'b2busers',
+          localField: '_id',
+          foreignField: 'userRole',
+          as: 'deliveryExecutiveName',
+        },
       },
-    },
+  
+      // {
+      //     $project: {
+      //         _id:1,
+      //         roleName: 1,
+      //         deliveryExecutiveName: '$deliveryExecutiveName.name',
+      //         deliveryExecutive: '$deliveryExecutiveName._id'
+      //     }
+      // }
+    ]);
+    return data;
+  };
+//   let data = await wardAdminGroup.aggregate([
+//              {
+//             $match: {
+//               $and: [
+//                 {
+//                   manageDeliveryStatus: {
+//                     $nin : [
+//                       'Delivery start',
+//                     ],
+//                   },
+//                 },
+//         ],
+//       },
+//     },
+//     {
+//       $lookup: {
+//         from :'b2busers',
+//         localField: 'deliveryExecutiveId',
+//         foreignField: '_id',
+//         as: 'deliveryExecutiveName',
+//       }
+//     },
+//     {
+//       $unwind: "$deliveryExecutiveName"
+//     },
+// //     {
+// //       $match: {
+// //         roleName: {
+// //           $in: ['Ward delivery execute(WDE)'],
+// //         },
+// //       },
+// //     },
+// //     {
+// //       $lookup: {
+// //         from: 'b2busers',
+// //         localField: '_id',
+// //         foreignField: 'userRole',
+// //         as: 'deliveryExecutiveName',
+// //       },
+// //     },
+// //     {
+// //       $lookup: {
+// //         from: 'shoporderclones',
+// //         localField: 'deliveryExecutiveName._id',
+// //         foreignField: 'deliveryExecutiveId',
+// //         pipeline: [
+// //           {
+// //             $match: {
+// //               $and: [
+// //                 {
+// //                   status: {
+// //                     $nin : [
+// //                       'Delivery start',
+// //                     ],
+// //                   },
+// //                 },
+// //         ],
+// //       },
+// //     },
+// //   ] ,
+// //   as:'statusData'
+// //   }
+// // }
+    
 
-    // {
-    //     $project: {
-    //         _id:1,
-    //         roleName: 1,
-    //         deliveryExecutiveName: '$deliveryExecutiveName.name',
-    //         deliveryExecutive: '$deliveryExecutiveName._id'
-    //     }
-    // }
-  ]);
-  return data;
-};
+   
+//   ]);
+//   return data;
+// };
 
 const getAssigned_details = async () => {
   const currentDate = moment().format('YYYY-MM-DD');
