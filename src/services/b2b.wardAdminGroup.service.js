@@ -1391,7 +1391,6 @@ const getcashAmountViewFromDB = async (id) => {
         _id: '$shoporderclonesdatas.payType',
         totalCash: { $sum: '$productorderclonesData.amount' },
       },
-      
     },
 
     // {
@@ -1406,7 +1405,66 @@ const getcashAmountViewFromDB = async (id) => {
     // },
   ]);
 
-  return values;
+  let total = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+   
+    // {
+    //   $lookup: {
+    //     from: 'orderassigns',
+    //     localField: '_id',
+    //     foreignField: 'wardAdminGroupID',
+    //     as: 'orderassignsdatas',
+    //   },
+    // },
+    // { $unwind: '$orderassignsdatas' },
+
+    // {
+    //   $lookup: {
+    //     from: 'shoporderclones',
+    //     localField: 'orderassignsdatas.orderId',
+    //     foreignField: '_id',
+    //     as: 'shoporderclonesdatas',
+    //   },
+    // },
+    // { $unwind: '$shoporderclonesdatas' },
+    // {
+    //   $lookup: {
+    //     from: 'productorderclones',
+    //     localField: 'shoporderclonesdatas._id',
+    //     foreignField:'orderId',
+    //     pipeline: [
+    //       {
+    //         $group: {
+    //           _id: null,
+    //           amount: {
+    //             $sum: {
+    //               $add: ['$finalQuantity', '$finalPricePerKg'],
+    //             },
+    //           },
+    //         },
+    //       },
+    //     ],
+
+    //     as: 'productorderclonesData',
+    //   }
+    // },
+    // {
+    //   $unwind: "$productorderclonesData"
+    // },
+    
+    {
+      $project: {
+        pettyCash: 1,
+       
+      },
+    },
+  ]);
+
+  return {values: values , total: total};
 };
 
 const createDatasInPettyStockModel = async (id, updateBody) => {
