@@ -1607,6 +1607,20 @@ const getShopDetailsForProj = async (id) => {
   return values;
 };
 
+
+const submitCashGivenByWDE = async (id, updateBody) => {
+  let deliveryStatus = await wardAdminGroup.findById(id);
+  console.log(deliveryStatus);
+  if (!deliveryStatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  deliveryStatus = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  console.log(deliveryStatus);
+
+  return deliveryStatus;
+};
+
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -1654,4 +1668,5 @@ module.exports = {
   delevery_start,
 
   getShopDetailsForProj,
+  submitCashGivenByWDE,
 };

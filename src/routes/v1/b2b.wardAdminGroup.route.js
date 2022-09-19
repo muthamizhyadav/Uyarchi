@@ -104,6 +104,8 @@ router.route('/create/pettyStock/:id').put(wardAdminGroupController.lastPettyStc
 
 
 router.route('/get/shop/details/:id').get(wardAdminGroupController.getShopDetailsForProj);
+
+router.route('/submit/pettyCash/AsGivenByWDE/:id').put(wardAdminGroupController.submitCashGivenByWDE);
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE
