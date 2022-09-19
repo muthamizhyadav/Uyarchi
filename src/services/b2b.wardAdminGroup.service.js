@@ -75,7 +75,7 @@ console.log(group)
     await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: wardAdminGroupcreate._id });
   });
 
-  return "njfgdjgj";
+  return wardAdminGroupcreate;
 };
 
 
@@ -1636,6 +1636,27 @@ const submitCashGivenByWDE = async (id, updateBody) => {
 };
 
 
+const createAddOrdINGrp = async (id,body) =>{
+  const {_id,shopId,status,productStatus,OrderId,date,time,type,Slat,Slong,street,totalItems,Qty,shopcloneId,shopName,ward} = body;
+  let datas = await wardAdminGroup.findById(id);
+  if(!datas){
+    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  await wardAdminGroup.update({_id:id},{ $push: { Orderdatas: body}});
+
+let update = await wardAdminGroup.findById(id);
+
+// let wardAdminGroupcreate = await wardAdminGroup.create(values);
+//   body.Orderdatas.forEach(async (e) => {
+//     let productId = e._id;
+
+//     await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: wardAdminGroupcreate._id });
+//   });
+
+return update;
+}
+
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -1684,4 +1705,5 @@ module.exports = {
 
   getShopDetailsForProj,
   submitCashGivenByWDE,
+  createAddOrdINGrp,
 };

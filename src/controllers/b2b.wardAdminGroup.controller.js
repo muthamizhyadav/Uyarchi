@@ -274,6 +274,11 @@ const submitCashGivenByWDE = catchAsync(async (req, res) => {
   res.send(cashAsGivenByWDE);
 });
 
+const  createAddOrdINGrp= catchAsync(async (req, res) => {
+  const cashAsGivenByWDE = await wardAdminGroupService.createAddOrdINGrp(req.params.id,req.body);
+  res.send(cashAsGivenByWDE);
+});
+
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -347,4 +352,5 @@ module.exports = {
 
   getShopDetailsForProj,
   submitCashGivenByWDE,
+  createAddOrdINGrp,
 };
