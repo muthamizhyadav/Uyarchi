@@ -1405,6 +1405,7 @@ const getcashAmountViewFromDB = async (id) => {
     // },
   ]);
 
+
   let total = await wardAdminGroup.aggregate([
     {
       $match: {
