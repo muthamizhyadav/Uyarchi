@@ -369,7 +369,6 @@ const returnStock = async (id) => {
 
     //  Un Delivered count
 
-
     {
       $lookup: {
         from: 'productorderclones',
@@ -437,7 +436,7 @@ const returnStock = async (id) => {
 
         productorderclones: { $eq: ['$productorderclones._id', null] },
         UndeliveryQuantity: '$productorderclonesData.UnQty',
-        totalSum : { '$add' : [ '$productorderclones.Qty', '$productorderclonesData.UnQty' ] },
+        totalSum: { $add: ['$productorderclones.Qty', '$productorderclonesData.UnQty'] },
         productorderclonesData: { $eq: ['$productorderclonesData._id', null] },
       },
     },
@@ -1177,7 +1176,7 @@ const getPettyCashDetails = async (id, page) => {
       $lookup: {
         from: 'productorderclones',
         localField: 'shoporderclonesdatas._id',
-        foreignField:'orderId',
+        foreignField: 'orderId',
         pipeline: [
           {
             $group: {
@@ -1192,33 +1191,30 @@ const getPettyCashDetails = async (id, page) => {
         ],
 
         as: 'productorderclonesData',
-      }
+      },
     },
     {
-      $unwind: "$productorderclonesData"
+      $unwind: '$productorderclonesData',
     },
-
 
     {
       $project: {
         groupId: 1,
-        shopOrderCloneId: "$shoporderclonesdatas._id",
+        shopOrderCloneId: '$shoporderclonesdatas._id',
         orderId: '$shoporderclonesdatas.OrderId',
         Amount: '$shoporderclonesdatas.overallTotal',
         // shopType: '$Orderdatas.type',
         // shopName: '$Orderdatas.shopName',
         Deliverystatus: '$shoporderclonesdatas.customerDeliveryStatus',
-        FinalPaymentType: "$shoporderclonesdatas.payType",
+        FinalPaymentType: '$shoporderclonesdatas.payType',
         initialPaymentType: '$shoporderclonesdatas.Payment',
         pettyCashApporvedStatus: '$shoporderclonesdatas.pettyCashReceiveStatus',
-        Amount: "$productorderclonesData.amount",
+        Amount: '$productorderclonesData.amount',
       },
     },
-    
+
     { $skip: 10 * page },
     { $limit: 10 },
-
-    
   ]);
   let total = await wardAdminGroup.aggregate([
     {
@@ -1250,7 +1246,7 @@ const getPettyCashDetails = async (id, page) => {
       $lookup: {
         from: 'productorderclones',
         localField: 'shoporderclonesdatas._id',
-        foreignField:'orderId',
+        foreignField: 'orderId',
         pipeline: [
           {
             $group: {
@@ -1265,10 +1261,10 @@ const getPettyCashDetails = async (id, page) => {
         ],
 
         as: 'productorderclonesData',
-      }
+      },
     },
     {
-      $unwind: "$productorderclonesData"
+      $unwind: '$productorderclonesData',
     },
   ]);
   return { values: values, total: total.length };
@@ -1379,7 +1375,7 @@ const getcashAmountViewFromDB = async (id) => {
       $lookup: {
         from: 'productorderclones',
         localField: 'shoporderclonesdatas._id',
-        foreignField:'orderId',
+        foreignField: 'orderId',
         pipeline: [
           {
             $group: {
@@ -1394,12 +1390,11 @@ const getcashAmountViewFromDB = async (id) => {
         ],
 
         as: 'productorderclonesData',
-      }
+      },
     },
     {
-      $unwind: "$productorderclonesData"
+      $unwind: '$productorderclonesData',
     },
-    
 
     {
       $group: {
@@ -1414,12 +1409,11 @@ const getcashAmountViewFromDB = async (id) => {
     //     totalCashCaculation: {
     //         _id: '$shoporderclonesdatas.payType',
     //         totalCash: { $sum: '$productorderclonesData.amount' },
-          
+
     //     },
     //   },
     // },
   ]);
-
 
   let total = await wardAdminGroup.aggregate([
     {
@@ -1427,7 +1421,7 @@ const getcashAmountViewFromDB = async (id) => {
         $and: [{ _id: { $eq: id } }],
       },
     },
-   
+
     // {
     //   $lookup: {
     //     from: 'orderassigns',
@@ -1471,16 +1465,15 @@ const getcashAmountViewFromDB = async (id) => {
     // {
     //   $unwind: "$productorderclonesData"
     // },
-    
+
     {
       $project: {
         pettyCash: 1,
-       
       },
     },
   ]);
 
-  return {values: values , total: total};
+  return { values: values, total: total };
 };
 
 const createDatasInPettyStockModel = async (id, updateBody) => {
