@@ -286,7 +286,7 @@ const updateProduct = async (id, updateBody) => {
 
 const updateRejected = async (body) => {
   body.arr.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Acknowledged' }, { new: true });
+    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Acknowledged',  statusUpdate: moment() }, { new: true });
   });
 
   return 'status updated successfully';
