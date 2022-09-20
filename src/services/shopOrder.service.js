@@ -837,7 +837,7 @@ const get_data_for_lapster = async (page) => {
       $match: {
         statusupdate: { $ne: null },
         statusupdate: { $eq: today },
-        status: { $ne: 'Assigned' },
+        status: { $ne: 'Assigned', $ne: 'Rejected' },
       },
     },
     {
@@ -896,7 +896,7 @@ const get_data_for_lapster = async (page) => {
       $match: {
         statusupdate: { $ne: null },
         statusupdate: { $eq: yersterday },
-        status: { $ne: 'Assigned' },
+        status: { $ne: 'Assigned', $ne: 'Rejected' },
       },
     },
     {
@@ -955,7 +955,7 @@ const get_data_for_lapster = async (page) => {
       $match: {
         statusupdate: { $ne: null },
         statusupdate: { $eq: yersterday },
-        status: { $ne: 'Assigned' },
+        status: { $ne: 'Assigned', $ne: 'Rejected' },
       },
     },
     {
@@ -1000,7 +1000,7 @@ const get_data_for_lapster = async (page) => {
       $match: {
         statusupdate: { $ne: null },
         statusupdate: { $eq: today },
-        status: { $ne: 'Assigned' },
+        status: { $ne: 'Assigned', $ne: 'Rejected' },
       },
     },
     {

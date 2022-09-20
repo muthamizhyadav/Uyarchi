@@ -30,6 +30,9 @@ const lapsedSchema = new mongoose.Schema({
   time: {
     type: Number,
   },
+  shoporderId: {
+    type: String,
+  },
 });
 
 const Lapsed = mongoose.model('lapsed', lapsedSchema);

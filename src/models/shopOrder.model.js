@@ -218,7 +218,11 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   statusUpdate: {
     type: Date,
-  }
+  },
+  lapsedOrder: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
