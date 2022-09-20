@@ -63,8 +63,28 @@ const productData = async() =>{
   return data
 }
 
+const getById  = async (id) =>{
+  const data = await CustomeIssues.findById(id)
+  if(!data){
+    throw new ApiError(httpStatus.NOT_FOUND, 'CustomerIssues nnot found');
+  }
+  return data
+}
+
+const updateCustomerId = async (id, updateBody) => {
+  let data = await getById(id);
+  console.log(id)
+  if (!data) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'CustomerIssues not found');
+  }
+  data = await CustomeIssues.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return data;
+};
+
 
 module.exports = {
   createCustomerIssues,
   productData,
+  updateCustomerId,
+
 };

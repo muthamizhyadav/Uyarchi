@@ -13,7 +13,13 @@ const getAll = catchAsync(async (req, res) => {
   const data = await CustomerIssuesService.productData();
   res.send(data);
 });
+
+const updateCustomerId = catchAsync(async (req, res) => {
+  const data = await CustomerIssuesService.updateCustomerId(req.params.id, req.body);
+  res.send(data);
+});
 module.exports = {
   createCustomerIssues,
   getAll,
+  updateCustomerId,
 };
