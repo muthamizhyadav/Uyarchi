@@ -685,8 +685,56 @@ const getManageordersByOrderId = async (orderId, date) => {
   let totalqty = total[0];
   return { values: values, total: totalqty.Qty };
 };
-
-// get allProductData
+const getproductOrders_By_OrderId = async (orderId) => {
+  let todaydate = moment().subtract(1, 'days').format('YYYY-MM-DD');
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        OrderId: orderId,
+        date: todaydate,
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              priceperkg: 1,
+              quantity: 1,
+              productTitle: '$products.productTitle',
+              productId: '$products._id',
+              Amount: { $multiply: ['$priceperkg', '$quantity'] },
+            },
+          },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        productData: '$productData',
+        shopId: 1,
+      },
+    },
+  ]);
+  return values;
+};
 
 const productData = async (id) => {
   let data = await ShopOrderClone.aggregate([
@@ -726,7 +774,6 @@ const productData = async (id) => {
     {
       $unwind: '$b2bshopclonesData',
     },
-
     {
       $project: {
         productTitle: '$products.productTitle',
@@ -811,7 +858,7 @@ const get_data_for_lapster = async (page) => {
       $match: {
         statusupdate: { $ne: null },
         statusupdate: { $eq: today },
-        status: { $ne: 'Assigned' },
+        status: { $ne: 'Assigned', $ne: 'Rejected' },
       },
     },
     {
@@ -870,7 +917,7 @@ const get_data_for_lapster = async (page) => {
       $match: {
         statusupdate: { $ne: null },
         statusupdate: { $eq: yersterday },
-        status: { $ne: 'Assigned' },
+        status: { $ne: 'Assigned', $ne: 'Rejected' },
       },
     },
     {
@@ -929,7 +976,7 @@ const get_data_for_lapster = async (page) => {
       $match: {
         statusupdate: { $ne: null },
         statusupdate: { $eq: yersterday },
-        status: { $ne: 'Assigned' },
+        status: { $ne: 'Assigned', $ne: 'Rejected' },
       },
     },
     {
@@ -974,7 +1021,7 @@ const get_data_for_lapster = async (page) => {
       $match: {
         statusupdate: { $ne: null },
         statusupdate: { $eq: today },
-        status: { $ne: 'Assigned' },
+        status: { $ne: 'Assigned', $ne: 'Rejected' },
       },
     },
     {
@@ -1044,6 +1091,8 @@ module.exports = {
   undelivered,
   B2BManageOrders,
   getManageordersByOrderId,
+  // for lapsed
+  getproductOrders_By_OrderId,
   productData,
   get_data_for_lapster,
 };

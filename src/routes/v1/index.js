@@ -85,11 +85,16 @@ const pettyStockRoute = require('./b2b.pettyStock.route');
 const WLE_Route = require('./WLE.route');
 const TrackingRoute = require('./tracking.route');
 const CustomerIssues = require('./customerIssues.route');
+const LapsedRoute = require('./lapsed.route');
 
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/LapsedOrder',
+    route: LapsedRoute,
   },
   {
     path: '/customerIssues',

@@ -36,6 +36,19 @@ const customerIssuesSchema = new mongoose.Schema({
   created: {
     type: Date,
   },
+  shopId: {
+    type: String,
+  },
+  customerId: {
+    type: String,
+  },
+  orderId: {
+    type: String,
+  },
+  status:{
+    type:String,
+    default:"Pending",
+  }
 });
 
 const CustomeIssues = mongoose.model('customerIssues', customerIssuesSchema);

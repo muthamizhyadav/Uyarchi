@@ -48,5 +48,6 @@ router.route('/undelivered/data/:page').get(shopOrderController.undelivered);
 router.route('/B2b/B2BManageOrders/:shopid').get(shopOrderController.B2BManageOrders);
 router.route('/B2BManageOrders/:orderId/:date').get(shopOrderController.getManageordersByOrderId);
 router.route('/productData/:id').get(shopOrderController.productData);
+router.route('/productorders/:orderId').get(shopOrderController.getproductOrders_By_OrderId);
 router.route('/getdata/lapster/yesterday/:page').get(shopOrderController.get_data_for_lapster);
 module.exports = router;

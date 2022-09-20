@@ -3,20 +3,25 @@ const wardAdminController = require('../../controllers/b2b.wardAdmin.controller'
 const router = express.Router();
 router.route('/create/data').post(wardAdminController.createdata);
 // checked
+router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusMatchingAppOrModi);
+
+router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
+// checked modified
+router.route('/updateProductById/:orderId').put(wardAdminController.updateProduct);
+
 // router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusMatchingAppOrModi);
 router.route('/getDetails/:type/:time/:status/:limit/:page').get(wardAdminController.statusMatchingAppOrModi);
 router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 // checked modified
-router.route('/updateProductById/:orderId').put(wardAdminController.updateProduct);
 // checked
 router.route('/updateAcknowledge').put(wardAdminController.updateAcknowledge);
 // checked
 router.route('/updateApproved').put(wardAdminController.updateApproval);
 
 router.route('/updatePacked').put(wardAdminController.updatePackedStatus);
+
 // checked
 router.route('/updateRejected').put(wardAdminController.updateRejectionStatus);
-
 // Checked;
 router.route('/updateApproved/:id').put(wardAdminController.updateApproved);
 

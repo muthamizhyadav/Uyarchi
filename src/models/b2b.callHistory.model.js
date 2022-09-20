@@ -77,6 +77,10 @@ const callHistorySchema = mongoose.Schema({
   sortTime: {
     type: Number,
   },
+  lapsedOrder: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const callHistory = mongoose.model('callHistory', callHistorySchema);
