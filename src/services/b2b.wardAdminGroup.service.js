@@ -17,17 +17,7 @@ const createGroup = async (body) => {
   let num = 1;
   const group = await wardAdminGroup.find({ assignDate: serverdates  });
 console.log(group)
-  // if(group){
-  //   body.Orderdatas.forEach(async (e) =>{
-  //     let data = e._id;
-
-  //     await wardAdminGroup.create(
-  //       {_id: data},
-
-  //     )
-  //   })
-  // }
- 
+  
 
   let center = '';
 
@@ -1637,7 +1627,7 @@ const submitCashGivenByWDE = async (id, updateBody) => {
 
 
 const createAddOrdINGrp = async (id,body) =>{
-  const {_id,shopId,status,productStatus,OrderId,date,time,type,Slat,Slong,street,totalItems,Qty,shopcloneId,shopName,ward} = body;
+  // const {_id,shopId,status,productStatus,OrderId,date,time,type,Slat,Slong,street,totalItems,Qty,shopcloneId,shopName,ward} = body;
   let datas = await wardAdminGroup.findById(id);
   if(!datas){
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
@@ -1646,14 +1636,48 @@ const createAddOrdINGrp = async (id,body) =>{
 
 let update = await wardAdminGroup.findById(id);
 
-// let wardAdminGroupcreate = await wardAdminGroup.create(values);
-//   body.Orderdatas.forEach(async (e) => {
-//     let productId = e._id;
 
-//     await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: wardAdminGroupcreate._id });
-//   });
+let serverdates = moment().format('YYYY-MM-DD');
+let servertime = moment().format('hh:mm a');
 
-return update;
+  const group = await wardAdminGroupModel_ORDERS.find({ date: serverdates  });
+  console.log(group)
+
+
+  let center = '';
+
+  if (group.length < 9) {
+    center = '0000';
+  }
+  if (group.length < 99 && group.length >= 9) {
+    center = '000';
+  }
+  if (group.length < 999 && group.length >= 99) {
+    center = '00';
+  }
+  if (group.length < 9999 && group.length >= 999) {
+    center = '0';
+  }
+  let userId = '';
+  let totalcount = group.length + 1;
+  console.log(totalcount);
+  userId = 'D' + center + totalcount;
+
+  let values = {
+    AssignedstatusPerDay: userId,
+    date: serverdates,
+    time: servertime
+  }
+
+
+  body.Orderdatas.forEach(async (e) => {
+    let productId = e._id;
+
+    await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: update._id ,AssignedstatusPerDay: values.AssignedstatusPerDay,date: values.date,time: values.time});
+  });
+ 
+
+return "works";
 }
 
 
