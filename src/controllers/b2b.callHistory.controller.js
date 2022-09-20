@@ -170,6 +170,11 @@ const call_visit_Count = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const BillHistoryByShopId_date = catchAsync(async (req, res) => {
+  const data = await callHistoryService.BillHistoryByShopId_date(req.params.shopId, req.params.date);
+  res.send(data);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -193,4 +198,5 @@ module.exports = {
   getOncallShops,
   oncallstatusByUser,
   call_visit_Count,
+  BillHistoryByShopId_date,
 };

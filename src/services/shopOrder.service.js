@@ -184,6 +184,120 @@ const getShopOrderCloneById = async (id) => {
   return Values;
 };
 
+const undelivered = async (page) => {
+  let data = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ customerDeliveryStatus: { $eq: 'UnDelivered' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'shopData.Strid',
+        foreignField: '_id',
+        as: 'streetsData',
+      },
+    },
+    {
+      $unwind: '$streetsData',
+    },
+    {
+      $project: {
+        _id: 1,
+        OrderId: 1,
+        Payment: 1,
+        UnDeliveredStatus: 1,
+        street: '$streetsData.street',
+        type: '$shopData.type',
+        SName: '$shopData.SName',
+        name: '$b2busersData.name',
+      },
+    },
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ customerDeliveryStatus: { $eq: 'UnDelivered' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'shopData.Strid',
+        foreignField: '_id',
+        as: 'streetsData',
+      },
+    },
+    {
+      $unwind: '$streetsData',
+    },
+    {
+      $project: {
+        _id: 1,
+        OrderId: 1,
+        payType: 1,
+        UnDeliveredStatus: 1,
+        street: '$streetsData.street',
+        type: '$shopData.type',
+        SName: '$shopData.SName',
+        name: '$b2busersData.name',
+      },
+    },
+  ]);
+  return { data: data, total: total.length };
+};
+
 const updateShopOrderCloneById = async (id, updatebody) => {
   let shoporderClone = await ShopOrderClone.findById(id);
   if (!shoporderClone) {
@@ -550,7 +664,6 @@ const getManageordersByOrderId = async (orderId, date) => {
   let totalqty = total[0];
   return { values: values, total: totalqty.Qty };
 };
-
 const getproductOrders_By_OrderId = async (orderId) => {
   let todaydate = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let values = await ShopOrderClone.aggregate([
@@ -602,6 +715,329 @@ const getproductOrders_By_OrderId = async (orderId) => {
   return values;
 };
 
+const productData = async (id) => {
+  let data = await ShopOrderClone.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orders',
+      },
+    },
+    {
+      $unwind: '$orders',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'orders.productid',
+        foreignField: '_id',
+        as: 'products',
+      },
+    },
+    {
+      $unwind: '$products',
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesData',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesData',
+    },
+    {
+      $project: {
+        productTitle: '$products.productTitle',
+        Qty: '$orders.finalQuantity',
+        price: '$orders.finalPricePerKg',
+        productid: '$orders.productid',
+        shop: '$b2bshopclonesData.SName',
+        totalValue: { $multiply: ['$orders.finalQuantity', '$orders.finalPricePerKg'] },
+      },
+    },
+  ]);
+  let total = await ShopOrderClone.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orders',
+      },
+    },
+    {
+      $unwind: '$orders',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'orders.productid',
+        foreignField: '_id',
+        as: 'products',
+      },
+    },
+    {
+      $unwind: '$products',
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesData',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesData',
+    },
+    {
+      $project: {
+        productTitle: '$products.productTitle',
+        Qty: '$orders.finalQuantity',
+        price: '$orders.finalPricePerKg',
+        totalValue: { $multiply: ['$orders.finalQuantity', '$orders.finalPricePerKg'] },
+      },
+    },
+    {
+      $group: { _id: null, Qty: { $sum: '$totalValue' } },
+    },
+  ]);
+  let totalqty = total[0];
+  return { data: data, total: totalqty.Qty };
+};
+
+const get_data_for_lapster = async (page) => {
+  var today = moment().format('YYYY-MM-DD');
+  var yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
+
+  console.log(today);
+  let todaydata = await ShopOrderClone.aggregate([
+    {
+      $project: {
+        statusupdate: { $dateToString: { format: '%Y-%m-%d', date: '$statusUpdate' } },
+        _id: 1,
+        shopId: 1,
+        OrderId: 1,
+        status: 1,
+        statusUpdate: 1,
+      },
+    },
+    {
+      $match: {
+        statusupdate: { $ne: null },
+        statusupdate: { $eq: today },
+        status: { $ne: 'Assigned' },
+      },
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              date: today,
+            },
+          },
+        ],
+        as: 'callhistory',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+    {
+      $project: {
+        _id: 1,
+        shopId: 1,
+        status: 1,
+        statusUpdate: 1,
+        statusupdate: 1,
+        OrderId: 1,
+        callhistory: { $size: '$callhistory' },
+        shopName: '$shops.SName',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let yersterdaydata = await ShopOrderClone.aggregate([
+    {
+      $project: {
+        statusupdate: { $dateToString: { format: '%Y-%m-%d', date: '$statusUpdate' } },
+        _id: 1,
+        shopId: 1,
+        OrderId: 1,
+        status: 1,
+        statusUpdate: 1,
+      },
+    },
+    {
+      $match: {
+        statusupdate: { $ne: null },
+        statusupdate: { $eq: yersterday },
+        status: { $ne: 'Assigned' },
+      },
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              date: yersterday,
+            },
+          },
+        ],
+        as: 'callhistory',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+    {
+      $project: {
+        _id: 1,
+        shopId: 1,
+        status: 1,
+        statusUpdate: 1,
+        statusupdate: 1,
+        OrderId: 1,
+        callhistory: { $size: '$callhistory' },
+        shopName: '$shops.SName',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let yersterdaytotal = await ShopOrderClone.aggregate([
+    {
+      $project: {
+        statusupdate: { $dateToString: { format: '%Y-%m-%d', date: '$statusUpdate' } },
+        _id: 1,
+        shopId: 1,
+        OrderId: 1,
+        status: 1,
+        statusUpdate: 1,
+      },
+    },
+    {
+      $match: {
+        statusupdate: { $ne: null },
+        statusupdate: { $eq: yersterday },
+        status: { $ne: 'Assigned' },
+      },
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              date: yersterday,
+            },
+          },
+        ],
+        as: 'callhistory',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+  ]);
+  let todaytotal = await ShopOrderClone.aggregate([
+    {
+      $project: {
+        statusupdate: { $dateToString: { format: '%Y-%m-%d', date: '$statusUpdate' } },
+        _id: 1,
+        shopId: 1,
+        OrderId: 1,
+        status: 1,
+        statusUpdate: 1,
+      },
+    },
+    {
+      $match: {
+        statusupdate: { $ne: null },
+        statusupdate: { $eq: today },
+        status: { $ne: 'Assigned' },
+      },
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              date: today,
+            },
+          },
+        ],
+        as: 'callhistory',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+  ]);
+  return {
+    todaydata: todaydata,
+    yersterdaydata: yersterdaydata,
+    yersterdaytotal: yersterdaytotal.length,
+    todaytotal: todaytotal.length,
+  };
+};
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -631,8 +1067,11 @@ module.exports = {
   getAll,
   createOrderId,
   getShopDetailsByOrder,
+  undelivered,
   B2BManageOrders,
   getManageordersByOrderId,
   // for lapsed
   getproductOrders_By_OrderId,
+  productData,
+  get_data_for_lapster,
 };

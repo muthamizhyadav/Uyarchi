@@ -10,6 +10,10 @@ router.route('/update/orderpicked/:deliveryExecutiveId').put(wardAdminGroupContr
 router.route('/update/pickedPettyStock/:id').put(wardAdminGroupController.updatePickedPettyStock);
 
 router.route('/update/pickedPettyCash/:id').put(wardAdminGroupController.updatePickedPettyCash);
+// new Api
+router.route('/update/pickedPettystock/collected/:id').put(wardAdminGroupController.updatePickedPettystockcollected);
+// new Api
+router.route('/update/pickedPettycash/collected/:id').put(wardAdminGroupController.updateManageStatuscashcollect);
 
 router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
 
@@ -27,11 +31,15 @@ router.route('/getDeliveryExecutivestatus/:id').get(wardAdminGroupController.get
 
 router.route('/get/billDetails/:id').get(wardAdminGroupController.getBillDetails);
 
+//checked
 router.route('/get/assignedOnle/:page').get(wardAdminGroupController.getAssigned);
 
 router.route('/get/details/deliveryExecutive/:id/:page').get(wardAdminGroupController.getDeliveryOrderSeparate);
 
 router.route('/statusChange/:id').put(wardAdminGroupController.updateManageStatus);
+
+//  new API
+router.route('/statusChange/completed/:id').put(wardAdminGroupController.updateManagecompleted);
 
 router.route('/groupIdClick/:id').get(wardAdminGroupController.groupIdClick);
 
@@ -44,7 +52,7 @@ router.route('/get/BillDetails/perOrder/:id').get(wardAdminGroupController.getBi
 router.route('/get/returnWDEtoWLE/:id/:page').get(wardAdminGroupController.getReturnWDEtoWLE);
 
 // router.route('/submit/pettyStockSubmit').post(wardAdminGroupController.pettyStockSubmit);
-
+// checked
 router.route('/submit/pettyCashSubmit/:id').put(wardAdminGroupController.pettyCashSubmit);
 
 router.route('/Update/orderCompleted/:id').put(wardAdminGroupController.orderCompleted);
@@ -65,14 +73,17 @@ router
 
 router.route('/update/status/allocateStatus/:id').put(wardAdminGroupController.updateAllocate);
 
+// checked
 router.route('/update/status/notAloocate/:id').put(wardAdminGroupController.updateDontAllocate);
+router.route('/cash/update/status/notAloocate/:id').put(wardAdminGroupController.updateDontAllocatecash);
 
 router.route('/get/getPettyCashDetails/:id/:page').get(wardAdminGroupController.getPettyCashDetails);
 
 router.route('/get/AllGroup/details/:page').get(wardAdminGroupController.getAllGroup);
 
-// router.route("/update/pettycash/return/:id").put(wardAdminGroupController.updatePettyCashReturnStatus);
+router.route("/update/pettycash/return/:id").put(wardAdminGroupController.updatePettyCashReturnStatus);
 
+// checked Modified
 router.route('/craete/pettyStock/create/:id').put(wardAdminGroupController.pettyStockCreate);
 
 router.route('/get/cashDetails/fromDB/:id').get(wardAdminGroupController.getcashAmountViewFromDB);
@@ -88,7 +99,15 @@ router
 
 router.route('/get/return/stock/:id').get(wardAdminGroupController.returnStock);
 
+// checked Modified
 router.route('/create/pettyStock/:id').put(wardAdminGroupController.lastPettyStckAdd);
+
+
+router.route('/get/shop/details/:id').get(wardAdminGroupController.getShopDetailsForProj);
+
+router.route('/submit/pettyCash/AsGivenByWDE/:id').put(wardAdminGroupController.submitCashGivenByWDE);
+
+router.route('/update/groupDetails/:id').put(wardAdminGroupController.createAddOrdINGrp);
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE

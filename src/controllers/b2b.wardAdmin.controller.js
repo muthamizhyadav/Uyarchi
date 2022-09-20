@@ -77,6 +77,10 @@ const wardloadExecutive = catchAsync(async (req, res) => {
   const executive = await wardAdminService.wardloadExecutive(req.params.page);
   res.send(executive);
 });
+const wardloadExecutivepacked = catchAsync(async (req, res) => {
+  const executive = await wardAdminService.wardloadExecutivepacked(req.params.status, req.params.date, req.params.page);
+  res.send(executive);
+});
 
 const updatePacked = catchAsync(async (req, res) => {
   const packed = await wardAdminService.updateStatusForAssugnedAndPacked(req.params.id, req.body);
@@ -110,21 +114,59 @@ const updateAcknowledgeSingle = catchAsync(async (req, res) => {
   res.send(Acknowledged);
 });
 
+// const statusMatchingAppOrModi = catchAsync(async (req, res) => {
+//   let statusMatching;
+//   if (req.params.status == 'Acknowledged') {
+//     statusMatching = await wardAdminService.getdetailsDataStatusAcknowledged(
+//       req.params.limit,
+//       req.params.page,
+//       req.params.status
+//     );
+//   } else if (req.params.status == 'ordered') {
+//     statusMatching = await wardAdminService.getdetailsDataStatusOdered(req.params.limit, req.params.page, req.params.status);
+//   } else if (req.params.status == 'Rejected') {
+//     statusMatching = await wardAdminService.getdetailsDataStatusRejected(
+//       req.params.limit,
+//       req.params.page,
+//       req.params.status
+//     );
+//   } else if (
+//     req.params.status == 'Approved' ||
+//     req.params.status == 'Modified' ||
+//     req.params.status == 'Packed' ||
+//     req.params.status == 'Assigned'
+//   ) {
+//     statusMatching = await wardAdminService.getAppOrModifiedStatus(req.params.limit, req.params.page, req.params.status);
+//   }
+//   res.send(statusMatching);
+// });
+
 const statusMatchingAppOrModi = catchAsync(async (req, res) => {
+  console.log(req.params.type, req.params.time, req.params.status, req.params.limit, req.params.page);
   let statusMatching;
   if (req.params.status == 'Acknowledged') {
     statusMatching = await wardAdminService.getdetailsDataStatusAcknowledged(
+      req.params.type,
+      req.params.time,
+      req.params.status,
       req.params.limit,
-      req.params.page,
-      req.params.status
+      req.params.page
     );
   } else if (req.params.status == 'ordered') {
-    statusMatching = await wardAdminService.getdetailsDataStatusOdered(req.params.limit, req.params.page, req.params.status);
+    statusMatching = await wardAdminService.getdetailsDataStatusOdered(
+      req.params.type,
+      req.params.time,
+      req.params.status,
+      req.params.limit,
+      req.params.page
+    );
   } else if (req.params.status == 'Rejected') {
     statusMatching = await wardAdminService.getdetailsDataStatusRejected(
+      req.params.type,
+      req.params.time,
+      req.params.status,
       req.params.limit,
-      req.params.page,
-      req.params.status
+      req.params.page
     );
   } else if (
     req.params.status == 'Approved' ||
@@ -132,7 +174,13 @@ const statusMatchingAppOrModi = catchAsync(async (req, res) => {
     req.params.status == 'Packed' ||
     req.params.status == 'Assigned'
   ) {
-    statusMatching = await wardAdminService.getAppOrModifiedStatus(req.params.limit, req.params.page, req.params.status);
+    statusMatching = await wardAdminService.getAppOrModifiedStatus(
+      req.params.type,
+      req.params.time,
+      req.params.status,
+      req.params.limit,
+      req.params.page
+    );
   }
   res.send(statusMatching);
 });
@@ -177,4 +225,5 @@ module.exports = {
   statusMatchingAppOrModi,
   getAssigned_details,
   updatePackedStatus,
+  wardloadExecutivepacked,
 };

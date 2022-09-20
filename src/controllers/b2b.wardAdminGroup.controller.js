@@ -26,8 +26,18 @@ const updatePickedPettyStock = catchAsync(async (req, res) => {
   res.send(pickedPettyStock);
 });
 
+const updateManageStatuscashcollect = catchAsync(async (req, res) => {
+  const pickedPettyStock = await wardAdminGroupService.updateManageStatuscashcollect(req.params.id, req.body);
+  res.send(pickedPettyStock);
+});
+
 const updatePickedPettyCash = catchAsync(async (req, res) => {
   const pickedPettyCash = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  res.send(pickedPettyCash);
+});
+
+const updatePickedPettystockcollected = catchAsync(async (req, res) => {
+  const pickedPettyCash = await wardAdminGroupService.updateManageStatuscollected(req.params.id, req.body);
   res.send(pickedPettyCash);
 });
 
@@ -35,29 +45,40 @@ const updateDontAllocate = catchAsync(async (req, res) => {
   const notAloocate = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
   res.send(notAloocate);
 });
-
+const updateDontAllocatecash = catchAsync(async (req, res) => {
+  const notAloocate = await wardAdminGroupService.updateManageStatuscash(req.params.id, req.body);
+  res.send(notAloocate);
+});
 const updateAllocate = catchAsync(async (req, res) => {
   const notAloocate = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
   res.send(notAloocate);
 });
 
 const updateDeliveryStarted = catchAsync(async (req, res) => {
-  const deleiveryStarted = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  const deleiveryStarted = await wardAdminGroupService.delevery_start(req.params.id, req.body);
   res.send(deleiveryStarted);
 });
 
 const updatePettyCashReturnStatus = catchAsync(async (req, res) => {
-  const status = await wardAdminGroupService.updateShopOrderCloneById(req.params.id, req.body);
+  const status = await wardAdminGroupService.updateShopOrderCloneById(req.params.id,{
+    pettyCashReceiveStatus: 'Approved'
+  });
   res.send(status);
 });
 
 const updateDeliveryCompleted = catchAsync(async (req, res) => {
-  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, req.body);
+  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id,req.body, {
+    status: 'Delivered',
+    customerDeliveryStatus: 'Delivered',
+  });
   res.send(deliveryCompleted);
 });
 
 const UpdateUnDeliveredStatus = catchAsync(async (req, res) => {
-  const deliveryStatus = await wardAdminGroupService.updateOrderStatus(req.params.id, 'UnDelivered', req.body);
+  const deliveryStatus = await wardAdminGroupService.updateOrderStatus(req.params.id, {
+    status: 'UnDelivered',
+    customerDeliveryStatus: 'UnDelivered',
+  });
   res.send(deliveryStatus);
 });
 
@@ -68,6 +89,11 @@ const getproductDetailsPettyStock = catchAsync(async (req, res) => {
 
 const updateManageStatus = catchAsync(async (req, res) => {
   const data = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  res.send(data);
+});
+
+const updateManagecompleted = catchAsync(async (req, res) => {
+  const data = await wardAdminGroupService.updateordercomplete(req.params.id, req.body);
   res.send(data);
 });
 
@@ -238,7 +264,20 @@ const lastPettyStckAdd = catchAsync(async (req, res) => {
   res.send(returnStock);
 });
 
+const getShopDetailsForProj = catchAsync(async (req, res) => {
+  const getShopDetailsForProj = await wardAdminGroupService.getShopDetailsForProj(req.params.id);
+  res.send(getShopDetailsForProj);
+});
 
+const submitCashGivenByWDE = catchAsync(async (req, res) => {
+  const cashAsGivenByWDE = await wardAdminGroupService.submitCashGivenByWDE(req.params.id, req.body);
+  res.send(cashAsGivenByWDE);
+});
+
+const  createAddOrdINGrp= catchAsync(async (req, res) => {
+  const cashAsGivenByWDE = await wardAdminGroupService.createAddOrdINGrp(req.params.id,req.body);
+  res.send(cashAsGivenByWDE);
+});
 
 module.exports = {
   createGroupOrder,
@@ -304,6 +343,14 @@ module.exports = {
   returnStock,
 
   lastPettyStckAdd,
-
+  updateDontAllocatecash,
+  updatePickedPettystockcollected,
   // createImageUploadAndDetails,
+  updateManageStatuscashcollect,
+  updateManagecompleted,
+
+
+  getShopDetailsForProj,
+  submitCashGivenByWDE,
+  createAddOrdINGrp,
 };

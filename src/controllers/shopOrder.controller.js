@@ -55,6 +55,12 @@ const getAllProductOrderClone = catchAsync(async (req, res) => {
   res.send(productOrderClone);
 });
 
+// undelivered
+const undelivered = catchAsync(async (req, res) => {
+  const data = await shopOrderService.undelivered(req.params.page);
+  res.send(data);
+});
+
 const getProductOrderCloneById = catchAsync(async (req, res) => {
   const productOrderClone = await shopOrderService.getProductOrderCloneById(req.params.id);
   res.send(productOrderClone);
@@ -181,6 +187,16 @@ const getproductOrders_By_OrderId = catchAsync(async (req, res) => {
   res.send(shopOrder);
 });
 
+const productData = catchAsync(async (req, res) => {
+  const data = await shopOrderService.productData(req.params.id);
+  res.send(data);
+});
+
+const get_data_for_lapster = catchAsync(async (req, res) => {
+  const data = await shopOrderService.get_data_for_lapster(req.params.page);
+  res.send(data);
+});
+
 module.exports = {
   createshopOrder,
   getAllShopOrder,
@@ -210,7 +226,10 @@ module.exports = {
   updateshop_order,
   createOrderId,
   getShopDetailsByOrder,
+  undelivered,
   B2BManageOrders,
   getproductOrders_By_OrderId,
   getManageordersByOrderId,
+  productData,
+  get_data_for_lapster,
 };

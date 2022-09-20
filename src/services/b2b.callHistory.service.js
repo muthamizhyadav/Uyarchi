@@ -1433,6 +1433,11 @@ const call_visit_Count = async (userId) => {
   return { visitCount: call_Count, callCount: visit_Count };
 };
 
+const BillHistoryByShopId_date = async (shopId, date) => {
+  let values = await callHistoryModel.find({ shopId: shopId, date: date }).limit(10);
+  return values;
+};
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -1458,4 +1463,5 @@ module.exports = {
   getShop_reshedule,
   getShop_oncall,
   call_visit_Count,
+  BillHistoryByShopId_date,
 };
