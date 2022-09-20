@@ -42,6 +42,9 @@ const customerIssuesSchema = new mongoose.Schema({
   customerId: {
     type: String,
   },
+  orderId: {
+    type: String,
+  },
 });
 
 const CustomeIssues = mongoose.model('customerIssues', customerIssuesSchema);
