@@ -1434,7 +1434,7 @@ const call_visit_Count = async (userId) => {
 };
 
 const BillHistoryByShopId_date = async (shopId, date) => {
-  let values = await callHistoryModel.find({ shopId: shopId, date: date }).limit(10);
+  let values = await callHistoryModel.find({ shopId: shopId}).limit(10);
   return values;
 };
 
