@@ -126,6 +126,17 @@ const wardAdminGroupSchema_ORDER = new mongoose.Schema({
   created: {
     type: Date,
   },
+  date: {
+    type: String,
+    default: moment().utcOffset(330).format('DD-MM-yyy'),
+  },
+  time: {
+    type: String,
+    default: moment().utcOffset(330).format('h:mm a'),
+  },
+  AssignedstatusPerDay: {
+    type: String,
+  },
 });
 
 const wardAdminGroupModel_ORDERS = mongoose.model('orderAssign', wardAdminGroupSchema_ORDER);
