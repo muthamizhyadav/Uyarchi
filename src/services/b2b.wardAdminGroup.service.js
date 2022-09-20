@@ -1627,7 +1627,7 @@ const submitCashGivenByWDE = async (id, updateBody) => {
 
 
 const createAddOrdINGrp = async (id,body) =>{
-  // const {_id,shopId,status,productStatus,OrderId,date,time,type,Slat,Slong,street,totalItems,Qty,shopcloneId,shopName,ward} = body;
+   const {_id,shopId,status,productStatus,OrderId,date,time,type,Slat,Slong,street,totalItems,Qty,shopcloneId,shopName,ward} = body;
   let datas = await wardAdminGroup.findById(id);
   if(!datas){
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');

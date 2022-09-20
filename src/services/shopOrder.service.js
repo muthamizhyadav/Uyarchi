@@ -46,7 +46,28 @@ const createshopOrderClone = async (body, userid) => {
   let totalcount = Buy.length + 1;
 
   userId = 'OD' + center + totalcount;
-  let bod = { ...body, ...{ Uid: userid, OrderId: userId, date: currentDate, time: currenttime, created: moment() } };
+
+
+  let centerdata = '';
+  if (Buy.length < 9) {
+    centerdata = '0000';
+  }
+  if (Buy.length < 99 && Buy.length >= 9) {
+    centerdata = '000';
+  }
+  if (Buy.length < 999 && Buy.length >= 99) {
+    centerdata = '00';
+  }
+  if (Buy.length < 9999 && Buy.length >= 999) {
+    centerdata = '0';
+  }
+  let BillId = '';
+  let totalcounts = Buy.length + 1;
+
+  BillId = 'B' + centerdata + totalcounts;
+
+
+  let bod = { ...body, ...{ Uid: userid, OrderId: userId,customerBillId:BillId, date: currentDate, time: currenttime, created: moment() } };
   console.log(bod);
 
   let createShopOrderClone = await ShopOrderClone.create(bod);

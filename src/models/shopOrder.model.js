@@ -218,6 +218,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   statusUpdate: {
     type: Date,
+  },
+
+  customerBillId: {
+    type: String,
   }
 });
 
