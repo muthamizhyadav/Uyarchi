@@ -9,6 +9,11 @@ const createCustomerIssues = catchAsync(async (req, res) => {
   res.send(customerIssues);
 });
 
+const getAll = catchAsync(async (req, res) => {
+  const data = await CustomerIssuesService.productData();
+  res.send(data);
+});
 module.exports = {
   createCustomerIssues,
+  getAll,
 };
