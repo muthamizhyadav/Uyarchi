@@ -551,6 +551,57 @@ const getManageordersByOrderId = async (orderId, date) => {
   return { values: values, total: totalqty.Qty };
 };
 
+const getproductOrders_By_OrderId = async (orderId) => {
+  let todaydate = moment().subtract(1, 'days').format('YYYY-MM-DD');
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        OrderId: orderId,
+        date: todaydate,
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              priceperkg: 1,
+              quantity: 1,
+              productTitle: '$products.productTitle',
+              productId: '$products._id',
+              Amount: { $multiply: ['$priceperkg', '$quantity'] },
+            },
+          },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        productData: '$productData',
+        shopId: 1,
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -582,4 +633,6 @@ module.exports = {
   getShopDetailsByOrder,
   B2BManageOrders,
   getManageordersByOrderId,
+  // for lapsed
+  getproductOrders_By_OrderId,
 };
