@@ -104,6 +104,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
   shopOrderCloneID: {
     type: String,
   },
+  route: {
+    type: String,
+  },
 });
 
 const wardAdminGroup = mongoose.model('wardAdminGroup', wardAdminGroupSchema);

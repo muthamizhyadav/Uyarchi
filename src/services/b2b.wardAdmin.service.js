@@ -494,13 +494,32 @@ const createdata = async (Orderdatas) => {
 
 // AFTER PACKED BY WARD LOADING EXECUTE
 
-const wardloadExecutivePacked = async (page) => {
+const wardloadExecutivePacked = async (range, page) => {
+  console.log(range);
+  // console.log(status);
+  let today = moment().format('yyyy-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  let dateMatch = {
+    $or: [
+      { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } },
+      { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
+    ],
+  };
+
   let data = await ShopOrderClone.aggregate([
     {
       $match: {
-        status: {
-          $in: ['Packed'],
-        },
+        $and: [
+          {
+            status: {
+              $in: ['Approved', 'Modified'],
+            },
+          },
+          {
+            time_of_delivery: { $eq: range },
+          },
+          dateMatch,
+        ],
       },
     },
     {
@@ -581,6 +600,8 @@ const wardloadExecutivePacked = async (page) => {
     {
       $project: {
         _id: 1,
+        delivery_type: 1,
+        time_of_delivery: 1,
         date: 1,
         time: 1,
         shopId: 1,
@@ -614,9 +635,17 @@ const wardloadExecutivePacked = async (page) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        status: {
-          $in: ['Packed'],
-        },
+        $and: [
+          {
+            status: {
+              $in: ['Approved', 'Modified'],
+            },
+          },
+          {
+            time_of_delivery: { $eq: range },
+          },
+          dateMatch,
+        ],
       },
     },
     {
@@ -698,36 +727,35 @@ const wardloadExecutivePacked = async (page) => {
   return { data: data, total: total.length };
 };
 
+const wardDeliveryExecutive = async () => {
+  let data = await Roles.aggregate([
+    {
+      $match: {
+        roleName: {
+          $in: ['Ward delivery execute(WDE)'],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: '_id',
+        foreignField: 'userRole',
+        as: 'deliveryExecutiveName',
+      },
+    },
 
-  const wardDeliveryExecutive = async () => {
-    let data = await Roles.aggregate([
-      {
-        $match: {
-          roleName: {
-            $in: ['Ward delivery execute(WDE)'],
-          },
-        },
-      },
-      {
-        $lookup: {
-          from: 'b2busers',
-          localField: '_id',
-          foreignField: 'userRole',
-          as: 'deliveryExecutiveName',
-        },
-      },
-  
-      // {
-      //     $project: {
-      //         _id:1,
-      //         roleName: 1,
-      //         deliveryExecutiveName: '$deliveryExecutiveName.name',
-      //         deliveryExecutive: '$deliveryExecutiveName._id'
-      //     }
-      // }
-    ]);
-    return data;
-  };
+    // {
+    //     $project: {
+    //         _id:1,
+    //         roleName: 1,
+    //         deliveryExecutiveName: '$deliveryExecutiveName.name',
+    //         deliveryExecutive: '$deliveryExecutiveName._id'
+    //     }
+    // }
+  ]);
+  return data;
+};
 //   let data = await wardAdminGroup.aggregate([
 //              {
 //             $match: {
@@ -791,9 +819,7 @@ const wardloadExecutivePacked = async (page) => {
 // //   as:'statusData'
 // //   }
 // // }
-    
 
-   
 //   ]);
 //   return data;
 // };
@@ -857,6 +883,7 @@ const getAssigned_details = async () => {
         assignTime: 1,
         deliveryexecuteName: '$deliveryexecute.name',
         orderassigns: '$orderassigns',
+        route: 1,
       },
     },
   ]);

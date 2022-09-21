@@ -45,10 +45,10 @@ const customerIssuesSchema = new mongoose.Schema({
   orderId: {
     type: String,
   },
-  status:{
-    type:String,
-    default:"Pending",
-  }
+  status: {
+    type: String,
+    default: 'Pending',
+  },
 });
 
 const CustomeIssues = mongoose.model('customerIssues', customerIssuesSchema);

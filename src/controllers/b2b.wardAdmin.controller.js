@@ -100,7 +100,7 @@ const updateBilled = catchAsync(async (req, res) => {
 // AFTER PACKED BY WARD LOADING EXECUTE
 
 const wardloadExecutivePacked = catchAsync(async (req, res) => {
-  const packedOnly = await wardAdminService.wardloadExecutivePacked(req.params.page);
+  const packedOnly = await wardAdminService.wardloadExecutivePacked(req.params.range, req.params.page);
   res.send(packedOnly);
 });
 
