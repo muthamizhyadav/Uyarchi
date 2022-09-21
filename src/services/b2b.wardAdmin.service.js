@@ -583,8 +583,9 @@ const wardloadExecutive = async (id) => {
       },
     },
   ]);
+  let orderdate = await wardAdminGroup.findById(id);
 
-  return data;
+  return { data: data, orderDetails: orderdate };
 };
 // TRACK STATUS FOR PRODUCT STATUS
 const updateBilled = async (id, status) => {
