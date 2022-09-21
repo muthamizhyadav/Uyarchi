@@ -1014,7 +1014,7 @@ const getBillDetailsPerOrder = async (id) => {
         from: 'productorderclones',
         localField: 'shopData._id',
         foreignField: 'orderId',
-        pipeline: [{ $group: { _id: null, Qty: { $sum: '$finalQuantity' }} }],
+        pipeline: [{ $group: { _id: null, Qty: { $sum: '$finalQuantity' } } }],
         as: 'TotalQuantityData',
       },
     },
@@ -1037,9 +1037,9 @@ const getBillDetailsPerOrder = async (id) => {
         GST_Number: 1,
         HSN_Code: 1,
         productTitle: '$productName.productTitle',
-        billNo: '$shopData.customerBillId',
-        billDate: '$shopData.customerBilldate',
-        billTime: '$shopData.customerBilltime',
+        billNo: '$shopData.billNo',
+        billDate: '$shopData.billDate',
+        billTime: '$shopData.billTime',
         OrderId: '$shopData.OrderId',
         shopName: '$b2bshopclonedatas.SName',
         address: '$b2bshopclonedatas.address',
@@ -1047,18 +1047,14 @@ const getBillDetailsPerOrder = async (id) => {
         shopType: '$b2bshopclonedatas.type',
         SOwner: '$b2bshopclonedatas.SOwner',
         Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+        // total: { $sum: "$Amount"},
         totalQuantity: '$TotalQuantityData.Qty',
         OperatorName: '$deliveryExecutiveName.name',
-        GSTamount:{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] },
-        totalRupees: {$add: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, { "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] } ]} ,
-        CGSTAmount: { $divide: [{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] }, 2] },
-        SGSTAmount: { $divide: [{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] }, 2] },
-       
+        CGSTAmount: { $divide: ['$GST_Number', 2] },
+        SGSTAmount: { $divide: ['$GST_Number', 2] },
       },
     },
-    
   ]);
-  
   return datas;
 };
 
@@ -1648,6 +1644,18 @@ const createAddOrdINGrp = async (id, body) => {
       date: serverdates,
     });
     if (!group) {
+      let productId = e._id;
+
+      await ShopOrderClone.findByIdAndUpdate(
+        { _id: productId },
+        {
+          status: 'Assigned',
+          completeStatus: 'Assigned',
+          deliveryExecutiveId: body.deliveryExecutiveId,
+          WA_assigned_Time: moment(),
+        },
+        { new: true }
+      );
       await wardAdminGroupModel_ORDERS.create({
         wardAdminGroupID: id,
         orderId: e._id,
