@@ -137,11 +137,40 @@ const getById  = async (id) =>{
 
 const updateCustomerId = async (id, updateBody) => {
   let data = await getById(id);
-  console.log(id)
   if (!data) {
     throw new ApiError(httpStatus.NOT_FOUND, 'CustomerIssues not found');
   }
   data = await CustomeIssues.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return data;
+};
+
+const updateRefund = async (id, updateBody) => {
+  let data = await getById(id);
+
+  if (!data) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'CustomerIssues not found');
+  }
+  data = await CustomeIssues.findByIdAndUpdate({ _id: id }, {status:"refund"}, { new: true });
+  return data;
+};
+
+const updateRedeliver = async (id, updateBody) => {
+  let data = await getById(id);
+
+  if (!data) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'CustomerIssues not found');
+  }
+  data = await CustomeIssues.findByIdAndUpdate({ _id: id }, {status:"redeliver"}, { new: true });
+  return data;
+};
+
+const updateReject = async (id, updateBody) => {
+  let data = await getById(id);
+
+  if (!data) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'CustomerIssues not found');
+  }
+  data = await CustomeIssues.findByIdAndUpdate({ _id: id }, {status:"reject"}, { new: true });
   return data;
 };
 
@@ -150,5 +179,7 @@ module.exports = {
   createCustomerIssues,
   productData,
   updateCustomerId,
-
+  updateReject,
+  updateRedeliver,
+  updateRefund,
 };

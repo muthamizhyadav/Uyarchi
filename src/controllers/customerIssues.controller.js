@@ -18,8 +18,26 @@ const updateCustomerId = catchAsync(async (req, res) => {
   const data = await CustomerIssuesService.updateCustomerId(req.params.id, req.body);
   res.send(data);
 });
+
+const updateRedeliver = catchAsync(async (req, res) => {
+  const data = await CustomerIssuesService.updateRedeliver(req.params.id, req.body);
+  res.send(data);
+});
+
+const updateRefund = catchAsync(async (req, res) => {
+  const data = await CustomerIssuesService.updateRefund(req.params.id, req.body);
+  res.send(data);
+});
+
+const updateReject = catchAsync(async (req, res) => {
+  const data = await CustomerIssuesService.updateReject(req.params.id, req.body);
+  res.send(data);
+});
 module.exports = {
   createCustomerIssues,
   getAll,
   updateCustomerId,
+  updateReject,
+  updateRefund,
+  updateRedeliver,
 };
