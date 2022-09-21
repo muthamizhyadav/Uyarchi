@@ -873,6 +873,22 @@ const getAssigned_details = async () => {
       },
     },
     {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: 'deliveryExecutiveId',
+        foreignField: 'deliveryExecutiveId',
+        pipeline: [
+          {
+            $match: {
+              assignDate: currentDate,
+              manageDeliveryStatus: 'Delivery Completed',
+            },
+          },
+        ],
+        as: 'wardadmingroups',
+      },
+    },
+    {
       $project: {
         _id: 1,
         status: 1,
@@ -884,6 +900,7 @@ const getAssigned_details = async () => {
         deliveryexecuteName: '$deliveryexecute.name',
         orderassigns: '$orderassigns',
         route: 1,
+        deliveryCompletedCount: { $size: '$wardadmingroups' },
       },
     },
   ]);
