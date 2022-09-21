@@ -42,7 +42,7 @@ router
   .route('/wardloadingExecutive/getdetails/afterpacked/:status/:date/:page')
   .get(wardAdminController.wardloadExecutivepacked);
 
-router.route('/wardloadingExecutive/getPackedProductDetails/:page').get(wardAdminController.wardloadExecutivePacked);
+router.route('/wardloadingExecutive/getPackedProductDetails/:range/:page').get(wardAdminController.wardloadExecutivePacked);
 
 router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
 
