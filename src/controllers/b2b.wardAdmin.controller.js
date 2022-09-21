@@ -77,6 +77,10 @@ const wardloadExecutive = catchAsync(async (req, res) => {
   const executive = await wardAdminService.wardloadExecutive(req.params.page);
   res.send(executive);
 });
+const wardloadExecutivebtgroup = catchAsync(async (req, res) => {
+  const executive = await wardAdminService.wardloadExecutivebtgroup(req.params.page);
+  res.send(executive);
+});
 const wardloadExecutivepacked = catchAsync(async (req, res) => {
   const executive = await wardAdminService.wardloadExecutivepacked(req.params.status, req.params.date, req.params.page);
   res.send(executive);
@@ -226,4 +230,5 @@ module.exports = {
   getAssigned_details,
   updatePackedStatus,
   wardloadExecutivepacked,
+  wardloadExecutivebtgroup,
 };

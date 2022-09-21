@@ -38,6 +38,7 @@ router.route('/wardloadingExecutive/updateAssign/:id').put(wardAdminController.u
 router.route('/wardloadingExecutive/updateProductBilled/:id').put(wardAdminController.updateBilled);
 // checked
 router.route('/wardloadingExecutive/getdetails/:page').get(wardAdminController.wardloadExecutive);
+router.route('/wardloadingExecutive/getdetails/bygroup/:page').get(wardAdminController.wardloadExecutivebtgroup);
 router
   .route('/wardloadingExecutive/getdetails/afterpacked/:status/:date/:page')
   .get(wardAdminController.wardloadExecutivepacked);

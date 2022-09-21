@@ -385,6 +385,64 @@ const wardloadExecutivepacked = async (status, date, page) => {
   ]);
   return { data: data, total: total.length };
 };
+
+const wardloadExecutivebtgroup = async (page) => {
+  let data = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ status: { $eq: 'Assigned' } }],
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        // Orderdatas: 1,
+        status: 1,
+        manageDeliveryStatus: 1,
+        pettyCashAllocateStatus: 1,
+        pettyStockAllocateStatus: 1,
+        AllocateStatus: 1,
+        pettyStock: 1,
+        deliveryExecutiveId: 1,
+        totalOrders: 1,
+        route: 1,
+        groupId: 1,
+        assignDate: 1,
+        assignTime: 1,
+        pettyStockAllocateStatusNumber: 1,
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ status: { $eq: 'Assigned' } }],
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        // Orderdatas: 1,
+        status: 1,
+        manageDeliveryStatus: 1,
+        pettyCashAllocateStatus: 1,
+        pettyStockAllocateStatus: 1,
+        AllocateStatus: 1,
+        pettyStock: 1,
+        deliveryExecutiveId: 1,
+        totalOrders: 1,
+        route: 1,
+        groupId: 1,
+        assignDate: 1,
+        assignTime: 1,
+        pettyStockAllocateStatusNumber: 1,
+      },
+    },
+  ]);
+  return { data: data, total: total.length };
+};
 const wardloadExecutive = async (page) => {
   let data = await ShopOrderClone.aggregate([
     {
@@ -1669,4 +1727,5 @@ module.exports = {
   updateStatusrejectOrModified,
   updateStatusModifiedOrModified,
   wardloadExecutivepacked,
+  wardloadExecutivebtgroup,
 };
