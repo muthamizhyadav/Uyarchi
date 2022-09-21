@@ -883,6 +883,7 @@ const getAssigned_details = async () => {
         assignTime: 1,
         deliveryexecuteName: '$deliveryexecute.name',
         orderassigns: '$orderassigns',
+        route: 1,
       },
     },
   ]);
