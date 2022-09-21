@@ -5,7 +5,8 @@ const { ProductorderClone } = require('../models/shopOrder.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
 const Roles = require('../models/roles.model');
-const { wardAdminGroup } = require('../models/b2b.wardAdminGroup.model');
+const { wardAdminGroup, wardAdminGroupModel_ORDERS } = require('../models/b2b.wardAdminGroup.model');
+
 const moment = require('moment');
 // GET DETAILS
 
@@ -443,65 +444,147 @@ const wardloadExecutivebtgroup = async (page) => {
   ]);
   return { data: data, total: total.length };
 };
-const wardloadExecutive = async (page) => {
-  let data = await ShopOrderClone.aggregate([
+const wardloadExecutive = async (id) => {
+  let data = await wardAdminGroupModel_ORDERS.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: 'Assigned' } }],
+        $and: [{ wardAdminGroupID: { $eq: id } }],
       },
     },
     {
       $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId', //Uid
+        from: 'shoporderclones',
+        localField: 'orderId', //Uid
         foreignField: '_id', //Uid
-        as: 'b2bshopclonesData',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'products',
+                    localField: 'productid',
+                    foreignField: '_id',
+                    as: 'products',
+                  },
+                },
+                {
+                  $unwind: '$products',
+                },
+                {
+                  $project: {
+                    _id: '297cf887-304f-457a-b416-df84a1ceede4',
+                    status: 1,
+                    orderId: 1,
+                    productid: 1,
+                    quantity: 1,
+                    priceperkg: 1,
+                    GST_Number: 1,
+                    HSN_Code: 1,
+                    packKg: 1,
+                    unit: 1,
+                    date: 1,
+                    time: 1,
+                    customerId: 1,
+                    finalQuantity: 1,
+                    finalPricePerKg: 1,
+                    created: 1,
+                    productTitle: '$products.productTitle',
+                  },
+                },
+              ],
+              as: 'product',
+            },
+          },
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'shopId',
+              foreignField: '_id',
+              as: 'shopdetails',
+            },
+          },
+          {
+            $unwind: '$shopdetails',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              productStatus: 1,
+              customerDeliveryStatus: 1,
+              receiveStatus: 1,
+              pettyCashReceiveStatus: 1,
+              AssignedStatus: 1,
+              completeStatus: 1,
+              UnDeliveredStatus: 1,
+              delivery_type: 1,
+              Payment: 1,
+              devevery_mode: 1,
+              time_of_delivery: 1,
+              total: 1,
+              gsttotal: 1,
+              subtotal: 1,
+              SGST: 1,
+              CGST: 1,
+              paidamount: 1,
+              OrderId: 1,
+              date: 1,
+              time: 1,
+              created: 1,
+              statusUpdate: 1,
+              WA_assigned_Time: 1,
+              shopname: '$shopdetails.SName',
+              deliveryExecutiveId: 1,
+              product: '$product',
+            },
+          },
+        ],
+        as: 'shoporderclones',
       },
     },
     {
-      $unwind: '$b2bshopclonesData',
+      $unwind: '$shoporderclones',
     },
     {
       $project: {
-        shopId: 1,
-        status: 1,
-        completeStatus: 1,
-        OrderId: 1,
-        SName: '$b2bshopclonesData.SName',
-        type: '$b2bshopclonesData.type',
-      },
-    },
-    { $skip: 10 * page },
-    { $limit: 10 },
-  ]);
-  let total = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [{ status: { $eq: 'Assigned' } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId', //Uid
-        foreignField: '_id', //Uid
-        as: 'b2bshopclonesData',
-      },
-    },
-    {
-      $unwind: '$b2bshopclonesData',
-    },
-    {
-      $project: {
-        shopId: 1,
-        status: 1,
-        OrderId: 1,
-        SName: '$b2bshopclonesData.SName',
-        type: '$b2bshopclonesData.type',
+        _id: 1,
+        // shoporderclones: '$shoporderclones',
+        status: '$shoporderclones.status',
+        productStatus: '$shoporderclones.productStatus',
+        customerDeliveryStatus: '$shoporderclones.customerDeliveryStatus',
+        receiveStatus: '$shoporderclones.receiveStatus',
+        pettyCashReceiveStatus: '$shoporderclones.pettyCashReceiveStatus',
+        AssignedStatus: '$shoporderclones.AssignedStatus',
+        completeStatus: '$shoporderclones.completeStatus',
+        UnDeliveredStatus: '$shoporderclones.UnDeliveredStatus',
+        delivery_type: '$shoporderclones.delivery_type',
+        Payment: '$shoporderclones.Payment',
+        devevery_mode: '$shoporderclones.devevery_mode',
+        time_of_delivery: '$shoporderclones.time_of_delivery',
+        total: '$shoporderclones.total',
+        gsttotal: '$shoporderclones.gsttotal',
+        subtotal: '$shoporderclones.subtotal',
+        SGST: '$shoporderclones.SGST',
+        CGST: '$shoporderclones.CGST',
+        paidamount: '$shoporderclones.paidamount',
+        OrderId: '$shoporderclones.OrderId',
+        date: '$shoporderclones.date',
+        time: '$shoporderclones.time',
+        created: '$shoporderclones.created',
+        statusUpdate: '$shoporderclones.statusUpdate',
+        WA_assigned_Time: '$shoporderclones.WA_assigned_Time',
+        deliveryExecutiveId: '$shoporderclones.deliveryExecutiveId',
+        shopname: '$shoporderclones.shopname',
+        product: '$shoporderclones.product',
       },
     },
   ]);
-  return { data: data, total: total.length };
+
+  return data;
 };
 // TRACK STATUS FOR PRODUCT STATUS
 const updateBilled = async (id, status) => {

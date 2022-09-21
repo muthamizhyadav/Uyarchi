@@ -74,7 +74,7 @@ const updateRejected = catchAsync(async (req, res) => {
 
 // ward loading executive
 const wardloadExecutive = catchAsync(async (req, res) => {
-  const executive = await wardAdminService.wardloadExecutive(req.params.page);
+  const executive = await wardAdminService.wardloadExecutive(req.params.id);
   res.send(executive);
 });
 const wardloadExecutivebtgroup = catchAsync(async (req, res) => {
