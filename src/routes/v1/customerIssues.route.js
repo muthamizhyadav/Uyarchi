@@ -3,6 +3,6 @@ const customerIssuesController = require('../../controllers/customerIssues.contr
 const router = express.Router();
 
 router.route('/').post(customerIssuesController.createCustomerIssues);
-router.route('/manageIssues').get(customerIssuesController.getAll);
+router.route('/manageIssues/:page').get(customerIssuesController.getAll);
 router.route('/:id').put(customerIssuesController.updateCustomerId);
 module.exports = router;

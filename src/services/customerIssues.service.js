@@ -10,7 +10,7 @@ const createCustomerIssues = async (body) => {
 };
 
 
-const productData = async() =>{
+const productData = async(page) =>{
   let data = await CustomeIssues.aggregate([
     // {
     //   $match: { _id: id },
@@ -59,8 +59,71 @@ const productData = async() =>{
         SName:'$b2bshopclonesData.SName',
       },
     },
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
+
   ])
-  return data
+  let total = await CustomeIssues.aggregate([
+    // {
+    //   $match: { _id: id },
+    // },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productId',
+        foreignField: '_id',
+        as: 'productsData',
+      },
+    },
+    {
+      $unwind: '$productsData',
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shoporderclonesData',
+      },
+    },
+    {
+      $unwind: '$shoporderclonesData',
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shoporderclonesData.shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesData',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesData',
+    },
+    {
+      $project: {
+        product:'$productsData.productTitle',
+        price:1,
+        quantity:1,
+        total:1,
+        issue:1,
+        OrderId:'$shoporderclonesData.OrderId',
+        SName:'$b2bshopclonesData.SName',
+      },
+    },
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
+
+  ])
+  return {data:data, count:total.length}
 }
 
 const getById  = async (id) =>{

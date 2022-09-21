@@ -10,7 +10,7 @@ const createCustomerIssues = catchAsync(async (req, res) => {
 });
 
 const getAll = catchAsync(async (req, res) => {
-  const data = await CustomerIssuesService.productData();
+  const data = await CustomerIssuesService.productData(req.params.page);
   res.send(data);
 });
 
