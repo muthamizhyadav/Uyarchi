@@ -1634,7 +1634,7 @@ const createAddOrdINGrp = async (id, body) => {
   if (!datas) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  await wardAdminGroup.findByIdAndUpdate({ _id: id }, { $push: { Orderdatas: body } }, { new: true });
+  await wardAdminGroup.update({ _id: id }, { $push: { Orderdatas: body } }, { new: true });
   let serverdates = moment().format('YYYY-MM-DD');
   let servertime = moment().format('hh:mm a');
   body.forEach(async (e) => {
