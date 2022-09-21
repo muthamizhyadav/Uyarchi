@@ -874,6 +874,14 @@ const getAssigned_details = async () => {
     },
     {
       $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        as: 'orderassignscount',
+      },
+    },
+    {
+      $lookup: {
         from: 'wardadmingroups',
         localField: 'deliveryExecutiveId',
         foreignField: 'deliveryExecutiveId',
@@ -893,7 +901,7 @@ const getAssigned_details = async () => {
         _id: 1,
         status: 1,
         deliveryExecutiveId: 1,
-        totalOrders: 1,
+        totalOrders: { $size: '$orderassignscount' },
         groupId: 1,
         assignDate: 1,
         assignTime: 1,
