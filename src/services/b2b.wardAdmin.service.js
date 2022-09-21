@@ -389,13 +389,7 @@ const wardloadExecutive = async (page) => {
   let data = await ShopOrderClone.aggregate([
     {
       $match: {
-        $or: [
-          { status: { $eq: 'Approved' } },
-          { status: { $eq: 'Modified' } },
-          // { status: { $eq: 'Packed' } },
-          // { status: { $eq: 'Billed' } },
-          // { status: { $eq: 'Assigned' } },
-        ],
+        $and: [{ status: { $eq: 'Assigned' } }],
       },
     },
     {
@@ -425,13 +419,7 @@ const wardloadExecutive = async (page) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $or: [
-          { status: { $eq: 'Approved' } },
-          { status: { $eq: 'Modified' } },
-          // { status: { $eq: 'Packed' } },
-          // { status: { $eq: 'Billed' } },
-          // { status: { $eq: 'Assigned' } },
-        ],
+        $and: [{ status: { $eq: 'Assigned' } }],
       },
     },
     {
