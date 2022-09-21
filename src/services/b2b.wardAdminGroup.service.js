@@ -12,12 +12,11 @@ const { Product } = require('../models/product.model');
 
 const createGroup = async (body) => {
   let serverdates = moment().format('YYYY-MM-DD');
-  console.log(typeof serverdates)
+  console.log(typeof serverdates);
   let servertime = moment().format('hh:mm a');
   let num = 1;
-  const group = await wardAdminGroup.find({ assignDate: serverdates  });
-console.log(group)
-  
+  const group = await wardAdminGroup.find({ assignDate: serverdates });
+  console.log(group);
 
   let center = '';
 
@@ -62,12 +61,18 @@ console.log(group)
       },
       { new: true }
     );
-    await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: wardAdminGroupcreate._id });
+    await wardAdminGroupModel_ORDERS.create({
+      orderId: productId,
+      wardAdminGroupID: wardAdminGroupcreate._id,
+      date: serverdates,
+      time: servertime,
+      created: moment(),
+      AssignedstatusPerDay: 1,
+    });
   });
 
   return wardAdminGroupcreate;
 };
-
 
 const updateOrderStatus = async (id, updateBody) => {
   let deliveryStatus = await ShopOrderClone.findById(id);
@@ -1612,7 +1617,6 @@ const getShopDetailsForProj = async (id) => {
   return values;
 };
 
-
 const submitCashGivenByWDE = async (id, updateBody) => {
   let deliveryStatus = await wardAdminGroup.findById(id);
   console.log(deliveryStatus);
@@ -1625,61 +1629,46 @@ const submitCashGivenByWDE = async (id, updateBody) => {
   return deliveryStatus;
 };
 
-
-const createAddOrdINGrp = async (id,body) =>{
-   const {_id,shopId,status,productStatus,OrderId,date,time,type,Slat,Slong,street,totalItems,Qty,shopcloneId,shopName,ward} = body;
+const createAddOrdINGrp = async (id, body) => {
   let datas = await wardAdminGroup.findById(id);
-  if(!datas){
+  if (!datas) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  await wardAdminGroup.update({_id:id},{ $push: { Orderdatas: body}});
+  await wardAdminGroup.update({ _id: id }, { $push: { Orderdatas: body } }, { new: true });
+  let serverdates = moment().format('YYYY-MM-DD');
+  let servertime = moment().format('hh:mm a');
+  body.forEach(async (e) => {
+    const group = await wardAdminGroupModel_ORDERS.findOne({
+      wardAdminGroupID: id,
+      orderId: e._id,
+      date: serverdates,
+    });
+    if (!group) {
+      let productId = e._id;
 
-let update = await wardAdminGroup.findById(id);
-
-
-let serverdates = moment().format('YYYY-MM-DD');
-let servertime = moment().format('hh:mm a');
-
-  const group = await wardAdminGroupModel_ORDERS.find({ date: serverdates  });
-  console.log(group)
-
-
-  let center = '';
-
-  if (group.length < 9) {
-    center = '0000';
-  }
-  if (group.length < 99 && group.length >= 9) {
-    center = '000';
-  }
-  if (group.length < 999 && group.length >= 99) {
-    center = '00';
-  }
-  if (group.length < 9999 && group.length >= 999) {
-    center = '0';
-  }
-  let userId = '';
-  let totalcount = group.length + 1;
-  console.log(totalcount);
-  userId = 'D' + center + totalcount;
-
-  let values = {
-    AssignedstatusPerDay: userId,
-    date: serverdates,
-    time: servertime
-  }
-
-
-  body.Orderdatas.forEach(async (e) => {
-    let productId = e._id;
-
-    await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: update._id ,AssignedstatusPerDay: values.AssignedstatusPerDay,date: values.date,time: values.time});
+      await ShopOrderClone.findByIdAndUpdate(
+        { _id: productId },
+        {
+          status: 'Assigned',
+          completeStatus: 'Assigned',
+          deliveryExecutiveId: body.deliveryExecutiveId,
+          WA_assigned_Time: moment(),
+        },
+        { new: true }
+      );
+      await wardAdminGroupModel_ORDERS.create({
+        wardAdminGroupID: id,
+        orderId: e._id,
+        date: serverdates,
+        time: servertime,
+        created: moment(),
+        AssignedstatusPerDay: 2,
+      });
+    }
   });
- 
 
-return "works";
-}
-
+  return 'works';
+};
 
 module.exports = {
   getPEttyCashQuantity,

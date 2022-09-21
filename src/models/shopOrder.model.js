@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
+const moment = require('moment');
 
 const ShopOrderPriceSchema = new mongoose.Schema({
   _id: {
@@ -222,6 +223,14 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
 
   customerBillId: {
     type: String,
+  },
+  customerBilldate: {
+    type: String,
+    default: moment().utcOffset(330).format('DD-MM-yyy'),
+  },
+  customerBilltime: {
+    type: String,
+    default: moment().utcOffset(330).format('h:mm a'),
   },
   lapsedOrder: {
     type: Boolean,
