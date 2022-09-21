@@ -1009,7 +1009,7 @@ const getBillDetailsPerOrder = async (id) => {
         from: 'productorderclones',
         localField: 'shopData._id',
         foreignField: 'orderId',
-        pipeline: [{ $group: { _id: null, Qty: { $sum: '$finalQuantity' } } }],
+        pipeline: [{ $group: { _id: null, Qty: { $sum: '$finalQuantity' }} }],
         as: 'TotalQuantityData',
       },
     },
@@ -1032,9 +1032,9 @@ const getBillDetailsPerOrder = async (id) => {
         GST_Number: 1,
         HSN_Code: 1,
         productTitle: '$productName.productTitle',
-        billNo: '$shopData.billNo',
-        billDate: '$shopData.billDate',
-        billTime: '$shopData.billTime',
+        billNo: '$shopData.customerBillId',
+        billDate: '$shopData.customerBilldate',
+        billTime: '$shopData.customerBilltime',
         OrderId: '$shopData.OrderId',
         shopName: '$b2bshopclonedatas.SName',
         address: '$b2bshopclonedatas.address',
@@ -1042,14 +1042,18 @@ const getBillDetailsPerOrder = async (id) => {
         shopType: '$b2bshopclonedatas.type',
         SOwner: '$b2bshopclonedatas.SOwner',
         Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
-        // total: { $sum: "$Amount"},
         totalQuantity: '$TotalQuantityData.Qty',
         OperatorName: '$deliveryExecutiveName.name',
-        CGSTAmount: { $divide: ['$GST_Number', 2] },
-        SGSTAmount: { $divide: ['$GST_Number', 2] },
+        GSTamount:{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] },
+        totalRupees: {$add: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, { "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] } ]} ,
+        CGSTAmount: { $divide: [{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] }, 2] },
+        SGSTAmount: { $divide: [{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] }, 2] },
+       
       },
     },
+    
   ]);
+  
   return datas;
 };
 
