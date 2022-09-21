@@ -58,6 +58,7 @@ const productData = async(page) =>{
         OrderId:'$shoporderclonesData.OrderId',
         SName:'$b2bshopclonesData.SName',
         status:1,
+        shoporderclonesId:'$shoporderclonesData._id'
       },
     },
     {
