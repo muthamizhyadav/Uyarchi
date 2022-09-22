@@ -28,6 +28,9 @@ const OrderPaymentSchema = new mongoose.Schema({
   uid: {
     type: String,
   },
+  payType: {
+    type: String,
+  },
   active: {
     type: Boolean,
     default: true,
