@@ -897,6 +897,14 @@ const getDeliveryOrderSeparate = async (id, page) => {
                   $unwind: '$productorderclones',
                 },
                 {
+                  $lookup: {
+                    from: 'productorderclones',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    as: 'productorderclonescount',
+                  },
+                },
+                {
                   $project: {
                     _id: 1,
                     status: 1,
@@ -928,6 +936,9 @@ const getDeliveryOrderSeparate = async (id, page) => {
                     deliveryExecutiveId: 1,
                     WL_Packed_Time: 1,
                     totalPrice: '$productorderclones.price',
+                    productCount: {
+                      $size: '$productorderclonescount',
+                    },
                   },
                 },
               ],
@@ -937,7 +948,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
           { $unwind: '$shopDatas' },
           {
             $project: {
-              _id: "$shopDatas._id",
+              _id: '$shopDatas._id',
               status: '$shopDatas.status',
               productStatus: '$shopDatas.productStatus',
               customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
@@ -960,6 +971,8 @@ const getDeliveryOrderSeparate = async (id, page) => {
               deliveryExecutiveId: '$shopDatas.deliveryExecutiveId',
               totalPrice: '$shopDatas.totalPrice',
               paidamount: '$shopDatas.paidamount',
+              productCount: '$shopDatas.productCount',
+              
             },
           },
         ],
