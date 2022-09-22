@@ -708,6 +708,9 @@ const assignOnly = async (page, status) => {
   if (status == 'cash') {
     macthStatus = { pettyCashAllocateStatus: 'Pending' };
   }
+  if (status == 'delivery') {
+    macthStatus = { pettyCashAllocateStatus: { $ne: 'Pending' }, pettyStockAllocateStatus: { $ne: 'Pending' } };
+  }
   console.log(page);
   let values = await wardAdminGroup.aggregate([
     { $match: { $and: [{ status: 'Packed' }, macthStatus] } },

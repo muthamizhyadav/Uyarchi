@@ -130,6 +130,10 @@ const cashgetAssigned = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.assignOnly(req.params.page, 'cash');
   res.send(details);
 });
+const deliverygetAssigned = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.assignOnly(req.params.page, 'delivery');
+  res.send(details);
+});
 
 const getDeliveryOrderSeparate = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.getDeliveryOrderSeparate(req.params.id, req.params.page);
@@ -357,4 +361,5 @@ module.exports = {
   submitCashGivenByWDE,
   createAddOrdINGrp,
   cashgetAssigned,
+  deliverygetAssigned,
 };
