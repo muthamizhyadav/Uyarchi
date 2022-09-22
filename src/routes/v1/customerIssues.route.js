@@ -8,4 +8,5 @@ router.route('/:id').put(customerIssuesController.updateCustomerId).put(customer
 router.route('/refund/:id').put(customerIssuesController.updateRefund)
 router.route('/redeliver/:id').put(customerIssuesController.updateRedeliver)
 router.route('/updateReject/:id').put(customerIssuesController.updateReject)
+router.route('/getById/:id').get(customerIssuesController.getById)
 module.exports = router;

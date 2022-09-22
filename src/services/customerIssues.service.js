@@ -184,4 +184,5 @@ module.exports = {
   updateReject,
   updateRedeliver,
   updateRefund,
+  getById,
 };
