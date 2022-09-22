@@ -702,9 +702,7 @@ const getBillDetails = async (id) => {
 const assignOnly = async (page) => {
   console.log(page);
   let values = await wardAdminGroup.aggregate([
-    // { $sort: { pettyStockAllocateStatusNumber: 1 } },
-    { $match: { status: 'Packed' } },
-
+    { $match: { status: 'Packed', pettyStockAllocateStatus: 'Pending' } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -742,9 +740,7 @@ const assignOnly = async (page) => {
         as: 'dataDetails',
       },
     },
-
     { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
-
     {
       $lookup: {
         from: 'b2busers',
@@ -756,16 +752,6 @@ const assignOnly = async (page) => {
     {
       $unwind: '$UserName',
     },
-    // {
-    //   $lookup: {
-    //     from: 'shoporderclones',
-    //     localField: 'Orderdatas._id',
-    //     foreignField: '_id',
-    //     as: 'wdfsaf'
-
-    //   }
-    // },
-
     {
       $project: {
         shopOrderCloneId: '$wdfsaf._id',
@@ -781,14 +767,11 @@ const assignOnly = async (page) => {
         pettyStockAllocateStatus: 1,
       },
     },
-
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
-    // { $sort: { pettyStockAllocateStatusNumber:1} },
-    { $match: { status: 'Packed' } },
-
+    { $match: { status: 'Packed', pettyStockAllocateStatus: 'Pending' } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -826,9 +809,7 @@ const assignOnly = async (page) => {
         as: 'dataDetails',
       },
     },
-
     { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
-
     {
       $lookup: {
         from: 'b2busers',
