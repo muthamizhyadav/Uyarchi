@@ -166,7 +166,7 @@ const updateStatusrejectOrModified = async (id) => {
 
 const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
   let statusUpdate = await ShopOrderClone.findById(id);
-  console.log(statusUpdate);
+  // console.log(statusUpdate);
   if (!statusUpdate) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
@@ -175,7 +175,17 @@ const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
     { status: 'Packed', statusUpdate: moment() },
     { new: true }
   );
-  // console.log(statusUpdate);
+  let orderassign = await wardAdminGroupModel_ORDERS.findOne({ orderId: id });
+  await wardAdminGroupModel_ORDERS.findByIdAndUpdate({ _id: orderassign._id }, { status: 'Packed' }, { new: true });
+  // console.log(orderassign);
+  let wardgroup = await wardAdminGroupModel_ORDERS.find({
+    wardAdminGroupID: orderassign.wardAdminGroupID,
+    status: 'Assigned',
+  });
+  console.log(wardgroup);
+  if (wardgroup.length == 0) {
+    await wardAdminGroup.findByIdAndUpdate({ _id: orderassign.wardAdminGroupID }, { status: 'Packed' }, { new: true });
+  }
   return statusUpdate;
 };
 
