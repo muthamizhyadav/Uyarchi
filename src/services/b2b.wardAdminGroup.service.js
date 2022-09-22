@@ -937,7 +937,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
           { $unwind: '$shopDatas' },
           {
             $project: {
-              _id: 1,
+              _id: "$shopDatas._id",
               status: '$shopDatas.status',
               productStatus: '$shopDatas.productStatus',
               customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
