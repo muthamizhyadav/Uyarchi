@@ -9,7 +9,7 @@ const pettyStockModel = require('../models/b2b.pettyStock.model');
 const { wardAdminGroup, wardAdminGroupModel_ORDERS } = require('../models/b2b.wardAdminGroup.model');
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 const { Product } = require('../models/product.model');
-
+const orderPayment = require('../models/orderpayment.model');
 const createGroup = async (body) => {
   let serverdates = moment().format('YYYY-MM-DD');
   console.log(typeof serverdates);
@@ -75,14 +75,30 @@ const createGroup = async (body) => {
 };
 
 const updateOrderStatus = async (id, updateBody) => {
+  let currentDate = moment().format('YYYY-MM-DD');
+  let currenttime = moment().format('HHmmss');
+  let body = {
+    ...updateBody,
+    ...{
+      status: 'Delivered',
+      customerDeliveryStatus: 'Delivered',
+    },
+  };
   let deliveryStatus = await ShopOrderClone.findById(id);
   console.log(deliveryStatus);
   if (!deliveryStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-  console.log(deliveryStatus);
-
+  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
+  await orderPayment.create({
+    paidAmt: updateBody.paidamount,
+    date: currentDate,
+    time: currenttime,
+    created: moment(),
+    orderId: deliveryStatus._id,
+    type: updateBody.reason,
+    payType: updateBody.payType,
+  });
   return deliveryStatus;
 };
 
@@ -897,6 +913,14 @@ const getDeliveryOrderSeparate = async (id, page) => {
                   $unwind: '$productorderclones',
                 },
                 {
+                  $lookup: {
+                    from: 'productorderclones',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    as: 'productorderclonescount',
+                  },
+                },
+                {
                   $project: {
                     _id: 1,
                     status: 1,
@@ -928,6 +952,9 @@ const getDeliveryOrderSeparate = async (id, page) => {
                     deliveryExecutiveId: 1,
                     WL_Packed_Time: 1,
                     totalPrice: '$productorderclones.price',
+                    productCount: {
+                      $size: '$productorderclonescount',
+                    },
                   },
                 },
               ],
@@ -937,7 +964,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
           { $unwind: '$shopDatas' },
           {
             $project: {
-              _id: "$shopDatas._id",
+              _id: '$shopDatas._id',
               status: '$shopDatas.status',
               productStatus: '$shopDatas.productStatus',
               customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
@@ -960,6 +987,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
               deliveryExecutiveId: '$shopDatas.deliveryExecutiveId',
               totalPrice: '$shopDatas.totalPrice',
               paidamount: '$shopDatas.paidamount',
+              productCount: '$shopDatas.productCount',
             },
           },
         ],
