@@ -33,6 +33,8 @@ router.route('/get/billDetails/:id').get(wardAdminGroupController.getBillDetails
 
 //checked
 router.route('/get/assignedOnle/:page').get(wardAdminGroupController.getAssigned);
+router.route('/get/assignedOnle/cash/:page').get(wardAdminGroupController.cashgetAssigned);
+router.route('/get/assignedOnle/delivery/:page').get(wardAdminGroupController.deliverygetAssigned);
 
 router.route('/get/details/deliveryExecutive/:id/:page').get(wardAdminGroupController.getDeliveryOrderSeparate);
 
@@ -81,10 +83,10 @@ router.route('/get/getPettyCashDetails/:id/:page').get(wardAdminGroupController.
 
 router.route('/get/AllGroup/details/:page').get(wardAdminGroupController.getAllGroup);
 
-router.route("/update/pettycash/return/:id").put(wardAdminGroupController.updatePettyCashReturnStatus);
+router.route('/update/pettycash/return/:id').put(wardAdminGroupController.updatePettyCashReturnStatus);
 
 // checked Modified
-router.route('/craete/pettyStock/create/:id').put(wardAdminGroupController.pettyStockCreate);
+router.route('/create/pettyStock/create/:id').put(wardAdminGroupController.pettyStockCreate);
 
 router.route('/get/cashDetails/fromDB/:id').get(wardAdminGroupController.getcashAmountViewFromDB);
 router.route('/submitPEttyCashGivenByWDE/submit/:id').put(wardAdminGroupController.submitPEttyCashGivenByWDE);
@@ -101,7 +103,6 @@ router.route('/get/return/stock/:id').get(wardAdminGroupController.returnStock);
 
 // checked Modified
 router.route('/create/pettyStock/:id').put(wardAdminGroupController.lastPettyStckAdd);
-
 
 router.route('/get/shop/details/:id').get(wardAdminGroupController.getShopDetailsForProj);
 
