@@ -590,6 +590,7 @@ const wardloadExecutive = async (id) => {
         deliveryExecutiveId: '$shoporderclones.deliveryExecutiveId',
         shopname: '$shoporderclones.shopname',
         product: '$shoporderclones.product',
+        orderId: '$shoporderclones._id',
       },
     },
   ]);
