@@ -50,6 +50,17 @@ const deletRoleById = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const getroleWardAdmin = catchAsync(async (req, res) => {
+  console.log("ojojo")
+  const role = await RolesService.getroleWardAdmin();
+  if (!role) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Roles Not Found');
+  }
+
+  res.send(role);
+});
+
+
 module.exports = {
   createRoles,
   getAllRoles,
@@ -58,4 +69,5 @@ module.exports = {
   updateRolesById,
   deletRoleById,
   getusermenus,
+  getroleWardAdmin,
 };
