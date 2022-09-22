@@ -844,29 +844,132 @@ const getDeliveryOrderSeparate = async (id, page) => {
       },
     },
     {
-      $unwind: '$Orderdatas',
-    },
-    {
       $lookup: {
-        from: 'shoporderclones',
-        localField: 'Orderdatas._id',
-        foreignField: '_id',
-        as: 'shopDatas',
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'productorderclones',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    pipeline: [
+                      {
+                        $project: {
+                          Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                          GST_Number: 1,
+                        },
+                      },
+                      {
+                        $project: {
+                          sum: '$sum',
+                          percentage: {
+                            $divide: [
+                              {
+                                $multiply: ['$GST_Number', '$Amount'],
+                              },
+                              100,
+                            ],
+                          },
+                          value: '$Amount',
+                        },
+                      },
+                      {
+                        $project: {
+                          price: { $sum: ['$value', '$percentage'] },
+                          value: '$value',
+                          GST: '$percentage',
+                        },
+                      },
+                      { $group: { _id: null, price: { $sum: '$price' } } },
+                    ],
+                    as: 'productorderclones',
+                  },
+                },
+                {
+                  $unwind: '$productorderclones',
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    status: 1,
+                    productStatus: 1,
+                    customerDeliveryStatus: 1,
+                    receiveStatus: 1,
+                    pettyCashReceiveStatus: 1,
+                    AssignedStatus: 1,
+                    completeStatus: 1,
+                    UnDeliveredStatus: 1,
+                    delivery_type: 1,
+                    Payment: 1,
+                    devevery_mode: 1,
+                    time_of_delivery: 1,
+                    total: 1,
+                    gsttotal: 1,
+                    subtotal: 1,
+                    SGST: 1,
+                    CGST: 1,
+                    paidamount: 1,
+                    Uid: 1,
+                    OrderId: 1,
+                    customerBillId: 1,
+                    date: 1,
+                    time: 1,
+                    created: 1,
+                    statusUpdate: 1,
+                    WA_assigned_Time: 1,
+                    deliveryExecutiveId: 1,
+                    WL_Packed_Time: 1,
+                    totalPrice: '$productorderclones.price',
+                  },
+                },
+              ],
+              as: 'shopDatas',
+            },
+          },
+          { $unwind: '$shopDatas' },
+          {
+            $project: {
+              _id: 1,
+              status: '$shopDatas.status',
+              productStatus: '$shopDatas.productStatus',
+              customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
+              receiveStatus: '$shopDatas.receiveStatus',
+              pettyCashReceiveStatus: '$shopDatas.pettyCashReceiveStatus',
+              AssignedStatus: '$shopDatas.AssignedStatus',
+              completeStatus: '$shopDatas.completeStatus',
+              UnDeliveredStatus: '$shopDatas.UnDeliveredStatus',
+              delivery_type: '$shopDatas.delivery_type',
+              Payment: '$shopDatas.Payment',
+              devevery_mode: '$shopDatas.devevery_mode',
+              time_of_delivery: '$shopDatas.time_of_delivery',
+              OrderId: '$shopDatas.OrderId',
+              customerBillId: '$shopDatas.customerBillId',
+              date: '$shopDatas.date',
+              time: '$shopDatas.time',
+              created: '$shopDatas.created',
+              statusUpdate: '$shopDatas.statusUpdate',
+              WA_assigned_Time: '$shopDatas.WA_assigned_Time',
+              deliveryExecutiveId: '$shopDatas.deliveryExecutiveId',
+              totalPrice: '$shopDatas.totalPrice',
+              paidamount: '$shopDatas.paidamount',
+            },
+          },
+        ],
+        as: 'orderassigns',
       },
     },
-    { $unwind: '$shopDatas' },
+
     {
       $project: {
-        type: '$Orderdatas.type',
-        orderId: '$Orderdatas.OrderId',
-        orderedDate: '$Orderdatas.date',
-        orderedTime: '$Orderdatas.time',
-        streetName: '$Orderdatas.street',
-        totalItems: '$Orderdatas.totalItems',
-        shopName: '$Orderdatas.shopName',
-        customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
-        shopordercloneId: '$shopDatas._id',
-        inititalPaymentType: '$shopDatas.Payment',
+        orderassigns: '$orderassigns',
       },
     },
     { $skip: 10 * page },
@@ -891,7 +994,10 @@ const getDeliveryOrderSeparate = async (id, page) => {
     },
     { $unwind: '$shopDatas' },
   ]);
-  return { datas: datas, total: total.length };
+  if (datas.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'order not Found');
+  }
+  return { datas: datas[0].orderassigns, total: total.length };
 };
 
 const groupIdClick = async (id) => {
