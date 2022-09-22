@@ -33,6 +33,11 @@ const updateReject = catchAsync(async (req, res) => {
   const data = await CustomerIssuesService.updateReject(req.params.id, req.body);
   res.send(data);
 });
+
+const  getById= catchAsync(async (req, res) => {
+  const data = await CustomerIssuesService.getById(req.params.id);
+  res.send(data);
+});
 module.exports = {
   createCustomerIssues,
   getAll,
@@ -40,4 +45,5 @@ module.exports = {
   updateReject,
   updateRefund,
   updateRedeliver,
+  getById,
 };
