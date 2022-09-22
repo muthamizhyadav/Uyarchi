@@ -699,10 +699,18 @@ const getBillDetails = async (id) => {
   return values[0];
 };
 
-const assignOnly = async (page) => {
+const assignOnly = async (page, status) => {
+  let macthStatus = { active: true };
+
+  if (status == 'stock') {
+    macthStatus = { pettyStockAllocateStatus: 'Pending' };
+  }
+  if (status == 'cash') {
+    macthStatus = { pettyCashAllocateStatus: 'Pending' };
+  }
   console.log(page);
   let values = await wardAdminGroup.aggregate([
-    { $match: { status: 'Packed', pettyStockAllocateStatus: 'Pending' } },
+    { $match: { $and: [{ status: 'Packed' }, macthStatus] } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -771,7 +779,7 @@ const assignOnly = async (page) => {
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
-    { $match: { status: 'Packed', pettyStockAllocateStatus: 'Pending' } },
+    { $match: { $and: [{ status: 'Packed' }, macthStatus] } },
     {
       $lookup: {
         from: 'orderassigns',
