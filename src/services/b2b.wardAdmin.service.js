@@ -172,7 +172,7 @@ const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
   }
   statusUpdate = await ShopOrderClone.findByIdAndUpdate(
     { _id: id },
-    { status: 'Packed', statusUpdate: moment() },
+    { status: 'Packed', statusUpdate: moment(), completeStatus: 'Packed' },
     { new: true }
   );
   let orderassign = await wardAdminGroupModel_ORDERS.findOne({ orderId: id });
