@@ -45,6 +45,37 @@ const deleterolesById = async (roleId) => {
   return roles;
 };
 
+
+const getroleWardAdmin = async() =>{
+  let data = await Roles.aggregate([
+    {
+      $match: {
+        $and: [{ roleName: { $eq:"Ward Admin Sales Manager (WASM)"} }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: '_id',
+        foreignField: 'userRole',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $project: {
+        name:'$b2busersData.name',
+        b2buserId:'$b2busersData._id',
+        roleName:1,
+        _id:1,
+      },
+    },
+  ])
+  return data;
+}
+
 module.exports = {
   createRoles,
   getAllRoles,
@@ -52,4 +83,5 @@ module.exports = {
   mainWarehouseRoles,
   updateRolesById,
   deleterolesById,
+  getroleWardAdmin,
 };

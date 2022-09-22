@@ -86,6 +86,7 @@ const WLE_Route = require('./WLE.route');
 const TrackingRoute = require('./tracking.route');
 const CustomerIssues = require('./customerIssues.route');
 const LapsedRoute = require('./lapsed.route');
+const wardAdminRole = require('./wardAdminRole.route');
 
 const defaultRoutes = [
   {
@@ -418,6 +419,10 @@ const defaultRoutes = [
   {
     path: '/pettyStock',
     route: pettyStockRoute,
+  },
+  {
+    path: '/wardAdminRole',
+    route: wardAdminRole,
   },
   // {
   //   path: '/sales',
