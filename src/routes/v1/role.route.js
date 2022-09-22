@@ -12,5 +12,6 @@ router
   .put(roleController.updateRolesById);
 router.route('/admin/wh').get(roleController.mainWarehouseRoles);
 router.route('/getallwardadmin/data').get(roleController.getroleWardAdmin)
+router.route('/getallwardadminAsm/Asm').get(roleController.getroleWardAdminAsm)
 
 module.exports = router;

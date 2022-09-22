@@ -17,14 +17,21 @@ const getAllwardAdminRole = catchAsync(async (req, res) => {
 
 const getDataById = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.getWardAdminRoleById(req.params.id);
-  if (!data || trends.data == false) {
+  if (!data || data.active == false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'wardAdminRole Not Found');
   }
   res.send(data);
 });
 
+
+const createwardAdminRoleAsmService = catchAsync(async (req, res) => {
+    const data = await wardAdminRoleService.createwardAdminRoleAsm(req.body);
+  res.status(httpStatus.CREATED).send(data);
+});
+
 module.exports = {
     getDataById,
     getAllwardAdminRole,
-    createwardAdminRoleService
+    createwardAdminRoleService,
+    createwardAdminRoleAsmService
 };

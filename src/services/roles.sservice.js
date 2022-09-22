@@ -76,6 +76,36 @@ const getroleWardAdmin = async() =>{
   return data;
 }
 
+const getroleWardAdminAsm = async() =>{
+  let data = await Roles.aggregate([
+    {
+      $match: {
+        $and: [{ roleName: { $eq:"Ward Field Sales Executive(WFSE)"} }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: '_id',
+        foreignField: 'userRole',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $project: {
+        name:'$b2busersData.name',
+        b2buserId:'$b2busersData._id',
+        roleName:1,
+        _id:1,
+      },
+    },
+  ])
+  return data;
+}
+
 module.exports = {
   createRoles,
   getAllRoles,
@@ -84,4 +114,5 @@ module.exports = {
   updateRolesById,
   deleterolesById,
   getroleWardAdmin,
+  getroleWardAdminAsm
 };

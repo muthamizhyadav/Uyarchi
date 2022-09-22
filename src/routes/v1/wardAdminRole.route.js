@@ -3,6 +3,7 @@ const wardAdminRoleController = require('../../controllers/wardAdminRole.control
 const router = express.Router();
 
 router.route('/').post(wardAdminRoleController.createwardAdminRoleService).get(wardAdminRoleController.getAllwardAdminRole);
-router.route('/:id').get(wardAdminRoleController.getDataById)
+router.route('/getAllData/:id').get(wardAdminRoleController.getDataById)
+router.route('/createwardAdminRoleAsm/data').post(wardAdminRoleController.createwardAdminRoleAsmService)
 
 module.exports = router;
