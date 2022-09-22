@@ -3,6 +3,7 @@ const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone } = req
 const ProductPacktype = require('../models/productPacktype.model');
 const { Product } = require('../models/product.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
+const OrderPayment = require('../models/orderpayment.model');
 const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 
@@ -47,7 +48,6 @@ const createshopOrderClone = async (body, userid) => {
 
   userId = 'OD' + center + totalcount;
 
-
   let centerdata = '';
   if (Buy.length < 9) {
     centerdata = '0000';
@@ -66,11 +66,22 @@ const createshopOrderClone = async (body, userid) => {
 
   BillId = 'B' + centerdata + totalcounts;
 
-
-  let bod = { ...body, ...{ Uid: userid, OrderId: userId,customerBillId:BillId, date: currentDate, time: currenttime, created: moment() } };
+  let bod = {
+    ...body,
+    ...{ Uid: userid, OrderId: userId, customerBillId: BillId, date: currentDate, time: currenttime, created: moment() },
+  };
   console.log(bod);
 
   let createShopOrderClone = await ShopOrderClone.create(bod);
+  await OrderPayment.create({
+    uid: userid,
+    paidAmt: body.paidamount,
+    date: currentDate,
+    time: currenttime,
+    created: moment(),
+    orderId: createShopOrderClone._id,
+    type: 'advanced',
+  });
   let { product, time, shopId } = body;
   await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: 'accept', callingStatusSort: 6 }, { new: true });
   product.forEach(async (e) => {
