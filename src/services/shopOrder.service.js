@@ -345,6 +345,23 @@ const updateshop_order = async (id, body) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not found');
   }
   shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
+  let order = await OrderPayment.findOne({ orderId: shoporder._id, type: 'advanced' });
+  let currentDate = moment().format('YYYY-MM-DD');
+  let currenttime = moment().format('HHmmss');
+  if (!order) {
+    await OrderPayment.create({
+      uid: userid,
+      paidAmt: body.paidamount,
+      date: currentDate,
+      time: currenttime,
+      created: moment(),
+      orderId: shoporder._id,
+      type: 'advanced',
+    });
+  } else {
+    await OrderPayment.findByIdAndUpdate({ _id: order._id }, { paidAmt: body.paidamount }, { new: true });
+  }
+
   await ProductorderClone.deleteMany({ orderId: id });
   let { product, date, time, shopId } = body;
   product.forEach(async (e) => {
