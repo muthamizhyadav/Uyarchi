@@ -46,9 +46,37 @@ const getAllWardAdminRoleData = async (id) =>{
     return data ;
 }
 
-// const salesmannotAllocateData = async () =>{
-//   let data = await 
-// }
+const smData = async () =>{
+  let data = await WardAdminRole.aggregate([
+    {
+      $lookup: {
+        from: 'wardadminroleasms',
+        localField: '_id',
+        foreignField: 'wardAdminId',
+        as: 'wardadminroleasmsData',
+      },
+    },
+    {
+      $unwind: '$wardadminroleasmsData',
+    },
+    {
+      $project: {
+        salesmanName: '$wardadminroleasmsData.salesman',
+        targetValue: '$wardadminroleasmsData.targetValue',
+        targetTonne:'$wardadminroleasmsData.targetTonne',
+        wardAdminId:'$wardadminroleasmsData.wardAdminId',
+        userRoleId:'$wardadminroleasmsData.userRoleId',
+        b2buserId: '$wardadminroleasmsData.b2buserId',
+        date:'$wardadminroleasmsData.date',
+        time:'$wardadminroleasmsData.time',
+        roleName: 1,
+        Asm:1,
+        _id: 1,
+      },
+    },
+  ])
+  return data ;
+}
 
 
 module.exports = {
@@ -57,4 +85,5 @@ module.exports = {
   getWardAdminRoleById,
   createwardAdminRoleAsm,  
   getAllWardAdminRoleData,
+  smData,
 }
