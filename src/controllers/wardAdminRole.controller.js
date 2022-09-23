@@ -29,9 +29,19 @@ const createwardAdminRoleAsmService = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(data);
 });
 
+const getAllWardAdminRoleData = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.getAllWardAdminRoleData(req.params.id);
+  if (!data || data.active == false) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'wardAdminRole Not Found');
+  }
+  res.send(data);
+});
+
+
 module.exports = {
     getDataById,
     getAllwardAdminRole,
     createwardAdminRoleService,
-    createwardAdminRoleAsmService
+    createwardAdminRoleAsmService,
+    getAllWardAdminRoleData,
 };
