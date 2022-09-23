@@ -45,12 +45,11 @@ const deleterolesById = async (roleId) => {
   return roles;
 };
 
-
-const getroleWardAdmin = async() =>{
+const getroleWardAdmin = async () => {
   let data = await Roles.aggregate([
     {
       $match: {
-        $and: [{ roleName: { $eq:"Ward Admin Sales Manager (WASM)"} }],
+        $and: [{ roleName: { $eq: 'Ward Admin Sales Manager (WASM)' } }],
       },
     },
     {
@@ -66,21 +65,21 @@ const getroleWardAdmin = async() =>{
     },
     {
       $project: {
-        name:'$b2busersData.name',
-        b2buserId:'$b2busersData._id',
-        roleName:1,
-        _id:1,
+        name: '$b2busersData.name',
+        b2buserId: '$b2busersData._id',
+        roleName: 1,
+        _id: 1,
       },
     },
-  ])
+  ]);
   return data;
-}
+};
 
-const getroleWardAdminAsm = async() =>{
+const getroleWardAdminAsm = async () => {
   let data = await Roles.aggregate([
     {
       $match: {
-        $and: [{ roleName: { $eq:"Ward Field Sales Executive(WFSE)"} }],
+        $and: [{ roleName: { $eq: 'Ward Field Sales Executive(WFSE)' } }],
       },
     },
     {
@@ -88,23 +87,46 @@ const getroleWardAdminAsm = async() =>{
         from: 'b2busers',
         localField: '_id',
         foreignField: 'userRole',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'wardadminroleasms',
+              let: {
+                localField: '$_id',
+              },
+              pipeline: [{ $match: { $expr: { $eq: ['$b2bUserId', '$$localField'] } } }],
+              as: 'wardadminroleasmsData',
+            },
+          },
+          {
+            $unwind: {
+              path: '$wardadminroleasmsData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        ],
         as: 'b2busersData',
       },
     },
     {
       $unwind: '$b2busersData',
     },
+
     {
       $project: {
-        name:'$b2busersData.name',
-        b2buserId:'$b2busersData._id',
-        roleName:1,
-        _id:1,
+        name: '$b2busersData.name',
+        b2buserId: '$b2busersData._id',
+        roleName: 1,
+        _id: 1,
+        wardadminroleasmsData: '$b2busersData.wardadminroleasmsData',
       },
     },
-  ])
+    {
+      $match: { wardadminroleasmsData: { $eq: null } },
+    },
+  ]);
   return data;
-}
+};
 
 module.exports = {
   createRoles,
@@ -114,5 +136,5 @@ module.exports = {
   updateRolesById,
   deleterolesById,
   getroleWardAdmin,
-  getroleWardAdminAsm
+  getroleWardAdminAsm,
 };
