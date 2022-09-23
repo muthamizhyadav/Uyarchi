@@ -1427,12 +1427,19 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
 };
 
 const gettimeslatcount = async (type) => {
+  let typeMatch = { delivery_type: { $eq: type } };
+  console.log(type);
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
   console.log(yesterday);
   let dateMatch = { date: { $eq: today } };
-  let typeMatch = { delivery_type: { $eq: type } };
   if (type == 'All') {
+    typeMatch = {
+      $or: [
+        { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } },
+        { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
+      ],
+    };
     dateMatch = {
       $or: [
         { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } },
@@ -1443,6 +1450,7 @@ const gettimeslatcount = async (type) => {
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
   }
+  console.log(dateMatch);
   let countall = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -1464,6 +1472,7 @@ const gettimeslatcount = async (type) => {
             },
           },
           dateMatch,
+          typeMatch,
         ],
       },
     },
@@ -1490,6 +1499,7 @@ const gettimeslatcount = async (type) => {
           },
           { time_of_delivery: { $eq: '5-6' } },
           dateMatch,
+          typeMatch,
         ],
       },
     },
@@ -1516,6 +1526,7 @@ const gettimeslatcount = async (type) => {
           },
           { time_of_delivery: { $eq: '6-7' } },
           dateMatch,
+          typeMatch,
         ],
       },
     },
@@ -1542,6 +1553,7 @@ const gettimeslatcount = async (type) => {
           },
           { time_of_delivery: { $eq: '7-8' } },
           dateMatch,
+          typeMatch,
         ],
       },
     },
@@ -1568,6 +1580,7 @@ const gettimeslatcount = async (type) => {
           },
           { time_of_delivery: { $eq: '8-9' } },
           dateMatch,
+          typeMatch,
         ],
       },
     },
@@ -1594,6 +1607,7 @@ const gettimeslatcount = async (type) => {
           },
           { time_of_delivery: { $eq: '9-10' } },
           dateMatch,
+          typeMatch,
         ],
       },
     },
@@ -1620,6 +1634,7 @@ const gettimeslatcount = async (type) => {
           },
           { time_of_delivery: { $eq: '10-11' } },
           dateMatch,
+          typeMatch,
         ],
       },
     },
