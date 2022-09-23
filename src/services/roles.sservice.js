@@ -45,12 +45,11 @@ const deleterolesById = async (roleId) => {
   return roles;
 };
 
-
-const getroleWardAdmin = async() =>{
+const getroleWardAdmin = async () => {
   let data = await Roles.aggregate([
     {
       $match: {
-        $and: [{ roleName: { $eq:"Ward Admin Sales Manager (WASM)"} }],
+        $and: [{ roleName: { $eq: 'Ward Admin Sales Manager (WASM)' } }],
       },
     },
     {
@@ -66,21 +65,21 @@ const getroleWardAdmin = async() =>{
     },
     {
       $project: {
-        name:'$b2busersData.name',
-        b2buserId:'$b2busersData._id',
-        roleName:1,
-        _id:1,
+        name: '$b2busersData.name',
+        b2buserId: '$b2busersData._id',
+        roleName: 1,
+        _id: 1,
       },
     },
-  ])
+  ]);
   return data;
-}
+};
 
-const getroleWardAdminAsm = async() =>{
+const getroleWardAdminAsm = async () => {
   let data = await Roles.aggregate([
     {
       $match: {
-        $and: [{ roleName: { $eq:"Ward Field Sales Executive(WFSE)"} }],
+        $and: [{ roleName: { $eq: 'Ward Field Sales Executive(WFSE)' } }],
       },
     },
     {
@@ -95,16 +94,38 @@ const getroleWardAdminAsm = async() =>{
       $unwind: '$b2busersData',
     },
     {
-      $project: {
-        name:'$b2busersData.name',
-        b2buserId:'$b2busersData._id',
-        roleName:1,
-        _id:1,
+      $lookup: {
+        from: 'wardadminroleasms',
+        let: {
+        localField: {data: "$b2busersData._id"},
+        pipeline: [
+          { $match:
+            { $expr:
+               { $and:
+                  [
+                    { $eq: [ "$b2bUserId",  "$$data" ] },
+                  ]
+               }
+            }
+         },
+        ],
+        as: 'wardadminroleasmsData',
       },
     },
-  ])
+  },
+  {
+      $project: {
+        name: '$b2busersData.name',
+        b2buserId: '$b2busersData._id',
+        roleName: 1,
+        _id: 1,
+        wardadminroleasmsData: '$wardadminroleasmsData',
+        // name: '$wardadminroleasmsData.salesman',
+      },
+    },
+  ]);
   return data;
-}
+};
 
 module.exports = {
   createRoles,
@@ -114,5 +135,5 @@ module.exports = {
   updateRolesById,
   deleterolesById,
   getroleWardAdmin,
-  getroleWardAdminAsm
+  getroleWardAdminAsm,
 };
