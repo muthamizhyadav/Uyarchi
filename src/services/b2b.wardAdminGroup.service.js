@@ -695,7 +695,6 @@ const getBillDetails = async (id) => {
               OrderId: '$shopDatasDetails.OrderId',
               Payment: '$shopDatasDetails.Payment',
               product: '$shopDatasDetails.products',
-
               SName: '$shopDatasDetails.SName',
               SOwner: '$shopDatasDetails.SOwner',
               street: '$shopDatasDetails.street',
@@ -716,6 +715,14 @@ const getBillDetails = async (id) => {
     {
       $unwind: '$b2bsersData',
     },
+    {
+      $lookup: {
+        from: 'pettystockmodels',
+        localField: '_id',
+        foreignField: 'wardAdminId',
+        as: 'pettystockmodels',
+      },
+    },
 
     {
       $project: {
@@ -725,6 +732,10 @@ const getBillDetails = async (id) => {
         totalOrders: { $size: '$orderassigns' },
         orderassigns: '$orderassigns',
         deliveryExecutivename: '$b2bsersData.name',
+        pettystockmodels: '$pettystockmodels',
+        pettyCash: 1,
+        pettyCashAllocateStatus: 1,
+        pettyStockAllocateStatus: 1,
       },
     },
   ]);
