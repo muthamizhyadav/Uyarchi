@@ -2123,6 +2123,7 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
       status: { $in: ['ordered', 'Acknowledged', 'Rejected'] },
     };
   }
+  
   let timeMatch = { active: true };
   if (time != 'all') {
     timeMatch = { time_of_delivery: { $eq: time } };
