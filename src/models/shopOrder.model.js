@@ -155,6 +155,12 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   reason: {
     type: String,
   },
+  undeliveyreason: {
+    type: String,
+  },
+  undeliveytype: {
+    type: String,
+  },
   payType: {
     type: String,
   },
@@ -176,7 +182,7 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   receiveStatus: {
     type: String,
-    default: 'Pending', 
+    default: 'Pending',
   },
   pettyCashReceiveStatus: {
     type: String,

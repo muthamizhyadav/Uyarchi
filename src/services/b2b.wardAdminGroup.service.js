@@ -101,7 +101,22 @@ const updateOrderStatus = async (id, updateBody) => {
   });
   return deliveryStatus;
 };
-
+const updateOrderStatus_forundelivey = async (id, updateBody) => {
+  let body = {
+    ...updateBody,
+    ...{
+      status: 'UnDelivered',
+      customerDeliveryStatus: 'UnDelivered',
+    },
+  };
+  let deliveryStatus = await ShopOrderClone.findById(id);
+  console.log(deliveryStatus);
+  if (!deliveryStatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
+  return deliveryStatus;
+};
 const orderPicked = async (deliveryExecutiveId) => {
   let orderPicked = await ShopOrderClone.find({ deliveryExecutiveId: deliveryExecutiveId });
   console.log(orderPicked);
@@ -1853,4 +1868,5 @@ module.exports = {
   getShopDetailsForProj,
   submitCashGivenByWDE,
   createAddOrdINGrp,
+  updateOrderStatus_forundelivey,
 };
