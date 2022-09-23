@@ -655,6 +655,7 @@ const wardloadExecutivePacked = async (range, page) => {
   }
 
   let data = await ShopOrderClone.aggregate([
+    { $sort: { time_of_delivery: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
         $and: [
@@ -1036,17 +1037,18 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
     timeMatch = { time_of_delivery: { $eq: time } };
   }
   let values = await ShopOrderClone.aggregate([
+    { $sort: { time_of_delivery: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
         $and: [statusMatch, timeMatch, typeMatch, dateMatch],
       },
     },
-    {
-      $sort: {
-        date: -1,
-        time: -1,
-      },
-    },
+    // {
+    //   $sort: {
+    //     date: -1,
+    //     time: -1,
+    //   },
+    // },
     {
       $lookup: {
         from: 'b2bshopclones',
@@ -1087,6 +1089,8 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
         shopName: '$userData.SName',
         totalItems: { $size: '$orderData' },
         created: 1,
+        time: 1,
+        time_of_delivery: 1,
       },
     },
     { $skip: parseInt(limit) * page },
@@ -1217,15 +1221,10 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
   }
 
   let values = await ShopOrderClone.aggregate([
+    { $sort: { time_of_delivery: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
         $and: [statusMatch, timeMatch, typeMatch, dateMatch],
-      },
-    },
-    {
-      $sort: {
-        date: -1,
-        time: -1,
       },
     },
     {
@@ -1273,6 +1272,8 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
         shopName: '$userData.SName',
         totalItems: { $size: '$orderData' },
         created: 1,
+        time: 1,
+        time_of_delivery: 1,
       },
     },
     { $skip: parseInt(limit) * page },
@@ -1749,17 +1750,13 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
     timeMatch = { time_of_delivery: { $eq: time } };
   }
   let values = await ShopOrderClone.aggregate([
+    { $sort: { time_of_delivery: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
         $and: [statusMatch, timeMatch, typeMatch, dateMatch],
       },
     },
-    {
-      $sort: {
-        date: -1,
-        time: -1,
-      },
-    },
+
     {
       $lookup: {
         from: 'b2bshopclones',
@@ -1803,6 +1800,8 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
         // orderId: '$orderData.orderId',
         totalItems: { $size: '$orderData' },
         created: 1,
+        time: 1,
+        time_of_delivery: 1,
       },
     },
     { $skip: parseInt(limit) * page },
@@ -1938,15 +1937,10 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
   console.log(statusMatch);
 
   let values = await ShopOrderClone.aggregate([
+    { $sort: { time_of_delivery: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
         $and: [statusMatch, timeMatch, typeMatch, dateMatch],
-      },
-    },
-    {
-      $sort: {
-        date: -1,
-        time: -1,
       },
     },
     {
@@ -1997,6 +1991,8 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
         // orderId: '$orderData.orderId',
         totalItems: { $size: '$orderData' },
         created: 1,
+        time: 1,
+        time_of_delivery: 1,
       },
     },
     { $skip: parseInt(limit) * page },
