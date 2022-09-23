@@ -1558,7 +1558,7 @@ const getVendorShops = async () => {
         address: 1,
         Uid: 1,
         StreetName: '$streets.street',
-        Area: '$streets.Thiruvalluvar Street',
+        Area: '$streets.area',
       },
     },
   ]);

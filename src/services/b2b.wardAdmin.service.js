@@ -653,6 +653,7 @@ const wardloadExecutivePacked = async (range, page) => {
   if (range == 'all') {
     rangematch = { active: true };
   }
+
   let data = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -965,6 +966,21 @@ const getAssigned_details = async () => {
       },
     },
     {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: 'deliveryExecutiveId',
+        foreignField: 'deliveryExecutiveId',
+        pipeline: [
+          {
+            $match: {
+              manageDeliveryStatus: 'Delivery Completed',
+            },
+          },
+        ],
+        as: 'totalwardadmingroups',
+      },
+    },
+    {
       $project: {
         _id: 1,
         status: 1,
@@ -977,6 +993,7 @@ const getAssigned_details = async () => {
         orderassigns: '$orderassigns',
         route: 1,
         deliveryCompletedCount: { $size: '$wardadmingroups' },
+        totaldeliveryCompletedCount: { $size: '$totalwardadmingroups' },
       },
     },
   ]);
