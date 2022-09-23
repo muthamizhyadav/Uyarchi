@@ -72,10 +72,7 @@ const updateDeliveryCompleted = catchAsync(async (req, res) => {
 });
 
 const UpdateUnDeliveredStatus = catchAsync(async (req, res) => {
-  const deliveryStatus = await wardAdminGroupService.updateOrderStatus(req.params.id, {
-    status: 'UnDelivered',
-    customerDeliveryStatus: 'UnDelivered',
-  });
+  const deliveryStatus = await wardAdminGroupService.updateOrderStatus_forundelivey(req.params.id, req.body);
   res.send(deliveryStatus);
 });
 

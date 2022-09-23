@@ -221,6 +221,7 @@ const getproductdetails = async (id) => {
           {
             $unwind: '$nameData',
           },
+
           {
             $project: {
               finalQuantity: 1,
@@ -228,6 +229,8 @@ const getproductdetails = async (id) => {
               productid: 1,
               productTitle: '$nameData.productTitle',
               productpacktypeId: 1,
+              unit: 1,
+              packKg:1,
             },
           },
         ],
@@ -1087,10 +1090,14 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
       status: { $eq: status },
     };
   }
+  let timeMatch = { active: true };
+  if (time != 'all') {
+    timeMatch = { time_of_delivery: { $eq: time } };
+  }
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
       },
     },
     {
@@ -1153,7 +1160,7 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
     },
     {
       $match: {
-        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
       },
     },
     {
@@ -1185,10 +1192,10 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
     },
   ]);
   let AcknowledgedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let orderedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'ordered' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let ApprovedStatusCount = await ShopOrderClone.aggregate([
     {
@@ -1208,7 +1215,7 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
               ],
             },
           },
-          { time_of_delivery: { $eq: time } },
+          timeMatch,
           typeMatch,
           dateMatch,
         ],
@@ -1216,10 +1223,10 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
     },
   ]);
   let ModifiedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Modified' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'Modified' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let rejectedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Rejected' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'Rejected' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let count = {
     AcknowledgedStatusCount: AcknowledgedStatusCount.length,
@@ -1254,6 +1261,11 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
   }
+
+  let timeMatch = { active: true };
+  if (time != 'all') {
+    timeMatch = { time_of_delivery: { $eq: time } };
+  }
   // console.log(dateMatch);
   let statusMatch;
   if (status != 'null') {
@@ -1265,7 +1277,7 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
       },
     },
     {
@@ -1333,7 +1345,7 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
     },
     {
       $match: {
-        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
       },
     },
     {
@@ -1366,10 +1378,10 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
     //  { unwind: '$userNameData'},
   ]);
   let AcknowledgedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let orderedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'ordered' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let ApprovedStatusCount = await ShopOrderClone.aggregate([
     {
@@ -1389,7 +1401,7 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
               ],
             },
           },
-          { time_of_delivery: { $eq: time } },
+          timeMatch,
           typeMatch,
           dateMatch,
         ],
@@ -1397,10 +1409,10 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
     },
   ]);
   let ModifiedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Modified' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'Modified' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let rejectedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Rejected' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'Rejected' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let count = {
     AcknowledgedStatusCount: AcknowledgedStatusCount.length,
@@ -1443,10 +1455,14 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
       status: { $eq: status },
     };
   }
+  let timeMatch = { active: true };
+  if (time != 'all') {
+    timeMatch = { time_of_delivery: { $eq: time } };
+  }
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
       },
     },
     {
@@ -1512,7 +1528,7 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
     },
     {
       $match: {
-        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
       },
     },
     {
@@ -1545,10 +1561,10 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
     //  { unwind: '$userNameData'},
   ]);
   let AcknowledgedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let orderedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'ordered' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let ApprovedStatusCount = await ShopOrderClone.aggregate([
     {
@@ -1568,7 +1584,7 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
               ],
             },
           },
-          { time_of_delivery: { $eq: time } },
+          timeMatch,
           typeMatch,
           dateMatch,
         ],
@@ -1576,10 +1592,10 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
     },
   ]);
   let ModifiedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Modified' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'Modified' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let rejectedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Rejected' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'Rejected' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let count = {
     AcknowledgedStatusCount: AcknowledgedStatusCount.length,
@@ -1616,7 +1632,10 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
   // console.log(typeMatch);
   // console.log(dateMatch);
   // console.log({ time_of_delivery: { $eq: time } });
-
+  let timeMatch = { active: true };
+  if (time != 'all') {
+    timeMatch = { time_of_delivery: { $eq: time } };
+  }
   let statusMatch;
   if (status != 'null') {
     statusMatch = {
@@ -1631,7 +1650,7 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
       },
     },
     {
@@ -1702,7 +1721,7 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
     },
     {
       $match: {
-        $and: [statusMatch, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
       },
     },
     {
@@ -1735,10 +1754,10 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
     //  { unwind: '$userNameData'},
   ]);
   let AcknowledgedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let orderedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'ordered' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let ApprovedStatusCount = await ShopOrderClone.aggregate([
     {
@@ -1758,7 +1777,7 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
               ],
             },
           },
-          { time_of_delivery: { $eq: time } },
+          timeMatch,
           typeMatch,
           dateMatch,
         ],
@@ -1766,10 +1785,10 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
     },
   ]);
   let ModifiedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Modified' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'Modified' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let rejectedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Rejected' } }, { time_of_delivery: { $eq: time } }, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'Rejected' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
   let count = {
     AcknowledgedStatusCount: AcknowledgedStatusCount.length,

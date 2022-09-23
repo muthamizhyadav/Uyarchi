@@ -1523,6 +1523,72 @@ const perdeleteShopById = async (id) => {
   };
 };
 
+const getVendorShops = async () => {
+  let values = await Shop.aggregate([
+    {
+      $match: {
+        SType: '07299efb-1aa4-40e6-ad5f-a03ffecdc0a5',
+        SType: '66077e16-aa5f-401f-abcc-e1842d151b14',
+        SType: '2d2a9e39-34a1-4dde-9767-a37251854cc5',
+        SType: '57fdca99-9b2c-47aa-838b-eed600d3264a',
+        SType: 'c974636a-6324-4426-9440-d599353c9a18',
+        SType: '4372526e-266a-4474-a140-7e633015b15c',
+        SType: '602e637e-11e8-4901-b80f-db8a467afda2',
+      },
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streets',
+      },
+    },
+    {
+      $unwind: '$streets',
+    },
+    {
+      $project: {
+        _id: 1,
+        SName: 1,
+        SType: 1,
+        SOwner: 1,
+        Slat: 1,
+        Slong: 1,
+        address: 1,
+        Uid: 1,
+        StreetName: '$streets.street',
+        Area: '$streets.Thiruvalluvar Street',
+      },
+    },
+  ]);
+  let total = await Shop.aggregate([
+    {
+      $match: {
+        SType: '07299efb-1aa4-40e6-ad5f-a03ffecdc0a5',
+        SType: '66077e16-aa5f-401f-abcc-e1842d151b14',
+        SType: '2d2a9e39-34a1-4dde-9767-a37251854cc5',
+        SType: '57fdca99-9b2c-47aa-838b-eed600d3264a',
+        SType: 'c974636a-6324-4426-9440-d599353c9a18',
+        SType: '4372526e-266a-4474-a140-7e633015b15c',
+        SType: '602e637e-11e8-4901-b80f-db8a467afda2',
+      },
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streets',
+      },
+    },
+    {
+      $unwind: '$streets',
+    },
+  ]);
+  return { values: values, total: total.length };
+};
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -1555,4 +1621,5 @@ module.exports = {
   perdeleteShopById,
   createAttendanceClone_new,
   searchShops,
+  getVendorShops,
 };

@@ -101,7 +101,22 @@ const updateOrderStatus = async (id, updateBody) => {
   });
   return deliveryStatus;
 };
-
+const updateOrderStatus_forundelivey = async (id, updateBody) => {
+  let body = {
+    ...updateBody,
+    ...{
+      status: 'UnDelivered',
+      customerDeliveryStatus: 'UnDelivered',
+    },
+  };
+  let deliveryStatus = await ShopOrderClone.findById(id);
+  console.log(deliveryStatus);
+  if (!deliveryStatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
+  return deliveryStatus;
+};
 const orderPicked = async (deliveryExecutiveId) => {
   let orderPicked = await ShopOrderClone.find({ deliveryExecutiveId: deliveryExecutiveId });
   console.log(orderPicked);
@@ -607,6 +622,8 @@ const getBillDetails = async (id) => {
                           finalPricePerKg: 1,
                           HSN_Code: 1,
                           GST_Number: 1,
+                          unit: 1,
+                          packKg: 1,
                           total: {
                             $multiply: ['$finalQuantity', '$finalPricePerKg'],
                           },
@@ -640,6 +657,7 @@ const getBillDetails = async (id) => {
                           _id: 1,
                           SName: 1,
                           SOwner: 1,
+                          mobile: 1,
                         },
                       },
                     ],
@@ -659,6 +677,7 @@ const getBillDetails = async (id) => {
                     SName: '$b2bshopclones.SName',
                     SOwner: '$b2bshopclones.SOwner',
                     street: '$b2bshopclones.street',
+                    mobile: '$b2bshopclones.mobile',
                   },
                 },
               ],
@@ -703,7 +722,7 @@ const getBillDetails = async (id) => {
         groupId: 1,
         assignDate: 1,
         assignTime: 1,
-        totalOrders: 1,
+        totalOrders: { $size: '$orderassigns' },
         orderassigns: '$orderassigns',
         deliveryExecutivename: '$b2bsersData.name',
       },
@@ -725,7 +744,11 @@ const assignOnly = async (page, status) => {
     macthStatus = { pettyCashAllocateStatus: 'Pending' };
   }
   if (status == 'delivery') {
-    macthStatus = { pettyCashAllocateStatus: { $ne: 'Pending' }, pettyStockAllocateStatus: { $ne: 'Pending' } };
+    macthStatus = {
+      pettyCashAllocateStatus: { $ne: 'Pending' },
+      pettyStockAllocateStatus: { $ne: 'Pending' },
+      manageDeliveryStatus: { $ne: 'Delivery Completed' },
+    };
   }
   console.log(page);
   let values = await wardAdminGroup.aggregate([
@@ -783,7 +806,7 @@ const assignOnly = async (page, status) => {
       $project: {
         shopOrderCloneId: '$wdfsaf._id',
         groupId: 1,
-        totalOrders: 1,
+        totalOrders: { $size: '$dataDetails' },
         assignDate: 1,
         assignTime: 1,
         manageDeliveryStatus: 1,
@@ -1845,4 +1868,5 @@ module.exports = {
   getShopDetailsForProj,
   submitCashGivenByWDE,
   createAddOrdINGrp,
+  updateOrderStatus_forundelivey,
 };

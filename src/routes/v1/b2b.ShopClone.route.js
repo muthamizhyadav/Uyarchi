@@ -77,4 +77,5 @@ router.route('/deleteshop/permenent/:id').delete(b2bShopCloneController.perdelet
 // shop search by shop Name
 
 router.route('/shopSearch/:key').get(b2bShopCloneController.searchShops);
+router.route('/getVendorShops/uyar-dial').get(b2bShopCloneController.getVendorShops);
 module.exports = router;
