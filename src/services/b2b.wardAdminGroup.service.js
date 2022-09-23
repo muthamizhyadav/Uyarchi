@@ -736,7 +736,7 @@ const getBillDetails = async (id) => {
 
 const assignOnly = async (page, status) => {
   let macthStatus = { active: true };
-
+  let statusMatch = { status: 'Packed' };
   if (status == 'stock') {
     macthStatus = { pettyStockAllocateStatus: 'Pending' };
   }
@@ -745,14 +745,15 @@ const assignOnly = async (page, status) => {
   }
   if (status == 'delivery') {
     macthStatus = {
-      pettyCashAllocateStatus: { $ne: 'Pending' },
-      pettyStockAllocateStatus: { $ne: 'Pending' },
+      // pettyCashAllocateStatus: { $ne: 'Pending' },
+      // pettyStockAllocateStatus: { $ne: 'Pending' },
       manageDeliveryStatus: { $ne: 'Delivery Completed' },
     };
+    statusMatch = { status: { $in: ['Assigned', 'Packed'] } };
   }
-  console.log(page);
+  console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
-    { $match: { $and: [{ status: 'Packed' }, macthStatus] } },
+    { $match: { $and: [statusMatch, macthStatus] } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -815,13 +816,14 @@ const assignOnly = async (page, status) => {
         deliveryExecutiveName: '$UserName.name',
         pettyCashAllocateStatus: 1,
         pettyStockAllocateStatus: 1,
+        status: 1,
       },
     },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
-    { $match: { $and: [{ status: 'Packed' }, macthStatus] } },
+    { $match: { $and: [statusMatch, macthStatus] } },
     {
       $lookup: {
         from: 'orderassigns',
