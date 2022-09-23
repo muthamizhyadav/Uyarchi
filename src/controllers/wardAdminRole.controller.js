@@ -37,6 +37,11 @@ const getAllWardAdminRoleData = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const  smData = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.smData();
+  res.send(data);
+});
+
 
 module.exports = {
     getDataById,
@@ -44,4 +49,5 @@ module.exports = {
     createwardAdminRoleService,
     createwardAdminRoleAsmService,
     getAllWardAdminRoleData,
+    smData,
 };
