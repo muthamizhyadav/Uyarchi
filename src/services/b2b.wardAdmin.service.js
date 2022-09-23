@@ -649,7 +649,10 @@ const wardloadExecutivePacked = async (range, page) => {
       { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
     ],
   };
-
+  rangematch = { time_of_delivery: { $eq: range } };
+  if (range == 'all') {
+    rangematch = { active: true };
+  }
   let data = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -659,9 +662,7 @@ const wardloadExecutivePacked = async (range, page) => {
               $in: ['Approved', 'Modified'],
             },
           },
-          {
-            time_of_delivery: { $eq: range },
-          },
+          rangematch,
           dateMatch,
         ],
       },
@@ -785,9 +786,7 @@ const wardloadExecutivePacked = async (range, page) => {
               $in: ['Approved', 'Modified'],
             },
           },
-          {
-            time_of_delivery: { $eq: range },
-          },
+          rangematch,
           dateMatch,
         ],
       },
