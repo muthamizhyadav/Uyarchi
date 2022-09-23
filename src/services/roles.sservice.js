@@ -83,44 +83,46 @@ const getroleWardAdminAsm = async () => {
       },
     },
     {
-      $unwind: '$_id',
-    },
-  
-    {
       $lookup: {
         from: 'b2busers',
         localField: '_id',
         foreignField: 'userRole',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'wardadminroleasms',
+              let: {
+                localField: '$_id',
+              },
+              pipeline: [{ $match: { $expr: { $eq: ['$b2bUserId', '$$localField'] } } }],
+              as: 'wardadminroleasmsData',
+            },
+          },
+          {
+            $unwind: {
+              path: '$wardadminroleasmsData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        ],
         as: 'b2busersData',
       },
     },
     {
       $unwind: '$b2busersData',
     },
-    {
-      $lookup: {
-        from: 'wardadminroleasms',
-        let: {
-          localField: '$b2busersData._id',
-        },
-        pipeline: [
-          { $match: { $expr: { $eq: ["$b2bUserId", "$$localField"] } } },
-        ],
-        as: 'wardadminroleasmsData',
-      },
-    },
-    {
-      $unwind: '$wardadminroleasmsData',
-    },
+
     {
       $project: {
         name: '$b2busersData.name',
         b2buserId: '$b2busersData._id',
         roleName: 1,
         _id: 1,
-        // wardadminroleasmsData: '$wardadminroleasmsData',
-        // name: '$wardadminroleasmsData.salesman',
+        wardadminroleasmsData: '$b2busersData.wardadminroleasmsData',
       },
+    },
+    {
+      $match: { wardadminroleasmsData: { $eq: null } },
     },
   ]);
   return data;
