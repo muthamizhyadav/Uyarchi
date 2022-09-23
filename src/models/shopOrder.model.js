@@ -149,7 +149,6 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   selfPickup: {
     type: String,
   },
-
   deliveryExecutiveId: {
     type: String,
   },
@@ -183,7 +182,6 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     type: String,
     default: 'Pending',
   },
-
   AssignedStatus: {
     type: String,
     default: 'Pending',
