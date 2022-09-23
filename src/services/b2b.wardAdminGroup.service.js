@@ -707,7 +707,7 @@ const getBillDetails = async (id) => {
         groupId: 1,
         assignDate: 1,
         assignTime: 1,
-        totalOrders: {$size:"$orderassigns"},
+        totalOrders: { $size: '$orderassigns' },
         orderassigns: '$orderassigns',
         deliveryExecutivename: '$b2bsersData.name',
       },
@@ -729,7 +729,11 @@ const assignOnly = async (page, status) => {
     macthStatus = { pettyCashAllocateStatus: 'Pending' };
   }
   if (status == 'delivery') {
-    macthStatus = { pettyCashAllocateStatus: { $ne: 'Pending' }, pettyStockAllocateStatus: { $ne: 'Pending' } };
+    macthStatus = {
+      pettyCashAllocateStatus: { $ne: 'Pending' },
+      pettyStockAllocateStatus: { $ne: 'Pending' },
+      manageDeliveryStatus: { $ne: 'Delivery Completed' },
+    };
   }
   console.log(page);
   let values = await wardAdminGroup.aggregate([
@@ -787,7 +791,7 @@ const assignOnly = async (page, status) => {
       $project: {
         shopOrderCloneId: '$wdfsaf._id',
         groupId: 1,
-        totalOrders: 1,
+        totalOrders: { $size: '$dataDetails' },
         assignDate: 1,
         assignTime: 1,
         manageDeliveryStatus: 1,
