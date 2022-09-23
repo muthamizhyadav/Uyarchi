@@ -38,8 +38,7 @@ const getAllWardAdminRoleData = async (id) =>{
     let data = await WardAdminRole.aggregate([
       {
         $match: {
-          $and: [{ 
-            userRoleId: { $eq: id } }],
+          $and: [{_id: { $eq: id } }],
         },
       },
 

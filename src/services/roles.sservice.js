@@ -83,6 +83,10 @@ const getroleWardAdminAsm = async () => {
       },
     },
     {
+      $unwind: '$_id',
+    },
+  
+    {
       $lookup: {
         from: 'b2busers',
         localField: '_id',
@@ -97,29 +101,24 @@ const getroleWardAdminAsm = async () => {
       $lookup: {
         from: 'wardadminroleasms',
         let: {
-        localField: {data: "$b2busersData._id"},
+          localField: '$b2busersData._id',
+        },
         pipeline: [
-          { $match:
-            { $expr:
-               { $and:
-                  [
-                    { $eq: [ "$b2bUserId",  "$$data" ] },
-                  ]
-               }
-            }
-         },
+          { $match: { $expr: { $eq: ["$b2bUserId", "$$localField"] } } },
         ],
         as: 'wardadminroleasmsData',
       },
     },
-  },
-  {
+    {
+      $unwind: '$wardadminroleasmsData',
+    },
+    {
       $project: {
         name: '$b2busersData.name',
         b2buserId: '$b2busersData._id',
         roleName: 1,
         _id: 1,
-        wardadminroleasmsData: '$wardadminroleasmsData',
+        // wardadminroleasmsData: '$wardadminroleasmsData',
         // name: '$wardadminroleasmsData.salesman',
       },
     },
