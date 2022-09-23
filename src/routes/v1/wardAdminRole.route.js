@@ -6,5 +6,5 @@ router.route('/').post(wardAdminRoleController.createwardAdminRoleService).get(w
 router.route('/getAllData/:id').get(wardAdminRoleController.getDataById)
 router.route('/createwardAdminRoleAsm/data').post(wardAdminRoleController.createwardAdminRoleAsmService)
 router.route('/data/:id').get(wardAdminRoleController.getAllWardAdminRoleData)
-
+router.route('/smData/data').get(wardAdminRoleController.smData)
 module.exports = router;
