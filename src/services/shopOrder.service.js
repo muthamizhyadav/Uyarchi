@@ -10,8 +10,9 @@ const moment = require('moment');
 const createshopOrder = async (shopOrderBody, userid) => {
   let { product, date, time, shopId, time_of_delivery } = shopOrderBody;
   let timeslot = time_of_delivery.replace('-', '');
-
-  let body = { ...shopOrderBody, ...{ Uid: userid, timeslot: parseInt(timeslot) } };
+  console.log(timeslot,'asdasd');
+  let body = { ...shopOrderBody, ...{ Uid: userid, timeslot: timeslot } };
+  console.log(body,'asdasdzasdasd');
   let createShopOrder = await ShopOrder.create(body);
   console.log(createShopOrder);
 
