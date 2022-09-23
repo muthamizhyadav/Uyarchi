@@ -2086,6 +2086,194 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
   let result = await gettimeslatcount(type);
   return { values: values, total: total.length, count: count, total_count: result };
 };
+
+const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
+  let today = moment().format('yyyy-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  console.log(yesterday);
+  let dateMatch = { date: { $eq: today } };
+  let typeMatch = { delivery_type: { $eq: type } };
+  if (type == 'All') {
+    typeMatch = {
+      $or: [
+        { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } },
+        { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
+      ],
+    };
+    dateMatch = {
+      $or: [
+        { date: { $eq: yesterday }, delivery_type: { $eq: 'NDD' } },
+        { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
+      ],
+    };
+  }
+  if (type == 'NDD') {
+    dateMatch = { date: { $eq: yesterday } };
+  }
+  // console.log(dateMatch);
+  console.log(status);
+  let statusMatch;
+  if (status != 'null') {
+    statusMatch = {
+      status: { $eq: status },
+    };
+  }
+  if (status == 'lasped') {
+    statusMatch = {
+      status: { $in: ['ordered', 'Acknowledged', 'Rejected'] },
+    };
+  }
+  let timeMatch = { active: true };
+  if (time != 'all') {
+    timeMatch = { time_of_delivery: { $eq: time } };
+  }
+  let values = await ShopOrderClone.aggregate([
+    { $sort: { time_of_delivery: 1, delivery_type: -1, created: 1 } },
+    {
+      $match: {
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId', //Uid
+        foreignField: '_id', //Uid
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'userNameData',
+      },
+    },
+    //  { unwind: '$userNameData'},
+    {
+      $project: {
+        shopId: 1,
+        OrderId: 1,
+        status: 1,
+        Payment: 1,
+        delivery_type: 1,
+        overallTotal: 1,
+        name: '$userNameData.name',
+        shopType: '$userData.type',
+        shopName: '$userData.SName',
+        // UserName: '$userData.name',
+        // orderId: '$orderData.orderId',
+        totalItems: { $size: '$orderData' },
+        created: 1,
+        time: 1,
+        time_of_delivery: 1,
+      },
+    },
+    { $skip: parseInt(limit) * page },
+    { $limit: parseInt(limit) },
+  ]);
+  let total = await ShopOrderClone.aggregate([
+    {
+      $sort: {
+        date: -1,
+        time: -1,
+      },
+    },
+    {
+      $match: {
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId', //Uid
+        foreignField: '_id', //Uid
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'userNameData',
+      },
+    },
+    //  { unwind: '$userNameData'},
+  ]);
+  let AcknowledgedStatusCount = await ShopOrderClone.aggregate([
+    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch] } },
+  ]);
+  let orderedStatusCount = await ShopOrderClone.aggregate([
+    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch] } },
+  ]);
+  let ApprovedStatusCount = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          timeMatch,
+          typeMatch,
+          dateMatch,
+        ],
+      },
+    },
+  ]);
+  let ModifiedStatusCount = await ShopOrderClone.aggregate([
+    { $match: { $and: [{ status: { $eq: 'Modified' } }, timeMatch, typeMatch, dateMatch] } },
+  ]);
+  let rejectedStatusCount = await ShopOrderClone.aggregate([
+    { $match: { $and: [{ status: { $eq: 'Rejected' } }, timeMatch, typeMatch, dateMatch] } },
+  ]);
+  let count = {
+    AcknowledgedStatusCount: AcknowledgedStatusCount.length,
+    orderedStatusCount: orderedStatusCount.length,
+    ApprovedStatusCount: ApprovedStatusCount.length,
+    ModifiedStatusCount: ModifiedStatusCount.length,
+    rejectedStatusCount: rejectedStatusCount.length,
+  };
+  let result = await gettimeslatcount(type);
+  return { values: values, total: total.length, count: count, total_count: result };
+};
+
 const countStatus = async () => {
   let AcknowledgedStatusCount = await ShopOrderClone.find({ status: 'Acknowledged' }).count();
   let orderedStatusCount = await ShopOrderClone.find({ status: 'ordered' }).count();
@@ -2129,4 +2317,5 @@ module.exports = {
   updateStatusModifiedOrModified,
   wardloadExecutivepacked,
   wardloadExecutivebtgroup,
+  getdetailsDataStatuslasped,
 };

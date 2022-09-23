@@ -8,10 +8,13 @@ const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 
 const createshopOrder = async (shopOrderBody, userid) => {
-  let body = { ...shopOrderBody, ...{ Uid: userid } };
+  let { product, date, time, shopId, time_of_delivery } = shopOrderBody;
+  let timeslot = time_of_delivery.replace('-', '');
+
+  let body = { ...shopOrderBody, ...{ Uid: userid, timeslot: parseInt(timeslot) } };
   let createShopOrder = await ShopOrder.create(body);
   console.log(createShopOrder);
-  let { product, date, time, shopId } = shopOrderBody;
+
   product.forEach(async (e) => {
     ProductorderSchema.create({
       orderId: createShopOrder.id,
@@ -547,7 +550,9 @@ const updateShopOrderById = async (shopOrderId, updateBody) => {
   if (!shoporder) {
     throw new ApiError(httpStatus.NOT_FOUND, 'shoporder not found');
   }
-  shoporder = await ShopOrder.findByIdAndUpdate({ _id: shopOrderId }, updateBody, { new: true });
+  let timeslot = updateBody.time_of_delivery.replace('-', '');
+  let body = { ...updateBody, ...{ timeslot: parseInt(timeslot) } };
+  shoporder = await ShopOrder.findByIdAndUpdate({ _id: shopOrderId }, body, { new: true });
   return shoporder;
 };
 

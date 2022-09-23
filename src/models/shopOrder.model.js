@@ -34,6 +34,9 @@ const ShopOrderPriceSchema = new mongoose.Schema({
   status: {
     type: String,
   },
+  timeslot: {
+    type: Number,
+  },
   Uid: {
     type: String,
   },
