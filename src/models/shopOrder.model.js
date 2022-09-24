@@ -243,6 +243,9 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  timeslot: {
+    type: Number,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);

@@ -10,12 +10,8 @@ const moment = require('moment');
 const createshopOrder = async (shopOrderBody, userid) => {
   let { product, date, time, shopId, time_of_delivery } = shopOrderBody;
   let timeslot = time_of_delivery.replace('-', '');
-  console.log(timeslot,'asdasd');
   let body = { ...shopOrderBody, ...{ Uid: userid, timeslot: timeslot } };
-  console.log(body,'asdasdzasdasd');
   let createShopOrder = await ShopOrder.create(body);
-  console.log(createShopOrder);
-
   product.forEach(async (e) => {
     ProductorderSchema.create({
       orderId: createShopOrder.id,
@@ -69,12 +65,19 @@ const createshopOrderClone = async (body, userid) => {
   let totalcounts = Buy.length + 1;
 
   BillId = 'B' + centerdata + totalcounts;
-
+  let timeslot = body.time_of_delivery.replace('-', '');
   let bod = {
     ...body,
-    ...{ Uid: userid, OrderId: userId, customerBillId: BillId, date: currentDate, time: currenttime, created: moment() },
+    ...{
+      Uid: userid,
+      OrderId: userId,
+      customerBillId: BillId,
+      date: currentDate,
+      time: currenttime,
+      created: moment(),
+      timeslot: timeslot,
+    },
   };
-  console.log(bod);
 
   let createShopOrderClone = await ShopOrderClone.create(bod);
   await OrderPayment.create({
