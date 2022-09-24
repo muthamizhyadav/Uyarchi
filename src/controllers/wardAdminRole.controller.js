@@ -11,7 +11,7 @@ const createwardAdminRoleService = catchAsync(async (req, res) => {
 });
 
 const getAllwardAdminRole = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.getAll();
+  const data = await wardAdminRoleService.getAll(req.params.date);
   res.send(data);
 });
 
@@ -38,7 +38,7 @@ const getAllWardAdminRoleData = catchAsync(async (req, res) => {
 });
 
 const  smData = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.smData();
+  const data = await wardAdminRoleService.smData(req.params.date);
   res.send(data);
 });
 
