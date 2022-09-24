@@ -2198,7 +2198,7 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
     },
     {
       $match: {
-        $and: [statusMatch, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch, { timeslot: { $lte: lapsed } }],
       },
     },
     {
