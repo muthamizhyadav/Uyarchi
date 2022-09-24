@@ -422,7 +422,7 @@ const wardloadExecutivebtgroup = async (page) => {
         AllocateStatus: 1,
         pettyStock: 1,
         deliveryExecutiveId: 1,
-        totalOrders: {$size:"$orderassigns"},
+        totalOrders: { $size: '$orderassigns' },
         route: 1,
         groupId: 1,
         assignDate: 1,
@@ -566,6 +566,7 @@ const wardloadExecutive = async (id) => {
     {
       $unwind: '$shoporderclones',
     },
+
     {
       $project: {
         _id: 1,
@@ -601,9 +602,50 @@ const wardloadExecutive = async (id) => {
       },
     },
   ]);
+  let packed_count = await wardAdminGroupModel_ORDERS.aggregate([
+    {
+      $match: {
+        $and: [{ wardAdminGroupID: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId', //Uid
+        foreignField: '_id',
+        pipeline: [{ $match: { status: 'Packed' } }],
+        as: 'packedcount',
+      },
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId', //Uid
+        foreignField: '_id',
+        pipeline: [{ $match: { status: 'Assigned' } }],
+        as: 'unpackedcount',
+      },
+    },
+
+    {
+      $project: {
+        _id: 1,
+        packedcount: { $size: '$packedcount' },
+        unpackedcount: { $size: '$unpackedcount' },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        packedCount: { $sum: '$packedcount' },
+        unpackedcount: { $sum: '$unpackedcount' },
+      },
+    },
+    
+  ]);
   let orderdate = await wardAdminGroup.findById(id);
 
-  return { data: data, orderDetails: orderdate };
+  return { data: data, orderDetails: orderdate, packed_count: packed_count[0] };
 };
 // TRACK STATUS FOR PRODUCT STATUS
 const updateBilled = async (id, status) => {
