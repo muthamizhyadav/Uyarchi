@@ -8,5 +8,5 @@ router.route('/getAllData/:id').get(wardAdminRoleController.getDataById)
 router.route('/createwardAdminRoleAsm/data').post(wardAdminRoleController.createwardAdminRoleAsmService)
 router.route('/data/:id').get(wardAdminRoleController.getAllWardAdminRoleData)
 router.route('/smData/data/:date').get(wardAdminRoleController.smData)
-router.route('/totalChange/:id').get(wardAdminRoleController.total)
+router.route('/totalChange/:id').put(wardAdminRoleController.total)
 module.exports = router;
