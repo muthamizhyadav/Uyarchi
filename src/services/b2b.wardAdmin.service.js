@@ -1026,11 +1026,39 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
   if (time != 'all') {
     timeMatch = { time_of_delivery: { $eq: time } };
   }
+  let hover = moment().subtract(-1, 'hours').format('H');
+  let timeslot = [
+    { start: 10, end: 20 },
+    { start: 20, end: 30 },
+    { start: 30, end: 40 },
+    { start: 40, end: 50 },
+    { start: 50, end: 60 },
+    { start: 60, end: 70 },
+    { start: 70, end: 80 },
+    { start: 80, end: 90 },
+    { start: 900, end: 1000 },
+    { start: 1000, end: 1100 },
+    { start: 1100, end: 1200 },
+    { start: 1200, end: 1300 },
+    { start: 1300, end: 1400 },
+    { start: 1400, end: 1500 },
+    { start: 1500, end: 1600 },
+    { start: 1600, end: 1700 },
+    { start: 1700, end: 1800 },
+    { start: 1800, end: 1900 },
+    { start: 1900, end: 2000 },
+    { start: 2000, end: 2100 },
+    { start: 2100, end: 2200 },
+    { start: 2200, end: 2300 },
+    { start: 2300, end: 2400 },
+    { start: 2400, end: 2500 },
+  ];
+  let lapsed = timeslot[hover].start;
   let values = await ShopOrderClone.aggregate([
     { $sort: { timeslot: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
-        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }],
       },
     },
     {
@@ -1089,7 +1117,7 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
     },
     {
       $match: {
-        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }],
       },
     },
     {
@@ -1121,10 +1149,14 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
     },
   ]);
   let AcknowledgedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch] } },
+    {
+      $match: {
+        $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }],
+      },
+    },
   ]);
   let orderedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }] } },
   ]);
   let ApprovedStatusCount = await ShopOrderClone.aggregate([
     {
@@ -1157,12 +1189,26 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
   let rejectedStatusCount = await ShopOrderClone.aggregate([
     { $match: { $and: [{ status: { $eq: 'Rejected' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
+  let lapsetStatusCount = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { status: { $in: ['Acknowledged', 'ordered', 'Rejected'] } },
+          timeMatch,
+          typeMatch,
+          dateMatch,
+          { timeslot: { $lte: lapsed } },
+        ],
+      },
+    },
+  ]);
   let count = {
     AcknowledgedStatusCount: AcknowledgedStatusCount.length,
     orderedStatusCount: orderedStatusCount.length,
     ApprovedStatusCount: ApprovedStatusCount.length,
     ModifiedStatusCount: ModifiedStatusCount.length,
     rejectedStatusCount: rejectedStatusCount.length,
+    lapsetStatusCount: lapsetStatusCount.length,
   };
   let result = await gettimeslatcount(type);
   return { values: values, total: total.length, count: count, total_count: result };
@@ -1201,12 +1247,39 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
       status: { $eq: status },
     };
   }
-
+  let hover = moment().subtract(-1, 'hours').format('H');
+  let timeslot = [
+    { start: 10, end: 20 },
+    { start: 20, end: 30 },
+    { start: 30, end: 40 },
+    { start: 40, end: 50 },
+    { start: 50, end: 60 },
+    { start: 60, end: 70 },
+    { start: 70, end: 80 },
+    { start: 80, end: 90 },
+    { start: 900, end: 1000 },
+    { start: 1000, end: 1100 },
+    { start: 1100, end: 1200 },
+    { start: 1200, end: 1300 },
+    { start: 1300, end: 1400 },
+    { start: 1400, end: 1500 },
+    { start: 1500, end: 1600 },
+    { start: 1600, end: 1700 },
+    { start: 1700, end: 1800 },
+    { start: 1800, end: 1900 },
+    { start: 1900, end: 2000 },
+    { start: 2000, end: 2100 },
+    { start: 2100, end: 2200 },
+    { start: 2200, end: 2300 },
+    { start: 2300, end: 2400 },
+    { start: 2400, end: 2500 },
+  ];
+  let lapsed = timeslot[hover].start;
   let values = await ShopOrderClone.aggregate([
     { $sort: { timeslot: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
-        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }],
       },
     },
     {
@@ -1270,7 +1343,7 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
     },
     {
       $match: {
-        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }],
       },
     },
     {
@@ -1303,10 +1376,14 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
     //  { unwind: '$userNameData'},
   ]);
   let AcknowledgedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch] } },
+    {
+      $match: {
+        $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }],
+      },
+    },
   ]);
   let orderedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }] } },
   ]);
   let ApprovedStatusCount = await ShopOrderClone.aggregate([
     {
@@ -1339,12 +1416,26 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
   let rejectedStatusCount = await ShopOrderClone.aggregate([
     { $match: { $and: [{ status: { $eq: 'Rejected' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
+  let lapsetStatusCount = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { status: { $in: ['Acknowledged', 'ordered', 'Rejected'] } },
+          timeMatch,
+          typeMatch,
+          dateMatch,
+          { timeslot: { $lte: lapsed } },
+        ],
+      },
+    },
+  ]);
   let count = {
     AcknowledgedStatusCount: AcknowledgedStatusCount.length,
     orderedStatusCount: orderedStatusCount.length,
     ApprovedStatusCount: ApprovedStatusCount.length,
     ModifiedStatusCount: ModifiedStatusCount.length,
     rejectedStatusCount: rejectedStatusCount.length,
+    lapsetStatusCount: lapsetStatusCount.length,
   };
   let result = await gettimeslatcount(type);
   return { values: values, total: total.length, count: count, total_count: result };
@@ -1826,10 +1917,14 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
     //  { unwind: '$userNameData'},
   ]);
   let AcknowledgedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch] } },
+    {
+      $match: {
+        $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }],
+      },
+    },
   ]);
   let orderedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }] } },
   ]);
   let ApprovedStatusCount = await ShopOrderClone.aggregate([
     {
@@ -1862,12 +1957,26 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
   let rejectedStatusCount = await ShopOrderClone.aggregate([
     { $match: { $and: [{ status: { $eq: 'Rejected' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
+  let lapsetStatusCount = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { status: { $in: ['Acknowledged', 'ordered', 'Rejected'] } },
+          timeMatch,
+          typeMatch,
+          dateMatch,
+          { timeslot: { $lte: lapsed } },
+        ],
+      },
+    },
+  ]);
   let count = {
     AcknowledgedStatusCount: AcknowledgedStatusCount.length,
     orderedStatusCount: orderedStatusCount.length,
     ApprovedStatusCount: ApprovedStatusCount.length,
     ModifiedStatusCount: ModifiedStatusCount.length,
     rejectedStatusCount: rejectedStatusCount.length,
+    lapsetStatusCount: lapsetStatusCount.length,
   };
   let result = await gettimeslatcount(type);
   return { values: values, total: total.length, count: count, total_count: result };
@@ -2013,10 +2122,14 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
     //  { unwind: '$userNameData'},
   ]);
   let AcknowledgedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch] } },
+    {
+      $match: {
+        $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }],
+      },
+    },
   ]);
   let orderedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }] } },
   ]);
   let ApprovedStatusCount = await ShopOrderClone.aggregate([
     {
@@ -2049,12 +2162,26 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
   let rejectedStatusCount = await ShopOrderClone.aggregate([
     { $match: { $and: [{ status: { $eq: 'Rejected' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
+  let lapsetStatusCount = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { status: { $in: ['Acknowledged', 'ordered', 'Rejected'] } },
+          timeMatch,
+          typeMatch,
+          dateMatch,
+          { timeslot: { $lte: lapsed } },
+        ],
+      },
+    },
+  ]);
   let count = {
     AcknowledgedStatusCount: AcknowledgedStatusCount.length,
     orderedStatusCount: orderedStatusCount.length,
     ApprovedStatusCount: ApprovedStatusCount.length,
     ModifiedStatusCount: ModifiedStatusCount.length,
     rejectedStatusCount: rejectedStatusCount.length,
+    lapsetStatusCount: lapsetStatusCount.length,
   };
   let result = await gettimeslatcount(type);
   return { values: values, total: total.length, count: count, total_count: result };
@@ -2099,8 +2226,6 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
     timeMatch = { time_of_delivery: { $eq: time } };
   }
   let hover = moment().subtract(-1, 'hours').format('H');
-  let minnuts = moment().subtract(-1, 'hours').format('H');
-
   let timeslot = [
     { start: 10, end: 20 },
     { start: 20, end: 30 },
@@ -2127,9 +2252,7 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
     { start: 2300, end: 2400 },
     { start: 2400, end: 2500 },
   ];
-  console.log(hover);
   let lapsed = timeslot[hover].start;
-  console.log(lapsed);
 
   let values = await ShopOrderClone.aggregate([
     { $sort: { timeslot: 1, delivery_type: -1, created: 1 } },
@@ -2231,10 +2354,14 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
     //  { unwind: '$userNameData'},
   ]);
   let AcknowledgedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch] } },
+    {
+      $match: {
+        $and: [{ status: { $eq: 'Acknowledged' } }, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }],
+      },
+    },
   ]);
   let orderedStatusCount = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch] } },
+    { $match: { $and: [{ status: { $eq: 'ordered' } }, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }] } },
   ]);
   let ApprovedStatusCount = await ShopOrderClone.aggregate([
     {
@@ -2267,12 +2394,26 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
   let rejectedStatusCount = await ShopOrderClone.aggregate([
     { $match: { $and: [{ status: { $eq: 'Rejected' } }, timeMatch, typeMatch, dateMatch] } },
   ]);
+  let lapsetStatusCount = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { status: { $in: ['Acknowledged', 'ordered', 'Rejected'] } },
+          timeMatch,
+          typeMatch,
+          dateMatch,
+          { timeslot: { $lte: lapsed } },
+        ],
+      },
+    },
+  ]);
   let count = {
     AcknowledgedStatusCount: AcknowledgedStatusCount.length,
     orderedStatusCount: orderedStatusCount.length,
     ApprovedStatusCount: ApprovedStatusCount.length,
     ModifiedStatusCount: ModifiedStatusCount.length,
     rejectedStatusCount: rejectedStatusCount.length,
+    lapsetStatusCount: lapsetStatusCount.length,
   };
   let result = await gettimeslatcount(type);
   return { values: values, total: total.length, count: count, total_count: result };
