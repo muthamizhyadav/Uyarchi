@@ -1037,18 +1037,12 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
     timeMatch = { time_of_delivery: { $eq: time } };
   }
   let values = await ShopOrderClone.aggregate([
-    { $sort: { time_of_delivery: 1, delivery_type: -1, created: 1 } },
+    { $sort: { timeslot: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
         $and: [statusMatch, timeMatch, typeMatch, dateMatch],
       },
     },
-    // {
-    //   $sort: {
-    //     date: -1,
-    //     time: -1,
-    //   },
-    // },
     {
       $lookup: {
         from: 'b2bshopclones',
@@ -1221,7 +1215,7 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
   }
 
   let values = await ShopOrderClone.aggregate([
-    { $sort: { time_of_delivery: 1, delivery_type: -1, created: 1 } },
+    { $sort: { timeslot: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
         $and: [statusMatch, timeMatch, typeMatch, dateMatch],
@@ -1750,7 +1744,7 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
     timeMatch = { time_of_delivery: { $eq: time } };
   }
   let values = await ShopOrderClone.aggregate([
-    { $sort: { time_of_delivery: 1, delivery_type: -1, created: 1 } },
+    { $sort: { timeslot: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
         $and: [statusMatch, timeMatch, typeMatch, dateMatch],
@@ -1937,7 +1931,7 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
   console.log(statusMatch);
 
   let values = await ShopOrderClone.aggregate([
-    { $sort: { time_of_delivery: 1, delivery_type: -1, created: 1 } },
+    { $sort: { timeslot: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
         $and: [statusMatch, timeMatch, typeMatch, dateMatch],
@@ -2129,7 +2123,7 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
     timeMatch = { time_of_delivery: { $eq: time } };
   }
   let values = await ShopOrderClone.aggregate([
-    { $sort: { time_of_delivery: 1, delivery_type: -1, created: 1 } },
+    { $sort: { timeslot: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
         $and: [statusMatch, timeMatch, typeMatch, dateMatch],
