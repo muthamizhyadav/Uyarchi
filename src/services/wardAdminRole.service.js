@@ -122,6 +122,22 @@ const smData = async () =>{
   return data ;
 }
 
+const total = async (id, updateBody) => {
+  let data = await getWardAdminRoleById(id);
+  if (!data) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'WardAdminRole not found');
+  }
+  let value =  updateBody.targetValue;
+  let tone  = updateBody.targetTonne;
+  let asmvalue = data.targetValue;
+  let asmtone = data.targetTonne;
+  let value1 = asmvalue - value ;
+  let tone1 = asmtone - tone ;
+
+
+  data = await WardAdminRole.findByIdAndUpdate({ _id: id }, {targetValue: value1, targetTonne: tone1}, { new: true });
+  return data;
+};
 
 module.exports = {
   createwardAdminRole,
@@ -130,4 +146,6 @@ module.exports = {
   createwardAdminRoleAsm,  
   getAllWardAdminRoleData,
   smData,
+  total,
+  
 }
