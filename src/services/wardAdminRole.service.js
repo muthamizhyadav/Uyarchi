@@ -14,7 +14,31 @@ const createwardAdminRole = async (body) => {
 
 
 const getAll = async () => {
-  return WardAdminRole.find({ active: true });
+  const data = await WardAdminRole.aggregate([
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'b2bUserId',
+        foreignField: '_id',
+        as: 'Asmb2busersData',
+      },
+    },
+    {
+      $unwind: '$Asmb2busersData',
+    },
+    {
+      $project:{
+        name:'$Asmb2busersData.name',
+        targetTonne:1,
+        targetValue:1,
+        b2bUserId:1,
+        date:1,
+        time:1,
+        _id:1,
+      }
+    }
+  ])
+  return data;
 };
 
 const getWardAdminRoleById = async (id) => {
@@ -50,6 +74,17 @@ const smData = async () =>{
   let data = await WardAdminRole.aggregate([
     {
       $lookup: {
+        from: 'b2busers',
+        localField: 'b2bUserId',
+        foreignField: '_id',
+        as: 'Asmb2busersData',
+      },
+    },
+    {
+      $unwind: '$Asmb2busersData',
+    },
+    {
+      $lookup: {
         from: 'wardadminroleasms',
         localField: '_id',
         foreignField: 'wardAdminId',
@@ -60,17 +95,26 @@ const smData = async () =>{
       $unwind: '$wardadminroleasmsData',
     },
     {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'wardadminroleasmsData.salesman',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
       $project: {
-        salesmanName: '$wardadminroleasmsData.salesman',
+        salesmanName: '$b2busersData.name',
         targetValue: '$wardadminroleasmsData.targetValue',
         targetTonne:'$wardadminroleasmsData.targetTonne',
-        wardAdminId:'$wardadminroleasmsData.wardAdminId',
-        userRoleId:'$wardadminroleasmsData.userRoleId',
-        b2buserId: '$wardadminroleasmsData.b2buserId',
+        // wardAdminId:'$wardadminroleasmsData.wardAdminId',
+        b2buserId: '$wardadminroleasmsData.salesman',
         date:'$wardadminroleasmsData.date',
         time:'$wardadminroleasmsData.time',
-        roleName: 1,
-        Asm:1,
+        Asm:'$Asmb2busersData.name',
         _id: 1,
       },
     },
