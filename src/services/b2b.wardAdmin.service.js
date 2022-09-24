@@ -2088,7 +2088,7 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
       status: { $eq: status },
     };
   }
-  if (status == 'lasped') {
+  if (status == 'lapsed') {
     statusMatch = {
       status: { $in: ['ordered', 'Acknowledged', 'Rejected'] },
     };
