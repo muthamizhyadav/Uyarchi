@@ -146,34 +146,7 @@ const updateAcknowledgeSingle = catchAsync(async (req, res) => {
 // });
 
 const statusMatchingAppOrModi = catchAsync(async (req, res) => {
-  let hover = moment().subtract(-1, 'hours').format('H');
-  let timeslot = [
-    { start: 10, end: 20 },
-    { start: 20, end: 30 },
-    { start: 30, end: 40 },
-    { start: 40, end: 50 },
-    { start: 50, end: 60 },
-    { start: 60, end: 70 },
-    { start: 70, end: 80 },
-    { start: 80, end: 90 },
-    { start: 900, end: 1000 },
-    { start: 1000, end: 1100 },
-    { start: 1100, end: 1200 },
-    { start: 1200, end: 1300 },
-    { start: 1300, end: 1400 },
-    { start: 1400, end: 1500 },
-    { start: 1500, end: 1600 },
-    { start: 1600, end: 1700 },
-    { start: 1700, end: 1800 },
-    { start: 1800, end: 1900 },
-    { start: 1900, end: 2000 },
-    { start: 2000, end: 2100 },
-    { start: 2100, end: 2200 },
-    { start: 2200, end: 2300 },
-    { start: 2300, end: 2400 },
-    { start: 2400, end: 2500 },
-  ];
-  let lapsed = timeslot[hover].start;
+  
   console.log(req.params.type, req.params.time, req.params.status, req.params.limit, req.params.page);
   let statusMatching;
   if (req.params.status == 'Acknowledged') {
