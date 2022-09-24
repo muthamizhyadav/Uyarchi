@@ -166,7 +166,6 @@ const updateStatusrejectOrModified = async (id) => {
 
 const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
   let statusUpdate = await ShopOrderClone.findById(id);
-  // console.log(statusUpdate);
   if (!statusUpdate) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
@@ -177,12 +176,10 @@ const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
   );
   let orderassign = await wardAdminGroupModel_ORDERS.findOne({ orderId: id });
   await wardAdminGroupModel_ORDERS.findByIdAndUpdate({ _id: orderassign._id }, { status: 'Packed' }, { new: true });
-  // console.log(orderassign);
   let wardgroup = await wardAdminGroupModel_ORDERS.find({
     wardAdminGroupID: orderassign.wardAdminGroupID,
     status: 'Assigned',
   });
-  console.log(wardgroup);
   if (wardgroup.length == 0) {
     await wardAdminGroup.findByIdAndUpdate({ _id: orderassign.wardAdminGroupID }, { status: 'Packed' }, { new: true });
   }
@@ -608,7 +605,6 @@ const updateBilled = async (id, status) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'productOrderBilled not found');
   }
   productOrderBilled = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: status }, { new: true });
-  console.log(productOrderBilled);
   return productOrderBilled;
 };
 
@@ -628,7 +624,6 @@ const deliveryExecutive = async (id, body) => {
 
 const createdata = async (Orderdatas) => {
   const { Orderdatass, deliveryExecutiveId } = Orderdatas;
-  console.log(Orderdatas);
   Orderdatass.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e._id }, { deliveryExecutiveId: deliveryExecutiveId, status: 'Assigned' });
   });
@@ -639,8 +634,6 @@ const createdata = async (Orderdatas) => {
 // AFTER PACKED BY WARD LOADING EXECUTE
 
 const wardloadExecutivePacked = async (range, page) => {
-  console.log(range);
-  // console.log(status);
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
   let dateMatch = {
@@ -1002,10 +995,8 @@ const getAssigned_details = async () => {
 };
 
 const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
-  // console.log(status);
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
-  console.log(yesterday);
   let dateMatch = { date: { $eq: today } };
   let typeMatch = { delivery_type: { $eq: type } };
   if (type == 'All') {
@@ -1025,7 +1016,6 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
   }
-  // console.log(dateMatch);
   let statusMatch;
   if (status != 'null') {
     statusMatch = {
@@ -1181,7 +1171,6 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
 const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page) => {
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
-  console.log(yesterday);
   let dateMatch = { date: { $eq: today } };
   let typeMatch = { delivery_type: { $eq: type } };
   if (type == 'All') {
@@ -1206,7 +1195,6 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
   if (time != 'all') {
     timeMatch = { time_of_delivery: { $eq: time } };
   }
-  // console.log(dateMatch);
   let statusMatch;
   if (status != 'null') {
     statusMatch = {
@@ -1364,10 +1352,8 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
 
 const gettimeslatcount = async (type) => {
   let typeMatch = { delivery_type: { $eq: type } };
-  console.log(type);
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
-  console.log(yesterday);
   let dateMatch = { date: { $eq: today } };
   if (type == 'All') {
     typeMatch = {
@@ -1386,7 +1372,6 @@ const gettimeslatcount = async (type) => {
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
   }
-  console.log(dateMatch);
   let countall = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -1712,7 +1697,6 @@ const gettimeslatcountassign = async (type) => {
 const getdetailsDataStatusRejected = async (type, time, status, limit, page) => {
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
-  console.log(yesterday);
   let dateMatch = { date: { $eq: today } };
   let typeMatch = { delivery_type: { $eq: type } };
   if (type == 'All') {
@@ -1732,7 +1716,6 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
   }
-  // console.log(dateMatch);
   let statusMatch;
   if (status != 'null') {
     statusMatch = {
@@ -1892,7 +1875,6 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
 const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
-  console.log(yesterday);
   let dateMatch = { date: { $eq: today } };
   let typeMatch = { delivery_type: { $eq: type } };
   if (type == 'All') {
@@ -1912,9 +1894,7 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
   }
-  // console.log(typeMatch);
-  // console.log(dateMatch);
-  // console.log({ time_of_delivery: { $eq: time } });
+
   let timeMatch = { active: true };
   if (time != 'all') {
     timeMatch = { time_of_delivery: { $eq: time } };
@@ -1928,7 +1908,6 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
       },
     };
   }
-  console.log(statusMatch);
 
   let values = await ShopOrderClone.aggregate([
     { $sort: { timeslot: 1, delivery_type: -1, created: 1 } },
@@ -2084,7 +2063,6 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
 const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
-  console.log(yesterday);
   let dateMatch = { date: { $eq: today } };
   let typeMatch = { delivery_type: { $eq: type } };
   if (type == 'All') {
@@ -2104,8 +2082,6 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
   if (type == 'NDD') {
     dateMatch = { date: { $eq: yesterday } };
   }
-  // console.log(dateMatch);
-  console.log(status);
   let statusMatch;
   if (status != 'null') {
     statusMatch = {
@@ -2117,16 +2093,49 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
       status: { $in: ['ordered', 'Acknowledged', 'Rejected'] },
     };
   }
-  
+
   let timeMatch = { active: true };
   if (time != 'all') {
     timeMatch = { time_of_delivery: { $eq: time } };
   }
+  let hover = moment().subtract(-1, 'hours').format('H');
+  let minnuts = moment().subtract(-1, 'hours').format('H');
+
+  let timeslot = [
+    { start: 10, end: 20 },
+    { start: 20, end: 30 },
+    { start: 30, end: 40 },
+    { start: 40, end: 50 },
+    { start: 50, end: 60 },
+    { start: 60, end: 70 },
+    { start: 70, end: 80 },
+    { start: 80, end: 90 },
+    { start: 900, end: 1000 },
+    { start: 1000, end: 1100 },
+    { start: 1100, end: 1200 },
+    { start: 1200, end: 1300 },
+    { start: 1300, end: 1400 },
+    { start: 1400, end: 1500 },
+    { start: 1500, end: 1600 },
+    { start: 1600, end: 1700 },
+    { start: 1700, end: 1800 },
+    { start: 1800, end: 1900 },
+    { start: 1900, end: 2000 },
+    { start: 2000, end: 2100 },
+    { start: 2100, end: 2200 },
+    { start: 2200, end: 2300 },
+    { start: 2300, end: 2400 },
+    { start: 2400, end: 2500 },
+  ];
+  console.log(hover);
+  let lapsed = timeslot[hover].start;
+  console.log(lapsed);
+
   let values = await ShopOrderClone.aggregate([
     { $sort: { timeslot: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
-        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }],
       },
     },
 
@@ -2189,7 +2198,7 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
     },
     {
       $match: {
-        $and: [statusMatch, timeMatch, typeMatch, dateMatch],
+        $and: [statusMatch, timeMatch, typeMatch, dateMatch, { timeslot: { $gte: lapsed } }],
       },
     },
     {
