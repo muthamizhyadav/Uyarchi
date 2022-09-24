@@ -1523,7 +1523,7 @@ const perdeleteShopById = async (id) => {
   };
 };
 
-const getVendorShops = async () => {
+const getVendorShops = async (key) => {
   let values = await Shop.aggregate([
     {
       $match: {
@@ -1541,6 +1541,13 @@ const getVendorShops = async () => {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $or: [{ area: { $regex: key, $options: 'i' } }],
+            },
+          },
+        ],
         as: 'streets',
       },
     },
@@ -1579,6 +1586,13 @@ const getVendorShops = async () => {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $or: [{ area: { $regex: key, $options: 'i' } }],
+            },
+          },
+        ],
         as: 'streets',
       },
     },

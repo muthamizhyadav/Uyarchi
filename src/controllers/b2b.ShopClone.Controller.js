@@ -373,7 +373,7 @@ const searchShops = catchAsync(async (req, res) => {
 });
 
 const getVendorShops = catchAsync(async (req, res) => {
-  const shops = await b2bCloneService.getVendorShops();
+  const shops = await b2bCloneService.getVendorShops(req.params.key);
   res.send(shops);
 });
 

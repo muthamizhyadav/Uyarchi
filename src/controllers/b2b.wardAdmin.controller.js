@@ -185,6 +185,14 @@ const statusMatchingAppOrModi = catchAsync(async (req, res) => {
       req.params.limit,
       req.params.page
     );
+  } else if (req.params.status == 'lapsed') {
+    statusMatching = await wardAdminService.getdetailsDataStatuslasped(
+      req.params.type,
+      req.params.time,
+      req.params.status,
+      req.params.limit,
+      req.params.page
+    );
   }
   res.send(statusMatching);
 });
