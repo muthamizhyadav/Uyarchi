@@ -1651,6 +1651,357 @@ const gettimeslatcount = async (type) => {
       },
     },
   ]);
+  let count11_12 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Acknowledged',
+                'ordered',
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          { time_of_delivery: { $eq: '11-12' } },
+          dateMatch,
+          typeMatch,
+        ],
+      },
+    },
+  ]);
+  let count12_13 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Acknowledged',
+                'ordered',
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          { time_of_delivery: { $eq: '12-13' } },
+          dateMatch,
+          typeMatch,
+        ],
+      },
+    },
+  ]);
+  let count13_14 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Acknowledged',
+                'ordered',
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          { time_of_delivery: { $eq: '13-14' } },
+          dateMatch,
+          typeMatch,
+        ],
+      },
+    },
+  ]);
+  let count14_15 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Acknowledged',
+                'ordered',
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          { time_of_delivery: { $eq: '14-15' } },
+          dateMatch,
+          typeMatch,
+        ],
+      },
+    },
+  ]);
+  let count15_16 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Acknowledged',
+                'ordered',
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          { time_of_delivery: { $eq: '15-16' } },
+          dateMatch,
+          typeMatch,
+        ],
+      },
+    },
+  ]);
+  let count16_17 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Acknowledged',
+                'ordered',
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          { time_of_delivery: { $eq: '16-17' } },
+          dateMatch,
+          typeMatch,
+        ],
+      },
+    },
+  ]);
+  let count17_18 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Acknowledged',
+                'ordered',
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          { time_of_delivery: { $eq: '17-18' } },
+          dateMatch,
+          typeMatch,
+        ],
+      },
+    },
+  ]);
+  let count18_19 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Acknowledged',
+                'ordered',
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          { time_of_delivery: { $eq: '18-19' } },
+          dateMatch,
+          typeMatch,
+        ],
+      },
+    },
+  ]);
+  let count19_20 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Acknowledged',
+                'ordered',
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          { time_of_delivery: { $eq: '19-20' } },
+          dateMatch,
+          typeMatch,
+        ],
+      },
+    },
+  ]);
+  let count20_21 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Acknowledged',
+                'ordered',
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          { time_of_delivery: { $eq: '20-21' } },
+          dateMatch,
+          typeMatch,
+        ],
+      },
+    },
+  ]);
+  let count21_22 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Acknowledged',
+                'ordered',
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          { time_of_delivery: { $eq: '21-22' } },
+          dateMatch,
+          typeMatch,
+        ],
+      },
+    },
+  ]);
+  let count22_23 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Acknowledged',
+                'ordered',
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          { time_of_delivery: { $eq: '22-23' } },
+          dateMatch,
+          typeMatch,
+        ],
+      },
+    },
+  ]);
+  let count23_24 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Acknowledged',
+                'ordered',
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'Delivered',
+                'UnDelivered',
+              ],
+            },
+          },
+          { time_of_delivery: { $eq: '23-24' } },
+          dateMatch,
+          typeMatch,
+        ],
+      },
+    },
+  ]);
   return {
     all: countall.length,
     '5_6': count5_6.length,
@@ -1659,6 +2010,19 @@ const gettimeslatcount = async (type) => {
     '8_9': count8_9.length,
     '9_10': count9_10.length,
     '10_11': count10_11.length,
+    '11_12': count11_12.length,
+    '12_13': count12_13.length,
+    '13_14': count13_14.length,
+    '14_15': count14_15.length,
+    '15_16': count15_16.length,
+    '16_17': count16_17.length,
+    '17_18': count17_18.length,
+    '18_19': count18_19.length,
+    '19_20': count19_20.length,
+    '20_21': count20_21.length,
+    '21_22': count21_22.length,
+    '22_23': count22_23.length,
+    '23_24': count23_24.length,
   };
 };
 
