@@ -146,6 +146,7 @@ const updateAcknowledgeSingle = catchAsync(async (req, res) => {
 // });
 
 const statusMatchingAppOrModi = catchAsync(async (req, res) => {
+  
   console.log(req.params.type, req.params.time, req.params.status, req.params.limit, req.params.page);
   let statusMatching;
   if (req.params.status == 'Acknowledged') {
