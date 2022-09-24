@@ -815,6 +815,56 @@ const assignOnly = async (page, status) => {
       $unwind: '$UserName',
     },
     {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'b2bshopclones',
+                    localField: 'shopId',
+                    foreignField: '_id',
+                    as: 'b2bshopclones',
+                  },
+                },
+                {
+                  $unwind: '$b2bshopclones',
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    SName: '$b2bshopclones.SName',
+                    mobile: '$b2bshopclones.mobile',
+                    status: 1,
+                    productStatus: 1,
+                    customerDeliveryStatus: 1,
+                    delivery_type: 1,
+                    time_of_delivery: 1,
+                    paidamount: 1,
+                    OrderId: 1,
+                    date: 1,
+                    created: 1,
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+        ],
+        as: 'groupOrders',
+      },
+    },
+    {
       $project: {
         shopOrderCloneId: '$wdfsaf._id',
         groupId: 1,
@@ -828,6 +878,7 @@ const assignOnly = async (page, status) => {
         pettyCashAllocateStatus: 1,
         pettyStockAllocateStatus: 1,
         status: 1,
+        groupOrders: '$groupOrders',
       },
     },
     { $skip: 10 * page },
