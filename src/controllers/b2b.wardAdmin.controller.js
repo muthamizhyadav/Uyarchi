@@ -172,7 +172,7 @@ const statusMatchingAppOrModi = catchAsync(async (req, res) => {
       req.params.status,
       req.params.limit,
       req.params.page
-    );
+    );  
   } else if (
     req.params.status == 'Approved' ||
     req.params.status == 'Modified' ||

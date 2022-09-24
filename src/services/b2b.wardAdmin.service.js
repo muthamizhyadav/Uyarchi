@@ -404,6 +404,14 @@ const wardloadExecutivebtgroup = async (page) => {
       },
     },
     {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id', //Uid
+        foreignField: 'wardAdminGroupID', //Uid
+        as: 'orderassigns',
+      },
+    },
+    {
       $project: {
         _id: 1,
         // Orderdatas: 1,
@@ -414,7 +422,7 @@ const wardloadExecutivebtgroup = async (page) => {
         AllocateStatus: 1,
         pettyStock: 1,
         deliveryExecutiveId: 1,
-        totalOrders: 1,
+        totalOrders: {$size:"$orderassigns"},
         route: 1,
         groupId: 1,
         assignDate: 1,
