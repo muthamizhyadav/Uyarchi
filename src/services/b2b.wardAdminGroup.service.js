@@ -860,6 +860,22 @@ const assignOnly = async (page, status) => {
           {
             $unwind: '$shoporderclones',
           },
+          {
+            $project: {
+              _id: '$shoporderclones._id',
+              SName: '$shoporderclones.SName',
+              mobile: '$shoporderclones.mobile',
+              status: '$shoporderclones.status',
+              productStatus: '$shoporderclones.productStatus',
+              customerDeliveryStatus: '$shoporderclones.customerDeliveryStatus',
+              delivery_type: '$shoporderclones.delivery_type',
+              time_of_delivery: '$shoporderclones.time_of_delivery',
+              paidamount: '$shoporderclones.paidamount',
+              OrderId: '$shoporderclones.OrderId',
+              date: '$shoporderclones.date',
+              created: '$shoporderclones.created',
+            },
+          },
         ],
         as: 'groupOrders',
       },
