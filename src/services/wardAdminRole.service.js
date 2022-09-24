@@ -4,7 +4,7 @@ const  {WardAdminRole, WardAdminRoleAsm} = require('../models/wardAdminRole.mode
 const moment = require('moment');
 
 const createwardAdminRole = async (body) => {
-    let serverdate = moment().format('DD-MM-yyy');
+    let serverdate = moment().format('yyy-MM-DD');
     let time = moment().format('hh:mm a')
     let values = {}
     values = { ...body, ...{ date:serverdate, time:time} };
@@ -13,8 +13,19 @@ const createwardAdminRole = async (body) => {
 };
 
 
-const getAll = async () => {
+const getAll = async (date) => {
+  if (date != 'null') {
+    match = [{date: { $eq: date }},]
+  } else {
+    match = [{active: { $eq: true }}];
+  }
   const data = await WardAdminRole.aggregate([
+    { $sort: {date: -1}},
+    {
+      $match: {
+        $and: match,
+      },
+    },
     {
       $lookup: {
         from: 'b2busers',
@@ -50,7 +61,7 @@ const getWardAdminRoleById = async (id) => {
 };
 
 const createwardAdminRoleAsm = async (body) => {
-    let serverdate = moment().format('DD-MM-yyy');
+    let serverdate = moment().format('yyy-MM-DD');
     let time = moment().format('hh:mm a')
     let values = {}
      values = { ...body, ...{ date:serverdate, time:time} };
@@ -70,7 +81,13 @@ const getAllWardAdminRoleData = async (id) =>{
     return data ;
 }
 
-const smData = async () =>{
+const smData = async (date) =>{
+  let match ;
+  if (date != 'null') {
+    match = [{'wardadminroleasmsData.date': { $eq: date } },]
+  } else {
+    match = [{'wardadminroleasmsData.active': { $eq: true } }];
+  }
   let data = await WardAdminRole.aggregate([
     {
       $lookup: {
@@ -105,6 +122,12 @@ const smData = async () =>{
     {
       $unwind: '$b2busersData',
     },
+    {
+      $match: {
+        $and: match,
+      },
+    },
+    { $sort: { 'wardadminroleasmsData.date': -1} },
     {
       $project: {
         salesmanName: '$b2busersData.name',
