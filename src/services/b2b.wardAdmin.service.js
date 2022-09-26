@@ -1129,6 +1129,11 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
+        pipeline: [
+          {
+            $match: { $and: [{ finalQuantity: { $gt: 0 } }] },
+          },
+        ],
         as: 'orderData',
       },
     },
@@ -1188,6 +1193,11 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
+        pipeline: [
+          {
+            $match: { $and: [{ finalQuantity: { $gt: 0 } }] },
+          },
+        ],
         as: 'orderData',
       },
     },
@@ -1352,7 +1362,7 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
         foreignField: 'orderId',
         pipeline: [
           {
-            $match: { $and: [{ finalQuantity: { $ge: 0 } }] },
+            $match: { $and: [{ finalQuantity: { $gt: 0 } }] },
           },
         ],
         as: 'orderData',
@@ -2257,6 +2267,11 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
+        pipeline: [
+          {
+            $match: { $and: [{ finalQuantity: { $gt: 0 } }] },
+          },
+        ],
         as: 'orderData',
       },
     },
@@ -2487,7 +2502,7 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $match: { $and: [{ finalQuantity: { $ne: null } }, { finalQuantity: { $ne: 0 } }] },
+            $match: { $and: [{ finalQuantity: { $gt: 0 } }] },
           },
         ],
         as: 'orderData',
@@ -2812,6 +2827,11 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
+        pipeline: [
+          {
+            $match: { $and: [{ finalQuantity: { $gt: 0 } }] },
+          },
+        ],
         as: 'orderData',
       },
     },
