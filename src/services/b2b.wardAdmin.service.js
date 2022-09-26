@@ -297,9 +297,13 @@ const updateProduct = async (id, updateBody) => {
   }
   updateBody.product.forEach(async (e) => {
     if ((await ProductorderClone.findById(e._id).finalQuantity) != e.quantity) {
+      let updateQty = 0;
+      if (e.quantity != null && e.quantity != '') {
+        updateQty = e.quantity;
+      }
       await ProductorderClone.findByIdAndUpdate(
         { _id: e._id },
-        { finalQuantity: e.quantity, status: 'Modified' },
+        { finalQuantity: updateQty, status: 'Modified' },
         { new: true }
       );
     }
@@ -641,7 +645,6 @@ const wardloadExecutive = async (id) => {
         unpackedcount: { $sum: '$unpackedcount' },
       },
     },
-    
   ]);
   let orderdate = await wardAdminGroup.findById(id);
 
@@ -1349,7 +1352,7 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
         foreignField: 'orderId',
         pipeline: [
           {
-            $match: { $and: [{ finalQuantity: { $ne: null } }, { finalQuantity: { $ne: 0 } }] },
+            $match: { $and: [{ finalQuantity: { $ge: 0 } }] },
           },
         ],
         as: 'orderData',
