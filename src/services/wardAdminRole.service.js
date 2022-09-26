@@ -170,5 +170,4 @@ module.exports = {
   getAllWardAdminRoleData,
   smData,
   total,
-  
 }
