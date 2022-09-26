@@ -25,12 +25,18 @@ const getshopName = async () => {
       },
     },
     {
+      $unwind: '$wardData'
+    },
+    {
       $lookup: {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
         as: 'streetData',
       },
+    },
+    {
+      $unwind: '$streetData'
     },
 
     {
@@ -76,6 +82,7 @@ const deleteWalletById = async (id) => {
   wallet.active = false;
   await wallet.save();
 };
+
 
 module.exports = {
   createWallet,
