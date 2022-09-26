@@ -58,6 +58,11 @@ const deleteWallet = catchAsync(async (req, res) => {
   res.send(wallet);
 });
 
+const getshopdtae = catchAsync(async (req, res) => {
+  const data = await walletService.getShopDetails(req.params.id)
+  res.send(data);
+});
+
 module.exports = {
   createWalletAccount,
   getAll,
@@ -67,4 +72,5 @@ module.exports = {
 
   createAmountWallet,
   getshopName,
+  getshopdtae
 };
