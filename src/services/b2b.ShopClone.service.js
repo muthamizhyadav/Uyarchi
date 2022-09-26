@@ -1603,6 +1603,28 @@ const getVendorShops = async (key) => {
   return { values: values, total: total.length };
 };
 
+// getnotAssignSalesmanData
+
+const getnotAssignSalesmanData = async () =>{
+  console.log("ewf4e")
+  let data = await Shop.aggregate([
+    {
+      $match: {
+        $or: [{ salesManStatus: { $ne:'Assign' } },{ salesManStatus: { $eq:null} },{ salesManStatus: { $eq:'Reassign'} }],
+      },
+    },
+    {
+      $project: {
+        SOwner:1,
+        SName:1,
+        _id: 1,
+      },
+    },
+  ])
+  return data ;
+}
+
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -1636,4 +1658,5 @@ module.exports = {
   createAttendanceClone_new,
   searchShops,
   getVendorShops,
+  getnotAssignSalesmanData,
 };

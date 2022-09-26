@@ -9,4 +9,9 @@ router.route('/createwardAdminRoleAsm/data').post(wardAdminRoleController.create
 router.route('/data/:id').get(wardAdminRoleController.getAllWardAdminRoleData)
 router.route('/smData/data/:date').get(wardAdminRoleController.smData)
 router.route('/totalChange/:id').put(wardAdminRoleController.total)
+router.route('/createAsmSamesman').post(wardAdminRoleController.createAsmSalesman)
+router.route('/getAllSalesmanData/:id').get(wardAdminRoleController.allAsmSalesmanData)
+router.route('/getAllAssignReassign/:id').get(wardAdminRoleController.getAllAssignReassignData)
+router.route('/createSalesmanShop').post(wardAdminRoleController.createSalesmanShop)
+router.route('/data/getAllAssignSalesmanShopData/data/:id').post(wardAdminRoleController.getAllAssignSalesmanShopData)
 module.exports = router;
