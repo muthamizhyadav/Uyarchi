@@ -59,7 +59,35 @@ const getAll = async () => {
 };
 
 const getWallet = async (page) => {
-  let wallet = await walletModel.aggregate([{ $skip: 10 * page }, { $limit: 10 }]);
+  let wallet = await walletModel.aggregate([
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopName',
+        foreignField: '_id',
+        as: 'shopDatq',
+    },
+  },
+  {
+      $unwind: '$shopDatq'
+    },
+    {
+      $project: {
+        type:1,
+        shopName:1,
+        date:1,
+        idProofNo:1,
+        addressProofNo:1,
+        idProof:1,
+        addressProof:1,
+        shopname:"$shopDatq.SName"
+
+    }
+  },
+  
+    { $skip: 10 * page }, 
+      { $limit: 10 }
+  ]);
   let total = await walletModel.find().count();
   return { wallet: wallet, total: total };
 };
