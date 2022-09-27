@@ -277,7 +277,6 @@ const createSalesmanShop = async (body) => {
 }
 
 const getSalesman = async (id) =>{
-  console.log(id)
   let data = await SalesManShop.aggregate([
     {
       $match: {

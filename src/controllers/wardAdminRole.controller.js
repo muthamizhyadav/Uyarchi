@@ -70,7 +70,6 @@ const createSalesmanShop = catchAsync(async (req, res) => {
 });
 
 const getAllAssignSalesmanShopData = catchAsync(async (req, res) => {
-  console.log(req.params.id)
   const data = await wardAdminRoleService.getSalesman(req.params.id);
    res.send(data);
 });

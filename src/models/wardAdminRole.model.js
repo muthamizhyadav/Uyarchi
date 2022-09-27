@@ -13,6 +13,9 @@ const wardAdminRoleSchema = new mongoose.Schema({
   targetTonne: {
     type: Number,
   },
+  unit:{
+    type:String,
+  },
   Asm: {
     type: String,
   },
