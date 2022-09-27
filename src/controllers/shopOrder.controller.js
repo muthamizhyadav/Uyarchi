@@ -205,6 +205,12 @@ const getLapsed_Rejected = catchAsync (async (req, res)=>{
   const data = await shopOrderService.getLapsed_Rejected(req.params.page)
   res.send(data)
 })
+
+const getLapsed_Undelivered = catchAsync(async (req, res) => {
+  const data = await shopOrderService.getLapsed_Undelivered(req.params.page)
+  res.send(data)
+})
+
 module.exports = {
   createshopOrder,
   getAllShopOrder,
@@ -241,5 +247,6 @@ module.exports = {
   productData,
   get_data_for_lapster,
   getLapsed_Data,
-  getLapsed_Rejected
+  getLapsed_Rejected,
+  getLapsed_Undelivered,
 };
