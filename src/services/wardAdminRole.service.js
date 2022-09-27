@@ -336,7 +336,7 @@ return data;
 //withoutoutAsmSalesmanCurrentDate
 const withoutoutAsmSalesmanCurrentDate = async (id) => {
   let serverdate = moment().format('yyy-MM-DD');
-  const data = await WithoutAsmSalesman.aggregate({salesman:id, active:true, date:serverdate});
+  const data = await WithoutAsmSalesman.find({salesman:id, active:true, date:serverdate});
   return data;
 };
 
