@@ -74,6 +74,23 @@ const getAllAssignSalesmanShopData = catchAsync(async (req, res) => {
    res.send(data);
 });
 
+// getAllSalesMandataCurrentdate 
+const getAllSalesMandataCurrentdate = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.getAllSalesMandataCurrentdate(req.params.id);
+   res.send(data);
+});
+
+// createwithoutoutAsmSalesman
+
+const createwithoutoutAsmSalesman = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.createwithoutoutAsmSalesman(req.body);
+res.status(httpStatus.CREATED).send(data);
+});
+
+const withoutoutAsmSalesmanCurrentDate = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.withoutoutAsmSalesmanCurrentDate(req.params.id);
+   res.send(data);
+});
 module.exports = {
     getDataById,
     getAllwardAdminRole,
@@ -87,4 +104,8 @@ module.exports = {
     getAllAssignReassignData,
     createSalesmanShop,
     getAllAssignSalesmanShopData,
+    getAllSalesMandataCurrentdate,
+    createwithoutoutAsmSalesman,
+    withoutoutAsmSalesmanCurrentDate,
+    
 };
