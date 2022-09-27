@@ -1105,13 +1105,13 @@ const getLapsed_Data = async (page,userRoles, userId )=>{
   let values = await ShopOrderClone.aggregate([
     {
       $match:{$and:[{status:{$ne:'UnDelivered'}},{ date: yersterday},{status:{$ne:'Delivered'}}]}
-      
     },
     {
       $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
+        pipeline:[{$match:{lapsed:{$ne:true}}}],
         as: 'shops',
       },
     },
@@ -1140,7 +1140,8 @@ const getLapsed_Data = async (page,userRoles, userId )=>{
         time_of_delivery:1,
         Payment:1,
         shops:'$shops.SName',
-        calls:{$size:'$callhistories'}
+        lapsed:'$shops.lapsed',
+        calls:{$size:'$callhistories'},
       }
     },
     { $skip: 10 * page },
@@ -1148,14 +1149,14 @@ const getLapsed_Data = async (page,userRoles, userId )=>{
   ])
   let total = await ShopOrderClone.aggregate([
     {
-      $match:{$and:[{status:{$ne:'UnDelivered'}},{ date: yersterday},{status:{$ne:'Delivered'}}]}
-      
+      $match:{$and:[{status:{$ne:'UnDelivered'}},{ date: yersterday},{status:{$ne:'Delivered'}},{lapsed:{$ne:true}}]}
     },
     {
       $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
+        pipeline:[{$match:{lapsed:{$ne:true}}}],
         as: 'shops',
       },
     },
