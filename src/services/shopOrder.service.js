@@ -1087,6 +1087,44 @@ const get_data_for_lapster = async (page) => {
   };
 };
 
+const getLapsed_Data = async ()=>{
+  let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match:{$and:[{status:{$ne:'UnDelivered'}},{ date: yersterday},{status:{$ne:'Delivered'}}]}
+      
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    } ,
+    {
+      $unwind: '$shops'
+    },
+    {
+      $project:{
+        _id:1,
+        shopId:1,
+        status:1,
+        OrderId:1,
+        customerBillId:1,
+        date:1,
+        delivery_type:1,
+        devevery_mode:1,
+        time_of_delivery:1,
+        Payment:1,
+        shops:'$shops.SName'
+      }
+    }
+  ])
+  return values
+
+}
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -1123,4 +1161,5 @@ module.exports = {
   getproductOrders_By_OrderId,
   productData,
   get_data_for_lapster,
+  getLapsed_Data
 };
