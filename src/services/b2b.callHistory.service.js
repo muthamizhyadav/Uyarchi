@@ -21,7 +21,7 @@ const createcallHistoryWithType = async (body, userId) => {
   let servertime = moment().format('hh:mm a');
   let serverdate = moment().format('yyyy-MM-DD');
 
-  const { callStatus, shopId, reason, type, lat, lang } = body;
+  const { callStatus, shopId, reason, type, lat, lang, lapsed } = body;
   let sort;
   if (callStatus == 'reschedule') {
     sort = 2;
@@ -47,6 +47,7 @@ const createcallHistoryWithType = async (body, userId) => {
     {
       sorttime: time,
       callingStatusSort: sort,
+      lapsed:lapsed
     },
     { new: true }
   );
@@ -57,12 +58,13 @@ const createcallHistoryWithType = async (body, userId) => {
       {
         sortdate: reason,
         callingStatus: callStatus,
+        lapsed:lapsed
       },
       { new: true }
     );
   } else {
     if (callStatus != 'accept') {
-      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus }, { new: true });
+      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, lapsed:lapsed }, { new: true });
     }
   }
   let callHistory = await callHistoryModel.create(values);
@@ -1068,7 +1070,7 @@ const updateCallingStatus = async (id, updatebody) => {
   return shops;
 };
 
-const updateStatuscall = async (id, userId, date) => {
+const updateStatuscall = async (id, body, userId, date) => {
   let status = await Shop.findById(id);
   if (!status) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
@@ -1076,9 +1078,27 @@ const updateStatuscall = async (id, userId, date) => {
   if (status.callingStatus == 'On Call') {
     throw new ApiError(httpStatus.NOT_FOUND, 'OnCall');
   }
+  let {lapsed} = body
   status = await Shop.findByIdAndUpdate(
     { _id: id },
-    { callingStatus: 'On Call', callingUserId: userId, historydate: date, sortdate: '' },
+    { callingStatus: 'On Call',lapsed:lapsed, callingUserId: userId, historydate: date, sortdate: '' },
+    { new: true }
+  );
+  return status;
+};
+
+const updateStatusLapsed = async (id, body, userId, date) => {
+  let status = await Shop.findById(id);
+  if (!status) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  if (status.callingStatus == 'On Call') {
+    throw new ApiError(httpStatus.NOT_FOUND, 'OnCall');
+  }
+  let {lapsed} = body
+  status = await Shop.findByIdAndUpdate(
+    { _id: id },
+    { callingStatus: 'On Lapsed', callingUserId: userId, historydate: date, sortdate: '' },
     { new: true }
   );
   return status;
@@ -1452,4 +1472,5 @@ module.exports = {
   getShop_oncall,
   call_visit_Count,
   BillHistoryByShopId_date,
+  updateStatusLapsed,
 };

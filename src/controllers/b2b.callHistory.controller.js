@@ -76,7 +76,7 @@ const getAllPage = catchAsync(async (req, res) => {
 const updateCallingStatus = catchAsync(async (req, res) => {
   let userId = req.userId;
   console.log(userId);
-  const callingStatus = await callHistoryService.updateStatuscall(req.params.id, userId, req.params.date);
+  const callingStatus = await callHistoryService.updateStatuscall(req.params.id,req.body, userId, req.params.date);
   // throw new ApiError(httpStatus.UNAUTHORIZED, 'OnCall');
   res.send(callingStatus);
 });
@@ -174,6 +174,10 @@ const BillHistoryByShopId_date = catchAsync(async (req, res) => {
   const data = await callHistoryService.BillHistoryByShopId_date(req.params.shopId, req.params.date);
   res.send(data);
 });
+
+// const updateStatusLapsed = catchAsync(async (req, res) => {
+//   const data = await callHistoryService.
+// })
 
 module.exports = {
   createCallHistory,
