@@ -341,10 +341,16 @@ const withoutoutAsmSalesmanCurrentDate = async (id) => {
 };
 
 const withoutoutAsmSalesman = async (date) => {
+  let match ;
+  if (date != 'null') {
+    match = [{date: { $eq: date } },]
+  } else {
+    match = [{active: { $eq: true } }];
+  }
   const data = await WithoutAsmSalesman.aggregate([
     {
       $match: {
-        $and: [{date: { $eq: date }}],
+        $and:match
       },
     },
       {
