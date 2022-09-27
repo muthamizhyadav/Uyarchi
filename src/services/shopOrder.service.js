@@ -1245,6 +1245,79 @@ const getLapsed_Rejected = async (page)=>{
   return {values: values, total: total.length}
 }
 
+const getLapsed_Undelivered = async (page)=>{
+  let todaydate = moment().format('YYYY-MM-DD')
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match:{status:'UnDelivered'}
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline:[{$match:{date:todaydate}}],
+        as: 'callhistories',
+      },
+    },
+    {
+      $project:{
+        _id:1,
+        shopId:1,
+        status:1,
+        OrderId:1,
+        customerBillId:1,
+        date:1,
+        delivery_type:1,
+        devevery_mode:1,
+        time_of_delivery:1,
+        Payment:1,
+        shops:'$shops.SName',
+        calls:{$size:'$callhistories'}
+      }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ])
+
+  let total = await ShopOrderClone.aggregate([{
+    $match:{status:'UnDelivered'}
+  },
+  {
+    $lookup: {
+      from: 'b2bshopclones',
+      localField: 'shopId',
+      foreignField: '_id',
+      as: 'shops',
+    },
+  },
+  {
+    $unwind: '$shops'
+  },
+  {
+    $lookup: {
+      from: 'callhistories',
+      localField: 'shopId',
+      foreignField: 'shopId',
+      pipeline:[{$match:{date:todaydate}}],
+      as: 'callhistories',
+    },
+  },])
+  return {values: values, total: total.length}
+}
+
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -1282,5 +1355,6 @@ module.exports = {
   productData,
   get_data_for_lapster,
   getLapsed_Data,
-  getLapsed_Rejected
+  getLapsed_Rejected,
+  getLapsed_Undelivered,
 };
