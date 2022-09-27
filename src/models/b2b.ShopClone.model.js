@@ -131,6 +131,9 @@ const shopSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  password: {
+    type: String,
+  },
 });
 
 // assignSchema.plugin(toJSON);
