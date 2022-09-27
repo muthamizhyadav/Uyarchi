@@ -107,6 +107,15 @@ const wardAdminGroupSchema = new mongoose.Schema({
   route: {
     type: String,
   },
+  GroupBillId: {
+    type: String,
+  },
+  GroupBillDate:{
+    type: String,
+  },
+  GroupBillTime:{
+    type: String,
+  }
 });
 
 const wardAdminGroup = mongoose.model('wardAdminGroup', wardAdminGroupSchema);

@@ -175,7 +175,7 @@ const getShopDetails = async (id)=>{
           mobile:"$shopDatq.mobile",
           address:"$shopDatq.address",
           idProofNo:1,
-          addressProofNo:1,
+          addressProofNo:1, 
 
 
       }
