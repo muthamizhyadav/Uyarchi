@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-const  {WardAdminRole, WardAdminRoleAsm, AsmSalesMan, SalesManShop} = require('../models/wardAdminRole.model');
+const  {WardAdminRole, WardAdminRoleAsm, AsmSalesMan, SalesManShop, WithoutAsmSalesman} = require('../models/wardAdminRole.model');
 const {Shop} = require('../models/b2b.ShopClone.model')
 const {Users} = require('../models/B2Busers.model')
 const moment = require('moment');
@@ -164,6 +164,15 @@ const total = async (id, updateBody) => {
   return data;
 };
 
+// getAllSalesMandataCurrentdate
+const getAllSalesMandataCurrentdate = async (id) => {
+  let serverdate = moment().format('yyy-MM-DD');
+  const data = await WardAdminRoleAsm.find({salesman:id, active:true, date:serverdate});
+  return data;
+};
+
+
+
 const createAsmSalesman = async (body) => {
   let {arr} = body
   let serverdate = moment().format('yyy-MM-DD');
@@ -310,6 +319,24 @@ const getSalesman = async (id) =>{
   return data;
 }
 
+// withoutoutAsmSalesman 
+const createwithoutoutAsmSalesman = async (body) => {
+  let serverdate = moment().format('yyy-MM-DD');
+  let time = moment().format('hh:mm a')
+  let values = {}
+  values = { ...body, ...{ date:serverdate, time:time} };
+const data = await WithoutAsmSalesman.create(values);
+return data;
+};
+
+//withoutoutAsmSalesmanCurrentDate
+const withoutoutAsmSalesmanCurrentDate = async (id) => {
+  let serverdate = moment().format('yyy-MM-DD');
+  const data = await WithoutAsmSalesman.find({salesman:id, active:true, date:serverdate});
+  return data;
+};
+
+
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -323,4 +350,7 @@ module.exports = {
   allAssignReassignSalesman,
   createSalesmanShop,
   getSalesman,
+  getAllSalesMandataCurrentdate,
+  createwithoutoutAsmSalesman,
+  withoutoutAsmSalesmanCurrentDate,
 }

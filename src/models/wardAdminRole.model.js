@@ -158,4 +158,36 @@ const wardAdminRoleAsmSchema = new mongoose.Schema({
   
   const SalesManShop = mongoose.model('SalesManShop', SalesManShopSchema);
 
-module.exports = {WardAdminRole, WardAdminRoleAsm, AsmSalesMan, SalesManShop};
+  const withoutAsmSalesmanSchema = new mongoose.Schema({
+    _id: {
+      type: String,
+      default: v4,
+    },
+    targetValue: {
+      type: String,
+    },
+    targetTonne: {
+      type: Number,
+    },
+    salesman:{
+      type:String,
+    },
+    date: {
+      type: String,
+    },
+    time: {
+      type: String,
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    archive: {
+      type: Boolean,
+      default: false,
+    },
+  });
+  
+  const WithoutAsmSalesman = mongoose.model('withoutAsmSalesman', withoutAsmSalesmanSchema);
+
+module.exports = {WardAdminRole, WardAdminRoleAsm, AsmSalesMan, SalesManShop, WithoutAsmSalesman};

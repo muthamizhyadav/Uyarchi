@@ -14,4 +14,7 @@ router.route('/getAllSalesmanData/:id').get(wardAdminRoleController.allAsmSalesm
 router.route('/getAllAssignReassign/:id').get(wardAdminRoleController.getAllAssignReassignData)
 router.route('/createSalesmanShop').post(wardAdminRoleController.createSalesmanShop)
 router.route('/data/getAllAssignSalesmanShopData/data/:id').get(wardAdminRoleController.getAllAssignSalesmanShopData)
+router.route('/getAllSalesMandataCurrentdate/:id').get(wardAdminRoleController.getAllSalesMandataCurrentdate)
+router.route('/createwithoutoutAsmSalesman').post(wardAdminRoleController.createwithoutoutAsmSalesman)
+router.route('/withoutoutAsmSalesmanCurrentDate/:id').get(wardAdminRoleController.withoutoutAsmSalesmanCurrentDate)
 module.exports = router;
