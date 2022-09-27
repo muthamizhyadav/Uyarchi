@@ -198,16 +198,34 @@ const get_data_for_lapster = catchAsync(async (req, res) => {
 });
 
 const getLapsed_Data = catchAsync (async (req, res)=>{
-  const data = await shopOrderService.getLapsed_Data(req.params.page)
+  let userRoles = req.userRole
+  let UserId = req.userId
+  const data = await shopOrderService.getLapsed_Data(req.params.page, userRoles, UserId)
   res.send(data)
 })
 const getLapsed_Rejected = catchAsync (async (req, res)=>{
-  const data = await shopOrderService.getLapsed_Rejected(req.params.page)
+  let userRoles = req.userRole
+  let UserId = req.userId
+  const data = await shopOrderService.getLapsed_Rejected(req.params.page, userRoles, UserId)
   res.send(data)
 })
 
 const getLapsed_Undelivered = catchAsync(async (req, res) => {
-  const data = await shopOrderService.getLapsed_Undelivered(req.params.page)
+  let userRoles = req.userRole
+  let UserId = req.userId
+  const data = await shopOrderService.getLapsed_Undelivered(req.params.page, userRoles,UserId)
+  res.send(data)
+})
+
+const getCallhistories = catchAsync(async (req, res) => {
+  let userRoles = req.userRole
+  let UserId = req.userId
+  const data = await shopOrderService.getCallhistories(req.params.shopId, userRoles, UserId)
+  res.send(data)
+})
+
+const getFindbyId = catchAsync(async (req, res) => {
+  const data = await shopOrderService.getFindbyId(req.params.id)
   res.send(data)
 })
 
@@ -249,4 +267,6 @@ module.exports = {
   getLapsed_Data,
   getLapsed_Rejected,
   getLapsed_Undelivered,
+  getCallhistories,
+  getFindbyId
 };

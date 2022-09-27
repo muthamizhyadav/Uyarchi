@@ -4,9 +4,11 @@ const ProductPacktype = require('../models/productPacktype.model');
 const { Product } = require('../models/product.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const OrderPayment = require('../models/orderpayment.model');
+const UserRole = require ('../models/roles.model.js')
 const ApiError = require('../utils/ApiError');
 const moment = require('moment');
-
+const { Users } = require('../models/B2Busers.model')
+const CallHistory = require('../models/b2b.callHistory.model')
 const createshopOrder = async (shopOrderBody, userid) => {
   let { product, date, time, shopId, time_of_delivery } = shopOrderBody;
   let timeslot = time_of_delivery.replace('-', '');
@@ -1096,7 +1098,8 @@ const get_data_for_lapster = async (page) => {
   };
 };
 
-const getLapsed_Data = async (page)=>{
+const getLapsed_Data = async (page,userRoles, userId )=>{
+  console.log(userRoles, userId)
   let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let todaydate = moment().format('YYYY-MM-DD')
   let values = await ShopOrderClone.aggregate([
@@ -1169,11 +1172,13 @@ const getLapsed_Data = async (page)=>{
       },
     },
   ])
-  return {values: values, total: total.length}
-
+  let userRole = await UserRole.findById(userRoles)
+  let User = await Users.findById(userId)
+  console.log(userRoles,userId )
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
 }
 
-const getLapsed_Rejected = async (page)=>{
+const getLapsed_Rejected = async (page,userRoles, userId)=>{
   let todaydate = moment().format('YYYY-MM-DD')
   let values = await ShopOrderClone.aggregate([
     {
@@ -1242,10 +1247,12 @@ const getLapsed_Rejected = async (page)=>{
       as: 'callhistories',
     },
   },])
-  return {values: values, total: total.length}
+  let userRole = await UserRole.findById(userRoles)
+  let User = await Users.findById(userId)
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
 }
 
-const getLapsed_Undelivered = async (page)=>{
+const getLapsed_Undelivered = async (page, userRoles, userId)=>{
   let todaydate = moment().format('YYYY-MM-DD')
   let values = await ShopOrderClone.aggregate([
     {
@@ -1314,9 +1321,71 @@ const getLapsed_Undelivered = async (page)=>{
       as: 'callhistories',
     },
   },])
-  return {values: values, total: total.length}
+  let userRole = await UserRole.findById(userRoles)
+  let User = await Users.findById(userId)
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
 }
 
+const getCallhistories = async (shopId)=>{
+let values = await CallHistory.find({shopId:shopId}).sort({date:-1, historytime: -1}).limit(10)
+  return values
+}
+
+const getFindbyId = async (id)=>{
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        _id:id
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+    // {
+    //   $lookup: {
+    //     from: 'productorderclones',
+    //     localField: '_id',
+    //     foreignField: 'orderId',
+    //     // pipeline: [
+    //     //   {
+    //     //     $match:{
+    //     //       orderId:id,
+    //     //       date:date
+    //     //     }
+    //     //   }
+    //     // ],
+    //     as: 'productOrders',
+    //   },
+    // },
+    {
+      $project:{
+        _id:1,
+        shopId:1,
+        status:1,
+        delivery_type:1,
+        Payment:1,
+        OrderId:1,
+        devevery_mode:1,
+        time_of_delivery:1,
+        OrderId:1,
+        date:1,
+        time:1,
+        product:1,
+        shopsName:'$shops.SName',
+        productOrders:'$productOrders'
+      }
+    }
+  ])
+  return values
+}
 
 module.exports = {
   // product
@@ -1357,4 +1426,6 @@ module.exports = {
   getLapsed_Data,
   getLapsed_Rejected,
   getLapsed_Undelivered,
+  getCallhistories,
+  getFindbyId,
 };

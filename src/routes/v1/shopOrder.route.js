@@ -50,7 +50,9 @@ router.route('/B2BManageOrders/:orderId/:date').get(shopOrderController.getManag
 router.route('/productData/:id').get(shopOrderController.productData);
 router.route('/productorders/:orderId').get(shopOrderController.getproductOrders_By_OrderId);
 router.route('/getdata/lapster/yesterday/:page').get(shopOrderController.get_data_for_lapster);
-router.route('/lapsed/getdata/:page').get(shopOrderController.getLapsed_Data)
-router.route('/lapsed/Reject/getdata/:page').get(shopOrderController.getLapsed_Rejected)
-router.route('/lapsed/Undelivered/getdata/:page').get(shopOrderController.getLapsed_Undelivered)
+router.route('/lapsed/getdata/:page').get(authorization,shopOrderController.getLapsed_Data)
+router.route('/lapsed/Reject/getdata/:page').get(authorization,shopOrderController.getLapsed_Rejected)
+router.route('/lapsed/Undelivered/getdata/:page').get(authorization, shopOrderController.getLapsed_Undelivered)
+router.route('/get/callhistory/last/ten/:shopId').get(shopOrderController.getCallhistories)
+router.route('/singleShoprders/:id').get(shopOrderController.getFindbyId)
 module.exports = router;

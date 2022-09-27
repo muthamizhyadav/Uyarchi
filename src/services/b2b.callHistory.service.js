@@ -647,18 +647,21 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
     {
       $match: { match: true },
     },
+    // {
+    //   $group: {
+    //     _id: null,
+    //     count: {
+    //       $sum: 1,
+    //     },
+    //   },
+    // },
     {
-      $group: {
-        _id: null,
-        count: {
-          $sum: 1,
-        },
-      },
+      $count: 'passing_scores',
     },
   ]);
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
-  return { values: values, total: total.length != 0 ? total[0].count : 0, RoleName: role.roleName, userName: user.name };
+  return { values: values, total: total.passing_scores, RoleName: role.roleName, userName: user.name };
   // return { values: values, total: total.length };
 };
 const getShop_oncall = async (date, status, key, page, userId, userRole) => {
