@@ -66,7 +66,20 @@ const getroleWardAdminAsm = catchAsync(async (req, res) => {
   res.send(role);
 });
 
+const getAlldataSalesManager = catchAsync(async(req, res) => {
+    const data = await RolesService.getAlldataSalesManager();
+    res.send(data);
+})
 
+const getAlldataSalesMan = catchAsync(async(req, res) => {
+  const data = await RolesService.getAlldataSalesMan();
+  res.send(data);
+})
+
+const getSalesMan = catchAsync(async(req, res) => {
+  const data = await RolesService.getsalesman();
+  res.send(data);
+})
 module.exports = {
   createRoles,
   getAllRoles,
@@ -77,4 +90,7 @@ module.exports = {
   getusermenus,
   getroleWardAdmin,
   getroleWardAdminAsm,
+  getAlldataSalesManager,
+  getAlldataSalesMan,
+  getSalesMan,
 };

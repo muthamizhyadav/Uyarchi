@@ -124,6 +124,9 @@ const shopSchema = mongoose.Schema({
   type: {
     type: String,
   },
+  salesManStatus:{
+    type:String,
+  },
 });
 
 // assignSchema.plugin(toJSON);

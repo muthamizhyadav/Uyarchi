@@ -1,6 +1,8 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-const  {WardAdminRole, WardAdminRoleAsm} = require('../models/wardAdminRole.model');
+const  {WardAdminRole, WardAdminRoleAsm, AsmSalesMan, SalesManShop} = require('../models/wardAdminRole.model');
+const {Shop} = require('../models/b2b.ShopClone.model')
+const {Users} = require('../models/B2Busers.model')
 const moment = require('moment');
 
 const createwardAdminRole = async (body) => {
@@ -162,6 +164,153 @@ const total = async (id, updateBody) => {
   return data;
 };
 
+const createAsmSalesman = async (body) => {
+  let {arr} = body
+  let serverdate = moment().format('yyy-MM-DD');
+  let time = moment().format('hh:mm a')
+  if(body.status == "Assign"){
+  arr.forEach(async (e) => {
+    await Users.findByIdAndUpdate({ _id: e }, {salesManagerStatus:body.status}, { new: true });
+    await AsmSalesMan.create({
+      asmId:body.asmId,
+      salesManId:e,
+      status:body.status,
+      date:serverdate,
+      time:time,
+      date:serverdate,
+  });
+
+})
+  }else {
+    arr.forEach(async (e) => {
+      let data = await AsmSalesMan.find({asmId:body.asmId, salesManId:e, status:'Assign'})
+      data.forEach(async (f) => {
+      await Users.findByIdAndUpdate({ _id: f.salesManId }, {salesManagerStatus:body.status}, { new: true });
+      await AsmSalesMan.findByIdAndUpdate({_id:f._id},
+        {asmId:f.asmId,
+        salesManId:f.salesManId,
+        status:body.status,
+        reAssignDate:serverdate,
+        reAssignTime:time},{new:true});
+        })
+   })
+  }
+    return "created"
+}
+
+const getAsmSalesman = async (id) =>{
+  let data = await AsmSalesMan.aggregate([
+    {
+      $match: {
+        $and: [{asmId: { $eq: id } },{status: { $eq: 'Assign' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'salesManId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $project: {
+        salesmanName: '$b2busersData.name',
+        salesManId:1,
+        status:1,
+        asmId:1,
+        date:1,
+        time:1,
+        _id: 1,
+      },
+    },
+  ])
+  return data;
+}
+
+const allAssignReassignSalesman = async (id) => {
+  const data = await AsmSalesMan.aggregate([
+    {
+      $match: {
+        $and: [{asmId: { $eq: id } }],
+      },
+    },
+  ])
+  return data ;
+}
+
+const createSalesmanShop = async (body) => {
+  let {arr} = body
+  let serverdate = moment().format('yyy-MM-DD');
+  let time = moment().format('hh:mm a')
+  if(body.status == "Assign"){
+  arr.forEach(async (e) => {
+    await Shop.findByIdAndUpdate({ _id: e }, {salesManStatus:body.status}, { new: true });
+    await SalesManShop.create({
+      salesManId:body.salesManId,
+      shopId:e,
+      status:body.status,
+      date:serverdate,
+      time:time,
+      date:serverdate,
+  });
+
+})
+  }else {
+    arr.forEach(async (e) => {
+      let data = await SalesManShop.find({ salesManId:body.salesManId, shopId:e,  status:'Assign'})
+      data.forEach(async (f) => {
+      await Shop.findByIdAndUpdate({ _id: f.shopId }, {salesManStatus:body.status}, { new: true });
+      await SalesManShop.findByIdAndUpdate({_id:f._id},
+        {salesManId:f.salesManId,
+        shopId:f.shopId,
+        status:body.status,
+        reAssignDate:serverdate,
+        reAssignTime:time},{new:true});
+        })
+   })
+  }
+    return "created"
+}
+
+const getSalesman = async (id) =>{
+  console.log(id)
+  let data = await SalesManShop.aggregate([
+    {
+      $match: {
+        $and: [{salesManId: { $eq: id } },{status: { $eq: 'Assign' } }],
+      },
+    },
+    // {
+    //   $lookup: {
+    //     from: 'b2bshopclones',
+    //     localField: 'shopId',
+    //     foreignField: '_id',
+    //     as: 'b2bshopclonesData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$b2bshopclonesData',
+    // },
+    {
+      $project: {
+        salesManId:1,
+        shopId:1,
+        status:1,
+        reAssignDate:1,
+        reAssignTime:1,
+        date:1,
+        time:1,
+        _id: 1,
+      },
+    },
+  ])
+  return data;
+}
+
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -170,4 +319,9 @@ module.exports = {
   getAllWardAdminRoleData,
   smData,
   total,
+  createAsmSalesman,
+  getAsmSalesman,
+  allAssignReassignSalesman,
+  createSalesmanShop,
+  getSalesman,
 }

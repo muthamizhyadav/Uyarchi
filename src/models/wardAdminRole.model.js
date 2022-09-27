@@ -80,4 +80,79 @@ const wardAdminRoleAsmSchema = new mongoose.Schema({
   
   const WardAdminRoleAsm = mongoose.model('wardAdminRoleAsm', wardAdminRoleAsmSchema);
 
-module.exports = {WardAdminRole, WardAdminRoleAsm };
+  const AsmSalesManSchema = new mongoose.Schema({
+    _id: {
+      type: String,
+      default: v4,
+    },
+    asmId: {
+        type: String,
+      },
+    salesManId: {
+      type: String,
+    },
+    date: {
+      type: String,
+    },
+    time: {
+      type: String,
+    },
+    reAssignDate:{
+      type:String,
+    },
+    reAssignTime:{
+      type:String,
+    },
+    status:{
+      type:String,
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    archive: {
+      type: Boolean,
+      default: false,
+    },
+  });
+  
+  const AsmSalesMan = mongoose.model('AsmSalesMan', AsmSalesManSchema);
+  const SalesManShopSchema = new mongoose.Schema({
+    _id: {
+      type: String,
+      default: v4,
+    },
+    salesManId: {
+      type: String,
+    },
+    shopId:{
+      type:String,
+    },
+    date: {
+      type: String,
+    },
+    time: {
+      type: String,
+    },
+    reAssignDate:{
+      type:String,
+    },
+    reAssignTime:{
+      type:String,
+    },
+    status:{
+      type:String,
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    archive: {
+      type: Boolean,
+      default: false,
+    },
+  });
+  
+  const SalesManShop = mongoose.model('SalesManShop', SalesManShopSchema);
+
+module.exports = {WardAdminRole, WardAdminRoleAsm, AsmSalesMan, SalesManShop};
