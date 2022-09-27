@@ -1080,7 +1080,7 @@ const updateCallingStatus = async (id, updatebody) => {
   return shops;
 };
 
-const updateStatuscall = async (id, userId, date) => {
+const updateStatuscall = async (id, body, userId, date) => {
   let status = await Shop.findById(id);
   if (!status) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
@@ -1088,9 +1088,10 @@ const updateStatuscall = async (id, userId, date) => {
   if (status.callingStatus == 'On Call') {
     throw new ApiError(httpStatus.NOT_FOUND, 'OnCall');
   }
+  let {lapsed} = body
   status = await Shop.findByIdAndUpdate(
     { _id: id },
-    { callingStatus: 'On Call', callingUserId: userId, historydate: date, sortdate: '' },
+    { callingStatus: 'On Call',lapsed:lapsed, callingUserId: userId, historydate: date, sortdate: '' },
     { new: true }
   );
   return status;
