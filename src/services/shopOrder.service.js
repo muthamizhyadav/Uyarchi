@@ -1388,6 +1388,182 @@ const getFindbyId = async (id)=>{
   return values
 }
 
+const lapsed_callBack = async (page)=>{
+  let todaydata = moment().format('YYYY-MM-DD')
+  let values = await CallHistory.aggregate([{
+    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'callback'}}]}
+  },
+{
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+    {
+      $project:{
+        shops:'$shops.SName',
+        shopId:'$shops._id',
+      }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+])
+let total = await CallHistory.aggregate([
+  {
+    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'callback'}}]}
+  },
+{
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+])
+  return {values: values, total: total.length}
+}
+
+const lapsed_accept = async (page)=>{
+  let todaydata = moment().format('YYYY-MM-DD')
+  let values = await CallHistory.aggregate([{
+    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'accept'}}]}
+  },
+{
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+    {
+      $project:{
+        shops:'$shops.SName',
+        shopId:'$shops._id',
+      }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+])
+let total = await CallHistory.aggregate([
+  {
+    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'accept'}}]}
+  },
+{
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+])
+  return {values: values, total: total.length}
+}
+
+const lapsed_declined = async (page)=>{
+  let todaydata = moment().format('YYYY-MM-DD')
+  let values = await CallHistory.aggregate([{
+    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'declined'}}]}
+  },
+{
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+    {
+      $project:{
+        shops:'$shops.SName',
+        shopId:'$shops._id',
+      }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+])
+let total = await CallHistory.aggregate([
+  {
+    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'declined'}}]}
+  },
+{
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+])
+  return {values: values, total: total.length}
+}
+
+const lapsed_reschedule = async (page)=>{
+  let todaydata = moment().format('YYYY-MM-DD')
+  let values = await CallHistory.aggregate([{
+    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'reschedule'}}]}
+  },
+{
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+    {
+      $project:{
+        shops:'$shops.SName',
+        shopId:'$shops._id',
+      }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+])
+let total = await CallHistory.aggregate([
+  {
+    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'reschedule'}}]}
+  },
+{
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+])
+  return {values: values, total: total.length}
+}
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -1429,4 +1605,8 @@ module.exports = {
   getLapsed_Undelivered,
   getCallhistories,
   getFindbyId,
+  lapsed_callBack,
+  lapsed_accept,
+  lapsed_declined,
+  lapsed_reschedule
 };
