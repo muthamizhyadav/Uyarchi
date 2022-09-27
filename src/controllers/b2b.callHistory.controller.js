@@ -175,6 +175,10 @@ const BillHistoryByShopId_date = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+// const updateStatusLapsed = catchAsync(async (req, res) => {
+//   const data = await callHistoryService.
+// })
+
 module.exports = {
   createCallHistory,
   getAll,
