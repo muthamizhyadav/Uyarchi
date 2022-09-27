@@ -50,4 +50,7 @@ router.route('/B2BManageOrders/:orderId/:date').get(shopOrderController.getManag
 router.route('/productData/:id').get(shopOrderController.productData);
 router.route('/productorders/:orderId').get(shopOrderController.getproductOrders_By_OrderId);
 router.route('/getdata/lapster/yesterday/:page').get(shopOrderController.get_data_for_lapster);
+router.route('/lapsed/getdata/:page').get(shopOrderController.getLapsed_Data)
+router.route('/lapsed/Reject/getdata/:page').get(shopOrderController.getLapsed_Rejected)
+
 module.exports = router;
