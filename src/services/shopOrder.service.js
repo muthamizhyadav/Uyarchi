@@ -1388,7 +1388,7 @@ const getFindbyId = async (id)=>{
   return values
 }
 
-const lapsed_callBack = async (page)=>{
+const lapsed_callBack = async (page,userRoles, userId)=>{
   let todaydata = moment().format('YYYY-MM-DD')
   let values = await CallHistory.aggregate([{
     $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'callback'}}]}
@@ -1429,10 +1429,12 @@ let total = await CallHistory.aggregate([
       $unwind: '$shops'
     },
 ])
-  return {values: values, total: total.length}
+let userRole = await UserRole.findById(userRoles)
+let User = await Users.findById(userId)
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
 }
 
-const lapsed_accept = async (page)=>{
+const lapsed_accept = async (page,userRoles, userId)=>{
   let todaydata = moment().format('YYYY-MM-DD')
   let values = await CallHistory.aggregate([{
     $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'accept'}}]}
@@ -1473,10 +1475,12 @@ let total = await CallHistory.aggregate([
       $unwind: '$shops'
     },
 ])
-  return {values: values, total: total.length}
+let userRole = await UserRole.findById(userRoles)
+let User = await Users.findById(userId)
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
 }
 
-const lapsed_declined = async (page)=>{
+const lapsed_declined = async (page,userRoles, userId)=>{
   let todaydata = moment().format('YYYY-MM-DD')
   let values = await CallHistory.aggregate([{
     $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'declined'}}]}
@@ -1517,10 +1521,12 @@ let total = await CallHistory.aggregate([
       $unwind: '$shops'
     },
 ])
-  return {values: values, total: total.length}
+let userRole = await UserRole.findById(userRoles)
+let User = await Users.findById(userId)
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
 }
 
-const lapsed_reschedule = async (page)=>{
+const lapsed_reschedule = async (page,userRoles, userId)=>{
   let todaydata = moment().format('YYYY-MM-DD')
   let values = await CallHistory.aggregate([{
     $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'reschedule'}}]}
@@ -1560,8 +1566,11 @@ let total = await CallHistory.aggregate([
     {
       $unwind: '$shops'
     },
+    
 ])
-  return {values: values, total: total.length}
+let userRole = await UserRole.findById(userRoles)
+let User = await Users.findById(userId)
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
 }
 
 module.exports = {
