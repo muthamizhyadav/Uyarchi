@@ -198,11 +198,15 @@ const get_data_for_lapster = catchAsync(async (req, res) => {
 });
 
 const getLapsed_Data = catchAsync (async (req, res)=>{
-  const data = await shopOrderService.getLapsed_Data(req.params.page)
+  let userRoles = req.userRole
+  let UserId = req.userId
+  const data = await shopOrderService.getLapsed_Data(req.params.page, userRoles, UserId)
   res.send(data)
 })
 const getLapsed_Rejected = catchAsync (async (req, res)=>{
-  const data = await shopOrderService.getLapsed_Rejected(req.params.page)
+  let userRoles = req.userRole
+  let UserId = req.userId
+  const data = await shopOrderService.getLapsed_Rejected(req.params.page, userRoles, UserId)
   res.send(data)
 })
 
@@ -214,7 +218,9 @@ const getLapsed_Undelivered = catchAsync(async (req, res) => {
 })
 
 const getCallhistories = catchAsync(async (req, res) => {
-  const data = await shopOrderService.getCallhistories(req.params.shopId)
+  let userRoles = req.userRole
+  let UserId = req.userId
+  const data = await shopOrderService.getCallhistories(req.params.shopId, userRoles, UserId)
   res.send(data)
 })
 

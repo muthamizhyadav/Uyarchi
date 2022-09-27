@@ -1099,6 +1099,7 @@ const get_data_for_lapster = async (page) => {
 };
 
 const getLapsed_Data = async (page,userRoles, userId )=>{
+  console.log(userRoles, userId)
   let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let todaydate = moment().format('YYYY-MM-DD')
   let values = await ShopOrderClone.aggregate([
@@ -1173,8 +1174,8 @@ const getLapsed_Data = async (page,userRoles, userId )=>{
   ])
   let userRole = await UserRole.findById(userRoles)
   let User = await Users.findById(userId)
+  console.log(userRoles,userId )
   return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
-
 }
 
 const getLapsed_Rejected = async (page,userRoles, userId)=>{
