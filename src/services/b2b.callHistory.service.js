@@ -1450,6 +1450,15 @@ const BillHistoryByShopId_date = async (shopId, date) => {
   return values;
 };
 
+const getLapsedCall_Count = async ()=>{
+  let today = moment().format('yyyy-MM-DD');
+  let callBack = await callHistoryModel.find({date:today, lapsed:true, callStatus:'callback'}).count()
+  let reschedule = await callHistoryModel.find({date:today, lapsed:true, callStatus:'reschedule'}).count()
+  let accept = await callHistoryModel.find({date:today, lapsed:true, callStatus:'accept'}).count()
+  let declined = await callHistoryModel.find({date:today, lapsed:true, callStatus:'declined'}).count()
+  return ({callBack:callBack, reschedule:reschedule,accept:accept, declined:declined})
+}
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -1477,4 +1486,5 @@ module.exports = {
   call_visit_Count,
   BillHistoryByShopId_date,
   updateStatusLapsed,
+  getLapsedCall_Count
 };
