@@ -224,6 +224,11 @@ const getCallhistories = catchAsync(async (req, res) => {
   res.send(data)
 })
 
+const getFindbyId = catchAsync(async (req, res) => {
+  const data = await shopOrderService.getFindbyId(req.params.id)
+  res.send(data)
+})
+
 module.exports = {
   createshopOrder,
   getAllShopOrder,
@@ -262,5 +267,6 @@ module.exports = {
   getLapsed_Data,
   getLapsed_Rejected,
   getLapsed_Undelivered,
-  getCallhistories
+  getCallhistories,
+  getFindbyId
 };
