@@ -52,5 +52,6 @@ router.route('/productorders/:orderId').get(shopOrderController.getproductOrders
 router.route('/getdata/lapster/yesterday/:page').get(shopOrderController.get_data_for_lapster);
 router.route('/lapsed/getdata/:page').get(shopOrderController.getLapsed_Data)
 router.route('/lapsed/Reject/getdata/:page').get(shopOrderController.getLapsed_Rejected)
-router.route('/lapsed/Undelivered/getdata/:page').get(shopOrderController.getLapsed_Undelivered)
+router.route('/lapsed/Undelivered/getdata/:page').get(authorization, shopOrderController.getLapsed_Undelivered)
+router.route('/get/callhistory/last/ten/:shopId').get(shopOrderController.getCallhistories)
 module.exports = router;

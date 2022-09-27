@@ -207,7 +207,14 @@ const getLapsed_Rejected = catchAsync (async (req, res)=>{
 })
 
 const getLapsed_Undelivered = catchAsync(async (req, res) => {
-  const data = await shopOrderService.getLapsed_Undelivered(req.params.page)
+  let userRoles = req.userRole
+  let UserId = req.userId
+  const data = await shopOrderService.getLapsed_Undelivered(req.params.page, userRoles,UserId)
+  res.send(data)
+})
+
+const getCallhistories = catchAsync(async (req, res) => {
+  const data = await shopOrderService.getCallhistories(req.params.shopId)
   res.send(data)
 })
 
@@ -249,4 +256,5 @@ module.exports = {
   getLapsed_Data,
   getLapsed_Rejected,
   getLapsed_Undelivered,
+  getCallhistories
 };
