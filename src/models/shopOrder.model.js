@@ -34,6 +34,9 @@ const ShopOrderPriceSchema = new mongoose.Schema({
   status: {
     type: String,
   },
+  timeslot: {
+    type: Number,
+  },
   Uid: {
     type: String,
   },
@@ -239,6 +242,9 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   lapsedOrder: {
     type: Boolean,
     default: false,
+  },
+  timeslot: {
+    type: Number,
   },
 });
 

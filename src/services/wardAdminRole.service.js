@@ -1,10 +1,12 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-const  {WardAdminRole, WardAdminRoleAsm} = require('../models/wardAdminRole.model');
+const  {WardAdminRole, WardAdminRoleAsm, AsmSalesMan, SalesManShop} = require('../models/wardAdminRole.model');
+const {Shop} = require('../models/b2b.ShopClone.model')
+const {Users} = require('../models/B2Busers.model')
 const moment = require('moment');
 
 const createwardAdminRole = async (body) => {
-    let serverdate = moment().format('DD-MM-yyy');
+    let serverdate = moment().format('yyy-MM-DD');
     let time = moment().format('hh:mm a')
     let values = {}
     values = { ...body, ...{ date:serverdate, time:time} };
@@ -13,8 +15,43 @@ const createwardAdminRole = async (body) => {
 };
 
 
-const getAll = async () => {
-  return WardAdminRole.find({ active: true });
+const getAll = async (date) => {
+  if (date != 'null') {
+    match = [{date: { $eq: date }},]
+  } else {
+    match = [{active: { $eq: true }}];
+  }
+  const data = await WardAdminRole.aggregate([
+    { $sort: {date: -1}},
+    {
+      $match: {
+        $and: match,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'b2bUserId',
+        foreignField: '_id',
+        as: 'Asmb2busersData',
+      },
+    },
+    {
+      $unwind: '$Asmb2busersData',
+    },
+    {
+      $project:{
+        name:'$Asmb2busersData.name',
+        targetTonne:1,
+        targetValue:1,
+        b2bUserId:1,
+        date:1,
+        time:1,
+        _id:1,
+      }
+    }
+  ])
+  return data;
 };
 
 const getWardAdminRoleById = async (id) => {
@@ -26,7 +63,7 @@ const getWardAdminRoleById = async (id) => {
 };
 
 const createwardAdminRoleAsm = async (body) => {
-    let serverdate = moment().format('DD-MM-yyy');
+    let serverdate = moment().format('yyy-MM-DD');
     let time = moment().format('hh:mm a')
     let values = {}
      values = { ...body, ...{ date:serverdate, time:time} };
@@ -46,8 +83,25 @@ const getAllWardAdminRoleData = async (id) =>{
     return data ;
 }
 
-const smData = async () =>{
+const smData = async (date) =>{
+  let match ;
+  if (date != 'null') {
+    match = [{'wardadminroleasmsData.date': { $eq: date } },]
+  } else {
+    match = [{'wardadminroleasmsData.active': { $eq: true } }];
+  }
   let data = await WardAdminRole.aggregate([
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'b2bUserId',
+        foreignField: '_id',
+        as: 'Asmb2busersData',
+      },
+    },
+    {
+      $unwind: '$Asmb2busersData',
+    },
     {
       $lookup: {
         from: 'wardadminroleasms',
@@ -60,17 +114,32 @@ const smData = async () =>{
       $unwind: '$wardadminroleasmsData',
     },
     {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'wardadminroleasmsData.salesman',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $match: {
+        $and: match,
+      },
+    },
+    { $sort: { 'wardadminroleasmsData.date': -1} },
+    {
       $project: {
-        salesmanName: '$wardadminroleasmsData.salesman',
+        salesmanName: '$b2busersData.name',
         targetValue: '$wardadminroleasmsData.targetValue',
         targetTonne:'$wardadminroleasmsData.targetTonne',
-        wardAdminId:'$wardadminroleasmsData.wardAdminId',
-        userRoleId:'$wardadminroleasmsData.userRoleId',
-        b2buserId: '$wardadminroleasmsData.b2buserId',
+        // wardAdminId:'$wardadminroleasmsData.wardAdminId',
+        b2buserId: '$wardadminroleasmsData.salesman',
         date:'$wardadminroleasmsData.date',
         time:'$wardadminroleasmsData.time',
-        roleName: 1,
-        Asm:1,
+        Asm:'$Asmb2busersData.name',
         _id: 1,
       },
     },
@@ -78,6 +147,168 @@ const smData = async () =>{
   return data ;
 }
 
+const total = async (id, updateBody) => {
+  let data = await getWardAdminRoleById(id);
+  if (!data) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'WardAdminRole not found');
+  }
+  let value =  updateBody.targetValue;
+  let tone  = updateBody.targetTonne;
+  let asmvalue = data.targetValue;
+  let asmtone = data.targetTonne;
+  let value1 = asmvalue - value ;
+  let tone1 = asmtone - tone ;
+
+
+  data = await WardAdminRole.findByIdAndUpdate({ _id: id }, {targetValue: value1, targetTonne: tone1}, { new: true });
+  return data;
+};
+
+const createAsmSalesman = async (body) => {
+  let {arr} = body
+  let serverdate = moment().format('yyy-MM-DD');
+  let time = moment().format('hh:mm a')
+  if(body.status == "Assign"){
+  arr.forEach(async (e) => {
+    await Users.findByIdAndUpdate({ _id: e }, {salesManagerStatus:body.status}, { new: true });
+    await AsmSalesMan.create({
+      asmId:body.asmId,
+      salesManId:e,
+      status:body.status,
+      date:serverdate,
+      time:time,
+      date:serverdate,
+  });
+
+})
+  }else {
+    arr.forEach(async (e) => {
+      let data = await AsmSalesMan.find({asmId:body.asmId, salesManId:e, status:'Assign'})
+      data.forEach(async (f) => {
+      await Users.findByIdAndUpdate({ _id: f.salesManId }, {salesManagerStatus:body.status}, { new: true });
+      await AsmSalesMan.findByIdAndUpdate({_id:f._id},
+        {asmId:f.asmId,
+        salesManId:f.salesManId,
+        status:body.status,
+        reAssignDate:serverdate,
+        reAssignTime:time},{new:true});
+        })
+   })
+  }
+    return "created"
+}
+
+const getAsmSalesman = async (id) =>{
+  let data = await AsmSalesMan.aggregate([
+    {
+      $match: {
+        $and: [{asmId: { $eq: id } },{status: { $eq: 'Assign' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'salesManId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $project: {
+        salesmanName: '$b2busersData.name',
+        salesManId:1,
+        status:1,
+        asmId:1,
+        date:1,
+        time:1,
+        _id: 1,
+      },
+    },
+  ])
+  return data;
+}
+
+const allAssignReassignSalesman = async (id) => {
+  const data = await AsmSalesMan.aggregate([
+    {
+      $match: {
+        $and: [{asmId: { $eq: id } }],
+      },
+    },
+  ])
+  return data ;
+}
+
+const createSalesmanShop = async (body) => {
+  let {arr} = body
+  let serverdate = moment().format('yyy-MM-DD');
+  let time = moment().format('hh:mm a')
+  if(body.status == "Assign"){
+  arr.forEach(async (e) => {
+    await Shop.findByIdAndUpdate({ _id: e }, {salesManStatus:body.status}, { new: true });
+    await SalesManShop.create({
+      salesManId:body.salesManId,
+      shopId:e,
+      status:body.status,
+      date:serverdate,
+      time:time,
+      date:serverdate,
+  });
+
+})
+  }else {
+    arr.forEach(async (e) => {
+      let data = await SalesManShop.find({ salesManId:body.salesManId, shopId:e,  status:'Assign'})
+      data.forEach(async (f) => {
+      await Shop.findByIdAndUpdate({ _id: f.shopId }, {salesManStatus:body.status}, { new: true });
+      await SalesManShop.findByIdAndUpdate({_id:f._id},
+        {salesManId:f.salesManId,
+        shopId:f.shopId,
+        status:body.status,
+        reAssignDate:serverdate,
+        reAssignTime:time},{new:true});
+        })
+   })
+  }
+    return "created"
+}
+
+const getSalesman = async (id) =>{
+  let data = await SalesManShop.aggregate([
+    {
+      $match: {
+        $and: [{salesManId: { $eq: id } },{status: { $eq: 'Assign' } }],
+      },
+    },
+    // {
+    //   $lookup: {
+    //     from: 'b2bshopclones',
+    //     localField: 'shopId',
+    //     foreignField: '_id',
+    //     as: 'b2bshopclonesData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$b2bshopclonesData',
+    // },
+    {
+      $project: {
+        salesManId:1,
+        shopId:1,
+        status:1,
+        reAssignDate:1,
+        reAssignTime:1,
+        date:1,
+        time:1,
+        _id: 1,
+      },
+    },
+  ])
+  return data;
+}
 
 module.exports = {
   createwardAdminRole,
@@ -86,4 +317,10 @@ module.exports = {
   createwardAdminRoleAsm,  
   getAllWardAdminRoleData,
   smData,
+  total,
+  createAsmSalesman,
+  getAsmSalesman,
+  allAssignReassignSalesman,
+  createSalesmanShop,
+  getSalesman,
 }

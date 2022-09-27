@@ -377,6 +377,12 @@ const getVendorShops = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const getNotAssignSalesManData = catchAsync(async (req, res) => {
+  console.log("tgf")
+  const data = await b2bCloneService.getnotAssignSalesmanData();
+  res.send(data);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -412,4 +418,5 @@ module.exports = {
   creatAttendanceClone_new,
   searchShops,
   getVendorShops,
+  getNotAssignSalesManData,
 };

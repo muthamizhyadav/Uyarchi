@@ -11,7 +11,7 @@ const createwardAdminRoleService = catchAsync(async (req, res) => {
 });
 
 const getAllwardAdminRole = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.getAll();
+  const data = await wardAdminRoleService.getAll(req.params.date);
   res.send(data);
 });
 
@@ -38,10 +38,41 @@ const getAllWardAdminRoleData = catchAsync(async (req, res) => {
 });
 
 const  smData = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.smData();
+  const data = await wardAdminRoleService.smData(req.params.date);
   res.send(data);
 });
 
+
+const total = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.total(req.params.id, req.body);
+   res.send(data);
+});
+
+const createAsmSalesman = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.createAsmSalesman(req.body);
+  res.send(data);
+});
+
+const allAsmSalesmanData = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.getAsmSalesman(req.params.id);
+   res.send(data);
+});
+
+const getAllAssignReassignData = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.allAssignReassignSalesman(req.params.id);
+   res.send(data);
+});
+
+
+const createSalesmanShop = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.createSalesmanShop(req.body);
+   res.send(data);
+});
+
+const getAllAssignSalesmanShopData = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.getSalesman(req.params.id);
+   res.send(data);
+});
 
 module.exports = {
     getDataById,
@@ -50,4 +81,10 @@ module.exports = {
     createwardAdminRoleAsmService,
     getAllWardAdminRoleData,
     smData,
+    total,
+    createAsmSalesman,
+    allAsmSalesmanData,
+    getAllAssignReassignData,
+    createSalesmanShop,
+    getAllAssignSalesmanShopData,
 };

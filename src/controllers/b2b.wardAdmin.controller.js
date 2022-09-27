@@ -146,6 +146,7 @@ const updateAcknowledgeSingle = catchAsync(async (req, res) => {
 // });
 
 const statusMatchingAppOrModi = catchAsync(async (req, res) => {
+  
   console.log(req.params.type, req.params.time, req.params.status, req.params.limit, req.params.page);
   let statusMatching;
   if (req.params.status == 'Acknowledged') {
@@ -171,7 +172,7 @@ const statusMatchingAppOrModi = catchAsync(async (req, res) => {
       req.params.status,
       req.params.limit,
       req.params.page
-    );
+    );  
   } else if (
     req.params.status == 'Approved' ||
     req.params.status == 'Modified' ||
@@ -179,6 +180,14 @@ const statusMatchingAppOrModi = catchAsync(async (req, res) => {
     req.params.status == 'Assigned'
   ) {
     statusMatching = await wardAdminService.getAppOrModifiedStatus(
+      req.params.type,
+      req.params.time,
+      req.params.status,
+      req.params.limit,
+      req.params.page
+    );
+  } else if (req.params.status == 'lapsed') {
+    statusMatching = await wardAdminService.getdetailsDataStatuslasped(
       req.params.type,
       req.params.time,
       req.params.status,
