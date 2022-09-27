@@ -124,8 +124,12 @@ const shopSchema = mongoose.Schema({
   type: {
     type: String,
   },
-  salesManStatus:{
-    type:String,
+  salesManStatus: {
+    type: String,
+  },
+  registered: {
+    type: Boolean,
+    default: false,
   },
 });
 

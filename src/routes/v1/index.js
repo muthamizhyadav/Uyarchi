@@ -87,8 +87,12 @@ const TrackingRoute = require('./tracking.route');
 const CustomerIssues = require('./customerIssues.route');
 const LapsedRoute = require('./lapsed.route');
 const wardAdminRole = require('./wardAdminRole.route');
-
+const registerShop = require('./shopregister.route');
 const defaultRoutes = [
+  {
+    path: '/registerShop',
+    route: registerShop,
+  },
   {
     path: '/auth',
     route: authRoute,
