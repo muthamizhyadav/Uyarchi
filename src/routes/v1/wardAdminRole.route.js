@@ -17,4 +17,5 @@ router.route('/data/getAllAssignSalesmanShopData/data/:id').get(wardAdminRoleCon
 router.route('/getAllSalesMandataCurrentdate/:id').get(wardAdminRoleController.getAllSalesMandataCurrentdate)
 router.route('/createwithoutoutAsmSalesman').post(wardAdminRoleController.createwithoutoutAsmSalesman)
 router.route('/withoutoutAsmSalesmanCurrentDate/:id').get(wardAdminRoleController.withoutoutAsmSalesmanCurrentDate)
+router.route('/withoutoutAsmSalesman/data/:date').get(wardAdminRoleController.withoutoutAsmSalesman)
 module.exports = router;

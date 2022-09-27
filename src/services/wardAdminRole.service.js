@@ -9,9 +9,10 @@ const createwardAdminRole = async (body) => {
     let serverdate = moment().format('yyy-MM-DD');
     let time = moment().format('hh:mm a')
     let values = {}
-    values = { ...body, ...{ date:serverdate, time:time} };
-  const data = await WardAdminRole.create(values);
-  return data;
+    values = { ...body, ...{ date:serverdate, time:time, startingValue:body.targetValue, startingTonne:body.targetTonne} };
+
+    const data = await WardAdminRole.create(values);
+    return data;
 };
 
 
@@ -45,6 +46,9 @@ const getAll = async (date) => {
         targetTonne:1,
         targetValue:1,
         b2bUserId:1,
+        startingValue:1,
+        startingTonne:1,
+        unit:1,
         date:1,
         time:1,
         _id:1,
@@ -332,11 +336,45 @@ return data;
 //withoutoutAsmSalesmanCurrentDate
 const withoutoutAsmSalesmanCurrentDate = async (id) => {
   let serverdate = moment().format('yyy-MM-DD');
-  const data = await WithoutAsmSalesman.find({salesman:id, active:true, date:serverdate});
+  const data = await WithoutAsmSalesman.aggregate({salesman:id, active:true, date:serverdate});
   return data;
 };
 
+const withoutoutAsmSalesman = async (date) => {
+  const data = await WithoutAsmSalesman.aggregate([
+    {
+      $match: {
+        $and: [{date: { $eq: date }}],
+      },
+    },
+      {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'salesman',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
 
+    {
+      $project: {
+        salesmanName:'$b2busersData.name',
+        targetTonne:1,
+        targetValue:1,
+        salesman:1,
+        unit:1,
+        date:1,
+        time:1,
+        _id: 1,
+      },
+    },
+
+  ]);
+  return data;
+};
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -353,4 +391,5 @@ module.exports = {
   getAllSalesMandataCurrentdate,
   createwithoutoutAsmSalesman,
   withoutoutAsmSalesmanCurrentDate,
+  withoutoutAsmSalesman,
 }

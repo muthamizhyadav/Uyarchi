@@ -1331,6 +1331,62 @@ let values = await CallHistory.find({shopId:shopId}).sort({date:-1, historytime:
   return values
 }
 
+const getFindbyId = async (id)=>{
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        _id:id
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+    // {
+    //   $lookup: {
+    //     from: 'productorderclones',
+    //     localField: '_id',
+    //     foreignField: 'orderId',
+    //     // pipeline: [
+    //     //   {
+    //     //     $match:{
+    //     //       orderId:id,
+    //     //       date:date
+    //     //     }
+    //     //   }
+    //     // ],
+    //     as: 'productOrders',
+    //   },
+    // },
+    {
+      $project:{
+        _id:1,
+        shopId:1,
+        status:1,
+        delivery_type:1,
+        Payment:1,
+        OrderId:1,
+        devevery_mode:1,
+        time_of_delivery:1,
+        OrderId:1,
+        date:1,
+        time:1,
+        product:1,
+        shopsName:'$shops.SName',
+        productOrders:'$productOrders'
+      }
+    }
+  ])
+  return values
+}
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -1371,4 +1427,5 @@ module.exports = {
   getLapsed_Rejected,
   getLapsed_Undelivered,
   getCallhistories,
+  getFindbyId,
 };
