@@ -48,6 +48,17 @@ const set_password = async (body) => {
   setpass = await Shop.findByIdAndUpdate({ _id: shopId }, { password: password, registered: true }, { new: true });
   return setpass;
 };
+const change_password = async (body, shopId) => {
+  const salt = await bcrypt.genSalt(10);
+  let { password } = body;
+  password = await bcrypt.hash(password, salt);
+  let setpass = await Shop.findById({ _id: shopId });
+  if (!setpass) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop Not Found');
+  }
+  setpass = await Shop.findByIdAndUpdate({ _id: shopId }, { password: password, registered: true }, { new: true });
+  return setpass;
+};
 
 const login_now = async (body) => {
   const { mobile, password } = body;
@@ -161,4 +172,4 @@ const get_myorder = async (req) => {
   return odrers;
 };
 
-module.exports = { register_shop, verify_otp, set_password, login_now, get_myDetails, get_myorder };
+module.exports = { register_shop, verify_otp, set_password, login_now, get_myDetails, get_myorder, change_password };
