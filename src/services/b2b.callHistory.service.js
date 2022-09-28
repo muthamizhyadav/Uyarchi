@@ -810,10 +810,9 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
   values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ historydate: { $eq: date } },{lapsed:{$ne:true}}, keys, { callingStatus: { $eq: status } }],
+        $and: [{ historydate: { $eq: date } }, keys, { callingStatus: { $eq: status } },{lapsed:{$ne:true}}],
       },
     },
-
     { $sort: { historydate: -1, sorttime: -1 } },
     {
       $lookup: {
@@ -903,7 +902,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ historydate: { $eq: date } }, {lapsed:{$ne:true}},keys, { callingStatus: { $eq: status } }],
+        $and: [{ historydate: { $eq: date } }, { callingStatus: { $eq: status } },{lapsed:{$ne:true}}],
       },
     },
     {
