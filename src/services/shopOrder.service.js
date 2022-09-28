@@ -1147,6 +1147,32 @@ const getLapsed_Data = async (page,userRoles, userId )=>{
     { $skip: 10 * page },
     { $limit: 10 },
   ])
+  let Pending = await ShopOrderClone.aggregate([
+    {
+      $match:{$and:[{status:{$ne:'UnDelivered'}},{ date: yersterday},{status:{$ne:'Delivered'}}]}
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline:[{$match:{lapsed:{$ne:true}}}],
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline:[{$match:{date:todaydate}}],
+        as: 'callhistories',
+      },
+    },
+  ])
   let total = await ShopOrderClone.aggregate([
     {
       $match:{$and:[{status:{$ne:'UnDelivered'}},{ date: yersterday},{status:{$ne:'Delivered'}},{lapsed:{$ne:true}}]}
@@ -1176,10 +1202,11 @@ const getLapsed_Data = async (page,userRoles, userId )=>{
   let userRole = await UserRole.findById(userRoles)
   let User = await Users.findById(userId)
   console.log(userRoles,userId )
-  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name, Pending:Pending.length}
 }
 
 const getLapsed_Rejected = async (page,userRoles, userId)=>{
+  let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let todaydate = moment().format('YYYY-MM-DD')
   let values = await ShopOrderClone.aggregate([
     {
@@ -1248,13 +1275,40 @@ const getLapsed_Rejected = async (page,userRoles, userId)=>{
       as: 'callhistories',
     },
   },])
+  let Pending = await ShopOrderClone.aggregate([
+    {
+      $match:{$and:[{status:{$ne:'UnDelivered'}},{ date: yersterday},{status:{$ne:'Delivered'}}]}
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline:[{$match:{lapsed:{$ne:true}}}],
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline:[{$match:{date:todaydate}}],
+        as: 'callhistories',
+      },
+    },
+  ])
   let userRole = await UserRole.findById(userRoles)
   let User = await Users.findById(userId)
-  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name, Pending:Pending.length}
 }
 
 const getLapsed_Undelivered = async (page, userRoles, userId)=>{
   let todaydate = moment().format('YYYY-MM-DD')
+  let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let values = await ShopOrderClone.aggregate([
     {
       $match:{status:'UnDelivered'}
@@ -1322,9 +1376,35 @@ const getLapsed_Undelivered = async (page, userRoles, userId)=>{
       as: 'callhistories',
     },
   },])
+  let Pending = await ShopOrderClone.aggregate([
+    {
+      $match:{$and:[{status:{$ne:'UnDelivered'}},{ date: yersterday},{status:{$ne:'Delivered'}}]}
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline:[{$match:{lapsed:{$ne:true}}}],
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline:[{$match:{date:todaydate}}],
+        as: 'callhistories',
+      },
+    },
+  ])
   let userRole = await UserRole.findById(userRoles)
   let User = await Users.findById(userId)
-  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name, Pending:Pending.length}
 }
 
 const getCallhistories = async (shopId)=>{
@@ -1390,8 +1470,10 @@ const getFindbyId = async (id)=>{
 
 const lapsed_callBack = async (page,userRoles, userId)=>{
   let todaydata = moment().format('YYYY-MM-DD')
+  let todaydate = moment().format('YYYY-MM-DD')
+  let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let values = await CallHistory.aggregate([{
-    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'callback'}}]}
+    $match:{$and:[{date:{$lt:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'callback'}}]}
   },
 {
       $lookup: {
@@ -1415,7 +1497,7 @@ const lapsed_callBack = async (page,userRoles, userId)=>{
 ])
 let total = await CallHistory.aggregate([
   {
-    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'callback'}}]}
+    $match:{$and:[{date:{$lt:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'callback'}}]}
   },
 {
       $lookup: {
@@ -1429,13 +1511,40 @@ let total = await CallHistory.aggregate([
       $unwind: '$shops'
     },
 ])
+let Pending = await ShopOrderClone.aggregate([
+  {
+    $match:{$and:[{status:{$ne:'UnDelivered'}},{ date: yersterday},{status:{$ne:'Delivered'}}]}
+  },
+  {
+    $lookup: {
+      from: 'b2bshopclones',
+      localField: 'shopId',
+      foreignField: '_id',
+      pipeline:[{$match:{lapsed:{$ne:true}}}],
+      as: 'shops',
+    },
+  },
+  {
+    $unwind: '$shops'
+  },
+  {
+    $lookup: {
+      from: 'callhistories',
+      localField: 'shopId',
+      foreignField: 'shopId',
+      pipeline:[{$match:{date:todaydate}}],
+      as: 'callhistories',
+    },
+  },
+])
 let userRole = await UserRole.findById(userRoles)
 let User = await Users.findById(userId)
-  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name, Pending:Pending.length}
 }
 
 const lapsed_accept = async (page,userRoles, userId)=>{
   let todaydata = moment().format('YYYY-MM-DD')
+  let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let values = await CallHistory.aggregate([{
     $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'accept'}}]}
   },
@@ -1475,13 +1584,40 @@ let total = await CallHistory.aggregate([
       $unwind: '$shops'
     },
 ])
+let Pending = await ShopOrderClone.aggregate([
+  {
+    $match:{$and:[{status:{$ne:'UnDelivered'}},{ date: yersterday},{status:{$ne:'Delivered'}}]}
+  },
+  {
+    $lookup: {
+      from: 'b2bshopclones',
+      localField: 'shopId',
+      foreignField: '_id',
+      pipeline:[{$match:{lapsed:{$ne:true}}}],
+      as: 'shops',
+    },
+  },
+  {
+    $unwind: '$shops'
+  },
+  {
+    $lookup: {
+      from: 'callhistories',
+      localField: 'shopId',
+      foreignField: 'shopId',
+      pipeline:[{$match:{date:todaydata}}],
+      as: 'callhistories',
+    },
+  },
+])
 let userRole = await UserRole.findById(userRoles)
 let User = await Users.findById(userId)
-  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name, Pending:Pending.length}
 }
 
 const lapsed_declined = async (page,userRoles, userId)=>{
   let todaydata = moment().format('YYYY-MM-DD')
+  let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let values = await CallHistory.aggregate([{
     $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'declined'}}]}
   },
@@ -1521,15 +1657,42 @@ let total = await CallHistory.aggregate([
       $unwind: '$shops'
     },
 ])
+let Pending = await ShopOrderClone.aggregate([
+  {
+    $match:{$and:[{status:{$ne:'UnDelivered'}},{ date: yersterday},{status:{$ne:'Delivered'}}]}
+  },
+  {
+    $lookup: {
+      from: 'b2bshopclones',
+      localField: 'shopId',
+      foreignField: '_id',
+      pipeline:[{$match:{lapsed:{$ne:true}}}],
+      as: 'shops',
+    },
+  },
+  {
+    $unwind: '$shops'
+  },
+  {
+    $lookup: {
+      from: 'callhistories',
+      localField: 'shopId',
+      foreignField: 'shopId',
+      pipeline:[{$match:{date:todaydata}}],
+      as: 'callhistories',
+    },
+  },
+])
 let userRole = await UserRole.findById(userRoles)
 let User = await Users.findById(userId)
-  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name, Pending:Pending.length}
 }
 
 const lapsed_reschedule = async (page,userRoles, userId)=>{
   let todaydata = moment().format('YYYY-MM-DD')
+  let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let values = await CallHistory.aggregate([{
-    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'reschedule'}}]}
+    $match:{$and:[{date:{$lt:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'reschedule'}}]}
   },
 {
       $lookup: {
@@ -1553,7 +1716,7 @@ const lapsed_reschedule = async (page,userRoles, userId)=>{
 ])
 let total = await CallHistory.aggregate([
   {
-    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'reschedule'}}]}
+    $match:{$and:[{date:{$lt:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'reschedule'}}]}
   },
 {
       $lookup: {
@@ -1568,9 +1731,35 @@ let total = await CallHistory.aggregate([
     },
     
 ])
+let Pending = await ShopOrderClone.aggregate([
+  {
+    $match:{$and:[{status:{$ne:'UnDelivered'}},{ date: yersterday},{status:{$ne:'Delivered'}}]}
+  },
+  {
+    $lookup: {
+      from: 'b2bshopclones',
+      localField: 'shopId',
+      foreignField: '_id',
+      pipeline:[{$match:{lapsed:{$ne:true}}}],
+      as: 'shops',
+    },
+  },
+  {
+    $unwind: '$shops'
+  },
+  {
+    $lookup: {
+      from: 'callhistories',
+      localField: 'shopId',
+      foreignField: 'shopId',
+      pipeline:[{$match:{date:todaydata}}],
+      as: 'callhistories',
+    },
+  },
+])
 let userRole = await UserRole.findById(userRoles)
 let User = await Users.findById(userId)
-  return {values: values, total: total.length, Role:userRole.roleName, User:User.name}
+  return {values: values, total: total.length, Role:userRole.roleName, User:User.name, Pending:Pending.length}
 }
 
 module.exports = {
