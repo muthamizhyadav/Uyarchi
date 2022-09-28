@@ -665,7 +665,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
   console.log(total);
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
-  return { values: values, total: total[0].passing_scores, RoleName: role.roleName, userName: user.name };
+  return { values: values, total: total.length !=0?total[0].passing_scores:0, RoleName: role.roleName, userName: user.name };
 };
 const getShop_oncall = async (date, status, key, page, userId, userRole) => {
   console.log(status);
@@ -795,7 +795,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
 
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
-  return { values: values, total: total[0].passing_scores, RoleName: role.roleName, userName: user.name };
+  return { values: values, total: total.length !=0?total[0].passing_scores:0, RoleName: role.roleName, userName: user.name };
 };
 
 const getShop_callback = async (date, status, key, page, userId, userRole) => {
@@ -808,7 +808,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
   values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ historydate: { $eq: date } }, keys, { callingStatus: { $eq: status } },{lapsed:{$ne:true}},],
+        $and: [{ historydate: { $eq: date } },{lapsed:{$ne:true}}, keys, { callingStatus: { $eq: status } }],
       },
     },
 
@@ -901,7 +901,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ historydate: { $eq: date } }, keys, { callingStatus: { $eq: status } },{lapsed:{$ne:true}},],
+        $and: [{ historydate: { $eq: date } }, {lapsed:{$ne:true}},keys, { callingStatus: { $eq: status } }],
       },
     },
     {
@@ -922,10 +922,10 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
       $count: 'passing_scores',
     },
   ]);
-
+console.log(total)
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
-  return { values: values, total: total[0].passing_scores, RoleName: role.roleName, userName: user.name };
+  return { values: values, total: total.length !=0?total[0].passing_scores:0, RoleName: role.roleName, userName: user.name };
 };
 
 const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
@@ -1064,7 +1064,7 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
 
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
-  return { values: values, total: total[0].passing_scores, RoleName: role.roleName, userName: user.name };
+  return { values: values, total: total.length !=0?total[0].passing_scores:0, RoleName: role.roleName, userName: user.name };
 };
 
 const updateCallingStatus = async (id, updatebody) => {
