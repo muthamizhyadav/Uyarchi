@@ -47,7 +47,7 @@ const createcallHistoryWithType = async (body, userId) => {
     {
       sorttime: time,
       callingStatusSort: sort,
-      lapsed:lapsed
+      lapsed: lapsed,
     },
     { new: true }
   );
@@ -58,13 +58,13 @@ const createcallHistoryWithType = async (body, userId) => {
       {
         sortdate: reason,
         callingStatus: callStatus,
-        lapsed:lapsed
+        lapsed: lapsed,
       },
       { new: true }
     );
   } else {
     if (callStatus != 'accept') {
-      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, lapsed:lapsed }, { new: true });
+      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, lapsed: lapsed }, { new: true });
     }
   }
   let callHistory = await callHistoryModel.create(values);
@@ -550,7 +550,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         status: 1,
         Uid: 1,
         shopData: 1,
-        lapsed:1,
+        lapsed: 1,
         callhistoriestoday: '0',
         shopData: '$callhistories',
         shoptypeName: '$shoplists',
@@ -756,7 +756,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         time: 1,
         created: 1,
         status: 1,
-        lapsed:1,
+        lapsed: 1,
         Uid: 1,
         shopData: 1,
         shopData: '$callhistories',
@@ -888,7 +888,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         status: 1,
         Uid: 1,
         shopData: 1,
-        lapsed:1,
+        lapsed: 1,
         shopData: '$callhistories',
         callhistoriestoday: '$callhistoriestoday.count',
         shoptypeName: '$shoplists',
@@ -1021,7 +1021,7 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         status: 1,
         Uid: 1,
         shopData: 1,
-        lapsed:1,
+        lapsed: 1,
         shopData: '$callhistories',
         callhistoriestoday: '$callhistoriestoday.count',
         shoptypeName: '$shoplists',
@@ -1082,10 +1082,10 @@ const updateStatuscall = async (id, body, userId, date) => {
   if (status.callingStatus == 'On Call') {
     throw new ApiError(httpStatus.NOT_FOUND, 'OnCall');
   }
-  let {lapsed} = body
+  let { lapsed } = body;
   status = await Shop.findByIdAndUpdate(
     { _id: id },
-    { callingStatus: 'On Call',lapsed:lapsed, callingUserId: userId, historydate: date, sortdate: '' },
+    { callingStatus: 'On Call', lapsed: lapsed, callingUserId: userId, historydate: date, sortdate: '' },
     { new: true }
   );
   return status;
@@ -1099,7 +1099,7 @@ const updateStatusLapsed = async (id, body, userId, date) => {
   if (status.callingStatus == 'On Call') {
     throw new ApiError(httpStatus.NOT_FOUND, 'OnCall');
   }
-  let {lapsed} = body
+  let { lapsed } = body;
   status = await Shop.findByIdAndUpdate(
     { _id: id },
     { callingStatus: 'On Lapsed', callingUserId: userId, historydate: date, sortdate: '' },
@@ -1450,7 +1450,7 @@ const BillHistoryByShopId_date = async (shopId, date) => {
   return values;
 };
 
-const getLapsedCall_Count = async ()=>{
+const getLapsedCall_Count = async () => {
   let today = moment().format('yyyy-MM-DD');
   let callBack = await callHistoryModel.find({date:today, lapsed:true, callStatus:'callback'}).count()
   let reschedule = await callHistoryModel.find({date:today, lapsed:true, callStatus:'reschedule'}).count()
@@ -1488,5 +1488,5 @@ module.exports = {
   call_visit_Count,
   BillHistoryByShopId_date,
   updateStatusLapsed,
-  getLapsedCall_Count
+  getLapsedCall_Count,
 };
