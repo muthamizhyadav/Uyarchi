@@ -1491,6 +1491,7 @@ const lapsed_callBack = async (page,userRoles, userId)=>{
         shops:'$shops.SName',
         shopId:'$shops._id',
         date:1,
+        callStatus:1,
         
       }
     },
@@ -1567,6 +1568,7 @@ const lapsed_accept = async (page,userRoles, userId)=>{
         shops:'$shops.SName',
         shopId:'$shops._id',
        date:1,
+       callStatus:1,
       }
     },
     { $skip: 10 * page },
@@ -1640,7 +1642,8 @@ const lapsed_declined = async (page,userRoles, userId)=>{
       $project:{
         shops:'$shops.SName',
         shopId:'$shops._id',
-        date:1
+        date:1,
+        callStatus:1,
       }
     },
     { $skip: 10 * page },
@@ -1715,6 +1718,7 @@ const lapsed_reschedule = async (page,userRoles, userId)=>{
         shops:'$shops.SName',
         shopId:'$shops._id',
         date:1,
+        callStatus:1,
       }
     },
     { $skip: 10 * page },
