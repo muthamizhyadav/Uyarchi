@@ -58,9 +58,7 @@ const login_now = async (body) => {
   if (!userName) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Shop Not Registered');
   }
-  const salt = await bcrypt.genSalt(10);
-  password = await bcrypt.hash(password, salt);
-  if (userName.password == password) {
+  if (!(await userName.isPasswordMatch(password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Password Doesn't Match");
   }
 

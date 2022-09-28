@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
+const bcrypt = require('bcryptjs');
 
 //shop clone Schema
 
@@ -134,18 +135,47 @@ const shopSchema = mongoose.Schema({
   password: {
     type: String,
   },
-  lapsed:{
-    type:Boolean,
-    default:false,
+  lapsed: {
+    type: Boolean,
+    default: false,
   },
 });
 
 // assignSchema.plugin(toJSON);
 // assignSchema.plugin(paginate);
 
-const Shop = mongoose.model('B2BshopClone', shopSchema);
+shopSchema.plugin(toJSON);
+shopSchema.plugin(paginate);
 
-// Attendance Schema
+/**
+ * Check if email is taken
+ * @param {string} email - The user's email
+ * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
+ * @returns {Promise<boolean>}
+ */
+shopSchema.statics.isEmailTaken = async function (email, excludeUserId) {
+  const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
+  return !!user;
+};
+
+/**
+ * Check if password matches the user's password
+ * @param {string} password
+ * @returns {Promise<boolean>}
+ */
+shopSchema.methods.isPasswordMatch = async function (password) {
+  const user = this;
+  return bcrypt.compare(password, user.password);
+};
+
+shopSchema.pre('save', async function (next) {
+  const user = this;
+  if (user.isModified('password')) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+  next();
+});
+const Shop = mongoose.model('B2BshopClone', shopSchema);
 
 const attendanceSchema = new mongoose.Schema({
   _id: {
