@@ -64,5 +64,12 @@ const login_now = async (body) => {
 
   return userName;
 };
+const get_myDetails = async (req) => {
+  const shop = await Shop.aggregate([{ $match: { _id: req.shopId } }]);
+  if (shop.length == 0) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Shop Not Registered');
+  }
+  return shop[0];
+};
 
-module.exports = { register_shop, verify_otp, set_password, login_now };
+module.exports = { register_shop, verify_otp, set_password, login_now, get_myDetails };
