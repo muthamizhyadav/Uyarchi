@@ -79,8 +79,8 @@ const callingStatusreport = async (date) => {
   let yesterday = moment(date, 'DD-MM-YYYY').add(-1, 'days').format('DD-MM-yyyy');
   console.log(yesterday);
   let serverdate = date;
-  let acceptCount = await Shop.find({ callingStatus: 'accept', historydate: serverdate }).count();
-  let callbackCount = await Shop.find({ callingStatus: 'callback', historydate: serverdate }).count();
+  let acceptCount = await Shop.find({ callingStatus: 'accept', historydate: serverdate, lapsed:{$ne:true},}).count();
+  let callbackCount = await Shop.find({ callingStatus: 'callback', historydate: serverdate, lapsed:{$ne:true}, }).count();
   let rescheduleCount = await Shop.aggregate([
     {
       $match: {
