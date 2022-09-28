@@ -18,4 +18,6 @@ router.route('/getAllSalesMandataCurrentdate/:id').get(wardAdminRoleController.g
 router.route('/createwithoutoutAsmSalesman').post(wardAdminRoleController.createwithoutoutAsmSalesman)
 router.route('/withoutoutAsmSalesmanCurrentDate/:id').get(wardAdminRoleController.withoutoutAsmSalesmanCurrentDate)
 router.route('/withoutoutAsmSalesman/data/:date').get(wardAdminRoleController.withoutoutAsmSalesman)
+router.route('/dataAllSalesManhistry/:id').get(wardAdminRoleController.dataAllSalesManhistry)
+router.route('/allocateDeallocateCount/:id').get(wardAdminRoleController.allocateDeallocateCount)
 module.exports = router;

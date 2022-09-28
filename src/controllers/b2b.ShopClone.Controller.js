@@ -378,7 +378,6 @@ const getVendorShops = catchAsync(async (req, res) => {
 });
 
 const getNotAssignSalesManData = catchAsync(async (req, res) => {
-  console.log("tgf")
   const data = await b2bCloneService.getnotAssignSalesmanData();
   res.send(data);
 });

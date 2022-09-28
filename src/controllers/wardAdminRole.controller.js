@@ -96,6 +96,16 @@ const withoutoutAsmSalesman = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.withoutoutAsmSalesman(req.params.date);
    res.send(data);
 });
+
+const dataAllSalesManhistry = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.dataAllSalesManhistry(req.params.id);
+   res.send(data);
+});
+
+const allocateDeallocateCount  = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.allocateDealocateCount(req.params.id);
+   res.send(data);
+});
 module.exports = {
     getDataById,
     getAllwardAdminRole,
@@ -113,5 +123,6 @@ module.exports = {
     createwithoutoutAsmSalesman,
     withoutoutAsmSalesmanCurrentDate,
     withoutoutAsmSalesman,
-
+    dataAllSalesManhistry,
+    allocateDeallocateCount,
 };
