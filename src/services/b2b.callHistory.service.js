@@ -88,6 +88,7 @@ const callingStatusreport = async (date) => {
           { sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') } },
           { historydate: { $eq: date } },
           { callingStatus: { $eq: 'reschedule' } },
+          {lapsed:{$ne:true}}
         ],
       },
     },
@@ -212,6 +213,7 @@ const callingStatusreport = async (date) => {
   let oldReschedule = await Shop.find({
     callingStatus: 'reschedule',
     historydate: { $ne: date },
+    lapsed:{$ne:true},
     sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
   }).count();
   // let Reschedule = await Shop.find({ callingStatus: 'reschedule', historydate: date }).count();
