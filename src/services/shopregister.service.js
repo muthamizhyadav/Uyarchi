@@ -49,14 +49,16 @@ const set_password = async (body) => {
   return setpass;
 };
 const change_password = async (body, shopId) => {
+  // console.log(shopId);
   const salt = await bcrypt.genSalt(10);
   let { password } = body;
   password = await bcrypt.hash(password, salt);
   let setpass = await Shop.findById({ _id: shopId });
+  // console.log(setpass);
   if (!setpass) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Shop Not Found');
   }
-  setpass = await Shop.findByIdAndUpdate({ _id: shopId }, { password: password, registered: true }, { new: true });
+  setpass = await Shop.findByIdAndUpdate({ _id: shopId }, { password: password }, { new: true });
   return setpass;
 };
 
