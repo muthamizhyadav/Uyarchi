@@ -113,7 +113,7 @@ const get_myorder = async (req) => {
               finalQuantity: 1,
               finalPricePerKg: 1,
               created: 1,
-              productTitle: '$products.producttitle',
+              productTitle: '$products.productTitle',
             },
           },
         ],
