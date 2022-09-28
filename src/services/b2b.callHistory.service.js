@@ -217,7 +217,7 @@ const callingStatusreport = async (date) => {
     sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
   }).count();
   // let Reschedule = await Shop.find({ callingStatus: 'reschedule', historydate: date }).count();
-  let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate }).count();
+  let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate,  lapsed:{$ne:true}, }).count();
   return {
     acceptCount: acceptCount,
     callbackCount: callbackCount,
