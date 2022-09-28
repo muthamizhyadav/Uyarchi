@@ -3,6 +3,7 @@ const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 const catchAsync = require('../utils/catchAsync');
 const registerShop = require('../services/shopregister.service');
+const tokenService = require('../services/token.service');
 
 const register_shop = catchAsync(async (req, res) => {
   const shop = await registerShop.register_shop(req.body);
@@ -19,8 +20,16 @@ const set_password = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(password);
 });
 
+const login_now = catchAsync(async (req, res) => {
+  const shop = await registerShop.login_now(req.body);
+  const tokens = await tokenService.generateAuthTokens_shop(shop);
+
+  res.status(httpStatus.CREATED).send(tokens);
+});
+
 module.exports = {
   register_shop,
   verify_otp,
   set_password,
+  login_now,
 };
