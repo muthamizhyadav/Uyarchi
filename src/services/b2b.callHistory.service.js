@@ -448,7 +448,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
   values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ historydate: { $ne: date } }, keys],
+        $and: [{ historydate: { $ne: date } },{lapsed:{$ne:true}}, keys],
       },
     },
     { $sort: { historydate: -1, sorttime: -1 } },
@@ -567,7 +567,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ historydate: { $ne: date } }, keys],
+        $and: [{ historydate: { $ne: date } },{lapsed:{$ne:true}}, keys],
       },
     },
     { $sort: { historydate: -1, sorttime: -1 } },
@@ -808,7 +808,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
   values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ historydate: { $eq: date } }, keys, { callingStatus: { $eq: status } }],
+        $and: [{ historydate: { $eq: date } }, keys, { callingStatus: { $eq: status } },{lapsed:{$ne:true}},],
       },
     },
 
@@ -901,7 +901,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ historydate: { $eq: date } }, keys, { callingStatus: { $eq: status } }],
+        $and: [{ historydate: { $eq: date } }, keys, { callingStatus: { $eq: status } },{lapsed:{$ne:true}},],
       },
     },
     {
@@ -942,6 +942,7 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
           { sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') } },
           keys,
           { callingStatus: { $eq: status } },
+          {lapsed:{$ne:true}},
         ],
       },
     },
@@ -1037,6 +1038,7 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         $and: [
           { sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') } },
           keys,
+          {lapsed:{$ne:true}},
           { callingStatus: { $eq: status } },
         ],
       },
