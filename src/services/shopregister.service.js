@@ -19,7 +19,7 @@ const register_shop = async (body) => {
   }
   const otp = await sentOTP(mobileNumber, shop);
   console.log(otp);
-  return 'Otp Send Successfull';
+  return { message: 'Otp Send Successfull' };
 };
 
 const verify_otp = async (body) => {
