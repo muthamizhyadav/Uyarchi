@@ -296,19 +296,20 @@ const getSalesman = async (id) =>{
         $and: [{salesManId: { $eq: id } },{status: { $eq: 'Assign' } }],
       },
     },
-    // {
-    //   $lookup: {
-    //     from: 'b2bshopclones',
-    //     localField: 'shopId',
-    //     foreignField: '_id',
-    //     as: 'b2bshopclonesData',
-    //   },
-    // },
-    // {
-    //   $unwind: '$b2bshopclonesData',
-    // },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesData',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesData',
+    },
     {
       $project: {
+        shopname:'$b2bshopclonesData.SName',
         salesManId:1,
         shopId:1,
         status:1,
@@ -381,6 +382,81 @@ const withoutoutAsmSalesman = async (date) => {
   ]);
   return data;
 };
+
+const dataAllSalesManhistry = async  (id) => {
+    let data = await SalesManShop.aggregate([
+      {
+        $match: {
+          $and: [{salesManId: { $eq: id } }],
+        },
+      },
+    ])
+  
+    return data ;
+}
+
+
+ const  allocateDealocateCount = async (id) => {
+  let data = await Users.aggregate([
+    {
+      $match: {
+        $and: [{_id: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'salesManId',
+        as: 'salesmanshopsData',
+      },
+    },
+    {
+      $unwind: '$salesmanshopsData',
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: 'salesmanshopsData.date',
+        foreignField: 'date',
+        pipeline:[
+          {
+            $match: {
+              $and: [{status: { $eq: "Assign" } }],
+            },
+          }, 
+        ],
+        as: 'salesmanshopsAssign',
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: 'salesmanshopsData.date',
+        foreignField: 'reAssignDate',
+        pipeline:[
+          {
+            $match: {
+              $and: [{status: { $eq: "Reassign" } }],
+            },
+          }, 
+        ],
+        as: 'salesmanshopsReassign',
+      },
+    },
+    {$sort:{'salesmanshopsData.date':-1}},
+    {
+      $project: {
+         assignCount:{$size:"$salesmanshopsAssign"},
+         reassignCount:{$size:"$salesmanshopsReassign"},
+         date: '$salesmanshopsData.date',
+        //  sum:{ $subtract:[{$size:"salesmanshopsReassign"},{$size:"salesmanshopsReassign"}]} 
+      },
+    },
+
+  ])
+  return data
+ }
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -398,4 +474,6 @@ module.exports = {
   createwithoutoutAsmSalesman,
   withoutoutAsmSalesmanCurrentDate,
   withoutoutAsmSalesman,
+  dataAllSalesManhistry,
+  allocateDealocateCount,
 }
