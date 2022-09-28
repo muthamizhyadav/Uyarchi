@@ -27,9 +27,15 @@ const login_now = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(tokens);
 });
 
+const get_myDetails = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_myDetails(req);
+  res.status(httpStatus.CREATED).send(shop);
+});
+
 module.exports = {
   register_shop,
   verify_otp,
   set_password,
   login_now,
+  get_myDetails,
 };
