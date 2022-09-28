@@ -31,6 +31,10 @@ const get_myDetails = catchAsync(async (req, res) => {
   const shop = await registerShop.get_myDetails(req);
   res.status(httpStatus.CREATED).send(shop);
 });
+const get_myorder = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_myorder(req);
+  res.status(httpStatus.CREATED).send(shop);
+});
 
 module.exports = {
   register_shop,
@@ -38,4 +42,5 @@ module.exports = {
   set_password,
   login_now,
   get_myDetails,
+  get_myorder,
 };
