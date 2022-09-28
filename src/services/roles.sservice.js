@@ -246,6 +246,67 @@ const getsalesman = async () =>{
   return data ;
 }
 
+// getAllSalesmanShops 
+const getAllSalesmanShops = async () =>{
+  let data = await Roles.aggregate([
+    {
+      $match: {
+        $and: [{ roleName: { $eq: 'Ward Field Sales Executive(WFSE)' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: '_id',
+        foreignField: 'userRole',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    }, 
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: 'b2busersData._id',
+        pipeline:[    {
+          $match: {
+            $and: [{ status: { $eq:"Assign"} }],
+          },
+        },],
+        foreignField: 'salesManId',
+        as: 'salesmanshopsData',
+      },
+    },
+    // {
+    //   $unwind: '$salesmanshopsData',
+    // }, 
+    // {
+    //   $lookup: {
+    //     from: 'b2bshopclones',
+    //     localField: 'salesmanshopsData.shopId',
+    //     foreignField: '_id',
+    //     as: 'b2bshopclonesData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$b2bshopclonesData',
+    // }, 
+
+    {
+      $project: {
+        salesmanName: '$b2busersData.name',
+        salemanId: '$b2busersData._id',
+        // shopsId:'$b2bshopclonesData._id',
+        // SName:'$b2bshopclonesData.SName',
+        shopCount:{$size:"$salesmanshopsData"},
+        _id: 1,
+      },
+    },
+  ])
+  return data ;
+}
+
 module.exports = {
   createRoles,
   getAllRoles,
@@ -258,4 +319,5 @@ module.exports = {
   getAlldataSalesManager,
   getAlldataSalesMan,
   getsalesman,
+  getAllSalesmanShops,
 };

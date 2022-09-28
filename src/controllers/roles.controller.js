@@ -80,6 +80,11 @@ const getSalesMan = catchAsync(async(req, res) => {
   const data = await RolesService.getsalesman();
   res.send(data);
 })
+
+const getAllSalesmanShops = catchAsync(async(req, res) => {
+  const data = await RolesService.getAllSalesmanShops();
+  res.send(data);
+})
 module.exports = {
   createRoles,
   getAllRoles,
@@ -93,4 +98,5 @@ module.exports = {
   getAlldataSalesManager,
   getAlldataSalesMan,
   getSalesMan,
+  getAllSalesmanShops,
 };

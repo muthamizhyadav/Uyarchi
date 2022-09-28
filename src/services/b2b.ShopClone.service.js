@@ -1606,7 +1606,6 @@ const getVendorShops = async (key) => {
 // getnotAssignSalesmanData
 
 const getnotAssignSalesmanData = async () =>{
-  console.log("ewf4e")
   let data = await Shop.aggregate([
     {
       $match: {
