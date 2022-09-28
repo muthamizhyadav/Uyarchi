@@ -48,4 +48,23 @@ const set_password = async (body) => {
   return setpass;
 };
 
-module.exports = { register_shop, verify_otp, set_password };
+const login_now = async (body) => {
+  const { mobile, password } = body;
+  let userName = await Shop.findOne({ mobile: mobile });
+  if (!userName) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Shop Not Found');
+  }
+  userName = await Shop.findOne({ mobile: mobile, registered: true });
+  if (!userName) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Shop Not Registered');
+  }
+  const salt = await bcrypt.genSalt(10);
+  password = await bcrypt.hash(password, salt);
+  if (userName.password == password) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Password Doesn't Match");
+  }
+
+  return userName;
+};
+
+module.exports = { register_shop, verify_otp, set_password, login_now };
