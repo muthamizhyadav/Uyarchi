@@ -1473,7 +1473,7 @@ const lapsed_callBack = async (page,userRoles, userId)=>{
   let todaydate = moment().format('YYYY-MM-DD')
   let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let values = await CallHistory.aggregate([{
-    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'callback'}}]}
+    $match:{$and:[{date:{$lt:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'callback'}}]}
   },
 {
       $lookup: {
@@ -1497,7 +1497,7 @@ const lapsed_callBack = async (page,userRoles, userId)=>{
 ])
 let total = await CallHistory.aggregate([
   {
-    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'callback'}}]}
+    $match:{$and:[{date:{$lt:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'callback'}}]}
   },
 {
       $lookup: {
@@ -1692,7 +1692,7 @@ const lapsed_reschedule = async (page,userRoles, userId)=>{
   let todaydata = moment().format('YYYY-MM-DD')
   let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let values = await CallHistory.aggregate([{
-    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'reschedule'}}]}
+    $match:{$and:[{date:{$lt:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'reschedule'}}]}
   },
 {
       $lookup: {
@@ -1716,7 +1716,7 @@ const lapsed_reschedule = async (page,userRoles, userId)=>{
 ])
 let total = await CallHistory.aggregate([
   {
-    $match:{$and:[{date:{$eq:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'reschedule'}}]}
+    $match:{$and:[{date:{$lt:todaydata}},{lapsed:{$eq:true}},{callStatus:{$eq:'reschedule'}}]}
   },
 {
       $lookup: {

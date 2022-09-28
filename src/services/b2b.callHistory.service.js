@@ -1460,7 +1460,6 @@ const getLapsedCall_Count = async () => {
   let declined = await callHistoryModel.find({date:today, lapsed:true, callStatus:'declined'}).count()
   return ({callBack:callBack, reschedule:reschedule,accept:accept, declined:declined, prevcallBack:prevcallBack, prevreschedule:prevreschedule})
 }
-
 module.exports = {
   createCallHistory,
   getAll,
