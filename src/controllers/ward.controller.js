@@ -72,6 +72,11 @@ const getAll = catchAsync(async (req, res) => {
   res.send(ward);
 });
 
+const wardParticularZoneData = catchAsync(async (req, res) => {
+  const ward = await wardService.wardParticularZoneData(req.params.id);
+  res.send(ward);
+});
+
 module.exports = {
   createWard,
   getAllWard,
@@ -84,4 +89,5 @@ module.exports = {
   getmetaData,
   createDummyStreet,
   getAll,
+  wardParticularZoneData,
 };
