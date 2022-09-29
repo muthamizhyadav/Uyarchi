@@ -1638,12 +1638,24 @@ const lapsed_declined = async (page,userRoles, userId)=>{
     {
       $unwind: '$shops'
     },
+    // {
+    //   $lookup: {
+    //     from: 'shoporderclones',
+    //     localField: 'shops._id',
+    //     foreignField: 'shopId',
+    //     as: 'shoporderclonesData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$shoporderclonesData'
+    // },
     {
       $project:{
         shops:'$shops.SName',
         shopId:'$shops._id',
         date:1,
         callStatus:1,
+        // shoporderclonesId:"shoporderclonesData._id",
       }
     },
     { $skip: 10 * page },
