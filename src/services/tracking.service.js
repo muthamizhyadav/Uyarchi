@@ -37,15 +37,13 @@ const updatelocation = async (shopId, body) => {
   let today = moment().format('YYYY-MM-DD');
   let update = { ...body, ...{ date: today, userId: shopId } };
   let values = await Tracking.findOne({ userId: shopId, date: today });
-  console.log(values, 'asdas');
   if (!values) {
     await Tracking.create(update);
   } else {
     let capture = body.capture;
     if (values.capture.length != 0) {
-      capture = values.capture.push(body.capture);
+      capture = values.capture.concat(body.capture);
     }
-    // console.log(capture);
     await Tracking.findByIdAndUpdate({ _id: values._id }, { capture: capture }, { new: true });
   }
   return values;
