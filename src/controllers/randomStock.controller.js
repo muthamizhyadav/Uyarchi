@@ -28,8 +28,14 @@ const getProductName= catchAsync(async (req, res) => {
     }
   });
 
+  const getAll = catchAsync(async (req, res) => {
+    const getDAte = await randomStockService.getAll();
+    res.send(getDAte);
+  });
+
 
 module.exports = {
     getProductName,
     createrandomStock,
+    getAll,
 }
