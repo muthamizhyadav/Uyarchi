@@ -1048,7 +1048,6 @@ const getBillDetailsPerOrder = async (id) => {
         totalRupees: {$add: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, { "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] } ]} ,
         CGSTAmount: { $divide: [{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] }, 2] },
         SGSTAmount: { $divide: [{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] }, 2] },
-       
       },
     },
     
