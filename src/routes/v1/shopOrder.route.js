@@ -50,7 +50,7 @@ router.route('/productData/:id').get(shopOrderController.productData);
 router.route('/productorders/:orderId').get(shopOrderController.getproductOrders_By_OrderId);
 router.route('/getdata/lapster/yesterday/:page').get(shopOrderController.get_data_for_lapster);
 router.route('/lapsed/getdata/:status/:page').get(authorization, shopOrderController.getLapsed_Data);
-router.route('/lapsed/Reject/getdata/:page').get(authorization, shopOrderController.getLapsed_Rejected);
+router.route('/lapsed/Reject/getdata/:status/:page').get(authorization, shopOrderController.getLapsed_Rejected);
 router.route('/lapsed/Undelivered/getdata/:page').get(authorization, shopOrderController.getLapsed_Undelivered);
 router.route('/get/callhistory/last/ten/:shopId').get(shopOrderController.getCallhistories);
 router.route('/singleShoprders/:id').get(shopOrderController.getFindbyId);

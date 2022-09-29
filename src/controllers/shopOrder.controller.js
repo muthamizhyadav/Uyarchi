@@ -203,31 +203,51 @@ const getLapsed_Data = catchAsync(async (req, res) => {
   let UserId = req.userId;
   console.log(req.params);
   if (req.params.status == 'pending') {
-    const data = await shopOrderService.getLapsed_Data(req.params.page, userRoles, UserId);
+    const data = await shopOrderService.getLapsed_Data(req.params.page, userRoles, UserId,'lp');
     res.send(data);
   }
   if (req.params.status == 'callback') {
-    const data = await shopOrderService.lapsed_callBack(req.params.page, userRoles, UserId);
+    const data = await shopOrderService.lapsed_callBack(req.params.page, userRoles, UserId,'lp');
     res.send(data);
   }
   if (req.params.status == 'accept') {
-    const data = await shopOrderService.lapsed_accept(req.params.page, userRoles, UserId);
+    const data = await shopOrderService.lapsed_accept(req.params.page, userRoles, UserId,'lp');
     res.send(data);
   }
   if (req.params.status == 'declined') {
-    const data = await shopOrderService.lapsed_declined(req.params.page, userRoles, UserId);
+    const data = await shopOrderService.lapsed_declined(req.params.page, userRoles, UserId,'lp');
     res.send(data);
   }
   if (req.params.status == 'reschedule') {
-    const data = await shopOrderService.lapsed_reschedule(req.params.page, userRoles, UserId);
+    const data = await shopOrderService.lapsed_reschedule(req.params.page, userRoles, UserId,'lp');
     res.send(data);
   }
 });
 const getLapsed_Rejected = catchAsync(async (req, res) => {
   let userRoles = req.userRole;
   let UserId = req.userId;
-  const data = await shopOrderService.getLapsed_Rejected(req.params.page, userRoles, UserId);
-  res.send(data);
+  console.log(req.params);
+
+  if (req.params.status == 'pending') {
+    const data = await shopOrderService.getLapsed_Data(req.params.page, userRoles, UserId,'re');
+    res.send(data);
+  }
+  if (req.params.status == 'callback') {
+    const data = await shopOrderService.lapsed_callBack(req.params.page, userRoles, UserId,'re');
+    res.send(data);
+  }
+  if (req.params.status == 'accept') {
+    const data = await shopOrderService.lapsed_accept(req.params.page, userRoles, UserId,'re');
+    res.send(data);
+  }
+  if (req.params.status == 'declined') {
+    const data = await shopOrderService.lapsed_declined(req.params.page, userRoles, UserId,'re');
+    res.send(data);
+  }
+  if (req.params.status == 'reschedule') {
+    const data = await shopOrderService.lapsed_reschedule(req.params.page, userRoles, UserId,'re');
+    res.send(data);
+  }
 });
 
 const getLapsed_Undelivered = catchAsync(async (req, res) => {

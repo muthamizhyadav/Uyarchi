@@ -1097,30 +1097,52 @@ const get_data_for_lapster = async (page) => {
     todaytotal: todaytotal.length,
   };
 };
-const getLapsed_Data = async (page, userRoles, userId) => {
+const getLapsed_Data = async (page, userRoles, userId, method) => {
   console.log(userRoles, userId);
   let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let todaydate = moment().format('YYYY-MM-DD');
+  let matchvalue;
+  if (method == 'lp') {
+    matchvalue = [
+      {
+        callstatus: { $ne: 'callback' },
+      },
+      {
+        callstatus: { $ne: 'accept' },
+      },
+      {
+        callstatus: { $ne: 'declined' },
+      },
+      {
+        callstatus: { $ne: 'reschedule' },
+      },
+      { status: { $ne: 'UnDelivered' } },
+      { date: yersterday },
+      { status: { $ne: 'Delivered' } },
+      { status: { $ne: 'Rejected' } },
+    ];
+  }
+  if (method == 're') {
+    matchvalue = [
+      {
+        callstatus: { $ne: 'callback' },
+      },
+      {
+        callstatus: { $ne: 'accept' },
+      },
+      {
+        callstatus: { $ne: 'declined' },
+      },
+      {
+        callstatus: { $ne: 'reschedule' },
+      },
+      { status: { $eq: 'Rejected' } },
+    ];
+  }
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          {
-            callstatus: { $ne: 'callback' },
-          },
-          {
-            callstatus: { $ne: 'accept' },
-          },
-          {
-            callstatus: { $ne: 'declined' },
-          },
-          {
-            callstatus: { $ne: 'reschedule' },
-          },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-        ],
+        $and: matchvalue,
       },
     },
     {
@@ -1128,7 +1150,6 @@ const getLapsed_Data = async (page, userRoles, userId) => {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
-        // pipeline:[{$match:{lapsed:{$ne:true}}}],
         as: 'shops',
       },
     },
@@ -1169,23 +1190,7 @@ const getLapsed_Data = async (page, userRoles, userId) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          {
-            callstatus: { $ne: 'callback' },
-          },
-          {
-            callstatus: { $ne: 'accept' },
-          },
-          {
-            callstatus: { $ne: 'declined' },
-          },
-          {
-            callstatus: { $ne: 'reschedule' },
-          },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-        ],
+        $and: matchvalue,
       },
     },
     {
@@ -1483,18 +1488,25 @@ const getFindbyId = async (id) => {
   return values;
 };
 
-const lapsed_callBack = async (page, userRoles, userId) => {
+const lapsed_callBack = async (page, userRoles, userId, method) => {
   let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let todaydate = moment().format('YYYY-MM-DD');
+  if (method == 'lp') {
+    matchvalue = [
+      { callstatus: { $eq: 'callback' } },
+      { status: { $ne: 'UnDelivered' } },
+      { date: yersterday },
+      { status: { $ne: 'Delivered' } },
+      { status: { $ne: 'Rejected' } },
+    ];
+  }
+  if (method == 're') {
+    matchvalue = [{ callstatus: { $eq: 'callback' } }, { status: { $eq: 'Rejected' } }];
+  }
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { callstatus: { $eq: 'callback' } },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-        ],
+        $and: matchvalue,
       },
     },
     {
@@ -1542,12 +1554,7 @@ const lapsed_callBack = async (page, userRoles, userId) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { callstatus: { $eq: 'callback' } },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-        ],
+        $and: matchvalue,
       },
     },
     {
@@ -1577,18 +1584,25 @@ const lapsed_callBack = async (page, userRoles, userId) => {
   return { values: values, total: total.length, Role: userRole.roleName, User: User.name };
 };
 
-const lapsed_accept = async (page, userRoles, userId) => {
+const lapsed_accept = async (page, userRoles, userId, method) => {
   let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let todaydate = moment().format('YYYY-MM-DD');
+  if (method == 'lp') {
+    matchvalue = [
+      { callstatus: { $eq: 'accept' } },
+      { status: { $ne: 'UnDelivered' } },
+      { date: yersterday },
+      { status: { $ne: 'Delivered' } },
+      { status: { $ne: 'Rejected' } },
+    ];
+  }
+  if (method == 're') {
+    matchvalue = [{ callstatus: { $eq: 'accept' } }, { status: { $eq: 'Rejected' } }];
+  }
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { callstatus: { $eq: 'accept' } },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-        ],
+        $and: matchvalue,
       },
     },
     {
@@ -1636,12 +1650,7 @@ const lapsed_accept = async (page, userRoles, userId) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { callstatus: { $eq: 'accept' } },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-        ],
+        $and: matchvalue,
       },
     },
     {
@@ -1671,18 +1680,25 @@ const lapsed_accept = async (page, userRoles, userId) => {
   return { values: values, total: total.length, Role: userRole.roleName, User: User.name };
 };
 
-const lapsed_declined = async (page, userRoles, userId) => {
+const lapsed_declined = async (page, userRoles, userId, method) => {
   let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let todaydate = moment().format('YYYY-MM-DD');
+  if (method == 'lp') {
+    matchvalue = [
+      { callstatus: { $eq: 'declined' } },
+      { status: { $ne: 'UnDelivered' } },
+      { date: yersterday },
+      { status: { $ne: 'Delivered' } },
+      { status: { $ne: 'Rejected' } },
+    ];
+  }
+  if (method == 're') {
+    matchvalue = [{ callstatus: { $eq: 'declined' } }, { status: { $eq: 'Rejected' } }];
+  }
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { callstatus: { $eq: 'declined' } },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-        ],
+        $and: matchvalue,
       },
     },
     {
@@ -1730,12 +1746,7 @@ const lapsed_declined = async (page, userRoles, userId) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { callstatus: { $eq: 'declined' } },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-        ],
+        $and: matchvalue,
       },
     },
     {
@@ -1765,18 +1776,25 @@ const lapsed_declined = async (page, userRoles, userId) => {
   return { values: values, total: total.length, Role: userRole.roleName, User: User.name };
 };
 
-const lapsed_reschedule = async (page, userRoles, userId) => {
+const lapsed_reschedule = async (page, userRoles, userId, method) => {
   let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   let todaydate = moment().format('YYYY-MM-DD');
+  if (method == 'lp') {
+    matchvalue = [
+      { callstatus: { $eq: 'declined' } },
+      { status: { $ne: 'UnDelivered' } },
+      { date: yersterday },
+      { status: { $ne: 'Delivered' } },
+      { status: { $ne: 'Rejected' } },
+    ];
+  }
+  if (method == 're') {
+    matchvalue = [{ callstatus: { $eq: 'declined' } }, { status: { $eq: 'Rejected' } }];
+  }
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { callstatus: { $eq: 'reschedule' } },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-        ],
+        $and: matchvalue,
       },
     },
     {
@@ -1837,12 +1855,7 @@ const lapsed_reschedule = async (page, userRoles, userId) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { callstatus: { $eq: 'reschedule' } },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-        ],
+        $and: matchvalue,
       },
     },
     {
@@ -1896,6 +1909,7 @@ const lapsedordercount = async () => {
           { status: { $ne: 'UnDelivered' } },
           { date: yersterday },
           { status: { $ne: 'Delivered' } },
+          { status: { $ne: 'Rejected' } },
         ],
       },
     },
@@ -1928,6 +1942,7 @@ const lapsedordercount = async () => {
           { status: { $ne: 'UnDelivered' } },
           { date: yersterday },
           { status: { $ne: 'Delivered' } },
+          { status: { $ne: 'Rejected' } },
         ],
       },
     },
@@ -1973,6 +1988,7 @@ const lapsedordercount = async () => {
           { status: { $ne: 'UnDelivered' } },
           { date: yersterday },
           { status: { $ne: 'Delivered' } },
+          { status: { $ne: 'Rejected' } },
         ],
       },
     },
@@ -2005,6 +2021,7 @@ const lapsedordercount = async () => {
           { status: { $ne: 'UnDelivered' } },
           { date: yersterday },
           { status: { $ne: 'Delivered' } },
+          { status: { $ne: 'Rejected' } },
         ],
       },
     },
@@ -2048,6 +2065,7 @@ const lapsedordercount = async () => {
           { status: { $ne: 'UnDelivered' } },
           { date: yersterday },
           { status: { $ne: 'Delivered' } },
+          { status: { $ne: 'Rejected' } },
         ],
       },
     },
