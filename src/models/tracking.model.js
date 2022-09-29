@@ -16,6 +16,12 @@ const TrackingSchema = new mongoose.Schema({
   lon: {
     type: String,
   },
+  date: {
+    type: String,
+  },
+  capture: {
+    type: Array,
+  },
   active: {
     type: Boolean,
     default: true,
