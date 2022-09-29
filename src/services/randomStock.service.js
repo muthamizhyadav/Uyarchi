@@ -32,8 +32,19 @@ const createrandomStock =  async (body) => {
   };
 
   
-    const getAll = async () => {
-        return randomStockModel.find();
+    const getAll = async (product,date) => {
+        let productmatch;
+        if (product != 'null') {
+            productmatch = { product: { $eq: product } };
+        } else {
+            productmatch = { active: true };
+        }
+        let datematch;
+        if (date != 'null') {
+            datematch = { date: date };
+        } else {
+            datematch = { active: true };
+        }
       };
 
 
