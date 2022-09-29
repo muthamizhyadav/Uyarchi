@@ -1619,60 +1619,24 @@ const lapsed_accept = async (page, userRoles, userId) => {
 };
 
 const lapsed_declined = async (page, userRoles, userId) => {
-  let todaydata = moment().format('YYYY-MM-DD');
   let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
-  let values = await CallHistory.aggregate([
+  let todaydate = moment().format('YYYY-MM-DD');
+  let values = await ShopOrderClone.aggregate([
     {
-      $match: { $and: [{ date: { $eq: todaydata } }, { lapsed: { $eq: true } }, { callStatus: { $eq: 'declined' } }] },
+      $match: {
+        $and: [
+          { callstatus: { $eq: 'declined' } },
+          { status: { $ne: 'UnDelivered' } },
+          { date: yersterday },
+          { status: { $ne: 'Delivered' } },
+        ],
+      },
     },
     {
       $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
-        as: 'shops',
-      },
-    },
-    {
-      $unwind: '$shops',
-    },
-    {
-      $project: {
-        shops: '$shops.SName',
-        shopId: '$shops._id',
-        date: 1,
-        callStatus: 1,
-      },
-    },
-    { $skip: 10 * page },
-    { $limit: 10 },
-  ]);
-  let total = await CallHistory.aggregate([
-    {
-      $match: { $and: [{ date: { $eq: todaydata } }, { lapsed: { $eq: true } }, { callStatus: { $eq: 'declined' } }] },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        as: 'shops',
-      },
-    },
-    {
-      $unwind: '$shops',
-    },
-  ]);
-  let Pending = await ShopOrderClone.aggregate([
-    {
-      $match: { $and: [{ status: { $ne: 'UnDelivered' } }, { date: yersterday }, { status: { $ne: 'Delivered' } }] },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { lapsed: { $ne: true } } }],
         as: 'shops',
       },
     },
@@ -1684,14 +1648,68 @@ const lapsed_declined = async (page, userRoles, userId) => {
         from: 'callhistories',
         localField: 'shopId',
         foreignField: 'shopId',
-        pipeline: [{ $match: { date: todaydata } }],
+        pipeline: [{ $match: { date: todaydate } }],
+        as: 'callhistories',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        shopId: 1,
+        status: 1,
+        OrderId: 1,
+        customerBillId: 1,
+        date: 1,
+        delivery_type: 1,
+        devevery_mode: 1,
+        time_of_delivery: 1,
+        Payment: 1,
+        shops: '$shops.SName',
+        lapsed: '$shops.lapsed',
+        calls: { $size: '$callhistories' },
+        callhistories: '$callhistories',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+
+  let total = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { callstatus: { $eq: 'declined' } },
+          { status: { $ne: 'UnDelivered' } },
+          { date: yersterday },
+          { status: { $ne: 'Delivered' } },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline: [{ $match: { date: todaydate } }],
         as: 'callhistories',
       },
     },
   ]);
   let userRole = await UserRole.findById(userRoles);
   let User = await Users.findById(userId);
-  return { values: values, total: total.length, Role: userRole.roleName, User: User.name, Pending: Pending.length };
+  console.log(userRoles, userId);
+  return { values: values, total: total.length, Role: userRole.roleName, User: User.name };
 };
 
 const lapsed_reschedule = async (page, userRoles, userId) => {
