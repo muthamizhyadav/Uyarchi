@@ -68,6 +68,10 @@ const callHistorySchema = mongoose.Schema({
   select: {
     type: String,
   },
+  lapsed: {
+    type: Boolean,
+    default: false,
+  },
   selectStatus: {
     type: String,
   },
@@ -80,6 +84,9 @@ const callHistorySchema = mongoose.Schema({
   lapsedOrder: {
     type: Boolean,
     default: false,
+  },
+  orderId: {
+    type: String,
   },
 });
 

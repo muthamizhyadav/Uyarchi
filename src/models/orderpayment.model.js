@@ -1,32 +1,35 @@
 const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const { toJSON, paginate } = require('./plugins');
-const moment = require('moment');
-const otpsave = mongoose.Schema({
-  name: {
+
+const OrderPaymentSchema = new mongoose.Schema({
+  _id: {
     type: String,
-  },
-  OTP: {
-    type: Number,
-  },
-  mobileNumber: {
-    type: Number,
+    default: v4,
   },
   date: {
     type: String,
   },
   time: {
+    type: Number,
+  },
+  created: {
+    type: Date,
+  },
+  paidAmt: {
+    type: Number,
+  },
+  type: {
     type: String,
   },
-  expired: {
-    type: Boolean,
-  },
-  userId: {
+  orderId: {
     type: String,
   },
-  used: {
-    type: Boolean,
-    default: false,
+  uid: {
+    type: String,
+  },
+  payType: {
+    type: String,
   },
   active: {
     type: Boolean,
@@ -36,11 +39,8 @@ const otpsave = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  create: {
-    type: String,
-  },
 });
-otpsave.plugin(toJSON);
-otpsave.plugin(paginate);
-const OTP = mongoose.model('OTP', otpsave);
-module.exports = OTP;
+
+const OrderPayment = new mongoose.model('orderPayment', OrderPaymentSchema);
+
+module.exports = OrderPayment;

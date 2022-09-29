@@ -140,6 +140,23 @@ const generateVerifyEmailToken = async (user) => {
   return verifyEmailToken;
 };
 
+const generateAuthTokens_shop = async (shop) => {
+  const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'days');
+  const accessToken = generateToken(shop._id, shop, accessTokenExpires, tokenTypes.ACCESS);
+  const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
+  const refreshToken = generateToken(shop._id, shop, refreshTokenExpires, tokenTypes.REFRESH);
+  return {
+    access: {
+      token: accessToken,
+      expires: accessTokenExpires.toDate(),
+    },
+    refresh: {
+      token: refreshToken,
+      expires: refreshTokenExpires.toDate(),
+    },
+  };
+};
+
 module.exports = {
   generateToken,
   saveToken,
@@ -148,4 +165,5 @@ module.exports = {
   generateResetPasswordToken,
   generateVerifyEmailToken,
   generateAuthTokens_forget,
+  generateAuthTokens_shop,
 };

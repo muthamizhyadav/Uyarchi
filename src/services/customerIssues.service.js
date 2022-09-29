@@ -58,6 +58,7 @@ const productData = async(page) =>{
         OrderId:'$shoporderclonesData.OrderId',
         SName:'$b2bshopclonesData.SName',
         status:1,
+        shoporderclonesId:'$shoporderclonesData._id'
       },
     },
     {
@@ -114,6 +115,7 @@ const productData = async(page) =>{
         issue:1,
         OrderId:'$shoporderclonesData.OrderId',
         SName:'$b2bshopclonesData.SName',
+        shoporderclonesId:'$shoporderclonesData._id'
       },
     },
     {
@@ -182,4 +184,5 @@ module.exports = {
   updateReject,
   updateRedeliver,
   updateRefund,
+  getById,
 };

@@ -15,4 +15,6 @@ router.route('/createAmount').post(walletController.createAmountWallet);
 
 router.route('/getShopname').get(walletController.getshopName);
 
+router.route('/getshopdtae/:id').get(walletController.getshopdtae);
+
 module.exports = router;

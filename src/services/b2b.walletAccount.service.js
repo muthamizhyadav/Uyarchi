@@ -25,12 +25,18 @@ const getshopName = async () => {
       },
     },
     {
+      $unwind: '$wardData'
+    },
+    {
       $lookup: {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
         as: 'streetData',
       },
+    },
+    {
+      $unwind: '$streetData'
     },
 
     {
@@ -53,9 +59,49 @@ const getAll = async () => {
 };
 
 const getWallet = async (page) => {
-  let wallet = await walletModel.aggregate([{ $skip: 10 * page }, { $limit: 10 }]);
-  let total = await walletModel.find().count();
-  return { wallet: wallet, total: total };
+  let wallet = await walletModel.aggregate([
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopName',
+        foreignField: '_id',
+        as: 'shopDatq',
+    },
+  },
+  {
+      $unwind: '$shopDatq'
+    },
+    {
+      $project: {
+        type:1,
+        shopName:1,
+        date:1,
+        idProofNo:1,
+        addressProofNo:1,
+        idProof:1,
+        addressProof:1,
+        shopname:"$shopDatq.SName"
+
+    }
+  },
+  
+    { $skip: 10 * page }, 
+      { $limit: 10 }
+  ]);
+  let total = await walletModel.aggregate([
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopName',
+        foreignField: '_id',
+        as: 'shopDatq',
+    },
+  },
+  {
+      $unwind: '$shopDatq'
+    },
+  ]);
+  return { wallet: wallet, total: total.length };
 };
 
 const updateWallet = async (id, walletbody) => {
@@ -77,6 +123,69 @@ const deleteWalletById = async (id) => {
   await wallet.save();
 };
 
+const getShopDetails = async (id)=>{
+  let values = await walletModel.aggregate([
+    {
+      $match: {
+        $and: [{ shopName: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from:'b2bshopclones',
+        localField:'shopName',
+        foreignField: '_id',
+        as:'shopDatq',
+
+      }
+    },
+    {
+      $unwind: '$shopDatq'
+    },
+    {
+      $lookup: {
+        from:'wards',
+        localField:'shopDatq.Wardid',
+        foreignField: '_id',
+        as:'wardDatq',
+
+      }
+    },
+    {
+      $unwind: '$wardDatq'
+    },
+    {
+      $lookup: {
+        from:'streets',
+        localField:'shopDatq.Strid',
+        foreignField: '_id',
+        as:'streetData',
+
+      }
+    },
+    {
+      $unwind: '$streetData'
+    },
+    {
+      $project:{
+        wardNo:"$wardDatq.wardNo",
+        streetname:"$streetData.street",
+        shopType:"$shopDatq.type",
+          OwnnerName:"$shopDatq.SOwner",
+          mobile:"$shopDatq.mobile",
+          address:"$shopDatq.address",
+          idProofNo:1,
+          addressProofNo:1, 
+
+
+      }
+    }
+
+  ]);
+  return values;
+}
+
+
 module.exports = {
   createWallet,
   getAll,
@@ -86,4 +195,5 @@ module.exports = {
 
   currentAmount,
   getshopName,
+  getShopDetails,
 };

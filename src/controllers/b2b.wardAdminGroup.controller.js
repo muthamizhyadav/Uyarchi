@@ -60,25 +60,19 @@ const updateDeliveryStarted = catchAsync(async (req, res) => {
 });
 
 const updatePettyCashReturnStatus = catchAsync(async (req, res) => {
-  const status = await wardAdminGroupService.updateShopOrderCloneById(req.params.id,{
-    pettyCashReceiveStatus: 'Approved'
+  const status = await wardAdminGroupService.updateShopOrderCloneById(req.params.id, {
+    pettyCashReceiveStatus: 'Approved',
   });
   res.send(status);
 });
 
 const updateDeliveryCompleted = catchAsync(async (req, res) => {
-  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id,req.body, {
-    status: 'Delivered',
-    customerDeliveryStatus: 'Delivered',
-  });
+  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, req.body);
   res.send(deliveryCompleted);
 });
 
 const UpdateUnDeliveredStatus = catchAsync(async (req, res) => {
-  const deliveryStatus = await wardAdminGroupService.updateOrderStatus(req.params.id, {
-    status: 'UnDelivered',
-    customerDeliveryStatus: 'UnDelivered',
-  });
+  const deliveryStatus = await wardAdminGroupService.updateOrderStatus_forundelivey(req.params.id, req.body);
   res.send(deliveryStatus);
 });
 
@@ -123,7 +117,15 @@ const getBillDetails = catchAsync(async (req, res) => {
 });
 
 const getAssigned = catchAsync(async (req, res) => {
-  const details = await wardAdminGroupService.assignOnly(req.params.page);
+  const details = await wardAdminGroupService.assignOnly(req.params.page, 'stock');
+  res.send(details);
+});
+const cashgetAssigned = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.assignOnly(req.params.page, 'cash');
+  res.send(details);
+});
+const deliverygetAssigned = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.assignOnly(req.params.page, 'delivery');
   res.send(details);
 });
 
@@ -274,8 +276,8 @@ const submitCashGivenByWDE = catchAsync(async (req, res) => {
   res.send(cashAsGivenByWDE);
 });
 
-const  createAddOrdINGrp= catchAsync(async (req, res) => {
-  const cashAsGivenByWDE = await wardAdminGroupService.createAddOrdINGrp(req.params.id,req.body);
+const createAddOrdINGrp = catchAsync(async (req, res) => {
+  const cashAsGivenByWDE = await wardAdminGroupService.createAddOrdINGrp(req.params.id, req.body);
   res.send(cashAsGivenByWDE);
 });
 
@@ -349,8 +351,9 @@ module.exports = {
   updateManageStatuscashcollect,
   updateManagecompleted,
 
-
   getShopDetailsForProj,
   submitCashGivenByWDE,
   createAddOrdINGrp,
+  cashgetAssigned,
+  deliverygetAssigned,
 };

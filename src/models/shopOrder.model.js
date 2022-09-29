@@ -34,6 +34,9 @@ const ShopOrderPriceSchema = new mongoose.Schema({
   status: {
     type: String,
   },
+  timeslot: {
+    type: Number,
+  },
   Uid: {
     type: String,
   },
@@ -149,11 +152,16 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   selfPickup: {
     type: String,
   },
-
   deliveryExecutiveId: {
     type: String,
   },
   reason: {
+    type: String,
+  },
+  undeliveyreason: {
+    type: String,
+  },
+  undeliveytype: {
     type: String,
   },
   payType: {
@@ -183,7 +191,6 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     type: String,
     default: 'Pending',
   },
-
   AssignedStatus: {
     type: String,
     default: 'Pending',
@@ -235,6 +242,15 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   lapsedOrder: {
     type: Boolean,
     default: false,
+  },
+  timeslot: {
+    type: Number,
+  },
+  callstatus: {
+    type: String,
+  },
+  callhistoryId: {
+    type: String,
   },
 });
 

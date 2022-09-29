@@ -50,6 +50,41 @@ const deletRoleById = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const getroleWardAdmin = catchAsync(async (req, res) => {
+  const role = await RolesService.getroleWardAdmin();
+  if (!role) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Roles Not Found');
+  }
+  res.send(role);
+});
+
+const getroleWardAdminAsm = catchAsync(async (req, res) => {
+  const role = await RolesService.getroleWardAdminAsm();
+  if (!role) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Roles Not Found');
+  }
+  res.send(role);
+});
+
+const getAlldataSalesManager = catchAsync(async(req, res) => {
+    const data = await RolesService.getAlldataSalesManager();
+    res.send(data);
+})
+
+const getAlldataSalesMan = catchAsync(async(req, res) => {
+  const data = await RolesService.getAlldataSalesMan();
+  res.send(data);
+})
+
+const getSalesMan = catchAsync(async(req, res) => {
+  const data = await RolesService.getsalesman();
+  res.send(data);
+})
+
+const getAllSalesmanShops = catchAsync(async(req, res) => {
+  const data = await RolesService.getAllSalesmanShops();
+  res.send(data);
+})
 module.exports = {
   createRoles,
   getAllRoles,
@@ -58,4 +93,10 @@ module.exports = {
   updateRolesById,
   deletRoleById,
   getusermenus,
+  getroleWardAdmin,
+  getroleWardAdminAsm,
+  getAlldataSalesManager,
+  getAlldataSalesMan,
+  getSalesMan,
+  getAllSalesmanShops,
 };

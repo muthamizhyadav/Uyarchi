@@ -74,7 +74,11 @@ const updateRejected = catchAsync(async (req, res) => {
 
 // ward loading executive
 const wardloadExecutive = catchAsync(async (req, res) => {
-  const executive = await wardAdminService.wardloadExecutive(req.params.page);
+  const executive = await wardAdminService.wardloadExecutive(req.params.id);
+  res.send(executive);
+});
+const wardloadExecutivebtgroup = catchAsync(async (req, res) => {
+  const executive = await wardAdminService.wardloadExecutivebtgroup(req.params.page);
   res.send(executive);
 });
 const wardloadExecutivepacked = catchAsync(async (req, res) => {
@@ -142,6 +146,7 @@ const updateAcknowledgeSingle = catchAsync(async (req, res) => {
 // });
 
 const statusMatchingAppOrModi = catchAsync(async (req, res) => {
+  
   console.log(req.params.type, req.params.time, req.params.status, req.params.limit, req.params.page);
   let statusMatching;
   if (req.params.status == 'Acknowledged') {
@@ -167,7 +172,7 @@ const statusMatchingAppOrModi = catchAsync(async (req, res) => {
       req.params.status,
       req.params.limit,
       req.params.page
-    );
+    );  
   } else if (
     req.params.status == 'Approved' ||
     req.params.status == 'Modified' ||
@@ -175,6 +180,14 @@ const statusMatchingAppOrModi = catchAsync(async (req, res) => {
     req.params.status == 'Assigned'
   ) {
     statusMatching = await wardAdminService.getAppOrModifiedStatus(
+      req.params.type,
+      req.params.time,
+      req.params.status,
+      req.params.limit,
+      req.params.page
+    );
+  } else if (req.params.status == 'lapsed') {
+    statusMatching = await wardAdminService.getdetailsDataStatuslasped(
       req.params.type,
       req.params.time,
       req.params.status,
@@ -226,4 +239,5 @@ module.exports = {
   getAssigned_details,
   updatePackedStatus,
   wardloadExecutivepacked,
+  wardloadExecutivebtgroup,
 };

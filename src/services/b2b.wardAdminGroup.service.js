@@ -9,15 +9,14 @@ const pettyStockModel = require('../models/b2b.pettyStock.model');
 const { wardAdminGroup, wardAdminGroupModel_ORDERS } = require('../models/b2b.wardAdminGroup.model');
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 const { Product } = require('../models/product.model');
-
+const orderPayment = require('../models/orderpayment.model');
 const createGroup = async (body) => {
   let serverdates = moment().format('YYYY-MM-DD');
-  console.log(typeof serverdates)
+  console.log(typeof serverdates);
   let servertime = moment().format('hh:mm a');
   let num = 1;
-  const group = await wardAdminGroup.find({ assignDate: serverdates  });
-console.log(group)
-  
+  const group = await wardAdminGroup.find({ assignDate: serverdates });
+  console.log(group);
 
   let center = '';
 
@@ -38,6 +37,25 @@ console.log(group)
   console.log(totalcount);
   userId = 'G' + center + totalcount;
 
+
+  let centerdata = '';
+  if (Buy.length < 9) {
+    centerdata = '0000';
+  }
+  if (Buy.length < 99 && Buy.length >= 9) {
+    centerdata = '000';
+  }
+  if (Buy.length < 999 && Buy.length >= 99) {
+    centerdata = '00';
+  }
+  if (Buy.length < 9999 && Buy.length >= 999) {
+    centerdata = '0';
+  }
+  let BillId = '';
+  let totalcounts = Buy.length + 1;
+
+  BillId = 'B' + centerdata + totalcounts;
+
   let values = {
     ...body,
     ...{
@@ -46,6 +64,9 @@ console.log(group)
       assignTime: servertime,
       pettyStockAllocateStatusNumber: num,
       created: moment(),
+      GroupBillId:BillId,
+      GroupBillDate: serverdates,
+      GroupBillTime: servertime,
     },
   };
   let wardAdminGroupcreate = await wardAdminGroup.create(values);
@@ -62,25 +83,62 @@ console.log(group)
       },
       { new: true }
     );
-    await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: wardAdminGroupcreate._id });
+    await wardAdminGroupModel_ORDERS.create({
+      orderId: productId,
+      wardAdminGroupID: wardAdminGroupcreate._id,
+      date: serverdates,
+      time: servertime,
+      created: moment(),
+      AssignedstatusPerDay: 1,
+    });
   });
 
   return wardAdminGroupcreate;
 };
 
-
 const updateOrderStatus = async (id, updateBody) => {
+  let currentDate = moment().format('YYYY-MM-DD');
+  let currenttime = moment().format('HHmmss');
+  let body = {
+    ...updateBody,
+    ...{
+      status: 'Delivered',
+      customerDeliveryStatus: 'Delivered',
+    },
+  };
   let deliveryStatus = await ShopOrderClone.findById(id);
   console.log(deliveryStatus);
   if (!deliveryStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
-  console.log(deliveryStatus);
-
+  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
+  await orderPayment.create({
+    paidAmt: updateBody.paidamount,
+    date: currentDate,
+    time: currenttime,
+    created: moment(),
+    orderId: deliveryStatus._id,
+    type: updateBody.reason,
+    payType: updateBody.payType,
+  });
   return deliveryStatus;
 };
-
+const updateOrderStatus_forundelivey = async (id, updateBody) => {
+  let body = {
+    ...updateBody,
+    ...{
+      status: 'UnDelivered',
+      customerDeliveryStatus: 'UnDelivered',
+    },
+  };
+  let deliveryStatus = await ShopOrderClone.findById(id);
+  console.log(deliveryStatus);
+  if (!deliveryStatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
+  return deliveryStatus;
+};
 const orderPicked = async (deliveryExecutiveId) => {
   let orderPicked = await ShopOrderClone.find({ deliveryExecutiveId: deliveryExecutiveId });
   console.log(orderPicked);
@@ -586,6 +644,8 @@ const getBillDetails = async (id) => {
                           finalPricePerKg: 1,
                           HSN_Code: 1,
                           GST_Number: 1,
+                          unit: 1,
+                          packKg: 1,
                           total: {
                             $multiply: ['$finalQuantity', '$finalPricePerKg'],
                           },
@@ -619,6 +679,7 @@ const getBillDetails = async (id) => {
                           _id: 1,
                           SName: 1,
                           SOwner: 1,
+                          mobile: 1,
                         },
                       },
                     ],
@@ -633,11 +694,15 @@ const getBillDetails = async (id) => {
                     _id: 1,
                     OrderId: 1,
                     Payment: 1,
+                    customerBillId:1,
+                    customerBilldate:1,
+                    customerBilltime:1,
                     products: '$products',
                     b2bshopclones: '$b2bshopclones',
                     SName: '$b2bshopclones.SName',
                     SOwner: '$b2bshopclones.SOwner',
                     street: '$b2bshopclones.street',
+                    mobile: '$b2bshopclones.mobile',
                   },
                 },
               ],
@@ -653,9 +718,11 @@ const getBillDetails = async (id) => {
               _id: 1,
               totalAmount: '$shopDatas.totalAmount',
               OrderId: '$shopDatasDetails.OrderId',
+              customerBillId: '$shopDatasDetails.customerBillId',
+              customerBilldate: '$shopDatasDetails.customerBilldate',
+              customerBilltime: '$shopDatasDetails.customerBilltime',
               Payment: '$shopDatasDetails.Payment',
               product: '$shopDatasDetails.products',
-
               SName: '$shopDatasDetails.SName',
               SOwner: '$shopDatasDetails.SOwner',
               street: '$shopDatasDetails.street',
@@ -676,15 +743,27 @@ const getBillDetails = async (id) => {
     {
       $unwind: '$b2bsersData',
     },
+    {
+      $lookup: {
+        from: 'pettystockmodels',
+        localField: '_id',
+        foreignField: 'wardAdminId',
+        as: 'pettystockmodels',
+      },
+    },
 
     {
       $project: {
         groupId: 1,
         assignDate: 1,
         assignTime: 1,
-        totalOrders: 1,
+        totalOrders: { $size: '$orderassigns' },
         orderassigns: '$orderassigns',
         deliveryExecutivename: '$b2bsersData.name',
+        pettystockmodels: '$pettystockmodels',
+        pettyCash: 1,
+        pettyCashAllocateStatus: 1,
+        pettyStockAllocateStatus: 1,
       },
     },
   ]);
@@ -694,12 +773,26 @@ const getBillDetails = async (id) => {
   return values[0];
 };
 
-const assignOnly = async (page) => {
-  console.log(page);
+const assignOnly = async (page, status) => {
+  let macthStatus = { active: true };
+  let statusMatch = { status: 'Packed' };
+  if (status == 'stock') {
+    macthStatus = { pettyStockAllocateStatus: 'Pending' };
+  }
+  if (status == 'cash') {
+    macthStatus = { pettyCashAllocateStatus: 'Pending' };
+  }
+  if (status == 'delivery') {
+    macthStatus = {
+      // pettyCashAllocateStatus: { $ne: 'Pending' },
+      // pettyStockAllocateStatus: { $ne: 'Pending' },
+      manageDeliveryStatus: { $ne: 'Delivery Completed' },
+    };
+    statusMatch = { status: { $in: ['Assigned', 'Packed'] } };
+  }
+  console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
-    // { $sort: { pettyStockAllocateStatusNumber: 1 } },
-    { $match: { status: 'Assigned' } },
-
+    { $match: { $and: [statusMatch, macthStatus] } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -737,9 +830,7 @@ const assignOnly = async (page) => {
         as: 'dataDetails',
       },
     },
-
     { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
-
     {
       $lookup: {
         from: 'b2busers',
@@ -751,21 +842,77 @@ const assignOnly = async (page) => {
     {
       $unwind: '$UserName',
     },
-    // {
-    //   $lookup: {
-    //     from: 'shoporderclones',
-    //     localField: 'Orderdatas._id',
-    //     foreignField: '_id',
-    //     as: 'wdfsaf'
-
-    //   }
-    // },
-
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'b2bshopclones',
+                    localField: 'shopId',
+                    foreignField: '_id',
+                    as: 'b2bshopclones',
+                  },
+                },
+                {
+                  $unwind: '$b2bshopclones',
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    SName: '$b2bshopclones.SName',
+                    mobile: '$b2bshopclones.mobile',
+                    status: 1,
+                    productStatus: 1,
+                    customerDeliveryStatus: 1,
+                    delivery_type: 1,
+                    time_of_delivery: 1,
+                    paidamount: 1,
+                    OrderId: 1,
+                    date: 1,
+                    created: 1,
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+          {
+            $project: {
+              _id: '$shoporderclones._id',
+              SName: '$shoporderclones.SName',
+              mobile: '$shoporderclones.mobile',
+              status: '$shoporderclones.status',
+              productStatus: '$shoporderclones.productStatus',
+              customerDeliveryStatus: '$shoporderclones.customerDeliveryStatus',
+              delivery_type: '$shoporderclones.delivery_type',
+              time_of_delivery: '$shoporderclones.time_of_delivery',
+              paidamount: '$shoporderclones.paidamount',
+              OrderId: '$shoporderclones.OrderId',
+              date: '$shoporderclones.date',
+              created: '$shoporderclones.created',
+            },
+          },
+        ],
+        as: 'groupOrders',
+      },
+    },
     {
       $project: {
         shopOrderCloneId: '$wdfsaf._id',
         groupId: 1,
-        totalOrders: 1,
+        totalOrders: { $size: '$dataDetails' },
         assignDate: 1,
         assignTime: 1,
         manageDeliveryStatus: 1,
@@ -774,16 +921,15 @@ const assignOnly = async (page) => {
         deliveryExecutiveName: '$UserName.name',
         pettyCashAllocateStatus: 1,
         pettyStockAllocateStatus: 1,
+        status: 1,
+        groupOrders: '$groupOrders',
       },
     },
-
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
-    // { $sort: { pettyStockAllocateStatusNumber:1} },
-    { $match: { status: 'Assigned' } },
-
+    { $match: { $and: [statusMatch, macthStatus] } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -821,9 +967,7 @@ const assignOnly = async (page) => {
         as: 'dataDetails',
       },
     },
-
     { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
-
     {
       $lookup: {
         from: 'b2busers',
@@ -847,29 +991,144 @@ const getDeliveryOrderSeparate = async (id, page) => {
       },
     },
     {
-      $unwind: '$Orderdatas',
-    },
-    {
       $lookup: {
-        from: 'shoporderclones',
-        localField: 'Orderdatas._id',
-        foreignField: '_id',
-        as: 'shopDatas',
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'productorderclones',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    pipeline: [
+                      {
+                        $project: {
+                          Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                          GST_Number: 1,
+                        },
+                      },
+                      {
+                        $project: {
+                          sum: '$sum',
+                          percentage: {
+                            $divide: [
+                              {
+                                $multiply: ['$GST_Number', '$Amount'],
+                              },
+                              100,
+                            ],
+                          },
+                          value: '$Amount',
+                        },
+                      },
+                      {
+                        $project: {
+                          price: { $sum: ['$value', '$percentage'] },
+                          value: '$value',
+                          GST: '$percentage',
+                        },
+                      },
+                      { $group: { _id: null, price: { $sum: '$price' } } },
+                    ],
+                    as: 'productorderclones',
+                  },
+                },
+                {
+                  $unwind: '$productorderclones',
+                },
+                {
+                  $lookup: {
+                    from: 'productorderclones',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    as: 'productorderclonescount',
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    status: 1,
+                    productStatus: 1,
+                    customerDeliveryStatus: 1,
+                    receiveStatus: 1,
+                    pettyCashReceiveStatus: 1,
+                    AssignedStatus: 1,
+                    completeStatus: 1,
+                    UnDeliveredStatus: 1,
+                    delivery_type: 1,
+                    Payment: 1,
+                    devevery_mode: 1,
+                    time_of_delivery: 1,
+                    total: 1,
+                    gsttotal: 1,
+                    subtotal: 1,
+                    SGST: 1,
+                    CGST: 1,
+                    paidamount: 1,
+                    Uid: 1,
+                    OrderId: 1,
+                    customerBillId: 1,
+                    date: 1,
+                    time: 1,
+                    created: 1,
+                    statusUpdate: 1,
+                    WA_assigned_Time: 1,
+                    deliveryExecutiveId: 1,
+                    WL_Packed_Time: 1,
+                    totalPrice: '$productorderclones.price',
+                    productCount: {
+                      $size: '$productorderclonescount',
+                    },
+                  },
+                },
+              ],
+              as: 'shopDatas',
+            },
+          },
+          { $unwind: '$shopDatas' },
+          {
+            $project: {
+              _id: '$shopDatas._id',
+              status: '$shopDatas.status',
+              productStatus: '$shopDatas.productStatus',
+              customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
+              receiveStatus: '$shopDatas.receiveStatus',
+              pettyCashReceiveStatus: '$shopDatas.pettyCashReceiveStatus',
+              AssignedStatus: '$shopDatas.AssignedStatus',
+              completeStatus: '$shopDatas.completeStatus',
+              UnDeliveredStatus: '$shopDatas.UnDeliveredStatus',
+              delivery_type: '$shopDatas.delivery_type',
+              Payment: '$shopDatas.Payment',
+              devevery_mode: '$shopDatas.devevery_mode',
+              time_of_delivery: '$shopDatas.time_of_delivery',
+              OrderId: '$shopDatas.OrderId',
+              customerBillId: '$shopDatas.customerBillId',
+              date: '$shopDatas.date',
+              time: '$shopDatas.time',
+              created: '$shopDatas.created',
+              statusUpdate: '$shopDatas.statusUpdate',
+              WA_assigned_Time: '$shopDatas.WA_assigned_Time',
+              deliveryExecutiveId: '$shopDatas.deliveryExecutiveId',
+              totalPrice: '$shopDatas.totalPrice',
+              paidamount: '$shopDatas.paidamount',
+              productCount: '$shopDatas.productCount',
+            },
+          },
+        ],
+        as: 'orderassigns',
       },
     },
-    { $unwind: '$shopDatas' },
+
     {
       $project: {
-        type: '$Orderdatas.type',
-        orderId: '$Orderdatas.OrderId',
-        orderedDate: '$Orderdatas.date',
-        orderedTime: '$Orderdatas.time',
-        streetName: '$Orderdatas.street',
-        totalItems: '$Orderdatas.totalItems',
-        shopName: '$Orderdatas.shopName',
-        customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
-        shopordercloneId: '$shopDatas._id',
-        inititalPaymentType: '$shopDatas.Payment',
+        orderassigns: '$orderassigns',
       },
     },
     { $skip: 10 * page },
@@ -894,7 +1153,10 @@ const getDeliveryOrderSeparate = async (id, page) => {
     },
     { $unwind: '$shopDatas' },
   ]);
-  return { datas: datas, total: total.length };
+  if (datas.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'order not Found');
+  }
+  return { datas: datas[0].orderassigns, total: total.length };
 };
 
 const groupIdClick = async (id) => {
@@ -1009,7 +1271,7 @@ const getBillDetailsPerOrder = async (id) => {
         from: 'productorderclones',
         localField: 'shopData._id',
         foreignField: 'orderId',
-        pipeline: [{ $group: { _id: null, Qty: { $sum: '$finalQuantity' }} }],
+        pipeline: [{ $group: { _id: null, Qty: { $sum: '$finalQuantity' } } }],
         as: 'TotalQuantityData',
       },
     },
@@ -1032,9 +1294,9 @@ const getBillDetailsPerOrder = async (id) => {
         GST_Number: 1,
         HSN_Code: 1,
         productTitle: '$productName.productTitle',
-        billNo: '$shopData.customerBillId',
-        billDate: '$shopData.customerBilldate',
-        billTime: '$shopData.customerBilltime',
+        billNo: '$shopData.billNo',
+        billDate: '$shopData.billDate',
+        billTime: '$shopData.billTime',
         OrderId: '$shopData.OrderId',
         shopName: '$b2bshopclonedatas.SName',
         address: '$b2bshopclonedatas.address',
@@ -1042,17 +1304,21 @@ const getBillDetailsPerOrder = async (id) => {
         shopType: '$b2bshopclonedatas.type',
         SOwner: '$b2bshopclonedatas.SOwner',
         Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+        // total: { $sum: "$Amount"},
         totalQuantity: '$TotalQuantityData.Qty',
         OperatorName: '$deliveryExecutiveName.name',
+<<<<<<< HEAD
         GSTamount:{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] },
         totalRupees: {$add: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, { "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] } ]} ,
         CGSTAmount: { $divide: [{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] }, 2] },
         SGSTAmount: { $divide: [{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] }, 2] },
+=======
+        CGSTAmount: { $divide: ['$GST_Number', 2] },
+        SGSTAmount: { $divide: ['$GST_Number', 2] },
+>>>>>>> bbd367e98a09cc251a8db89b1d43251241746179
       },
     },
-    
   ]);
-  
   return datas;
 };
 
@@ -1615,7 +1881,6 @@ const getShopDetailsForProj = async (id) => {
   return values;
 };
 
-
 const submitCashGivenByWDE = async (id, updateBody) => {
   let deliveryStatus = await wardAdminGroup.findById(id);
   console.log(deliveryStatus);
@@ -1628,60 +1893,46 @@ const submitCashGivenByWDE = async (id, updateBody) => {
   return deliveryStatus;
 };
 
-
-const createAddOrdINGrp = async (id,body) =>{
-   const {_id,shopId,status,productStatus,OrderId,date,time,type,Slat,Slong,street,totalItems,Qty,shopcloneId,shopName,ward} = body;
+const createAddOrdINGrp = async (id, body) => {
   let datas = await wardAdminGroup.findById(id);
-  if(!datas){
+  if (!datas) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  await wardAdminGroup.update({_id:id},{ $push: { Orderdatas: body}});
+  await wardAdminGroup.update({ _id: id }, { $push: { Orderdatas: body } }, { new: true });
+  let serverdates = moment().format('YYYY-MM-DD');
+  let servertime = moment().format('hh:mm a');
+  body.forEach(async (e) => {
+    const group = await wardAdminGroupModel_ORDERS.findOne({
+      wardAdminGroupID: id,
+      orderId: e._id,
+      date: serverdates,
+    });
+    if (!group) {
+      let productId = e._id;
 
-let update = await wardAdminGroup.findById(id);
-
-
-let serverdates = moment().format('YYYY-MM-DD');
-let servertime = moment().format('hh:mm a');
-
-  const group = await wardAdminGroupModel_ORDERS.find({ date: serverdates  });
-  console.log(group)
-
-
-  let center = '';
-
-  if (group.length < 9) {
-    center = '0000';
-  }
-  if (group.length < 99 && group.length >= 9) {
-    center = '000';
-  }
-  if (group.length < 999 && group.length >= 99) {
-    center = '00';
-  }
-  if (group.length < 9999 && group.length >= 999) {
-    center = '0';
-  }
-  let userId = '';
-  let totalcount = group.length + 1;
-  console.log(totalcount);
-  userId = 'D' + center + totalcount;
-
-  let values = {
-    AssignedstatusPerDay: userId,
-    date: serverdates,
-    time: servertime
-  }
-
-
-  body.Orderdatas.forEach(async (e) => {
-    let productId = e._id;
-
-    await wardAdminGroupModel_ORDERS.create({ orderId: productId, wardAdminGroupID: update._id ,AssignedstatusPerDay: values.AssignedstatusPerDay,date: values.date,time: values.time});
+      await ShopOrderClone.findByIdAndUpdate(
+        { _id: productId },
+        {
+          status: 'Assigned',
+          completeStatus: 'Assigned',
+          deliveryExecutiveId: body.deliveryExecutiveId,
+          WA_assigned_Time: moment(),
+        },
+        { new: true }
+      );
+      await wardAdminGroupModel_ORDERS.create({
+        wardAdminGroupID: id,
+        orderId: e._id,
+        date: serverdates,
+        time: servertime,
+        created: moment(),
+        AssignedstatusPerDay: 2,
+      });
+    }
   });
- 
 
-return "works";
-}
+  return 'works';
+};
 
 
 module.exports = {
@@ -1733,4 +1984,5 @@ module.exports = {
   getShopDetailsForProj,
   submitCashGivenByWDE,
   createAddOrdINGrp,
+  updateOrderStatus_forundelivey,
 };

@@ -14,6 +14,12 @@ const createcallHistoryWithTypes = catchAsync(async (req, res) => {
   res.send(history);
 });
 
+const createcallHistoryWithTypeslapsed = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const history = await callHistoryService.createcallHistoryWithTypelapsed(req.body, userId);
+  res.send(history);
+});
+
 const getAll = catchAsync(async (req, res) => {
   const callhistory = await callHistoryService.getAll();
   res.send(callhistory);
@@ -76,7 +82,21 @@ const getAllPage = catchAsync(async (req, res) => {
 const updateCallingStatus = catchAsync(async (req, res) => {
   let userId = req.userId;
   console.log(userId);
-  const callingStatus = await callHistoryService.updateStatuscall(req.params.id, userId, req.params.date);
+  const callingStatus = await callHistoryService.updateStatuscall(req.params.id, req.body, userId, req.params.date);
+  // throw new ApiError(httpStatus.UNAUTHORIZED, 'OnCall');
+  res.send(callingStatus);
+});
+
+const updateCallingStatuslapsed = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  console.log(userId);
+  const callingStatus = await callHistoryService.updateStatuscalllapsed(
+    req.params.id,
+    req.params.orderId,
+    req.body,
+    userId,
+    req.params.date
+  );
   // throw new ApiError(httpStatus.UNAUTHORIZED, 'OnCall');
   res.send(callingStatus);
 });
@@ -175,6 +195,15 @@ const BillHistoryByShopId_date = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+// const updateStatusLapsed = catchAsync(async (req, res) => {
+//   const data = await callHistoryService.
+// })
+
+const getLapsedCall_Count = catchAsync(async (req, res) => {
+  const data = await callHistoryService.getLapsedCall_Count();
+  res.send(data);
+});
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -199,4 +228,7 @@ module.exports = {
   oncallstatusByUser,
   call_visit_Count,
   BillHistoryByShopId_date,
+  getLapsedCall_Count,
+  updateCallingStatuslapsed,
+  createcallHistoryWithTypeslapsed,
 };

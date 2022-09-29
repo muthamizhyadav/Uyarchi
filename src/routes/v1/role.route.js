@@ -11,5 +11,10 @@ router
   .delete(roleController.deletRoleById)
   .put(roleController.updateRolesById);
 router.route('/admin/wh').get(roleController.mainWarehouseRoles);
-
+router.route('/getallwardadmin/data').get(roleController.getroleWardAdmin)
+router.route('/getallwardadminAsm/Asm').get(roleController.getroleWardAdminAsm)
+router.route('/getAllSalesManager/data').get(roleController.getAlldataSalesManager)
+router.route('/getAllSalesMan/data').get(roleController.getAlldataSalesMan)
+router.route('/getSalesMan/data').get(roleController.getSalesMan)
+router.route('/getAllSalesmanShops/data').get(roleController.getAllSalesmanShops)
 module.exports = router;

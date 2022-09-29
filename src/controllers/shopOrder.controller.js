@@ -197,6 +197,58 @@ const get_data_for_lapster = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getLapsed_Data = catchAsync(async (req, res) => {
+  console.log('hello');
+  let userRoles = req.userRole;
+  let UserId = req.userId;
+  console.log(req.params);
+  if (req.params.status == 'pending') {
+    const data = await shopOrderService.getLapsed_Data(req.params.page, userRoles, UserId);
+    res.send(data);
+  }
+  if (req.params.status == 'callback') {
+    const data = await shopOrderService.lapsed_callBack(req.params.page, userRoles, UserId);
+    res.send(data);
+  }
+  if (req.params.status == 'accept') {
+    const data = await shopOrderService.lapsed_accept(req.params.page, userRoles, UserId);
+    res.send(data);
+  }
+  if (req.params.status == 'declined') {
+    const data = await shopOrderService.lapsed_declined(req.params.page, userRoles, UserId);
+    res.send(data);
+  }
+  if (req.params.status == 'reschedule') {
+    const data = await shopOrderService.lapsed_reschedule(req.params.page, userRoles, UserId);
+    res.send(data);
+  }
+});
+const getLapsed_Rejected = catchAsync(async (req, res) => {
+  let userRoles = req.userRole;
+  let UserId = req.userId;
+  const data = await shopOrderService.getLapsed_Rejected(req.params.page, userRoles, UserId);
+  res.send(data);
+});
+
+const getLapsed_Undelivered = catchAsync(async (req, res) => {
+  let userRoles = req.userRole;
+  let UserId = req.userId;
+  const data = await shopOrderService.getLapsed_Undelivered(req.params.page, userRoles, UserId);
+  res.send(data);
+});
+
+const getCallhistories = catchAsync(async (req, res) => {
+  let userRoles = req.userRole;
+  let UserId = req.userId;
+  const data = await shopOrderService.getCallhistories(req.params.shopId, userRoles, UserId);
+  res.send(data);
+});
+
+const getFindbyId = catchAsync(async (req, res) => {
+  const data = await shopOrderService.getFindbyId(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   createshopOrder,
   getAllShopOrder,
@@ -232,4 +284,9 @@ module.exports = {
   getManageordersByOrderId,
   productData,
   get_data_for_lapster,
+  getLapsed_Data,
+  getLapsed_Rejected,
+  getLapsed_Undelivered,
+  getCallhistories,
+  getFindbyId,
 };
