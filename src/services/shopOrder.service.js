@@ -1454,14 +1454,20 @@ const lapsed_callBack = async (page, userRoles, userId) => {
   let todaydate = moment().format('YYYY-MM-DD');
   let values = await ShopOrderClone.aggregate([
     {
-      $match: { $and: [{ status: { $ne: 'UnDelivered' } }, { date: yersterday }, { status: { $ne: 'Delivered' } }] },
+      $match: {
+        $and: [
+          { callstatus: { $eq: 'callback' } },
+          { status: { $ne: 'UnDelivered' } },
+          { date: yersterday },
+          { status: { $ne: 'Delivered' } },
+        ],
+      },
     },
     {
       $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
-        pipeline: [{ $match: { callingStatus: { $eq: 'callback' } } }],
         as: 'shops',
       },
     },
@@ -1501,14 +1507,20 @@ const lapsed_callBack = async (page, userRoles, userId) => {
 
   let total = await ShopOrderClone.aggregate([
     {
-      $match: { $and: [{ status: { $ne: 'UnDelivered' } }, { date: yersterday }, { status: { $ne: 'Delivered' } }] },
+      $match: {
+        $and: [
+          { callstatus: { $eq: 'callback' } },
+          { status: { $ne: 'UnDelivered' } },
+          { date: yersterday },
+          { status: { $ne: 'Delivered' } },
+        ],
+      },
     },
     {
       $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
-        // pipeline:[{$match:{lapsed:{$ne:true}}}],
         as: 'shops',
       },
     },
