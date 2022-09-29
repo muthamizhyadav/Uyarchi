@@ -1139,6 +1139,23 @@ const getLapsed_Data = async (page, userRoles, userId, method) => {
       { status: { $eq: 'Rejected' } },
     ];
   }
+  if (method == 'un') {
+    matchvalue = [
+      {
+        callstatus: { $ne: 'callback' },
+      },
+      {
+        callstatus: { $ne: 'accept' },
+      },
+      {
+        callstatus: { $ne: 'declined' },
+      },
+      {
+        callstatus: { $ne: 'reschedule' },
+      },
+      { status: { $eq: 'UnDelivered' } },
+    ];
+  }
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -1503,6 +1520,9 @@ const lapsed_callBack = async (page, userRoles, userId, method) => {
   if (method == 're') {
     matchvalue = [{ callstatus: { $eq: 'callback' } }, { status: { $eq: 'Rejected' } }];
   }
+  if (method == 'un') {
+    matchvalue = [{ callstatus: { $eq: 'callback' } }, { status: { $eq: 'UnDelivered' } }];
+  }
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -1598,6 +1618,9 @@ const lapsed_accept = async (page, userRoles, userId, method) => {
   }
   if (method == 're') {
     matchvalue = [{ callstatus: { $eq: 'accept' } }, { status: { $eq: 'Rejected' } }];
+  }
+  if (method == 'un') {
+    matchvalue = [{ callstatus: { $eq: 'accept' } }, { status: { $eq: 'UnDelivered' } }];
   }
   let values = await ShopOrderClone.aggregate([
     {
@@ -1695,6 +1718,9 @@ const lapsed_declined = async (page, userRoles, userId, method) => {
   if (method == 're') {
     matchvalue = [{ callstatus: { $eq: 'declined' } }, { status: { $eq: 'Rejected' } }];
   }
+  if (method == 'un') {
+    matchvalue = [{ callstatus: { $eq: 'declined' } }, { status: { $eq: 'UnDelivered' } }];
+  }
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -1781,7 +1807,7 @@ const lapsed_reschedule = async (page, userRoles, userId, method) => {
   let todaydate = moment().format('YYYY-MM-DD');
   if (method == 'lp') {
     matchvalue = [
-      { callstatus: { $eq: 'declined' } },
+      { callstatus: { $eq: 'reschedule' } },
       { status: { $ne: 'UnDelivered' } },
       { date: yersterday },
       { status: { $ne: 'Delivered' } },
@@ -1789,7 +1815,10 @@ const lapsed_reschedule = async (page, userRoles, userId, method) => {
     ];
   }
   if (method == 're') {
-    matchvalue = [{ callstatus: { $eq: 'declined' } }, { status: { $eq: 'Rejected' } }];
+    matchvalue = [{ callstatus: { $eq: 'reschedule' } }, { status: { $eq: 'Rejected' } }];
+  }
+  if (method == 'un') {
+    matchvalue = [{ callstatus: { $eq: 'reschedule' } }, { status: { $eq: 'UnDelivered' } }];
   }
   let values = await ShopOrderClone.aggregate([
     {
@@ -1897,20 +1926,110 @@ const lapsed_reschedule = async (page, userRoles, userId, method) => {
   return { values: values, total: total.length, Role: userRole.roleName, User: User.name };
 };
 
-const lapsedordercount = async () => {
+const lapsedordercount = async (method) => {
   console.log('asd');
   let todaydate = moment().format('YYYY-MM-DD');
   let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
+  let callBackmatch;
+  let reschedulematch;
+  let acceptmatch;
+  let declinedmatch;
+  let pendingmatch;
+
+  if (method == 'lp') {
+    pendingmatch = [
+      {
+        callstatus: { $ne: 'callback' },
+      },
+      {
+        callstatus: { $ne: 'accept' },
+      },
+      {
+        callstatus: { $ne: 'declined' },
+      },
+      {
+        callstatus: { $ne: 'reschedule' },
+      },
+      { status: { $ne: 'UnDelivered' } },
+      { date: yersterday },
+      { status: { $ne: 'Delivered' } },
+      { status: { $ne: 'Rejected' } },
+    ];
+    callBackmatch = [
+      { callstatus: { $eq: 'callback' } },
+      { status: { $ne: 'UnDelivered' } },
+      { date: yersterday },
+      { status: { $ne: 'Delivered' } },
+      { status: { $ne: 'Rejected' } },
+    ];
+    acceptmatch = [
+      { callstatus: { $eq: 'accept' } },
+      { status: { $ne: 'UnDelivered' } },
+      { date: yersterday },
+      { status: { $ne: 'Delivered' } },
+      { status: { $ne: 'Rejected' } },
+    ];
+    declinedmatch = [
+      { callstatus: { $eq: 'declined' } },
+      { status: { $ne: 'UnDelivered' } },
+      { date: yersterday },
+      { status: { $ne: 'Delivered' } },
+      { status: { $ne: 'Rejected' } },
+    ];
+    reschedulematch = [
+      { callstatus: { $eq: 'reschedule' } },
+      { status: { $ne: 'UnDelivered' } },
+      { date: yersterday },
+      { status: { $ne: 'Delivered' } },
+      { status: { $ne: 'Rejected' } },
+    ];
+  }
+  if (method == 're') {
+    pendingmatch = [
+      {
+        callstatus: { $ne: 'callback' },
+      },
+      {
+        callstatus: { $ne: 'accept' },
+      },
+      {
+        callstatus: { $ne: 'declined' },
+      },
+      {
+        callstatus: { $ne: 'reschedule' },
+      },
+      { status: { $eq: 'Rejected' } },
+    ];
+    callBackmatch = [{ callstatus: { $eq: 'callback' } }, { status: { $eq: 'Rejected' } }];
+    acceptmatch = [{ callstatus: { $eq: 'accept' } }, { status: { $eq: 'Rejected' } }];
+    declinedmatch = [{ callstatus: { $eq: 'declined' } }, { status: { $eq: 'Rejected' } }];
+    reschedulematch = [{ callstatus: { $eq: 'reschedule' } }, { status: { $eq: 'Rejected' } }];
+  }
+  if (method == 'un') {
+    pendingmatch = [
+      {
+        callstatus: { $ne: 'callback' },
+      },
+      {
+        callstatus: { $ne: 'accept' },
+      },
+      {
+        callstatus: { $ne: 'declined' },
+      },
+      {
+        callstatus: { $ne: 'reschedule' },
+      },
+      { status: { $eq: 'UnDelivered' } },
+    ];
+    callBackmatch = [{ callstatus: { $eq: 'callback' } }, { status: { $eq: 'UnDelivered' } }];
+    acceptmatch = [{ callstatus: { $eq: 'accept' } }, { status: { $eq: 'UnDelivered' } }];
+    declinedmatch = [{ callstatus: { $eq: 'declined' } }, { status: { $eq: 'UnDelivered' } }];
+    reschedulematch = [{ callstatus: { $eq: 'reschedule' } }, { status: { $eq: 'UnDelivered' } }];
+  }
   let callBack = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { callstatus: { $eq: 'callback' } },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-          { status: { $ne: 'Rejected' } },
-        ],
+        $and: callBackmatch,
       },
     },
     {
@@ -1937,13 +2056,7 @@ const lapsedordercount = async () => {
   let reschedule = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { callstatus: { $eq: 'reschedule' } },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-          { status: { $ne: 'Rejected' } },
-        ],
+        $and: reschedulematch,
       },
     },
     {
@@ -1983,13 +2096,7 @@ const lapsedordercount = async () => {
   let accept = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { callstatus: { $eq: 'accept' } },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-          { status: { $ne: 'Rejected' } },
-        ],
+        $and: acceptmatch,
       },
     },
     {
@@ -2016,13 +2123,7 @@ const lapsedordercount = async () => {
   let declined = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { callstatus: { $eq: 'declined' } },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-          { status: { $ne: 'Rejected' } },
-        ],
+        $and: declinedmatch,
       },
     },
     {
@@ -2049,24 +2150,7 @@ const lapsedordercount = async () => {
   let pending = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          {
-            callstatus: { $ne: 'callback' },
-          },
-          {
-            callstatus: { $ne: 'accept' },
-          },
-          {
-            callstatus: { $ne: 'declined' },
-          },
-          {
-            callstatus: { $ne: 'reschedule' },
-          },
-          { status: { $ne: 'UnDelivered' } },
-          { date: yersterday },
-          { status: { $ne: 'Delivered' } },
-          { status: { $ne: 'Rejected' } },
-        ],
+        $and: pendingmatch,
       },
     },
     {
