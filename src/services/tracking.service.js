@@ -32,9 +32,24 @@ const getTrackingByUserById = async (userId) => {
   }
   return values;
 };
+const updatelocation = async (shopId, body) => {
+  console.log(userId);
+  let today = moment().format('YYYY-MM-DD');
+  let update = { ...body, ...{ date: today, userId: shopId } };
+  let values = await Tracking.findOne({ userId: shopId, date: today });
+  if (!values) {
+    await Tracking.create(update);
+  } else {
+    let capture = values.capture.push(body.capture);
+    console.log(capture)
+    await Tracking.findByIdAndUpdate({ _id: update._id }, { capture: capture }, { new: true });
+  }
+  return values;
+};
 
 module.exports = {
   createTracking,
   updateTrackingById,
   getTrackingByUserById,
+  updatelocation,
 };
