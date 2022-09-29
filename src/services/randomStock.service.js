@@ -35,6 +35,41 @@ const createrandomStock =  async (body) => {
     const getAll = async () => {
         return randomStockModel.find();
       };
+
+
+      const getProductNameDetails = async (id) =>{
+        let values = await randomStockModel.aggregate([
+            {
+                $match: {
+                  $and: [{ _id: { $eq: id } }],
+                },
+              },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'product',
+                    foreignField: '_id',
+                    as: 'productName',
+            }
+        },
+        {
+            $unwind: "$productName"
+        },
+        {
+            $project:{
+                productName:"$productName.productTitle",
+                NSFQ1:1,
+                NSFQ2:1,
+                NSFQ3:1,
+                NSFW_Wastage:1,
+                wastedImageFile:1, 
+                _id:1, 
+
+            }
+        }
+        ]);
+        return values;
+      }
   
 
 
@@ -42,4 +77,5 @@ module.exports = {
     getProduct,
     createrandomStock,
     getAll,
+    getProductNameDetails,
 }
