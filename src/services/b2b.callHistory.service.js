@@ -1023,7 +1023,6 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
           { sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') } },
           keys,
           { callingStatus: { $eq: status } },
-          { lapsed: { $ne: true } },
         ],
       },
     },
