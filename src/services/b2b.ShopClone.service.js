@@ -1605,17 +1605,36 @@ const getVendorShops = async (key) => {
 
 // getnotAssignSalesmanData
 
-const getnotAssignSalesmanData = async () =>{
+const getnotAssignSalesmanData = async (id) =>{
   let data = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ Wardid: { $eq:id} }],
+      },
+    },
     {
       $match: {
         $or: [{ salesManStatus: { $ne:'Assign' } },{ salesManStatus: { $eq:null} },{ salesManStatus: { $eq:'Reassign'} }],
       },
     },
     {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streets',
+      },
+    },
+    {
+      $unwind:'$streets',
+    },
+    {
       $project: {
         SOwner:1,
         SName:1,
+        mobile:1,
+        address:1,
+        locality:'$streets.locality',
         _id: 1,
       },
     },
