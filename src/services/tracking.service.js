@@ -41,7 +41,7 @@ const updatelocation = async (shopId, body) => {
     await Tracking.create(update);
   } else {
     let capture = values.capture.push(body.capture);
-    console.log(capture)
+    console.log(capture);
     await Tracking.findByIdAndUpdate({ _id: update._id }, { capture: capture }, { new: true });
   }
   return values;
