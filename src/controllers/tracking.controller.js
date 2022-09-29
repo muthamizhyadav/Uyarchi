@@ -20,7 +20,7 @@ const getTrackingByUserById = catchAsync(async (req, res) => {
 
 const updatelocation = catchAsync(async (req, res) => {
   const tracking = await TrackingService.updatelocation(req.shopId, req.body);
-  console.log(tracking);
+  // console.log(tracking);
   res.send(tracking);
 });
 module.exports = {
