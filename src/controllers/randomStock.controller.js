@@ -32,10 +32,15 @@ const getProductName= catchAsync(async (req, res) => {
     const getDAte = await randomStockService.getAll();
     res.send(getDAte);
   });
+  const getProductNameDetails = catchAsync(async (req, res) => {
+    const getDAte = await randomStockService.getProductNameDetails(req.params.id);
+    res.send(getDAte);
+  });
 
 
 module.exports = {
     getProductName,
     createrandomStock,
     getAll,
+    getProductNameDetails,
 }
