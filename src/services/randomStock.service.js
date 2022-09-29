@@ -48,13 +48,13 @@ const createrandomStock =  async (body) => {
       };
 
 
-      const getProductNameDetails = async (id) =>{
+      const getProductNameDetails = async () =>{
         let values = await randomStockModel.aggregate([
-            {
-                $match: {
-                  $and: [{ _id: { $eq: id } }],
-                },
-              },
+            // {
+            //     $match: {
+            //       $and: [{ _id: { $eq: id } }],
+            //     },
+            //   },
             {
                 $lookup: {
                     from: 'products',

@@ -33,7 +33,7 @@ const getProductName= catchAsync(async (req, res) => {
     res.send(getDAte);
   });
   const getProductNameDetails = catchAsync(async (req, res) => {
-    const getDAte = await randomStockService.getProductNameDetails(req.params.id);
+    const getDAte = await randomStockService.getProductNameDetails();
     res.send(getDAte);
   });
 
