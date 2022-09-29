@@ -1167,12 +1167,33 @@ const getLapsed_Data = async (page, userRoles, userId, method) => {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoplists',
+              localField: 'SType',
+              foreignField: '_id',
+              as: 'shoplists',
+            },
+          },
+          {
+            $unwind: '$shoplists',
+          },
+          {
+            $project: {
+              SName: 1,
+              _id: 1,
+              shopType: '$shoplists.shopList',
+            },
+          },
+        ],
         as: 'shops',
       },
     },
     {
       $unwind: '$shops',
     },
+
     {
       $lookup: {
         from: 'callhistories',
@@ -1195,9 +1216,10 @@ const getLapsed_Data = async (page, userRoles, userId, method) => {
         time_of_delivery: 1,
         Payment: 1,
         shops: '$shops.SName',
-        lapsed: '$shops.lapsed',
+        shopType: '$shops.shopType',
         calls: { $size: '$callhistories' },
         callhistories: '$callhistories',
+        created: 1,
       },
     },
     { $skip: 10 * page },
@@ -1534,12 +1556,33 @@ const lapsed_callBack = async (page, userRoles, userId, method) => {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoplists',
+              localField: 'SType',
+              foreignField: '_id',
+              as: 'shoplists',
+            },
+          },
+          {
+            $unwind: '$shoplists',
+          },
+          {
+            $project: {
+              SName: 1,
+              _id: 1,
+              shopType: '$shoplists.shopList',
+            },
+          },
+        ],
         as: 'shops',
       },
     },
     {
       $unwind: '$shops',
     },
+
     {
       $lookup: {
         from: 'callhistories',
@@ -1562,9 +1605,10 @@ const lapsed_callBack = async (page, userRoles, userId, method) => {
         time_of_delivery: 1,
         Payment: 1,
         shops: '$shops.SName',
-        lapsed: '$shops.lapsed',
+        shopType: '$shops.shopType',
         calls: { $size: '$callhistories' },
         callhistories: '$callhistories',
+        created: 1,
       },
     },
     { $skip: 10 * page },
@@ -1633,12 +1677,33 @@ const lapsed_accept = async (page, userRoles, userId, method) => {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoplists',
+              localField: 'SType',
+              foreignField: '_id',
+              as: 'shoplists',
+            },
+          },
+          {
+            $unwind: '$shoplists',
+          },
+          {
+            $project: {
+              SName: 1,
+              _id: 1,
+              shopType: '$shoplists.shopList',
+            },
+          },
+        ],
         as: 'shops',
       },
     },
     {
       $unwind: '$shops',
     },
+
     {
       $lookup: {
         from: 'callhistories',
@@ -1661,9 +1726,10 @@ const lapsed_accept = async (page, userRoles, userId, method) => {
         time_of_delivery: 1,
         Payment: 1,
         shops: '$shops.SName',
-        lapsed: '$shops.lapsed',
+        shopType: '$shops.shopType',
         calls: { $size: '$callhistories' },
         callhistories: '$callhistories',
+        created: 1,
       },
     },
     { $skip: 10 * page },
@@ -1732,12 +1798,33 @@ const lapsed_declined = async (page, userRoles, userId, method) => {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoplists',
+              localField: 'SType',
+              foreignField: '_id',
+              as: 'shoplists',
+            },
+          },
+          {
+            $unwind: '$shoplists',
+          },
+          {
+            $project: {
+              SName: 1,
+              _id: 1,
+              shopType: '$shoplists.shopList',
+            },
+          },
+        ],
         as: 'shops',
       },
     },
     {
       $unwind: '$shops',
     },
+
     {
       $lookup: {
         from: 'callhistories',
@@ -1760,9 +1847,10 @@ const lapsed_declined = async (page, userRoles, userId, method) => {
         time_of_delivery: 1,
         Payment: 1,
         shops: '$shops.SName',
-        lapsed: '$shops.lapsed',
+        shopType: '$shops.shopType',
         calls: { $size: '$callhistories' },
         callhistories: '$callhistories',
+        created: 1,
       },
     },
     { $skip: 10 * page },
@@ -1831,11 +1919,28 @@ const lapsed_reschedule = async (page, userRoles, userId, method) => {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoplists',
+              localField: 'SType',
+              foreignField: '_id',
+              as: 'shoplists',
+            },
+          },
+          {
+            $unwind: '$shoplists',
+          },
+          {
+            $project: {
+              SName: 1,
+              _id: 1,
+              shopType: '$shoplists.shopList',
+            },
+          },
+        ],
         as: 'shops',
       },
-    },
-    {
-      $unwind: '$shops',
     },
     {
       $lookup: {
@@ -1871,10 +1976,11 @@ const lapsed_reschedule = async (page, userRoles, userId, method) => {
         time_of_delivery: 1,
         Payment: 1,
         shops: '$shops.SName',
-        lapsed: '$shops.lapsed',
+        shopType: '$shops.shopType',
         calls: { $size: '$callhistories' },
         callhistories: '$callhistories',
         callhistoriesdata: '$callhistoriesdata',
+        created: 1,
       },
     },
     { $skip: 10 * page },
