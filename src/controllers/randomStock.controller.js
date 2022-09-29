@@ -29,7 +29,11 @@ const getProductName= catchAsync(async (req, res) => {
   });
 
   const getAll = catchAsync(async (req, res) => {
-    const getDAte = await randomStockService.getAll();
+    const getDAte = await randomStockService.getAll(req.params.product,req.params.date);
+    res.send(getDAte);
+  });
+  const getProductNameDetails = catchAsync(async (req, res) => {
+    const getDAte = await randomStockService.getProductNameDetails();
     res.send(getDAte);
   });
 
@@ -38,4 +42,5 @@ module.exports = {
     getProductName,
     createrandomStock,
     getAll,
+    getProductNameDetails,
 }
