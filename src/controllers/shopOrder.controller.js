@@ -249,6 +249,11 @@ const getFindbyId = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const lapsedordercount = catchAsync(async (req, res) => {
+  const data = await shopOrderService.lapsedordercount(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   createshopOrder,
   getAllShopOrder,
@@ -289,4 +294,5 @@ module.exports = {
   getLapsed_Undelivered,
   getCallhistories,
   getFindbyId,
+  lapsedordercount,
 };

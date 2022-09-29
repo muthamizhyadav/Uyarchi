@@ -30,5 +30,4 @@ router.route('/oncallshops').get(callHistoryController.getOncallShops);
 router.route('/oncall/status/Byuser').get(authorization, callHistoryController.oncallstatusByUser);
 router.route('/call/visit/count').get(authorization, callHistoryController.call_visit_Count);
 router.route('/callhistory/byShop/:shopId/:date').get(callHistoryController.BillHistoryByShopId_date);
-router.route('/call/count/lapsed').get(callHistoryController.getLapsedCall_Count);
 module.exports = router;

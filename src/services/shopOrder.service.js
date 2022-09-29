@@ -1884,6 +1884,203 @@ const lapsed_reschedule = async (page, userRoles, userId) => {
   return { values: values, total: total.length, Role: userRole.roleName, User: User.name };
 };
 
+const lapsedordercount = async () => {
+  console.log('asd');
+  let todaydate = moment().format('YYYY-MM-DD');
+  let yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
+  let callBack = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { callstatus: { $eq: 'callback' } },
+          { status: { $ne: 'UnDelivered' } },
+          { date: yersterday },
+          { status: { $ne: 'Delivered' } },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline: [{ $match: { date: todaydate } }],
+        as: 'callhistories',
+      },
+    },
+  ]);
+  let reschedule = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { callstatus: { $eq: 'reschedule' } },
+          { status: { $ne: 'UnDelivered' } },
+          { date: yersterday },
+          { status: { $ne: 'Delivered' } },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline: [{ $match: { date: todaydate } }],
+        as: 'callhistories',
+      },
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'callhistoryId',
+        foreignField: '_id',
+        pipeline: [{ $match: { callStatus: 'reschedule', date: { $gte: moment().format('YYYY-MM-DD') } } }],
+        as: 'callhistoriesdata',
+      },
+    },
+    {
+      $unwind: '$callhistoriesdata',
+    },
+  ]);
+
+  let accept = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { callstatus: { $eq: 'accept' } },
+          { status: { $ne: 'UnDelivered' } },
+          { date: yersterday },
+          { status: { $ne: 'Delivered' } },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline: [{ $match: { date: todaydate } }],
+        as: 'callhistories',
+      },
+    },
+  ]);
+  let declined = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { callstatus: { $eq: 'declined' } },
+          { status: { $ne: 'UnDelivered' } },
+          { date: yersterday },
+          { status: { $ne: 'Delivered' } },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline: [{ $match: { date: todaydate } }],
+        as: 'callhistories',
+      },
+    },
+  ]);
+  let pending = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            callstatus: { $ne: 'callback' },
+          },
+          {
+            callstatus: { $ne: 'accept' },
+          },
+          {
+            callstatus: { $ne: 'declined' },
+          },
+          {
+            callstatus: { $ne: 'reschedule' },
+          },
+          { status: { $ne: 'UnDelivered' } },
+          { date: yersterday },
+          { status: { $ne: 'Delivered' } },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        pipeline: [{ $match: { date: todaydate } }],
+        as: 'callhistories',
+      },
+    },
+  ]);
+  return {
+    callBack: callBack.length,
+    reschedule: reschedule.length,
+    accept: accept.length,
+    declined: declined.length,
+    pending: pending.length,
+  };
+};
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -1929,4 +2126,5 @@ module.exports = {
   lapsed_accept,
   lapsed_declined,
   lapsed_reschedule,
+  lapsedordercount,
 };
