@@ -86,13 +86,9 @@ const WLE_Route = require('./WLE.route');
 const TrackingRoute = require('./tracking.route');
 const CustomerIssues = require('./customerIssues.route');
 const LapsedRoute = require('./lapsed.route');
-<<<<<<< HEAD
-const randomStock = require('./randomStock.route')
-
-=======
 const wardAdminRole = require('./wardAdminRole.route');
 const registerShop = require('./shopregister.route');
->>>>>>> bbd367e98a09cc251a8db89b1d43251241746179
+const randomStock = require('./randomStock.route');
 const defaultRoutes = [
   {
     path: '/registerShop',
@@ -430,15 +426,13 @@ const defaultRoutes = [
     route: pettyStockRoute,
   },
   {
-<<<<<<< HEAD
     path: '/randomStockpath',
     route: randomStock,
-  }
-=======
+  },
+  {
     path: '/wardAdminRole',
     route: wardAdminRole,
   },
->>>>>>> bbd367e98a09cc251a8db89b1d43251241746179
   // {
   //   path: '/sales',
   //   route: salesApp,
