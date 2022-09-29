@@ -32,29 +32,64 @@ const createrandomStock =  async (body) => {
   };
 
   
-    const getAll = async (product,date) => {
-        let productmatch;
-        if (product != 'null') {
-            productmatch = { product: { $eq: product } };
-        } else {
-            productmatch = { active: true };
-        }
-        let datematch;
-        if (date != 'null') {
-            datematch = { date: date };
-        } else {
-            datematch = { active: true };
-        }
-      };
+    const getAll = async (product, date) => {
+      let datematch ;
+      let productmatch ;
+
+      if (product != 'null' && date == 'null') {
+        productmatch = {
+          product: { $eq: product },
+        };
+      }else if (product == 'null' && date != 'null'){
+        datematch = {
+                  date: { $eq: date },
+                };
+      }
+    else if (product == 'null' && date == 'null'){
+        datematch = [{active: { $eq: true }}];
+        console.log(datematch)
+        productmatch = [{active: { $eq: true }}]
+        console.log(productmatch)
+      }
+
+      let values = await randomStockModel.aggregate([
+        {
+          $match: {
+            $and: [datematch, productmatch],
+          },
+        },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'product',
+            foreignField: '_id',
+            as: 'clonedProducts',
+          },
+        },
+        {
+          $unwind: '$clonedProducts',
+        },
+        {
+          $project: {
+            NSFQ1: 1,
+            NSFQ2: 1,
+            NSFQ3: 1,
+            NSFW_Wastage: 1,
+            product: 1,
+            productTitle: '$clonedProducts.productTitle',
+            _id: 1,
+            date: 1,
+            time: 1,
+          },
+        },
+      ]);
+      return values;
+    };
 
 
       const getProductNameDetails = async () =>{
         let values = await randomStockModel.aggregate([
-            // {
-            //     $match: {
-            //       $and: [{ _id: { $eq: id } }],
-            //     },
-            //   },
+         
             {
                 $lookup: {
                     from: 'products',
