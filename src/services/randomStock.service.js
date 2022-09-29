@@ -31,8 +31,15 @@ const createrandomStock =  async (body) => {
     return stock;
   };
 
+  
+    const getAll = async () => {
+        return randomStockModel.find();
+      };
+  
+
 
 module.exports = {
     getProduct,
     createrandomStock,
+    getAll,
 }
