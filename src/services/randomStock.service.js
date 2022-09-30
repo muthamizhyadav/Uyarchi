@@ -89,20 +89,37 @@ const getProductNameDetails = async () => {
     {
       $unwind: '$productName',
     },
+    { $group : { _id : "$product" ,Names : { $addToSet : "$productName.productTitle" } }}
+  
+  ]);
+  let datas = await randomStockModel.aggregate([
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'product',
+        foreignField: '_id',
+        as: 'productName',
+      },
+    },
+    {
+      $unwind: '$productName',
+    },
     {
       $project: {
-        productName: '$productName.productTitle',
         NSFQ1: 1,
         NSFQ2: 1,
         NSFQ3: 1,
         NSFW_Wastage: 1,
         wastedImageFile: 1,
-        _id: 1,
         product: 1,
+        _id: 1,
+        productName: '$productName.productTitle',
+       
+       
       },
     },
   ]);
-  return values;
+  return { values: values, datas:datas }
 };
 
 module.exports = {
