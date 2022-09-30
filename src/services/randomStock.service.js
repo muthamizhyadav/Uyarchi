@@ -90,19 +90,7 @@ const getProductNameDetails = async () => {
       $unwind: '$productName',
     },
     { $group : { _id : "$product" ,Names : { $addToSet : "$productName.productTitle" } }}
-    // {
-    //   $project: {
-    //     // productName: '$productName.productTitle',
-    //     Names : { $addToSet : "$productName.productTitle" },
-    //     NSFQ1: 1,
-    //     NSFQ2: 1,
-    //     NSFQ3: 1,
-    //     NSFW_Wastage: 1,
-    //     wastedImageFile: 1,
-    //     _id: 1,
-    //     product: 1,
-    //   },
-    // },
+  
   ]);
   let datas = await randomStockModel.aggregate([
     {
