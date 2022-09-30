@@ -90,6 +90,8 @@ const createshopOrderClone = async (body, userid) => {
     created: moment(),
     orderId: createShopOrderClone._id,
     type: 'advanced',
+    pay_type: body.pay_type,
+    paymentMethod: body.paymentMethod,
   });
   let { product, time, shopId } = body;
   await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: 'accept', callingStatusSort: 6 }, { new: true });
