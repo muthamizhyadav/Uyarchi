@@ -23,6 +23,11 @@ const gettracking = catchAsync(async (req, res) => {
   console.log(tracking);
   res.send(tracking);
 });
+const gettrackingall = catchAsync(async (req, res) => {
+  const tracking = await TrackingService.gettrackingall(req.params.userId);
+  console.log(tracking);
+  res.send(tracking);
+});
 
 const getusers = catchAsync(async (req, res) => {
   const tracking = await TrackingService.getusers();
@@ -41,4 +46,5 @@ module.exports = {
   updatelocation,
   gettracking,
   getusers,
+  gettrackingall,
 };

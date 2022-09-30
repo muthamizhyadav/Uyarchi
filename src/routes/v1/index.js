@@ -89,6 +89,7 @@ const LapsedRoute = require('./lapsed.route');
 const wardAdminRole = require('./wardAdminRole.route');
 const registerShop = require('./shopregister.route');
 const randomStock = require('./randomStock.route');
+const destoryStock = require('./destoryStock.route')
 const defaultRoutes = [
   {
     path: '/registerShop',
@@ -433,6 +434,10 @@ const defaultRoutes = [
     path: '/wardAdminRole',
     route: wardAdminRole,
   },
+  {
+    path: '/destoryStockpath',
+    route: destoryStock,
+  }
   // {
   //   path: '/sales',
   //   route: salesApp,

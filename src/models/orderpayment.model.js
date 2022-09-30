@@ -39,6 +39,12 @@ const OrderPaymentSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  pay_type: {
+    type: String,
+  },
+  paymentMethod: {
+    type: String,
+  },
 });
 
 const OrderPayment = new mongoose.model('orderPayment', OrderPaymentSchema);

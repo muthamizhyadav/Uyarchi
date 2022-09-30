@@ -252,6 +252,12 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   callhistoryId: {
     type: String,
   },
+  pay_type: {
+    type: String,
+  },
+  paymentMethod: {
+    type: String,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
