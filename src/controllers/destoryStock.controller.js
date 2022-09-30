@@ -10,6 +10,21 @@ const getProductNAmeFromRandom = catchAsync(async (req, res) => {
     res.send(cashAsGivenByWDE);
 });
 
+const createDestroyStock = catchAsync(async (req, res) => {
+    const sample = await destroyStockService.createDestroyStock(req.body);
+    res.send(sample);
+});
+
+const getdetailsWithSorting = catchAsync(async (req, res) => {
+    const data = await destroyStockService.getdetailsWithSorting(
+        req.params.productId, 
+        req.params.date
+        );
+    res.send(data);
+})
+
 module.exports = {
     getProductNAmeFromRandom,
+    createDestroyStock,
+    getdetailsWithSorting,
 }

@@ -3,6 +3,8 @@ const destroyStockController = require('../../controllers/destoryStock.controlle
 const router = express.Router();
 
 router.route('/get/productNAme/fromRandomStock').get(destroyStockController.getProductNAmeFromRandom);
+router.route('/create/destoryStock/product').post(destroyStockController.createDestroyStock);
+router.route('/get/data/fromdestroyStock/:productId/:date').get(destroyStockController.getdetailsWithSorting);
 
 
 module.exports = router;
