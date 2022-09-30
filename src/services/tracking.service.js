@@ -3,6 +3,7 @@ const ApiError = require('../utils/ApiError');
 const Tracking = require('../models/tracking.model');
 const { Users } = require('../models/B2Busers.model');
 const moment = require('moment');
+const { Shop } = require('../models/b2b.ShopClone.model');
 
 const createTracking = async (body) => {
   let values = { ...body, ...{ created: moment() } };
@@ -32,6 +33,24 @@ const getTrackingByUserById = async (userId) => {
   }
   return values;
 };
+
+const gettracking = async (userId) => {
+  console.log(userId);
+  let values = await Tracking.findOne({ userId: userId });
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  return values;
+};
+
+const getusers = async () => {
+  let values = await Shop.find({ registered: true });
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop Not Found');
+  }
+  return values;
+};
+
 const updatelocation = async (shopId, body) => {
   console.log(shopId);
   let today = moment().format('YYYY-MM-DD');
@@ -54,4 +73,6 @@ module.exports = {
   updateTrackingById,
   getTrackingByUserById,
   updatelocation,
+  gettracking,
+  getusers,
 };
