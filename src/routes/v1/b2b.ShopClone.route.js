@@ -82,6 +82,6 @@ router.route('/getVendorShops/uyar-dial/:key').get(b2bShopCloneController.getVen
 // salesmanShops
 router.route('/getNotAssignReassignSalesman/data/:id/:page/:limit').get(b2bShopCloneController.getNotAssignSalesManData);
 
-router.route('/getShops/By/type/:id').get(b2bShopCloneController.GetShopsByShopType)
+router.route('/getShops/By/type/:id/:page').get(b2bShopCloneController.GetShopsByShopType)
 
 module.exports = router;

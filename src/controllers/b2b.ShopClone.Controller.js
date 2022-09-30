@@ -383,7 +383,7 @@ const getNotAssignSalesManData = catchAsync(async (req, res) => {
 });
 
 const GetShopsByShopType = catchAsync (async (req, res)=>{
-  const data = await b2bCloneService.GetShopsByShopType(req.params.id)
+  const data = await b2bCloneService.GetShopsByShopType(req.params.id, req.params.page)
   res.send(data)
 })
 
