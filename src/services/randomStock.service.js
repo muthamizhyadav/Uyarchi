@@ -69,6 +69,7 @@ const getAll = async (product, date) => {
         _id: 1,
         date: 1,
         time: 1,
+        wastedImageFile:1,
       },
     },
   ]);
