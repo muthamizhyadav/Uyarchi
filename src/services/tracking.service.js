@@ -3,6 +3,7 @@ const ApiError = require('../utils/ApiError');
 const Tracking = require('../models/tracking.model');
 const { Users } = require('../models/B2Busers.model');
 const moment = require('moment');
+const { Shop } = require('../models/b2b.ShopClone.model');
 
 const createTracking = async (body) => {
   let values = { ...body, ...{ created: moment() } };
@@ -32,20 +33,48 @@ const getTrackingByUserById = async (userId) => {
   }
   return values;
 };
+
+const gettracking = async (userId) => {
+  console.log(userId);
+
+  let values = await Tracking.aggregate([
+    { $match: { userId: userId } },
+    { $unwind: '$capture' },
+    { $sort: { 'capture.CreatedDate': -1, 'capture:CreatedDate': -1 } },
+    {
+      $project: {
+        capture: 1,
+        _id: 1,
+      },
+    },
+    { $limit: 1 },
+  ]);
+  if (values.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  return values[0];
+};
+
+const getusers = async () => {
+  let values = await Shop.find({ registered: true });
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop Not Found');
+  }
+  return values;
+};
+
 const updatelocation = async (shopId, body) => {
   console.log(shopId);
   let today = moment().format('YYYY-MM-DD');
   let update = { ...body, ...{ date: today, userId: shopId } };
   let values = await Tracking.findOne({ userId: shopId, date: today });
-  console.log(values, 'asdas');
   if (!values) {
     await Tracking.create(update);
   } else {
     let capture = body.capture;
     if (values.capture.length != 0) {
-      capture = values.capture.push(body.capture);
+      capture = values.capture.concat(body.capture);
     }
-    // console.log(capture);
     await Tracking.findByIdAndUpdate({ _id: values._id }, { capture: capture }, { new: true });
   }
   return values;
@@ -56,4 +85,6 @@ module.exports = {
   updateTrackingById,
   getTrackingByUserById,
   updatelocation,
+  gettracking,
+  getusers,
 };
