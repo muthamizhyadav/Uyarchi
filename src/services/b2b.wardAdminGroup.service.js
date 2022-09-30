@@ -1307,8 +1307,10 @@ const getBillDetailsPerOrder = async (id) => {
         // total: { $sum: "$Amount"},
         totalQuantity: '$TotalQuantityData.Qty',
         OperatorName: '$deliveryExecutiveName.name',
-        CGSTAmount: { $divide: ['$GST_Number', 2] },
-        SGSTAmount: { $divide: ['$GST_Number', 2] },
+        GSTamount:{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] },
+        totalRupees: {$add: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, { "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] } ]} ,
+        CGSTAmount: { $divide: [{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] }, 2] },
+        SGSTAmount: { $divide: [{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] }, 2] },
       },
     },
   ]);

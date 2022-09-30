@@ -17,8 +17,28 @@ const getTrackingByUserById = catchAsync(async (req, res) => {
   console.log(tracking);
   res.send(tracking);
 });
+
+const gettracking = catchAsync(async (req, res) => {
+  const tracking = await TrackingService.gettracking(req.params.userId);
+  console.log(tracking);
+  res.send(tracking);
+});
+
+const getusers = catchAsync(async (req, res) => {
+  const tracking = await TrackingService.getusers();
+  console.log(tracking);
+  res.send(tracking);
+});
+const updatelocation = catchAsync(async (req, res) => {
+  const tracking = await TrackingService.updatelocation(req.shopId, req.body);
+  // console.log(tracking);
+  res.send(tracking);
+});
 module.exports = {
   createTracking,
   updateTrackingById,
   getTrackingByUserById,
+  updatelocation,
+  gettracking,
+  getusers,
 };

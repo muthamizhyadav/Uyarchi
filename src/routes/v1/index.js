@@ -88,6 +88,7 @@ const CustomerIssues = require('./customerIssues.route');
 const LapsedRoute = require('./lapsed.route');
 const wardAdminRole = require('./wardAdminRole.route');
 const registerShop = require('./shopregister.route');
+const randomStock = require('./randomStock.route');
 const defaultRoutes = [
   {
     path: '/registerShop',
@@ -423,6 +424,10 @@ const defaultRoutes = [
   {
     path: '/pettyStock',
     route: pettyStockRoute,
+  },
+  {
+    path: '/randomStockpath',
+    route: randomStock,
   },
   {
     path: '/wardAdminRole',

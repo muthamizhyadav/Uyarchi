@@ -20,6 +20,11 @@ const set_password = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(password);
 });
 
+const change_password = catchAsync(async (req, res) => {
+  const password = await registerShop.change_password(req.body, req.shopId);
+  res.status(httpStatus.CREATED).send(password);
+});
+
 const login_now = catchAsync(async (req, res) => {
   const shop = await registerShop.login_now(req.body);
   const tokens = await tokenService.generateAuthTokens_shop(shop);
@@ -43,4 +48,5 @@ module.exports = {
   login_now,
   get_myDetails,
   get_myorder,
+  change_password,
 };

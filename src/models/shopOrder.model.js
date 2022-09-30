@@ -246,6 +246,12 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   timeslot: {
     type: Number,
   },
+  callstatus: {
+    type: String,
+  },
+  callhistoryId: {
+    type: String,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
