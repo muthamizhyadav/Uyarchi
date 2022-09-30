@@ -195,6 +195,8 @@ const getShopOrderCloneById = async (id) => {
               unit: 1,
               productTitle: '$products.productTitle',
               created: 1,
+              pay_type: 1,
+              paymentMethod: 1,
             },
           },
         ],
