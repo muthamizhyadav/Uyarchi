@@ -1681,6 +1681,13 @@ const getnotAssignSalesmanData = async (id,page,limit) =>{
   return {data:data, total:total.length} ;
 }
 
+const GetShopsByShopType = async (id)=>{
+  const shops = await Shop.find({SType:id})
+  if(!shops){
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shops Not found');
+  }
+  return shops
+}
 
 module.exports = {
   createShopClone,
@@ -1716,4 +1723,5 @@ module.exports = {
   searchShops,
   getVendorShops,
   getnotAssignSalesmanData,
+  GetShopsByShopType,
 };

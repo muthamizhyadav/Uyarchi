@@ -382,6 +382,11 @@ const getNotAssignSalesManData = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const GetShopsByShopType = catchAsync (async (req, res)=>{
+  const data = await b2bCloneService.GetShopsByShopType(req.params.id)
+  res.send(data)
+})
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -418,4 +423,5 @@ module.exports = {
   searchShops,
   getVendorShops,
   getNotAssignSalesManData,
+  GetShopsByShopType,
 };
