@@ -45,6 +45,7 @@ const gettracking = async (userId) => {
       $project: {
         capture: 1,
         _id: 1,
+        userId: 1,
       },
     },
     { $limit: 1 },
@@ -53,6 +54,16 @@ const gettracking = async (userId) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
   }
   return values[0];
+};
+
+const gettrackingall = async (userId) => {
+  console.log(userId);
+  let today = moment().format('YYYY-MM-DD');
+  let values = await Tracking.findOne({ userId: userId, date: today });
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  return values;
 };
 
 const getusers = async () => {
@@ -87,4 +98,5 @@ module.exports = {
   updatelocation,
   gettracking,
   getusers,
+  gettrackingall,
 };
