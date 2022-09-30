@@ -36,7 +36,30 @@ const getTrackingByUserById = async (userId) => {
 
 const gettracking = async (userId) => {
   console.log(userId);
-  let values = await Tracking.findOne({ userId: userId });
+
+  let values = await Tracking.aggregate([
+    { $match: { userId: userId } },
+    { $unwind: '$capture' },
+    { $sort: { 'capture.CreatedDate': -1, 'capture:CreatedDate': -1 } },
+    {
+      $project: {
+        capture: 1,
+        _id: 1,
+        userId: 1,
+      },
+    },
+    { $limit: 1 },
+  ]);
+  if (values.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
+  }
+  return values[0];
+};
+
+const gettrackingall = async (userId) => {
+  console.log(userId);
+  let today = moment().format('YYYY-MM-DD');
+  let values = await Tracking.findOne({ userId: userId, date: today });
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
   }
@@ -75,4 +98,5 @@ module.exports = {
   updatelocation,
   gettracking,
   getusers,
+  gettrackingall,
 };

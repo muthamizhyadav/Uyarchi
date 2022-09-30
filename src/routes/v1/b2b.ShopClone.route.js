@@ -80,6 +80,6 @@ router.route('/shopSearch/:key').get(b2bShopCloneController.searchShops);
 router.route('/getVendorShops/uyar-dial/:key').get(b2bShopCloneController.getVendorShops);
 
 // salesmanShops
-router.route('/getNotAssignReassignSalesman/data/:id').get(b2bShopCloneController.getNotAssignSalesManData);
+router.route('/getNotAssignReassignSalesman/data/:id/:page/:limit').get(b2bShopCloneController.getNotAssignSalesManData);
 
 module.exports = router;
