@@ -23,8 +23,14 @@ const getdetailsWithSorting = catchAsync(async (req, res) => {
     res.send(data);
 })
 
+const updateProduct = catchAsync(async (req, res) => {
+    const product = await destroyStockService.updateProduct(req.params.product, req.body);
+    res.send(product);
+  });
+
 module.exports = {
     getProductNAmeFromRandom,
     createDestroyStock,
     getdetailsWithSorting,
+    updateProduct,
 }

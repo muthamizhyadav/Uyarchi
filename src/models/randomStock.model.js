@@ -14,19 +14,19 @@ const randomStockSchema = mongoose.Schema({
         type: String,
       },
       NSFQ1:{
-        type: String,
+        type: Number,
         default: 0,
       },
       NSFQ2:{
-        type: String,
+        type: Number,
         default: 0,
       },
       NSFQ3:{
-        type: String,
+        type: Number,
         default: 0,
       },
       NSFW_Wastage:{
-        type: String,
+        type: Number,
         default: 0,
       },
       wastedImageFile:{
@@ -48,6 +48,13 @@ const randomStockSchema = mongoose.Schema({
         type: Boolean,
         default: false,
       },
+      quantityToDestroy: {
+        type:Number,
+      },
+      status: {
+        type: String,
+       
+      }
 
     });
 

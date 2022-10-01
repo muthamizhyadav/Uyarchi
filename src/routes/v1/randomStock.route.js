@@ -8,4 +8,5 @@ router.route('/create/stock/random').post(randomStock.fields([{ name: 'wastedIma
 router.route('/get/date/time/:product/:date').get(randomStockController.getAll);
 router.route('/get/product/name/withDetails').get(randomStockController.getProductNameDetails);
 
+
 module.exports = router;
