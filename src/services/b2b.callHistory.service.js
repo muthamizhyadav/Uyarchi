@@ -1899,9 +1899,10 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ historydate: { $eq: date } }, { callingStatus: { $eq: status } }, { lapsed: { $ne: true } }],
+        $and: [{ historydate: { $eq: date } }, keys, { lapsed: { $ne: true } }],
       },
     },
+    { $sort: { historydate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
@@ -1916,6 +1917,55 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
         as: 'callhistories',
       },
     },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplists',
+      },
+    },
+    {
+      $lookup: {
+        from: 'callhistories',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: { date: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
+          },
+          {
+            $group: {
+              _id: null,
+              count: {
+                $sum: 1,
+              },
+            },
+          },
+        ],
+        as: 'callhistoriestoday',
+      },
+    },
+    {
+      $unwind: {
+        path: '$callhistoriestoday',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: faildstatusMatch,
+          },
+        ],
+        as: 'shoporderclonesun',
+      },
+    },
+    { $unwind: '$shoporderclonesun' },
     {
       $count: 'passing_scores',
     },
