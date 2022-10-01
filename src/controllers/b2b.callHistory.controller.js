@@ -2,7 +2,7 @@ const callHistoryService = require('../services/b2b.callHistory.service');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const httpStatus = require('http-status');
-
+const moment = require('moment');
 const createCallHistory = catchAsync(async (req, res) => {
   const callHistory = await callHistoryService.createCallHistory(req.body);
   res.send(callHistory);
@@ -41,7 +41,7 @@ const getAllPage = catchAsync(async (req, res) => {
   let call;
   if (req.params.status == 'Pending') {
     call = await callHistoryService.getShop_pending(
-      req.params.date,
+      moment().format('DD-MM-YYYY'),
       req.params.status,
       req.params.key,
       req.params.page,
@@ -50,7 +50,7 @@ const getAllPage = catchAsync(async (req, res) => {
     );
   } else if (req.params.status == 'callback' || req.params.status == 'accept' || req.params.status == 'declined') {
     call = await callHistoryService.getShop_callback(
-      req.params.date,
+      moment().format('DD-MM-YYYY'),
       req.params.status,
       req.params.key,
       req.params.page,
@@ -59,7 +59,7 @@ const getAllPage = catchAsync(async (req, res) => {
     );
   } else if (req.params.status == 'reschedule') {
     call = await callHistoryService.getShop_reshedule(
-      req.params.date,
+      moment().format('DD-MM-YYYY'),
       req.params.status,
       req.params.key,
       req.params.page,
@@ -68,12 +68,22 @@ const getAllPage = catchAsync(async (req, res) => {
     );
   } else if (req.params.status == 'oncall') {
     call = await callHistoryService.getShop_oncall(
-      req.params.date,
+      moment().format('DD-MM-YYYY'),
       'On Call',
       req.params.key,
       req.params.page,
       userId,
       userRole
+    );
+  } else if (req.params.status == 'lapsed') {
+    call = await callHistoryService.getShop_lapsed(
+      moment().format('DD-MM-YYYY'),
+      req.params.status,
+      req.params.key,
+      req.params.page,
+      userId,
+      userRole,
+      req.params.date
     );
   }
   res.send(call);
@@ -198,7 +208,6 @@ const BillHistoryByShopId_date = catchAsync(async (req, res) => {
 // const updateStatusLapsed = catchAsync(async (req, res) => {
 //   const data = await callHistoryService.
 // })
-
 
 module.exports = {
   createCallHistory,
