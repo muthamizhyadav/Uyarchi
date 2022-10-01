@@ -37,7 +37,6 @@ const createGroup = async (body) => {
   let totalcount = group.length + 1;
   console.log(totalcount);
   userId = 'G' + center + totalcount;
-
   let centerdata = '';
   if (Buy.length < 9) {
     centerdata = '0000';
@@ -119,7 +118,9 @@ const updateOrderStatus = async (id, updateBody) => {
     created: moment(),
     orderId: deliveryStatus._id,
     type: updateBody.reason,
-    payType: updateBody.payType,
+    pay_type: updateBody.pay_types,
+    paymentMethod: updateBody.paymentMethods,
+    paymentstutes: updateBody.paymentstutes,
   });
   return deliveryStatus;
 };
