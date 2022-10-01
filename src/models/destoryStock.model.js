@@ -31,6 +31,10 @@ const destoryStockSchema = mongoose.Schema({
         type: Boolean,
         default: false,
       },
+      status: {
+        type: String,
+        default: "Pending"
+      }
 });
 
 const destoryStock = mongoose.model('destroyStock',destoryStockSchema);

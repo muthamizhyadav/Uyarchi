@@ -1,6 +1,5 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-const walletModel = require('../models/b2b.walletAccount.model');
 const moment = require('moment');
 const randomStockModel = require('../models/randomStock.model');
 const destroyStockModel = require('../models/destoryStock.model')
@@ -88,6 +87,17 @@ const createDestroyStock = async (sampleBody) => {
 
   }
 
+  const updateProduct = async(productId,body  )=>{
+    console.log(productId);
+    let stack = await destroyStockModel.findOne({ productId: productId });
+    console.log(stack);
+    if (!stack) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'stacks not found');
+    }
+    stack = await destroyStockModel.findOneAndUpdate({ productId: productId }, body, { new: true });
+    return stack;
+  };
+
 
 
 
@@ -99,4 +109,5 @@ module.exports = {
     getProductNAmeFromRandom,
     createDestroyStock,
     getdetailsWithSorting,
+    updateProduct,
 }
