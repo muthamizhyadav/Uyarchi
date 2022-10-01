@@ -34,6 +34,10 @@ const destoryStockSchema = mongoose.Schema({
       status: {
         type: String,
         default: "Pending"
+      },
+      quantityToDestroy: {
+        type:Number,
+        default: 0,
       }
 });
 

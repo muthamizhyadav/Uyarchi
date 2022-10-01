@@ -76,25 +76,29 @@ const createDestroyStock = async (sampleBody) => {
             time:1,
             productId:1,
             wastage:1,
+
+            // quantityToDestroy:1,
             worthRupees:1,
             productTitle:"$clonedProducts.productTitle",
-
-
+            // balanceQuantity: { 
+            //   $subtract: [ "$wastage", "$quantityToDestroy" ] 
+            // } 
+            } 
         }
-      }
+      
   ]);
   return values;
 
   }
 
-  const updateProduct = async(productId,body  )=>{
-    console.log(productId);
-    let stack = await destroyStockModel.findOne({ productId: productId });
+  const updateProduct = async(product,body  )=>{
+    console.log(product);
+    let stack = await randomStockModel.findOne({ product: product });
     console.log(stack);
     if (!stack) {
       throw new ApiError(httpStatus.NOT_FOUND, 'stacks not found');
     }
-    stack = await destroyStockModel.findOneAndUpdate({ productId: productId }, body, { new: true });
+    stack = await randomStockModel.findOneAndUpdate({ product: product }, body, { new: true });
     return stack;
   };
 

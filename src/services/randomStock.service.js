@@ -79,6 +79,13 @@ const getAll = async (product, date) => {
         date: 1,
         time: 1,
         wastedImageFile:1,
+        quantityToDestroy:1,
+        status:1,
+         balanceQuantity: { 
+              $subtract: [ "$NSFW_Wastage", "$quantityToDestroy" ] 
+            } 
+
+
       },
     },
   ]);
