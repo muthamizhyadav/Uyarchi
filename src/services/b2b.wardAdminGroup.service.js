@@ -16,6 +16,7 @@ const createGroup = async (body) => {
   let servertime = moment().format('hh:mm a');
   let num = 1;
   const group = await wardAdminGroup.find({ assignDate: serverdates });
+  const Buy = await wardAdminGroup.find({ assignDate: serverdates });
   console.log(group);
 
   let center = '';
@@ -36,7 +37,6 @@ const createGroup = async (body) => {
   let totalcount = group.length + 1;
   console.log(totalcount);
   userId = 'G' + center + totalcount;
-
 
   let centerdata = '';
   if (Buy.length < 9) {
@@ -64,7 +64,7 @@ const createGroup = async (body) => {
       assignTime: servertime,
       pettyStockAllocateStatusNumber: num,
       created: moment(),
-      GroupBillId:BillId,
+      GroupBillId: BillId,
       GroupBillDate: serverdates,
       GroupBillTime: servertime,
     },
@@ -694,9 +694,9 @@ const getBillDetails = async (id) => {
                     _id: 1,
                     OrderId: 1,
                     Payment: 1,
-                    customerBillId:1,
-                    customerBilldate:1,
-                    customerBilltime:1,
+                    customerBillId: 1,
+                    customerBilldate: 1,
+                    customerBilltime: 1,
                     products: '$products',
                     b2bshopclones: '$b2bshopclones',
                     SName: '$b2bshopclones.SName',
@@ -1307,10 +1307,25 @@ const getBillDetailsPerOrder = async (id) => {
         // total: { $sum: "$Amount"},
         totalQuantity: '$TotalQuantityData.Qty',
         OperatorName: '$deliveryExecutiveName.name',
-        GSTamount:{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] },
-        totalRupees: {$add: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, { "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] } ]} ,
-        CGSTAmount: { $divide: [{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] }, 2] },
-        SGSTAmount: { $divide: [{ "$divide": [ { "$multiply": [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] },"$GST_Number"] }, 100 ] }, 2] },
+        GSTamount: { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
+        totalRupees: {
+          $add: [
+            { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+            { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
+          ],
+        },
+        CGSTAmount: {
+          $divide: [
+            { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
+            2,
+          ],
+        },
+        SGSTAmount: {
+          $divide: [
+            { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
+            2,
+          ],
+        },
       },
     },
   ]);
@@ -1928,7 +1943,6 @@ const createAddOrdINGrp = async (id, body) => {
 
   return 'works';
 };
-
 
 module.exports = {
   getPEttyCashQuantity,
