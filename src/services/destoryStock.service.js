@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const walletModel = require('../models/b2b.walletAccount.model');
+const moment = require('moment');
 const randomStockModel = require('../models/randomStock.model');
 const destroyStockModel = require('../models/destoryStock.model')
 
@@ -26,7 +27,17 @@ const getProductNAmeFromRandom = async()=>{
 }
 
 const createDestroyStock = async (sampleBody) => {
-    return destroyStockModel.create(sampleBody);
+  let time = moment().format('HHmm');
+  let date = moment().format('yyyy-MM-DD');
+  let created = moment();
+  let datas = {
+    time : time,
+    date : date,
+    created : created,
+  };
+  let bodyData = { ...datas, ...sampleBody};
+  return destroyStockModel.create(bodyData);
+    
   };
 
 

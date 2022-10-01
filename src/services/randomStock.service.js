@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
+const moment = require('moment');
 const randomStockModel = require('../models/randomStock.model');
 const { Product } = require('../models/product.model');
 
@@ -24,8 +25,16 @@ const getProduct = async () => {
 };
 
 const createrandomStock = async (body) => {
-  let stock = await randomStockModel.create(body);
-  return stock;
+  let time = moment().format('HHmm');
+  let date = moment().format('yyyy-MM-DD');
+  let created = moment();
+  let datas = {
+    time : time,
+    date : date,
+    created : created,
+  };
+  let bodyData = { ...datas, ...body};
+  return randomStockModel.create(bodyData);
 };
 
 const getAll = async (product, date) => {

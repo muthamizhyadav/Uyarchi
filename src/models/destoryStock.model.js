@@ -17,11 +17,11 @@ const destoryStockSchema = mongoose.Schema({
     },
     date: {
         type: String,
-        default: moment().utcOffset(331).format('yyy-MM-DD'),
+       
       },
       time: {
         type: String,
-        default: moment().utcOffset(331).format('h:mm a'),
+        
       },
       active: {
         type: Boolean,

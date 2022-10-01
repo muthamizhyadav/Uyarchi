@@ -34,11 +34,11 @@ const randomStockSchema = mongoose.Schema({
       },
       date: {
         type: String,
-        default: moment().utcOffset(330).format('yyy-MM-DD'),
+        
       },
       time: {
         type: String,
-        default: moment().utcOffset(330).format('h:mm a'),
+       
       },
       active: {
         type: Boolean,
