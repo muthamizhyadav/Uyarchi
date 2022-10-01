@@ -15,26 +15,30 @@ const randomStockSchema = mongoose.Schema({
       },
       NSFQ1:{
         type: String,
+        default: 0,
       },
       NSFQ2:{
         type: String,
+        default: 0,
       },
       NSFQ3:{
         type: String,
+        default: 0,
       },
       NSFW_Wastage:{
         type: String,
+        default: 0,
       },
       wastedImageFile:{
         type: String,
       },
       date: {
         type: String,
-        default: moment().utcOffset(330).format('DD-MM-yyy'),
+        
       },
       time: {
         type: String,
-        default: moment().utcOffset(330).format('h:mm a'),
+       
       },
       active: {
         type: Boolean,

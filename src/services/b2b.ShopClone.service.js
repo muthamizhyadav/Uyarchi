@@ -1681,6 +1681,39 @@ const getnotAssignSalesmanData = async (id,page,limit) =>{
   return {data:data, total:total.length} ;
 }
 
+const GetShopsByShopType = async (id, page)=>{
+  let shops = await Shop.aggregate([{
+    $match: {
+      $and: [{ SType: { $eq:id} }],
+    },
+  },
+  {
+    $project:{
+      _id:1,
+      photoCapture:1,
+      SName:1,
+      type:1,
+      SOwner:1,
+      mobile:1,
+      address:1,
+    }
+  },
+  {
+    $skip: 10 * page,
+  },
+    {
+      $limit: 10,
+    },
+  ])
+  let total = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ SType: { $eq:id} }],
+      },
+    },
+  ])
+  return {shops: shops, total: total.length}
+}
 
 module.exports = {
   createShopClone,
@@ -1716,4 +1749,5 @@ module.exports = {
   searchShops,
   getVendorShops,
   getnotAssignSalesmanData,
+  GetShopsByShopType,
 };
