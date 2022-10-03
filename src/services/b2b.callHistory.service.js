@@ -786,6 +786,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         match: { $ne: ['$b2bshopclones._id', null] },
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
+        lapsedOrder: 1,
       },
     },
     {
@@ -1160,6 +1161,8 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
+        lapsedOrder: 1,
+
       },
     },
     { $skip: 10 * page },
@@ -1456,6 +1459,8 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
+        lapsedOrder: 1,
+
       },
     },
     { $skip: 10 * page },
@@ -1756,6 +1761,8 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
+        lapsedOrder: 1,
+
       },
     },
     { $skip: 10 * page },
@@ -1825,8 +1832,7 @@ const updateStatuscall = async (id, body, userId, date) => {
       { callingStatus: 'On Call', callingUserId: userId, historydate: date, sortdate: '' },
       { new: true }
     );
-  }
-  else{
+  } else {
     status = await Shop.findByIdAndUpdate(
       { _id: id },
       { callingStatus: 'On Call', lapsedOrder: orderId, callingUserId: userId, historydate: date, sortdate: '' },
@@ -2556,6 +2562,8 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
         shoporderclonesun: '$shoporderclonesun',
+        lapsedOrder: 1,
+
       },
     },
     { $skip: 10 * page },
