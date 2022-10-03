@@ -1899,57 +1899,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ historydate: { $eq: date } }, keys, { lapsed: { $ne: true } }],
-      },
-    },
-    { $sort: { historydate: -1, sorttime: -1 } },
-    {
-      $lookup: {
-        from: 'callhistories',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline: [
-          {
-            $sort: { date: -1, historytime: -1 },
-          },
-          { $limit: 10 },
-        ],
-        as: 'callhistories',
-      },
-    },
-    {
-      $lookup: {
-        from: 'shoplists',
-        localField: 'SType',
-        foreignField: '_id',
-        as: 'shoplists',
-      },
-    },
-    {
-      $lookup: {
-        from: 'callhistories',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline: [
-          {
-            $match: { date: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
-          },
-          {
-            $group: {
-              _id: null,
-              count: {
-                $sum: 1,
-              },
-            },
-          },
-        ],
-        as: 'callhistoriestoday',
-      },
-    },
-    {
-      $unwind: {
-        path: '$callhistoriestoday',
-        preserveNullAndEmptyArrays: true,
+        $and: [keys],
       },
     },
     {
