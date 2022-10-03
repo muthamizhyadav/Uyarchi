@@ -572,6 +572,15 @@ const getAssignData_by_SalesMan = async (page) => {
   return { values: values, total: total.length };
 };
 
+const get_Assign_data_By_SalesManId = async (id) => {
+  let values = await SalesManShop.aggregate([
+    {
+      $match: { salesManId: id },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -594,4 +603,5 @@ module.exports = {
   createtemperaryAssigndata,
   getAllTempReassigndata,
   getAssignData_by_SalesMan,
+  get_Assign_data_By_SalesManId,
 };
