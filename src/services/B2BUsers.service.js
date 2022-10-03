@@ -377,12 +377,12 @@ const getUsersDataById = async (id) => {
 
 const deleteB2bUsersbyId = async (id) => {
   let users = await Users.findById(id);
-  if (!users) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Users Not Found');
-  }
-  await Shop.updateMany({ Uid: id }, { $set: { Uid: '3625a112-a7f5-4bd8-b9c3-f86ae03c2f44' } }, { new: true });
-  await MarketClone.updateMany({ Uid: id }, { $set: { Uid: '3625a112-a7f5-4bd8-b9c3-f86ae03c2f44' } }, { new: true });
-  users = await Users.deleteOne({ _id: id });
+  // if (!users) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'Users Not Found');
+  // }
+  // await Shop.updateMany({ Uid: id }, { $set: { Uid: '3625a112-a7f5-4bd8-b9c3-f86ae03c2f44' } }, { new: true });
+  // await MarketClone.updateMany({ Uid: id }, { $set: { Uid: '3625a112-a7f5-4bd8-b9c3-f86ae03c2f44' } }, { new: true });
+  // users = await Users.deleteOne({ _id: id });
   return users;
 };
 
