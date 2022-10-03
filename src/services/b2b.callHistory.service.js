@@ -1855,6 +1855,11 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           {
             $match: faildstatusMatch,
           },
+          {
+            $group: {
+              _id: null,
+            },
+          },
         ],
         as: 'shoporderclonesun',
       },
@@ -1885,12 +1890,14 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
         created: 1,
         status: 1,
         Uid: 1,
-        shopData: 1,
+        // shopData: 1,
+        shopData: '$callhistories',
         lapsed: 1,
         callhistoriestoday: '$callhistoriestoday.count',
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
+        shoporderclonesun: '$shoporderclonesun',
       },
     },
     { $skip: 10 * page },
@@ -1911,6 +1918,11 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           {
             $match: faildstatusMatch,
           },
+          {
+            $group: {
+              _id: null,
+            },
+          },
         ],
         as: 'shoporderclonesun',
       },
@@ -1919,7 +1931,9 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
     {
       $count: 'passing_scores',
     },
+    // { $group: { _id: null, count: { $sum: 1 } } },
   ]);
+  console.log(total);
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
   return {

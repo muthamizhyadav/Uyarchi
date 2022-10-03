@@ -76,6 +76,7 @@ const getAllPage = catchAsync(async (req, res) => {
       userRole
     );
   } else if (req.params.status == 'lapsed') {
+    console.log('hello')
     call = await callHistoryService.getShop_lapsed(
       moment().format('DD-MM-YYYY'),
       req.params.status,
