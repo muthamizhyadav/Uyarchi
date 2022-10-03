@@ -626,6 +626,15 @@ const get_Assign_data_By_SalesManId = async (id) => {
   return values;
 };
 
+const getUsersWith_skiped = async (id) => {
+  let values = await Users.aggregate([
+    {
+      $match: { _id: { $ne: id } },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -649,4 +658,5 @@ module.exports = {
   getAllTempReassigndata,
   getAssignData_by_SalesMan,
   get_Assign_data_By_SalesManId,
+  getUsersWith_skiped,
 };
