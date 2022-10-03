@@ -1539,7 +1539,7 @@ const oncallstatusByUser = async (userId) => {
 };
 
 const call_visit_Count = async (userId) => {
-  console.log(currentDate)
+  // console.log(currentDate)
   let visit_Count = await callHistoryModel
     .find({ userId: userId, date: currentDate, type: 'call', status: 'ordered' })
     .count();
