@@ -281,6 +281,11 @@ const createAddOrdINGrp = catchAsync(async (req, res) => {
   res.send(cashAsGivenByWDE);
 });
 
+const finishingAccount = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.finishingAccount(req.params.id);
+  res.send(details);
+});
+
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -356,4 +361,6 @@ module.exports = {
   createAddOrdINGrp,
   cashgetAssigned,
   deliverygetAssigned,
+
+  finishingAccount,
 };
