@@ -106,6 +106,16 @@ const allocateDeallocateCount  = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.allocateDealocateCount(req.params.id);
    res.send(data);
 });
+
+const createtemperaryAssigndata = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.createtemperaryAssigndata(req.body);
+  res.send(data);
+});
+
+const getAllTempReassigndata = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.getAllTempReassigndata();
+  res.send(data);
+});
 module.exports = {
     getDataById,
     getAllwardAdminRole,
@@ -125,4 +135,6 @@ module.exports = {
     withoutoutAsmSalesman,
     dataAllSalesManhistry,
     allocateDeallocateCount,
+    createtemperaryAssigndata,
+    getAllTempReassigndata,
 };
