@@ -22,4 +22,6 @@ router.route('/dataAllSalesManhistry/:id').get(wardAdminRoleController.dataAllSa
 router.route('/allocateDeallocateCount/:id').get(wardAdminRoleController.allocateDeallocateCount)
 router.route('/createtemperaryAssigndata').post(wardAdminRoleController.createtemperaryAssigndata)
 router.route('/getAllTempReassigndata/data').get(wardAdminRoleController.getAllTempReassigndata)
+router.route('/getAssign/dataBy/salesMan/:page').get(wardAdminRoleController.getAssignData_by_SalesMan)
+
 module.exports = router;

@@ -4,9 +4,8 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const wardAdminRoleService = require('../services/wardAdminRole.service');
 
-
 const createwardAdminRoleService = catchAsync(async (req, res) => {
-    const data = await wardAdminRoleService.createwardAdminRole(req.body);
+  const data = await wardAdminRoleService.createwardAdminRole(req.body);
   res.status(httpStatus.CREATED).send(data);
 });
 
@@ -23,9 +22,8 @@ const getDataById = catchAsync(async (req, res) => {
   res.send(data);
 });
 
-
 const createwardAdminRoleAsmService = catchAsync(async (req, res) => {
-    const data = await wardAdminRoleService.createwardAdminRoleAsm(req.body);
+  const data = await wardAdminRoleService.createwardAdminRoleAsm(req.body);
   res.status(httpStatus.CREATED).send(data);
 });
 
@@ -37,15 +35,14 @@ const getAllWardAdminRoleData = catchAsync(async (req, res) => {
   res.send(data);
 });
 
-const  smData = catchAsync(async (req, res) => {
+const smData = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.smData(req.params.date);
   res.send(data);
 });
 
-
 const total = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.total(req.params.id, req.body);
-   res.send(data);
+  res.send(data);
 });
 
 const createAsmSalesman = catchAsync(async (req, res) => {
@@ -55,56 +52,55 @@ const createAsmSalesman = catchAsync(async (req, res) => {
 
 const allAsmSalesmanData = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.getAsmSalesman(req.params.id);
-   res.send(data);
+  res.send(data);
 });
 
 const getAllAssignReassignData = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.allAssignReassignSalesman(req.params.id);
-   res.send(data);
+  res.send(data);
 });
-
 
 const createSalesmanShop = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.createSalesmanShop(req.body);
-   res.send(data);
+  res.send(data);
 });
 
 const getAllAssignSalesmanShopData = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.getSalesman(req.params.id);
-   res.send(data);
+  res.send(data);
 });
 
-// getAllSalesMandataCurrentdate 
+// getAllSalesMandataCurrentdate
 const getAllSalesMandataCurrentdate = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.getAllSalesMandataCurrentdate(req.params.id);
-   res.send(data);
+  res.send(data);
 });
 
 // createwithoutoutAsmSalesman
 
 const createwithoutoutAsmSalesman = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.createwithoutoutAsmSalesman(req.body);
-res.status(httpStatus.CREATED).send(data);
+  res.status(httpStatus.CREATED).send(data);
 });
 
 const withoutoutAsmSalesmanCurrentDate = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.withoutoutAsmSalesmanCurrentDate(req.params.id);
-   res.send(data);
+  res.send(data);
 });
 
 const withoutoutAsmSalesman = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.withoutoutAsmSalesman(req.params.date);
-   res.send(data);
+  res.send(data);
 });
 
 const dataAllSalesManhistry = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.dataAllSalesManhistry(req.params.id);
-   res.send(data);
+  res.send(data);
 });
 
-const allocateDeallocateCount  = catchAsync(async (req, res) => {
+const allocateDeallocateCount = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.allocateDealocateCount(req.params.id);
-   res.send(data);
+  res.send(data);
 });
 
 const createtemperaryAssigndata = catchAsync(async (req, res) => {
@@ -116,25 +112,32 @@ const getAllTempReassigndata = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.getAllTempReassigndata();
   res.send(data);
 });
+
+const getAssignData_by_SalesMan = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.getAssignData_by_SalesMan(req.params.page);
+  res.send(data);
+});
+
 module.exports = {
-    getDataById,
-    getAllwardAdminRole,
-    createwardAdminRoleService,
-    createwardAdminRoleAsmService,
-    getAllWardAdminRoleData,
-    smData,
-    total,
-    createAsmSalesman,
-    allAsmSalesmanData,
-    getAllAssignReassignData,
-    createSalesmanShop,
-    getAllAssignSalesmanShopData,
-    getAllSalesMandataCurrentdate,
-    createwithoutoutAsmSalesman,
-    withoutoutAsmSalesmanCurrentDate,
-    withoutoutAsmSalesman,
-    dataAllSalesManhistry,
-    allocateDeallocateCount,
-    createtemperaryAssigndata,
-    getAllTempReassigndata,
+  getDataById,
+  getAllwardAdminRole,
+  createwardAdminRoleService,
+  createwardAdminRoleAsmService,
+  getAllWardAdminRoleData,
+  smData,
+  total,
+  createAsmSalesman,
+  allAsmSalesmanData,
+  getAllAssignReassignData,
+  createSalesmanShop,
+  getAllAssignSalesmanShopData,
+  getAllSalesMandataCurrentdate,
+  createwithoutoutAsmSalesman,
+  withoutoutAsmSalesmanCurrentDate,
+  withoutoutAsmSalesman,
+  dataAllSalesManhistry,
+  allocateDeallocateCount,
+  createtemperaryAssigndata,
+  getAllTempReassigndata,
+  getAssignData_by_SalesMan
 };
