@@ -630,7 +630,7 @@ const getUsersWith_skiped = async (id) => {
   let values = await Users.aggregate([
     {
       $match: {
-        $and: [{ _id: { $ne: id } }, { userRole: { $ne: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
+        $and: [{ _id: { $ne: id } }, { userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
       },
     },
   ]);
