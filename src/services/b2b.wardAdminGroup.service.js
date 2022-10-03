@@ -1945,6 +1945,124 @@ const createAddOrdINGrp = async (id, body) => {
   return 'works';
 };
 
+
+
+const finishingAccount = async (id)=>{
+  let data = await wardAdminGroupModel_ORDERS.aggregate([
+    {
+              $match: {
+                $and: [{ wardAdminGroupID: { $eq: id } }],
+              },
+            },
+            {
+              $lookup: {
+                from: 'shoporderclones',
+                localField: 'orderId',
+                
+                foreignField: '_id',
+
+                as: 'shopDta',
+              }
+            },
+            { $unwind: "$shopDta"},
+            {
+              $lookup:{
+                from: 'productorderclones',
+                localField: 'shopDta._id',
+                foreignField: 'orderId',
+                pipeline: [
+               
+                  {
+                    $group: {
+                      _id: null,
+                      amount: {
+                        $sum: {
+                          $multiply: ['$finalQuantity', '$finalPricePerKg'],
+                        },
+                      },
+
+                    },
+                  },
+                ],
+                as: 'dataaaaaa',
+              }
+            },
+            { $unwind: "$dataaaaaa"},
+
+
+
+            {
+              $project:{
+
+                wardAdminGroupID:1,
+                status: "$shopDta.status",
+                initialPaymentType: "$shopDta.paymentMethod",
+                InitialPaymentcapacity: "$shopDta.pay_type",
+                amount: "$dataaaaaa.amount"
+              }
+            }
+            // {
+            //   $lookup:{
+            //     from: 'orderpayments',
+            //     localField: 'orderId',
+            //     foreignField: 'orderId',
+            //     pipeline: [
+               
+            //       {
+            //         $group: {
+            //           _id: null,
+            //         },
+            //       },
+            //     ],
+            //     as: 'orderdataaaaaa',
+            //   }
+            // },
+            // { $unwind: "$orderdataaaaaa"},
+         
+         
+    
+
+    // {
+    //   $lookup: {
+    //     from: 'shoporderclones',
+    //     localField: 'orderId',
+    //     foreignField: '_id',
+    //     as: 'wardAdminGroupdata',
+    //   }
+    // },
+    // { $unwind:"$wardAdminGroupdata"},
+    // {
+    //   $lookup: {
+    //     from: 'orderassigns',
+    //     localField: 'wardAdminGroupdata.orderId',
+    //     foreignField: 'orderId',  
+    //     pipeline: [
+    //       {
+    //         $match: {
+    //           $and: [{ wardAdminGroupID: { $eq: id } }],
+    //         },
+    //       },
+    //       {
+    //         $group: {
+    //           _id: null,
+    //         },
+    //       },
+    //     ],
+    //     as: 'ordatadata',
+    //   }
+    // }
+    
+    
+   
+   
+          ]);
+  
+
+  return data;
+
+}
+
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -1995,4 +2113,6 @@ module.exports = {
   submitCashGivenByWDE,
   createAddOrdINGrp,
   updateOrderStatus_forundelivey,
+
+  finishingAccount,
 };

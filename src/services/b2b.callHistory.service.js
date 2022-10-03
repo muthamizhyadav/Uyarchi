@@ -1708,7 +1708,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
         $and: [keys],
       },
     },
-    { $sort: { historydate: -1, sorttime: -1 } },
+    // { $sort: { historydate: -1, sorttime: -1 } },
     {
       $lookup: {
         from: 'callhistories',
