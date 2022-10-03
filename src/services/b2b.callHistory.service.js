@@ -786,6 +786,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         match: { $ne: ['$b2bshopclones._id', null] },
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
+        lapsedOrder: 1,
       },
     },
     {
@@ -908,7 +909,80 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
   if (key != 'null') {
     keys = { $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }] };
   }
-
+  let today = moment().format('yyyy-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  let threeDay = moment().subtract(2, 'days').format('yyyy-MM-DD');
+  let hover = moment().subtract(-1, 'hours').format('H');
+  let timeslot = [
+    { start: 10, end: 20 },
+    { start: 20, end: 30 },
+    { start: 30, end: 40 },
+    { start: 40, end: 50 },
+    { start: 50, end: 60 },
+    { start: 60, end: 70 },
+    { start: 70, end: 80 },
+    { start: 80, end: 90 },
+    { start: 900, end: 1000 },
+    { start: 1000, end: 1100 },
+    { start: 1100, end: 1200 },
+    { start: 1200, end: 1300 },
+    { start: 1300, end: 1400 },
+    { start: 1400, end: 1500 },
+    { start: 1500, end: 1600 },
+    { start: 1600, end: 1700 },
+    { start: 1700, end: 1800 },
+    { start: 1800, end: 1900 },
+    { start: 1900, end: 2000 },
+    { start: 2000, end: 2100 },
+    { start: 2100, end: 2200 },
+    { start: 2200, end: 2300 },
+    { start: 2300, end: 2400 },
+    { start: 2400, end: 2500 },
+  ];
+  let lapsed = timeslot[hover].start;
+  let faildstatusMatch = {
+    $or: [
+      {
+        status: {
+          $in: [
+            'Acknowledged',
+            'Approved',
+            'Modified',
+            'Packed',
+            'Assigned',
+            'Order Picked',
+            'Delivery start',
+            'UnDelivered',
+            'ordered',
+          ],
+        },
+        date: { $lte: threeDay },
+      },
+      {
+        status: {
+          $in: [
+            'Acknowledged',
+            'Approved',
+            'Modified',
+            'Packed',
+            'Assigned',
+            'Order Picked',
+            'Delivery start',
+            'UnDelivered',
+            'ordered',
+          ],
+        },
+        date: { $eq: yesterday },
+        delivery_type: 'IMD',
+      },
+      {
+        timeslot: { $gte: lapsed },
+        status: {
+          $in: ['ordered', 'Acknowledged'],
+        },
+      },
+    ],
+  };
   let values;
   values = await Shop.aggregate([
     {
@@ -968,6 +1042,94 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
       },
     },
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'lapsedOrder',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: faildstatusMatch,
+          },
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'products',
+                    localField: 'productid',
+                    foreignField: '_id',
+                    as: 'products',
+                  },
+                },
+                { $unwind: '$products' },
+                {
+                  $project: {
+                    _id: 1,
+                    preOrderClose: 1,
+                    // status: 1,
+                    quantity: 1,
+                    priceperkg: 1,
+                    GST_Number: 1,
+                    HSN_Code: 1,
+                    packKg: 1,
+                    unit: 1,
+                    date: 1,
+                    time: 1,
+                    finalQuantity: 1,
+                    finalPricePerKg: 1,
+                    created: 1,
+                    productTitle: '$products.productTitle',
+                  },
+                },
+              ],
+              as: 'product',
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              productStatus: 1,
+              customerDeliveryStatus: 1,
+              receiveStatus: 1,
+              pettyCashReceiveStatus: 1,
+              AssignedStatus: 1,
+              completeStatus: 1,
+              UnDeliveredStatus: 1,
+              customerBilldate: 1,
+              customerBilltime: 1,
+              delivery_type: 1,
+              Payment: 1,
+              devevery_mode: 1,
+              time_of_delivery: 1,
+              total: 1,
+              gsttotal: 1,
+              subtotal: 1,
+              SGST: 1,
+              CGST: 1,
+              paidamount: 1,
+              pay_type: 1,
+              paymentMethod: 1,
+              Uid: 1,
+              OrderId: 1,
+              customerBillId: 1,
+              date: 1,
+              time: 1,
+              created: 1,
+              timeslot: 1,
+              statusUpdate: 1,
+              WA_assigned_Time: 1,
+              product: '$product',
+            },
+          },
+        ],
+        as: 'shoporderclones',
+      },
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -998,6 +1160,9 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         callhistoriestoday: '$callhistoriestoday.count',
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
+        shoporderclones: '$shoporderclones',
+        lapsedOrder: 1,
+
       },
     },
     { $skip: 10 * page },
@@ -1043,7 +1208,80 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
   if (key != 'null') {
     keys = { $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }] };
   }
-
+  let today = moment().format('yyyy-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  let threeDay = moment().subtract(2, 'days').format('yyyy-MM-DD');
+  let hover = moment().subtract(-1, 'hours').format('H');
+  let timeslot = [
+    { start: 10, end: 20 },
+    { start: 20, end: 30 },
+    { start: 30, end: 40 },
+    { start: 40, end: 50 },
+    { start: 50, end: 60 },
+    { start: 60, end: 70 },
+    { start: 70, end: 80 },
+    { start: 80, end: 90 },
+    { start: 900, end: 1000 },
+    { start: 1000, end: 1100 },
+    { start: 1100, end: 1200 },
+    { start: 1200, end: 1300 },
+    { start: 1300, end: 1400 },
+    { start: 1400, end: 1500 },
+    { start: 1500, end: 1600 },
+    { start: 1600, end: 1700 },
+    { start: 1700, end: 1800 },
+    { start: 1800, end: 1900 },
+    { start: 1900, end: 2000 },
+    { start: 2000, end: 2100 },
+    { start: 2100, end: 2200 },
+    { start: 2200, end: 2300 },
+    { start: 2300, end: 2400 },
+    { start: 2400, end: 2500 },
+  ];
+  let lapsed = timeslot[hover].start;
+  let faildstatusMatch = {
+    $or: [
+      {
+        status: {
+          $in: [
+            'Acknowledged',
+            'Approved',
+            'Modified',
+            'Packed',
+            'Assigned',
+            'Order Picked',
+            'Delivery start',
+            'UnDelivered',
+            'ordered',
+          ],
+        },
+        date: { $lte: threeDay },
+      },
+      {
+        status: {
+          $in: [
+            'Acknowledged',
+            'Approved',
+            'Modified',
+            'Packed',
+            'Assigned',
+            'Order Picked',
+            'Delivery start',
+            'UnDelivered',
+            'ordered',
+          ],
+        },
+        date: { $eq: yesterday },
+        delivery_type: 'IMD',
+      },
+      {
+        timeslot: { $gte: lapsed },
+        status: {
+          $in: ['ordered', 'Acknowledged'],
+        },
+      },
+    ],
+  };
   let values;
   values = await Shop.aggregate([
     {
@@ -1102,6 +1340,94 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
       },
     },
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: faildstatusMatch,
+          },
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'products',
+                    localField: 'productid',
+                    foreignField: '_id',
+                    as: 'products',
+                  },
+                },
+                { $unwind: '$products' },
+                {
+                  $project: {
+                    _id: 1,
+                    preOrderClose: 1,
+                    // status: 1,
+                    quantity: 1,
+                    priceperkg: 1,
+                    GST_Number: 1,
+                    HSN_Code: 1,
+                    packKg: 1,
+                    unit: 1,
+                    date: 1,
+                    time: 1,
+                    finalQuantity: 1,
+                    finalPricePerKg: 1,
+                    created: 1,
+                    productTitle: '$products.productTitle',
+                  },
+                },
+              ],
+              as: 'product',
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              productStatus: 1,
+              customerDeliveryStatus: 1,
+              receiveStatus: 1,
+              pettyCashReceiveStatus: 1,
+              AssignedStatus: 1,
+              completeStatus: 1,
+              UnDeliveredStatus: 1,
+              customerBilldate: 1,
+              customerBilltime: 1,
+              delivery_type: 1,
+              Payment: 1,
+              devevery_mode: 1,
+              time_of_delivery: 1,
+              total: 1,
+              gsttotal: 1,
+              subtotal: 1,
+              SGST: 1,
+              CGST: 1,
+              paidamount: 1,
+              pay_type: 1,
+              paymentMethod: 1,
+              Uid: 1,
+              OrderId: 1,
+              customerBillId: 1,
+              date: 1,
+              time: 1,
+              created: 1,
+              timeslot: 1,
+              statusUpdate: 1,
+              WA_assigned_Time: 1,
+              product: '$product',
+            },
+          },
+        ],
+        as: 'shoporderclones',
+      },
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -1132,6 +1458,9 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         callhistoriestoday: '$callhistoriestoday.count',
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
+        shoporderclones: '$shoporderclones',
+        lapsedOrder: 1,
+
       },
     },
     { $skip: 10 * page },
@@ -1177,7 +1506,80 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
   if (key != 'null') {
     keys = { SName: { $regex: key, $options: 'i' } };
   }
-
+  let today = moment().format('yyyy-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  let threeDay = moment().subtract(2, 'days').format('yyyy-MM-DD');
+  let hover = moment().subtract(-1, 'hours').format('H');
+  let timeslot = [
+    { start: 10, end: 20 },
+    { start: 20, end: 30 },
+    { start: 30, end: 40 },
+    { start: 40, end: 50 },
+    { start: 50, end: 60 },
+    { start: 60, end: 70 },
+    { start: 70, end: 80 },
+    { start: 80, end: 90 },
+    { start: 900, end: 1000 },
+    { start: 1000, end: 1100 },
+    { start: 1100, end: 1200 },
+    { start: 1200, end: 1300 },
+    { start: 1300, end: 1400 },
+    { start: 1400, end: 1500 },
+    { start: 1500, end: 1600 },
+    { start: 1600, end: 1700 },
+    { start: 1700, end: 1800 },
+    { start: 1800, end: 1900 },
+    { start: 1900, end: 2000 },
+    { start: 2000, end: 2100 },
+    { start: 2100, end: 2200 },
+    { start: 2200, end: 2300 },
+    { start: 2300, end: 2400 },
+    { start: 2400, end: 2500 },
+  ];
+  let lapsed = timeslot[hover].start;
+  let faildstatusMatch = {
+    $or: [
+      {
+        status: {
+          $in: [
+            'Acknowledged',
+            'Approved',
+            'Modified',
+            'Packed',
+            'Assigned',
+            'Order Picked',
+            'Delivery start',
+            'UnDelivered',
+            'ordered',
+          ],
+        },
+        date: { $lte: threeDay },
+      },
+      {
+        status: {
+          $in: [
+            'Acknowledged',
+            'Approved',
+            'Modified',
+            'Packed',
+            'Assigned',
+            'Order Picked',
+            'Delivery start',
+            'UnDelivered',
+            'ordered',
+          ],
+        },
+        date: { $eq: yesterday },
+        delivery_type: 'IMD',
+      },
+      {
+        timeslot: { $gte: lapsed },
+        status: {
+          $in: ['ordered', 'Acknowledged'],
+        },
+      },
+    ],
+  };
   let values;
   values = await Shop.aggregate([
     {
@@ -1240,6 +1642,94 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
       },
     },
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: faildstatusMatch,
+          },
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'products',
+                    localField: 'productid',
+                    foreignField: '_id',
+                    as: 'products',
+                  },
+                },
+                { $unwind: '$products' },
+                {
+                  $project: {
+                    _id: 1,
+                    preOrderClose: 1,
+                    // status: 1,
+                    quantity: 1,
+                    priceperkg: 1,
+                    GST_Number: 1,
+                    HSN_Code: 1,
+                    packKg: 1,
+                    unit: 1,
+                    date: 1,
+                    time: 1,
+                    finalQuantity: 1,
+                    finalPricePerKg: 1,
+                    created: 1,
+                    productTitle: '$products.productTitle',
+                  },
+                },
+              ],
+              as: 'product',
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              productStatus: 1,
+              customerDeliveryStatus: 1,
+              receiveStatus: 1,
+              pettyCashReceiveStatus: 1,
+              AssignedStatus: 1,
+              completeStatus: 1,
+              UnDeliveredStatus: 1,
+              customerBilldate: 1,
+              customerBilltime: 1,
+              delivery_type: 1,
+              Payment: 1,
+              devevery_mode: 1,
+              time_of_delivery: 1,
+              total: 1,
+              gsttotal: 1,
+              subtotal: 1,
+              SGST: 1,
+              CGST: 1,
+              paidamount: 1,
+              pay_type: 1,
+              paymentMethod: 1,
+              Uid: 1,
+              OrderId: 1,
+              customerBillId: 1,
+              date: 1,
+              time: 1,
+              created: 1,
+              timeslot: 1,
+              statusUpdate: 1,
+              WA_assigned_Time: 1,
+              product: '$product',
+            },
+          },
+        ],
+        as: 'shoporderclones',
+      },
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -1270,6 +1760,9 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         callhistoriestoday: '$callhistoriestoday.count',
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
+        shoporderclones: '$shoporderclones',
+        lapsedOrder: 1,
+
       },
     },
     { $skip: 10 * page },
@@ -1332,12 +1825,20 @@ const updateStatuscall = async (id, body, userId, date) => {
   if (status.callingStatus == 'On Call') {
     throw new ApiError(httpStatus.NOT_FOUND, 'OnCall');
   }
-  let { lapsed } = body;
-  status = await Shop.findByIdAndUpdate(
-    { _id: id },
-    { callingStatus: 'On Call', lapsed: lapsed, callingUserId: userId, historydate: date, sortdate: '' },
-    { new: true }
-  );
+  let { orderId } = body;
+  if (orderId == null) {
+    status = await Shop.findByIdAndUpdate(
+      { _id: id },
+      { callingStatus: 'On Call', callingUserId: userId, historydate: date, sortdate: '' },
+      { new: true }
+    );
+  } else {
+    status = await Shop.findByIdAndUpdate(
+      { _id: id },
+      { callingStatus: 'On Call', lapsedOrder: orderId, callingUserId: userId, historydate: date, sortdate: '' },
+      { new: true }
+    );
+  }
   return status;
 };
 const updateStatuscalllapsed = async (id, orderId, body, userId, date) => {
@@ -2061,6 +2562,8 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
         shoporderclonesun: '$shoporderclonesun',
+        lapsedOrder: 1,
+
       },
     },
     { $skip: 10 * page },
