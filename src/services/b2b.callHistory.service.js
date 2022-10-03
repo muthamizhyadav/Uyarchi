@@ -1159,7 +1159,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         callhistoriestoday: '$callhistoriestoday.count',
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
-        shoporderclones:"$shoporderclones"
+        shoporderclones: '$shoporderclones',
       },
     },
     { $skip: 10 * page },
@@ -1818,12 +1818,21 @@ const updateStatuscall = async (id, body, userId, date) => {
   if (status.callingStatus == 'On Call') {
     throw new ApiError(httpStatus.NOT_FOUND, 'OnCall');
   }
-  let { lapsed } = body;
-  status = await Shop.findByIdAndUpdate(
-    { _id: id },
-    { callingStatus: 'On Call', lapsed: lapsed, callingUserId: userId, historydate: date, sortdate: '' },
-    { new: true }
-  );
+  let { orderId } = body;
+  if (orderId == null) {
+    status = await Shop.findByIdAndUpdate(
+      { _id: id },
+      { callingStatus: 'On Call', callingUserId: userId, historydate: date, sortdate: '' },
+      { new: true }
+    );
+  }
+  else{
+    status = await Shop.findByIdAndUpdate(
+      { _id: id },
+      { callingStatus: 'On Call', lapsedOrder: orderId, callingUserId: userId, historydate: date, sortdate: '' },
+      { new: true }
+    );
+  }
   return status;
 };
 const updateStatuscalllapsed = async (id, orderId, body, userId, date) => {
