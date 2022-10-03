@@ -1305,7 +1305,6 @@ const getBillDetailsPerOrder = async (id) => {
         shopType: '$b2bshopclonedatas.type',
         SOwner: '$b2bshopclonedatas.SOwner',
         Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
-        // total: { $sum: "$Amount"},
         totalQuantity: '$TotalQuantityData.Qty',
         OperatorName: '$deliveryExecutiveName.name',
         GSTamount: { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
@@ -1959,66 +1958,122 @@ const finishingAccount = async (id)=>{
                 from: 'shoporderclones',
                 localField: 'orderId',
                 foreignField: '_id',
+                pipeline: [
+                  {
+                    $lookup: {
+                      from:'productorderclones',
+                      localField: '_id',
+                      foreignField: 'orderId',
+                      pipeline: [
+
+
+                        {
+                          $project: {
+                            Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                            GST_Number: 1,
+                          },
+                        },
+                        {
+                          $project: {
+                            sum: '$sum',
+                            percentage: {
+                              $divide: [
+                                {
+                                  $multiply: ['$GST_Number', '$Amount'],
+                                },
+                                100,
+                              ],
+                            },
+                            value: '$Amount',
+                          },
+                        },
+                        {
+                          $project: {
+                            price: { $sum: ['$value', '$percentage'] },
+                            value: '$value',
+                            GST: '$percentage',
+                          },
+                        },
+                        { $group: { _id: null, price: { $sum: '$price' } } },
+                     
+                              // {
+                              //   $group: {
+                              //     _id: null,
+                              //     productOrderCloneamount: {
+                              //       $sum: {
+                              //         $multiply: ['$finalQuantity', '$finalPricePerKg'],
+                              //       },
+                              //     },
+                                  
+            
+                              //   },
+                              // },
+                            ],
+                      as: 'productData',
+                    }
+                  },
+                  { $unwind: "$productData"},
+                  {
+                    $lookup: {  
+                      from: 'orderpayments',
+                      localField: '_id',
+                      foreignField: 'orderId',
+                      pipeline: [
+                              {
+                                
+                                  $match: {
+                                    $and: [{ type: { $eq: 'advanced' } }],
+                                  },
+                                
+                            },
+                          ],
+                      as: 'orderData',
+                    },
+                  },
+                  { $unwind: "$orderData"},
+                  {
+                    $lookup: {
+                      from: 'orderpayments',
+                      localField: '_id',
+                      foreignField: 'orderId',
+                      pipeline: [
+                              {
+                                
+                                  $match: {
+                                    $and: [{ type: { $ne: 'advanced' } }],
+                                  },
+                                
+                            },
+                          ],
+                      as: 'orderDataNotEqual',
+                    },
+                  },
+                ],
                 as: 'shopData',
               }
             },
             { $unwind: "$shopData"},
             {
-              $lookup: {
-                from:'productorderclones',
-                localField: 'shopData._id',
-                foreignField: 'orderId',
-                pipeline: [
-               
-                        {
-                          $group: {
-                            _id: null,
-                            productOrderCloneamount: {
-                              $sum: {
-                                $multiply: ['$finalQuantity', '$finalPricePerKg'],
-                              },
-                            },
-      
-                          },
-                        },
-                      ],
-                as: 'productData',
-              }
-            },
-            { $unwind:"$productData"},
-            {
-              $lookup: {
-                from: 'orderpayments',
-                localField: 'orderId',
-                foreignField: 'orderId',
-                pipeline: [
-                        {
-                          
-                            $match: {
-                              $and: [{ type: { $eq: 'advanced' } }],
-                            },
-                          
-                      },
-                    ],
-                as: 'orderData',
-              },
-            },
-            { $unwind:"$orderData"},
-           
-            {
-              $project:{
-
+              $project: {
                 wardAdminGroupID:1,
-                _order: "$shopData._id",
-                orderId: "$shopData.OrderId",
-                status: "$shopData.status",
-                initialPaymentType: "$shopData.paymentMethod",
-                InitialPaymentcapacity: "$shopData.pay_type",
-                amount: "$productData.productOrderCloneamount",
-                paidAmount: "$orderData.paidAmt",
-                type: "$orderData.type"
+               deliveryStatus: "$shopData.status",
+               order: "$shopData.OrderId",
+               originalOrderId: "$shopData._id",
+
+     
+           
+               productAmountWithGST: "$shopData.productData.price",
+               initialPaymentType: "$shopData.orderData.paymentMethod",
+               initialpaymenyCapacity: "$shopData.orderData.pay_type",
+                paidAmount: "$shopData.orderData.paidAmt",
+
+
+               FinalPaymentType: "$shopData.orderDataNotEqual.paymentMethod",
+               Finalpaymentcapacity: "$shopData.orderDataNotEqual.pay_type",
+                finalpaidAmount: "$shopData.orderDataNotEqual.paidAmt",
               }
             }
+          
           ]);
   
 
