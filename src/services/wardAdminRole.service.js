@@ -488,7 +488,14 @@ const createtemperaryAssigndata = async (body) => {
       await Shop.findByIdAndUpdate({ _id: f.shopId }, { salesManStatus: body.status }, { new: true });
       await SalesManShop.findByIdAndUpdate(
         { _id: f._id },
-        { salesManId: f.salesManId, shopId: f.shopId, status: body.status, reAssignDate: serverdate, reAssignTime: time },
+        {
+          salesManId: f.salesManId,
+          shopId: f.shopId,
+          status: body.status,
+          reAssignDate: serverdate,
+          reAssignTime: time,
+          fromSalesManId: body.fromSalesManId,
+        },
         { new: true }
       );
     });
