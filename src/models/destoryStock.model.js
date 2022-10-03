@@ -17,11 +17,11 @@ const destoryStockSchema = mongoose.Schema({
     },
     date: {
         type: String,
-        default: moment().utcOffset(331).format('yyy-MM-DD'),
+       
       },
       time: {
         type: String,
-        default: moment().utcOffset(331).format('h:mm a'),
+        
       },
       active: {
         type: Boolean,
@@ -31,6 +31,14 @@ const destoryStockSchema = mongoose.Schema({
         type: Boolean,
         default: false,
       },
+      status: {
+        type: String,
+        default: "Pending"
+      },
+      quantityToDestroy: {
+        type:Number,
+        default: 0,
+      }
 });
 
 const destoryStock = mongoose.model('destroyStock',destoryStockSchema);
