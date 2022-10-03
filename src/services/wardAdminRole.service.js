@@ -584,6 +584,55 @@ const get_Assign_data_By_SalesManId = async (id) => {
     {
       $match: { salesManId: id },
     },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesData',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'salesManId',
+        foreignField: '_id',
+        as: 'Users',
+      },
+    },
+    {
+      $unwind: '$Users',
+    },
+    {
+      $project: {
+        _id: 1,
+        archive: 1,
+        active: 1,
+        salesManId: 1,
+        shopId: 1,
+        status: 1,
+        date: 1,
+        time: 1,
+        reAssignDate: 1,
+        reAssignTime: 1,
+        shops: '$b2bshopclonesData.SName',
+        salesMan: '$Users.name',
+      },
+    },
+  ]);
+  return values;
+};
+
+const getUsersWith_skiped = async (id) => {
+  let values = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $ne: id } }, { userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
+      },
+    },
   ]);
   return values;
 };
@@ -611,4 +660,5 @@ module.exports = {
   getAllTempReassigndata,
   getAssignData_by_SalesMan,
   get_Assign_data_By_SalesManId,
+  getUsersWith_skiped,
 };

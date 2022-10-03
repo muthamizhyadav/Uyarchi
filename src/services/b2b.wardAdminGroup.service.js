@@ -1958,103 +1958,67 @@ const finishingAccount = async (id)=>{
               $lookup: {
                 from: 'shoporderclones',
                 localField: 'orderId',
-                
                 foreignField: '_id',
-
-                as: 'shopDta',
+                as: 'shopData',
               }
             },
-            { $unwind: "$shopDta"},
+            { $unwind: "$shopData"},
             {
-              $lookup:{
-                from: 'productorderclones',
-                localField: 'shopDta._id',
+              $lookup: {
+                from:'productorderclones',
+                localField: 'shopData._id',
                 foreignField: 'orderId',
                 pipeline: [
                
-                  {
-                    $group: {
-                      _id: null,
-                      amount: {
-                        $sum: {
-                          $multiply: ['$finalQuantity', '$finalPricePerKg'],
+                        {
+                          $group: {
+                            _id: null,
+                            productOrderCloneamount: {
+                              $sum: {
+                                $multiply: ['$finalQuantity', '$finalPricePerKg'],
+                              },
+                            },
+      
+                          },
                         },
-                      },
-
-                    },
-                  },
-                ],
-                as: 'dataaaaaa',
+                      ],
+                as: 'productData',
               }
             },
-            { $unwind: "$dataaaaaa"},
-
-
-
+            { $unwind:"$productData"},
+            {
+              $lookup: {
+                from: 'orderpayments',
+                localField: 'orderId',
+                foreignField: 'orderId',
+                pipeline: [
+                        {
+                          
+                            $match: {
+                              $and: [{ type: { $eq: 'advanced' } }],
+                            },
+                          
+                      },
+                    ],
+                as: 'orderData',
+              },
+            },
+            { $unwind:"$orderData"},
+           
             {
               $project:{
 
                 wardAdminGroupID:1,
-                status: "$shopDta.status",
-                initialPaymentType: "$shopDta.paymentMethod",
-                InitialPaymentcapacity: "$shopDta.pay_type",
-                amount: "$dataaaaaa.amount"
+                _order: "$shopData._id",
+                orderId: "$shopData.OrderId",
+                status: "$shopData.status",
+                initialPaymentType: "$shopData.paymentMethod",
+                InitialPaymentcapacity: "$shopData.pay_type",
+                amount: "$productData.productOrderCloneamount",
+                paidAmount: "$orderData.paidAmt",
+                type: "$orderData.type"
               }
             }
-            // {
-            //   $lookup:{
-            //     from: 'orderpayments',
-            //     localField: 'orderId',
-            //     foreignField: 'orderId',
-            //     pipeline: [
-               
-            //       {
-            //         $group: {
-            //           _id: null,
-            //         },
-            //       },
-            //     ],
-            //     as: 'orderdataaaaaa',
-            //   }
-            // },
-            // { $unwind: "$orderdataaaaaa"},
-         
-         
-    
-
-    // {
-    //   $lookup: {
-    //     from: 'shoporderclones',
-    //     localField: 'orderId',
-    //     foreignField: '_id',
-    //     as: 'wardAdminGroupdata',
-    //   }
-    // },
-    // { $unwind:"$wardAdminGroupdata"},
-    // {
-    //   $lookup: {
-    //     from: 'orderassigns',
-    //     localField: 'wardAdminGroupdata.orderId',
-    //     foreignField: 'orderId',  
-    //     pipeline: [
-    //       {
-    //         $match: {
-    //           $and: [{ wardAdminGroupID: { $eq: id } }],
-    //         },
-    //       },
-    //       {
-    //         $group: {
-    //           _id: null,
-    //         },
-    //       },
-    //     ],
-    //     as: 'ordatadata',
-    //   }
-    // }
-    
-    
-   
-   
           ]);
   
 
