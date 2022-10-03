@@ -1927,10 +1927,10 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
       },
     },
     { $unwind: '$shoporderclonesun' },
-    // {
-    //   $count: 'passing_scores',
-    // },
-    { $group: { _id: null, count: { $sum: 1 } } },
+    {
+      $count: 'passing_scores',
+    },
+    // { $group: { _id: null, count: { $sum: 1 } } },
   ]);
   console.log(total);
   let role = await Role.findOne({ _id: userRole });
