@@ -1539,7 +1539,7 @@ const oncallstatusByUser = async (userId) => {
 };
 
 const call_visit_Count = async (userId) => {
-  let currentDate = moment().format('YYYY-MM-DD');
+  console.log(currentDate)
   let visit_Count = await callHistoryModel
     .find({ userId: userId, date: currentDate, type: 'call', status: 'ordered' })
     .count();
@@ -1557,6 +1557,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
   let threeDay = moment().subtract(2, 'days').format('yyyy-MM-DD');
+  // console.log(threeDay)
   let faildstatusMatch;
   let timelapsed;
   let hover = moment().subtract(-1, 'hours').format('H');
@@ -1589,6 +1590,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
   let lapsed = timeslot[hover].start;
 
   if (faildstatus == 'null') {
+    console.log('trueee')
     faildstatusMatch = {
       $or: [
         {
@@ -1603,7 +1605,6 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
               'Delivery start',
               'UnDelivered',
               'ordered',
-              'Rejected',
             ],
           },
           date: { $lte: threeDay },
@@ -1620,7 +1621,6 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
               'Delivery start',
               'UnDelivered',
               'ordered',
-              'Rejected',
             ],
           },
           date: { $eq: yesterday },
@@ -1705,11 +1705,6 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
 
   let values;
   values = await Shop.aggregate([
-    {
-      $match: {
-        $and: [{ historydate: { $eq: date } }, keys, { lapsed: { $ne: true } }],
-      },
-    },
     { $sort: { historydate: -1, sorttime: -1 } },
     {
       $lookup: {
@@ -1899,11 +1894,6 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
     { $limit: 10 },
   ]);
   let total = await Shop.aggregate([
-    {
-      $match: {
-        $and: [{ historydate: { $eq: date } }, keys, { lapsed: { $ne: true } }],
-      },
-    },
     { $sort: { historydate: -1, sorttime: -1 } },
     {
       $lookup: {
