@@ -481,6 +481,55 @@ const dataAllSalesManhistry = async  (id) => {
   ])
   return data
  }
+
+ const createtemperaryAssigndata = async (body) => {
+  let serverdate = moment().format('yyy-MM-DD');
+  let time = moment().format('hh:mm a');
+  body.arr.forEach(async (e) => {
+    let data = await SalesManShop.find({ salesManId:body.salesManId, shopId:e,  status:'Assign'})
+    data.forEach(async (f) => {
+    await Shop.findByIdAndUpdate({ _id: f.shopId }, {salesManStatus:body.status}, { new: true });
+    await SalesManShop.findByIdAndUpdate({_id:f._id},
+      {salesManId:f.salesManId,
+      shopId:f.shopId,
+      status:body.status,
+      reAssignDate:serverdate,
+      reAssignTime:time},{new:true});
+      })
+ })
+ return {data:"created"}
+};
+
+const getAllTempReassigndata = async () => {
+   const data = await SalesManShop.aggregate([
+    {
+      $match: {
+        $and: [{status: { $eq: "tempReassign" } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesData',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesData',
+    },
+    {
+      $project: {
+        SName:"$b2bshopclonesData.SName",
+        mobile:"$b2bshopclonesData.mobile",
+        address:'$b2bshopclonesData.address',
+      },
+    },
+   ])
+
+   return data
+}
+
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -500,4 +549,6 @@ module.exports = {
   withoutoutAsmSalesman,
   dataAllSalesManhistry,
   allocateDealocateCount,
+  createtemperaryAssigndata,
+  getAllTempReassigndata,
 }
