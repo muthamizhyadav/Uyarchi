@@ -629,7 +629,9 @@ const get_Assign_data_By_SalesManId = async (id) => {
 const getUsersWith_skiped = async (id) => {
   let values = await Users.aggregate([
     {
-      $match: { _id: { $ne: id } },
+      $match: {
+        $and: [{ _id: { $ne: id } }, { userRole: { $ne: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
+      },
     },
   ]);
   return values;
