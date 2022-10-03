@@ -118,6 +118,11 @@ const getAssignData_by_SalesMan = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const get_Assign_data_By_SalesManId = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.get_Assign_data_By_SalesManId(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -139,5 +144,6 @@ module.exports = {
   allocateDeallocateCount,
   createtemperaryAssigndata,
   getAllTempReassigndata,
-  getAssignData_by_SalesMan
+  getAssignData_by_SalesMan,
+  get_Assign_data_By_SalesManId,
 };

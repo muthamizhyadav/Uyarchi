@@ -134,6 +134,9 @@ const wardAdminRoleAsmSchema = new mongoose.Schema({
     salesManId: {
       type: String,
     },
+    fromSalesManId: {
+      type: String,
+    },
     shopId:{
       type:String,
     },

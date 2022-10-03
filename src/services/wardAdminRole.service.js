@@ -488,7 +488,14 @@ const createtemperaryAssigndata = async (body) => {
       await Shop.findByIdAndUpdate({ _id: f.shopId }, { salesManStatus: body.status }, { new: true });
       await SalesManShop.findByIdAndUpdate(
         { _id: f._id },
-        { salesManId: f.salesManId, shopId: f.shopId, status: body.status, reAssignDate: serverdate, reAssignTime: time },
+        {
+          salesManId: f.salesManId,
+          shopId: f.shopId,
+          status: body.status,
+          reAssignDate: serverdate,
+          reAssignTime: time,
+          fromSalesManId: body.fromSalesManId,
+        },
         { new: true }
       );
     });
@@ -572,6 +579,53 @@ const getAssignData_by_SalesMan = async (page) => {
   return { values: values, total: total.length };
 };
 
+const get_Assign_data_By_SalesManId = async (id) => {
+  let values = await SalesManShop.aggregate([
+    {
+      $match: { salesManId: id },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesData',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'salesManId',
+        foreignField: '_id',
+        as: 'Users',
+      },
+    },
+    {
+      $unwind: '$Users',
+    },
+    {
+      $project: {
+        _id: 1,
+        archive: 1,
+        active: 1,
+        salesManId: 1,
+        shopId: 1,
+        status: 1,
+        date: 1,
+        time: 1,
+        reAssignDate: 1,
+        reAssignTime: 1,
+        shops: '$b2bshopclonesData.SName',
+        salesMan: '$Users.name',
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -594,4 +648,5 @@ module.exports = {
   createtemperaryAssigndata,
   getAllTempReassigndata,
   getAssignData_by_SalesMan,
+  get_Assign_data_By_SalesManId,
 };
