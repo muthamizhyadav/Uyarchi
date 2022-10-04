@@ -39,7 +39,7 @@ const createcallHistoryWithType = async (body, userId) => {
 
   let values = {
     ...body,
-    ...{ userId: userId, date: serverdate, time: servertime, historytime: time, type: type, lat: lat, lang: lang },
+    ...{ userId: userId, date: serverdate, time: servertime, historytime: time },
   };
   let shopdata = await Shop.findOne({ _id: shopId });
   let currentdate = moment().format('DD-MM-yyyy');
@@ -48,7 +48,7 @@ const createcallHistoryWithType = async (body, userId) => {
     {
       sorttime: time,
       callingStatusSort: sort,
-      lapsed: lapsed,
+      // lapsedOrder: null,
     },
     { new: true }
   );
@@ -59,13 +59,12 @@ const createcallHistoryWithType = async (body, userId) => {
       {
         sortdate: reason,
         callingStatus: callStatus,
-        lapsed: lapsed,
       },
       { new: true }
     );
   } else {
     if (callStatus != 'accept') {
-      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus, lapsed: lapsed }, { new: true });
+      await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus }, { new: true });
     }
   }
   let callHistory = await callHistoryModel.create(values);
@@ -1162,7 +1161,6 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
-
       },
     },
     { $skip: 10 * page },
@@ -1460,7 +1458,6 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
-
       },
     },
     { $skip: 10 * page },
@@ -1762,7 +1759,6 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
-
       },
     },
     { $skip: 10 * page },
@@ -1838,7 +1834,13 @@ const updateStatuscall = async (id, body, userId, date) => {
       { callingStatus: 'On Call', lapsedOrder: orderId, callingUserId: userId, historydate: date, sortdate: '' },
       { new: true }
     );
+    await ShopOrderClone.findByIdAndUpdate(
+      { _id: orderId },
+      { RE_order_status: 'On Call', Re_order_userId: userId },
+      { new: true }
+    );
   }
+
   return status;
 };
 const updateStatuscalllapsed = async (id, orderId, body, userId, date) => {
@@ -2563,7 +2565,6 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
         shoporderclones: '$shoporderclones',
         shoporderclonesun: '$shoporderclonesun',
         lapsedOrder: 1,
-
       },
     },
     { $skip: 10 * page },
