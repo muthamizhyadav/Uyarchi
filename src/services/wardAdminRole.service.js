@@ -483,14 +483,16 @@ const createtemperaryAssigndata = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   body.arr.forEach(async (e) => {
-    let data = await SalesManShop.find({ salesManId: body.fromSalesManId, shopId: e, status: 'Assign' });
+    let data = await SalesManShop.find({ salesManId: body.fromSalesManId, shopId: e });
+    // console.log(data);
     if (data.length != 0) {
       data.forEach(async (f) => {
         await Shop.findByIdAndUpdate({ _id: f.shopId }, { salesManStatus: body.status }, { new: true });
+        console.log(body.salesManId);
         await SalesManShop.findByIdAndUpdate(
           { _id: f._id },
           {
-            salesManId: f.salesManId,
+            salesManId: body.salesManId,
             shopId: f.shopId,
             status: body.status,
             reAssignDate: serverdate,
@@ -558,6 +560,13 @@ const getAssignData_by_SalesMan = async (page) => {
         from: 'salesmanshops',
         localField: '_id',
         foreignField: 'salesManId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ status: { $ne: 'Reassign' } }],
+            },
+          },
+        ],
         as: 'salesMan',
       },
     },
@@ -604,8 +613,13 @@ const getAssignData_by_SalesMan = async (page) => {
 
 const get_Assign_data_By_SalesManId = async (id) => {
   let values = await SalesManShop.aggregate([
+    // {
+    //   $match: { salesManId: id },
+    // },
     {
-      $match: { salesManId: id },
+      $match: {
+        $and: [{ salesManId: { $eq: id } }, { status: { $ne: 'Reassign' } }],
+      },
     },
     {
       $lookup: {
