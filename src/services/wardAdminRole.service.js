@@ -549,6 +549,11 @@ const getAllTempReassigndata = async () => {
 const getAssignData_by_SalesMan = async (page) => {
   let values = await Users.aggregate([
     {
+      $match: {
+        $and: [{ userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
+      },
+    },
+    {
       $lookup: {
         from: 'salesmanshops',
         localField: '_id',
@@ -570,6 +575,11 @@ const getAssignData_by_SalesMan = async (page) => {
     { $limit: 10 },
   ]);
   let total = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
+      },
+    },
     {
       $lookup: {
         from: 'salesmanshops',
