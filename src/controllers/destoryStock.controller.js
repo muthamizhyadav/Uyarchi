@@ -24,7 +24,7 @@ const getdetailsWithSorting = catchAsync(async (req, res) => {
 })
 
 const updateProduct = catchAsync(async (req, res) => {
-    const product = await destroyStockService.updateProduct(req.params.product, req.body);
+    const product = await destroyStockService.updateProduct(req.params.id, req.body);
     res.send(product);
   });
 

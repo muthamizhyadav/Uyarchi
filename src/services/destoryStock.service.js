@@ -25,19 +25,19 @@ const getProductNAmeFromRandom = async()=>{
           return  values;   
 }
 
-const createDestroyStock = async (sampleBody) => {
-  let time = moment().format('HHmm');
-  let date = moment().format('yyyy-MM-DD');
-  let created = moment();
-  let datas = {
-    time : time,
-    date : date,
-    created : created,
-  };
-  let bodyData = { ...datas, ...sampleBody};
-  return destroyStockModel.create(bodyData);
+// const createDestroyStock = async (sampleBody) => {
+//   let time = moment().format('HHmm');
+//   let date = moment().format('yyyy-MM-DD');
+//   let created = moment();
+//   let datas = {
+//     time : time,
+//     date : date,
+//     created : created,
+//   };
+//   let bodyData = { ...datas, ...sampleBody};
+//   return destroyStockModel.create(bodyData);
     
-  };
+//   };
 
 
   const getdetailsWithSorting = async (productId, date)=>{
@@ -91,15 +91,13 @@ const createDestroyStock = async (sampleBody) => {
 
   }
 
-  const updateProduct = async(product,body  )=>{
-    console.log(product);
-    let stack = await randomStockModel.findOne({ product: product });
-    console.log(stack);
-    if (!stack) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'stacks not found');
+  const updateProduct = async(id,updatebody  )=>{
+    let product = await randomStockModel.findById(id);
+    if (!product) {
+      throw new ApiError(httpStatus.NOT_FOUND, ' Not Found');
     }
-    stack = await randomStockModel.findOneAndUpdate({ product: product }, body, { new: true });
-    return stack;
+    product = await randomStockModel.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+    return product;
   };
 
 
@@ -111,7 +109,7 @@ const createDestroyStock = async (sampleBody) => {
 
 module.exports = {
     getProductNAmeFromRandom,
-    createDestroyStock,
+    // createDestroyStock,
     getdetailsWithSorting,
     updateProduct,
 }

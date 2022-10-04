@@ -75,7 +75,6 @@ const createcallHistoryWithType = async (body, userId) => {
   let callHistory = await callHistoryModel.create(values);
   return callHistory;
 };
-
 const createcallHistoryWithTypelapsed = async (body, userId) => {
   let time = moment().format('HHmmss');
   let date = moment().format('yyyy-MM-DD');
@@ -2616,6 +2615,86 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
   };
 };
 
+const get_order_details = async (orderId) => {
+  const toady = moment().format('YYYY-MM-DD');
+  let data = await ProductorderClone.aggregate([
+    {
+      $match: {
+        orderId: { $eq: orderId },
+      },
+    },
+    {
+      $lookup: {
+        from: 'productpacktypes',
+        localField: 'productpacktypeId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'historypacktypes',
+              localField: '_id',
+              foreignField: 'productPackId',
+              pipeline: [{ $match: { date: toady } }],
+              as: 'historypacktypes',
+            },
+          },
+          {
+            $unwind: '$historypacktypes',
+          },
+          {
+            $project: {
+              _id: 1,
+              onlinePrice: 1,
+              salesstartPrice: 1,
+              salesendPrice: 1,
+            },
+          },
+        ],
+        as: 'productpacktypes',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productpacktypes',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        preOrderClose: 1,
+        active: 1,
+        archive: 1,
+        status: 1,
+        orderId: 1,
+        productid: 1,
+        quantity: 1,
+        priceperkg: 1,
+        GST_Number: 1,
+        HSN_Code: 1,
+        packtypeId: 1,
+        productpacktypeId: 1,
+        packKg: 1,
+        unit: 1,
+        date: 1,
+        time: 1,
+        customerId: 1,
+        finalQuantity: 1,
+        finalPricePerKg: 1,
+        created: 1,
+        onlinePrice: '$productpacktypes.onlinePrice',
+        salesstartPrice: '$productpacktypes.salesstartPrice',
+        salesendPrice: '$productpacktypes.salesendPrice',
+        // productpacktypes:"$productpacktypes",
+        price_available: { $ne: ['$productpacktypes', null] },
+        // price_available: { '$productpacktypes.salesendPrice': null },
+      },
+    },
+  ]);
+
+  return data;
+};
+
 module.exports = {
   createCallHistory,
   getAll,
@@ -2646,4 +2725,5 @@ module.exports = {
   updateStatuscalllapsed,
   createcallHistoryWithTypelapsed,
   getShop_lapsed,
+  get_order_details,
 };

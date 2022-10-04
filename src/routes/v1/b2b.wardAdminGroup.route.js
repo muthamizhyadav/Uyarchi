@@ -115,6 +115,6 @@ router.route('/update/groupDetails/:id').put(wardAdminGroupController.createAddO
 
 // router.route('/get/getDeliveryDetails/:page').get(wardAdminGroupController.getDeliveryDetails);
 
-router.route('/get/details/finishing/account/:id').get(wardAdminGroupController.finishingAccount)
+router.route('/get/details/finishing/account/:id/:page').get(wardAdminGroupController.finishingAccount)
 
 module.exports = router;
