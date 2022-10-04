@@ -286,6 +286,12 @@ const finishingAccount = catchAsync(async (req, res) => {
   res.send(details);
 });
 
+
+const submitDispute = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.submitDispute(req.params.id,req.body);
+  res.send(details);
+});
+
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -363,4 +369,5 @@ module.exports = {
   deliverygetAssigned,
 
   finishingAccount,
+  submitDispute,
 };
