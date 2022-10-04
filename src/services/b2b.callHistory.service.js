@@ -62,11 +62,16 @@ const createcallHistoryWithType = async (body, userId) => {
       },
       { new: true }
     );
+    await ShopOrderClone.findOneAndUpdate({ _id: body.orderId }, { RE_order_status: callStatus }, { new: true });
   } else {
     if (callStatus != 'accept') {
       await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: callStatus }, { new: true });
+      if (body.orderId != null) {
+        await ShopOrderClone.findOneAndUpdate({ _id: body.orderId }, { RE_order_status: callStatus }, { new: true });
+      }
     }
   }
+
   let callHistory = await callHistoryModel.create(values);
   return callHistory;
 };
