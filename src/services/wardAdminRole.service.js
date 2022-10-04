@@ -490,7 +490,7 @@ const createtemperaryAssigndata = async (body) => {
         await SalesManShop.findByIdAndUpdate(
           { _id: f._id },
           {
-            salesManId: f.fromSalesManId,
+            salesManId: f.salesManId,
             shopId: f.shopId,
             status: body.status,
             reAssignDate: serverdate,
