@@ -70,27 +70,27 @@ const getActiveUsers = async () => {
         $and: [{ userStatus: { $eq: 'Active' } }],
       },
     },
-    // {
-    //   $lookup: {
-    //     from: 'b2busers',
-    //     localField: 'userId',
-    //     foreignField: '_id',
-    //     as: 'userData',
-    //   },
-    // },
-    // {
-    //   $unwind: '$userData',
-    // },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
 
-    // {
-    //   $project: {
-    //     userId: '$userData._id',
-    //     userName: '$userData.name',
-    //     userStatus: 1,
-    //     empId: 1,
-    //     salary: 1,
-    //   },
-    // },
+    {
+      $project: {
+        userId: '$userData._id',
+        userName: '$userData.name',
+        userStatus: 1,
+        empId: 1,
+        salary: 1,
+      },
+    },
   ]);
   return values;
 };
