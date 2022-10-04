@@ -613,8 +613,13 @@ const getAssignData_by_SalesMan = async (page) => {
 
 const get_Assign_data_By_SalesManId = async (id) => {
   let values = await SalesManShop.aggregate([
+    // {
+    //   $match: { salesManId: id },
+    // },
     {
-      $match: { salesManId: id },
+      $match: {
+        $and: [{ salesManId: { $eq: id } }, { status: { $ne: 'Reassign' } }],
+      },
     },
     {
       $lookup: {
