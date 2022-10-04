@@ -1342,8 +1342,8 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
     {
       $lookup: {
         from: 'shoporderclones',
-        localField: '_id',
-        foreignField: 'shopId',
+        localField: 'lapsedOrder',
+        foreignField: '_id',
         pipeline: [
           {
             $match: faildstatusMatch,
@@ -1644,8 +1644,8 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
     {
       $lookup: {
         from: 'shoporderclones',
-        localField: '_id',
-        foreignField: 'shopId',
+        localField: 'lapsedOrder',
+        foreignField: '_id',
         pipeline: [
           {
             $match: faildstatusMatch,
