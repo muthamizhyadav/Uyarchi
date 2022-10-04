@@ -786,6 +786,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         match: { $ne: ['$b2bshopclones._id', null] },
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
+        lapsedOrder: 1,
       },
     },
     {
@@ -1043,8 +1044,8 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
     {
       $lookup: {
         from: 'shoporderclones',
-        localField: '_id',
-        foreignField: 'shopId',
+        localField: 'lapsedOrder',
+        foreignField: '_id',
         pipeline: [
           {
             $match: faildstatusMatch,
@@ -1159,7 +1160,9 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         callhistoriestoday: '$callhistoriestoday.count',
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
-        shoporderclones:"$shoporderclones"
+        shoporderclones: '$shoporderclones',
+        lapsedOrder: 1,
+
       },
     },
     { $skip: 10 * page },
@@ -1339,8 +1342,8 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
     {
       $lookup: {
         from: 'shoporderclones',
-        localField: '_id',
-        foreignField: 'shopId',
+        localField: 'lapsedOrder',
+        foreignField: '_id',
         pipeline: [
           {
             $match: faildstatusMatch,
@@ -1456,6 +1459,8 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
+        lapsedOrder: 1,
+
       },
     },
     { $skip: 10 * page },
@@ -1639,8 +1644,8 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
     {
       $lookup: {
         from: 'shoporderclones',
-        localField: '_id',
-        foreignField: 'shopId',
+        localField: 'lapsedOrder',
+        foreignField: '_id',
         pipeline: [
           {
             $match: faildstatusMatch,
@@ -1756,6 +1761,8 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         shoptypeName: '$shoplists',
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
+        lapsedOrder: 1,
+
       },
     },
     { $skip: 10 * page },
@@ -1818,12 +1825,20 @@ const updateStatuscall = async (id, body, userId, date) => {
   if (status.callingStatus == 'On Call') {
     throw new ApiError(httpStatus.NOT_FOUND, 'OnCall');
   }
-  let { lapsed } = body;
-  status = await Shop.findByIdAndUpdate(
-    { _id: id },
-    { callingStatus: 'On Call', lapsed: lapsed, callingUserId: userId, historydate: date, sortdate: '' },
-    { new: true }
-  );
+  let { orderId } = body;
+  if (orderId == null) {
+    status = await Shop.findByIdAndUpdate(
+      { _id: id },
+      { callingStatus: 'On Call', callingUserId: userId, historydate: date, sortdate: '' },
+      { new: true }
+    );
+  } else {
+    status = await Shop.findByIdAndUpdate(
+      { _id: id },
+      { callingStatus: 'On Call', lapsedOrder: orderId, callingUserId: userId, historydate: date, sortdate: '' },
+      { new: true }
+    );
+  }
   return status;
 };
 const updateStatuscalllapsed = async (id, orderId, body, userId, date) => {
@@ -2547,6 +2562,8 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
         shoporderclonesun: '$shoporderclonesun',
+        lapsedOrder: 1,
+
       },
     },
     { $skip: 10 * page },
