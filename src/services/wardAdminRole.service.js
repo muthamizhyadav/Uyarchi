@@ -491,11 +491,12 @@ const createtemperaryAssigndata = async (body) => {
   let serverdate = moment().format('YYYY-MM-DD');
   let time = moment().format('hh:mm a');
   body.arr.forEach(async (e) => {
-    let data = await SalesManShop.find({ salesManId: body.salesManId, shopId: e });
+    let data = await SalesManShop.find({ shopId: e });
+    console.log(data);
     if (data.length != 0) {
       data.forEach(async (f) => {
         await Shop.findByIdAndUpdate({ _id: f.shopId }, { salesManStatus: body.status }, { new: true });
-        console.log(body.salesManId);
+        console.log(f._id);
         await SalesManShop.findByIdAndUpdate(
           { _id: f._id },
           {
@@ -583,6 +584,7 @@ const getAssignData_by_SalesMan = async (page) => {
         email: 1,
         phoneNumber: 1,
         userRole: 1,
+        fromSalesManId: '$saleMan.fromSalesManId',
         no_of_shop: { $size: '$salesMan' },
       },
     },
@@ -656,6 +658,7 @@ const get_Assign_data_By_SalesManId = async (id) => {
         active: 1,
         salesManId: 1,
         shopId: 1,
+        fromSalesManId: 1,
         status: 1,
         date: 1,
         time: 1,
