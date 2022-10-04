@@ -88,6 +88,7 @@ const callHistorySchema = mongoose.Schema({
   orderId: {
     type: String,
   },
+  
 });
 
 const callHistory = mongoose.model('callHistory', callHistorySchema);
