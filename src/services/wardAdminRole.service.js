@@ -496,6 +496,7 @@ const createtemperaryAssigndata = async (body) => {
             shopId: f.shopId,
             status: body.status,
             reAssignDate: serverdate,
+            fromSalesManId: body.fromSalesManId,
             reAssignTime: time,
           },
           { new: true }
