@@ -80,6 +80,7 @@ const getWallet = async (page) => {
         addressProofNo:1,
         idProof:1,
         addressProof:1,
+        email:1,
         shopname:"$shopDatq.SName"
 
     }
