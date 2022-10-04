@@ -76,7 +76,7 @@ const getAllPage = catchAsync(async (req, res) => {
       userRole
     );
   } else if (req.params.status == 'lapsed') {
-    console.log('hello')
+    console.log('hello');
     call = await callHistoryService.getShop_lapsed(
       moment().format('DD-MM-YYYY'),
       req.params.status,
@@ -206,6 +206,11 @@ const BillHistoryByShopId_date = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const get_order_details = catchAsync(async (req, res) => {
+  const data = await callHistoryService.get_order_details(req.params.id);
+  res.send(data);
+});
+
 // const updateStatusLapsed = catchAsync(async (req, res) => {
 //   const data = await callHistoryService.
 // })
@@ -236,4 +241,5 @@ module.exports = {
   BillHistoryByShopId_date,
   updateCallingStatuslapsed,
   createcallHistoryWithTypeslapsed,
+  get_order_details,
 };
