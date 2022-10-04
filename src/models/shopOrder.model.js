@@ -258,6 +258,15 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   paymentMethod: {
     type: String,
   },
+  RE_order_status: {
+    type: String,
+  },
+  Re_order_userId: {
+    type: String,
+  },
+  RE_order_Id: {
+    type: String,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
