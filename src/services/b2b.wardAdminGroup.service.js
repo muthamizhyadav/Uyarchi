@@ -1946,7 +1946,7 @@ const createAddOrdINGrp = async (id, body) => {
 
 
 
-const finishingAccount = async (id)=>{
+const finishingAccount = async (id,page)=>{
   let data = await wardAdminGroupModel_ORDERS.aggregate([
     {
               $match: {
@@ -2055,7 +2055,7 @@ const finishingAccount = async (id)=>{
                initialpaymenyCapacity: "$shopData.orderData.pay_type",
                 paidAmount: "$shopData.orderData.paidAmt",
 
-                
+
                 type: "$shopData.orderDataNotEqual.type",
                 paytype: "$shopData.orderDataNotEqual.payType",
                FinalPaymentType: "$shopData.orderDataNotEqual.paymentMethod",
@@ -2067,12 +2067,111 @@ const finishingAccount = async (id)=>{
                   $subtract: [ "$shopData.productData.price", "$shopData.orderData.paidAmt" ] } 
                   
               }
-            }
+            },
+            { $skip: 10 * page },
+            { $limit: 10 },
           
           ]);
+
+
+          let total = await wardAdminGroupModel_ORDERS.aggregate([
+            {
+              $match: {
+                $and: [{ wardAdminGroupID: { $eq: id } }],
+              },
+            },
+            {
+              $lookup: {
+                from: 'shoporderclones',
+                localField: 'orderId',
+                foreignField: '_id',
+                pipeline: [
+                  {
+                    $lookup: {
+                      from:'productorderclones',
+                      localField: '_id',
+                      foreignField: 'orderId',
+                      pipeline: [
+                        {
+                          $project: {
+                            Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                            GST_Number: 1,
+                          },
+                        },
+                        {
+                          $project: {
+                            sum: '$sum',
+                            percentage: {
+                              $divide: [
+                                {
+                                  $multiply: ['$GST_Number', '$Amount'],
+                                },
+                                100,
+                              ],
+                            },
+                            value: '$Amount',
+                          },
+                        },
+                        {
+                          $project: {
+                            price: { $sum: ['$value', '$percentage'] },
+                            value: '$value',
+                            GST: '$percentage',
+                          },
+                        },
+                        { $group: { _id: null, price: { $sum: '$price' } } },
+                     
+                            ],
+                      as: 'productData',
+                    }
+                  },
+                  { $unwind: "$productData"},
+                  {
+                    $lookup: {  
+                      from: 'orderpayments',
+                      localField: '_id',
+                      foreignField: 'orderId',
+                      pipeline: [
+                              {
+                                
+                                  $match: {
+                                    $and: [{ type: { $eq: 'advanced' } }],
+                                  },
+                                
+                            },
+                          ],
+                      as: 'orderData',
+                    },
+                  },
+                  { $unwind: "$orderData"},
+                  {
+                    $lookup: {
+                      from: 'orderpayments',
+                      localField: '_id',
+                      foreignField: 'orderId',
+                      pipeline: [
+                              {
+                                
+                                  $match: {
+                                    $and: [{ type: { $ne: 'advanced' } }],
+                                  },
+                                
+                            },
+                          ],
+                      as: 'orderDataNotEqual',
+                    },
+                    
+                  },
+                  { $unwind: "$orderDataNotEqual"},
+                ],
+                as: 'shopData',
+              }
+            },
+            { $unwind: "$shopData"},
+          ])
   
 
-  return data;
+  return {data: data, total: total.length};
 
 }
 

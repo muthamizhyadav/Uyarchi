@@ -282,7 +282,7 @@ const createAddOrdINGrp = catchAsync(async (req, res) => {
 });
 
 const finishingAccount = catchAsync(async (req, res) => {
-  const details = await wardAdminGroupService.finishingAccount(req.params.id);
+  const details = await wardAdminGroupService.finishingAccount(req.params.id,req.params.page);
   res.send(details);
 });
 
