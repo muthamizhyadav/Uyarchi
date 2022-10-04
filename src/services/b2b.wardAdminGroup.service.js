@@ -2055,6 +2055,7 @@ const finishingAccount = async (id)=>{
                initialpaymenyCapacity: "$shopData.orderData.pay_type",
                 paidAmount: "$shopData.orderData.paidAmt",
 
+                
                 type: "$shopData.orderDataNotEqual.type",
                 paytype: "$shopData.orderDataNotEqual.payType",
                FinalPaymentType: "$shopData.orderDataNotEqual.paymentMethod",
@@ -2062,7 +2063,7 @@ const finishingAccount = async (id)=>{
                 finalpaidAmount: "$shopData.orderDataNotEqual.paidAmt",
 
                 PendinAmount: { 
-                  
+
                   $subtract: [ "$shopData.productData.price", "$shopData.orderData.paidAmt" ] } 
                   
               }

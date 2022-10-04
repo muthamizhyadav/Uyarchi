@@ -98,7 +98,7 @@ const createDestroyStock = async (sampleBody) => {
     if (!stack) {
       throw new ApiError(httpStatus.NOT_FOUND, 'stacks not found');
     }
-    stack = await randomStockModel.findAndUpdate( body, { new: true });
+    stack = await randomStockModel.update( body, { new: true });
     return stack;
   };
 
