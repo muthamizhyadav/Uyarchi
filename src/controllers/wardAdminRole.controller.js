@@ -127,6 +127,12 @@ const getUsersWith_skiped = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.getUsersWith_skiped(req.params.id);
   res.send(data);
 });
+
+const Return_Assign_To_SalesMan = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.Return_Assign_To_SalesMan(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -151,4 +157,5 @@ module.exports = {
   getAssignData_by_SalesMan,
   get_Assign_data_By_SalesManId,
   getUsersWith_skiped,
+  Return_Assign_To_SalesMan,
 };
