@@ -1615,73 +1615,31 @@ const pettyStockCreate = async (id, pettyStockBody) => {
 };
 
 const getcashAmountViewFromDB = async (id) => {
-  let values = await wardAdminGroup.aggregate([
+  let values = await wardAdminGroupModel_ORDERS.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }],
+        $and: [{ wardAdminGroupID: { $eq: id } }],
       },
     },
     {
       $lookup: {
-        from: 'orderassigns',
-        localField: '_id',
-        foreignField: 'wardAdminGroupID',
-        as: 'orderassignsdatas',
-      },
-    },
-    { $unwind: '$orderassignsdatas' },
-
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'orderassignsdatas.orderId',
-        foreignField: '_id',
-        as: 'shoporderclonesdatas',
-      },
-    },
-    { $unwind: '$shoporderclonesdatas' },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: 'shoporderclonesdatas._id',
+        from: 'orderpayments',
+        localField: 'orderId',
         foreignField: 'orderId',
-        pipeline: [
-          {
-            $group: {
-              _id: null,
-              amount: {
-                $sum: {
-                  $add: ['$finalQuantity', '$finalPricePerKg'],
-                },
-              },
-            },
-          },
-        ],
-
-        as: 'productorderclonesData',
-      },
+        as: 'orderdatadata'
+      }
     },
     {
-      $unwind: '$productorderclonesData',
+      $unwind: "$orderdatadata"
     },
-
     {
       $group: {
-        _id: '$shoporderclonesdatas.payType',
-        totalCash: { $sum: '$productorderclonesData.amount' },
+        _id: '$orderdatadata.paymentMethod',
+        totalCash: { $sum: '$orderdatadata.paidAmt' },
       },
     },
 
-   
-  ]);
-
-  let total = await wardAdminGroup.aggregate([
-    {
-      $match: {
-        $and: [{ _id: { $eq: id } }],
-      },
-    },
-
+    
     // {
     //   $lookup: {
     //     from: 'orderassigns',
@@ -1705,7 +1663,7 @@ const getcashAmountViewFromDB = async (id) => {
     //   $lookup: {
     //     from: 'productorderclones',
     //     localField: 'shoporderclonesdatas._id',
-    //     foreignField:'orderId',
+    //     foreignField: 'orderId',
     //     pipeline: [
     //       {
     //         $group: {
@@ -1720,12 +1678,28 @@ const getcashAmountViewFromDB = async (id) => {
     //     ],
 
     //     as: 'productorderclonesData',
-    //   }
+    //   },
     // },
     // {
-    //   $unwind: "$productorderclonesData"
+    //   $unwind: '$productorderclonesData',
     // },
 
+    // {
+    //   $group: {
+    //     _id: '$shoporderclonesdatas.payType',
+    //     totalCash: { $sum: '$productorderclonesData.amount' },
+    //   },
+    // },
+
+   
+  ]);
+
+  let total = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
     {
       $project: {
         pettyCash: 1,
@@ -2282,6 +2256,17 @@ const finishingAccount = async (id,page)=>{
 }
 
 
+const submitDispute = async(id,updatebody  )=>{
+  let product = await wardAdminGroup.findById(id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, ' Not Found');
+  }
+  product = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  console.log(product)
+  return product;
+};
+
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -2334,4 +2319,5 @@ module.exports = {
   updateOrderStatus_forundelivey,
 
   finishingAccount,
+  submitDispute,
 };

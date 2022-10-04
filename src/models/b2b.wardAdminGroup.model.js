@@ -115,6 +115,12 @@ const wardAdminGroupSchema = new mongoose.Schema({
   },
   GroupBillTime:{
     type: String,
+  },
+  ByCashIncPettyCash: {
+    type: Number,
+  },
+  Disputestatus: {
+  type: String,
   }
 });
 
