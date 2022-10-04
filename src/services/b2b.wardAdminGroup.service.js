@@ -1965,8 +1965,6 @@ const finishingAccount = async (id)=>{
                       localField: '_id',
                       foreignField: 'orderId',
                       pipeline: [
-
-
                         {
                           $project: {
                             Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
@@ -2047,7 +2045,9 @@ const finishingAccount = async (id)=>{
                           ],
                       as: 'orderDataNotEqual',
                     },
+                    
                   },
+                  { $unwind: "$orderDataNotEqual"},
                 ],
                 as: 'shopData',
               }
@@ -2071,6 +2071,10 @@ const finishingAccount = async (id)=>{
                FinalPaymentType: "$shopData.orderDataNotEqual.paymentMethod",
                Finalpaymentcapacity: "$shopData.orderDataNotEqual.pay_type",
                 finalpaidAmount: "$shopData.orderDataNotEqual.paidAmt",
+
+                PendinAmount: { 
+                  $subtract: [ "$shopData.productData.price", "$shopData.orderData.paidAmt" ] } 
+                  
               }
             }
           
