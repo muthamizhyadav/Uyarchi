@@ -488,7 +488,7 @@ const createtemperaryAssigndata = async (body) => {
     if (data.length != 0) {
       data.forEach(async (f) => {
         await Shop.findByIdAndUpdate({ _id: f.shopId }, { salesManStatus: body.status }, { new: true });
-        console.log( body.salesManId)
+        console.log(body.salesManId);
         await SalesManShop.findByIdAndUpdate(
           { _id: f._id },
           {
@@ -560,6 +560,13 @@ const getAssignData_by_SalesMan = async (page) => {
         from: 'salesmanshops',
         localField: '_id',
         foreignField: 'salesManId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ status: { $ne: 'Reassign' } }],
+            },
+          },
+        ],
         as: 'salesMan',
       },
     },
