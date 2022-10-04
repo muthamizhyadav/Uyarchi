@@ -482,34 +482,37 @@ const allocateDealocateCount = async (id) => {
 const createtemperaryAssigndata = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
-  // body.arr.forEach(async (e) => {
-  //   let data = await SalesManShop.find({ salesManId: body.salesManId, shopId: e, status: 'Assign' });
-  //   data.forEach(async (f) => {
-  //     await Shop.findByIdAndUpdate({ _id: f.shopId }, { salesManStatus: body.status }, { new: true });
-  //     await SalesManShop.findByIdAndUpdate(
-  //       { _id: f._id },
-  //       {
-  //         salesManId: f.salesManId,
-  //         shopId: f.shopId,
-  //         status: body.status,
-  //         reAssignDate: serverdate,
-  //         reAssignTime: time,
-  //         fromSalesManId: body.fromSalesManId,
-  //       },
-  //       { new: true }
-  //     );
-  //   });
-  // });
   body.arr.forEach(async (e) => {
-    await SalesManShop.create({
-      shopId: e,
-      status: body.status,
-      salesManId: body.salesManId,
-      fromSalesManId: body.fromSalesManId,
-      date:serverdate,
-      time:time
-    });
+    let data = await SalesManShop.find({ salesManId: body.fromSalesManId, shopId: e, status: 'Assign' });
+    if (data.length != 0) {
+      data.forEach(async (f) => {
+        await Shop.findByIdAndUpdate({ _id: f.shopId }, { salesManStatus: body.status }, { new: true });
+        await SalesManShop.findByIdAndUpdate(
+          { _id: f._id },
+          {
+            salesManId: f.fromSalesManId,
+            shopId: f.shopId,
+            status: body.status,
+            reAssignDate: serverdate,
+            reAssignTime: time,
+          },
+          { new: true }
+        );
+      });
+    } else {
+      body.arr.forEach(async (e) => {
+        await SalesManShop.create({
+          shopId: e,
+          status: body.status,
+          salesManId: body.salesManId,
+          fromSalesManId: body.fromSalesManId,
+          date: serverdate,
+          time: time,
+        });
+      });
+    }
   });
+
   return { data: 'created' };
 };
 
@@ -546,6 +549,11 @@ const getAllTempReassigndata = async () => {
 const getAssignData_by_SalesMan = async (page) => {
   let values = await Users.aggregate([
     {
+      $match: {
+        $and: [{ userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
+      },
+    },
+    {
       $lookup: {
         from: 'salesmanshops',
         localField: '_id',
@@ -567,6 +575,11 @@ const getAssignData_by_SalesMan = async (page) => {
     { $limit: 10 },
   ]);
   let total = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
+      },
+    },
     {
       $lookup: {
         from: 'salesmanshops',
