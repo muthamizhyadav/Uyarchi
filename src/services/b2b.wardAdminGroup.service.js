@@ -1672,16 +1672,7 @@ const getcashAmountViewFromDB = async (id) => {
       },
     },
 
-    // {
-    //   $project: {
-    //     pettyCash: 1,
-    //     totalCashCaculation: {
-    //         _id: '$shoporderclonesdatas.payType',
-    //         totalCash: { $sum: '$productorderclonesData.amount' },
-
-    //     },
-    //   },
-    // },
+   
   ]);
 
   let total = await wardAdminGroup.aggregate([
@@ -2168,10 +2159,125 @@ const finishingAccount = async (id,page)=>{
               }
             },
             { $unwind: "$shopData"},
-          ])
+          ]);
+
+
+          let partialCount = await wardAdminGroupModel_ORDERS.aggregate([
+            {
+              $match: {
+                $and: [{ wardAdminGroupID: { $eq: id } }],
+              },
+            },
+            {
+              $lookup: {
+                from: 'shoporderclones',
+                localField: 'orderId',
+                foreignField: '_id',
+                pipeline: [{
+                  $match: {
+                    $and: [{ pay_type: { $eq: "Partial" } }],
+                  },
+                }],
+                as: 'shopdatadata'
+              }
+            },
+            {
+              $unwind: "$shopdatadata"
+            },
+            {
+              $project: {
+                partialCount : "$partialCount.shopdatadata.pay_type"
+              }
+            }
+        
+          ]);
+
+          let partialTotalCount = await wardAdminGroupModel_ORDERS.aggregate([
+            {
+              $match: {
+                $and: [{ wardAdminGroupID: { $eq: id } }],
+              },
+            },
+            {
+              $lookup: {
+                from: 'shoporderclones',
+                localField: 'orderId',
+                foreignField: '_id',
+                pipeline: [{
+                  $match: {
+                    $and: [{ pay_type: { $eq: "Partial" } }],
+                  },
+                }],
+                as: 'shopdatadata'
+              }
+            },
+            {
+              $unwind: "$shopdatadata"
+            },
+        
+          ]);
+
+
+
+          let UnDeliveredTotal  = await wardAdminGroupModel_ORDERS.aggregate([
+            {
+              $match: {
+                $and: [{ wardAdminGroupID: { $eq: id } }],
+              },
+            },
+            {
+              $lookup: {
+                from: 'shoporderclones',
+                localField: 'orderId',
+                foreignField: '_id',
+                pipeline: [{
+                  $match: {
+                    $and: [{ status: { $eq: "UnDelivered" } }],
+                  },
+                }],
+                as: 'shopdatadata'
+              }
+            },
+            {
+              $unwind: "$shopdatadata"
+            },
+            {
+              $project: {
+                status : "$UnDeliveredTotal.shopdatadata.status"
+              }
+            }
+        
+          ]);
+
+          let UnDeliveredTotalCount  = await wardAdminGroupModel_ORDERS.aggregate([
+            {
+              $match: {
+                $and: [{ wardAdminGroupID: { $eq: id } }],
+              },
+            },
+            {
+              $lookup: {
+                from: 'shoporderclones',
+                localField: 'orderId',
+                foreignField: '_id',
+                pipeline: [{
+                  $match: {
+                    $and: [{ status: { $eq: "UnDelivered" } }],
+                  },
+                }],
+                as: 'shopdatadata'
+              }
+            },
+            {
+              $unwind: "$shopdatadata"
+            },
+        
+          ]);
+
+
   
 
-  return {data: data, total: total.length};
+  return {data: data, total: total.length,partialCount:partialCount,partialTotalCount: partialTotalCount.length,UnDeliveredTotal:UnDeliveredTotal,UnDeliveredTotalCount:UnDeliveredTotalCount.length   };
 
 }
 
