@@ -437,7 +437,7 @@ const allocateDealocateCount = async (id) => {
       $lookup: {
         from: 'salesmanshops',
         localField: '_id',
-        foreignField: 'fromSalesManId',
+        foreignField: 'salesManId',
         as: 'salesmanshopsData',
       },
     },
@@ -565,7 +565,7 @@ const getAssignData_by_SalesMan = async (page) => {
       $lookup: {
         from: 'salesmanshops',
         localField: '_id',
-        foreignField: 'fromSalesManId',
+        foreignField: 'salesManId',
         pipeline: [
           {
             $match: {
@@ -599,7 +599,7 @@ const getAssignData_by_SalesMan = async (page) => {
       $lookup: {
         from: 'salesmanshops',
         localField: '_id',
-        foreignField: 'fromSalesManId',
+        foreignField: 'salesManId',
         as: 'salesMan',
       },
     },
@@ -641,7 +641,7 @@ const get_Assign_data_By_SalesManId = async (id) => {
     {
       $lookup: {
         from: 'b2busers',
-        localField: 'fromSalesManId',
+        localField: 'salesManId',
         foreignField: '_id',
         as: 'Users',
       },
