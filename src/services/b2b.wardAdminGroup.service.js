@@ -1994,18 +1994,6 @@ const finishingAccount = async (id)=>{
                         },
                         { $group: { _id: null, price: { $sum: '$price' } } },
                      
-                              // {
-                              //   $group: {
-                              //     _id: null,
-                              //     productOrderCloneamount: {
-                              //       $sum: {
-                              //         $multiply: ['$finalQuantity', '$finalPricePerKg'],
-                              //       },
-                              //     },
-                                  
-            
-                              //   },
-                              // },
                             ],
                       as: 'productData',
                     }
@@ -2067,12 +2055,15 @@ const finishingAccount = async (id)=>{
                initialpaymenyCapacity: "$shopData.orderData.pay_type",
                 paidAmount: "$shopData.orderData.paidAmt",
 
-
+                
+                type: "$shopData.orderDataNotEqual.type",
+                paytype: "$shopData.orderDataNotEqual.payType",
                FinalPaymentType: "$shopData.orderDataNotEqual.paymentMethod",
                Finalpaymentcapacity: "$shopData.orderDataNotEqual.pay_type",
                 finalpaidAmount: "$shopData.orderDataNotEqual.paidAmt",
 
                 PendinAmount: { 
+
                   $subtract: [ "$shopData.productData.price", "$shopData.orderData.paidAmt" ] } 
                   
               }

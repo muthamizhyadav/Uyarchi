@@ -91,14 +91,14 @@ const createDestroyStock = async (sampleBody) => {
 
   }
 
-  const updateProduct = async(product,body  )=>{
+  const updateProduct = async(product,date,body  )=>{
     console.log(product);
-    let stack = await randomStockModel.findOne({ product: product });
+    let stack = await randomStockModel.find({ product: product },{date: date});
     console.log(stack);
     if (!stack) {
       throw new ApiError(httpStatus.NOT_FOUND, 'stacks not found');
     }
-    stack = await randomStockModel.findOneAndUpdate({ product: product }, body, { new: true });
+    stack = await randomStockModel.update( body, { new: true });
     return stack;
   };
 
