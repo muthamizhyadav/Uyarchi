@@ -683,6 +683,16 @@ const getUsersWith_skiped = async (id) => {
   return values;
 };
 
+const Return_Assign_To_SalesMan = async (id) => {
+  let currentDate = moment().format('YYYY-MM-DD');
+  let currentTime = moment().format('hh:mm a');
+  await SalesManShop.updateMany(
+    { fromSalesManId: id, status: 'tempReassign' },
+    { $set: { status: 'Assign', salesManId: id, reAssignDate: currentDate, reAssignTime: currentTime } },
+    { new: true }
+  );
+  return { Message: 'Successfully Re-Assigned to SalesMan' };
+};
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -707,4 +717,5 @@ module.exports = {
   getAssignData_by_SalesMan,
   get_Assign_data_By_SalesManId,
   getUsersWith_skiped,
+  Return_Assign_To_SalesMan,
 };

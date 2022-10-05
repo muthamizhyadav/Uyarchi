@@ -25,5 +25,6 @@ router.route('/getAllTempReassigndata/data').get(wardAdminRoleController.getAllT
 router.route('/getAssign/dataBy/salesMan/:page').get(wardAdminRoleController.getAssignData_by_SalesMan);
 router.route('/getAssign/dataBy/salesMan/Id/:id').get(wardAdminRoleController.get_Assign_data_By_SalesManId);
 router.route('/getData/without/given/:id').get(wardAdminRoleController.getUsersWith_skiped);
+router.route('/Return_Assign_To_SalesMan/:id').get(wardAdminRoleController.Return_Assign_To_SalesMan);
 
 module.exports = router;
