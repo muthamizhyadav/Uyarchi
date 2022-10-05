@@ -104,8 +104,6 @@ const getAll = async (date) => {
 //         $and: [{ b2bUserId: { $eq: id } }],
 //       },
 //     },
-
-
 //    ])
 // }
 const getWardAdminRoleById = async (id) => {
