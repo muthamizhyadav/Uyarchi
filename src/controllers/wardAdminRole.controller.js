@@ -6,7 +6,7 @@ const wardAdminRoleService = require('../services/wardAdminRole.service');
 
 const createwardAdminRoleService = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.createwardAdminRole(req.body);
-  res.status(httpStatus.CREATED).send(data);
+  res.send(data);
 });
 
 const getAllwardAdminRole = catchAsync(async (req, res) => {
