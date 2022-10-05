@@ -693,6 +693,45 @@ const Return_Assign_To_SalesMan = async (id) => {
   );
   return { Message: 'Successfully Re-Assigned to SalesMan' };
 };
+
+const history_Assign_Reaasign_data = async (id) => {
+  const data = await SalesManShop.aggregate([
+    {
+      $match: {
+        $or: [
+          { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
+          { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'fromSalesManId',
+        foreignField: '_id',
+        as: 'Users',
+      },
+    },
+    {
+      $unwind: '$Users',
+    },
+    {
+      $project:{
+        salesMan: '$Users.name',
+        salesManId:1,
+        shopId:1,
+        status:1,
+        date:1,
+        fromSalesManId:1,
+        time:1,
+        reAssignDate:1,
+        reAssignTime:1,
+      }
+    }
+
+  ])
+  return data ;
+}
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -718,4 +757,5 @@ module.exports = {
   get_Assign_data_By_SalesManId,
   getUsersWith_skiped,
   Return_Assign_To_SalesMan,
+  history_Assign_Reaasign_data,
 };
