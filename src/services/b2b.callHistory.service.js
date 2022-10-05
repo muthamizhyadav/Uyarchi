@@ -2625,6 +2625,15 @@ const get_order_details = async (orderId) => {
     },
     {
       $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'productsdata',
+      },
+    },
+    { $unwind: '$productsdata' },
+    {
+      $lookup: {
         from: 'productpacktypes',
         localField: 'productpacktypeId',
         foreignField: '_id',
@@ -2686,6 +2695,7 @@ const get_order_details = async (orderId) => {
         salesstartPrice: '$productpacktypes.salesstartPrice',
         salesendPrice: '$productpacktypes.salesendPrice',
         price_available: { $ne: ['$productpacktypes', null] },
+        productTitle: '$productsdata.productTitle',
       },
     },
   ]);
