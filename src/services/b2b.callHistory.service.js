@@ -581,7 +581,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         delivery_type: 'IMD',
       },
       {
-        timeslot: { $gte: lapsed },
+        timeslot: { $lte: lapsed },
         status: {
           $in: ['ordered', 'Acknowledged'],
         },
@@ -979,7 +979,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         delivery_type: 'IMD',
       },
       {
-        timeslot: { $gte: lapsed },
+        timeslot: { $lte: lapsed },
         status: {
           $in: ['ordered', 'Acknowledged'],
         },
@@ -1277,7 +1277,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         delivery_type: 'IMD',
       },
       {
-        timeslot: { $gte: lapsed },
+        timeslot: { $lte: lapsed },
         status: {
           $in: ['ordered', 'Acknowledged'],
         },
@@ -1574,7 +1574,7 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         delivery_type: 'IMD',
       },
       {
-        timeslot: { $gte: lapsed },
+        timeslot: { $lte: lapsed },
         status: {
           $in: ['ordered', 'Acknowledged'],
         },
@@ -2295,7 +2295,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           delivery_type: 'IMD',
         },
         {
-          timeslot: { $gte: lapsed },
+          timeslot: { $lte: lapsed },
           status: {
             $in: ['ordered', 'Acknowledged'],
           },
@@ -2340,7 +2340,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           delivery_type: 'IMD',
         },
         {
-          timeslot: { $gte: lapsed },
+          timeslot: { $lte: lapsed },
           status: {
             $eq: faildstatus,
           },
