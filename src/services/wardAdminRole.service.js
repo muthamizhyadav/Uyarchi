@@ -127,7 +127,7 @@ const getAllWardAdminRoleData = async (id) => {
   let data = await WardAdminRole.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }],
+        $and: [{ b2bUserId: { $eq: id } }],
       },
     },
   ]);
@@ -752,7 +752,7 @@ const history_Assign_Reaasign_data = async (id,date) => {
     {
       $match: match
     },
-    
+
     {
       $lookup: {
         from: 'b2busers',
