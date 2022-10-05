@@ -1632,64 +1632,13 @@ const getcashAmountViewFromDB = async (id) => {
     {
       $unwind: "$orderdatadata"
     },
-    {
-      $group: {
-        _id: '$orderdatadata.paymentMethod',
-        totalCash: { $sum: '$orderdatadata.paidAmt' },
-      },
-    },
-
-    
-    // {
-    //   $lookup: {
-    //     from: 'orderassigns',
-    //     localField: '_id',
-    //     foreignField: 'wardAdminGroupID',
-    //     as: 'orderassignsdatas',
-    //   },
-    // },
-    // { $unwind: '$orderassignsdatas' },
-
-    // {
-    //   $lookup: {
-    //     from: 'shoporderclones',
-    //     localField: 'orderassignsdatas.orderId',
-    //     foreignField: '_id',
-    //     as: 'shoporderclonesdatas',
-    //   },
-    // },
-    // { $unwind: '$shoporderclonesdatas' },
-    // {
-    //   $lookup: {
-    //     from: 'productorderclones',
-    //     localField: 'shoporderclonesdatas._id',
-    //     foreignField: 'orderId',
-    //     pipeline: [
-    //       {
-    //         $group: {
-    //           _id: null,
-    //           amount: {
-    //             $sum: {
-    //               $add: ['$finalQuantity', '$finalPricePerKg'],
-    //             },
-    //           },
-    //         },
-    //       },
-    //     ],
-
-    //     as: 'productorderclonesData',
-    //   },
-    // },
-    // {
-    //   $unwind: '$productorderclonesData',
-    // },
-
     // {
     //   $group: {
-    //     _id: '$shoporderclonesdatas.payType',
-    //     totalCash: { $sum: '$productorderclonesData.amount' },
+    //     _id: '$orderdatadata.paymentMethod',
+    //     totalCash: { $sum: '$orderdatadata.paidAmt' },
     //   },
     // },
+
 
    
   ]);
@@ -1827,6 +1776,7 @@ const getShopDetailsForProj = async (id) => {
     {
       $unwind: '$wardData',
     },
+    
     {
       $lookup: {
         from: 'b2busers',
