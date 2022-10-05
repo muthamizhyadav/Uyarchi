@@ -80,12 +80,27 @@ const getProductNAmeFromRandom = async()=>{
   }
 
   const updateProduct = async(id,updatebody  )=>{
-    let product = await randomStockModel.findById(id);
-    if (!product) {
+    let currentDate = moment().format('YYYY-MM-DD');
+    let currenttime =  moment().format('HHmm');
+    let updateProduct = await randomStockModel.findById(id);
+    if (!updateProduct) {
       throw new ApiError(httpStatus.NOT_FOUND, ' Not Found');
     }
-    product = await randomStockModel.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
-    return product;
+
+    updateProduct = await randomStockModel.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+
+    await destroyStockModel.create({
+     
+      date: currentDate,
+      time: currenttime,
+      created: moment(),
+      product: updateProduct._id,
+      quantityToDestroy: updatebody.quantityToDestroy,
+      status: updatebody.status,
+    });
+
+
+    return updateProduct;
   };
 
 

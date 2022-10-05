@@ -6,7 +6,7 @@ const destoryStockSchema = mongoose.Schema({
         type:String,
         default: v4,
     },
-    productId: {
+    product: {
         type: String,
     },
     wastage: {
