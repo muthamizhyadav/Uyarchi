@@ -716,6 +716,17 @@ const history_Assign_Reaasign_data = async (id) => {
       $unwind: '$Users',
     },
     {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesdata',
+    },
+    {
       $project:{
         salesMan: '$Users.name',
         salesManId:1,
@@ -726,6 +737,7 @@ const history_Assign_Reaasign_data = async (id) => {
         time:1,
         reAssignDate:1,
         reAssignTime:1,
+        shopname:'$b2bshopclonesdata.SName'
       }
     }
 
