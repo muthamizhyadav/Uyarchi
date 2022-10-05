@@ -28,9 +28,15 @@ const updateProduct = catchAsync(async (req, res) => {
     res.send(product);
   });
 
+  const getHistory = catchAsync(async (req, res) => {
+    const getHistory = await destroyStockService.getHistory(req.params.id);
+    res.send(getHistory)
+  });
+
 module.exports = {
     getProductNAmeFromRandom,
     createDestroyStock,
     getdetailsWithSorting,
     updateProduct,
+    getHistory,
 }

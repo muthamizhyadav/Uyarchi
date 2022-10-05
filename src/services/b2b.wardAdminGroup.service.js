@@ -1989,7 +1989,7 @@ const finishingAccount = async (id,page)=>{
 
 
    
-       productAmountWithGST: "$shopData.productData.price",
+       productAmountWithGST: {$round: ["$shopData.productData.price",1]},
        initialPaymentType: "$shopData.orderData.paymentMethod",
        initialpaymenyCapacity: "$shopData.orderData.pay_type",
         paidAmount: "$shopData.orderData.paidAmt",
@@ -2001,10 +2001,18 @@ const finishingAccount = async (id,page)=>{
        Finalpaymentcapacity: "$shopData.orderDataNotEqual.pay_type",
         finalpaidAmount: "$shopData.orderDataNotEqual.paidAmt",
 
+        addTwoAmount : {
+          $add: ["$shopData.orderDataNotEqual.paidAmt", "$shopData.orderData.paidAmt"]
+        },
+
         PendinAmount: { 
 
-          $subtract: [ "$shopData.productData.price", "$shopData.orderData.paidAmt" ] } 
-          
+          $subtract: [ "$shopData.productData.price", "$shopData.orderData.paidAmt" ] } ,
+
+          // lastPendingAmount: { 
+
+          //   $subtract: [ {$add: ["$shopData.orderDataNotEqual.paidAmt", "$shopData.orderData.paidAmt"], $subtract: [ "$shopData.productData.price", "$shopData.orderData.paidAmt" ]}  ] 
+          // } 
       }
     },
     { $skip: 10 * page },
@@ -2221,9 +2229,6 @@ const finishingAccount = async (id,page)=>{
             },
         
           ]);
-
-
-  
 
   return {data: data, total: total.length,partialCount:partialCount,partialTotalCount: partialTotalCount.length,UnDeliveredTotal:UnDeliveredTotal,UnDeliveredTotalCount:UnDeliveredTotalCount.length   };
 

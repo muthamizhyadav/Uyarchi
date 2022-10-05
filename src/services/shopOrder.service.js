@@ -68,6 +68,9 @@ const createshopOrderClone = async (body, userid) => {
 
   BillId = 'B' + centerdata + totalcounts;
   let timeslot = body.time_of_delivery.replace('-', '');
+  if (body.paidamount == null) {
+    paidamount = 0;
+  }
   let bod = {
     ...body,
     ...{
@@ -78,6 +81,7 @@ const createshopOrderClone = async (body, userid) => {
       time: currenttime,
       created: moment(),
       timeslot: timeslot,
+      paidamount: paidamount,
     },
   };
 
@@ -87,9 +91,7 @@ const createshopOrderClone = async (body, userid) => {
   if (body.Payment == 'cod') {
     Payment_type = null;
   }
-  if (body.paidamount == null) {
-    paidamount = 0;
-  }
+
   await OrderPayment.create({
     uid: userid,
     paidAmt: paidamount,

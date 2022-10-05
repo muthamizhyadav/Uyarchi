@@ -104,6 +104,18 @@ const getProductNAmeFromRandom = async()=>{
   };
 
 
+  const getHistory = async (id)=>{
+    let values = await destroyStockModel.aggregate([
+      {
+        $match: {
+          $and: [{ product: { $eq: id } }],
+        },
+      },
+    ]);
+    return values;
+  };
+
+
 
 
 
@@ -115,4 +127,5 @@ module.exports = {
     // createDestroyStock,
     getdetailsWithSorting,
     updateProduct,
+    getHistory,
 }
