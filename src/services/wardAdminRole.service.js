@@ -734,16 +734,25 @@ const Return_Assign_To_SalesMan = async (id) => {
   return { Message: 'Successfully Re-Assigned to SalesMan' };
 };
 
-const history_Assign_Reaasign_data = async (id) => {
+const history_Assign_Reaasign_data = async (id,date) => {
+  let match ;
+  if(date == 'null'){
+    match = { $or: [
+      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
+      { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
+    ],}
+   }else {
+    match = { $or: [
+      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}] },
+      { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}] },
+    ],}
+  }
+
   const data = await SalesManShop.aggregate([
     {
-      $match: {
-        $or: [
-          { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
-          { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
-        ],
-      },
+      $match: match
     },
+    
     {
       $lookup: {
         from: 'b2busers',

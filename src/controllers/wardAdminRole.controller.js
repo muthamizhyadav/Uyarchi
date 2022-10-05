@@ -134,7 +134,7 @@ const Return_Assign_To_SalesMan = catchAsync(async (req, res) => {
 });
 
 const history_Assign_Reaasign_data = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.history_Assign_Reaasign_data(req.params.id);
+  const data = await wardAdminRoleService.history_Assign_Reaasign_data(req.params.id, req.params.date);
   res.send(data);
 });
 module.exports = {
