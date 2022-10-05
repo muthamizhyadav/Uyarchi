@@ -95,9 +95,7 @@ router.route('/submitPEttyCashGivenByWDE/submit/:id').put(wardAdminGroupControll
 
 router.route('/get/details/pettyCash/:id').get(wardAdminGroupController.getPEttyCashQuantity);
 
-router
-  .route('/create/detatisl/About/pettyStock/returnstock')
-  .post(returnStockWastage.array('wastageImageUpload'), wardAdminGroupController.uploadWastageImage);
+router.route('/create/detatisl/About/pettyStock/returnstock').post(returnStockWastage.array('wastageImageUpload'), wardAdminGroupController.uploadWastageImage);
 
 router.route('/get/return/stock/:id').get(wardAdminGroupController.returnStock);
 
