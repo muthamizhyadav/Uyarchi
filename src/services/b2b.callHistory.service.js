@@ -2685,13 +2685,10 @@ const get_order_details = async (orderId) => {
         onlinePrice: '$productpacktypes.onlinePrice',
         salesstartPrice: '$productpacktypes.salesstartPrice',
         salesendPrice: '$productpacktypes.salesendPrice',
-        // productpacktypes:"$productpacktypes",
         price_available: { $ne: ['$productpacktypes', null] },
-        // price_available: { '$productpacktypes.salesendPrice': null },
       },
     },
   ]);
-
   return data;
 };
 

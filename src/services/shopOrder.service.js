@@ -82,15 +82,20 @@ const createshopOrderClone = async (body, userid) => {
   };
 
   let createShopOrderClone = await ShopOrderClone.create(bod);
+  let paidamount = body.paidamount;
+  if (body.paidamount == null) {
+    paidamount = 0;
+  }
   await OrderPayment.create({
     uid: userid,
-    paidAmt: body.paidamount,
+    paidAmt: paidamount,
     date: currentDate,
     time: currenttime,
     created: moment(),
     orderId: createShopOrderClone._id,
     type: 'advanced',
     pay_type: body.pay_type,
+    payment: body.payment,
     paymentMethod: body.paymentMethod,
   });
   let { product, time, shopId } = body;
