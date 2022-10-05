@@ -83,7 +83,7 @@ const createshopOrderClone = async (body, userid) => {
 
   let createShopOrderClone = await ShopOrderClone.create(bod);
   let paidamount = body.paidamount;
-  let Payment_type = body.Payment;
+  let Payment_type = body.paymentMethod;
   if (body.Payment == 'cod') {
     Payment_type = null;
   }
@@ -99,8 +99,8 @@ const createshopOrderClone = async (body, userid) => {
     orderId: createShopOrderClone._id,
     type: 'advanced',
     pay_type: body.pay_type,
-    payment: Payment_type,
-    paymentMethod: body.paymentMethod,
+    payment: body.Payment,
+    paymentMethod: Payment_type,
   });
   let { product, time, shopId } = body;
   await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: 'accept', callingStatusSort: 6 }, { new: true });
