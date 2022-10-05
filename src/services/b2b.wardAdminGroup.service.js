@@ -1776,17 +1776,38 @@ const getShopDetailsForProj = async (id) => {
     {
       $unwind: '$wardData',
     },
-    
-    {
+      {
       $lookup: {
-        from: 'b2busers',
-        localField: 'deliveryExecutiveId',
-        foreignField: '_id',
-        as: 'deliveryExecutivename',
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderassigns',
       },
     },
     {
-      $unwind: '$deliveryExecutivename',
+      $unwind: '$orderassigns',
+    },
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: 'orderassigns.wardAdminGroupID',
+        foreignField: '_id',
+        as: 'wardadmingroups',
+      },
+    },
+    {
+      $unwind: '$wardadmingroups',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'wardadmingroups.deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },
+    {
+      $unwind: '$b2busers',
     },
     {
       $project: {
@@ -1799,7 +1820,10 @@ const getShopDetailsForProj = async (id) => {
         address: '$b2bshopData.address',
         street: '$StridData.street',
         ward: '$wardData.ward',
-        deliveryExecutivename: '$deliveryExecutivename.name',
+        deliveryExecutivename: '$b2busers.name',
+        // name:"$orderassigns",
+        // wjfj:"$wardadmingroups",
+
       },
     },
   ]);
