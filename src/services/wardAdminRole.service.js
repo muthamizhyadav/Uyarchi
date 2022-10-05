@@ -10,18 +10,49 @@ const {
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
 const moment = require('moment');
+const { findByIdAndUpdate } = require('../models/b2b.pettyStock.model');
+const { ValidationRequestList } = require('twilio/lib/rest/api/v2010/account/validationRequest');
 
 const createwardAdminRole = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   let values = {};
-  values = {
-    ...body,
-    ...{ date: serverdate, time: time, startingValue: body.targetValue, startingTonne: body.targetTonne },
-  };
-
-  const data = await WardAdminRole.create(values);
-  return data;
+  const value = await WardAdminRole.find({b2bUserId:body.b2bUserId});
+  if(value.length == 0)
+  {
+    values = {
+      ...body,
+      ...{ date: serverdate, time: time, startingValue: body.targetValue, startingTonne: body.targetTonne },
+    };
+  
+     await WardAdminRole.create(values);
+  }else{
+    if(body.unit == "KG"){
+    value.forEach(async (e) => {
+     
+      if(e.unit == "KG"){
+    e.targetValue += body.targetValue
+    e.targetTonne += body.targetTonne
+    e.startingValue += body.targetValue
+    e.startingTonne += body.targetTonne 
+    console.log( e.targetValue,e.targetTonne, e.startingValue, )  
+   const qwdwdf = await WardAdminRole.updateMany({b2bUserId:e.b2bUserId, unit:'KG'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })
+  console.log(qwdwdf)   
+  }
+  });
+      }else{
+        value.forEach(async (e) => {
+          if(e.unit == "Tonne"){
+        e.targetValue += body.targetValue
+        e.targetTonne += body.targetTonne
+        e.startingValue += body.targetValue
+        e.startingTonne += body.targetTonne   
+        await WardAdminRole.updateMany({b2bUserId:e.b2bUserId, unit:'Tonne'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })
+          }
+      });
+  }
+  }
+   return {data: "created or else updated asmtone and value"};
 };
 
 const getAll = async (date) => {
@@ -66,6 +97,15 @@ const getAll = async (date) => {
   return data;
 };
 
+// const get_All_tones_and_values = async (id) =>{
+//    const data = await WardAdminRole.aggregate([
+//     {
+//       $match: {
+//         $and: [{ b2bUserId: { $eq: id } }],
+//       },
+//     },
+//    ])
+// }
 const getWardAdminRoleById = async (id) => {
   const data = await WardAdminRole.findById(id);
   if (!data || data.active === false) {
@@ -693,6 +733,57 @@ const Return_Assign_To_SalesMan = async (id) => {
   );
   return { Message: 'Successfully Re-Assigned to SalesMan' };
 };
+
+const history_Assign_Reaasign_data = async (id) => {
+  const data = await SalesManShop.aggregate([
+    {
+      $match: {
+        $or: [
+          { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
+          { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'fromSalesManId',
+        foreignField: '_id',
+        as: 'Users',
+      },
+    },
+    {
+      $unwind: '$Users',
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesdata',
+    },
+    {
+      $project:{
+        salesMan: '$Users.name',
+        salesManId:1,
+        shopId:1,
+        status:1,
+        date:1,
+        fromSalesManId:1,
+        time:1,
+        reAssignDate:1,
+        reAssignTime:1,
+        shopname:'$b2bshopclonesdata.SName'
+      }
+    }
+
+  ])
+  return data ;
+}
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -718,4 +809,5 @@ module.exports = {
   get_Assign_data_By_SalesManId,
   getUsersWith_skiped,
   Return_Assign_To_SalesMan,
+  history_Assign_Reaasign_data,
 };

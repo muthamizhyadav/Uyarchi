@@ -581,7 +581,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         delivery_type: 'IMD',
       },
       {
-        timeslot: { $gte: lapsed },
+        timeslot: { $lte: lapsed },
         status: {
           $in: ['ordered', 'Acknowledged'],
         },
@@ -979,7 +979,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         delivery_type: 'IMD',
       },
       {
-        timeslot: { $gte: lapsed },
+        timeslot: { $lte: lapsed },
         status: {
           $in: ['ordered', 'Acknowledged'],
         },
@@ -1277,7 +1277,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         delivery_type: 'IMD',
       },
       {
-        timeslot: { $gte: lapsed },
+        timeslot: { $lte: lapsed },
         status: {
           $in: ['ordered', 'Acknowledged'],
         },
@@ -1574,7 +1574,7 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         delivery_type: 'IMD',
       },
       {
-        timeslot: { $gte: lapsed },
+        timeslot: { $lte: lapsed },
         status: {
           $in: ['ordered', 'Acknowledged'],
         },
@@ -2295,7 +2295,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           delivery_type: 'IMD',
         },
         {
-          timeslot: { $gte: lapsed },
+          timeslot: { $lte: lapsed },
           status: {
             $in: ['ordered', 'Acknowledged'],
           },
@@ -2340,7 +2340,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           delivery_type: 'IMD',
         },
         {
-          timeslot: { $gte: lapsed },
+          timeslot: { $lte: lapsed },
           status: {
             $eq: faildstatus,
           },
@@ -2685,13 +2685,10 @@ const get_order_details = async (orderId) => {
         onlinePrice: '$productpacktypes.onlinePrice',
         salesstartPrice: '$productpacktypes.salesstartPrice',
         salesendPrice: '$productpacktypes.salesendPrice',
-        // productpacktypes:"$productpacktypes",
         price_available: { $ne: ['$productpacktypes', null] },
-        // price_available: { '$productpacktypes.salesendPrice': null },
       },
     },
   ]);
-
   return data;
 };
 
