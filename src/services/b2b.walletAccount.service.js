@@ -177,6 +177,7 @@ const getShopDetails = async (id)=>{
           address:"$shopDatq.address",
           idProofNo:1,
           addressProofNo:1, 
+          email: 1,
 
 
       }
