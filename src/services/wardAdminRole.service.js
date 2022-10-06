@@ -6,6 +6,7 @@ const {
   AsmSalesMan,
   SalesManShop,
   WithoutAsmSalesman,
+  WardAdminRoleAsmHistory,
 } = require('../models/wardAdminRole.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
@@ -18,7 +19,6 @@ const createwardAdminRole = async (body) => {
   let time = moment().format('hh:mm a');
   let values = {};
   const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, unit:body.unit});
-  console.log(value)
   if(value.length == 0)
   {
     values = {
@@ -122,6 +122,41 @@ const createwardAdminRoleAsm = async (body) => {
   return data;
 };
 
+const WardAdminRoleAsmHistorydata = async (body) => {
+  let serverdate = moment().format('yyy-MM-DD');
+  let time = moment().format('hh:mm a');
+  let values = {};
+    values = {
+      ...body,
+      ...{ date: serverdate, time: time, targetValue: parseInt(body.targetValue), targetTonne: parseInt(body.targetTonne)  },
+    };
+  
+     await WardAdminRoleAsm.create(values);
+
+  const value = await WardAdminRoleAsmHistory.find({b2bUserId:body.b2bUserId, unit:body.unit});
+  if(value != 0){
+    if(body.unit == "KG"){
+    value.forEach(async (e) => {
+     
+      if(e.unit == "KG"){
+    e.targetValue += parseInt(body.targetValue)
+    e.targetTonne += parseInt(body.targetTonne)
+    await WardAdminRoleAsmHistory.updateMany({b2bUserId:e.b2bUserId, unit:'KG'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne}, { new: true })  
+  }
+  });
+      }else{
+        value.forEach(async (e) => {
+          if(e.unit == "Tonne"){
+        e.targetValue += parseInt(body.targetValue)
+        e.targetTonne += parseInt(body.targetTonne)
+        await WardAdminRoleAsmHistory.updateMany({b2bUserId:e.b2bUserId, unit:'Tonne'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne}, { new: true })
+          }
+      });
+  }
+  }
+   return {data: "created or else updated asmtone and value"};
+};
+
 const getAllWardAdminRoleData = async (id) => {
   let data = await WardAdminRole.aggregate([
     {
@@ -155,7 +190,7 @@ const smData = async (date) => {
     {
       $lookup: {
         from: 'wardadminroleasms',
-        localField: '_id',
+        localField: 'b2bUserId',
         foreignField: 'wardAdminId',
         as: 'wardadminroleasmsData',
       },
@@ -198,19 +233,39 @@ const smData = async (date) => {
 };
 
 const total = async (id, updateBody) => {
-  let data = await getWardAdminRoleById(id);
-  if (!data) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'WardAdminRole not found');
-  }
-  let value = updateBody.targetValue;
-  let tone = updateBody.targetTonne;
-  let asmvalue = data.targetValue;
-  let asmtone = data.targetTonne;
+  const values = await WardAdminRole.find({b2bUserId:id})
+  if(values != 0){
+  if(updateBody.unit == "KG"){
+  values.forEach(async (e) => {
+    if(e.unit == "KG"){
+  let value = parseInt(updateBody.targetValue);
+  let tone = parseInt(updateBody.targetTonne);
+  let asmvalue = e.targetValue;
+  let asmtone = e.targetTonne;
   let value1 = asmvalue - value;
   let tone1 = asmtone - tone;
 
-  data = await WardAdminRole.findByIdAndUpdate({ _id: id }, { targetValue: value1, targetTonne: tone1 }, { new: true });
-  return data;
+    await WardAdminRole.updateMany({ b2bUserId: id, unit:"KG"}, { targetValue: value1, targetTonne: tone1 }, { new: true });
+    }
+   })
+  }else{
+    values.forEach(async (e) => {
+      if(e.unit == "Tonne"){
+    let value = parseInt(updateBody.targetValue);
+    let tone = parseInt(updateBody.targetTonne);
+    let asmvalue = e.targetValue;
+    let asmtone = e.targetTonne;
+    let value1 = asmvalue - value;
+    let tone1 = asmtone - tone;
+  
+     await WardAdminRole.updateMany({ b2bUserId: id, unit:"Tonne"}, { targetValue: value1, targetTonne: tone1 }, { new: true });
+      }
+     })
+  }
+}else{
+  throw new ApiError(httpStatus.NOT_FOUND, 'wardAdminRole not found');
+}
+return {message:"updated"}
 };
 
 // getAllSalesMandataCurrentdate
@@ -818,4 +873,5 @@ module.exports = {
   getUsersWith_skiped,
   Return_Assign_To_SalesMan,
   history_Assign_Reaasign_data,
+  WardAdminRoleAsmHistorydata
 };

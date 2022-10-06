@@ -58,23 +58,25 @@ const getProductNAmeFromRandom = async()=>{
       {
         $unwind: '$clonedProducts',
       },
+     
       {
         $project:{
             date:1,
             time:1,
             product:1,
             NSFW_Wastage:1,
-
             quantityToDestroy:1,
             worthRupees:1,
             productTitle:"$clonedProducts.productTitle",
             balanceQuantity: { 
               $subtract: [ "$NSFW_Wastage", "$quantityToDestroy" ] 
-            } 
+            } ,
+           
             } 
         }
       
   ]);
+ 
   return values;
 
   }
@@ -111,6 +113,7 @@ const getProductNAmeFromRandom = async()=>{
           $and: [{ product: { $eq: id } }],
         },
       },
+      
     ]);
     let total = await destroyStockModel.aggregate([
       {
