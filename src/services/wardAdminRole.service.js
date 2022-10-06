@@ -17,12 +17,13 @@ const createwardAdminRole = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   let values = {};
-  const value = await WardAdminRole.find({b2bUserId:body.b2bUserId});
+  const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, unit:body.unit});
+  console.log(value)
   if(value.length == 0)
   {
     values = {
       ...body,
-      ...{ date: serverdate, time: time, startingValue: body.targetValue, startingTonne: body.targetTonne },
+      ...{ date: serverdate, time: time, startingValue: parseInt(body.targetValue), startingTonne: parseInt(body.targetTonne), targetValue:parseInt(body.targetValue), targetTonne: parseInt(body.targetTonne)  },
     };
   
      await WardAdminRole.create(values);
@@ -31,22 +32,20 @@ const createwardAdminRole = async (body) => {
     value.forEach(async (e) => {
      
       if(e.unit == "KG"){
-    e.targetValue += body.targetValue
-    e.targetTonne += body.targetTonne
-    e.startingValue += body.targetValue
-    e.startingTonne += body.targetTonne 
-    console.log( e.targetValue,e.targetTonne, e.startingValue, )  
-   const qwdwdf = await WardAdminRole.updateMany({b2bUserId:e.b2bUserId, unit:'KG'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })
-  console.log(qwdwdf)   
+    e.targetValue += parseInt(body.targetValue)
+    e.targetTonne += parseInt(body.targetTonne)
+    e.startingValue += parseInt(body.targetValue)
+    e.startingTonne += parseInt(body.targetTonne) 
+    await WardAdminRole.updateMany({b2bUserId:e.b2bUserId, unit:'KG'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })  
   }
   });
       }else{
         value.forEach(async (e) => {
           if(e.unit == "Tonne"){
-        e.targetValue += body.targetValue
-        e.targetTonne += body.targetTonne
-        e.startingValue += body.targetValue
-        e.startingTonne += body.targetTonne   
+        e.targetValue += parseInt(body.targetValue)
+        e.targetTonne += parseInt(body.targetTonne)
+        e.startingValue += parseInt(body.targetValue)
+        e.startingTonne += parseInt(body.targetTonne)  
         await WardAdminRole.updateMany({b2bUserId:e.b2bUserId, unit:'Tonne'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })
           }
       });
@@ -127,7 +126,7 @@ const getAllWardAdminRoleData = async (id) => {
   let data = await WardAdminRole.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }],
+        $and: [{ b2bUserId: { $eq: id } }],
       },
     },
   ]);
@@ -734,16 +733,25 @@ const Return_Assign_To_SalesMan = async (id) => {
   return { Message: 'Successfully Re-Assigned to SalesMan' };
 };
 
-const history_Assign_Reaasign_data = async (id) => {
+const history_Assign_Reaasign_data = async (id,date) => {
+  let match ;
+  if(date == 'null'){
+    match = { $or: [
+      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
+      { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
+    ],}
+   }else {
+    match = { $or: [
+      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}] },
+      { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}] },
+    ],}
+  }
+
   const data = await SalesManShop.aggregate([
     {
-      $match: {
-        $or: [
-          { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
-          { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
-        ],
-      },
+      $match: match
     },
+
     {
       $lookup: {
         from: 'b2busers',
