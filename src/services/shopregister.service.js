@@ -352,6 +352,7 @@ const get_mypayments = async (req) => {
         totalRupees: 1,
         pendingAmount: { $subtract: ['$totalRupees', '$orderpayments.paidAmt'] },
         pendingAmountstatus: { $ne: ['$totalRupees', '$orderpayments.paidAmt'] },
+        pay_type: 1,
         // productorderclonesdata: '$productorderclonesdata',
       },
     },
