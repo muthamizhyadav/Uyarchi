@@ -22,7 +22,7 @@ const createwardAdminRole = async (body) => {
   {
     values = {
       ...body,
-      ...{ date: serverdate, time: time, startingValue: body.targetValue, startingTonne: body.targetTonne },
+      ...{ date: serverdate, time: time, startingValue: parseInt(body.targetValue), startingTonne: parseInt(body.targetTonne) },
     };
   
      await WardAdminRole.create(values);
@@ -31,22 +31,20 @@ const createwardAdminRole = async (body) => {
     value.forEach(async (e) => {
      
       if(e.unit == "KG"){
-    e.targetValue += body.targetValue
-    e.targetTonne += body.targetTonne
-    e.startingValue += body.targetValue
-    e.startingTonne += body.targetTonne 
-    console.log( e.targetValue,e.targetTonne, e.startingValue, )  
-   const qwdwdf = await WardAdminRole.updateMany({b2bUserId:e.b2bUserId, unit:'KG'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })
-  console.log(qwdwdf)   
+    e.targetValue += parseInt(body.targetValue)
+    e.targetTonne += parseInt(body.targetTonne)
+    e.startingValue += parseInt(body.targetValue)
+    e.startingTonne += parseInt(body.targetTonne) 
+    await WardAdminRole.updateMany({b2bUserId:e.b2bUserId, unit:'KG'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })  
   }
   });
       }else{
         value.forEach(async (e) => {
           if(e.unit == "Tonne"){
-        e.targetValue += body.targetValue
-        e.targetTonne += body.targetTonne
-        e.startingValue += body.targetValue
-        e.startingTonne += body.targetTonne   
+        e.targetValue += parseInt(body.targetValue)
+        e.targetTonne += parseInt(body.targetTonne)
+        e.startingValue += parseInt(body.targetValue)
+        e.startingTonne += parseInt(body.targetTonne)  
         await WardAdminRole.updateMany({b2bUserId:e.b2bUserId, unit:'Tonne'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })
           }
       });
