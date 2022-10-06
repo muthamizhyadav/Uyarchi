@@ -168,9 +168,9 @@ const get_myorder = async (req) => {
       },
     },
   ]);
-  if (odrers.length == 0) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Order Not Found');
-  }
+  // if (odrers.length == 0) {
+  //   throw new ApiError(httpStatus.UNAUTHORIZED, 'Order Not Found');
+  // }
   return odrers;
 };
 
