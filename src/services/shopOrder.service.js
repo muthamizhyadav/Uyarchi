@@ -80,9 +80,9 @@ const createshopOrderClone = async (body, userid) => {
       { RE_order_status: 'Re-Ordered', Re_order_userId: userid },
       { new: true }
     );
-    if (body.pay_type != 'Fully') {
-      paidamount = shoss.paidamount + paidamount;
-    }
+    // if (body.pay_type != 'Fully') {
+    //   paidamount = shoss.paidamount + paidamount;
+    // }
   }
   let bod = {
     ...body,
