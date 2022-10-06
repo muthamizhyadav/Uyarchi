@@ -97,6 +97,58 @@ const getroleWardAdmin = async () => {
   return data;
 };
 
+// notAssignTonneValueSalesmanager
+const notAssignTonneValueSalesmanager = async () => {
+  let data = await Roles.aggregate([
+    {
+      $match: {
+        $and: [{ roleName: { $eq: 'Ward Admin Sales Manager (WASM)' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: '_id',
+        foreignField: 'userRole',
+        pipeline:[
+          {
+            $lookup: {
+              from: 'wardadminroles',
+              let: {
+                localField: '$_id',
+              },
+              pipeline: [{ $match: { $expr: { $eq: ['$b2bUserId', '$$localField'] } } }],
+              as: 'wardadminrolesData',
+            },
+          },
+          // {
+          //   $unwind:'$wardadminrolesData',
+          //     // preserveNullAndEmptyArrays: true,
+          // },
+       ],
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $project: {
+        name: '$b2busersData.name',
+        b2buserId: '$b2busersData._id',
+        roleName: 1,
+        _id: 1,
+        // wardadminrolesData:'$b2busersData.wardadminrolesData'
+        b2user:'$b2busersData.wardadminrolesData'
+      },
+    },
+    {
+      $match:{ $and:[{ b2user: { $type: 'array', $ne: [] } }] },
+    },
+  ]);
+  return data;
+};
+
 const getroleWardAdminAsm = async () => {
   let data = await Roles.aggregate([
     {
@@ -320,4 +372,5 @@ module.exports = {
   getAlldataSalesMan,
   getsalesman,
   getAllSalesmanShops,
+  notAssignTonneValueSalesmanager,
 };

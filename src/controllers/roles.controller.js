@@ -85,6 +85,11 @@ const getAllSalesmanShops = catchAsync(async(req, res) => {
   const data = await RolesService.getAllSalesmanShops();
   res.send(data);
 })
+
+const notAssignTonneValueSalesmanager = catchAsync(async(req, res) => {
+  const data = await RolesService.notAssignTonneValueSalesmanager();
+  res.send(data);
+})
 module.exports = {
   createRoles,
   getAllRoles,
@@ -99,4 +104,5 @@ module.exports = {
   getAlldataSalesMan,
   getSalesMan,
   getAllSalesmanShops,
+  notAssignTonneValueSalesmanager,
 };
