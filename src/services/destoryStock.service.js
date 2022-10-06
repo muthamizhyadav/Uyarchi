@@ -65,48 +65,18 @@ const getProductNAmeFromRandom = async()=>{
             time:1,
             product:1,
             NSFW_Wastage:1,
-
             quantityToDestroy:1,
             worthRupees:1,
             productTitle:"$clonedProducts.productTitle",
             balanceQuantity: { 
               $subtract: [ "$NSFW_Wastage", "$quantityToDestroy" ] 
             } ,
-            // balanceQuantityToDestroy: { $sum: "$quantityToDestroy" }
+           
             } 
         }
       
   ]);
-  let total = await randomStockModel.aggregate([
-    {
-        $match: {
-            $and:match,
-        },
-    },
-    {
-        $lookup: {
-          from: 'products',
-          localField: 'product',
-          foreignField: '_id',
-          as: 'clonedProducts',
-        },
-      },
-      {
-        $unwind: '$clonedProducts',
-      },
-      {
-        $lookup:{
-          from:'destroystocks',
-          localStorage:'_id',
-          foreignField:'product',
-          as: 'datas'
-        }
-      },
-      { $unwind:"$datas"}
-     
-     
-      
-  ]);
+ 
   return values;
 
   }
