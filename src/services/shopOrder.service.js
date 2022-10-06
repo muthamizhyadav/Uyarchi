@@ -81,7 +81,7 @@ const createshopOrderClone = async (body, userid) => {
       { new: true }
     );
     if (body.pay_type != 'Fully') {
-      paidamount = shoss.paidamount + body.paidamount;
+      paidamount = shoss.paidamount + paidamount;
     }
   }
   let bod = {
