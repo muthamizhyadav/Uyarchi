@@ -190,7 +190,7 @@ const smData = async (date) => {
     {
       $lookup: {
         from: 'wardadminroleasms',
-        localField: '_id',
+        localField: 'b2bUserId',
         foreignField: 'wardAdminId',
         as: 'wardadminroleasmsData',
       },

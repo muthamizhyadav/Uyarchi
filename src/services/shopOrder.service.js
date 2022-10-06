@@ -122,11 +122,15 @@ const createshopOrderClone = async (body, userid) => {
   let { product, time, shopId } = body;
   await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: 'accept', callingStatusSort: 6 }, { new: true });
   product.forEach(async (e) => {
+    let priceperkg = e.priceperkg;
+    if (body.RE_order_Id != null) {
+      priceperkg = e.salesmanprice;
+    }
     ProductorderClone.create({
       orderId: createShopOrderClone.id,
       productid: e.productid,
       quantity: e.quantity,
-      priceperkg: e.priceperkg,
+      priceperkg: priceperkg,
       GST_Number: e.GST_Number,
       HSN_Code: e.HSN_Code,
       packtypeId: e.packtypeId,

@@ -71,6 +71,9 @@ const wardAdminRoleAsmSchema = new mongoose.Schema({
     b2bUserId: {
       type: String,
     },
+    unit:{
+      type:String,
+    },
     date: {
       type: String,
     },
