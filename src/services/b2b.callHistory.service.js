@@ -2639,6 +2639,11 @@ const get_order_details = async (orderId) => {
         foreignField: '_id',
         pipeline: [
           {
+            $match: {
+              show: true,
+            },
+          },
+          {
             $lookup: {
               from: 'historypacktypes',
               localField: '_id',
@@ -2658,15 +2663,15 @@ const get_order_details = async (orderId) => {
               salesendPrice: 1,
             },
           },
+          {
+            $limit: 1,
+          },
         ],
         as: 'productpacktypes',
       },
     },
     {
-      $unwind: {
-        path: '$productpacktypes',
-        preserveNullAndEmptyArrays: true,
-      },
+      $unwind: '$productpacktypes',
     },
     {
       $project: {
