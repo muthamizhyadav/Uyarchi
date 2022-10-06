@@ -50,6 +50,9 @@ const OrderPaymentSchema = new mongoose.Schema({
     type: String,
   },
   RE_order_Id: {
+    type: String,
+  },
+  reorder_status: {
     type: Boolean,
   },
 });

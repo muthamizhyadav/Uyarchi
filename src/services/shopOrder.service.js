@@ -117,6 +117,7 @@ const createshopOrderClone = async (body, userid) => {
     payment: body.Payment,
     paymentMethod: Payment_type,
     RE_order_Id: body.RE_order_Id,
+    reorder_status: reorder_status,
   });
   let { product, time, shopId } = body;
   await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: 'accept', callingStatusSort: 6 }, { new: true });

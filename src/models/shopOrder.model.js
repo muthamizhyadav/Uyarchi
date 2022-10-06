@@ -268,7 +268,7 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     type: String,
   },
   reorder_status: {
-    type: String,
+    type: Boolean,
   },
 });
 
