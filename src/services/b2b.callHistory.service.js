@@ -2671,7 +2671,10 @@ const get_order_details = async (orderId) => {
       },
     },
     {
-      $unwind: '$productpacktypes',
+      $unwind: {
+        path: '$productpacktypes',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $project: {
