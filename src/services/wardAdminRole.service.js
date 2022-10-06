@@ -233,19 +233,39 @@ const smData = async (date) => {
 };
 
 const total = async (id, updateBody) => {
-  let data = await getWardAdminRoleById(id);
-  if (!data) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'WardAdminRole not found');
-  }
-  let value = updateBody.targetValue;
-  let tone = updateBody.targetTonne;
-  let asmvalue = data.targetValue;
-  let asmtone = data.targetTonne;
+  const values = await WardAdminRole.find({b2bUserId:id})
+  if(values != 0){
+  if(updateBody.unit == "KG"){
+  values.forEach(async (e) => {
+    if(e.unit == "KG"){
+  let value = parseInt(updateBody.targetValue);
+  let tone = parseInt(updateBody.targetTonne);
+  let asmvalue = e.targetValue;
+  let asmtone = e.targetTonne;
   let value1 = asmvalue - value;
   let tone1 = asmtone - tone;
 
-  data = await WardAdminRole.findByIdAndUpdate({ b2bUserId: id, unit: updateBody.unit }, { targetValue: value1, targetTonne: tone1 }, { new: true });
-  return data;
+    await WardAdminRole.updateMany({ b2bUserId: id, unit:"KG"}, { targetValue: value1, targetTonne: tone1 }, { new: true });
+    }
+   })
+  }else{
+    values.forEach(async (e) => {
+      if(e.unit == "Tonne"){
+    let value = parseInt(updateBody.targetValue);
+    let tone = parseInt(updateBody.targetTonne);
+    let asmvalue = e.targetValue;
+    let asmtone = e.targetTonne;
+    let value1 = asmvalue - value;
+    let tone1 = asmtone - tone;
+  
+     await WardAdminRole.updateMany({ b2bUserId: id, unit:"Tonne"}, { targetValue: value1, targetTonne: tone1 }, { new: true });
+      }
+     })
+  }
+}else{
+  throw new ApiError(httpStatus.NOT_FOUND, 'wardAdminRole not found');
+}
+return {message:"updated"}
 };
 
 // getAllSalesMandataCurrentdate
