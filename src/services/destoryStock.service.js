@@ -58,6 +58,7 @@ const getProductNAmeFromRandom = async()=>{
       {
         $unwind: '$clonedProducts',
       },
+     
       {
         $project:{
             date:1,
@@ -70,9 +71,40 @@ const getProductNAmeFromRandom = async()=>{
             productTitle:"$clonedProducts.productTitle",
             balanceQuantity: { 
               $subtract: [ "$NSFW_Wastage", "$quantityToDestroy" ] 
-            } 
+            } ,
+            // balanceQuantityToDestroy: { $sum: "$quantityToDestroy" }
             } 
         }
+      
+  ]);
+  let total = await randomStockModel.aggregate([
+    {
+        $match: {
+            $and:match,
+        },
+    },
+    {
+        $lookup: {
+          from: 'products',
+          localField: 'product',
+          foreignField: '_id',
+          as: 'clonedProducts',
+        },
+      },
+      {
+        $unwind: '$clonedProducts',
+      },
+      {
+        $lookup:{
+          from:'destroystocks',
+          localStorage:'_id',
+          foreignField:'product',
+          as: 'datas'
+        }
+      },
+      { $unwind:"$datas"}
+     
+     
       
   ]);
   return values;
@@ -111,6 +143,7 @@ const getProductNAmeFromRandom = async()=>{
           $and: [{ product: { $eq: id } }],
         },
       },
+      
     ]);
     let total = await destroyStockModel.aggregate([
       {
