@@ -68,6 +68,14 @@ const getAll = async (product, date) => {
       $unwind: '$clonedProducts',
     },
     {
+      $lookup: {
+        from: 'destroystocks',
+        localField: '_id',
+        foreignField: 'product',
+        as: 'destroystocksData'
+      }
+    },
+    {
       $project: {
         NSFQ1: 1,
         NSFQ2: 1,
@@ -81,11 +89,13 @@ const getAll = async (product, date) => {
         wastedImageFile:1,
         quantityToDestroy:1,
         status:1,
-         balanceQuantity: { 
-              $subtract: [ "$NSFW_Wastage", "$quantityToDestroy" ] 
-            } 
+        //  balanceQuantity: { 
+        //       $subtract: [ "$NSFW_Wastage", "$quantityToDestroy" ] 
+        //     } 
 
-
+  
+          totalDestroyCount: {  $sum:"$destroystocksData.quantityToDestroy"},
+        
       },
     },
   ]);
