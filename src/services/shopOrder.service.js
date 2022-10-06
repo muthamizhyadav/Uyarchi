@@ -68,8 +68,21 @@ const createshopOrderClone = async (body, userid) => {
 
   BillId = 'B' + centerdata + totalcounts;
   let timeslot = body.time_of_delivery.replace('-', '');
+  let paidamount = body.paidamount;
   if (body.paidamount == null) {
     paidamount = 0;
+  }
+  let reorder_status = false;
+  if (body.RE_order_Id != null) {
+    reorder_status = true;
+    let shoss = await ShopOrderClone.findByIdAndUpdate(
+      { _id: body.RE_order_Id },
+      { RE_order_status: 'Re-Ordered', Re_order_userId: userid },
+      { new: true }
+    );
+    // if (body.pay_type != 'Fully') {
+    //   paidamount = shoss.paidamount + paidamount;
+    // }
   }
   let bod = {
     ...body,
@@ -82,11 +95,11 @@ const createshopOrderClone = async (body, userid) => {
       created: moment(),
       timeslot: timeslot,
       paidamount: paidamount,
+      reorder_status: reorder_status,
     },
   };
 
   let createShopOrderClone = await ShopOrderClone.create(bod);
-  let paidamount = body.paidamount;
   let Payment_type = body.paymentMethod;
   if (body.Payment == 'cod') {
     Payment_type = null;
@@ -103,6 +116,8 @@ const createshopOrderClone = async (body, userid) => {
     pay_type: body.pay_type,
     payment: body.Payment,
     paymentMethod: Payment_type,
+    RE_order_Id: body.RE_order_Id,
+    reorder_status: reorder_status,
   });
   let { product, time, shopId } = body;
   await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: 'accept', callingStatusSort: 6 }, { new: true });

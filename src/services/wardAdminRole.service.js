@@ -6,6 +6,7 @@ const {
   AsmSalesMan,
   SalesManShop,
   WithoutAsmSalesman,
+  WardAdminRoleAsmHistory,
 } = require('../models/wardAdminRole.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
@@ -18,7 +19,6 @@ const createwardAdminRole = async (body) => {
   let time = moment().format('hh:mm a');
   let values = {};
   const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, unit:body.unit});
-  console.log(value)
   if(value.length == 0)
   {
     values = {
@@ -122,6 +122,41 @@ const createwardAdminRoleAsm = async (body) => {
   return data;
 };
 
+const WardAdminRoleAsmHistorydata = async (body) => {
+  let serverdate = moment().format('yyy-MM-DD');
+  let time = moment().format('hh:mm a');
+  let values = {};
+    values = {
+      ...body,
+      ...{ date: serverdate, time: time, targetValue: parseInt(body.targetValue), targetTonne: parseInt(body.targetTonne)  },
+    };
+  
+     await WardAdminRoleAsm.create(values);
+
+  const value = await WardAdminRoleAsmHistory.find({b2bUserId:body.b2bUserId, unit:body.unit});
+  if(value != 0){
+    if(body.unit == "KG"){
+    value.forEach(async (e) => {
+     
+      if(e.unit == "KG"){
+    e.targetValue += parseInt(body.targetValue)
+    e.targetTonne += parseInt(body.targetTonne)
+    await WardAdminRoleAsmHistory.updateMany({b2bUserId:e.b2bUserId, unit:'KG'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne}, { new: true })  
+  }
+  });
+      }else{
+        value.forEach(async (e) => {
+          if(e.unit == "Tonne"){
+        e.targetValue += parseInt(body.targetValue)
+        e.targetTonne += parseInt(body.targetTonne)
+        await WardAdminRoleAsmHistory.updateMany({b2bUserId:e.b2bUserId, unit:'Tonne'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne}, { new: true })
+          }
+      });
+  }
+  }
+   return {data: "created or else updated asmtone and value"};
+};
+
 const getAllWardAdminRoleData = async (id) => {
   let data = await WardAdminRole.aggregate([
     {
@@ -209,7 +244,7 @@ const total = async (id, updateBody) => {
   let value1 = asmvalue - value;
   let tone1 = asmtone - tone;
 
-  data = await WardAdminRole.findByIdAndUpdate({ _id: id }, { targetValue: value1, targetTonne: tone1 }, { new: true });
+  data = await WardAdminRole.findByIdAndUpdate({ b2bUserId: id, unit: updateBody.unit }, { targetValue: value1, targetTonne: tone1 }, { new: true });
   return data;
 };
 
@@ -818,4 +853,5 @@ module.exports = {
   getUsersWith_skiped,
   Return_Assign_To_SalesMan,
   history_Assign_Reaasign_data,
+  WardAdminRoleAsmHistorydata
 };
