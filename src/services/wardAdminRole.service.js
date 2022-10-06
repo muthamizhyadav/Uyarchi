@@ -17,12 +17,13 @@ const createwardAdminRole = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   let values = {};
-  const value = await WardAdminRole.find({b2bUserId:body.b2bUserId});
+  const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, unit:body.unit});
+  console.log(value)
   if(value.length == 0)
   {
     values = {
       ...body,
-      ...{ date: serverdate, time: time, startingValue: parseInt(body.targetValue), startingTonne: parseInt(body.targetTonne) },
+      ...{ date: serverdate, time: time, startingValue: parseInt(body.targetValue), startingTonne: parseInt(body.targetTonne), targetValue:parseInt(body.targetValue), targetTonne: parseInt(body.targetTonne)  },
     };
   
      await WardAdminRole.create(values);
