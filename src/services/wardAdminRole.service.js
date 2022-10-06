@@ -244,7 +244,7 @@ const total = async (id, updateBody) => {
   let value1 = asmvalue - value;
   let tone1 = asmtone - tone;
 
-  data = await WardAdminRole.findByIdAndUpdate({ b2bUserId: id, unit: updateBody.unit }, { targetValue: value1, targetTonne: tone1 }, { new: true });
+  data = await WardAdminRole.updateMany({ b2bUserId: id, unit: updateBody.unit }, { targetValue: value1, targetTonne: tone1 }, { new: true });
   return data;
 };
 
