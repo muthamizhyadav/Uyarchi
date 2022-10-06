@@ -58,6 +58,17 @@ const getProductNAmeFromRandom = async()=>{
       {
         $unwind: '$clonedProducts',
       },
+      {
+        $lookup:{
+          from: 'destroystocks',
+          localField: '_id',
+          foreignField: 'product',
+          as: 'destoryStockDataaa'
+        }
+      },
+      // {
+      //   $unwind: "$destoryStockDataaa"
+      // },
      
       {
         $project:{
@@ -68,10 +79,10 @@ const getProductNAmeFromRandom = async()=>{
             quantityToDestroy:1,
             worthRupees:1,
             productTitle:"$clonedProducts.productTitle",
-            balanceQuantity: { 
-              $subtract: [ "$NSFW_Wastage", "$quantityToDestroy" ] 
-            } ,
-           
+            // balanceQuantity: { 
+            //   $subtract: [ "$NSFW_Wastage", "$quantityToDestroy" ] 
+            // } ,
+            totalDestroyCount: {  $sum:"$destoryStockDataaa.quantityToDestroy"},
             } 
         }
       
