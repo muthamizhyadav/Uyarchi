@@ -222,9 +222,103 @@ const get_mypayments = async (req) => {
       },
     },
     {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              GSTamount: {
+                $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100],
+              },
+              totalRupees: {
+                $add: [
+                  { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                  { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
+                ],
+              },
+              CGSTAmount: {
+                $divide: [
+                  { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
+                  2,
+                ],
+              },
+              SGSTAmount: {
+                $divide: [
+                  { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
+                  2,
+                ],
+              },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              GSTamount: { $sum: { $round: ['$GSTamount', 0] } },
+              totalRupees: { $sum: { $round: ['$totalRupees', 0] } },
+              CGSTAmount: { $sum: { $round: ['$CGSTAmount', 0] } },
+              SGSTAmount: { $sum: { $round: ['$SGSTAmount', 0] } },
+            },
+          },
+        ],
+        as: 'productorderclonesdata',
+      },
+    },
+    {
+      $unwind: '$productorderclonesdata',
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              paidAmt: { $sum: '$paidAmt' },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: '$orderpayments',
+    },
+    {
+      $addFields: {
+        totalpaid: '$orderpayments.paidAmt',
+      },
+    },
+    {
+      $addFields: {
+        totalRupees: { $round: ['$productorderclonesdata.totalRupees', 0] },
+      },
+    },
+    {
+      $addFields: {
+        GSTamount: { $round: ['$productorderclonesdata.GSTamount', 0] },
+      },
+    },
+    {
+      $addFields: {
+        CGSTAmount: { $round: ['$productorderclonesdata.CGSTAmount', 0] },
+      },
+    },
+    {
+      $addFields: {
+        SGSTAmount: { $round: ['$productorderclonesdata.SGSTAmount', 0] },
+      },
+    },
+    {
       $project: {
         product: '$productOrderdata',
         _id: 1,
+        GSTamount: 1,
+        CGSTAmount: 1,
+        SGSTAmount: 1,
         status: 1,
         productStatus: 1,
         customerDeliveryStatus: 1,
@@ -241,10 +335,10 @@ const get_mypayments = async (req) => {
         devevery_mode: 1,
         time_of_delivery: 1,
         total: 1,
-        gsttotal: 1,
-        subtotal: 1,
-        SGST: 1,
-        CGST: 1,
+        // gsttotal: 1,
+        // subtotal: 1,
+        // SGST: 1,
+        // CGST: 1,
         paidamount: 1,
         Uid: 1,
         OrderId: 1,
@@ -253,7 +347,16 @@ const get_mypayments = async (req) => {
         time: 1,
         created: 1,
         timeslot: 1,
+        orderpayments: '$orderpayments',
+        totalpaid: 1,
+        totalRupees: 1,
+        pendingAmount: { $subtract: ['$totalRupees', '$orderpayments.paidAmt'] },
+        pendingAmountstatus: { $ne: ['$totalRupees', '$orderpayments.paidAmt'] },
+        // productorderclonesdata: '$productorderclonesdata',
       },
+    },
+    {
+      $match: { pendingAmountstatus: true },
     },
   ]);
   // if (odrers.length == 0) {
