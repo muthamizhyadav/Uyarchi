@@ -5,7 +5,7 @@ const Shop_review_Service = require('../services/shop-review.service');
 
 const create_Shop_Review = catchAsync(async (req, res) => {
   const shopReview = await Shop_review_Service.create_Shop_Review(req.body);
-  await shop.save();
+  await shopReview.save();
   res.send(shopReview);
 });
 
