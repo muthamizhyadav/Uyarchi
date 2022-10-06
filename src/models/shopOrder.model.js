@@ -267,6 +267,9 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   RE_order_Id: {
     type: String,
   },
+  reorder_status: {
+    type: String,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);

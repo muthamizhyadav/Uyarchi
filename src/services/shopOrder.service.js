@@ -72,6 +72,15 @@ const createshopOrderClone = async (body, userid) => {
   if (body.paidamount == null) {
     paidamount = 0;
   }
+  let reorder_status = false;
+  if (body.RE_order_Id != null) {
+    reorder_status = true;
+    await ShopOrderClone.findByIdAndUpdate(
+      { _id: body.RE_order_Id },
+      { RE_order_status: 'Re-Ordered', Re_order_userId: userid },
+      { new: true }
+    );
+  }
   let bod = {
     ...body,
     ...{
@@ -83,6 +92,7 @@ const createshopOrderClone = async (body, userid) => {
       created: moment(),
       timeslot: timeslot,
       paidamount: paidamount,
+      reorder_status: reorder_status,
     },
   };
 
@@ -103,6 +113,7 @@ const createshopOrderClone = async (body, userid) => {
     pay_type: body.pay_type,
     payment: body.Payment,
     paymentMethod: Payment_type,
+    RE_order_Id: body.RE_order_Id,
   });
   let { product, time, shopId } = body;
   await Shop.findByIdAndUpdate({ _id: shopId }, { callingStatus: 'accept', callingStatusSort: 6 }, { new: true });
