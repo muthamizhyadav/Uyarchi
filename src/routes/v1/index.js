@@ -90,6 +90,7 @@ const wardAdminRole = require('./wardAdminRole.route');
 const registerShop = require('./shopregister.route');
 const randomStock = require('./randomStock.route');
 const destoryStock = require('./destoryStock.route')
+const shopRoute = require('./shop-review.route')
 const defaultRoutes = [
   {
     path: '/registerShop',
@@ -98,6 +99,10 @@ const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/shop-review',
+    route: shopRoute,
   },
   {
     path: '/LapsedOrder',

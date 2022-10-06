@@ -49,6 +49,12 @@ const OrderPaymentSchema = new mongoose.Schema({
   paymentstutes: {
     type: String,
   },
+  RE_order_Id: {
+    type: String,
+  },
+  reorder_status: {
+    type: Boolean,
+  },
 });
 
 const OrderPayment = new mongoose.model('orderPayment', OrderPaymentSchema);
