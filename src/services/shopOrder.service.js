@@ -75,11 +75,14 @@ const createshopOrderClone = async (body, userid) => {
   let reorder_status = false;
   if (body.RE_order_Id != null) {
     reorder_status = true;
-    await ShopOrderClone.findByIdAndUpdate(
+    let shoss = await ShopOrderClone.findByIdAndUpdate(
       { _id: body.RE_order_Id },
       { RE_order_status: 'Re-Ordered', Re_order_userId: userid },
       { new: true }
     );
+    if (body.pay_type != 'Fully') {
+      paidamount = shoss.paidamount + body.paidamount;
+    }
   }
   let bod = {
     ...body,
