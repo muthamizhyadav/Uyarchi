@@ -17,4 +17,5 @@ router.route('/getAllSalesManager/data').get(roleController.getAlldataSalesManag
 router.route('/getAllSalesMan/data').get(roleController.getAlldataSalesMan)
 router.route('/getSalesMan/data').get(roleController.getSalesMan)
 router.route('/getAllSalesmanShops/data').get(roleController.getAllSalesmanShops)
+router.route('/notAssignTonneValueSalesmanager/data').get(roleController.notAssignTonneValueSalesmanager)
 module.exports = router;
