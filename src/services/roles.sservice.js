@@ -232,7 +232,7 @@ const getAlldataSalesManager = async () =>{
   return data ;
 }
 
-const getAlldataSalesMan = async () =>{
+const getAlldataSalesMan = async (page) =>{
   let data = await Roles.aggregate([
     {
       $match: {
@@ -259,10 +259,14 @@ const getAlldataSalesMan = async () =>{
       $project: {
         name: '$b2busersData.name',
         b2buserId: '$b2busersData._id',
+        mobileNumber:'$b2busersData.phoneNumber',
+        email:"$b2busersData.email",
         roleName: 1,
         _id: 1,
       },
     },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ])
   return data ;
 }

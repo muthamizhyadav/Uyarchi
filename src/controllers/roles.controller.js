@@ -72,7 +72,7 @@ const getAlldataSalesManager = catchAsync(async(req, res) => {
 })
 
 const getAlldataSalesMan = catchAsync(async(req, res) => {
-  const data = await RolesService.getAlldataSalesMan();
+  const data = await RolesService.getAlldataSalesMan(req.params.page);
   res.send(data);
 })
 

@@ -782,23 +782,33 @@ const Return_Assign_To_SalesMan = async (id) => {
   let currentTime = moment().format('hh:mm a');
   await SalesManShop.updateMany(
     { fromSalesManId: id, status: 'tempReassign' },
-    { $set: { status: 'Assign', salesManId: id, reAssignDate: currentDate, reAssignTime: currentTime } },
+    { $set: { status: 'Assign', salesManId: id, date: currentDate, time: currentTime } },
     { new: true }
   );
   return { Message: 'Successfully Re-Assigned to SalesMan' };
 };
 
-const history_Assign_Reaasign_data = async (id,date) => {
+const history_Assign_Reaasign_data = async (id,date,idSearch) => {
   let match ;
-  if(date == 'null'){
-    match = { $or: [
-      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
-      { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
-    ],}
-   }else {
+ if(date != 'null' && idSearch == 'null') {
     match = { $or: [
       { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}] },
       { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}] },
+    ],}
+  }else if(date != 'null' && idSearch != 'null'){
+    match = { $or: [
+      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}, {salesManId:{$eq:idSearch}}] },
+      { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}, {fromSalesManId:{$eq:idSearch}}] },
+    ],}
+  }else if(date == 'null' && idSearch != 'null'){
+    match = { $or: [
+      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} },{salesManId:{$eq:idSearch}}] },
+      { $and: [{ salesManId: {$eq:id} },{ status: { $eq:'tempReassign'} },{fromSalesManId:{$eq:idSearch}}] },
+    ],}
+  }else {
+    match = { $or: [
+      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
+      { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
     ],}
   }
 
