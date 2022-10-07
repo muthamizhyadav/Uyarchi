@@ -40,6 +40,10 @@ const get_myorder = catchAsync(async (req, res) => {
   const shop = await registerShop.get_myorder(req);
   res.status(httpStatus.CREATED).send(shop);
 });
+const get_mypayments = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_mypayments(req);
+  res.status(httpStatus.CREATED).send(shop);
+});
 
 module.exports = {
   register_shop,
@@ -49,4 +53,5 @@ module.exports = {
   get_myDetails,
   get_myorder,
   change_password,
+  get_mypayments,
 };

@@ -11,10 +11,10 @@ const create_Shop_Review = async (body) => {
 
 const getTop_20_reviews = async (id) => {
   let values = await ReviewShop.find({ shopId: id }).sort({ created: -1 }).limit(20);
-  if (values.length <= 0) {
-    return { message: 'No reviews' };
+  if (!values.length <= 0) {
+    return values
   }
-  return values
+
 };
 
 module.exports = {
