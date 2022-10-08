@@ -25,7 +25,7 @@ const getProduct = async () => {
 };
 
 const createrandomStock = async (body) => {
-  let time = moment().format('HHmm');
+  let time = moment().format('hh:mm a');
   let date = moment().format('yyyy-MM-DD');
   let created = moment();
   let datas = {

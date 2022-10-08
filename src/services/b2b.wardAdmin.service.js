@@ -1367,7 +1367,7 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
         foreignField: 'orderId',
         pipeline: [
           {
-            $match: { $and: [{ finalQuantity: { $gt: 0 } }] },
+            $match: { $and: [{ finalQuantity: { $gt: 0 }}] },
           },
         ],
         as: 'orderData',

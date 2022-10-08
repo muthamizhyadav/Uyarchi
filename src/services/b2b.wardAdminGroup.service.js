@@ -2131,7 +2131,7 @@ const finishingAccount = async (id,page)=>{
                 foreignField: '_id',
                 pipeline: [{
                   $match: {
-                    $and: [{ pay_type: { $eq: "Partial" } }],
+                    $or: [{ pay_type: { $eq: "Partial" }}, {paymentMethod: { $eq: "By Credit"} }],
                   },
                 }],
                 as: 'shopdatadata'
@@ -2161,7 +2161,7 @@ const finishingAccount = async (id,page)=>{
                 foreignField: '_id',
                 pipeline: [{
                   $match: {
-                    $and: [{ pay_type: { $eq: "Partial" } }],
+                    $or: [{ pay_type: { $eq: "Partial" } },{paymentMethod: { $eq: "By Credit"}}],
                   },
                 }],
                 as: 'shopdatadata'
