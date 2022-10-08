@@ -1626,6 +1626,13 @@ const getcashAmountViewFromDB = async (id) => {
         from: 'orderpayments',
         localField: 'orderId',
         foreignField: 'orderId',
+        pipeline: [{
+          $match: {
+            $or: [{ type: { $eq: "Customer Asked to deliver to Security" } },
+                   { type: { $eq: "Customer Handover" } },
+                   { type: { $eq: "Customer Asked to deliver to Neighbour" } }],
+          },
+        }],
         as: 'orderdatadata'
       }
     },
