@@ -1632,12 +1632,12 @@ const getcashAmountViewFromDB = async (id) => {
     {
       $unwind: "$orderdatadata"
     },
-    // {
-    //   $group: {
-    //     _id: '$orderdatadata.paymentMethod',
-    //     totalCash: { $sum: '$orderdatadata.paidAmt' },
-    //   },
-    // },
+    {
+      $group: {
+        _id: '$orderdatadata.paymentMethod',
+        totalCash: { $sum: '$orderdatadata.paidAmt' },
+      },
+    },
 
 
    

@@ -251,6 +251,7 @@ const getShopOrderCloneById = async (id) => {
         Payment: 1,
         productData: '$productData',
         shopName: '$shopData.SName',
+        mobile:"$shopData.mobile",
         pay_type: 1,
         paymentMethod: 1,
       },

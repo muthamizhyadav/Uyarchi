@@ -54,7 +54,10 @@ const getAll = async (product, date) => {
     {
       $match: {
         $and: match,
-      },
+       
+      }
+    
+      
     },
     {
       $lookup: {
@@ -89,15 +92,18 @@ const getAll = async (product, date) => {
         wastedImageFile:1,
         quantityToDestroy:1,
         status:1,
-        //  balanceQuantity: { 
-        //       $subtract: [ "$NSFW_Wastage", "$quantityToDestroy" ] 
-        //     } 
-
-  
-          totalDestroyCount: {  $sum:"$destroystocksData.quantityToDestroy"},
+        totalDestroyCount: {  $sum:"$destroystocksData.quantityToDestroy"},
+      //   equal : {
+      //     $ne : [{$sum:"$destroystocksData.quantityToDestroy"}, "$NSFW_Wastage"] 
+      // },
         
       },
     },
+    // {
+    //   $match : {
+    //       equal : true   
+    //   }
+    // }
   ]);
   return values;
 };
