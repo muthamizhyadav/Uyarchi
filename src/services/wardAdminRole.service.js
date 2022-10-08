@@ -857,6 +857,44 @@ const history_Assign_Reaasign_data = async (id,date,idSearch) => {
   ])
   return data ;
 }
+
+const getAllSalesmanShops = async (id) =>{
+  const data = await SalesManShop.aggregate([
+    {
+      $match:{ $or: [
+        { $and: [{ salesManId: {$eq:id} },{ status: { $eq:'tempReassign'} }]},
+        { $and: [{ fromSalesManId: {$eq:id} },{ status: { $eq:'Assign'} }]},
+      ],}
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesdata',
+    },
+    {
+      $project:{
+        salesMan: '$Users.name',
+        salesManId:1,
+        shopId:1,
+        status:1,
+        date:1,
+        fromSalesManId:1,
+        time:1,
+        reAssignDate:1,
+        reAssignTime:1,
+        shopname:'$b2bshopclonesdata.SName'
+      }
+    }
+
+  ])
+  return {data:data, count:data.length}
+}
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -883,5 +921,6 @@ module.exports = {
   getUsersWith_skiped,
   Return_Assign_To_SalesMan,
   history_Assign_Reaasign_data,
-  WardAdminRoleAsmHistorydata
+  WardAdminRoleAsmHistorydata,
+  getAllSalesmanShops,
 };
