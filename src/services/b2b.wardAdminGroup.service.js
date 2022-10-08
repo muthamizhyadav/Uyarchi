@@ -1626,18 +1626,25 @@ const getcashAmountViewFromDB = async (id) => {
         from: 'orderpayments',
         localField: 'orderId',
         foreignField: 'orderId',
+        pipeline: [{
+          $match: {
+            $or: [{ type: { $eq: "Customer Asked to deliver to Security" } },
+                   { type: { $eq: "Customer Handover" } },
+                   { type: { $eq: "Customer Asked to deliver to Neighbour" } }],
+          },
+        }],
         as: 'orderdatadata'
       }
     },
     {
       $unwind: "$orderdatadata"
     },
-    // {
-    //   $group: {
-    //     _id: '$orderdatadata.paymentMethod',
-    //     totalCash: { $sum: '$orderdatadata.paidAmt' },
-    //   },
-    // },
+    {
+      $group: {
+        _id: '$orderdatadata.paymentMethod',
+        totalCash: { $sum: '$orderdatadata.paidAmt' },
+      },
+    },
 
 
    
@@ -2131,7 +2138,7 @@ const finishingAccount = async (id,page)=>{
                 foreignField: '_id',
                 pipeline: [{
                   $match: {
-                    $and: [{ pay_type: { $eq: "Partial" } }],
+                    $or: [{ pay_type: { $eq: "Partial" }}, {paymentMethod: { $eq: "By Credit"} }],
                   },
                 }],
                 as: 'shopdatadata'
@@ -2161,7 +2168,7 @@ const finishingAccount = async (id,page)=>{
                 foreignField: '_id',
                 pipeline: [{
                   $match: {
-                    $and: [{ pay_type: { $eq: "Partial" } }],
+                    $or: [{ pay_type: { $eq: "Partial" } },{paymentMethod: { $eq: "By Credit"}}],
                   },
                 }],
                 as: 'shopdatadata'

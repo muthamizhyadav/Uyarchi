@@ -18,40 +18,60 @@ const createwardAdminRole = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   let values = {};
-  const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, unit:body.unit});
-  if(value.length == 0)
-  {
-    values = {
-      ...body,
-      ...{ date: serverdate, time: time, startingValue: parseInt(body.targetValue), startingTonne: parseInt(body.targetTonne), targetValue:parseInt(body.targetValue), targetTonne: parseInt(body.targetTonne)  },
-    };
-  
-     await WardAdminRole.create(values);
-  }else{
-    if(body.unit == "KG"){
-    value.forEach(async (e) => {
+   const value = await WardAdminRole.find({b2bUserId:body.b2bUserId});
+   if(value.length == 0){
+   values = {
+         ...body,
+       ...{ date: serverdate, time: time, startingValue: parseInt(body.targetValue), startingTonne: parseInt(body.targetTonne),},
+     }
+     await WardAdminRole.create(values)
      
-      if(e.unit == "KG"){
-    e.targetValue += parseInt(body.targetValue)
-    e.targetTonne += parseInt(body.targetTonne)
-    e.startingValue += parseInt(body.targetValue)
-    e.startingTonne += parseInt(body.targetTonne) 
-    await WardAdminRole.updateMany({b2bUserId:e.b2bUserId, unit:'KG'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })  
   }
-  });
-      }else{
+    else{
         value.forEach(async (e) => {
-          if(e.unit == "Tonne"){
         e.targetValue += parseInt(body.targetValue)
         e.targetTonne += parseInt(body.targetTonne)
         e.startingValue += parseInt(body.targetValue)
-        e.startingTonne += parseInt(body.targetTonne)  
-        await WardAdminRole.updateMany({b2bUserId:e.b2bUserId, unit:'Tonne'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })
-          }
+        e.startingTonne += parseInt(body.targetTonne) 
+        await WardAdminRole.updateMany({b2bUserId:e.b2bUserId},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })  
       });
-  }
-  }
-   return {data: "created or else updated asmtone and value"};
+      }
+         
+  // const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, unit:body.unit});
+  // if(value.length == 0)
+  // {
+  //   values = {
+  //     ...body,
+  //     ...{ date: serverdate, time: time, startingValue: parseInt(body.targetValue), startingTonne: parseInt(body.targetTonne), targetValue:parseInt(body.targetValue), targetTonne: parseInt(body.targetTonne)  },
+  //   };
+  
+  //    await WardAdminRole.create(values);
+  // }else{
+  //   if(body.unit == "KG"){
+  //   value.forEach(async (e) => {
+     
+  //     if(e.unit == "KG"){
+  //   e.targetValue += parseInt(body.targetValue)
+  //   e.targetTonne += parseInt(body.targetTonne)
+  //   e.startingValue += parseInt(body.targetValue)
+  //   e.startingTonne += parseInt(body.targetTonne) 
+  //   await WardAdminRole.updateMany({b2bUserId:e.b2bUserId, unit:'KG'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })  
+  // }
+  // });
+  //     }else{
+  //       value.forEach(async (e) => {
+  //         if(e.unit == "Tonne"){
+  //       e.targetValue += parseInt(body.targetValue)
+  //       e.targetTonne += parseInt(body.targetTonne)
+  //       e.startingValue += parseInt(body.targetValue)
+  //       e.startingTonne += parseInt(body.targetTonne)  
+  //       await WardAdminRole.updateMany({b2bUserId:e.b2bUserId, unit:'Tonne'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })
+  //         }
+  //     });
+  // }
+  // }
+
+  return {message:"created"};
 };
 
 const getAll = async (date) => {
@@ -233,39 +253,52 @@ const smData = async (date) => {
 };
 
 const total = async (id, updateBody) => {
-  const values = await WardAdminRole.find({b2bUserId:id})
-  if(values != 0){
-  if(updateBody.unit == "KG"){
+    const values = await WardAdminRole.find({b2bUserId:id})
+  if(values.length == 0){
+    throw new ApiError(httpStatus.NOT_FOUND, 'wardAdminRole not found');
+  }
   values.forEach(async (e) => {
-    if(e.unit == "KG"){
   let value = parseInt(updateBody.targetValue);
   let tone = parseInt(updateBody.targetTonne);
   let asmvalue = e.targetValue;
   let asmtone = e.targetTonne;
   let value1 = asmvalue - value;
   let tone1 = asmtone - tone;
-
-    await WardAdminRole.updateMany({ b2bUserId: id, unit:"KG"}, { targetValue: value1, targetTonne: tone1 }, { new: true });
-    }
+    await WardAdminRole.updateMany({ b2bUserId: id}, { targetValue: value1, targetTonne: tone1 }, { new: true });
    })
-  }else{
-    values.forEach(async (e) => {
-      if(e.unit == "Tonne"){
-    let value = parseInt(updateBody.targetValue);
-    let tone = parseInt(updateBody.targetTonne);
-    let asmvalue = e.targetValue;
-    let asmtone = e.targetTonne;
-    let value1 = asmvalue - value;
-    let tone1 = asmtone - tone;
+  //  const values = await WardAdminRole.find({b2bUserId:id})
+  // if(values != 0){
+//   if(updateBody.unit == "KG"){
+//   values.forEach(async (e) => {
+//     if(e.unit == "KG"){
+//   let value = parseInt(updateBody.targetValue);
+//   let tone = parseInt(updateBody.targetTonne);
+//   let asmvalue = e.targetValue;
+//   let asmtone = e.targetTonne;
+//   let value1 = asmvalue - value;
+//   let tone1 = asmtone - tone;
+
+//     await WardAdminRole.updateMany({ b2bUserId: id, unit:"KG"}, { targetValue: value1, targetTonne: tone1 }, { new: true });
+//     }
+//    })
+//   }else{
+//     values.forEach(async (e) => {
+//       if(e.unit == "Tonne"){
+//     let value = parseInt(updateBody.targetValue);
+//     let tone = parseInt(updateBody.targetTonne);
+//     let asmvalue = e.targetValue;
+//     let asmtone = e.targetTonne;
+//     let value1 = asmvalue - value;
+//     let tone1 = asmtone - tone;
   
-     await WardAdminRole.updateMany({ b2bUserId: id, unit:"Tonne"}, { targetValue: value1, targetTonne: tone1 }, { new: true });
-      }
-     })
-  }
-}else{
-  throw new ApiError(httpStatus.NOT_FOUND, 'wardAdminRole not found');
-}
-return {message:"updated"}
+//      await WardAdminRole.updateMany({ b2bUserId: id, unit:"Tonne"}, { targetValue: value1, targetTonne: tone1 }, { new: true });
+//       }
+//      })
+//   }
+// }else{
+//   throw new ApiError(httpStatus.NOT_FOUND, 'wardAdminRole not found');
+// }
+  return {message:"updated"} 
 };
 
 // getAllSalesMandataCurrentdate
@@ -857,6 +890,44 @@ const history_Assign_Reaasign_data = async (id,date,idSearch) => {
   ])
   return data ;
 }
+
+const getAllSalesmanShops = async (id) =>{
+  const data = await SalesManShop.aggregate([
+    {
+      $match:{ $or: [
+        { $and: [{ salesManId: {$eq:id} },{ status: { $eq:'tempReassign'} }]},
+        { $and: [{ fromSalesManId: {$eq:id} },{ status: { $eq:'Assign'} }]},
+      ],}
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesdata',
+    },
+    {
+      $project:{
+        salesMan: '$Users.name',
+        salesManId:1,
+        shopId:1,
+        status:1,
+        date:1,
+        fromSalesManId:1,
+        time:1,
+        reAssignDate:1,
+        reAssignTime:1,
+        shopname:'$b2bshopclonesdata.SName'
+      }
+    }
+
+  ])
+  return {data:data, count:data.length}
+}
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -883,5 +954,6 @@ module.exports = {
   getUsersWith_skiped,
   Return_Assign_To_SalesMan,
   history_Assign_Reaasign_data,
-  WardAdminRoleAsmHistorydata
+  WardAdminRoleAsmHistorydata,
+  getAllSalesmanShops,
 };

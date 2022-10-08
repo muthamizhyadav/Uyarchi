@@ -227,6 +227,8 @@ const getproductdetails = async (id) => {
               productpacktypeId: 1,
               unit: 1,
               packKg: 1,
+              GST_Number:1,
+              GSTamount: { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$priceperkg'] }, '$GST_Number'] }, 100] },
             },
           },
         ],
@@ -279,6 +281,9 @@ const getproductdetails = async (id) => {
         status: 1,
         OrderId: 1,
         total: '$productDatadetails.amount',
+        TotalGstAmount : { $sum : "$productData.GSTamount" },
+        totalSum : { '$add' : [ '$productDatadetails.amount', {$sum : "$productData.GSTamount"} ] },
+       
       },
     },
   ]);
@@ -1362,7 +1367,7 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
         foreignField: 'orderId',
         pipeline: [
           {
-            $match: { $and: [{ finalQuantity: { $gt: 0 } }] },
+            $match: { $and: [{ finalQuantity: { $gt: 0 }}] },
           },
         ],
         as: 'orderData',

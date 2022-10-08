@@ -46,7 +46,18 @@ const getProductNAmeFromRandom = async()=>{
         $match: {
             $and:match,
         },
+       
     },
+    
+    // {
+    //   $match: {
+    //    $expr: {
+    //       $ne: [
+    //         '$totalDestroyCount', '$NSFW_Wastage',
+    //       ],
+    //     },
+    //   }
+    // },
     {
         $lookup: {
           from: 'products',
@@ -79,12 +90,20 @@ const getProductNAmeFromRandom = async()=>{
             quantityToDestroy:1,
             worthRupees:1,
             productTitle:"$clonedProducts.productTitle",
-            // balanceQuantity: { 
-            //   $subtract: [ "$NSFW_Wastage", "$quantityToDestroy" ] 
-            // } ,
+            
             totalDestroyCount: {  $sum:"$destoryStockDataaa.quantityToDestroy"},
+           
+
+      //          equal : {
+      //     $ne : ["$totalDestroyCount", "$NSFW_Wastage"] 
+      // },
             } 
-        }
+        },
+    //     {
+    //   $match : {
+    //       equal : true   
+    //   }
+    // }
       
   ]);
  

@@ -400,6 +400,9 @@ const productorderCloneSchema = new mongoose.Schema({
   finalPricePerKg: {
     type: Number,
   },
+  amountwithGST: {
+    type: Number
+  },
 });
 
 productorderCloneSchema.plugin(toJSON);
