@@ -1774,6 +1774,36 @@ const GetShopsReviewsByShopType = async (id, page) => {
   return { shops: shops, total: total.length };
 };
 
+const getShopReviewByShopid = async (id) => {
+  let values = await Shop.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'shopreviews',
+        localField: '_id',
+        foreignField: 'shopId',
+        as: 'Reviews',
+      },
+    },
+    {
+      $unwind: '$Reviews',
+    },
+    {
+      $project: {
+        _id: 1,
+        SName: 1,
+        reviewvId: '$Reviews._id',
+        Rating: '$Reviews.Rating',
+        Name: '$Reviews.Name',
+        MobileNumber: '$Reviews.MobileNumber',
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -1810,4 +1840,5 @@ module.exports = {
   getnotAssignSalesmanData,
   GetShopsByShopType,
   GetShopsReviewsByShopType,
+  getShopReviewByShopid,
 };
