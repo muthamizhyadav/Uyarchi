@@ -138,7 +138,7 @@ const history_Assign_Reaasign_data = catchAsync(async (req, res) => {
   res.send(data);
 });
 const getAllSalesmanShops = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.getAllSalesmanShops(req.params.id);
+  const data = await wardAdminRoleService.getAllSalesmanShops();
   res.send(data);
 });
 
