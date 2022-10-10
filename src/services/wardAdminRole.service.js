@@ -359,6 +359,22 @@ const getAsmSalesman = async (id) => {
       $unwind: '$b2busersData',
     },
     {
+      $lookup: {
+        from: 'salesmanshops',
+        let:{
+          localField: '$salesManId',
+        },
+        pipeline:[{ $match:{ $expr: { $eq: ['$salesManId', '$$localField']}}},
+        {
+          $match: {
+            $and: [{ status: { $ne: "Reassign" } }],
+          },
+        },
+      ],
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
       $project: {
         salesmanName: '$b2busersData.name',
         salesManId: 1,
@@ -367,6 +383,7 @@ const getAsmSalesman = async (id) => {
         date: 1,
         time: 1,
         _id: 1,
+        Count:{$size:"$b2bshopclonesdata"},
       },
     },
   ]);
@@ -920,6 +937,7 @@ const getAllSalesmanShopsCount = async () =>{
     // },
     {
       $project:{
+
         Count:{$size:"$b2bshopclonesdata"},
       }
     }
