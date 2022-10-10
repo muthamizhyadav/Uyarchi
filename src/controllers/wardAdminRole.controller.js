@@ -138,10 +138,14 @@ const history_Assign_Reaasign_data = catchAsync(async (req, res) => {
   res.send(data);
 });
 const getAllSalesmanShops = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.getAllSalesmanShops();
+  const data = await wardAdminRoleService.getAllSalesmanShopsCount();
   res.send(data);
 });
 
+const getAllSalesmanShopsData = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.getAllSalesmanShopsData(req.params.id);
+  res.send(data);
+});
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -169,4 +173,5 @@ module.exports = {
   Return_Assign_To_SalesMan,
   history_Assign_Reaasign_data,
   getAllSalesmanShops,
+  getAllSalesmanShopsData,
 };
