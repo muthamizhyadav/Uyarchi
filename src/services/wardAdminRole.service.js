@@ -359,6 +359,22 @@ const getAsmSalesman = async (id) => {
       $unwind: '$b2busersData',
     },
     {
+      $lookup: {
+        from: 'salesmanshops',
+        let:{
+          localField: '$salesManId',
+        },
+        pipeline:[{ $match:{ $expr: { $eq: ['$salesManId', '$$localField']}}},
+        {
+          $match: {
+            $and: [{ status: { $ne: "Reassign" } }],
+          },
+        },
+      ],
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
       $project: {
         salesmanName: '$b2busersData.name',
         salesManId: 1,
@@ -367,6 +383,7 @@ const getAsmSalesman = async (id) => {
         date: 1,
         time: 1,
         _id: 1,
+        Count:{$size:"$b2bshopclonesdata"},
       },
     },
   ]);
@@ -891,42 +908,83 @@ const history_Assign_Reaasign_data = async (id,date,idSearch) => {
   return data ;
 }
 
-const getAllSalesmanShops = async (id) =>{
-  const data = await SalesManShop.aggregate([
-    {
-      $match:{ $or: [
-        { $and: [{ salesManId: {$eq:id} },{ status: { $eq:'tempReassign'} }]},
-        { $and: [{ fromSalesManId: {$eq:id} },{ status: { $eq:'Assign'} }]},
-      ],}
-    },
+const getAllSalesmanShopsCount = async () =>{
+  const data = await Users.aggregate([
+    // {
+      {
+        $match:{
+          $and:[{ userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' }}]
+        }
+      },
     {
       $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
+        from: 'salesmanshops',
+        let:{
+          localField: '$_id',
+        },
+        pipeline:[{ $match:{ $expr: { $eq: ['$salesManId', '$$localField']}}},
+        {
+          $match: {
+            $and: [{ status: { $ne: "Reassign" } }],
+          },
+        },
+      ],
         as: 'b2bshopclonesdata',
       },
     },
-    {
-      $unwind: '$b2bshopclonesdata',
-    },
+    // {
+    //   $unwind: '$b2bshopclonesdata',
+    // },
     {
       $project:{
-        salesMan: '$Users.name',
-        salesManId:1,
-        shopId:1,
-        status:1,
-        date:1,
-        fromSalesManId:1,
-        time:1,
-        reAssignDate:1,
-        reAssignTime:1,
-        shopname:'$b2bshopclonesdata.SName'
+
+        Count:{$size:"$b2bshopclonesdata"},
       }
     }
 
   ])
-  return {data:data, count:data.length}
+  return data ;
+}
+
+const getAllSalesmanShopsData = async (id) =>{
+
+  const data = await SalesManShop.aggregate([
+    // {
+      {
+        $match:{ $or: [
+          { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
+          { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
+        ],}
+      },
+      {
+        $lookup: {
+          from: 'b2bshopclones',
+          localField: 'shopId',
+          foreignField: '_id',
+          as: 'b2bshopclonesdata',
+        },
+      },
+      {
+        $unwind: '$b2bshopclonesdata',
+      },
+    {
+      $project:{
+         shopName:"$b2bshopclonesdata.SName",
+         shopOwner:"$b2bshopclonesdata.SOwner",
+         mobileNumber:"$b2bshopclonesdata.mobile",
+         status:1,
+         date:1,
+         time:1,
+         reAssignDate:1,
+         reAssignTime:1,
+         shopId:1,
+         salesManId:1,
+         fromSalesManId:1,
+      }
+    }
+
+  ])
+  return data ;
 }
 module.exports = {
   createwardAdminRole,
@@ -955,5 +1013,6 @@ module.exports = {
   Return_Assign_To_SalesMan,
   history_Assign_Reaasign_data,
   WardAdminRoleAsmHistorydata,
-  getAllSalesmanShops,
+  getAllSalesmanShopsCount,
+  getAllSalesmanShopsData,
 };

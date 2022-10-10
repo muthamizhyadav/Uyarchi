@@ -1632,6 +1632,8 @@ const getcashAmountViewFromDB = async (id) => {
                    { type: { $eq: "Customer Handover" } },
                    { type: { $eq: "Customer Asked to deliver to Neighbour" } }],
           },
+
+          
         }],
         as: 'orderdatadata'
       }
@@ -1899,12 +1901,16 @@ const finishingAccount = async (id,page)=>{
         $and: [{ wardAdminGroupID: { $eq: id } }],
       },
     },
+  
+      
+    
     {
       $lookup: {
         from: 'shoporderclones',
         localField: 'orderId',
         foreignField: '_id',
         pipeline: [
+     
           {
             $lookup: {
               from:'productorderclones',
@@ -1945,81 +1951,90 @@ const finishingAccount = async (id,page)=>{
             }
           },
           { $unwind: "$productData"},
-          {
-            $lookup: {  
-              from: 'orderpayments',
-              localField: '_id',
-              foreignField: 'orderId',
-              pipeline: [
-                      {
-                        
-                          $match: {
-                            $and: [{ type: { $eq: 'advanced' } }],
-                          },
-                        
-                    },
-                  ],
-              as: 'orderData',
-            },
-          },
-          { $unwind: "$orderData"},
-          {
-            $lookup: {
-              from: 'orderpayments',
-              localField: '_id',
-              foreignField: 'orderId',
-              pipeline: [
-                      {
-                        
-                          $match: {
-                            $and: [{ type: { $ne: 'advanced' } }],
-                          },
-                        
-                    },
-                  ],
-              as: 'orderDataNotEqual',
-            },
-            
-          },
-          { $unwind: "$orderDataNotEqual"},
+         
         ],
         as: 'shopData',
       }
     },
     { $unwind: "$shopData"},
+
+    {
+      $lookup: {  
+        from: 'orderpayments',
+        localField: 'orderId',
+        foreignField: 'orderId',
+        pipeline: [
+                {
+                  
+                    $match: {
+                      $and: [{ type: { $eq: 'advanced' } },
+                    ],
+                    },
+                  
+              },
+            ],
+        as: 'orderData',
+      },
+    },
+    { $unwind: {
+      path: '$orderData',
+      preserveNullAndEmptyArrays: true,
+      }
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: 'orderId',
+        foreignField: 'orderId',
+        pipeline: [
+                {
+                  
+                    $match: {
+                      $and: [{ type: { $ne: 'advanced' } }],
+                    },
+                  
+              },
+            ],
+        as: 'orderDataNotEqual',
+      },
+      
+    },
+    { $unwind: {
+    path: '$orderDataNotEqual',
+    preserveNullAndEmptyArrays: true,
+    }
+  },
     {
       $project: {
         wardAdminGroupID:1,
        deliveryStatus: "$shopData.status",
        order: "$shopData.OrderId",
        originalOrderId: "$shopData._id",
+       customerBillId: "$shopData.customerBillId",
 
 
    
        productAmountWithGST: {$round: ["$shopData.productData.price",1]},
-       initialPaymentType: "$shopData.orderData.paymentMethod",
-       initialpaymenyCapacity: "$shopData.orderData.pay_type",
-        paidAmount: "$shopData.orderData.paidAmt",
+       initialPaymentType: "$orderData.paymentMethod",
+       initialpaymenyCapacity: "$orderData.pay_type",
+        paidAmount: "$orderData.paidAmt",
 
 
-        type: "$shopData.orderDataNotEqual.type",
-        paytype: "$shopData.orderDataNotEqual.payType",
-       FinalPaymentType: "$shopData.orderDataNotEqual.paymentMethod",
-       Finalpaymentcapacity: "$shopData.orderDataNotEqual.pay_type",
-        finalpaidAmount: "$shopData.orderDataNotEqual.paidAmt",
+        type: "$orderDataNotEqual.type",
+        paytype: "$orderDataNotEqual.payType",
+       FinalPaymentType: "$orderDataNotEqual.paymentMethod",
+       Finalpaymentcapacity: "$orderDataNotEqual.pay_type",
+        finalpaidAmount: "$orderDataNotEqual.paidAmt",
 
         addTwoAmount : {
-          $add: ["$shopData.orderDataNotEqual.paidAmt", "$shopData.orderData.paidAmt"]
+          $add: ["$orderDataNotEqual.paidAmt", "$orderData.paidAmt"]
         },
 
         PendinAmount: { 
 
-          $subtract: [ "$shopData.productData.price", "$shopData.orderData.paidAmt" ] } ,
+          $subtract: [ "$shopData.productData.price", "$orderData.paidAmt" ] } ,
 
-          // lastPendingAmount: { 
-
-          //   $subtract: [ {$add: ["$shopData.orderDataNotEqual.paidAmt", "$shopData.orderData.paidAmt"], $subtract: [ "$shopData.productData.price", "$shopData.orderData.paidAmt" ]}  ] 
-          // } 
+        
       }
     },
     { $skip: 10 * page },
@@ -2034,12 +2049,16 @@ const finishingAccount = async (id,page)=>{
                 $and: [{ wardAdminGroupID: { $eq: id } }],
               },
             },
+          
+              
+            
             {
               $lookup: {
                 from: 'shoporderclones',
                 localField: 'orderId',
                 foreignField: '_id',
                 pipeline: [
+             
                   {
                     $lookup: {
                       from:'productorderclones',
@@ -2080,50 +2099,60 @@ const finishingAccount = async (id,page)=>{
                     }
                   },
                   { $unwind: "$productData"},
-                  {
-                    $lookup: {  
-                      from: 'orderpayments',
-                      localField: '_id',
-                      foreignField: 'orderId',
-                      pipeline: [
-                              {
-                                
-                                  $match: {
-                                    $and: [{ type: { $eq: 'advanced' } }],
-                                  },
-                                
-                            },
-                          ],
-                      as: 'orderData',
-                    },
-                  },
-                  { $unwind: "$orderData"},
-                  {
-                    $lookup: {
-                      from: 'orderpayments',
-                      localField: '_id',
-                      foreignField: 'orderId',
-                      pipeline: [
-                              {
-                                
-                                  $match: {
-                                    $and: [{ type: { $ne: 'advanced' } }],
-                                  },
-                                
-                            },
-                          ],
-                      as: 'orderDataNotEqual',
-                    },
-                    
-                  },
-                  { $unwind: "$orderDataNotEqual"},
+                 
                 ],
                 as: 'shopData',
               }
             },
             { $unwind: "$shopData"},
-          ]);
-
+        
+            {
+              $lookup: {  
+                from: 'orderpayments',
+                localField: 'orderId',
+                foreignField: 'orderId',
+                pipeline: [
+                        {
+                          
+                            $match: {
+                              $and: [{ type: { $eq: 'advanced' } },
+                            ],
+                            },
+                          
+                      },
+                    ],
+                as: 'orderData',
+              },
+            },
+            { $unwind: {
+              path: '$orderData',
+              preserveNullAndEmptyArrays: true,
+              }
+            },
+            {
+              $lookup: {
+                from: 'orderpayments',
+                localField: 'orderId',
+                foreignField: 'orderId',
+                pipeline: [
+                        {
+                          
+                            $match: {
+                              $and: [{ type: { $ne: 'advanced' } }],
+                            },
+                          
+                      },
+                    ],
+                as: 'orderDataNotEqual',
+              },
+              
+            },
+            { $unwind: {
+            path: '$orderDataNotEqual',
+            preserveNullAndEmptyArrays: true,
+            }
+          },
+        ]);
 
           let partialCount = await wardAdminGroupModel_ORDERS.aggregate([
             {
