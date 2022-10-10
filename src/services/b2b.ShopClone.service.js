@@ -1798,6 +1798,7 @@ const getShopReviewByShopid = async (id) => {
         Rating: '$Reviews.Rating',
         Name: '$Reviews.Name',
         MobileNumber: '$Reviews.MobileNumber',
+        Review: '$Reviews.Review',
       },
     },
   ]);
