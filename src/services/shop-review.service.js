@@ -12,12 +12,31 @@ const create_Shop_Review = async (body) => {
 const getTop_20_reviews = async (id) => {
   let values = await ReviewShop.find({ shopId: id }).sort({ created: -1 }).limit(20);
   if (!values.length <= 0) {
-    return values
+    return values;
   }
+};
 
+const updateReviewById = async (id, updateBody) => {
+  let values = await ReviewShop.findById(id);
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'No Review Yet');
+  }
+  values = await ReviewShop.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return values;
+};
+
+const DeleteReviewById = async (id) => {
+  let values = await ReviewShop.findById(id);
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'No Review yet');
+  }
+  values = await ReviewShop.findOneAndDelete({ _id: id });
+  return values;
 };
 
 module.exports = {
   create_Shop_Review,
   getTop_20_reviews,
+  updateReviewById,
+  DeleteReviewById,
 };
