@@ -378,14 +378,19 @@ const getVendorShops = catchAsync(async (req, res) => {
 });
 
 const getNotAssignSalesManData = catchAsync(async (req, res) => {
-  const data = await b2bCloneService.getnotAssignSalesmanData(req.params.id,req.params.page,req.params.limit);
+  const data = await b2bCloneService.getnotAssignSalesmanData(req.params.id, req.params.page, req.params.limit);
   res.send(data);
 });
 
-const GetShopsByShopType = catchAsync (async (req, res)=>{
-  const data = await b2bCloneService.GetShopsByShopType(req.params.id, req.params.page)
-  res.send(data)
-})
+const GetShopsByShopType = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.GetShopsByShopType(req.params.id, req.params.page);
+  res.send(data);
+});
+
+const GetShopsReviewsByShopType = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.GetShopsReviewsByShopType(req.params.id, req.params.page);
+  res.send(data);
+});
 
 module.exports = {
   createB2bShopClone,
@@ -424,4 +429,5 @@ module.exports = {
   getVendorShops,
   getNotAssignSalesManData,
   GetShopsByShopType,
+  GetShopsReviewsByShopType,
 };

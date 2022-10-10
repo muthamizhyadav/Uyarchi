@@ -1605,16 +1605,20 @@ const getVendorShops = async (key) => {
 
 // getnotAssignSalesmanData
 
-const getnotAssignSalesmanData = async (id,page,limit) =>{
+const getnotAssignSalesmanData = async (id, page, limit) => {
   let data = await Shop.aggregate([
     {
       $match: {
-        $and: [{ Wardid: { $eq:id} }],
+        $and: [{ Wardid: { $eq: id } }],
       },
     },
     {
       $match: {
-        $or: [{ salesManStatus: { $ne:'Assign' } },{ salesManStatus: { $eq:null} },{ salesManStatus: { $eq:'Reassign'} }],
+        $or: [
+          { salesManStatus: { $ne: 'Assign' } },
+          { salesManStatus: { $eq: null } },
+          { salesManStatus: { $eq: 'Reassign' } },
+        ],
       },
     },
     {
@@ -1626,15 +1630,15 @@ const getnotAssignSalesmanData = async (id,page,limit) =>{
       },
     },
     {
-      $unwind:'$streets',
+      $unwind: '$streets',
     },
     {
       $project: {
-        SOwner:1,
-        SName:1,
-        mobile:1,
-        address:1,
-        locality:'$streets.locality',
+        SOwner: 1,
+        SName: 1,
+        mobile: 1,
+        address: 1,
+        locality: '$streets.locality',
         _id: 1,
       },
     },
@@ -1644,16 +1648,20 @@ const getnotAssignSalesmanData = async (id,page,limit) =>{
     {
       $limit: parseInt(limit),
     },
-  ])
+  ]);
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ Wardid: { $eq:id} }],
+        $and: [{ Wardid: { $eq: id } }],
       },
     },
     {
       $match: {
-        $or: [{ salesManStatus: { $ne:'Assign' } },{ salesManStatus: { $eq:null} },{ salesManStatus: { $eq:'Reassign'} }],
+        $or: [
+          { salesManStatus: { $ne: 'Assign' } },
+          { salesManStatus: { $eq: null } },
+          { salesManStatus: { $eq: 'Reassign' } },
+        ],
       },
     },
     {
@@ -1665,55 +1673,106 @@ const getnotAssignSalesmanData = async (id,page,limit) =>{
       },
     },
     {
-      $unwind:'$streets',
+      $unwind: '$streets',
     },
     {
       $project: {
-        SOwner:1,
-        SName:1,
-        mobile:1,
-        address:1,
-        locality:'$streets.locality',
+        SOwner: 1,
+        SName: 1,
+        mobile: 1,
+        address: 1,
+        locality: '$streets.locality',
         _id: 1,
       },
     },
-  ])
-  return {data:data, total:total.length} ;
-}
+  ]);
+  return { data: data, total: total.length };
+};
 
-const GetShopsByShopType = async (id, page)=>{
-  let shops = await Shop.aggregate([{
-    $match: {
-      $and: [{ SType: { $eq:id} }],
+const GetShopsByShopType = async (id, page) => {
+  let shops = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ SType: { $eq: id } }],
+      },
     },
-  },
-  {
-    $project:{
-      _id:1,
-      photoCapture:1,
-      SName:1,
-      type:1,
-      SOwner:1,
-      mobile:1,
-      address:1,
-    }
-  },
-  {
-    $skip: 10 * page,
-  },
+    {
+      $project: {
+        _id: 1,
+        photoCapture: 1,
+        SName: 1,
+        type: 1,
+        SOwner: 1,
+        mobile: 1,
+        address: 1,
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
     {
       $limit: 10,
     },
-  ])
+  ]);
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ SType: { $eq:id} }],
+        $and: [{ SType: { $eq: id } }],
       },
     },
-  ])
-  return {shops: shops, total: total.length}
-}
+  ]);
+  return { shops: shops, total: total.length };
+};
+
+const GetShopsReviewsByShopType = async (id, page) => {
+  let shops = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ SType: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'shopreviews',
+        localField: '_id',
+        foreignField: 'shopId',
+        as: 'Reviews',
+      },
+    },
+    // {
+    //   $unwind: {
+    //     path: '$Reviews',
+    //     preserveNullAndEmptyArrays: true,
+    //   },
+    // },
+    {
+      $project: {
+        _id: 1,
+        photoCapture: 1,
+        SName: 1,
+        type: 1,
+        SOwner: 1,
+        mobile: 1,
+        address: 1,
+        reviews: '$Reviews',
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ SType: { $eq: id } }],
+      },
+    },
+  ]);
+  return { shops: shops, total: total.length };
+};
 
 module.exports = {
   createShopClone,
@@ -1750,4 +1809,5 @@ module.exports = {
   getVendorShops,
   getnotAssignSalesmanData,
   GetShopsByShopType,
+  GetShopsReviewsByShopType,
 };
