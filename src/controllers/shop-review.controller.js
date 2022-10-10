@@ -24,9 +24,15 @@ const DeleteReviewById = catchAsync(async (req, res) => {
   res.send(shopReview);
 });
 
+const getReviewById = catchAsync(async (req, res) => {
+  const shopReview = await Shop_review_Service.getReviewById(req.params.id);
+  res.send(shopReview);
+});
+
 module.exports = {
   create_Shop_Review,
   getTop_20_reviews,
   updateReviewById,
   DeleteReviewById,
+  getReviewById,
 };

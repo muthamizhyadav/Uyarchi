@@ -34,9 +34,18 @@ const DeleteReviewById = async (id) => {
   return values;
 };
 
+const getReviewById = async (id) => {
+  let values = await ReviewShop.findById(id);
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'No Review Yet');
+  }
+  return values;
+};
+
 module.exports = {
   create_Shop_Review,
   getTop_20_reviews,
   updateReviewById,
   DeleteReviewById,
+  getReviewById,
 };

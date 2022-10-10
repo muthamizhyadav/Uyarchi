@@ -9,5 +9,5 @@ router
   .get(shop_Review_Controller.getTop_20_reviews)
   .put(shop_Review_Controller.updateReviewById)
   .delete(shop_Review_Controller.DeleteReviewById);
-
+router.route('/getSingle/:id').get(shop_Review_Controller.getReviewById);
 module.exports = router;
