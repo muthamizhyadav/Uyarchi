@@ -30,7 +30,7 @@ const DeleteReviewById = async (id) => {
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'No Review yet');
   }
-  values = await ReviewShop.findOneAndDelete({ _id: id });
+  values = await ReviewShop.deleteOne({ _id: id });
   return values;
 };
 

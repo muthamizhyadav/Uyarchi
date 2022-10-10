@@ -20,7 +20,7 @@ const updateReviewById = catchAsync(async (req, res) => {
 });
 
 const DeleteReviewById = catchAsync(async (req, res) => {
-  const shopReview = await Shop_review_Service(req.params.id);
+  const shopReview = await Shop_review_Service.DeleteReviewById(req.params.id);
   res.send(shopReview);
 });
 
