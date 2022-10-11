@@ -497,6 +497,7 @@ const returnStock = async (id) => {
         productTitle: 1,
         productid: 1,
         status: '$returnStock.status',
+        mismatch: { $subtract: ['$returnStock.actualStock', '$returnStock.actualWastage'] },
         pettyStock: '$totalpetty.pettyStock',
         // custoQtyPetty: '$totalpetty.totalQtyIncludingPettyStock',
         DeliveryQuantity: '$productorderclones.Qty',
