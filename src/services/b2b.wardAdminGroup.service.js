@@ -501,7 +501,8 @@ const returnStock = async (id) => {
         pettyStock: '$totalpetty.pettyStock',
         // custoQtyPetty: '$totalpetty.totalQtyIncludingPettyStock',
         DeliveryQuantity: '$productorderclones.Qty',
-
+        actualStock: '$returnStock.actualStock',
+        actualWastage: '$returnStock.actualWastage',
         productorderclones: { $eq: ['$productorderclones._id', null] },
         UndeliveryQuantity: '$productorderclonesData.UnQty',
         totalSum: { $add: ['$productorderclones.Qty', '$productorderclonesData.UnQty'] },
