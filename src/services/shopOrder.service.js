@@ -388,7 +388,8 @@ const updateshop_order = async (id, body) => {
   if (!shoporder) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not found');
   }
-  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
+  let timeslot = body.time_of_delivery.replace('-', '');
+  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, {...body,...{timeslot:timeslot}}, { new: true });
   let order = await OrderPayment.findOne({ orderId: shoporder._id, type: 'advanced' });
   let currentDate = moment().format('YYYY-MM-DD');
   let currenttime = moment().format('HHmmss');
