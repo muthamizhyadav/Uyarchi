@@ -1304,6 +1304,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         delivery_type: 'IMD',
         RE_order_status: { $ne: 'Re-Ordered' },
         RE_order_status: { $ne: 'declined' },
+
         date: { $eq: today },
       },
     ],
@@ -2309,7 +2310,6 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           },
           date: { $lte: threeDay },
           RE_order_status: { $ne: 'Re-Ordered' },
-          RE_order_status: { $ne: 'declined' },
         },
         {
           status: {
@@ -2328,7 +2328,6 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           date: { $eq: yesterday },
           delivery_type: 'IMD',
           RE_order_status: { $ne: 'Re-Ordered' },
-          RE_order_status: { $ne: 'declined' },
         },
         {
           timeslot: { $lte: lapsed },
@@ -2338,9 +2337,9 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           delivery_type: 'IMD',
           date: { $eq: today },
           RE_order_status: { $ne: 'Re-Ordered' },
-          RE_order_status: { $ne: 'declined' },
         },
       ],
+      RE_order_status: { $ne: 'declined' },
     };
   } else if (faildstatus == 'time') {
     faildstatusMatch = {
@@ -2352,6 +2351,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           },
           delivery_type: 'IMD',
           date: today,
+          RE_order_status: { $ne: 'Re-Ordered' },
         },
         {
           timeslot: { $lte: lapsed },
@@ -2360,8 +2360,10 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           },
           delivery_type: 'NDD',
           date: yesterday,
+          RE_order_status: { $ne: 'Re-Ordered' },
         },
       ],
+      RE_order_status: { $ne: 'declined' },
     };
   } else if (faildstatus == 'ordered' || faildstatus == 'Acknowledged') {
     faildstatusMatch = {
@@ -2371,6 +2373,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
             $eq: faildstatus,
           },
           date: { $lte: threeDay },
+          RE_order_status: { $ne: 'Re-Ordered' },
         },
         {
           status: {
@@ -2378,14 +2381,17 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           },
           date: { $eq: yesterday },
           delivery_type: 'IMD',
+          RE_order_status: { $ne: 'Re-Ordered' },
         },
         {
           timeslot: { $lte: lapsed },
           status: {
             $eq: faildstatus,
           },
+          RE_order_status: { $ne: 'Re-Ordered' },
         },
       ],
+      RE_order_status: { $ne: 'declined' },
     };
   } else {
     faildstatusMatch = {
@@ -2395,6 +2401,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
             $eq: faildstatus,
           },
           date: { $lte: threeDay },
+          RE_order_status: { $ne: 'Re-Ordered' },
         },
         {
           status: {
@@ -2402,8 +2409,10 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           },
           date: { $eq: yesterday },
           delivery_type: 'IMD',
+          RE_order_status: { $ne: 'Re-Ordered' },
         },
       ],
+      RE_order_status: { $ne: 'declined' },
     };
   }
   let keys = { active: { $eq: true } };
@@ -2429,6 +2438,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
             $sort: { date: -1, historytime: -1 },
           },
           { $limit: 10 },
+          
         ],
         as: 'callhistories',
       },
@@ -2550,6 +2560,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
               statusUpdate: 1,
               WA_assigned_Time: 1,
               product: '$product',
+              RE_order_status: 1,
             },
           },
         ],
