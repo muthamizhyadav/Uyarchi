@@ -4,7 +4,10 @@ const moment = require('moment');
 const ReturnStock = require('../models/returnStocks.model');
 
 const create_ReturnStock = async (body) => {
-  let values = { ...body, ...{ created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HHmmss') } };
+  let values = {
+    ...body,
+    ...{ created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HHmmss'), status: 'received' },
+  };
   let create = await ReturnStock.create(values);
   return create;
 };
