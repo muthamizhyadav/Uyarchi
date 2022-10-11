@@ -111,8 +111,12 @@ const updateOrderStatus = async (id, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
   deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
+  let paidamount = updateBody.paidamount;
+  if (paidamount == null) {
+    paidamount = 0;
+  }
   await orderPayment.create({
-    paidAmt: updateBody.paidamount,
+    paidAmt: paidamount,
     date: currentDate,
     time: currenttime,
     created: moment(),
@@ -1626,20 +1630,22 @@ const getcashAmountViewFromDB = async (id) => {
         from: 'orderpayments',
         localField: 'orderId',
         foreignField: 'orderId',
-        pipeline: [{
-          $match: {
-            $or: [{ type: { $eq: "Customer Asked to deliver to Security" } },
-                   { type: { $eq: "Customer Handover" } },
-                   { type: { $eq: "Customer Asked to deliver to Neighbour" } }],
+        pipeline: [
+          {
+            $match: {
+              $or: [
+                { type: { $eq: 'Customer Asked to deliver to Security' } },
+                { type: { $eq: 'Customer Handover' } },
+                { type: { $eq: 'Customer Asked to deliver to Neighbour' } },
+              ],
+            },
           },
-
-          
-        }],
-        as: 'orderdatadata'
-      }
+        ],
+        as: 'orderdatadata',
+      },
     },
     {
-      $unwind: "$orderdatadata"
+      $unwind: '$orderdatadata',
     },
     {
       $group: {
@@ -1647,9 +1653,6 @@ const getcashAmountViewFromDB = async (id) => {
         totalCash: { $sum: '$orderdatadata.paidAmt' },
       },
     },
-
-
-   
   ]);
 
   let total = await wardAdminGroup.aggregate([
@@ -1832,7 +1835,6 @@ const getShopDetailsForProj = async (id) => {
         // deliveryExecutivename: '$b2busers.name',
         // name:"$orderassigns",
         // wjfj:"$wardadmingroups",
-
       },
     },
   ]);
@@ -1892,28 +1894,23 @@ const createAddOrdINGrp = async (id, body) => {
   return 'works';
 };
 
-
-
-const finishingAccount = async (id,page)=>{
+const finishingAccount = async (id, page) => {
   let data = await wardAdminGroupModel_ORDERS.aggregate([
     {
       $match: {
         $and: [{ wardAdminGroupID: { $eq: id } }],
       },
     },
-  
-      
-    
+
     {
       $lookup: {
         from: 'shoporderclones',
         localField: 'orderId',
         foreignField: '_id',
         pipeline: [
-     
           {
             $lookup: {
-              from:'productorderclones',
+              from: 'productorderclones',
               localField: '_id',
               foreignField: 'orderId',
               pipeline: [
@@ -1945,41 +1942,37 @@ const finishingAccount = async (id,page)=>{
                   },
                 },
                 { $group: { _id: null, price: { $sum: '$price' } } },
-             
-                    ],
+              ],
               as: 'productData',
-            }
+            },
           },
-          { $unwind: "$productData"},
-         
+          { $unwind: '$productData' },
         ],
         as: 'shopData',
-      }
+      },
     },
-    { $unwind: "$shopData"},
+    { $unwind: '$shopData' },
 
     {
-      $lookup: {  
+      $lookup: {
         from: 'orderpayments',
         localField: 'orderId',
         foreignField: 'orderId',
         pipeline: [
-                {
-                  
-                    $match: {
-                      $and: [{ type: { $eq: 'advanced' } },
-                    ],
-                    },
-                  
-              },
-            ],
+          {
+            $match: {
+              $and: [{ type: { $eq: 'advanced' } }],
+            },
+          },
+        ],
         as: 'orderData',
       },
     },
-    { $unwind: {
-      path: '$orderData',
-      preserveNullAndEmptyArrays: true,
-      }
+    {
+      $unwind: {
+        path: '$orderData',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $lookup: {
@@ -1987,300 +1980,288 @@ const finishingAccount = async (id,page)=>{
         localField: 'orderId',
         foreignField: 'orderId',
         pipeline: [
-                {
-                  
-                    $match: {
-                      $and: [{ type: { $ne: 'advanced' } }],
-                    },
-                  
-              },
-            ],
+          {
+            $match: {
+              $and: [{ type: { $ne: 'advanced' } }],
+            },
+          },
+        ],
         as: 'orderDataNotEqual',
       },
-      
     },
-    { $unwind: {
-    path: '$orderDataNotEqual',
-    preserveNullAndEmptyArrays: true,
-    }
-  },
+    {
+      $unwind: {
+        path: '$orderDataNotEqual',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
-        wardAdminGroupID:1,
-       deliveryStatus: "$shopData.status",
-       order: "$shopData.OrderId",
-       originalOrderId: "$shopData._id",
-       customerBillId: "$shopData.customerBillId",
+        wardAdminGroupID: 1,
+        deliveryStatus: '$shopData.status',
+        order: '$shopData.OrderId',
+        originalOrderId: '$shopData._id',
+        customerBillId: '$shopData.customerBillId',
 
+        productAmountWithGST: { $round: ['$shopData.productData.price', 1] },
+        initialPaymentType: '$orderData.paymentMethod',
+        initialpaymenyCapacity: '$orderData.pay_type',
+        paidAmount: '$orderData.paidAmt',
 
-   
-       productAmountWithGST: {$round: ["$shopData.productData.price",1]},
-       initialPaymentType: "$orderData.paymentMethod",
-       initialpaymenyCapacity: "$orderData.pay_type",
-        paidAmount: "$orderData.paidAmt",
+        type: '$orderDataNotEqual.type',
+        paytype: '$orderDataNotEqual.payType',
+        FinalPaymentType: '$orderDataNotEqual.paymentMethod',
+        Finalpaymentcapacity: '$orderDataNotEqual.pay_type',
+        finalpaidAmount: '$orderDataNotEqual.paidAmt',
 
-
-        type: "$orderDataNotEqual.type",
-        paytype: "$orderDataNotEqual.payType",
-       FinalPaymentType: "$orderDataNotEqual.paymentMethod",
-       Finalpaymentcapacity: "$orderDataNotEqual.pay_type",
-        finalpaidAmount: "$orderDataNotEqual.paidAmt",
-
-        addTwoAmount : {
-          $add: ["$orderDataNotEqual.paidAmt", "$orderData.paidAmt"]
+        addTwoAmount: {
+          $add: ['$orderDataNotEqual.paidAmt', '$orderData.paidAmt'],
         },
 
-        PendinAmount: { 
-
-          $subtract: [ "$shopData.productData.price", "$orderData.paidAmt" ] } ,
-
-        
-      }
+        PendinAmount: {
+          $subtract: ['$shopData.productData.price', '$orderData.paidAmt'],
+        },
+      },
     },
     { $skip: 10 * page },
     { $limit: 10 },
-  
   ]);
 
+  let total = await wardAdminGroupModel_ORDERS.aggregate([
+    {
+      $match: {
+        $and: [{ wardAdminGroupID: { $eq: id } }],
+      },
+    },
 
-          let total = await wardAdminGroupModel_ORDERS.aggregate([
-            {
-              $match: {
-                $and: [{ wardAdminGroupID: { $eq: id } }],
-              },
-            },
-          
-              
-            
-            {
-              $lookup: {
-                from: 'shoporderclones',
-                localField: 'orderId',
-                foreignField: '_id',
-                pipeline: [
-             
-                  {
-                    $lookup: {
-                      from:'productorderclones',
-                      localField: '_id',
-                      foreignField: 'orderId',
-                      pipeline: [
-                        {
-                          $project: {
-                            Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
-                            GST_Number: 1,
-                          },
-                        },
-                        {
-                          $project: {
-                            sum: '$sum',
-                            percentage: {
-                              $divide: [
-                                {
-                                  $multiply: ['$GST_Number', '$Amount'],
-                                },
-                                100,
-                              ],
-                            },
-                            value: '$Amount',
-                          },
-                        },
-                        {
-                          $project: {
-                            price: { $sum: ['$value', '$percentage'] },
-                            value: '$value',
-                            GST: '$percentage',
-                          },
-                        },
-                        { $group: { _id: null, price: { $sum: '$price' } } },
-                     
-                            ],
-                      as: 'productData',
-                    }
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
                   },
-                  { $unwind: "$productData"},
-                 
-                ],
-                as: 'shopData',
-              }
-            },
-            { $unwind: "$shopData"},
-        
-            {
-              $lookup: {  
-                from: 'orderpayments',
-                localField: 'orderId',
-                foreignField: 'orderId',
-                pipeline: [
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
                         {
-                          
-                            $match: {
-                              $and: [{ type: { $eq: 'advanced' } },
-                            ],
-                            },
-                          
-                      },
-                    ],
-                as: 'orderData',
-              },
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
             },
-            { $unwind: {
-              path: '$orderData',
-              preserveNullAndEmptyArrays: true,
-              }
-            },
-            {
-              $lookup: {
-                from: 'orderpayments',
-                localField: 'orderId',
-                foreignField: 'orderId',
-                pipeline: [
-                        {
-                          
-                            $match: {
-                              $and: [{ type: { $ne: 'advanced' } }],
-                            },
-                          
-                      },
-                    ],
-                as: 'orderDataNotEqual',
-              },
-              
-            },
-            { $unwind: {
-            path: '$orderDataNotEqual',
-            preserveNullAndEmptyArrays: true,
-            }
           },
-        ]);
+          { $unwind: '$productData' },
+        ],
+        as: 'shopData',
+      },
+    },
+    { $unwind: '$shopData' },
 
-          let partialCount = await wardAdminGroupModel_ORDERS.aggregate([
-            {
-              $match: {
-                $and: [{ wardAdminGroupID: { $eq: id } }],
-              },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: 'orderId',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ type: { $eq: 'advanced' } }],
             },
-            {
-              $lookup: {
-                from: 'shoporderclones',
-                localField: 'orderId',
-                foreignField: '_id',
-                pipeline: [{
-                  $match: {
-                    $or: [{ pay_type: { $eq: "Partial" }}, {paymentMethod: { $eq: "By Credit"} }],
-                  },
-                }],
-                as: 'shopdatadata'
-              }
+          },
+        ],
+        as: 'orderData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: 'orderId',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ type: { $ne: 'advanced' } }],
             },
-            {
-              $unwind: "$shopdatadata"
-            },
-            {
-              $project: {
-                partialCount : "$partialCount.shopdatadata.pay_type"
-              }
-            }
-        
-          ]);
+          },
+        ],
+        as: 'orderDataNotEqual',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderDataNotEqual',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+  ]);
 
-          let partialTotalCount = await wardAdminGroupModel_ORDERS.aggregate([
-            {
-              $match: {
-                $and: [{ wardAdminGroupID: { $eq: id } }],
-              },
+  let partialCount = await wardAdminGroupModel_ORDERS.aggregate([
+    {
+      $match: {
+        $and: [{ wardAdminGroupID: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $or: [{ pay_type: { $eq: 'Partial' } }, { paymentMethod: { $eq: 'By Credit' } }],
             },
-            {
-              $lookup: {
-                from: 'shoporderclones',
-                localField: 'orderId',
-                foreignField: '_id',
-                pipeline: [{
-                  $match: {
-                    $or: [{ pay_type: { $eq: "Partial" } },{paymentMethod: { $eq: "By Credit"}}],
-                  },
-                }],
-                as: 'shopdatadata'
-              }
-            },
-            {
-              $unwind: "$shopdatadata"
-            },
-        
-          ]);
+          },
+        ],
+        as: 'shopdatadata',
+      },
+    },
+    {
+      $unwind: '$shopdatadata',
+    },
+    {
+      $project: {
+        partialCount: '$partialCount.shopdatadata.pay_type',
+      },
+    },
+  ]);
 
-
-
-          let UnDeliveredTotal  = await wardAdminGroupModel_ORDERS.aggregate([
-            {
-              $match: {
-                $and: [{ wardAdminGroupID: { $eq: id } }],
-              },
+  let partialTotalCount = await wardAdminGroupModel_ORDERS.aggregate([
+    {
+      $match: {
+        $and: [{ wardAdminGroupID: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $or: [{ pay_type: { $eq: 'Partial' } }, { paymentMethod: { $eq: 'By Credit' } }],
             },
-            {
-              $lookup: {
-                from: 'shoporderclones',
-                localField: 'orderId',
-                foreignField: '_id',
-                pipeline: [{
-                  $match: {
-                    $and: [{ status: { $eq: "UnDelivered" } }],
-                  },
-                }],
-                as: 'shopdatadata'
-              }
-            },
-            {
-              $unwind: "$shopdatadata"
-            },
-            {
-              $project: {
-                status : "$UnDeliveredTotal.shopdatadata.status"
-              }
-            }
-        
-          ]);
+          },
+        ],
+        as: 'shopdatadata',
+      },
+    },
+    {
+      $unwind: '$shopdatadata',
+    },
+  ]);
 
-          let UnDeliveredTotalCount  = await wardAdminGroupModel_ORDERS.aggregate([
-            {
-              $match: {
-                $and: [{ wardAdminGroupID: { $eq: id } }],
-              },
+  let UnDeliveredTotal = await wardAdminGroupModel_ORDERS.aggregate([
+    {
+      $match: {
+        $and: [{ wardAdminGroupID: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ status: { $eq: 'UnDelivered' } }],
             },
-            {
-              $lookup: {
-                from: 'shoporderclones',
-                localField: 'orderId',
-                foreignField: '_id',
-                pipeline: [{
-                  $match: {
-                    $and: [{ status: { $eq: "UnDelivered" } }],
-                  },
-                }],
-                as: 'shopdatadata'
-              }
+          },
+        ],
+        as: 'shopdatadata',
+      },
+    },
+    {
+      $unwind: '$shopdatadata',
+    },
+    {
+      $project: {
+        status: '$UnDeliveredTotal.shopdatadata.status',
+      },
+    },
+  ]);
+
+  let UnDeliveredTotalCount = await wardAdminGroupModel_ORDERS.aggregate([
+    {
+      $match: {
+        $and: [{ wardAdminGroupID: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ status: { $eq: 'UnDelivered' } }],
             },
-            {
-              $unwind: "$shopdatadata"
-            },
-        
-          ]);
+          },
+        ],
+        as: 'shopdatadata',
+      },
+    },
+    {
+      $unwind: '$shopdatadata',
+    },
+  ]);
 
-  return {data: data, total: total.length,partialCount:partialCount,partialTotalCount: partialTotalCount.length,UnDeliveredTotal:UnDeliveredTotal,UnDeliveredTotalCount:UnDeliveredTotalCount.length   };
+  return {
+    data: data,
+    total: total.length,
+    partialCount: partialCount,
+    partialTotalCount: partialTotalCount.length,
+    UnDeliveredTotal: UnDeliveredTotal,
+    UnDeliveredTotalCount: UnDeliveredTotalCount.length,
+  };
+};
 
-}
-
-
-const submitDispute = async(id,updatebody  )=>{
+const submitDispute = async (id, updatebody) => {
   let product = await wardAdminGroup.findById(id);
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, ' Not Found');
   }
   product = await wardAdminGroup.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
-  console.log(product)
+  console.log(product);
   return product;
 };
-
 
 module.exports = {
   getPEttyCashQuantity,
