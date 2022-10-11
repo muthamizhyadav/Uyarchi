@@ -93,6 +93,8 @@ const destoryStock = require('./destoryStock.route')
 const shopRoute = require('./shop-review.route');
 const vehicleRoute = require('./b2b.vehicle.allocation.route');
 const creditBill = require('./b2b.creditBill.route');
+
+const returnStockroute = require('./returnStock.route');
 const defaultRoutes = [
   {
     path: '/registerShop',
@@ -105,6 +107,10 @@ const defaultRoutes = [
   {
     path: '/shop-review',
     route: shopRoute,
+  },
+  {
+    path: '/return-stock',
+    route: returnStockroute,
   },
   {
     path: '/LapsedOrder',
