@@ -1299,6 +1299,7 @@ const getBillDetailsPerOrder = async (id) => {
         billDate: '$shopData.billDate',
         billTime: '$shopData.billTime',
         OrderId: '$shopData.OrderId',
+        billId: "$shopData.customerBillId",
         shopName: '$b2bshopclonedatas.SName',
         address: '$b2bshopclonedatas.address',
         mobile: '$b2bshopclonedatas.mobile',
