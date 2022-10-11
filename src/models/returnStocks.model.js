@@ -18,6 +18,7 @@ const ReturnStockSchema = new mongoose.Schema({
   },
   status: {
     type: String,
+    default: 'received',
   },
   totalStocks: {
     type: Number,
