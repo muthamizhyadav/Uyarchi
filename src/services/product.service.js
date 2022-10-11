@@ -875,7 +875,6 @@ const getProductByIdWithAggregation = async (id) => {
       },
     },
   ]);
-
   return product;
 };
 
