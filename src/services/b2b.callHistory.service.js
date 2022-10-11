@@ -585,6 +585,8 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         status: {
           $in: ['ordered', 'Acknowledged'],
         },
+        delivery_type: 'IMD',
+        date: { $eq: today },
       },
     ],
   };
@@ -983,6 +985,8 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         status: {
           $in: ['ordered', 'Acknowledged'],
         },
+        delivery_type: 'IMD',
+        date: { $eq: today },
       },
     ],
   };
@@ -1281,6 +1285,8 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         status: {
           $in: ['ordered', 'Acknowledged'],
         },
+        delivery_type: 'IMD',
+        date: { $eq: today },
       },
     ],
   };
@@ -1578,6 +1584,8 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         status: {
           $in: ['ordered', 'Acknowledged'],
         },
+        delivery_type: 'IMD',
+        date: { $eq: today },
       },
     ],
   };
@@ -2299,6 +2307,8 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           status: {
             $in: ['ordered', 'Acknowledged'],
           },
+          delivery_type: 'IMD',
+          date: { $eq: today },
         },
       ],
     };
