@@ -562,7 +562,8 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
           ],
         },
         date: { $lte: threeDay },
-        RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+        RE_order_status: { $ne: 'Re-Ordered' },
+        RE_order_status: { $ne: 'declined' },
       },
       {
         status: {
@@ -580,7 +581,8 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         },
         date: { $eq: yesterday },
         delivery_type: 'IMD',
-        RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+        RE_order_status: { $ne: 'Re-Ordered' },
+        RE_order_status: { $ne: 'declined' },
       },
       {
         timeslot: { $lte: lapsed },
@@ -589,7 +591,8 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         },
         delivery_type: 'IMD',
         date: { $eq: today },
-        RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+        RE_order_status: { $ne: 'Re-Ordered' },
+        RE_order_status: { $ne: 'declined' },
       },
     ],
   };
@@ -965,7 +968,8 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
           ],
         },
         date: { $lte: threeDay },
-        RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+        RE_order_status: { $ne: 'Re-Ordered' },
+        RE_order_status: { $ne: 'declined' },
       },
       {
         status: {
@@ -983,7 +987,8 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         },
         date: { $eq: yesterday },
         delivery_type: 'IMD',
-        RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+        RE_order_status: { $ne: 'Re-Ordered' },
+        RE_order_status: { $ne: 'declined' },
       },
       {
         timeslot: { $lte: lapsed },
@@ -992,7 +997,8 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         },
         delivery_type: 'IMD',
         date: { $eq: today },
-        RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+        RE_order_status: { $ne: 'Re-Ordered' },
+        RE_order_status: { $ne: 'declined' },
       },
     ],
   };
@@ -1268,7 +1274,8 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
           ],
         },
         date: { $lte: threeDay },
-        RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+        RE_order_status: { $ne: 'Re-Ordered' },
+        RE_order_status: { $ne: 'declined' },
       },
       {
         status: {
@@ -1286,7 +1293,8 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         },
         date: { $eq: yesterday },
         delivery_type: 'IMD',
-        RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+        RE_order_status: { $ne: 'Re-Ordered' },
+        RE_order_status: { $ne: 'declined' },
       },
       {
         timeslot: { $lte: lapsed },
@@ -1294,7 +1302,8 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
           $in: ['ordered', 'Acknowledged'],
         },
         delivery_type: 'IMD',
-        RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+        RE_order_status: { $ne: 'Re-Ordered' },
+        RE_order_status: { $ne: 'declined' },
         date: { $eq: today },
       },
     ],
@@ -1570,7 +1579,8 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
           ],
         },
         date: { $lte: threeDay },
-        RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+        RE_order_status: { $ne: 'Re-Ordered' },
+        RE_order_status: { $ne: 'declined' },
       },
       {
         status: {
@@ -1588,7 +1598,8 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         },
         date: { $eq: yesterday },
         delivery_type: 'IMD',
-        RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+        RE_order_status: { $ne: 'Re-Ordered' },
+        RE_order_status: { $ne: 'declined' },
       },
       {
         timeslot: { $lte: lapsed },
@@ -1597,7 +1608,8 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         },
         delivery_type: 'IMD',
         date: { $eq: today },
-        RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+        RE_order_status: { $ne: 'Re-Ordered' },
+        RE_order_status: { $ne: 'declined' },
       },
     ],
   };
@@ -2296,7 +2308,8 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
             ],
           },
           date: { $lte: threeDay },
-          RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+          RE_order_status: { $ne: 'Re-Ordered' },
+          RE_order_status: { $ne: 'declined' },
         },
         {
           status: {
@@ -2314,7 +2327,8 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           },
           date: { $eq: yesterday },
           delivery_type: 'IMD',
-          RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+          RE_order_status: { $ne: 'Re-Ordered' },
+          RE_order_status: { $ne: 'declined' },
         },
         {
           timeslot: { $lte: lapsed },
@@ -2323,7 +2337,8 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           },
           delivery_type: 'IMD',
           date: { $eq: today },
-          RE_order_status: { $ne: {$or:['Re-Ordered','declined']} },
+          RE_order_status: { $ne: 'Re-Ordered' },
+          RE_order_status: { $ne: 'declined' },
         },
       ],
     };
