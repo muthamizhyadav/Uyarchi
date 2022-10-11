@@ -477,12 +477,26 @@ const returnStock = async (id) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-
+    {
+      $lookup: {
+        from: 'returnstocks',
+        localField: '_id',
+        foreignField: 'productId',
+        as: 'returnStock',
+      },
+    },
+    {
+      $unwind: {
+        path: '$returnStock',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
         _id: 1,
         productTitle: 1,
         productid: 1,
+        status: '$returnStock.status',
         pettyStock: '$totalpetty.pettyStock',
         // custoQtyPetty: '$totalpetty.totalQtyIncludingPettyStock',
         DeliveryQuantity: '$productorderclones.Qty',
