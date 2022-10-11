@@ -89,8 +89,9 @@ const LapsedRoute = require('./lapsed.route');
 const wardAdminRole = require('./wardAdminRole.route');
 const registerShop = require('./shopregister.route');
 const randomStock = require('./randomStock.route');
-const destoryStock = require('./destoryStock.route')
-const shopRoute = require('./shop-review.route')
+const destoryStock = require('./destoryStock.route');
+const shopRoute = require('./shop-review.route');
+const returnStockroute = require('./returnStock.route');
 const defaultRoutes = [
   {
     path: '/registerShop',
@@ -103,6 +104,10 @@ const defaultRoutes = [
   {
     path: '/shop-review',
     route: shopRoute,
+  },
+  {
+    path: '/return-stock',
+    route: returnStockroute,
   },
   {
     path: '/LapsedOrder',
@@ -442,7 +447,7 @@ const defaultRoutes = [
   {
     path: '/destoryStockpath',
     route: destoryStock,
-  }
+  },
   // {
   //   path: '/sales',
   //   route: salesApp,
