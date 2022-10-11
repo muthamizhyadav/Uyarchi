@@ -251,7 +251,7 @@ const getShopOrderCloneById = async (id) => {
         Payment: 1,
         productData: '$productData',
         shopName: '$shopData.SName',
-        mobile:"$shopData.mobile",
+        mobile: '$shopData.mobile',
         pay_type: 1,
         paymentMethod: 1,
       },
@@ -499,7 +499,6 @@ const getShopNameWithPagination = async (page, userId) => {
 };
 
 const getShopNameCloneWithPagination = async (page, userId) => {
-  console.log();
   let value = await ShopOrderClone.aggregate([
     {
       $sort: { date: -1, time: -1 },
@@ -537,15 +536,75 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         shopName: '$shopData.SName',
         contact: '$shopData.mobile',
         status: 1,
+        timeslot: 1,
+        date: 1,
       },
     },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
+  let retrunValue = [];
   let total = await ShopOrderClone.find({ Uid: { $eq: userId } }).count();
+  let today = moment().format('yyyy-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  let threeDay = moment().subtract(2, 'days').format('yyyy-MM-DD');
+  let hover = moment().subtract(-1, 'hours').format('H');
+  let timeslot = [
+    { start: 10, end: 20 },
+    { start: 20, end: 30 },
+    { start: 30, end: 40 },
+    { start: 40, end: 50 },
+    { start: 50, end: 60 },
+    { start: 60, end: 70 },
+    { start: 70, end: 80 },
+    { start: 80, end: 90 },
+    { start: 900, end: 1000 },
+    { start: 1000, end: 1100 },
+    { start: 1100, end: 1200 },
+    { start: 1200, end: 1300 },
+    { start: 1300, end: 1400 },
+    { start: 1400, end: 1500 },
+    { start: 1500, end: 1600 },
+    { start: 1600, end: 1700 },
+    { start: 1700, end: 1800 },
+    { start: 1800, end: 1900 },
+    { start: 1900, end: 2000 },
+    { start: 2000, end: 2100 },
+    { start: 2100, end: 2200 },
+    { start: 2200, end: 2300 },
+    { start: 2300, end: 2400 },
+    { start: 2400, end: 2500 },
+  ];
+  let lapsed = timeslot[hover].start;
+  let statuss = [
+    'Acknowledged',
+    'Approved',
+    'Modified',
+    'Packed',
+    'Assigned',
+    'Order Picked',
+    'Delivery start',
+    'UnDelivered',
+    'ordered',
+  ];
+  value.forEach((e) => {
+    console.log(statuss.find((element) => element == e.status));
+    let lapsedd = false;
+    if (
+      (e.date = today && e.delivery_type == 'IMD' && e.timeslot <= lapsed) ||
+      (e.date = yesterday && e.delivery_type == 'NDD' && e.timeslot <= lapsed) ||
+      (e.date = threeDay && e.status == 'Acknowledged' && e.status == '' && e.status == '')
+    ) {
+      lapsedd = true;
+      console.log(e);
+    }
+    retrunValue.push({...e,...{lapsed:lapsedd}});
+  });
+  // console.log(value);
   return {
-    value: value,
+    // value: value,
     total: total,
+    retrunValue: retrunValue,
   };
 };
 
