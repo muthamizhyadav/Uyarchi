@@ -1151,6 +1151,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
       $project: {
         orderassigns: '$orderassigns',
         status: 1,
+        manageDeliveryStatus: 1,
       },
     },
     { $skip: 10 * page },
@@ -1178,7 +1179,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
   if (datas.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'order not Found');
   }
-  return { datas: datas[0].orderassigns,status:datas[0].status, total: total.length };
+  return { datas: datas[0].orderassigns, status: datas[0].status,manageDeliveryStatus:datas[0].manageDeliveryStatus, total: total.length };
 };
 
 const groupIdClick = async (id) => {
