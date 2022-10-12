@@ -227,8 +227,10 @@ const getproductdetails = async (id) => {
               productpacktypeId: 1,
               unit: 1,
               packKg: 1,
-              GST_Number:1,
-              GSTamount: { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$priceperkg'] }, '$GST_Number'] }, 100] },
+              GST_Number: 1,
+              GSTamount: {
+                $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$priceperkg'] }, '$GST_Number'] }, 100],
+              },
             },
           },
         ],
@@ -281,9 +283,8 @@ const getproductdetails = async (id) => {
         status: 1,
         OrderId: 1,
         total: '$productDatadetails.amount',
-        TotalGstAmount : { $sum : "$productData.GSTamount" },
-        totalSum : { '$add' : [ '$productDatadetails.amount', {$sum : "$productData.GSTamount"} ] },
-       
+        TotalGstAmount: { $sum: '$productData.GSTamount' },
+        totalSum: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] },
       },
     },
   ]);
@@ -924,24 +925,52 @@ const wardloadExecutivePacked = async (range, page) => {
 };
 
 const wardDeliveryExecutive = async () => {
-  let data = await Roles.aggregate([
+  let today = moment().format('YYYY-MM-DD');
+
+  // assignDate;
+
+  let value = await Users.aggregate([
     {
-      $match: {
-        roleName: {
-          $in: ['Ward delivery execute(WDE)'],
-        },
-      },
+      $match: { userRole: { $in: ['36151bdd-a8ce-4f80-987e-1f454cd0993f'] } },
     },
     {
       $lookup: {
-        from: 'b2busers',
+        from: 'wardadmingroups',
         localField: '_id',
-        foreignField: 'userRole',
+        foreignField: 'deliveryExecutiveId',
+        pipeline: [
+          {
+            $match: {
+              manageDeliveryStatus: { $ne: 'Delivery Completed' },
+              date: { $eq: today },
+            },
+          },
+        ],
         as: 'deliveryExecutiveName',
       },
     },
+    {
+      $project: {
+        isEmailVerified: 1,
+        active: 1,
+        name: 1,
+        email: 1,
+        phoneNumber: 1,
+        userRole: 1,
+        dateOfJoining: 1,
+        salary: 1,
+        password: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        totalItems: { $size: '$deliveryExecutiveName' },
+      },
+    },
+    {
+      $match: { totalItems: { $eq: 0 } },
+    },
   ]);
-  return data;
+
+  return value;
 };
 
 const getAssigned_details = async () => {
@@ -1367,7 +1396,7 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
         foreignField: 'orderId',
         pipeline: [
           {
-            $match: { $and: [{ finalQuantity: { $gt: 0 }}] },
+            $match: { $and: [{ finalQuantity: { $gt: 0 } }] },
           },
         ],
         as: 'orderData',

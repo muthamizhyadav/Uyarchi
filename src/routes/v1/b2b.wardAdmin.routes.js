@@ -47,7 +47,7 @@ router.route('/wardloadingExecutive/getPackedProductDetails/:range/:page').get(w
 
 router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
 
-router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
+// router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
 
 router.route('/delivery/Executive/Name/:id').put(wardAdminController.deliveryexecutive);
 
