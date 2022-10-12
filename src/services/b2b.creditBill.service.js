@@ -15,7 +15,7 @@ const creditBillGroup = require('../models/b2b.creditBillGroup.model')
 const creditBill = require('../models/b2b.creditBill.model');
 const creditBillPaymentModel = require('../models/b2b.creditBillPayments.History.model')
 
-const getShopWithBill = async () => {
+const getShopWithBill = async (page) => {
   let values = await ShopOrderClone.aggregate([
     {
       $lookup: {
@@ -91,6 +91,8 @@ const getShopWithBill = async () => {
         },
       },
     },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
 
   let total = await ShopOrderClone.aggregate([
@@ -400,7 +402,69 @@ const updateAssignedStatusPerBill = async (id) => {
     return updateProduct;
 
 };
+
+
+const getManageCreditBillAssigning = async () =>{
+  let values = await creditBillGroup.aggregate([
+    {
+      $lookup:{
+        from: 'b2busers',
+        localField: 'AssignedUserId',
+        foreignField: '_id',
+        as: 'deliveryExecutiveNameData'
+      }
+    },
+    { $unwind:"$deliveryExecutiveNameData"},
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        as: 'historyDatass'
+      }
+    },
+    { $unwind:"$historyDatass"}
+   
+   
+    // {
+    //   $project: {
+    //     assignedDate:1,
+    //     assignedTime:1,
+    //     groupId:1,
+    //     execuName: "$deliveryExecutiveNameData.name",
+    //     TotalBills:1,
+    //     totalAmount:1,
+    //     totalShops: {"$size": "$Orderdatas.shopId"}
+    //   }
+    // }
+  ]);
+  return values;
+
+}
+
+
+
+const getcreditBillDetailsByPassExecID = async(id) =>{
+  let values = await creditBillGroup.aggregate([
+    {
+      $match: {
+        $and: [{ AssignedUserId: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        as: 'datasss'
+      }
+    }
+  ]);
+  return values;
+}
   
+
+
 
 
 
@@ -413,4 +477,6 @@ module.exports = {
   updateAssignedStatusPerBill,
   createGroup,
   payingCAshWithDEorSM,
+  getManageCreditBillAssigning,
+  getcreditBillDetailsByPassExecID,
 };

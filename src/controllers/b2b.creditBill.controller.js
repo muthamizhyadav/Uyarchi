@@ -5,7 +5,7 @@ const creditBillService = require('../services/b2b.creditBill.service');
 
 
 const getShopWithBill = catchAsync(async (req, res) => {
-    const bill = await creditBillService.getShopWithBill();
+    const bill = await creditBillService.getShopWithBill(req.params.page);
     res.send(bill);
 })
 
@@ -39,6 +39,16 @@ const createGroupcredit = catchAsync(async (req, res) => {
     res.send(bill);
 })
 
+const getManageCreditBillAssigning = catchAsync(async (req, res) => {
+    const name = await creditBillService.getManageCreditBillAssigning();
+    res.send(name);
+});
+
+const  getcreditBillDetailsByPassExecID= catchAsync(async (req, res) => {
+    const data = await creditBillService.getcreditBillDetailsByPassExecID(req.params.id);
+    res.send(data);
+})
+
 
 module.exports = {
 
@@ -49,4 +59,6 @@ module.exports = {
     updateAssignedStatusPerBill,
     createGroupcredit,
     payingCAshWithDEorSM,
+    getManageCreditBillAssigning,
+    getcreditBillDetailsByPassExecID,
 }
