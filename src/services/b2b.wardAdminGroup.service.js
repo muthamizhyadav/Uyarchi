@@ -1150,6 +1150,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
     {
       $project: {
         orderassigns: '$orderassigns',
+        status: 1,
       },
     },
     { $skip: 10 * page },
@@ -1177,7 +1178,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
   if (datas.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'order not Found');
   }
-  return { datas: datas[0].orderassigns, total: total.length };
+  return { datas: datas[0].orderassigns,status:datas[0].status, total: total.length };
 };
 
 const groupIdClick = async (id) => {
@@ -1319,7 +1320,7 @@ const getBillDetailsPerOrder = async (id) => {
         billDate: '$shopData.billDate',
         billTime: '$shopData.billTime',
         OrderId: '$shopData.OrderId',
-        billId: "$shopData.customerBillId",
+        billId: '$shopData.customerBillId',
         shopName: '$b2bshopclonedatas.SName',
         address: '$b2bshopclonedatas.address',
         mobile: '$b2bshopclonedatas.mobile',
