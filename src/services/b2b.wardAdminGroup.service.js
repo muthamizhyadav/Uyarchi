@@ -345,7 +345,6 @@ const returnStock = async (id) => {
   console.log(id);
   let values = await Product.aggregate([
     // Delivered count
-
     {
       $lookup: {
         from: 'pettystockmodels',
@@ -354,17 +353,22 @@ const returnStock = async (id) => {
         pipeline: [
           {
             $match: {
-              wardAdminId: id,
+              groupId: id,
             },
           },
         ],
         as: 'totalpetty',
       },
     },
+    // {
+    //   $unwind: '$totalpetty',
+    // },
     {
-      $unwind: '$totalpetty',
+      $unwind: {
+        path: '$totalpetty',
+        preserveNullAndEmptyArrays: true,
+      },
     },
-
     {
       $lookup: {
         from: 'productorderclones',
@@ -497,6 +501,9 @@ const returnStock = async (id) => {
         productTitle: 1,
         productid: 1,
         status: '$returnStock.status',
+        // totalpetty: '$totalpetty',
+        productorderclones: '$productorderclones',
+        productorderclonesData: '$productorderclonesData',
         mismatch: { $subtract: ['$returnStock.actualStock', '$returnStock.actualWastage'] },
         pettyStock: '$totalpetty.pettyStock',
         // custoQtyPetty: '$totalpetty.totalQtyIncludingPettyStock',
@@ -1179,7 +1186,12 @@ const getDeliveryOrderSeparate = async (id, page) => {
   if (datas.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'order not Found');
   }
-  return { datas: datas[0].orderassigns, status: datas[0].status,manageDeliveryStatus:datas[0].manageDeliveryStatus, total: total.length };
+  return {
+    datas: datas[0].orderassigns,
+    status: datas[0].status,
+    manageDeliveryStatus: datas[0].manageDeliveryStatus,
+    total: total.length,
+  };
 };
 
 const groupIdClick = async (id) => {
