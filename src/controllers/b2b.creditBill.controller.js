@@ -20,12 +20,12 @@ const getsalesmanName = catchAsync(async (req, res) => {
 })
 
 const getShopHistory = catchAsync(async (req, res) => {
-    const bill = await creditBillService.getShopHistory(req.params.id);
+    const bill = await creditBillService.getShopHistory(req.params.page);
     res.send(bill);
 })
 
 const updateAssignedStatusPerBill = catchAsync(async (req, res) => {
-    const bill = await creditBillService.updateAssignedStatusPerBill(req.params.id);
+    const bill = await creditBillService.updateAssignedStatusByMultiSelect(req.body);
     res.send(bill);
 })
 
@@ -49,6 +49,11 @@ const  getcreditBillDetailsByPassExecID= catchAsync(async (req, res) => {
     res.send(data);
 })
 
+const updateAssigned = catchAsync(async (req, res) => {
+    const approval = await creditBillService.updateAssignedStatusByMultiSelect(req.body);
+    res.send(approval);
+  });
+
 
 module.exports = {
 
@@ -61,4 +66,5 @@ module.exports = {
     payingCAshWithDEorSM,
     getManageCreditBillAssigning,
     getcreditBillDetailsByPassExecID,
+    updateAssigned,
 }

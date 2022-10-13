@@ -813,7 +813,7 @@ const getManageordersByOrderId = async (orderId, date) => {
       },
     },
     {
-      $group: { _id: null, Qty: { $sum: '$totalValue' } },
+      $group: { _id: null, Qty: { $sum: '$+' } },
     },
   ]);
   let totalqty = total[0];

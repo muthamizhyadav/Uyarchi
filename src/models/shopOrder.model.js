@@ -273,6 +273,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   creditBillAssignedStatus: {
     type: String,
     default: "Pending",
+  },
+  statusOfBill: {
+    type: String,
+    default: "Pending",
   }
 });
 
