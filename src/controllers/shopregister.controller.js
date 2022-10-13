@@ -45,6 +45,16 @@ const get_mypayments = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(shop);
 });
 
+const getpayment_history = catchAsync(async (req, res) => {
+  const shop = await registerShop.getpayment_history(req.shopId, req.params.id);
+  res.status(httpStatus.CREATED).send(shop);
+});
+
+const get_pendung_amount = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_pendung_amount(req.shopId, req.params.id);
+  res.status(httpStatus.CREATED).send(shop);
+});
+
 module.exports = {
   register_shop,
   verify_otp,
@@ -54,4 +64,6 @@ module.exports = {
   get_myorder,
   change_password,
   get_mypayments,
+  getpayment_history,
+  get_pendung_amount,
 };
