@@ -3097,8 +3097,8 @@ const mismatchGroup = async (id) => {
         pettyCash: '$wardadmingroupsData.pettyCash',
 
         // // mismatch:"$wardadmingroupsData.total",
-         mismatch: '$assignDate.ByCashIncPettyCash',
-         assignDate: '$assignDate.assignDate',
+         mismatch: '$wardadmingroupsData.ByCashIncPettyCash',
+         assignDate: '$wardadmingroupsData.assignDate',
       },
     },
   ]);
