@@ -765,6 +765,15 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
       },
     },
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [{ $limit: 5 }],
+        as: 'lastfiveorder',
+      },
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -798,6 +807,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
+        lastfiveorder: '$lastfiveorder',
       },
     },
     {
@@ -1149,6 +1159,15 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
       },
     },
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [{ $limit: 5 }],
+        as: 'lastfiveorder',
+      },
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -1181,6 +1200,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
+        lastfiveorder: '$lastfiveorder',
       },
     },
     { $skip: 10 * page },
@@ -1455,6 +1475,15 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
       },
     },
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [{ $limit: 5 }],
+        as: 'lastfiveorder',
+      },
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -1487,6 +1516,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
+        lastfiveorder: '$lastfiveorder',
       },
     },
     { $skip: 10 * page },
@@ -1764,6 +1794,15 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
       },
     },
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [{ $limit: 5 }],
+        as: 'lastfiveorder',
+      },
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -1796,6 +1835,7 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         matching: { $and: [{ $eq: ['$callingUserId', userId] }, { $eq: ['$callingStatus', 'On Call'] }] },
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
+        lastfiveorder: '$lastfiveorder',
       },
     },
     { $skip: 10 * page },
@@ -2438,7 +2478,6 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
             $sort: { date: -1, historytime: -1 },
           },
           { $limit: 10 },
-          
         ],
         as: 'callhistories',
       },
@@ -2587,6 +2626,15 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
     },
     { $unwind: '$shoporderclonesun' },
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [{ $limit: 5 }],
+        as: 'lastfiveorder',
+      },
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -2620,6 +2668,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
         shoporderclones: '$shoporderclones',
         shoporderclonesun: '$shoporderclonesun',
         lapsedOrder: 1,
+        lastfiveorder: '$lastfiveorder',
       },
     },
     { $skip: 10 * page },
