@@ -769,7 +769,12 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         from: 'shoporderclones',
         localField: '_id',
         foreignField: 'shopId',
-        pipeline: [{ $limit: 5 }],
+        pipeline: [
+          {
+            $sort: { created: -1 },
+          },
+          { $limit: 5 },
+        ],
         as: 'lastfiveorder',
       },
     },
@@ -1163,7 +1168,12 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         from: 'shoporderclones',
         localField: '_id',
         foreignField: 'shopId',
-        pipeline: [{ $limit: 5 }],
+        pipeline: [
+          {
+            $sort: { created: -1 },
+          },
+          { $limit: 5 },
+        ],
         as: 'lastfiveorder',
       },
     },
@@ -1479,7 +1489,12 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         from: 'shoporderclones',
         localField: '_id',
         foreignField: 'shopId',
-        pipeline: [{ $limit: 5 }],
+        pipeline: [
+          {
+            $sort: { created: -1 },
+          },
+          { $limit: 5 },
+        ],
         as: 'lastfiveorder',
       },
     },
@@ -1798,7 +1813,12 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         from: 'shoporderclones',
         localField: '_id',
         foreignField: 'shopId',
-        pipeline: [{ $limit: 5 }],
+        pipeline: [
+          {
+            $sort: { created: -1 },
+          },
+          { $limit: 5 },
+        ],
         as: 'lastfiveorder',
       },
     },
@@ -2630,10 +2650,16 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
         from: 'shoporderclones',
         localField: '_id',
         foreignField: 'shopId',
-        pipeline: [{ $limit: 5 }],
+        pipeline: [
+          {
+            $sort: { created: -1 },
+          },
+          { $limit: 5 },
+        ],
         as: 'lastfiveorder',
       },
     },
+
     {
       $project: {
         _id: 1,
