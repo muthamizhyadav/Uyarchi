@@ -389,14 +389,14 @@ const updateshop_order = async (id, body) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not found');
   }
   let timeslot = body.time_of_delivery.replace('-', '');
-  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, {...body,...{timeslot:timeslot}}, { new: true });
+  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { ...body, ...{ timeslot: timeslot } }, { new: true });
   let order = await OrderPayment.findOne({ orderId: shoporder._id, type: 'advanced' });
   let currentDate = moment().format('YYYY-MM-DD');
   let currenttime = moment().format('HHmmss');
   if (!order) {
     await OrderPayment.create({
       uid: userid,
-      paidAmt: body.paidamount,
+      paidAmt: order.paidAmt + body.paidamount,
       date: currentDate,
       time: currenttime,
       created: moment(),
@@ -404,7 +404,7 @@ const updateshop_order = async (id, body) => {
       type: 'advanced',
     });
   } else {
-    await OrderPayment.findByIdAndUpdate({ _id: order._id }, { paidAmt: body.paidamount }, { new: true });
+    await OrderPayment.findByIdAndUpdate({ _id: order._id }, { paidAmt: order.paidAmt + body.paidamount }, { new: true });
   }
 
   await ProductorderClone.deleteMany({ orderId: id });
@@ -599,7 +599,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
       lapsedd = true;
       console.log(e);
     }
-    retrunValue.push({...e,...{lapsed:lapsedd}});
+    retrunValue.push({ ...e, ...{ lapsed: lapsedd } });
   });
   // console.log(value);
   return {
