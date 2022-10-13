@@ -295,6 +295,11 @@ const getShopHistory = async (page) => {
             
             pendingAmount: {$round:{ $subtract: [ "$productData.price", "$paymentData.price" ] } },
 
+            condition1: {
+                      $cond: {if: {$ne: [{ $subtract: [ {$round:["$productData.price",0]}, "$paymentData.price" ] }, 0]}, then: true, else: false}
+                  },
+                
+
         }
     },
     { $skip: 10 * page },
