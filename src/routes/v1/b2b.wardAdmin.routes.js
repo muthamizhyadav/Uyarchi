@@ -58,4 +58,6 @@ router.route('/update/acknowleded/status/single/:id').put(wardAdminController.up
 router.route('/get/status/Count').get(wardAdminController.countStatus);
 // checked Modified
 router.route('/order/Assign').get(wardAdminController.getAssigned_details);
+// mismatcheddata
+router.route('/mismatchCount/:page').get(wardAdminController.mismatchCount);
 module.exports = router;

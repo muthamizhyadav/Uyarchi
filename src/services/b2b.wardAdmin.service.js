@@ -2959,6 +2959,54 @@ const countStatus = async () => {
     rejectedStatusCount: rejectedStatusCount,
   };
 };
+
+
+const mismatchCount = async (page) =>{
+  let data = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' }}],
+      },
+    },
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: '_id',
+        foreignField: 'deliveryExecutiveId',
+        pipeline:[
+          {
+            $match: {
+              $and: [{ ByCashIncPettyCash: {$ne:null}}],
+            },
+          },
+          {$group: { 
+            _id: null, 
+            total: { 
+                $sum: "$ByCashIncPettyCash"
+            } 
+        } },
+        ],
+        as: 'wardadmingroupsData',
+      },
+    },
+    {
+      $unwind: '$wardadmingroupsData',
+    },
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
+    {
+      $project: {
+        name:1,
+        totalAmount:"$wardadmingroupsData.total",
+      },
+    },
+  ])
+  return data;
+}
 module.exports = {
   getdetails,
   getproductdetails,
@@ -2989,4 +3037,5 @@ module.exports = {
   wardloadExecutivepacked,
   wardloadExecutivebtgroup,
   getdetailsDataStatuslasped,
+  mismatchCount,
 };
