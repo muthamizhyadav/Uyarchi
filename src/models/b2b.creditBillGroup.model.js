@@ -20,9 +20,9 @@ const creditBillGroupSchema = mongoose.Schema({
     // DeliveryExecutiveId: {
     //     type: String,
     // },
-    // salesmanId: {
-    //     type: String
-    // },
+    salesmanId: {
+        type: String
+    },
     AssignedUserId: {
         type: String
     },

@@ -78,19 +78,21 @@ const getShopWithBill = async (page) => {
         }
       },
       { $unwind: "$productData"},
-    {
-      $project: {
-        shopName: '$shopNameData.SName',
-        shopId: '$shopNameData._id',
-        customerBillId: 1,
-        overAllTotalBYOrder: {$round:["$productData.price",0]},
-        paidamount: "$paymentData.price",
-        pendingAmount: { $subtract: [ {$round:["$productData.price",0]}, "$paymentData.price" ] } ,
-        condition1: {
-            $cond: {if: {$ne: [{ $subtract: [ {$round:["$productData.price",0]}, "$paymentData.price" ] }, 0]}, then: true, else: false}
-        },
-      },
-    },
+    // {
+    //   $project: {
+    //     shopName: '$shopNameData.SName',
+    //     shopId: '$shopNameData._id',
+    //     date: "$shopNameData.customerBilldate",
+    //      orderId: "$shopNameData.OrderId",
+    //     customerBillId: 1,
+    //     overAllTotalBYOrder: {$round:["$productData.price",0]},
+    //     paidamount: "$paymentData.price",
+    //     pendingAmount: { $subtract: [ {$round:["$productData.price",0]}, "$paymentData.price" ] } ,
+    //     condition1: {
+    //         $cond: {if: {$ne: [{ $subtract: [ {$round:["$productData.price",0]}, "$paymentData.price" ] }, 0]}, then: true, else: false}
+    //     },
+    //   },
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -212,13 +214,13 @@ const getsalesmanName = async () => {
 }
 
 
-const getShopHistory = async (id) => {
+const getShopHistory = async (page) => {
     let values = await ShopOrderClone.aggregate([
-        {
-            $match: {
-              $and: [{ shopId: { $eq: id } }],
-            },
-          },
+        // {
+        //     $match: {
+        //       $and: [{ shopId: { $eq: id } }],
+        //     },
+        //   },
         {
         $lookup: {
             from: 'orderpayments',
@@ -230,6 +232,14 @@ const getShopHistory = async (id) => {
             as: 'paymentData'
         }
     },{ $unwind:"$paymentData"},
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopDtaa'
+      }
+    },{ $unwind: "$shopDtaa"},
     {
         $lookup: {
           from:'productorderclones',
@@ -275,6 +285,9 @@ const getShopHistory = async (id) => {
             customerBillId:1,
             OrderId:1,
             date:1,
+            statusOfBillLast: "$shopDtaa.statusOfBill",
+            shopNmae: "$shopDtaa.SName",
+            shopId: "$shopDtaa._id",
             creditBillAssignedStatus:1,
             BillAmount:{$round:["$productData.price",0]},
             // BillAmount:"$productData.price",
@@ -283,9 +296,72 @@ const getShopHistory = async (id) => {
             pendingAmount: {$round:{ $subtract: [ "$productData.price", "$paymentData.price" ] } },
 
         }
-    }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
     ]);
-    return values;
+    let total = await ShopOrderClone.aggregate([
+      {
+        $lookup: {
+            from: 'orderpayments',
+            localField: '_id',
+            foreignField: 'orderId',
+            pipeline: [{
+                $group: { _id: null, price: { $sum: '$paidAmt' } } ,
+           }],
+            as: 'paymentData'
+        }
+    },{ $unwind:"$paymentData"},
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopDtaa'
+      }
+    },{ $unwind: "$shopDtaa"},
+    {
+        $lookup: {
+          from:'productorderclones',
+          localField: '_id',
+          foreignField: 'orderId',
+          pipeline: [
+            {
+              $project: {
+                Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                GST_Number: 1,
+              },
+            },
+            {
+              $project: {
+                sum: '$sum',
+                percentage: {
+                  $divide: [
+                    {
+                      $multiply: ['$GST_Number', '$Amount'],
+                    },
+                    100,
+                  ],
+                },
+                value: '$Amount',
+              },
+            },
+            {
+              $project: {
+                price: { $sum: ['$value', '$percentage'] },
+                value: '$value',
+                GST: '$percentage',
+              },
+            },
+            { $group: { _id: null, price: { $sum: '$price' } } },
+         
+                ],
+          as: 'productData',
+        }
+      },
+      { $unwind: "$productData"},
+    ])
+    return {values: values, total: total.length };
 }
 
 
