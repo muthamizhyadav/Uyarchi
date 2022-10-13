@@ -25,7 +25,7 @@ const getShopHistory = catchAsync(async (req, res) => {
 })
 
 const updateAssignedStatusPerBill = catchAsync(async (req, res) => {
-    const bill = await creditBillService.updateAssignedStatusPerBill(req.body);
+    const bill = await creditBillService.updateAssignedStatusByMultiSelect(req.body);
     res.send(bill);
 })
 
