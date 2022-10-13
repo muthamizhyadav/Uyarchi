@@ -270,6 +270,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   reorder_status: {
     type: Boolean,
   },
+  creditBillAssignedStatus: {
+    type: String,
+    default: "Pending",
+  }
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);

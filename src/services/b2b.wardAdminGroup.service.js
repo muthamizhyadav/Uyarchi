@@ -345,7 +345,6 @@ const returnStock = async (id) => {
   console.log(id);
   let values = await Product.aggregate([
     // Delivered count
-
     {
       $lookup: {
         from: 'pettystockmodels',
@@ -354,17 +353,22 @@ const returnStock = async (id) => {
         pipeline: [
           {
             $match: {
-              wardAdminId: id,
+              groupId: id,
             },
           },
         ],
         as: 'totalpetty',
       },
     },
+    // {
+    //   $unwind: '$totalpetty',
+    // },
     {
-      $unwind: '$totalpetty',
+      $unwind: {
+        path: '$totalpetty',
+        preserveNullAndEmptyArrays: true,
+      },
     },
-
     {
       $lookup: {
         from: 'productorderclones',
@@ -394,6 +398,8 @@ const returnStock = async (id) => {
                 {
                   $unwind: '$orderassigns',
                 },
+                
+             
               ],
               as: 'shoporderclones',
             },
@@ -497,9 +503,12 @@ const returnStock = async (id) => {
         productTitle: 1,
         productid: 1,
         status: '$returnStock.status',
+        // totalpetty: '$totalpetty',
+        productorderclones: '$productorderclones',
+        productorderclonesData: '$productorderclonesData',
         mismatch: { $subtract: ['$returnStock.actualStock', '$returnStock.actualWastage'] },
         pettyStock: '$totalpetty.pettyStock',
-        // custoQtyPetty: '$totalpetty.totalQtyIncludingPettyStock',
+       
         DeliveryQuantity: '$productorderclones.Qty',
         actualStock: '$returnStock.actualStock',
         actualWastage: '$returnStock.actualWastage',
@@ -1150,6 +1159,8 @@ const getDeliveryOrderSeparate = async (id, page) => {
     {
       $project: {
         orderassigns: '$orderassigns',
+        status: 1,
+        manageDeliveryStatus: 1,
       },
     },
     { $skip: 10 * page },
@@ -1177,7 +1188,12 @@ const getDeliveryOrderSeparate = async (id, page) => {
   if (datas.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'order not Found');
   }
-  return { datas: datas[0].orderassigns, total: total.length };
+  return {
+    datas: datas[0].orderassigns,
+    status: datas[0].status,
+    manageDeliveryStatus: datas[0].manageDeliveryStatus,
+    total: total.length,
+  };
 };
 
 const groupIdClick = async (id) => {
@@ -1319,6 +1335,7 @@ const getBillDetailsPerOrder = async (id) => {
         billDate: '$shopData.billDate',
         billTime: '$shopData.billTime',
         OrderId: '$shopData.OrderId',
+        billId: '$shopData.customerBillId',
         shopName: '$b2bshopclonedatas.SName',
         address: '$b2bshopclonedatas.address',
         mobile: '$b2bshopclonedatas.mobile',
