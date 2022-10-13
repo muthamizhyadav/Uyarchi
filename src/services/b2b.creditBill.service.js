@@ -384,6 +384,15 @@ const updateAssignedStatusPerBill = async (id) => {
   };
 
 
+  const updateAssignedStatusByMultiSelect = async (body) => {
+    body.arr.forEach(async (e) => {
+      await ShopOrderClone.findByIdAndUpdate({ _id: e }, { creditBillAssignedStatus: 'Assigned' }, { new: true });
+    });
+  
+    return 'status updated successfully';
+  };
+
+
 
 
   const createGroup = async (body) => {
@@ -560,4 +569,5 @@ module.exports = {
   payingCAshWithDEorSM,
   getManageCreditBillAssigning,
   getcreditBillDetailsByPassExecID,
+  updateAssignedStatusByMultiSelect,
 };
