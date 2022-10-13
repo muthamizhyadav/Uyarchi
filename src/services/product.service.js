@@ -1511,6 +1511,7 @@ const incommingStockQty = async (date, page) => {
 };
 
 const AssignStockGetall = async (date, page) => {
+  let today = moment().format('DD-MM-YYYY');
   let values = await Product.aggregate([
     {
       $lookup: {
@@ -1520,7 +1521,7 @@ const AssignStockGetall = async (date, page) => {
         pipeline: [
           {
             $match: {
-              $and: [{ date: { $eq: date } }, { totalStock: { $gte: 0 } }],
+              $and: [{ date: { $eq: today } }, { totalStock: { $gte: 0 } }],
             },
           },
         ],
@@ -1538,7 +1539,7 @@ const AssignStockGetall = async (date, page) => {
         pipeline: [
           {
             $match: {
-              $and: [{ date: { $eq: date } }, { totalStock: { $gte: 0 } }],
+              $and: [{ date: { $eq: today } }, { totalStock: { $gte: 0 } }],
             },
           },
           {
