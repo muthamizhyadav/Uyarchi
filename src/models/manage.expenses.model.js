@@ -28,6 +28,9 @@ const manageExpenseSchma = new mongoose.Schema({
   time: {
     type: String,
   },
+  created: {
+    type: Date,
+  },
   active: {
     type: Boolean,
     default: true,
