@@ -10,7 +10,6 @@ const create_ReturnStock = catchAsync(async (req, res) => {
       returnstock.image.push('images/returnstock/' + files.filename);
     });
   }
-
   res.send(returnstock);
   await returnstock.save();
 });
