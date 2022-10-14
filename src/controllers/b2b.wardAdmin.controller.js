@@ -213,6 +213,11 @@ const mismatchCount = catchAsync(async (req, res) => {
   res.send(orderAssign);
 });
 
+const mismatchGroup = catchAsync(async (req, res) => {
+  const orderAssign = await wardAdminService.mismatchGroup(req.params.id);
+  res.send(orderAssign);
+});
+
 module.exports = {
   getDetails,
   getproductDetails,
@@ -246,4 +251,5 @@ module.exports = {
   wardloadExecutivepacked,
   wardloadExecutivebtgroup,
   mismatchCount,
+  mismatchGroup,
 };

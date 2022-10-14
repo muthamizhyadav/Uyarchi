@@ -60,4 +60,5 @@ router.route('/get/status/Count').get(wardAdminController.countStatus);
 router.route('/order/Assign').get(wardAdminController.getAssigned_details);
 // mismatcheddata
 router.route('/mismatchCount/:page').get(wardAdminController.mismatchCount);
+router.route('/mismatchGroup/:id').get(wardAdminController.mismatchGroup);
 module.exports = router;

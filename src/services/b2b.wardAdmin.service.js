@@ -2960,12 +2960,11 @@ const countStatus = async () => {
   };
 };
 
-
-const mismatchCount = async (page) =>{
+const mismatchCount = async (page) => {
   let data = await Users.aggregate([
     {
       $match: {
-        $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' }}],
+        $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' } }],
       },
     },
     {
@@ -2973,18 +2972,20 @@ const mismatchCount = async (page) =>{
         from: 'wardadmingroups',
         localField: '_id',
         foreignField: 'deliveryExecutiveId',
-        pipeline:[
+        pipeline: [
           {
             $match: {
-              $and: [{ ByCashIncPettyCash: {$ne:null}}],
+              $and: [{ ByCashIncPettyCash: { $ne: null } }],
             },
           },
-          {$group: { 
-            _id: null, 
-            total: { 
-                $sum: "$ByCashIncPettyCash"
-            } 
-        } },
+          {
+            $group: {
+              _id: null,
+              total: {
+                $sum: '$ByCashIncPettyCash',
+              },
+            },
+          },
         ],
         as: 'wardadmingroupsData',
       },
@@ -3000,13 +3001,109 @@ const mismatchCount = async (page) =>{
     },
     {
       $project: {
-        name:1,
-        totalAmount:"$wardadmingroupsData.total",
+        name: 1,
+        totalAmount: '$wardadmingroupsData.total',
       },
     },
-  ])
+  ]);
   return data;
-}
+};
+
+const mismatchGroup = async (id) => {
+  let data = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: '_id',
+        foreignField: 'deliveryExecutiveId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ ByCashIncPettyCash: { $ne: null } }],
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderassigns',
+              localField: '_id',
+              foreignField: 'wardAdminGroupID',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'orderpayments',
+                    localField: 'orderId',
+                    foreignField: 'orderId',
+                    pipeline: [
+                      {
+                        $match: {
+                          $and: [{ type: { $ne: 'advanced' } }],
+                        },
+                      },
+                      {
+                        $group: {
+                          _id: null,
+                          total: {
+                            $sum: '$paidAmt',
+                          },
+                        },
+                      },
+                    ],
+                    as: 'orderpaymentsData',
+                  },
+                },
+                {
+                  $unwind: '$orderpaymentsData',
+                },
+                {
+                  $group: {
+                    _id: null,
+                    total: { $sum: '$orderpaymentsData.total' },
+                  },
+                },
+              ],
+              as: 'orderassignsData',
+            },
+          },
+          {
+            $unwind: '$orderassignsData',
+          },
+        ],
+        as: 'wardadmingroupsData',
+      },
+    },
+    {
+      $unwind: '$wardadmingroupsData',
+    },
+
+    // {
+    //   $unwind: '$orderpaymentsData',
+    // },
+    // {
+    //   $skip: 10 * parseInt(page),
+    // },
+    // {
+    //   $limit: 10,
+    // },
+    {
+      $project: {
+        name: 1,
+        wardadmingroupsData: '$wardadmingroupsData.orderassignsData.total',
+        groupId: '$wardadmingroupsData.groupId',
+        pettyCash: '$wardadmingroupsData.pettyCash',
+
+        // // mismatch:"$wardadmingroupsData.total",
+         mismatch: '$wardadmingroupsData.ByCashIncPettyCash',
+         assignDate: '$wardadmingroupsData.assignDate',
+      },
+    },
+  ]);
+  return data;
+};
 module.exports = {
   getdetails,
   getproductdetails,
@@ -3038,4 +3135,5 @@ module.exports = {
   wardloadExecutivebtgroup,
   getdetailsDataStatuslasped,
   mismatchCount,
+  mismatchGroup,
 };

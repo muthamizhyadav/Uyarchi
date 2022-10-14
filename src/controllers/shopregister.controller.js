@@ -54,6 +54,10 @@ const get_pendung_amount = catchAsync(async (req, res) => {
   const shop = await registerShop.get_pendung_amount(req.shopId, req.params.id);
   res.status(httpStatus.CREATED).send(shop);
 });
+const get_orderamount = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_orderamount(req.shopId, req.body);
+  res.status(httpStatus.CREATED).send(shop);
+});
 
 module.exports = {
   register_shop,
@@ -66,4 +70,5 @@ module.exports = {
   get_mypayments,
   getpayment_history,
   get_pendung_amount,
+  get_orderamount,
 };
