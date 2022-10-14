@@ -422,6 +422,17 @@ const wardloadExecutivebtgroup = async (page) => {
       },
     },
     {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId', //Uid
+        foreignField: '_id', //Uid
+        as: 'deliveryExecutive',
+      },
+    },
+    {
+      $unwind: '$deliveryExecutive',
+    },
+    {
       $project: {
         _id: 1,
         // Orderdatas: 1,
@@ -438,6 +449,7 @@ const wardloadExecutivebtgroup = async (page) => {
         assignDate: 1,
         assignTime: 1,
         pettyStockAllocateStatusNumber: 1,
+        deliveryExecutive: '$deliveryExecutive.name',
       },
     },
     { $skip: 10 * page },
@@ -3095,11 +3107,11 @@ const mismatchGroup = async (id) => {
         wardadmingroupsData: '$wardadmingroupsData.orderassignsData.total',
         groupId: '$wardadmingroupsData.groupId',
         pettyCash: '$wardadmingroupsData.pettyCash',
-        group:'$wardadmingroupsData._id',
+        group: '$wardadmingroupsData._id',
 
         // // mismatch:"$wardadmingroupsData.total",
-         mismatch: '$wardadmingroupsData.ByCashIncPettyCash',
-         assignDate: '$wardadmingroupsData.assignDate',
+        mismatch: '$wardadmingroupsData.ByCashIncPettyCash',
+        assignDate: '$wardadmingroupsData.assignDate',
       },
     },
   ]);
