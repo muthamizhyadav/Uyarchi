@@ -215,115 +215,119 @@ const getsalesmanName = async () => {
 
 
 const getShopHistory = async (id) => {
+let match;
+  if (id != 'null') {
+    match = [{ AssignedUserId: { $eq: id } }];
+  }  if(id != 'null') {
+    match = [{ salesmanId: { $eq: id } }];
+  }else {
+    match = [{ active: { $eq: true } }];
+  }
 
 
   let values = await creditBill.aggregate([
+
     {
-      $lookup: {
-        from:'creditbillgroups',
-        localField: 'creditbillId',
-        foreignField: '_id',
-        pipeline: [
-          
-
-            {
-                $match: {
-                        $or: [{ AssignedUserId: { $eq: id } }, {salesmanId: { $eq:id}}],
-                      },
-              },
-
-          
-        ],
-        as: 'dataa'
-      }
+      $match: {
+        $and: match,
+      },
     },
-    { $unwind: "$dataa"},
+
+    // {
+    //   $lookup: {
+    //     from:'creditbillgroups',
+    //     localField: 'creditbillId',
+    //     foreignField: '_id',
+    //     as: 'dataa'
+    //   }
+    // },
+    // { $unwind: "$dataa"},
 
   
-        {
-        $lookup: {
-            from: 'orderpayments',
-            localField: 'orderId',
-            foreignField: 'orderId',
-            pipeline: [{
-                $group: { _id: null, price: { $sum: '$paidAmt' } } ,
-           }],
-            as: 'paymentData'
-        }
-    },{ $unwind:"$paymentData"},
+    //     {
+    //     $lookup: {
+    //         from: 'orderpayments',
+    //         localField: 'orderId',
+    //         foreignField: 'orderId',
+    //         pipeline: [{
+    //             $group: { _id: null, price: { $sum: '$paidAmt' } } ,
+    //        }],
+    //         as: 'paymentData'
+    //     }
+    // },{ $unwind:"$paymentData"},
     
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        as: 'shopDtaa'
-      }
-    },{ $unwind: "$shopDtaa"},
-    {
-        $lookup: {
-          from:'productorderclones',
-          localField: 'orderId',
-          foreignField: 'orderId',
-          pipeline: [
-            {
-              $project: {
-                Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
-                GST_Number: 1,
-              },
-            },
-            {
-              $project: {
-                sum: '$sum',
-                percentage: {
-                  $divide: [
-                    {
-                      $multiply: ['$GST_Number', '$Amount'],
-                    },
-                    100,
-                  ],
-                },
-                value: '$Amount',
-              },
-            },
-            {
-              $project: {
-                price: { $sum: ['$value', '$percentage'] },
-                value: '$value',
-                GST: '$percentage',
-              },
-            },
-            { $group: { _id: null, price: { $sum: '$price' } } },
+    // {
+    //   $lookup: {
+    //     from: 'b2bshopclones',
+    //     localField: 'shopId',
+    //     foreignField: '_id',
+    //     as: 'shopDtaa'
+    //   }
+    // },{ $unwind: "$shopDtaa"},
+    // {
+    //     $lookup: {
+    //       from:'productorderclones',
+    //       localField: 'orderId',
+    //       foreignField: 'orderId',
+    //       pipeline: [
+    //         {
+    //           $project: {
+    //             Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+    //             GST_Number: 1,
+    //           },
+    //         },
+    //         {
+    //           $project: {
+    //             sum: '$sum',
+    //             percentage: {
+    //               $divide: [
+    //                 {
+    //                   $multiply: ['$GST_Number', '$Amount'],
+    //                 },
+    //                 100,
+    //               ],
+    //             },
+    //             value: '$Amount',
+    //           },
+    //         },
+    //         {
+    //           $project: {
+    //             price: { $sum: ['$value', '$percentage'] },
+    //             value: '$value',
+    //             GST: '$percentage',
+    //           },
+    //         },
+    //         { $group: { _id: null, price: { $sum: '$price' } } },
          
-                ],
-          as: 'productData',
-        }
-      },
-      { $unwind: "$productData"},
+    //             ],
+    //       as: 'productData',
+    //     }
+    //   },
+    //   { $unwind: "$productData"},
    
-    {
-        $project: {
-            customerBillId:1,
-            OrderId:1,
-            date:1,
-            statusOfBill:1 ,
-            executeName: "$dataa.AssignedUserId",
-            shopNmae: "$shopDtaa.SName",
-            shopId: "$shopDtaa._id",
-            creditBillAssignedStatus:1,
-            BillAmount:{$round:["$productData.price",0]},
-            // BillAmount:"$productData.price",
-            paidAmount: "$paymentData.price",
+    // {
+    //     $project: {
+    //         customerBillId:1,
+    //         OrderId:1,
+    //         date:1,
+    //         statusOfBill:1 ,
+    //         executeName: "$dataa.AssignedUserId",
+    //         shopNmae: "$shopDtaa.SName",
+    //         shopId: "$shopDtaa._id",
+    //         creditBillAssignedStatus:1,
+    //         BillAmount:{$round:["$productData.price",0]},
+    //         // BillAmount:"$productData.price",
+    //         paidAmount: "$paymentData.price",
             
-            pendingAmount: {$round:{ $subtract: [ "$productData.price", "$paymentData.price" ] } },
+    //         pendingAmount: {$round:{ $subtract: [ "$productData.price", "$paymentData.price" ] } },
 
-            condition1: {
-                      $cond: {if: {$ne: [{ $subtract: [ {$round:["$productData.price",0]}, "$paymentData.price" ] }, 0]}, then: true, else: false}
-                  },
+    //         condition1: {
+    //                   $cond: {if: {$ne: [{ $subtract: [ {$round:["$productData.price",0]}, "$paymentData.price" ] }, 0]}, then: true, else: false}
+    //               },
                 
 
-        }
-    },
+    //     }
+    // },
  
     ]);
     
