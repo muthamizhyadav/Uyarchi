@@ -1486,10 +1486,10 @@ const incommingStockQty = async (date, page) => {
         localField: '_id',
         foreignField: 'productId',
         pipeline: [
-          // { $match: { date: date, status: { $in: ['Loaded', 'Billed'] } } },
+          // { $match: { date: date, status: 'Loaded' } },
           {
             $match: {
-              $and: [{ status: { $in: ['Loaded', 'Billed'] } }],
+              $and: [{ status: { $in: ['Loaded', 'Billed'] } }, { segStatus: 'Pending' }],
             },
           },
           {

@@ -8,6 +8,7 @@ const OTP = require('../models/saveOtp.model');
 const bcrypt = require('bcryptjs');
 const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone } = require('../models/shopOrder.model');
 const OrderPayment = require('../models/orderpayment.model');
+
 const register_shop = async (body) => {
   const mobileNumber = body.mobile;
   let shop = await Shop.findOne({ mobile: mobileNumber });
