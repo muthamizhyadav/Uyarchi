@@ -10,4 +10,39 @@ const createAssignStock = async (bodyData) => {
   return AssignStock.create(values);
 };
 
-module.exports = { createAssignStock };
+const get_Current_Stock = async (id, date) => {
+  let values = await AssignStock.aggregate([
+    {
+      $match: {
+        $and: [{ date: { $eq: date } }, { type: { $eq: 'b2b' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'usablestocks',
+        localField: 'usablestockId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ productId: { $eq: id } }],
+            },
+          },
+        ],
+        as: 'usablestock',
+      },
+    },
+    {
+      $unwind: '$usablestock',
+    },
+    {
+      $group: {
+        _id: null,
+        qty: { $sum: '$quantity' },
+      },
+    },
+  ]);
+  return { qty: values.length == 0 ? 0 : values[0].qty };
+};
+
+module.exports = { createAssignStock, get_Current_Stock };

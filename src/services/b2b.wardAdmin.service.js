@@ -422,6 +422,17 @@ const wardloadExecutivebtgroup = async (page) => {
       },
     },
     {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId', //Uid
+        foreignField: '_id', //Uid
+        as: 'deliveryExecutive',
+      },
+    },
+    {
+      $unwind: '$deliveryExecutive',
+    },
+    {
       $project: {
         _id: 1,
         // Orderdatas: 1,
@@ -438,6 +449,7 @@ const wardloadExecutivebtgroup = async (page) => {
         assignDate: 1,
         assignTime: 1,
         pettyStockAllocateStatusNumber: 1,
+        deliveryExecutive: '$deliveryExecutive.name',
       },
     },
     { $skip: 10 * page },
@@ -652,7 +664,47 @@ const wardloadExecutive = async (id) => {
       },
     },
   ]);
-  let orderdate = await wardAdminGroup.findById(id);
+  let orderdate = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        _id: id,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId', //Uid
+        foreignField: '_id',
+        as: 'deliveryExecutive',
+      },
+    },
+    {
+      $unwind: '$deliveryExecutive',
+    },
+    {
+      $project: {
+        _id: 1,
+        manageDeliveryStatus: 1,
+        pettyCashAllocateStatus: 1,
+        pettyStockAllocateStatus: 1,
+        AllocateStatus: 1,
+        pettyStock: 1,
+        deliveryExecutiveId: 1,
+        totalOrders: 1,
+        route: 1,
+        assignDate: 1,
+        groupId: 1,
+        assignDate: 1,
+        assignTime: 1,
+        GroupBillId: 1,
+        pettyStockAllocateStatusNumber: 1,
+        GroupBillDate: 1,
+        GroupBillTime: 1,
+        pettyCash: 1,
+        deliveryExecutive: '$deliveryExecutive.name',
+      },
+    },
+  ]);
 
   return { data: data, orderDetails: orderdate, packed_count: packed_count[0] };
 };
@@ -3095,11 +3147,11 @@ const mismatchGroup = async (id) => {
         wardadmingroupsData: '$wardadmingroupsData.orderassignsData.total',
         groupId: '$wardadmingroupsData.groupId',
         pettyCash: '$wardadmingroupsData.pettyCash',
-        group:'$wardadmingroupsData._id',
+        group: '$wardadmingroupsData._id',
 
         // // mismatch:"$wardadmingroupsData.total",
-         mismatch: '$wardadmingroupsData.ByCashIncPettyCash',
-         assignDate: '$wardadmingroupsData.assignDate',
+        mismatch: '$wardadmingroupsData.ByCashIncPettyCash',
+        assignDate: '$wardadmingroupsData.assignDate',
       },
     },
   ]);

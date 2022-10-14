@@ -60,7 +60,7 @@ const getAssignStockbyId = async (id) => {
         foreignField: 'usablestockId',
         as: 'assignHistory',
       },
-    }, 
+    },
     {
       $lookup: {
         from: 'products',
