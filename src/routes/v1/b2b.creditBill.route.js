@@ -12,5 +12,6 @@ router.route('/post/creditBill/details/create').post(creditBillController.create
 router.route('/put/payingCash/with/DE/SM/:id').put(creditBillController.payingCAshWithDEorSM);
 router.route('/get/getManageCreditBillAssigning/deliveryExecutivename').get(creditBillController.getManageCreditBillAssigning);
 router.route('/get/details/getcreditBillDetailsByPassExecID/:id').get(creditBillController.getcreditBillDetailsByPassExecID);
+router.route('/get/history/data/ByPassing/orderId/:id').get(creditBillController.getHistoryByPassOrderId);
 
 module.exports = router;

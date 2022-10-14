@@ -54,6 +54,11 @@ const updateAssigned = catchAsync(async (req, res) => {
     res.send(approval);
   });
 
+  const  getHistoryByPassOrderId= catchAsync(async (req, res) => {
+    const approval = await creditBillService.getHistoryByPassOrderId(req.params.id);
+    res.send(approval);
+  });
+
 
 module.exports = {
 
@@ -67,4 +72,5 @@ module.exports = {
     getManageCreditBillAssigning,
     getcreditBillDetailsByPassExecID,
     updateAssigned,
+    getHistoryByPassOrderId,
 }

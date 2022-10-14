@@ -463,12 +463,12 @@ const updateAssignedStatusPerBill = async (id) => {
     let currentDate = moment().format('YYYY-MM-DD');
     let currenttime =  moment().format('HHmm');
   
-    let updateProduct = await creditBill.findById(id);
+    let updateProduct = await ShopOrderClone.findById(id);
     if (!updateProduct) {
       throw new ApiError(httpStatus.NOT_FOUND, ' Not Found');
     }
 
-    updateProduct = await creditBill.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+    // updateProduct = await creditBill.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
 
 
     await creditBillPaymentModel.create({
@@ -552,6 +552,27 @@ const getcreditBillDetailsByPassExecID = async(id) =>{
   ]);
   return values;
 }
+
+
+
+const getHistoryByPassOrderId = async (id)=>{
+  let values = await orderPayment.aggregate([
+      {
+            $match: {
+              $and: [{ orderId: { $eq: id } }],
+            },
+          },
+          // {
+          //   $lookup: {
+          //     from: 'orderpayments',
+          //     localField: '_id',
+          //     foreignField: 'orderId',
+          //     as: 'paymentsData'
+          //   }
+          // },{ $unwind: "$paymentData"},
+  ]);
+  return values;
+}
   
 
 
@@ -570,4 +591,5 @@ module.exports = {
   getManageCreditBillAssigning,
   getcreditBillDetailsByPassExecID,
   updateAssignedStatusByMultiSelect,
+  getHistoryByPassOrderId,
 };
