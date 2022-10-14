@@ -135,6 +135,7 @@ const getDataWithSupplierId = async (id, page) => {
         confirmcallDetail: 1,
         confirmcallstatus: 1,
         confirmprice: 1,
+        exp_date: 1,
         supplierContact: '$supplierData.primaryContactNumber',
         supplierName: '$supplierData.primaryContactName',
         productTitle: '$ProductData.productTitle',
