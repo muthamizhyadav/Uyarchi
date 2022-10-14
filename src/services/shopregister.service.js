@@ -8,6 +8,7 @@ const OTP = require('../models/saveOtp.model');
 const bcrypt = require('bcryptjs');
 const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone } = require('../models/shopOrder.model');
 const OrderPayment = require('../models/orderpayment.model');
+
 const register_shop = async (body) => {
   const mobileNumber = body.mobile;
   let shop = await Shop.findOne({ mobile: mobileNumber });
@@ -599,6 +600,27 @@ const get_pendung_amount = async (shopId, id) => {
   return odrers[0];
 };
 
+const get_orderamount = async (shopId, body) => {
+  const shop = await Shop.findById(shopId);
+  if (!shop) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Shop Not Registered');
+  }
+  let created = moment();
+  let date = moment().format('YYYY-MM-DD');
+  let time = moment().format('hhmm');
+
+  const order = await OrderPayment.create({
+    orderId: body.orderId,
+    payment: 'self',
+    paidAmt: body.paidamount,
+    paymentMethod: 'self',
+    created: created,
+    date: date,
+    time: time,
+  });
+  return order;
+};
+
 module.exports = {
   register_shop,
   verify_otp,
@@ -610,4 +632,5 @@ module.exports = {
   get_mypayments,
   getpayment_history,
   get_pendung_amount,
+  get_orderamount,
 };
