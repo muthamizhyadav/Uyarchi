@@ -398,8 +398,6 @@ const returnStock = async (id) => {
                 {
                   $unwind: '$orderassigns',
                 },
-                
-             
               ],
               as: 'shoporderclones',
             },
@@ -488,6 +486,13 @@ const returnStock = async (id) => {
         from: 'returnstocks',
         localField: '_id',
         foreignField: 'productId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ groupId: { $eq: id } }],
+            },
+          },
+        ],
         as: 'returnStock',
       },
     },
@@ -508,7 +513,7 @@ const returnStock = async (id) => {
         productorderclonesData: '$productorderclonesData',
         mismatch: { $subtract: ['$returnStock.actualStock', '$returnStock.actualWastage'] },
         pettyStock: '$totalpetty.pettyStock',
-       
+
         DeliveryQuantity: '$productorderclones.Qty',
         actualStock: '$returnStock.actualStock',
         actualWastage: '$returnStock.actualWastage',
