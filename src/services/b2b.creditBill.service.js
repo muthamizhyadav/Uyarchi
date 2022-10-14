@@ -214,7 +214,7 @@ const getsalesmanName = async () => {
 }
 
 
-const getShopHistory = async (id,page) => {
+const getShopHistory = async (id) => {
 
 
   let values = await creditBill.aggregate([
@@ -324,8 +324,7 @@ const getShopHistory = async (id,page) => {
 
         }
     },
-    { $skip: 10 * page },
-    { $limit: 10 },
+ 
     ]);
     
       let total = await creditBill.aggregate([
