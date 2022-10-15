@@ -72,6 +72,11 @@ const updateAssigned = catchAsync(async (req, res) => {
     res.send(delName);
   })
 
+  const getShopPendingByPassingShopId = catchAsync(async (req, res) => {
+    const delName = await creditBillService.getShopPendingByPassingShopId(req.params.id);
+    res.send(delName);
+  })
+
 
 module.exports = {
 
@@ -89,4 +94,5 @@ module.exports = {
     getDElExecutiveName,
     getsalesName,
     getNotAssignData,
+    getShopPendingByPassingShopId,
 }

@@ -734,7 +734,38 @@ const getNotAssignData = async (page) =>{
                 as: 'paymentData'
             }
         },{ $unwind:"$paymentData"},
-        
+        // {
+        //   $lookup:{
+        //     from: 'creditbills',
+        //     localField: '_id',
+        //     foreignField: 'orderId',
+        //     pipeline: [{
+              
+        //         $lookup: {
+        //           from: 'creditbillpaymenthistories',
+        //           localField: '_id',
+        //           foreignField: 'creditBillId',
+        //           pipeline: [
+        //             {
+        //               $project: {
+        //                 HistoryAmount:{"$sum": "$amountPayingWithDEorSM"}
+                     
+        //               },
+        //             },],
+        //           as: 'historyDtaa'
+        //         }
+              
+        //     },{$unwind:"$historyDtaa"}],
+        //     as: 'creditData'
+        //   }
+        // },
+        // {
+        //   $unwind: {
+        //     path: '$creditData',
+        //     preserveNullAndEmptyArrays: true,
+        //   },
+        // },
+
         {
           $lookup: {
             from: 'b2bshopclones',
@@ -786,7 +817,7 @@ const getNotAssignData = async (page) =>{
           { $unwind: "$productData"},
           { $skip: 10 * page },
           { $limit: 10 },
-             {
+      {
         $project: {
             customerBillId:1,
             OrderId:1,
@@ -797,7 +828,10 @@ const getNotAssignData = async (page) =>{
             shopId: "$shopDtaa._id",
             creditBillAssignedStatus:1,
             BillAmount:{$round:["$productData.price",0]},
-            // BillAmount:"$productData.price",
+            "totalHistory": {
+                     "$sum": "$creditData.historyDtaa.amountPayingWithDEorSM"
+                    },
+            
             paidAmount: "$paymentData.price",
             
             pendingAmount: {$round:{ $subtract: [ "$productData.price", "$paymentData.price" ] } },
@@ -885,6 +919,104 @@ const getNotAssignData = async (page) =>{
 }
 
 
+const getShopPendingByPassingShopId = async (id) => {
+  let values  = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ shopId: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+          from: 'orderpayments',
+          localField: '_id',
+          foreignField: 'orderId',
+          pipeline: [{
+              $group: { _id: null, price: { $sum: '$paidAmt' } } ,
+         }],
+          as: 'paymentData'
+      }
+  },{ $unwind:"$paymentData"},
+  
+  {
+    $lookup: {
+      from: 'b2bshopclones',
+      localField: 'shopId',
+      foreignField: '_id',
+      as: 'shopDtaa'
+    }
+  },{ $unwind: "$shopDtaa"},
+  {
+      $lookup: {
+        from:'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+       
+              ],
+        as: 'productData',
+      }
+    },
+  
+    { $unwind: "$productData"},
+
+
+    {
+      $project: {
+          customerBillId:1,
+          OrderId:1,
+          date:1,
+          statusOfBill:1 ,
+          executeName: "$dataa.AssignedUserId",
+          shopNmae: "$shopDtaa.SName",
+          shopId: "$shopDtaa._id",
+          creditBillAssignedStatus:1,
+          BillAmount:{$round:["$productData.price",0]},
+          paidAmount: "$paymentData.price",
+          
+          pendingAmount: {$round:{ $subtract: [ "$productData.price", "$paymentData.price" ] } },
+
+          condition1: {
+                    $cond: {if: {$ne: [{ $subtract: [ {$round:["$productData.price",0]}, "$paymentData.price" ] }, 0]}, then: true, else: false}
+                },
+              
+
+      }
+    }
+
+  ]);
+  return values;
+}
+
+
   
 
 
@@ -907,4 +1039,5 @@ module.exports = {
   getDElExecutiveName,
   getsalesName,
   getNotAssignData,
+  getShopPendingByPassingShopId,
 };
