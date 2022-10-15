@@ -224,7 +224,7 @@ const Mismatch_Stock_Reconcilation = catchAsync(async (req, res) => {
 });
 
 const Mismatch_Stock_Reconcilation1 = catchAsync(async (req, res) => {
-  const data = await wardAdminService.Mismatch_Stock_Reconcilation1();
+  const data = await wardAdminService.Mismatch_Stock_Reconcilation1(req.params.id);
   res.send(data);
 });
 

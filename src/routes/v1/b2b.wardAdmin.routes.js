@@ -62,5 +62,5 @@ router.route('/order/Assign').get(wardAdminController.getAssigned_details);
 router.route('/mismatchCount/:page').get(wardAdminController.mismatchCount);
 router.route('/mismatchGroup/:id').get(wardAdminController.mismatchGroup);
 router.route('/Mismatch_Stock_Reconcilation').get(wardAdminController.Mismatch_Stock_Reconcilation);
-router.route('/Mismatch_Stock_Reconcilation1').get(wardAdminController.Mismatch_Stock_Reconcilation1);
+router.route('/Mismatch_Stock_Reconcilation1/:id').get(wardAdminController.Mismatch_Stock_Reconcilation1);
 module.exports = router;
