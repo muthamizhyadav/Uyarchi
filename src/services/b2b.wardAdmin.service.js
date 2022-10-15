@@ -3240,7 +3240,8 @@ const Mismatch_Stock_Reconcilation = async () =>{
         {
           $project: {
             name:1,
-            swdwdf:{$size:"$wardadmingroupsData.orderassignsData"}
+            total:{$size:"$wardadmingroupsData.orderassignsData"},
+            groupId:"$wardadmingroupsData._id"
             // product:"$productorderclonesData.productsData.productTitle",
             // data:"$returnstocks.misMatch"
           },
