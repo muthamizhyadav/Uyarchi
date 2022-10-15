@@ -2469,6 +2469,7 @@ const returnStockData = async (id) => {
         productTitle: 1,
         productid: 1,
         status: '$returnStock.status',
+        image:'$returnStock.image',
         // totalpetty: '$totalpetty',
         productorderclones: '$productorderclones',
         productorderclonesData: '$productorderclonesData',
