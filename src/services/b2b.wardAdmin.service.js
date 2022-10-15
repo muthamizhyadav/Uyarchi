@@ -3159,6 +3159,7 @@ const mismatchGroup = async (id) => {
 };
 
 const Mismatch_Stock_Reconcilation = async () =>{
+  let count = 0
        const data = await Users.aggregate([
         {
           $match: {
@@ -3170,80 +3171,53 @@ const Mismatch_Stock_Reconcilation = async () =>{
             from: 'wardadmingroups',
             localField: '_id',
             foreignField: 'deliveryExecutiveId',
-            pipeline: [
-              {
-                $lookup: {
-                  from: 'orderassigns',
-                  localField: '_id',
-                  foreignField: 'wardAdminGroupID',
-                  as: 'orderassignsData',
-                },
-              },
-              {
-                $unwind: '$orderassignsData',
-              },
-            ],
+            // pipeline: [
+            //   {
+            //     $lookup: {
+            //       from: 'orderassigns',
+            //       localField: '_id',
+            //       foreignField: 'wardAdminGroupID',
+            //       pipeline:[
+                   
+            //       ],
+            //       as: 'orderassignsData',
+            //     },
+            //   },
+            //   {
+            //     $unwind: '$orderassignsData',
+            //   },
+            // ],
             as: 'wardadmingroupsData',
           },
         },
-        // {
-        //   $unwind: '$wardadmingroupsData',
-        // },
-        // {
-        //   $lookup: {
-        //     from: 'productorderclones',
-        //     localField: 'wardadmingroupsData.orderassignsData.orderId',
-        //     foreignField: 'orderId',
-        //     pipeline:[
-        //       {
-        //         $lookup: {
-        //           from: 'products',
-        //           localField: 'productid',
-        //           foreignField: '_id',
-        //           as: 'productsData',
-        //         },
-        //       },
-             
-        // {
-        //   $unwind: '$productsData',
-        // },
-        //     ],
+                {
+          $unwind: '$wardadmingroupsData',
+        },
 
-        //     as: 'productorderclonesData',
-        //   },
-        // },
-        // {
-        //   $unwind: '$productorderclonesData',
-        // },
-        // {
-        //   $lookup: {
-        //     from: 'returnstocks',
-        //     localField: 'wardadmingroupsData._id',
-        //     foreignField: 'groupId',
-        //     pipeline:[
-        //       {
-        //         $match: {
-        //           $and: [{ misMatch: { $ne:null }}],
-        //         },
-        //       },
-        //       // {
-        //       //   $match: {
-        //       //     $and: [{ productId: { $eq:"$productorderclonesData.productsData._id" }}],
-        //       //   },
-        //       // },
-              
-        //     ],
-        //     as: 'returnstocks',
-        //   },
-        // },
+        {
+          $lookup: {
+            from: 'returnstocks',
+            localField: 'wardadmingroupsData._id',
+            foreignField: 'groupId',
+            pipeline:[
+              {
+                        $match: {
+                          $and: [{ misMatch: { $ne:null }},{ misMatch: { $ne:count }}],
+                        },
+                      },
+            ],
+            as: 'returnstocksData',
+          },
+        },
+          {
+          $unwind: '$returnstocksData',
+        },
 
         {
           $project: {
             name:1,
-            total:{$size:"$wardadmingroupsData.orderassignsData"},
+            data:"$returnstocksData",
             groupId:"$wardadmingroupsData._id"
-            // product:"$productorderclonesData.productsData.productTitle",
-            // data:"$returnstocks.misMatch"
           },
         },
        ])
