@@ -3250,8 +3250,13 @@ const Mismatch_Stock_Reconcilation = async () =>{
        return data;
 }		
 
-const Mismatch_Stock_Reconcilation1 = async () => {
+const Mismatch_Stock_Reconcilation1 = async (id) => {
   let data = await wardAdminGroup.aggregate([
+    {
+      $match:{
+        $and: [{ deliveryExecutiveId: { $eq:id }}],
+      }
+    },
     {
       $lookup: {
         from: 'b2busers',
@@ -3285,10 +3290,9 @@ $unwind: '$b2busers',
         as: 'returnstocksData',
       },
     },
-    // {
-    //   $unwind: '$returnstocksData',
-    //   },
-    // {
+    {
+      $unwind: '$returnstocksData',
+      },
     
     {
       $project: {
@@ -3298,11 +3302,11 @@ $unwind: '$b2busers',
         assignDate:1,
       },
     },
-    {
-          $match: {
-          $and: [{ mismatch: { $type: 'array', $ne: [] } }] 
-      },
-    },
+    // {
+    //       $match: {
+    //       $and: [{ mismatch: { $type: 'array', $ne: [] } }] 
+    //   },
+    // },
   ])
   return data ;
 }
