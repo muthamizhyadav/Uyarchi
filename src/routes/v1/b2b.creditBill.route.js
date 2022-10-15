@@ -16,5 +16,6 @@ router.route('/get/history/data/ByPassing/orderId/:id').get(creditBillController
 router.route('/get/DelNmae/AfterAssign').get(creditBillController.getDElExecutiveName);
 router.route('/get/salesman/name').get(creditBillController.getsalesName)
 router.route('/get/data/notAssigned/:page').get(creditBillController.getNotAssignData);
+router.route('/get/shop/pending/:id').get(creditBillController.getShopPendingByPassingShopId);
 
 module.exports = router;
