@@ -12,4 +12,9 @@ const createAssignStock = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(assignStock);
 });
 
-module.exports = { createAssignStock };
+const get_Current_Stock = catchAsync(async (req, res) => {
+  const stock = await assignStockService.get_Current_Stock(req.params.id, req.params.date);
+  res.send(stock);
+});
+
+module.exports = { createAssignStock, get_Current_Stock };

@@ -45,6 +45,10 @@ const creditBillPaymentsSchema = mongoose.Schema({
     creditBillId:{
         type: String
     },
+    reasonScheduleOrDate: {
+        type: String
+    },
+   
 
 
 });

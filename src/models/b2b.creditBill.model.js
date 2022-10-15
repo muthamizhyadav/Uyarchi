@@ -41,7 +41,15 @@ const creditBillSchema = mongoose.Schema({
     },
     actionStatus: {
         type: String
-    }
+    },
+    active: {
+        type: Boolean,
+        default: true,
+      },
+      archive: {
+        type: Boolean,
+        default: false,
+      },
 
 
 });

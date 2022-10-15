@@ -20,7 +20,7 @@ const getsalesmanName = catchAsync(async (req, res) => {
 })
 
 const getShopHistory = catchAsync(async (req, res) => {
-    const bill = await creditBillService.getShopHistory(req.params.page);
+    const bill = await creditBillService.getShopHistory(req.params.id,req.params.date);
     res.send(bill);
 })
 
@@ -54,6 +54,24 @@ const updateAssigned = catchAsync(async (req, res) => {
     res.send(approval);
   });
 
+  const  getHistoryByPassOrderId= catchAsync(async (req, res) => {
+    const approval = await creditBillService.getHistoryByPassOrderId(req.params.id);
+    res.send(approval);
+  });
+
+  const getDElExecutiveName = catchAsync(async (req, res) => {
+    const delName = await creditBillService.getDElExecutiveName();
+    res.send(delName);
+  })
+  const getsalesName = catchAsync(async (req, res) => {
+    const delName = await creditBillService.getsalesName();
+    res.send(delName);
+  })
+  const getNotAssignData = catchAsync(async (req, res) => {
+    const delName = await creditBillService.getNotAssignData(req.params.page);
+    res.send(delName);
+  })
+
 
 module.exports = {
 
@@ -67,4 +85,8 @@ module.exports = {
     getManageCreditBillAssigning,
     getcreditBillDetailsByPassExecID,
     updateAssigned,
+    getHistoryByPassOrderId,
+    getDElExecutiveName,
+    getsalesName,
+    getNotAssignData,
 }

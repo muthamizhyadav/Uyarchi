@@ -771,6 +771,32 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         foreignField: 'shopId',
         pipeline: [
           {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              // pipeline: [
+              //   {
+              //     $lookup: {
+              //       from: 'products',
+              //       localField: 'productid',
+              //       foreignField: '_id',
+              //       as: 'products',
+              //     },
+              //   },
+              //   {
+              //     $unwind: '$products',
+              //   },
+              // ],
+              as: 'productorderclones',
+            },
+          },
+          // {
+          //   project:{
+
+          //   }
+          // }
+          {
             $sort: { created: -1 },
           },
           { $limit: 5 },
@@ -1169,6 +1195,35 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         localField: '_id',
         foreignField: 'shopId',
         pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'products',
+                    localField: 'productid',
+                    foreignField: '_id',
+                    as: 'products',
+                  },
+                },
+                {
+                  $unwind: '$products',
+                },
+                {
+                  $project: {
+                    productTitle: '$products.productTitle',
+                    finalQuantity: 1,
+                    finalPricePerKg: 1,
+                    _id: 1,
+                  },
+                },
+              ],
+              as: 'productorderclones',
+            },
+          },
           {
             $sort: { created: -1 },
           },
