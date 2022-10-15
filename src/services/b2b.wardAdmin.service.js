@@ -3310,7 +3310,6 @@ $unwind: '$b2busers',
   ])
   return data ;
 }
-
 module.exports = {
   getdetails,
   getproductdetails,
