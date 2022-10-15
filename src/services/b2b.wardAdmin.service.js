@@ -3266,20 +3266,41 @@ $unwind: '$b2busers',
 
     {
       $lookup: {
-        from: 'orderassigns',
+        from: 'returnstocks',
         localField: '_id',
-        foreignField: 'wardAdminGroupID',
-        as: 'orderassignsData',
+        foreignField: 'groupId',
+        pipeline:[
+          {
+                    $match: {
+                      $and: [{ misMatch: { $ne:null }}],
+                    },
+                  },
+                  {
+                    $group: {
+                      _id: null,
+                      total: { $sum: '$misMatch' },
+                    },
+                  },
+        ],
+        as: 'returnstocksData',
       },
     },
     // {
-    //   $unwind: '$orderassignsData',
-    // },
+    //   $unwind: '$returnstocksData',
+    //   },
+    // {
     
     {
       $project: {
         name:"$b2busers.name",
-        groupCount:{ $size: '$orderassignsData' },
+        groupId:1,
+        mismatch:"$returnstocksData.total",
+        assignDate:1,
+      },
+    },
+    {
+          $match: {
+          $and: [{ mismatch: { $type: 'array', $ne: [] } }] 
       },
     },
   ])
