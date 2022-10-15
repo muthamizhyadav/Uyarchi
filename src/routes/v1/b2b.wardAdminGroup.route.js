@@ -115,5 +115,6 @@ router.route('/update/groupDetails/:id').put(wardAdminGroupController.createAddO
 
 router.route('/get/details/finishing/account/:id/:page').get(wardAdminGroupController.finishingAccount);
 router.route('/submit/Dispute/:id').put(wardAdminGroupController.submitDispute);
+router.route('/returnStockData/:id').get(wardAdminGroupController.returnStockData);
 
 module.exports = router;
