@@ -520,7 +520,7 @@ const updateAssignedStatusPerBill = async (id) => {
     let currentDate = moment().format('YYYY-MM-DD');
     let currenttime =  moment().format('HHmm');
   
-    let updateProduct = await ShopOrderClone.findById(id);
+    let updateProduct = await creditBill.findById(id);
     if (!updateProduct) {
       throw new ApiError(httpStatus.NOT_FOUND, ' Not Found');
     }
@@ -540,7 +540,8 @@ const updateAssignedStatusPerBill = async (id) => {
         pay_type: updateBody.pay_type,
         upiStatus: updateBody.upiStatus,
         amountPayingWithDEorSM: updateBody.amountPayingWithDEorSM,
-        actionStatus: updateBody.actionStatus
+        actionStatus: updateBody.actionStatus,
+        reasonScheduleOrDate: updateBody.reasonScheduleOrDate,
 
       });
 
