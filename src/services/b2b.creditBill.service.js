@@ -236,102 +236,102 @@ const getShopHistory = async (AssignedUserId,date) => {
         $and: match,
       },
     },
-
-    // {
-    //   $lookup: {
-    //     from:'creditbillgroups',
-    //     localField: 'creditbillId',
-    //     foreignField: '_id',
-    //     as: 'dataa'
-    //   }
-    // },
-    // { $unwind: "$dataa"},
+    {
+      $lookup: {
+        from : 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        as: 'shoporderclonedata'
+      }
+    },
+    { $unwind: "$shoporderclonedata"},
+ 
 
   
-    //     {
-    //     $lookup: {
-    //         from: 'orderpayments',
-    //         localField: 'orderId',
-    //         foreignField: 'orderId',
-    //         pipeline: [{
-    //             $group: { _id: null, price: { $sum: '$paidAmt' } } ,
-    //        }],
-    //         as: 'paymentData'
-    //     }
-    // },{ $unwind:"$paymentData"},
+        {
+        $lookup: {
+            from: 'orderpayments',
+            localField: 'orderId',
+            foreignField: 'orderId',
+            pipeline: [{
+                $group: { _id: null, price: { $sum: '$paidAmt' } } ,
+           }],
+            as: 'paymentData'
+        }
+    },{ $unwind:"$paymentData"},
     
-    // {
-    //   $lookup: {
-    //     from: 'b2bshopclones',
-    //     localField: 'shopId',
-    //     foreignField: '_id',
-    //     as: 'shopDtaa'
-    //   }
-    // },{ $unwind: "$shopDtaa"},
-    // {
-    //     $lookup: {
-    //       from:'productorderclones',
-    //       localField: 'orderId',
-    //       foreignField: 'orderId',
-    //       pipeline: [
-    //         {
-    //           $project: {
-    //             Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
-    //             GST_Number: 1,
-    //           },
-    //         },
-    //         {
-    //           $project: {
-    //             sum: '$sum',
-    //             percentage: {
-    //               $divide: [
-    //                 {
-    //                   $multiply: ['$GST_Number', '$Amount'],
-    //                 },
-    //                 100,
-    //               ],
-    //             },
-    //             value: '$Amount',
-    //           },
-    //         },
-    //         {
-    //           $project: {
-    //             price: { $sum: ['$value', '$percentage'] },
-    //             value: '$value',
-    //             GST: '$percentage',
-    //           },
-    //         },
-    //         { $group: { _id: null, price: { $sum: '$price' } } },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopDtaa'
+      }
+    },{ $unwind: "$shopDtaa"},
+    {
+        $lookup: {
+          from:'productorderclones',
+          localField: 'orderId',
+          foreignField: 'orderId',
+          pipeline: [
+            {
+              $project: {
+                Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                GST_Number: 1,
+              },
+            },
+            {
+              $project: {
+                sum: '$sum',
+                percentage: {
+                  $divide: [
+                    {
+                      $multiply: ['$GST_Number', '$Amount'],
+                    },
+                    100,
+                  ],
+                },
+                value: '$Amount',
+              },
+            },
+            {
+              $project: {
+                price: { $sum: ['$value', '$percentage'] },
+                value: '$value',
+                GST: '$percentage',
+              },
+            },
+            { $group: { _id: null, price: { $sum: '$price' } } },
          
-    //             ],
-    //       as: 'productData',
-    //     }
-    //   },
-    //   { $unwind: "$productData"},
+                ],
+          as: 'productData',
+        }
+      },
+      { $unwind: "$productData"},
    
-    // {
-    //     $project: {
-    //         customerBillId:1,
-    //         OrderId:1,
-    //         date:1,
-    //         statusOfBill:1 ,
-    //         executeName: "$dataa.AssignedUserId",
-    //         shopNmae: "$shopDtaa.SName",
-    //         shopId: "$shopDtaa._id",
-    //         creditBillAssignedStatus:1,
-    //         BillAmount:{$round:["$productData.price",0]},
-    //         // BillAmount:"$productData.price",
-    //         paidAmount: "$paymentData.price",
+    {
+        $project: {
+            customerBillId: "$shoporderclonedata.customerBillId",
+            OrderId: "$shoporderclonedata.OrderId",
+            date:"$shoporderclonedata.date",
+            statusOfBill:"$shoporderclonedata.creditBillAssignedStatus" ,
+            executeName: "$dataa.AssignedUserId",
+            shopNmae: "$shopDtaa.SName",
+            shopId: "$shopDtaa._id",
+            creditBillAssignedStatus:1,
+            BillAmount:{$round:["$productData.price",0]},
+            // BillAmount:"$productData.price",
+            paidAmount: "$paymentData.price",
             
-    //         pendingAmount: {$round:{ $subtract: [ "$productData.price", "$paymentData.price" ] } },
+            pendingAmount: {$round:{ $subtract: [ "$productData.price", "$paymentData.price" ] } },
 
-    //         condition1: {
-    //                   $cond: {if: {$ne: [{ $subtract: [ {$round:["$productData.price",0]}, "$paymentData.price" ] }, 0]}, then: true, else: false}
-    //               },
+            condition1: {
+                      $cond: {if: {$ne: [{ $subtract: [ {$round:["$productData.price",0]}, "$paymentData.price" ] }, 0]}, then: true, else: false}
+                  },
                 
 
-    //     }
-    // },
+        }
+    },
  
     ]);
     return values;
