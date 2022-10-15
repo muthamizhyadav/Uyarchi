@@ -650,14 +650,14 @@ const getDElExecutiveName = async ()=>{
       from: 'roles',
       localField: 'WDEName.userRole',
       foreignField: '_id',
-      pipeline: [
-        {
-          $match: {
-            $and: [{ roleName: { $eq: 'Ward delivery execute(WDE)' } }],
-          },
+    //   pipeline: [
+    //     {
+    //       $match: {
+    //         $and: [{ roleName: { $eq: 'Ward delivery execute(WDE)' } }],
+    //       },
 
-      }
-    ],
+    //   }
+    // ],
       as: 'data'
   }
 },{ $unwind: "$data"},
