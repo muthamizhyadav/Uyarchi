@@ -50,6 +50,9 @@ const creditBillSchema = mongoose.Schema({
         type: Boolean,
         default: false,
       },
+      AssignedUserId: {
+        type: String
+      }
 
 
 });

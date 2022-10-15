@@ -217,22 +217,16 @@ const getsalesmanName = async () => {
 const getShopHistory = async (id,date) => {
 
   let match;
-  if (id != 'null' && date != 'null') {
-    match = [{ AssignedUserId: { $eq: id } },{ date: { $eq: date } }, { active: { $eq: true } }];
-  } 
-   if (id != 'null' && date != 'null') {
-    match = [ { salesmanId: { $eq: id } },{ date: { $eq: date } }, { active: { $eq: true } }];
-  }else if (id != 'null') {
-    match = [{ AssignedUserId: { $eq: id } }, { active: { $eq: true } }];
-  }
-  else if (id != 'null') {
-
-    match = [ { salesmanId: { $eq: id } }, { active: { $eq: true } }];
-  } else if (date != 'null') {
-    match = [{ date: { $eq: date } }, { active: { $eq: true } }];
-  } else {
-    match = [{ AssignedUserId: { $ne: null } },{ salesmanId: { $ne: null } }, { active: { $eq: true } }];
-  }
+  if(id != 'null' && date != 'null'){
+      match = [{ AssignedUserId: { $eq: id }}, { date: { $eq: date }}, { active: { $eq: true }}];
+  }else if (AssignedUserId != 'null') {
+  match = [{ AssignedUserId: { $eq: id } }, { active: { $eq: true } }];
+ 
+} else if (date != 'null') {
+  match = [{ date: { $eq: date } }, { active: { $eq: true } }];
+} else {
+  match = [{ AssignedUserId: { $ne: null } }, { active: { $eq: true } }];
+}
 
 
   let values = await creditBillGroup.aggregate([
@@ -504,6 +498,7 @@ const updateAssignedStatusPerBill = async (id) => {
   
       
       await creditBill.create({
+        AssignedUserId: body.AssignedUserId,
         orderId: productId,
         shopId: shopId,
         creditbillId: wardAdminGroupcreate._id,
