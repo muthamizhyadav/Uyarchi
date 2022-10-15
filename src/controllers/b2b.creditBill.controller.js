@@ -20,7 +20,7 @@ const getsalesmanName = catchAsync(async (req, res) => {
 })
 
 const getShopHistory = catchAsync(async (req, res) => {
-    const bill = await creditBillService.getShopHistory(req.params.id,req.params.date);
+    const bill = await creditBillService.getShopHistory(req.params.AssignedUserId,req.params.date);
     res.send(bill);
 })
 
