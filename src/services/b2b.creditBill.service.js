@@ -214,13 +214,13 @@ const getsalesmanName = async () => {
 }
 
 
-const getShopHistory = async (id,date) => {
+const getShopHistory = async (AssignedUserId,date) => {
 
   let match;
-  if(id != 'null' && date != 'null'){
-      match = [{ AssignedUserId: { $eq: id }}, { date: { $eq: date }}, { active: { $eq: true }}];
+  if(AssignedUserId != 'null' && date != 'null'){
+      match = [{ AssignedUserId: { $eq: AssignedUserId }}, { date: { $eq: date }}, { active: { $eq: true }}];
   }else if (AssignedUserId != 'null') {
-  match = [{ AssignedUserId: { $eq: id } }, { active: { $eq: true } }];
+  match = [{ AssignedUserId: { $eq: AssignedUserId } }, { active: { $eq: true } }];
  
 } else if (date != 'null') {
   match = [{ date: { $eq: date } }, { active: { $eq: true } }];
@@ -229,7 +229,7 @@ const getShopHistory = async (id,date) => {
 }
 
 
-  let values = await creditBillGroup.aggregate([
+  let values = await creditBill.aggregate([
 
     {
       $match: {
@@ -650,14 +650,14 @@ const getDElExecutiveName = async ()=>{
       from: 'roles',
       localField: 'WDEName.userRole',
       foreignField: '_id',
-      pipeline: [
-        {
-          $match: {
-            $and: [{ roleName: { $eq: 'Ward delivery execute(WDE)' } }],
-          },
+    //   pipeline: [
+    //     {
+    //       $match: {
+    //         $and: [{ roleName: { $eq: 'Ward delivery execute(WDE)' } }],
+    //       },
 
-      }
-    ],
+    //   }
+    // ],
       as: 'data'
   }
 },{ $unwind: "$data"},
