@@ -1613,6 +1613,8 @@ const AssignStockGetall = async (date, page) => {
   return { values: values, total: total.length };
 };
 
+const get_Set_price_product = async () => {};
+
 module.exports = {
   createProduct,
   getTrendsData,
@@ -1681,4 +1683,5 @@ module.exports = {
   incommingStockQty,
   AssignStockGetall,
   getDataOnlySetSales,
+  get_Set_price_product,
 };
