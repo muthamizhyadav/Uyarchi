@@ -462,6 +462,10 @@ const getDataOnlySetSales = catchAsync(async (req, res) => {
   res.send(product);
 });
 
+const get_Set_price_product = catchAsync(async (req, res) => {
+  const product = await productService.get_Set_price_product(req.params.page);
+  res.send(product);
+});
 module.exports = {
   createProduct,
   getAllienceBySupplierId,
@@ -529,4 +533,5 @@ module.exports = {
   incommingStockQty,
   AssignStockGetall,
   getDataOnlySetSales,
+  get_Set_price_product,
 };

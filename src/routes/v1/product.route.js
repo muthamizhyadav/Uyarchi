@@ -99,4 +99,6 @@ router.route('/product/existCheck/filter/:key').get(productController.productagg
 router.route('/stock/segregation/:date/:page').get(productController.incommingStockQty);
 router.route('/stock/Assgin/:date/:page').get(productController.AssignStockGetall);
 router.route('/getsetsales/dataOnly/:page').get(productController.getDataOnlySetSales);
+router.route('/setprice/details/:page').get(productController.get_Set_price_product);
+
 module.exports = router;
