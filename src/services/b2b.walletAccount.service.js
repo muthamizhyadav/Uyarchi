@@ -205,6 +205,19 @@ const getShopDetails = async (id) => {
     {
       $unwind: '$streetData',
     },
+   
+    {
+      $lookup: {
+        from:'shoplists',
+        localField: 'shopDatq.SType',
+        foreignField: '_id',
+        as: 'shopTypeDetails'
+  
+      }
+    },
+    {
+      $unwind: '$shopTypeDetails'
+    },
     {
       $project: {
         wardNo: '$wardDatq.wardNo',
@@ -213,6 +226,7 @@ const getShopDetails = async (id) => {
         OwnnerName: '$shopDatq.SOwner',
         mobile: '$shopDatq.mobile',
         address: '$shopDatq.address',
+        shopTypeDetails: "$shopTypeDetails.shopList",
         idProofNo: 1,
         addressProofNo: 1,
         email: 1,
