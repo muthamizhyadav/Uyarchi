@@ -143,7 +143,7 @@ const getProductNAmeFromRandom = async()=>{
           $and: [{ product: { $eq: id } }],
         },
       },
-      { $group: { _id : null, sum : { $sum: "$quantityToDestroy" } }}
+     
       
     ]);
     let total = await destroyStockModel.aggregate([
@@ -152,10 +152,11 @@ const getProductNAmeFromRandom = async()=>{
           $and: [{ product: { $eq: id } }],
         },
       },
+      { $group: { _id : null, sum : { $sum: "$quantityToDestroy" } }}
      
   
     ]);
-    return {values: values, total: total.length };
+    return {values: values, total: total };
   };
 
 
