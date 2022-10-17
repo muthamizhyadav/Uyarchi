@@ -189,6 +189,18 @@ const getAllWardAdminRoleData = async (id) => {
   return data;
 };
 
+// const getAllWardAdminRoleDataCurrent = async (id) => {
+
+//   let data = await WardAdminRole.aggregate([
+//     {
+//       $match: {
+//         $and: [{ b2bUserId: { $eq: id } }],
+//       },
+//     },
+//   ]);
+//   return data;
+// };
+
 const smData = async (date) => {
   let match;
   if (date != 'null') {
@@ -829,6 +841,17 @@ const getUsersWith_skiped = async (id) => {
   return values;
 };
 
+const getDataAll= async () => {
+  let values = await Users.aggregate([
+    {
+      $match: {
+        $and: [ { userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
+      },
+    },
+  ]);
+  return values;
+};
+
 const Return_Assign_To_SalesMan = async (id) => {
   let currentDate = moment().format('YYYY-MM-DD');
   let currentTime = moment().format('hh:mm a');
@@ -840,37 +863,43 @@ const Return_Assign_To_SalesMan = async (id) => {
   return { Message: 'Successfully Re-Assigned to SalesMan' };
 };
 
-const history_Assign_Reaasign_data = async (id,date,idSearch) => {
+const history_Assign_Reaasign_data = async (id,date,idSearch,tempid) => {
   let match ;
- if(date != 'null' && idSearch == 'null') {
+ if(date != 'null' && idSearch == 'null' && tempid == 'null') {
     match = { $or: [
       { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}] },
       { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}] },
     ],}
   }
-  // else if(tempid != 'null' && date == 'null' && idSearch == 'null' ){
-  //   match = { $or: [
-  //     // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
-  //    { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {fromSalesManId:{$eq:tempid}}] },
-  //   ],}
-  // }
-  else if(date != 'null' && idSearch != 'null'){
+  else if(tempid != 'null' && date == 'null' && idSearch == 'null' ){
+    match = { $or: [
+      // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
+     { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {fromSalesManId:{$eq:tempid}}]},
+    ],}
+  }
+  else if(tempid != 'null' && date != 'null' && idSearch == 'null'){
+    match = { $or: [
+      // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
+     { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} },{reAssignDate:{$eq:date}},{fromSalesManId:{$eq:tempid}}] },
+    ],}
+  }
+  else if(date != 'null' && idSearch != 'null' && tempid == 'null'){
     match = { $or: [
       { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}, {salesManId:{$eq:idSearch}}] },
       { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}, {fromSalesManId:{$eq:idSearch}}] },
     ],}
-  }else if(date == 'null' && idSearch != 'null'){
+  }else if(date == 'null' && idSearch != 'null' && tempid == 'null'){
     match = { $or: [
       { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} },{salesManId:{$eq:idSearch}}] },
       { $and: [{ salesManId: {$eq:id} },{ status: { $eq:'tempReassign'} },{fromSalesManId:{$eq:idSearch}}] },
     ],}
   }else {
     match = { $or: [
-      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
+      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, ] },
       { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
     ],}
   }
-
+// console.log(match)
   const data = await SalesManShop.aggregate([
     {
       $match: match
@@ -1024,4 +1053,5 @@ module.exports = {
   WardAdminRoleAsmHistorydata,
   getAllSalesmanShopsCount,
   getAllSalesmanShopsData,
+  getDataAll,
 };

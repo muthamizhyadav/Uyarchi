@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { Roles } = require('../models');
 const ApiError = require('../utils/ApiError');
+const moment = require('moment');
 
 const createRoles = async (rolesBody) => {
   return Roles.create(rolesBody);
@@ -99,6 +100,7 @@ const getroleWardAdmin = async () => {
 
 // notAssignTonneValueSalesmanager
 const notAssignTonneValueSalesmanager = async () => {
+  let serverdate = moment().format('yyy-MM-DD');
   let data = await Roles.aggregate([
     {
       $match: {
@@ -117,7 +119,12 @@ const notAssignTonneValueSalesmanager = async () => {
               let: {
                 localField: '$_id',
               },
-              pipeline: [{ $match: { $expr: { $eq: ['$b2bUserId', '$$localField'] } } }],
+              pipeline: [{ $match: { $expr: { $eq: ['$b2bUserId', '$$localField'] } } }
+            , {
+              $match: {
+                $and: [{ date: { $eq: serverdate } }],
+              },
+            }    ],
               as: 'wardadminrolesData',
             },
           },
