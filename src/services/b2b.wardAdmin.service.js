@@ -3158,7 +3158,7 @@ const mismatchGroup = async (id) => {
   return data;
 };
 
-const Mismatch_Stock_Reconcilation = async () =>{
+ const Mismatch_Stock_Reconcilation = async () =>{
   let count = 0
        const data = await Users.aggregate([
         {
@@ -3171,58 +3171,49 @@ const Mismatch_Stock_Reconcilation = async () =>{
             from: 'wardadmingroups',
             localField: '_id',
             foreignField: 'deliveryExecutiveId',
-            // pipeline: [
-            //   {
-            //     $lookup: {
-            //       from: 'orderassigns',
-            //       localField: '_id',
-            //       foreignField: 'wardAdminGroupID',
-            //       pipeline:[
-                   
-            //       ],
-            //       as: 'orderassignsData',
-            //     },
-            //   },
-            //   {
-            //     $unwind: '$orderassignsData',
-            //   },
-            // ],
-            as: 'wardadmingroupsData',
-          },
-        },
+              pipeline:[
                 {
-          $unwind: '$wardadmingroupsData',
-        },
-
-        {
-          $lookup: {
-            from: 'returnstocks',
-            localField: 'wardadmingroupsData._id',
-            foreignField: 'groupId',
-            pipeline:[
-              {
-                        $match: {
-                          $and: [{ misMatch: { $ne:null }},{ misMatch: { $ne:count }}],
-                        },
+                  $lookup: {
+                    from: 'returnstocks',
+                    let: {
+                               localField: '$_id',
+                          },
+                    pipeline: [{ $match: { $expr: { $eq: ['$groupId', '$$localField'] } } },
+                    {    
+                      $match: {
+                        $and: [{ misMatch: { $ne:null} },{ misMatch: { $ne:count} }],
                       },
-            ],
-            as: 'returnstocksData',
-          },
-        },
-          {
-          $unwind: '$returnstocksData',
-        },
+                    },
+                    ],
 
+                    as: 'returnstocks',
+                  },
+                },
+                {
+                  $match:{
+                     $and: [{ returnstocks: { $type: 'array', $ne: [] } }]
+                  }
+                },
+              ],
+            as: 'wardadmingroupsData',
+              },
+          },
+          // {
+          //   $group: {
+          //     _id: null,
+          //      count: { $sum: { returnstocks: { $type: 'array', $ne: [] } } }
+          //   },
+          // },
         {
           $project: {
             name:1,
-            data:"$returnstocksData",
-            groupId:"$wardadmingroupsData._id"
+            data:{$size:"$wardadmingroupsData.returnstocks"},
+            // groupid:"$wardadmingroupsData._id",
           },
         },
        ])
        return data;
-}		
+ }		
 
 const Mismatch_Stock_Reconcilation1 = async (id) => {
   let data = await wardAdminGroup.aggregate([
