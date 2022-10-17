@@ -29,4 +29,5 @@ router.route('/Return_Assign_To_SalesMan/:id').get(wardAdminRoleController.Retur
 router.route('/history_Assign_Reaasign_data/:id/:date/:idSearch/:tempid').get(wardAdminRoleController.history_Assign_Reaasign_data);
 router.route('/getAllSalesmanShops/data').get(wardAdminRoleController.getAllSalesmanShops);
 router.route('/getAllSalesmanShopsData/data/:id').get(wardAdminRoleController.getAllSalesmanShopsData);
+router.route('/getDataAll/data').get(wardAdminRoleController.getDataAll);
 module.exports = router;

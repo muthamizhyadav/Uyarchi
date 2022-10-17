@@ -87,7 +87,7 @@ const getAll = async (date) => {
       $match: {
         $and: match,
       },
-    },-
+    },
     {
       $lookup: {
         from: 'b2busers',
@@ -841,6 +841,17 @@ const getUsersWith_skiped = async (id) => {
   return values;
 };
 
+const getDataAll= async () => {
+  let values = await Users.aggregate([
+    {
+      $match: {
+        $and: [ { userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
+      },
+    },
+  ]);
+  return values;
+};
+
 const Return_Assign_To_SalesMan = async (id) => {
   let currentDate = moment().format('YYYY-MM-DD');
   let currentTime = moment().format('hh:mm a');
@@ -1042,4 +1053,5 @@ module.exports = {
   WardAdminRoleAsmHistorydata,
   getAllSalesmanShopsCount,
   getAllSalesmanShopsData,
+  getDataAll,
 };
