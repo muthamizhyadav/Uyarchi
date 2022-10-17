@@ -1646,7 +1646,7 @@ const get_Set_price_product = async (page) => {
           {
             $group: {
               _id: null,
-              orderedStock: { $sum: '$finalQuantity' },
+              orderedStock: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
             },
           },
         ],
