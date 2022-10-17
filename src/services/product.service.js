@@ -1616,7 +1616,7 @@ const AssignStockGetall = async (date, page) => {
 const get_Set_price_product = async (page) => {
   const today = moment().format('YYYY-MM-DD');
   const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
-  console.log(yesterday)
+  console.log(yesterday);
   let value = await Product.aggregate([
     {
       $lookup: {
@@ -1677,6 +1677,24 @@ const get_Set_price_product = async (page) => {
       },
     },
     {
+      $lookup: {
+        from: 'pettystockmodels',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          { $match: { date: { $eq: moment().format('DD-MM-YYYY') } } },
+          { $group: { _id: null, pettystock: { $sum: '$pettyStock' } } },
+        ],
+        as: 'pettystockmodels',
+      },
+    },
+    {
+      $unwind: {
+        path: '$pettystockmodels',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $skip: page * 10,
     },
     {
@@ -1686,9 +1704,10 @@ const get_Set_price_product = async (page) => {
   retrunvalue = [];
   value.forEach(async (e) => {
     let availablestock = 0;
+    let pettystockmodels = e.pettystockmodels != null ? e.pettystockmodels.pettystock : 0;
     if (e.usablestocks != null && e.productorderclones != null) {
       let orderstock = e.productorderclones.orderedStock != null ? e.productorderclones.orderedStock : 0;
-      availablestock = e.usablestocks.totalStock - orderstock;
+      availablestock = e.usablestocks.totalStock - (orderstock + pettystockmodels);
     }
     if (e.usablestocks != null && e.productorderclones == null) {
       availablestock = e.usablestocks.totalStock;
