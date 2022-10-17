@@ -244,11 +244,13 @@ const getAlldataSalesMan = async (page) =>{
         from: 'b2busers',
         localField: '_id',
         foreignField: 'userRole',
-        pipeline:[ {
+        pipeline:[ 
+          {
           $match: {
             $or: [{ salesManagerStatus: { $ne:'Assign' } },{ salesManagerStatus: { $eq:null} },{ salesManagerStatus: { $eq:'Reassign'} }],
           },
-        },],
+        }    
+      ],
         as: 'b2busersData',
       },
     },
