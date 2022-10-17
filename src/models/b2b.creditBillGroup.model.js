@@ -11,18 +11,18 @@ const creditBillGroupSchema = mongoose.Schema({
     groupId: {
         type: String
     },
-    totalAmount:{
-        type: String,
-    },
-    TotalBills: {
-        type: String,
-    },
+    // totalAmount:{
+    //     type: String,
+    // },
+    // TotalBills: {
+    //     type: String,
+    // },
     // DeliveryExecutiveId: {
     //     type: String,
     // },
-    salesmanId: {
-        type: String
-    },
+    // salesmanId: {
+    //     type: String
+    // },
     AssignedUserId: {
         type: String
     },
@@ -36,6 +36,15 @@ const creditBillGroupSchema = mongoose.Schema({
         type: Array,
         default: [],
       },
+      active: {
+        type: Boolean,
+        default: true,
+      },
+      archive: {
+        type: Boolean,
+        default: false,
+      },
+
    
 });
 

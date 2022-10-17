@@ -20,7 +20,7 @@ const getsalesmanName = catchAsync(async (req, res) => {
 })
 
 const getShopHistory = catchAsync(async (req, res) => {
-    const bill = await creditBillService.getShopHistory(req.params.page);
+    const bill = await creditBillService.getShopHistory(req.params.AssignedUserId,req.params.date);
     res.send(bill);
 })
 
@@ -59,6 +59,34 @@ const updateAssigned = catchAsync(async (req, res) => {
     res.send(approval);
   });
 
+  const getDElExecutiveName = catchAsync(async (req, res) => {
+    const delName = await creditBillService.getDElExecutiveName();
+    res.send(delName);
+  })
+  const getsalesName = catchAsync(async (req, res) => {
+    const delName = await creditBillService.getsalesName();
+    res.send(delName);
+  })
+  const getNotAssignData = catchAsync(async (req, res) => {
+    const delName = await creditBillService.getNotAssignData(req.params.page);
+    res.send(delName);
+  })
+
+  const getShopPendingByPassingShopId = catchAsync(async (req, res) => {
+    const delName = await creditBillService.getShopPendingByPassingShopId(req.params.id);
+    res.send(delName);
+  })
+
+  const getDeliDetails = catchAsync(async (req, res) => {
+    const name = await creditBillService.getDeliDetails(req.params.AssignedUserId);
+    res.send(name);
+  })
+
+  const  getFineAccount= catchAsync(async (req, res) => {
+    const name = await creditBillService.getFineAccount(req.params.id);
+    res.send(name);
+  })
+
 
 module.exports = {
 
@@ -73,4 +101,10 @@ module.exports = {
     getcreditBillDetailsByPassExecID,
     updateAssigned,
     getHistoryByPassOrderId,
+    getDElExecutiveName,
+    getsalesName,
+    getNotAssignData,
+    getShopPendingByPassingShopId,
+    getDeliDetails,
+    getFineAccount,
 }

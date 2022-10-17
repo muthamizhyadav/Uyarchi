@@ -245,6 +245,7 @@ const getPEttyCashQuantity = catchAsync(async (req, res) => {
 });
 
 const returnStock = catchAsync(async (req, res) => {
+  console.log(req.params.id)
   const returnStock = await wardAdminGroupService.returnStock(req.params.id);
   res.send(returnStock);
 });
@@ -289,6 +290,11 @@ const finishingAccount = catchAsync(async (req, res) => {
 
 const submitDispute = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.submitDispute(req.params.id,req.body);
+  res.send(details);
+});
+
+const returnStockData = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.returnStockData(req.params.id);
   res.send(details);
 });
 
@@ -370,4 +376,5 @@ module.exports = {
 
   finishingAccount,
   submitDispute,
+  returnStockData,
 };

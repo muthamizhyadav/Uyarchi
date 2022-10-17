@@ -3157,6 +3157,124 @@ const mismatchGroup = async (id) => {
   ]);
   return data;
 };
+
+ const Mismatch_Stock_Reconcilation = async () =>{
+  let count = 0
+       const data = await Users.aggregate([
+        {
+          $match: {
+            $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' } }],
+          },
+        },
+        {
+          $lookup: {
+            from: 'wardadmingroups',
+            localField: '_id',
+            foreignField: 'deliveryExecutiveId',
+              pipeline:[
+                {
+                  $lookup: {
+                    from: 'returnstocks',
+                    let: {
+                               localField: '$_id',
+                          },
+                    pipeline: [{ $match: { $expr: { $eq: ['$groupId', '$$localField'] } } },
+                    {    
+                      $match: {
+                        $and: [{ misMatch: { $ne:null} },{ misMatch: { $ne:count} }],
+                      },
+                    },
+                    ],
+
+                    as: 'returnstocks',
+                  },
+                },
+                {
+                  $match:{
+                     $and: [{ returnstocks: { $type: 'array', $ne: [] } }]
+                  }
+                },
+              ],
+            as: 'wardadmingroupsData',
+              },
+          },
+          // {
+          //   $group: {
+          //     _id: null,
+          //      count: { $sum: { returnstocks: { $type: 'array', $ne: [] } } }
+          //   },
+          // },
+        {
+          $project: {
+            name:1,
+            data:{$size:"$wardadmingroupsData.returnstocks"},
+            // groupid:"$wardadmingroupsData._id",
+          },
+        },
+       ])
+       return data;
+ }		
+
+const Mismatch_Stock_Reconcilation1 = async (id) => {
+  let data = await wardAdminGroup.aggregate([
+    {
+      $match:{
+        $and: [{ deliveryExecutiveId: { $eq:id }}],
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },  
+{
+$unwind: '$b2busers',
+},
+
+    {
+      $lookup: {
+        from: 'returnstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline:[
+          {
+                    $match: {
+                      $and: [{ misMatch: { $ne:null }}],
+                    },
+                  },
+                  {
+                    $group: {
+                      _id: null,
+                      total: { $sum: '$misMatch' },
+                    },
+                  },
+        ],
+        as: 'returnstocksData',
+      },
+    },
+    {
+      $unwind: '$returnstocksData',
+      },
+    
+    {
+      $project: {
+        name:"$b2busers.name",
+        groupId:1,
+        mismatch:"$returnstocksData.total",
+        assignDate:1,
+      },
+    },
+    // {
+    //       $match: {
+    //       $and: [{ mismatch: { $type: 'array', $ne: [] } }] 
+    //   },
+    // },
+  ])
+  return data ;
+}
 module.exports = {
   getdetails,
   getproductdetails,
@@ -3189,4 +3307,6 @@ module.exports = {
   getdetailsDataStatuslasped,
   mismatchCount,
   mismatchGroup,
+  Mismatch_Stock_Reconcilation,
+  Mismatch_Stock_Reconcilation1
 };

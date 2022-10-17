@@ -218,6 +218,16 @@ const mismatchGroup = catchAsync(async (req, res) => {
   res.send(orderAssign);
 });
 
+const Mismatch_Stock_Reconcilation = catchAsync(async (req, res) => {
+  const data = await wardAdminService.Mismatch_Stock_Reconcilation();
+  res.send(data);
+});
+
+const Mismatch_Stock_Reconcilation1 = catchAsync(async (req, res) => {
+  const data = await wardAdminService.Mismatch_Stock_Reconcilation1(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   getDetails,
   getproductDetails,
@@ -252,4 +262,6 @@ module.exports = {
   wardloadExecutivebtgroup,
   mismatchCount,
   mismatchGroup,
+  Mismatch_Stock_Reconcilation,
+  Mismatch_Stock_Reconcilation1,
 };
