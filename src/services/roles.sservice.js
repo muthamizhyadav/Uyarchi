@@ -244,11 +244,34 @@ const getAlldataSalesMan = async (page) =>{
         from: 'b2busers',
         localField: '_id',
         foreignField: 'userRole',
-        pipeline:[ {
-          $match: {
-            $or: [{ salesManagerStatus: { $ne:'Assign' } },{ salesManagerStatus: { $eq:null} },{ salesManagerStatus: { $eq:'Reassign'} }],
+        pipeline:[ 
+        //   {
+        //   $match: {
+        //     $or: [{ salesManagerStatus: { $ne:'Assign' } },{ salesManagerStatus: { $eq:null} },{ salesManagerStatus: { $eq:'Reassign'} }],
+        //   },
+        // },
+        {
+          $lookup: {
+            from: 'salesmanshops',
+            let: {
+                      localField: '$_id',
+                    },
+                    pipeline: [{ $match: { $expr: { $eq: ['$fromSalesManId', '$$localField'] } } }],
+            as: 'salesmanshopsData',
           },
-        },],
+        },
+        // {
+        //       $unwind: {
+        //         path: '$salesmanshopsData',
+        //         preserveNullAndEmptyArrays: true,
+        //       },
+        //     },
+        {
+          $match:{
+             $and: [{ salesmanshopsData: { $type: 'array', $eq: [] } }]
+          }
+        },
+      ],
         as: 'b2busersData',
       },
     },
@@ -263,6 +286,7 @@ const getAlldataSalesMan = async (page) =>{
         email:"$b2busersData.email",
         roleName: 1,
         _id: 1,
+        // data:"$b2busersData.salesmanshopsData"
       },
     },
     { $skip: 10 * page },
