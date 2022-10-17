@@ -68,12 +68,25 @@ const getWallet = async (page) => {
         as: 'shopDatq',
     },
   },
+
   {
       $unwind: '$shopDatq'
     },
     {
+      $lookup: {
+        from:'shoplists',
+        localField: 'shopDatq.SType',
+        foreignField: '_id',
+        as: 'shopTypeDetails'
+  
+      }
+    },
+    {
+      $unwind: '$shopTypeDetails'
+    },
+    {
       $project: {
-        type:1,
+        // type:1,
         shopName:1,
         date:1,
         idProofNo:1,
@@ -81,7 +94,8 @@ const getWallet = async (page) => {
         idProof:1,
         addressProof:1,
         email:1,
-        shopname:"$shopDatq.SName"
+        shopname:"$shopDatq.SName",
+        type: '$shopTypeDetails.shopList'
 
     }
   },

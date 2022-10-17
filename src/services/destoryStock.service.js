@@ -113,7 +113,7 @@ const getProductNAmeFromRandom = async()=>{
 
   const updateProduct = async(id,updatebody  )=>{
     let currentDate = moment().format('YYYY-MM-DD');
-    let currenttime =  moment().format('HHmm');
+    let currenttime =  moment().format('hh:mm a');
     let updateProduct = await randomStockModel.findById(id);
     if (!updateProduct) {
       throw new ApiError(httpStatus.NOT_FOUND, ' Not Found');
@@ -143,6 +143,7 @@ const getProductNAmeFromRandom = async()=>{
           $and: [{ product: { $eq: id } }],
         },
       },
+      { $group: { _id : null, sum : { $sum: "$quantityToDestroy" } }}
       
     ]);
     let total = await destroyStockModel.aggregate([
@@ -152,9 +153,9 @@ const getProductNAmeFromRandom = async()=>{
         },
       },
      
-      { $group: { _id : null, sum : { $sum: "$quantityToDestroy" } }}
+  
     ]);
-    return {values: values, total: total };
+    return {values: values, total: total.length };
   };
 
 
