@@ -138,6 +138,9 @@ const shopSchema = mongoose.Schema({
   lapsedOrder: {
     type: String,
   },
+  DA_Comment: {
+    type: String,
+  },
 });
 
 // assignSchema.plugin(toJSON);
