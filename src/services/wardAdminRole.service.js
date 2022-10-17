@@ -189,6 +189,18 @@ const getAllWardAdminRoleData = async (id) => {
   return data;
 };
 
+// const getAllWardAdminRoleDataCurrent = async (id) => {
+
+//   let data = await WardAdminRole.aggregate([
+//     {
+//       $match: {
+//         $and: [{ b2bUserId: { $eq: id } }],
+//       },
+//     },
+//   ]);
+//   return data;
+// };
+
 const smData = async (date) => {
   let match;
   if (date != 'null') {
