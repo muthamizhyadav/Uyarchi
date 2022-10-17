@@ -93,6 +93,7 @@ const getAll = async (product, date) => {
         quantityToDestroy:1,
         status:1,
         totalDestroyCount: {  $sum:"$destroystocksData.quantityToDestroy"},
+        
       //   equal : {
       //     $ne : [{$sum:"$destroystocksData.quantityToDestroy"}, "$NSFW_Wastage"] 
       // },

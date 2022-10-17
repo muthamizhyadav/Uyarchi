@@ -85,6 +85,11 @@ const updateAssigned = catchAsync(async (req, res) => {
   const  getFineAccount= catchAsync(async (req, res) => {
     const name = await creditBillService.getFineAccount(req.params.id);
     res.send(name);
+  });
+
+  const getDeliveryExecutiveName = catchAsync(async (req, res) => {
+    const name = await creditBillService.getDeliveryExecutiveName();
+    res.send(name);
   })
 
 
@@ -107,4 +112,5 @@ module.exports = {
     getShopPendingByPassingShopId,
     getDeliDetails,
     getFineAccount,
+    getDeliveryExecutiveName,
 }
