@@ -444,9 +444,10 @@ const createSalesmanShop = async (body) => {
 const getSalesman = async (id) => {
   let data = await SalesManShop.aggregate([
     {
-      $match: {
-        $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'Assign' } }],
-      },
+      $match:{ $or: [
+        { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
+        { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
+      ],}
     },
     {
       $lookup: {
