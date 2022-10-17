@@ -1346,7 +1346,8 @@ const getFineAccount = async (id)=>{
         foreignField: 'creditBillId',
         as: 'creditBillData'
       }
-    },{ $unwind: "$creditBillData"},
+    },
+    { $unwind: "$creditBillData"},
       // {
       //     $unwind: {
       //       path: '$creditBillData',

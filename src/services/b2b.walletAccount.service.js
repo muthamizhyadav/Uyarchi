@@ -81,22 +81,39 @@ const getWallet = async (page) => {
         as: 'shopDatq',
       },
     },
+
     {
       $unwind: '$shopDatq',
     },
     {
-      $project: {
-        type: 1,
-        shopName: 1,
-        date: 1,
-        idProofNo: 1,
-        addressProofNo: 1,
-        idProof: 1,
-        addressProof: 1,
-        email: 1,
-        shopname: '$shopDatq.SName',
-      },
+      $lookup: {
+        from:'shoplists',
+        localField: 'shopDatq.SType',
+        foreignField: '_id',
+        as: 'shopTypeDetails'
+  
+      }
     },
+    {
+      $unwind: '$shopTypeDetails'
+    },
+    {
+      $project: {
+
+        // type:1,
+        shopName:1,
+        date:1,
+        idProofNo:1,
+        addressProofNo:1,
+        idProof:1,
+        addressProof:1,
+        email:1,
+        shopname:"$shopDatq.SName",
+        type: '$shopTypeDetails.shopList',
+      }
+    },
+
+
 
     { $skip: 10 * page },
     { $limit: 10 },
@@ -112,6 +129,18 @@ const getWallet = async (page) => {
     },
     {
       $unwind: '$shopDatq',
+    },
+    {
+      $lookup: {
+        from:'shoplists',
+        localField: 'shopDatq.SType',
+        foreignField: '_id',
+        as: 'shopTypeDetails'
+  
+      }
+    },
+    {
+      $unwind: '$shopTypeDetails'
     },
   ]);
   return { wallet: wallet, total: total.length };
