@@ -12,7 +12,7 @@ let datenow = moment(new Date()).format('DD-MM-YYYY');
 const ReceivedProduct = require('../models/receivedProduct.model');
 const { MarketClone } = require('../models/market.model');
 const Trendproductsclones = require('../models/trendsProduct.clocne.model');
-
+const { ProductorderClone } = require('../models/shopOrder.model');
 const createProduct = async (productBody) => {
   let { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime, maxBidAomunt, minBidAmount } =
     productBody;
@@ -1615,6 +1615,8 @@ const AssignStockGetall = async (date, page) => {
 
 const get_Set_price_product = async (page) => {
   const today = moment().format('YYYY-MM-DD');
+  const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
+  console.log(yesterday)
   let value = await Product.aggregate([
     {
       $lookup: {
@@ -1623,9 +1625,6 @@ const get_Set_price_product = async (page) => {
         foreignField: 'productid',
         pipeline: [
           {
-            $match: { date: { $eq: today } },
-          },
-          {
             $lookup: {
               from: 'shoporderclones',
               localField: 'orderId',
@@ -1633,7 +1632,10 @@ const get_Set_price_product = async (page) => {
               pipeline: [
                 {
                   $match: {
-                    status: { $ne: 'Rejected' },
+                    $or: [
+                      { date: { $eq: today }, status: { $ne: 'Rejected' }, delivery_type: { $eq: 'IMD' } },
+                      { date: { $eq: yesterday }, status: { $ne: 'Rejected' }, delivery_type: { $eq: 'NDD' } },
+                    ],
                   },
                 },
               ],
@@ -1646,7 +1648,7 @@ const get_Set_price_product = async (page) => {
           {
             $group: {
               _id: null,
-              orderedStock: { $sum: '$finalQuantity' },
+              orderedStock: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
             },
           },
         ],
@@ -1654,14 +1656,17 @@ const get_Set_price_product = async (page) => {
       },
     },
     {
-      $unwind: '$productorderclones',
+      $unwind: {
+        path: '$productorderclones',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $lookup: {
         from: 'usablestocks',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [{ $match: { date: { $eq: today } } }],
+        pipeline: [{ $match: { date: { $eq: moment().format('DD-MM-YYYY') } } }],
         as: 'usablestocks',
       },
     },
@@ -1684,6 +1689,9 @@ const get_Set_price_product = async (page) => {
     if (e.usablestocks != null && e.productorderclones != null) {
       let orderstock = e.productorderclones.orderedStock != null ? e.productorderclones.orderedStock : 0;
       availablestock = e.usablestocks.totalStock - orderstock;
+    }
+    if (e.usablestocks != null && e.productorderclones == null) {
+      availablestock = e.usablestocks.totalStock;
     }
     retrunvalue.push({ ...e, ...{ availablestock: availablestock } });
   });

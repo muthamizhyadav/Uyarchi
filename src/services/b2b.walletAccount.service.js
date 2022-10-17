@@ -55,7 +55,6 @@ const getshopName = async () => {
         type: 1,
         wardNo: '$wardData.wardNo',
         streetName: '$streetData.street',
-        // walletss: '$wallets',
         wallets: {
           $arrayElemAt: ['$wallets', 0],
         },
