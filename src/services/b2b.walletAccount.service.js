@@ -25,7 +25,7 @@ const getshopName = async () => {
       },
     },
     {
-      $unwind: '$wardData'
+      $unwind: '$wardData',
     },
     {
       $lookup: {
@@ -36,9 +36,16 @@ const getshopName = async () => {
       },
     },
     {
-      $unwind: '$streetData'
+      $unwind: '$streetData',
     },
-
+    {
+      $lookup: {
+        from: 'wallets',
+        localField: '_id',
+        foreignField: 'shopName',
+        as: 'wallets',
+      },
+    },
     {
       $project: {
         SName: 1,
@@ -48,7 +55,14 @@ const getshopName = async () => {
         type: 1,
         wardNo: '$wardData.wardNo',
         streetName: '$streetData.street',
+        // walletss: '$wallets',
+        wallets: {
+          $arrayElemAt: ['$wallets', 0],
+        },
       },
+    },
+    {
+      $match: { wallets: { $eq: null } },
     },
   ]);
   return shopname;
@@ -66,28 +80,27 @@ const getWallet = async (page) => {
         localField: 'shopName',
         foreignField: '_id',
         as: 'shopDatq',
+      },
     },
-  },
-  {
-      $unwind: '$shopDatq'
+    {
+      $unwind: '$shopDatq',
     },
     {
       $project: {
-        type:1,
-        shopName:1,
-        date:1,
-        idProofNo:1,
-        addressProofNo:1,
-        idProof:1,
-        addressProof:1,
-        email:1,
-        shopname:"$shopDatq.SName"
+        type: 1,
+        shopName: 1,
+        date: 1,
+        idProofNo: 1,
+        addressProofNo: 1,
+        idProof: 1,
+        addressProof: 1,
+        email: 1,
+        shopname: '$shopDatq.SName',
+      },
+    },
 
-    }
-  },
-  
-    { $skip: 10 * page }, 
-      { $limit: 10 }
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
   let total = await walletModel.aggregate([
     {
@@ -96,10 +109,10 @@ const getWallet = async (page) => {
         localField: 'shopName',
         foreignField: '_id',
         as: 'shopDatq',
+      },
     },
-  },
-  {
-      $unwind: '$shopDatq'
+    {
+      $unwind: '$shopDatq',
     },
   ]);
   return { wallet: wallet, total: total.length };
@@ -124,7 +137,7 @@ const deleteWalletById = async (id) => {
   await wallet.save();
 };
 
-const getShopDetails = async (id)=>{
+const getShopDetails = async (id) => {
   let values = await walletModel.aggregate([
     {
       $match: {
@@ -133,60 +146,53 @@ const getShopDetails = async (id)=>{
     },
     {
       $lookup: {
-        from:'b2bshopclones',
-        localField:'shopName',
+        from: 'b2bshopclones',
+        localField: 'shopName',
         foreignField: '_id',
-        as:'shopDatq',
-
-      }
+        as: 'shopDatq',
+      },
     },
     {
-      $unwind: '$shopDatq'
+      $unwind: '$shopDatq',
     },
     {
       $lookup: {
-        from:'wards',
-        localField:'shopDatq.Wardid',
+        from: 'wards',
+        localField: 'shopDatq.Wardid',
         foreignField: '_id',
-        as:'wardDatq',
-
-      }
+        as: 'wardDatq',
+      },
     },
     {
-      $unwind: '$wardDatq'
+      $unwind: '$wardDatq',
     },
     {
       $lookup: {
-        from:'streets',
-        localField:'shopDatq.Strid',
+        from: 'streets',
+        localField: 'shopDatq.Strid',
         foreignField: '_id',
-        as:'streetData',
-
-      }
+        as: 'streetData',
+      },
     },
     {
-      $unwind: '$streetData'
+      $unwind: '$streetData',
     },
     {
-      $project:{
-        wardNo:"$wardDatq.wardNo",
-        streetname:"$streetData.street",
-        shopType:"$shopDatq.type",
-          OwnnerName:"$shopDatq.SOwner",
-          mobile:"$shopDatq.mobile",
-          address:"$shopDatq.address",
-          idProofNo:1,
-          addressProofNo:1, 
-          email: 1,
-
-
-      }
-    }
-
+      $project: {
+        wardNo: '$wardDatq.wardNo',
+        streetname: '$streetData.street',
+        shopType: '$shopDatq.type',
+        OwnnerName: '$shopDatq.SOwner',
+        mobile: '$shopDatq.mobile',
+        address: '$shopDatq.address',
+        idProofNo: 1,
+        addressProofNo: 1,
+        email: 1,
+      },
+    },
   ]);
   return values;
-}
-
+};
 
 module.exports = {
   createWallet,
