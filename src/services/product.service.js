@@ -1654,14 +1654,17 @@ const get_Set_price_product = async (page) => {
       },
     },
     {
-      $unwind: '$productorderclones',
+      $unwind: {
+        path: '$productorderclones',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $lookup: {
         from: 'usablestocks',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [{ $match: { date: { $eq: today } } }],
+        pipeline: [{ $match: { date: { $eq: moment().format('DD-MM-YYYY') } } }],
         as: 'usablestocks',
       },
     },
@@ -1684,6 +1687,9 @@ const get_Set_price_product = async (page) => {
     if (e.usablestocks != null && e.productorderclones != null) {
       let orderstock = e.productorderclones.orderedStock != null ? e.productorderclones.orderedStock : 0;
       availablestock = e.usablestocks.totalStock - orderstock;
+    }
+    if (e.usablestocks != null && e.productorderclones == null) {
+      availablestock = e.usablestocks.totalStock;
     }
     retrunvalue.push({ ...e, ...{ availablestock: availablestock } });
   });
