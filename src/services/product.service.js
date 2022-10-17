@@ -1613,7 +1613,82 @@ const AssignStockGetall = async (date, page) => {
   return { values: values, total: total.length };
 };
 
-const get_Set_price_product = async () => {};
+const get_Set_price_product = async (page) => {
+  const today = moment().format('YYYY-MM-DD');
+  let value = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          {
+            $match: { date: { $eq: today } },
+          },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    status: { $ne: 'Rejected' },
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+          {
+            $group: {
+              _id: null,
+              orderedStock: { $sum: '$finalQuantity' },
+            },
+          },
+        ],
+        as: 'productorderclones',
+      },
+    },
+    {
+      $unwind: '$productorderclones',
+    },
+    {
+      $lookup: {
+        from: 'usablestocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [{ $match: { date: { $eq: today } } }],
+        as: 'usablestocks',
+      },
+    },
+    {
+      $unwind: {
+        path: '$usablestocks',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $skip: page * 10,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  retrunvalue = [];
+  value.forEach(async (e) => {
+    let availablestock = 0;
+    if (e.usablestocks != null && e.productorderclones != null) {
+      let orderstock = e.productorderclones.orderedStock != null ? e.productorderclones.orderedStock : 0;
+      availablestock = e.usablestocks.totalStock - orderstock;
+    }
+    retrunvalue.push({ ...e, ...{ availablestock: availablestock } });
+  });
+  return { value: retrunvalue, total: await Product.find().count() };
+};
 
 module.exports = {
   createProduct,
