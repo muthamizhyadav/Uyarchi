@@ -18,23 +18,24 @@ const createwardAdminRole = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   let values = {};
-   const value = await WardAdminRole.find({b2bUserId:body.b2bUserId});
-   if(value.length == 0){
+   const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, date:serverdate});
+   if(value.length != 0){
+
+  value.forEach(async (e) => {
+    e.targetValue += parseInt(body.targetValue)
+    e.targetTonne += parseInt(body.targetTonne)
+    e.startingValue += parseInt(body.targetValue)
+    e.startingTonne += parseInt(body.targetTonne) 
+    await WardAdminRole.updateMany({b2bUserId:e.b2bUserId},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })  
+  });
+  }
+    else{
    values = {
          ...body,
        ...{ date: serverdate, time: time, startingValue: parseInt(body.targetValue), startingTonne: parseInt(body.targetTonne),},
      }
      await WardAdminRole.create(values)
-     
-  }
-    else{
-        value.forEach(async (e) => {
-        e.targetValue += parseInt(body.targetValue)
-        e.targetTonne += parseInt(body.targetTonne)
-        e.startingValue += parseInt(body.targetValue)
-        e.startingTonne += parseInt(body.targetTonne) 
-        await WardAdminRole.updateMany({b2bUserId:e.b2bUserId},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })  
-      });
+       
       }
          
   // const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, unit:body.unit});
@@ -846,7 +847,14 @@ const history_Assign_Reaasign_data = async (id,date,idSearch) => {
       { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}] },
       { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}] },
     ],}
-  }else if(date != 'null' && idSearch != 'null'){
+  }
+  // else if(tempid != 'null' && date == 'null' && idSearch == 'null' ){
+  //   match = { $or: [
+  //     // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
+  //    { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {fromSalesManId:{$eq:tempid}}] },
+  //   ],}
+  // }
+  else if(date != 'null' && idSearch != 'null'){
     match = { $or: [
       { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}, {salesManId:{$eq:idSearch}}] },
       { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}, {fromSalesManId:{$eq:idSearch}}] },
