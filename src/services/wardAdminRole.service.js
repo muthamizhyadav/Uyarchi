@@ -87,7 +87,7 @@ const getAll = async (date) => {
       $match: {
         $and: match,
       },
-    },
+    },-
     {
       $lookup: {
         from: 'b2busers',
@@ -852,37 +852,43 @@ const Return_Assign_To_SalesMan = async (id) => {
   return { Message: 'Successfully Re-Assigned to SalesMan' };
 };
 
-const history_Assign_Reaasign_data = async (id,date,idSearch) => {
+const history_Assign_Reaasign_data = async (id,date,idSearch,tempid) => {
   let match ;
- if(date != 'null' && idSearch == 'null') {
+ if(date != 'null' && idSearch == 'null' && tempid == 'null') {
     match = { $or: [
       { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}] },
       { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}] },
     ],}
   }
-  // else if(tempid != 'null' && date == 'null' && idSearch == 'null' ){
-  //   match = { $or: [
-  //     // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
-  //    { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {fromSalesManId:{$eq:tempid}}] },
-  //   ],}
-  // }
-  else if(date != 'null' && idSearch != 'null'){
+  else if(tempid != 'null' && date == 'null' && idSearch == 'null' ){
+    match = { $or: [
+      // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
+     { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {fromSalesManId:{$eq:tempid}}]},
+    ],}
+  }
+  else if(tempid != 'null' && date != 'null' && idSearch == 'null'){
+    match = { $or: [
+      // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
+     { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} },{reAssignDate:{$eq:date}},{fromSalesManId:{$eq:tempid}}] },
+    ],}
+  }
+  else if(date != 'null' && idSearch != 'null' && tempid == 'null'){
     match = { $or: [
       { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}, {salesManId:{$eq:idSearch}}] },
       { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}, {fromSalesManId:{$eq:idSearch}}] },
     ],}
-  }else if(date == 'null' && idSearch != 'null'){
+  }else if(date == 'null' && idSearch != 'null' && tempid == 'null'){
     match = { $or: [
       { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} },{salesManId:{$eq:idSearch}}] },
       { $and: [{ salesManId: {$eq:id} },{ status: { $eq:'tempReassign'} },{fromSalesManId:{$eq:idSearch}}] },
     ],}
   }else {
     match = { $or: [
-      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
+      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, ] },
       { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
     ],}
   }
-
+// console.log(match)
   const data = await SalesManShop.aggregate([
     {
       $match: match
