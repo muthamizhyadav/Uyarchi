@@ -1024,6 +1024,19 @@ const getAllSalesmanShopsData = async (id) =>{
   ])
   return data ;
 }
+
+const getAllAsmCurrentdata = async (id) =>{
+  let serverdate = moment().format('YYYY-MM-DD');
+  const data = await WardAdminRole.aggregate([
+    {
+      $match: {
+        $and: [{ b2bUserId: { $eq:id} },{ date: { $eq:serverdate} }],
+      },
+    },
+  ])
+  return data ;
+     
+}
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -1054,4 +1067,5 @@ module.exports = {
   getAllSalesmanShopsCount,
   getAllSalesmanShopsData,
   getDataAll,
+  getAllAsmCurrentdata,
 };

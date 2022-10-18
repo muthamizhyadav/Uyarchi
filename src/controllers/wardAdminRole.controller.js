@@ -151,6 +151,11 @@ const getDataAll = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.getDataAll(req.params.id);
   res.send(data);
 });
+
+const getAllAsmCurrentdata = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.getAllAsmCurrentdata(req.params.id);
+  res.send(data);
+});
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -180,4 +185,5 @@ module.exports = {
   getAllSalesmanShops,
   getAllSalesmanShopsData,
   getDataAll,
+  getAllAsmCurrentdata,
 };
