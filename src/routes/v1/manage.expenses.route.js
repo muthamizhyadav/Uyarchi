@@ -3,6 +3,6 @@ const manageExpenseController = require('../../controllers/manage.expenses.contr
 const router = express.Router();
 
 router.route('/').post(manageExpenseController.createManageExpenses);
-router.route('/:page').get(manageExpenseController.getAllManageExpenses);
+router.route('/:date/:page').get(manageExpenseController.getAllManageExpenses);
 
 module.exports = router;

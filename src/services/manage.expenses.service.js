@@ -9,8 +9,13 @@ const createManageExpenses = async (body) => {
   return manageExpense;
 };
 
-const getAllManageExpenses = async (page) => {
+const getAllManageExpenses = async (date, page) => {
   let values = await ManageExpenses.aggregate([
+    {
+      $match: {
+        date: date,
+      },
+    },
     {
       $sort: { created: -1 },
     },
