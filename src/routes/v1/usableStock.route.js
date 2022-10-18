@@ -6,4 +6,6 @@ router.route('/').post(usableStockController.createUsableStock).get(usableStockC
 
 router.route('/:id').get(usableStockController.getUsableStockById).put(usableStockController.createUsableStock);
 router.route('/assign/:id').get(usableStockController.getAssignStockbyId);
+router.route('/get/stocks').get(usableStockController.getStocks);
+
 module.exports = router;

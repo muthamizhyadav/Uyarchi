@@ -30,10 +30,17 @@ const getAssignStockbyId = catchAsync(async (req, res) => {
   }
   res.send(usable[0]);
 });
+
+const getStocks = catchAsync(async (req, res) => {
+  const usable = await usableStockService.getStocks();
+  res.send(usable);
+});
+
 module.exports = {
   createUsableStock,
   getAllUsableStock,
   getUsableStockById,
   updateUsableStockbyId,
   getAssignStockbyId,
+  getStocks,
 };
