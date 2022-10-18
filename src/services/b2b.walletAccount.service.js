@@ -100,7 +100,7 @@ const getWallet = async (page) => {
     {
       $project: {
 
-        // type:1,
+        type:1,
         shopName:1,
         date:1,
         idProofNo:1,
@@ -109,7 +109,7 @@ const getWallet = async (page) => {
         addressProof:1,
         email:1,
         shopname:"$shopDatq.SName",
-        type: '$shopTypeDetails.shopList',
+        types: '$shopTypeDetails.shopList',
       }
     },
 
@@ -230,6 +230,7 @@ const getShopDetails = async (id) => {
         idProofNo: 1,
         addressProofNo: 1,
         email: 1,
+        shopname: "$shopDatq.SName"
       },
     },
   ]);
