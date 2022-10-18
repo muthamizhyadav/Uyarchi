@@ -12,7 +12,7 @@ const createManageExpenses = async (body) => {
 const getAllManageExpenses = async (page) => {
   let values = await ManageExpenses.aggregate([
     {
-      $sort: { date: -1 },
+      $sort: { created: -1 },
     },
     {
       $skip: 10 * page,
