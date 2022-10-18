@@ -7,6 +7,7 @@ const {
   SalesManShop,
   WithoutAsmSalesman,
   WardAdminRoleAsmHistory,
+  WardAdminRoleHistory,
 } = require('../models/wardAdminRole.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
@@ -18,9 +19,13 @@ const createwardAdminRole = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   let values = {};
+  let values1 = {
+    ...body,
+  ...{ date: serverdate, time: time},
+}
+  await WardAdminRoleHistory.create(values1)
    const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, date:serverdate});
    if(value.length != 0){
-
   value.forEach(async (e) => {
     e.targetValue += parseInt(body.targetValue)
     e.targetTonne += parseInt(body.targetTonne)
@@ -35,8 +40,7 @@ const createwardAdminRole = async (body) => {
        ...{ date: serverdate, time: time, startingValue: parseInt(body.targetValue), startingTonne: parseInt(body.targetTonne),},
      }
      await WardAdminRole.create(values)
-       
-      }
+       }
          
   // const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, unit:body.unit});
   // if(value.length == 0)
@@ -1024,6 +1028,19 @@ const getAllSalesmanShopsData = async (id) =>{
   ])
   return data ;
 }
+
+const getAllAsmCurrentdata = async (id) =>{
+  let serverdate = moment().format('YYYY-MM-DD');
+  const data = await WardAdminRoleHistory.aggregate([
+    {
+      $match: {
+        $and: [{ b2bUserId: { $eq:id} },{ date: { $eq:serverdate} }],
+      },
+    },
+  ])
+  return data ;
+     
+}
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -1054,4 +1071,5 @@ module.exports = {
   getAllSalesmanShopsCount,
   getAllSalesmanShopsData,
   getDataAll,
+  getAllAsmCurrentdata,
 };

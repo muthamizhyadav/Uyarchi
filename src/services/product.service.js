@@ -761,11 +761,12 @@ const AccountDetails = async (date, page) => {
       },
     },
     {
-      $limit: 10,
-    },
-    {
       $skip: 10 * page,
     },
+    {
+      $limit: 10,
+    },
+
     {
       $project: {
         _id: 1,
