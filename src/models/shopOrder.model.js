@@ -355,7 +355,7 @@ const productorderCloneSchema = new mongoose.Schema({
     type: String,
   },
   packKg: {
-    type: String,
+    type: Number,
   },
   quantity: {
     type: Number,

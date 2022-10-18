@@ -12,7 +12,7 @@ let datenow = moment(new Date()).format('DD-MM-YYYY');
 const ReceivedProduct = require('../models/receivedProduct.model');
 const { MarketClone } = require('../models/market.model');
 const Trendproductsclones = require('../models/trendsProduct.clocne.model');
-
+const { ProductorderClone } = require('../models/shopOrder.model');
 const createProduct = async (productBody) => {
   let { needBidding, biddingStartDate, biddingStartTime, biddingEndDate, biddingEndTime, maxBidAomunt, minBidAmount } =
     productBody;
@@ -1614,7 +1614,109 @@ const AssignStockGetall = async (date, page) => {
   return { values: values, total: total.length };
 };
 
-const get_Set_price_product = async () => {};
+const get_Set_price_product = async (page) => {
+  const today = moment().format('YYYY-MM-DD');
+  const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
+  console.log(yesterday);
+  let value = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    $or: [
+                      { date: { $eq: today }, status: { $ne: 'Rejected' }, delivery_type: { $eq: 'IMD' } },
+                      { date: { $eq: yesterday }, status: { $ne: 'Rejected' }, delivery_type: { $eq: 'NDD' } },
+                    ],
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+          {
+            $group: {
+              _id: null,
+              orderedStock: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
+            },
+          },
+        ],
+        as: 'productorderclones',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productorderclones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'usablestocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [{ $match: { date: { $eq: moment().format('DD-MM-YYYY') } } }],
+        as: 'usablestocks',
+      },
+    },
+    {
+      $unwind: {
+        path: '$usablestocks',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'pettystockmodels',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          { $match: { date: { $eq: moment().format('DD-MM-YYYY') } } },
+          { $group: { _id: null, pettystock: { $sum: '$pettyStock' } } },
+        ],
+        as: 'pettystockmodels',
+      },
+    },
+    {
+      $unwind: {
+        path: '$pettystockmodels',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $skip: page * 10,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  retrunvalue = [];
+  value.forEach(async (e) => {
+    let availablestock = 0;
+    let pettystockmodels = e.pettystockmodels != null ? e.pettystockmodels.pettystock : 0;
+    if (e.usablestocks != null && e.productorderclones != null) {
+      let orderstock = e.productorderclones.orderedStock != null ? e.productorderclones.orderedStock : 0;
+      availablestock = e.usablestocks.totalStock - (orderstock + pettystockmodels);
+    }
+    if (e.usablestocks != null && e.productorderclones == null) {
+      availablestock = e.usablestocks.totalStock;
+    }
+    retrunvalue.push({ ...e, ...{ availablestock: availablestock } });
+  });
+  return { value: retrunvalue, total: await Product.find().count() };
+};
 
 module.exports = {
   createProduct,

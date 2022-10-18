@@ -18,23 +18,24 @@ const createwardAdminRole = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   let values = {};
-   const value = await WardAdminRole.find({b2bUserId:body.b2bUserId});
-   if(value.length == 0){
+   const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, date:serverdate});
+   if(value.length != 0){
+
+  value.forEach(async (e) => {
+    e.targetValue += parseInt(body.targetValue)
+    e.targetTonne += parseInt(body.targetTonne)
+    e.startingValue += parseInt(body.targetValue)
+    e.startingTonne += parseInt(body.targetTonne) 
+    await WardAdminRole.updateMany({b2bUserId:e.b2bUserId},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })  
+  });
+  }
+    else{
    values = {
          ...body,
        ...{ date: serverdate, time: time, startingValue: parseInt(body.targetValue), startingTonne: parseInt(body.targetTonne),},
      }
      await WardAdminRole.create(values)
-     
-  }
-    else{
-        value.forEach(async (e) => {
-        e.targetValue += parseInt(body.targetValue)
-        e.targetTonne += parseInt(body.targetTonne)
-        e.startingValue += parseInt(body.targetValue)
-        e.startingTonne += parseInt(body.targetTonne) 
-        await WardAdminRole.updateMany({b2bUserId:e.b2bUserId},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })  
-      });
+       
       }
          
   // const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, unit:body.unit});
@@ -187,6 +188,18 @@ const getAllWardAdminRoleData = async (id) => {
   ]);
   return data;
 };
+
+// const getAllWardAdminRoleDataCurrent = async (id) => {
+
+//   let data = await WardAdminRole.aggregate([
+//     {
+//       $match: {
+//         $and: [{ b2bUserId: { $eq: id } }],
+//       },
+//     },
+//   ]);
+//   return data;
+// };
 
 const smData = async (date) => {
   let match;
@@ -444,9 +457,10 @@ const createSalesmanShop = async (body) => {
 const getSalesman = async (id) => {
   let data = await SalesManShop.aggregate([
     {
-      $match: {
-        $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'Assign' } }],
-      },
+      $match:{ $or: [
+        { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
+        { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
+      ],}
     },
     {
       $lookup: {
@@ -827,6 +841,17 @@ const getUsersWith_skiped = async (id) => {
   return values;
 };
 
+const getDataAll= async () => {
+  let values = await Users.aggregate([
+    {
+      $match: {
+        $and: [ { userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
+      },
+    },
+  ]);
+  return values;
+};
+
 const Return_Assign_To_SalesMan = async (id) => {
   let currentDate = moment().format('YYYY-MM-DD');
   let currentTime = moment().format('hh:mm a');
@@ -838,30 +863,43 @@ const Return_Assign_To_SalesMan = async (id) => {
   return { Message: 'Successfully Re-Assigned to SalesMan' };
 };
 
-const history_Assign_Reaasign_data = async (id,date,idSearch) => {
+const history_Assign_Reaasign_data = async (id,date,idSearch,tempid) => {
   let match ;
- if(date != 'null' && idSearch == 'null') {
+ if(date != 'null' && idSearch == 'null' && tempid == 'null') {
     match = { $or: [
       { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}] },
       { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}] },
     ],}
-  }else if(date != 'null' && idSearch != 'null'){
+  }
+  else if(tempid != 'null' && date == 'null' && idSearch == 'null' ){
+    match = { $or: [
+      // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
+     { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {fromSalesManId:{$eq:tempid}}]},
+    ],}
+  }
+  else if(tempid != 'null' && date != 'null' && idSearch == 'null'){
+    match = { $or: [
+      // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
+     { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} },{reAssignDate:{$eq:date}},{fromSalesManId:{$eq:tempid}}] },
+    ],}
+  }
+  else if(date != 'null' && idSearch != 'null' && tempid == 'null'){
     match = { $or: [
       { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}, {salesManId:{$eq:idSearch}}] },
       { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}, {fromSalesManId:{$eq:idSearch}}] },
     ],}
-  }else if(date == 'null' && idSearch != 'null'){
+  }else if(date == 'null' && idSearch != 'null' && tempid == 'null'){
     match = { $or: [
       { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} },{salesManId:{$eq:idSearch}}] },
       { $and: [{ salesManId: {$eq:id} },{ status: { $eq:'tempReassign'} },{fromSalesManId:{$eq:idSearch}}] },
     ],}
   }else {
     match = { $or: [
-      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
+      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, ] },
       { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
     ],}
   }
-
+// console.log(match)
   const data = await SalesManShop.aggregate([
     {
       $match: match
@@ -986,6 +1024,19 @@ const getAllSalesmanShopsData = async (id) =>{
   ])
   return data ;
 }
+
+const getAllAsmCurrentdata = async (id) =>{
+  let serverdate = moment().format('YYYY-MM-DD');
+  const data = await WardAdminRole.aggregate([
+    {
+      $match: {
+        $and: [{ b2bUserId: { $eq:id} },{ date: { $eq:serverdate} }],
+      },
+    },
+  ])
+  return data ;
+     
+}
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -1015,4 +1066,6 @@ module.exports = {
   WardAdminRoleAsmHistorydata,
   getAllSalesmanShopsCount,
   getAllSalesmanShopsData,
+  getDataAll,
+  getAllAsmCurrentdata,
 };

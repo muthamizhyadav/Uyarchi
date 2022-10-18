@@ -14,6 +14,7 @@ const orderPayment = require('../models/orderpayment.model');
 const creditBillGroup = require('../models/b2b.creditBillGroup.model')
 const creditBill = require('../models/b2b.creditBill.model');
 const creditBillPaymentModel = require('../models/b2b.creditBillPayments.History.model')
+const { Roles } = require('../models');
 
 const getShopWithBill = async (page) => {
   let values = await ShopOrderClone.aggregate([
@@ -1339,20 +1340,21 @@ const getFineAccount = async (id)=>{
         as:'shopOrderCloneData'
       }
     },{ $unwind: "$shopOrderCloneData"},
-    {
-      $lookup: {
-        from:'creditbillpaymenthistories',
-        localField: '_id',
-        foreignField: 'creditBillId',
-        as: 'creditBillData'
-      }
-    },{ $unwind: "$creditBillData"},
-      // {
-      //     $unwind: {
-      //       path: '$creditBillData',
-      //       preserveNullAndEmptyArrays: true,
-      //     },
-      //   },
+    // {
+    //   $lookup: {
+    //     from:'creditbillpaymenthistories',
+    //     localField: '_id',
+    //     foreignField: 'creditBillId',
+    //     as: 'creditBillData'
+    //   }
+    // },
+    // { $unwind: "$creditBillData"},
+    //   {
+    //       $unwind: {
+    //         path: '$creditBillData',
+    //         preserveNullAndEmptyArrays: true,
+    //       },
+    //     },
 
     {
       $project: {
@@ -1386,6 +1388,58 @@ const getFineAccount = async (id)=>{
   return values;
 }
 
+
+const getDeliveryExecutiveName = async()=>{
+  let data = await Roles.aggregate([
+    // {
+    //   $match: {
+    //     $and: [{ roleName: { $eq: 'Ward Admin Sales Manager (WASM)' } }],
+    //   },
+    // },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: '_id',
+        foreignField: 'userRole',
+        pipeline:[
+          {
+            $lookup: {
+              from: 'creditbills',
+              let: {
+                localField: '$_id',
+              },
+              pipeline: [{ $match: { $expr: { $eq: ['$AssignedUserId', '$$localField'] } } }],
+              as: 'wardadminrolesData',
+            },
+          },
+          // {
+          //   $unwind:'$wardadminrolesData',
+          //     preserveNullAndEmptyArrays: true,
+          // },
+       ],
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $project: {
+        name: '$b2busersData.name',
+        b2buserId: '$b2busersData._id',
+        roleName: 1,
+        _id: 1,
+        // wardadminrolesData:'$b2busersData.wardadminrolesData'
+        b2user:'$b2busersData.wardadminrolesData'
+      },
+    },
+    {
+      $match:{ $and:[{ b2user: { $type: 'array', $ne: [] } }] },
+    },
+  ]);
+  return data;
+}
+
   
 
 
@@ -1411,4 +1465,5 @@ module.exports = {
   getShopPendingByPassingShopId,
   getDeliDetails,
   getFineAccount,
+  getDeliveryExecutiveName,
 };
