@@ -1340,21 +1340,21 @@ const getFineAccount = async (id)=>{
         as:'shopOrderCloneData'
       }
     },{ $unwind: "$shopOrderCloneData"},
-    {
-      $lookup: {
-        from:'creditbillpaymenthistories',
-        localField: '_id',
-        foreignField: 'creditBillId',
-        as: 'creditBillData'
-      }
-    },
-    { $unwind: "$creditBillData"},
-      // {
-      //     $unwind: {
-      //       path: '$creditBillData',
-      //       preserveNullAndEmptyArrays: true,
-      //     },
-      //   },
+    // {
+    //   $lookup: {
+    //     from:'creditbillpaymenthistories',
+    //     localField: '_id',
+    //     foreignField: 'creditBillId',
+    //     as: 'creditBillData'
+    //   }
+    // },
+    // { $unwind: "$creditBillData"},
+    //   {
+    //       $unwind: {
+    //         path: '$creditBillData',
+    //         preserveNullAndEmptyArrays: true,
+    //       },
+    //     },
 
     {
       $project: {
