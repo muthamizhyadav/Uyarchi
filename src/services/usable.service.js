@@ -1,6 +1,8 @@
 const httpStatus = require('http-status');
 const { usableStock } = require('../models/usableStock.model');
 const ApiError = require('../utils/ApiError');
+const moment = require('moment');
+const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise, ManageBill, ShopList } = require('../models/product.model');
 
 const createusableStock = async (body) => {
   let usable = await usableStock.create(body);
@@ -94,10 +96,123 @@ const getAssignStockbyId = async (id) => {
   ]);
 };
 
+const getStocks = async () => {
+  const today = moment().format('DD-MM-YYYY');
+  console.log(today);
+  const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
+  const Today = moment().format('YYYY-MM-DD');
+  let values = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'usablestocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [{ $match: { date: today } }],
+        as: 'stocks',
+      },
+    },
+    {
+      $unwind: { path: '$stocks', preserveNullAndEmptyArrays: true },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+                  },
+                },
+              ],
+              as: 'shops',
+            },
+          },
+          {
+            $unwind: '$shops',
+          },
+          {
+            $group: {
+              _id: null,
+              NDD: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
+            },
+          },
+        ],
+        as: 'productorder',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productorder',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ delivery_type: { $eq: 'IMD' } }, { status: { $ne: 'Rejected' } }, { date: { $eq: Today } }],
+                  },
+                },
+              ],
+              as: 'shops',
+            },
+          },
+          {
+            $unwind: '$shops',
+          },
+          {
+            $group: {
+              _id: null,
+              IMD: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
+            },
+          },
+        ],
+        as: 'Imd',
+      },
+    },
+    {
+      $unwind: {
+        path: '$Imd',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        productTitle: 1,
+        availableStocks: '$stocks.totalStock',
+        TodayDeliveryStock: '$productorder.NDD',
+        Imd: '$Imd.IMD',
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createusableStock,
   getAllusableStock,
   getusableStockById,
   updateusableStockbyId,
   getAssignStockbyId,
+  getStocks,
 };
