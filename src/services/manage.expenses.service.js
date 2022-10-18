@@ -10,6 +10,10 @@ const createManageExpenses = async (body) => {
 };
 
 const getAllManageExpenses = async (date, page) => {
+  let today = moment().format('YYYY-MM-DD');
+  if (date == 'null') {
+    date = today;
+  }
   let values = await ManageExpenses.aggregate([
     {
       $match: {
@@ -26,8 +30,17 @@ const getAllManageExpenses = async (date, page) => {
       $limit: 10,
     },
   ]);
-  let total = await ManageExpenses.find().count();
-  return { values: values, total: total };
+  let total = await ManageExpenses.aggregate([
+    {
+      $match: {
+        date: date,
+      },
+    },
+    {
+      $sort: { created: -1 },
+    },
+  ]);
+  return { values: values, total: total.length };
 };
 
 module.exports = {
