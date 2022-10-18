@@ -1031,7 +1031,7 @@ const getAllSalesmanShopsData = async (id) =>{
 
 const getAllAsmCurrentdata = async (id) =>{
   let serverdate = moment().format('YYYY-MM-DD');
-  const data = await WardAdminRole.aggregate([
+  const data = await WardAdminRoleHistory.aggregate([
     {
       $match: {
         $and: [{ b2bUserId: { $eq:id} },{ date: { $eq:serverdate} }],
