@@ -272,12 +272,18 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   creditBillAssignedStatus: {
     type: String,
-    default: "Pending",
+    default: 'Pending',
   },
   statusOfBill: {
     type: String,
-    default: "Pending",
-  }
+    default: 'Pending',
+  },
+  delivered_date: {
+    type: Date,
+  },
+  un_delivered_date: {
+    type: Date,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
@@ -409,7 +415,7 @@ const productorderCloneSchema = new mongoose.Schema({
     type: Number,
   },
   amountwithGST: {
-    type: Number
+    type: Number,
   },
 });
 
