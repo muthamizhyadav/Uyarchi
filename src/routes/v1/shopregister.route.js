@@ -14,5 +14,8 @@ router.route('/mypayments').get(shopverify, shopregister.get_mypayments);
 router.route('/mypayments/history/:id').get(shopverify, shopregister.getpayment_history);
 router.route('/orderPending/amount/:id').get(shopverify, shopregister.get_pendung_amount);
 router.route('/orderamount/collect').post(shopverify, shopregister.get_orderamount);
+router.route('/raiseonissue/order/all').get(shopverify, shopregister.get_raiseonissue);
+
+
 
 module.exports = router;

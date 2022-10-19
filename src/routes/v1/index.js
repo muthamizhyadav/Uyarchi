@@ -101,6 +101,10 @@ const defaultRoutes = [
     route: registerShop,
   },
   {
+    path: '/shop',
+    route: registerShop,
+  },
+  {
     path: '/auth',
     route: authRoute,
   },

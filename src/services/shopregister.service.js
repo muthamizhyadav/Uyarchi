@@ -621,6 +621,39 @@ const get_orderamount = async (shopId, body) => {
   return order;
 };
 
+
+
+const get_raiseonissue = async (shopId) => {
+  let last24h = moment().subtract(24, 'h').toDate();
+  const value = await ShopOrderClone.aggregate([
+    {
+      $sort: { created: -1 }
+    },
+    {
+      $match: {
+        shopId: { $eq: shopId },
+        status: { $eq: "Delivered" },
+        delivered_date: { $gte: last24h },
+      }
+    },
+    {
+      $project: {
+        OrderId: 1,
+        created: 1,
+        delivery_type: 1,
+        status: 1,
+        date: 1,
+        time: 1,
+        time_of_delivery: 1,
+        delivered_date: 1
+      }
+    }
+
+  ])
+  return value;
+};
+
+
 module.exports = {
   register_shop,
   verify_otp,
@@ -633,4 +666,5 @@ module.exports = {
   getpayment_history,
   get_pendung_amount,
   get_orderamount,
+  get_raiseonissue
 };

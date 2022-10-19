@@ -227,6 +227,24 @@ const getstockDetails = async (id) => {
       }
     },
     {
+      $addFields: {
+        yesterdate: {
+          $dateSubtract:
+          {
+            startDate: "$created",
+            unit: "day",
+            amount: 1
+          }
+        }
+
+      }
+    },
+    {
+      $addFields: {
+        yesterday: { "$dateToString": { "format": "%Y-%m-%d", "date": "$yesterdate" } }
+      }
+    },
+    {
       $lookup: {
         from: 'productorderclones',
         localField: 'todaydate',
