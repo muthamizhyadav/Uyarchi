@@ -59,6 +59,14 @@ const get_orderamount = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(shop);
 });
 
+const get_raiseonissue = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_raiseonissue(req.shopId);
+  res.status(httpStatus.CREATED).send(shop);
+});
+const get_raiseorder_issue = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_raiseorder_issue(req.shopId, req.params.id);
+  res.status(httpStatus.CREATED).send(shop);
+});
 module.exports = {
   register_shop,
   verify_otp,
@@ -71,4 +79,6 @@ module.exports = {
   getpayment_history,
   get_pendung_amount,
   get_orderamount,
+  get_raiseonissue,
+  get_raiseorder_issue
 };
