@@ -20,5 +20,6 @@ router.route('/get/shop/pending/:id').get(creditBillController.getShopPendingByP
 router.route('/get/getDeliDetails/:AssignedUserId').get(creditBillController.getDeliDetails);
 router.route('/get/getFineAccount/:id').get(creditBillController.getFineAccount);
 router.route('/get/deliveryExecutiveNmae').get(creditBillController.getDeliveryExecutiveName);
+router.route('/get/details/Group/:id').get(creditBillController.getgetGroupAndBill);
 
 module.exports = router;

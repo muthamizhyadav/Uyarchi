@@ -44,6 +44,10 @@ const creditBillGroupSchema = mongoose.Schema({
         type: Boolean,
         default: false,
       },
+      receiveStatus: {
+        type: String,
+        default: "Pending"
+      }
 
    
 });
