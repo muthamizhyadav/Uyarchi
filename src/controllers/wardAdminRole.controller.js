@@ -187,6 +187,12 @@ const asmdata = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+
+const asmSalesman = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.asmSalesman(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -222,4 +228,5 @@ module.exports = {
   WardAdminRoleHistor,
   getAllWithAsmwithout,
   asmdata,
+  asmSalesman,
 };

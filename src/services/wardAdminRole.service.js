@@ -1302,6 +1302,37 @@ const asmdata = async () => {
    ])
    return data;
 }
+
+const asmSalesman = async (id) =>{
+  const data = await AsmSalesMan.aggregate([
+    {
+      $match:{
+        $and:[{ asmId: { $eq:id}},{ status: { $eq:"Assign"} }]
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'salesManId',
+        foreignField: '_id',
+        as: 'b2busersdata',
+      },
+    },
+    {
+      $unwind: '$b2busersdata',
+    },
+    {
+      $project:{
+         name:"$b2busersdata.name",
+         salesManId:1,
+      }
+    }
+
+  ])
+  return data ;
+
+}
+
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -1340,4 +1371,5 @@ module.exports = {
   WardAdminRoleHistor,
   getAllWithAsmwithout,
   asmdata,
+  asmSalesman,
 };

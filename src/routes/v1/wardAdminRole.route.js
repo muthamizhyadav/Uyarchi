@@ -36,4 +36,5 @@ router.route('/getwithAsmwithoutAsm/data/:type/:date').get(wardAdminRoleControll
 router.route('/WardAdminRoleHistor/:id/:date').get(wardAdminRoleController.WardAdminRoleHistor);
 router.route('/getAllWithAsmwithout/:sm/:asm/:date').get(wardAdminRoleController.getAllWithAsmwithout);
 router.route('/asmdata/data').get(wardAdminRoleController.asmdata);
+router.route('/asmSalesman/data/:id').get(wardAdminRoleController.asmSalesman);
 module.exports = router;
