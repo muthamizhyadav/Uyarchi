@@ -31,4 +31,6 @@ router.route('/getAllSalesmanShops/data').get(wardAdminRoleController.getAllSale
 router.route('/getAllSalesmanShopsData/data/:id').get(wardAdminRoleController.getAllSalesmanShopsData);
 router.route('/getDataAll/data').get(wardAdminRoleController.getDataAll);
 router.route('/getAllAsmCurrentdata/data/:id').get(wardAdminRoleController.getAllAsmCurrentdata);
+router.route('/createwithAsmwithoutAsm/data').post(wardAdminRoleController.createwithAsmwithoutAsm);
+router.route('/getwithAsmwithoutAsm/data/:type/:date').get(wardAdminRoleController.getwithAsmwithoutAsm);
 module.exports = router;

@@ -295,6 +295,9 @@ const wardAdminRoleAsmSchema = new mongoose.Schema({
     wardAdminId: {
       type: String,
     },
+    status:{
+      type:String,
+    },
     date: {
       type: String,
     },

@@ -156,6 +156,21 @@ const getAllAsmCurrentdata = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.getAllAsmCurrentdata(req.params.id);
   res.send(data);
 });
+
+const createwithAsmwithoutAsm = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.createwithAsmwithoutAsm(req.body);
+  res.send(data);
+});
+
+const getwithAsmwithoutAsm = catchAsync(async (req, res) => {
+  let data
+  if(req.params.type === "withoutAsm"){
+   data = await wardAdminRoleService.getwithAsmwithoutAsm(req.params.type, req.params.date);
+  }else{
+   data = await wardAdminRoleService.getwithAsmwithoutAsm1(req.params.type, req.params.date);
+  }
+  res.send(data);
+});
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -186,4 +201,6 @@ module.exports = {
   getAllSalesmanShopsData,
   getDataAll,
   getAllAsmCurrentdata,
+  createwithAsmwithoutAsm,
+  getwithAsmwithoutAsm,
 };
