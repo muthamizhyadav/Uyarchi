@@ -2326,6 +2326,14 @@ const returnStockData = async (id) => {
     // Delivered count
     {
       $lookup: {
+        from: 'wardadmingroupfines',
+        localField: '_id',
+        foreignField: 'productId',
+        as: 'wardadmingroupfines',
+      },
+    },
+    {
+      $lookup: {
         from: 'pettystockmodels',
         localField: '_id',
         foreignField: 'productId',
@@ -2503,6 +2511,7 @@ const returnStockData = async (id) => {
         UndeliveryQuantity: '$productorderclonesData.UnQty',
         totalSum: { $add: ['$productorderclones.Qty', '$productorderclonesData.UnQty'] },
         productorderclonesData: { $eq: ['$productorderclonesData._id', null] },
+        fineStatus:"$wardadmingroupfines.status"
       },
     },
     {

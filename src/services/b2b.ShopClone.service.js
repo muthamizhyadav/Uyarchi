@@ -1612,12 +1612,21 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
         $and: [{ Wardid: { $eq: id } }],
       },
     },
+    // {
+    //   $match: {
+    //     $or: [
+    //       { salesManStatus: { $ne: 'Assign' } },
+    //       { salesManStatus: { $eq: null } },
+    //       { salesManStatus: { $eq: 'Reassign' } },
+    //       { salesManStatus: { $ne: 'tempReassign' } },
+    //     ],
+    //   },
+    // },
     {
       $match: {
         $or: [
-          { salesManStatus: { $ne: 'Assign' } },
-          { salesManStatus: { $eq: null } },
-          { salesManStatus: { $eq: 'Reassign' } },
+          { $and: [{ salesManStatus: { $ne: 'Assign' }}, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }] },
+          { $and: [{ salesManStatus: { $ne: 'Assign' }}, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: null } }] },
         ],
       },
     },
@@ -1655,12 +1664,21 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
         $and: [{ Wardid: { $eq: id } }],
       },
     },
+    // {
+    //   $match: {
+    //     $or: [
+    //       { salesManStatus: { $ne: 'Assign' } },
+    //       { salesManStatus: { $eq: null } },
+    //       { salesManStatus: { $eq: 'Reassign' } },
+    //       { salesManStatus: { $ne: 'tempReassign' } },
+    //     ],
+    //   },
+    // },
     {
       $match: {
         $or: [
-          { salesManStatus: { $ne: 'Assign' } },
-          { salesManStatus: { $eq: null } },
-          { salesManStatus: { $eq: 'Reassign' } },
+          { $and: [{ salesManStatus: { $ne: 'Assign' }}, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }] },
+          { $and: [{ salesManStatus: { $ne: 'Assign' }}, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: null } }] },
         ],
       },
     },
@@ -1805,6 +1823,17 @@ const getShopReviewByShopid = async (id) => {
   return values;
 };
 
+const data1 = async () =>{
+  const data = await Shop.find({salesManStatus:"Reassign"})
+//   if(data.length != 0){
+//   data.forEach(async (e) => {
+//     await Shop.findByIdAndUpdate({ _id: e._id }, { salesManStatus:null}, { new: true });
+//     console.log(e.salesManStatus)
+//   });
+// }
+  return {mesage:"updated.."}
+}
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -1842,4 +1871,5 @@ module.exports = {
   GetShopsByShopType,
   GetShopsReviewsByShopType,
   getShopReviewByShopid,
+  data1,
 };

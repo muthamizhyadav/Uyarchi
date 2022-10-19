@@ -8,6 +8,7 @@ const {
   WithoutAsmSalesman,
   WardAdminRoleAsmHistory,
   WardAdminRoleHistory,
+  WithoutAsmWithAsm,
 } = require('../models/wardAdminRole.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
@@ -78,6 +79,192 @@ const createwardAdminRole = async (body) => {
 
   return {message:"created"};
 };
+
+const createwithAsmwithoutAsm = async (body) => {
+  let serverdate = moment().format('yyy-MM-DD');
+  let time = moment().format('hh:mm a');
+  let values1 = {
+    ...body,
+  ...{ date: serverdate, time: time},
+}
+  const data = await WithoutAsmWithAsm.create(values1)
+  return data;
+};
+
+// get withwithoutData
+
+const getwithAsmwithoutAsm = async (type,date) => {
+  // let type = "withAsm"
+  // let type = "withoutAsm"
+  let match ;
+  if(date != 'null'){
+    match = [{ date: { $eq: date } },{ status: { $eq: type } }];
+  }else{
+    match = [{ status: { $eq: type } }];
+  }
+const data = await WithoutAsmWithAsm.aggregate([
+  {
+    $match: {
+      $and: match,
+    },
+  },
+  // {
+  //   $lookup: {
+  //     from: 'b2busers',
+  //     localField: '_id',
+  //     foreignField: 'wardAdminId',
+  //     as: 'b2busersData',
+  //   },
+  // },
+  // {
+  //   $unwind: '$b2busersData',
+  // },
+  {
+    $lookup: {
+      from: 'b2busers',
+      localField: 'salesman',
+      foreignField: '_id',
+      as: 'b2busersDataSales',
+    },
+  },
+    {
+    $unwind: '$b2busersDataSales',
+  },
+  {
+    $project: {
+      Salesmanname: '$b2busersDataSales.name',
+      // Asmname:"$b2busersData.name",
+      targetTonne: 1,
+      targetValue: 1,
+      salesman: 1,
+      wardAdminId: 1,
+      status: 1,
+      unit: 1,
+      date: 1,
+      time: 1,
+      _id: 1,
+    },
+  },
+])
+return data
+};
+
+const getwithAsmwithoutAsm1 = async (type,date) => {
+  // let type = "withAsm"
+  // let type = "withoutAsm"
+  let match ;
+  if(date != 'null'){
+    match = [{ date: { $eq: date } },{ status: { $eq: type } }];
+  }else{
+    match = [{ status: { $eq: type } }];
+  }
+const data = await WithoutAsmWithAsm.aggregate([
+  {
+    $match: {
+      $and: match,
+    },
+  },
+  {
+    $lookup: {
+      from: 'b2busers',
+      localField: 'wardAdminId',
+      foreignField: '_id',
+      as: 'b2busersData',
+    },
+  },
+  {
+    $unwind: '$b2busersData',
+  },
+  {
+    $lookup: {
+      from: 'b2busers',
+      localField: 'salesman',
+      foreignField: '_id',
+      as: 'b2busersDataSales',
+    },
+  },
+  {
+    $unwind: '$b2busersDataSales',
+  },
+  {
+    $project: {
+      Salesmanname: '$b2busersDataSales.name',
+      Asmname:"$b2busersData.name",
+      targetTonne: 1,
+      targetValue: 1,
+      salesman: 1,
+      wardAdminId: 1,
+      status: 1,
+      unit: 1,
+      date: 1,
+      time: 1,
+      _id: 1,
+    },
+  },
+])
+return data
+};
+
+const getAllWithAsmwithout = async (sm,asm,date) => {
+  let match ;
+  if(sm != 'null' && asm == 'null' && date == 'null'){
+    match = [{ salesman: { $eq: sm } },{ status: { $eq: "withoutAsm"}}];
+  }
+  else if(sm != 'null' && asm == 'null' && date != 'null'){
+    match = [{ salesman: { $eq: sm } },{ date: { $eq: date } },{ status: { $eq: "withoutAsm"}}];
+  }else if(sm = 'null' && asm != 'null' && date == 'null'){
+    match = [{ wardAdminId: { $eq: asm } },{ status: { $eq: "withAsm"}}];
+  }else if(sm = 'null' && asm != 'null' && date != 'null'){
+    match = [{ wardAdminId: { $eq: asm } }, { date: { $eq: date } },{ status: { $eq: "withAsm"}}];
+  }else if(sm != 'null' && asm != 'null' && date == 'null'){
+    match = [{ wardAdminId: { $eq: asm } },{ salesman: { $eq: sm } },{ status: { $eq: "withAsm"}}];
+  }else if(sm != 'null' && asm != 'null' && date != 'null'){
+    match = [{ wardAdminId: { $eq: asm } },{ salesman: { $eq: sm } },{ date: { $eq: date } },{ status: { $eq: "withAsm"}}];
+  }
+  else{
+    match = [{active: { $eq: true } }];
+  }
+const data = await WithoutAsmWithAsm.aggregate([
+  {
+    $match: {
+      $and: match,
+    },
+  },
+  {
+    $lookup: {
+      from: 'b2busers',
+      localField: 'wardAdminId',
+      foreignField: '_id',
+      as: 'b2busersData',
+    },
+  },
+  {
+    $lookup: {
+      from: 'b2busers',
+      localField: 'salesman',
+      foreignField: '_id',
+      as: 'b2busersDataSales',
+    },
+  },
+  {
+    $project: {
+      Salesmanname: '$b2busersDataSales.name',
+      Asmname:"$b2busersData.name",
+      targetTonne: 1,
+      targetValue: 1,
+      salesman: 1,
+      wardAdminId: 1,
+      status: 1,
+      unit: 1,
+      date: 1,
+      time: 1,
+      _id: 1,
+    },
+  },
+])
+return data
+};
+
 
 const getAll = async (date) => {
   if (date != 'null') {
@@ -1042,6 +1229,57 @@ const getAllAsmCurrentdata = async (id) =>{
   return data ;
      
 }
+
+const WardAdminRoleHistor = async (id,date) =>{
+  let match ;
+  if(id != 'null' && date == 'null'){
+    match = {  
+     $and: [{ b2bUserId: {$eq:id} }]
+    }
+  }else if(id == 'null' && date != 'null'){
+    match = {  
+      $and: [{ date: {$eq:date} }]
+     }
+  }
+  else if(id != 'null' && date != 'null'){
+    match = {  
+      $and: [{ b2bUserId: {$eq:id} },{ date: {$eq:date} }]
+     }
+  }else{
+    match = {  
+      $and: [{ active: {$eq:true} }]
+     }
+  }
+
+  const data = await WardAdminRoleHistory.aggregate([
+    {
+      $match: match
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'b2bUserId',
+        foreignField: '_id',
+        as: 'b2busersdata',
+      },
+    },
+    {
+      $unwind: '$b2busersdata',
+    },
+    {
+      $project:{
+         Name:"$b2busersdata.name",
+         targetTonne:1,
+         date:1,
+         time:1,
+         targetValue:1,
+         b2bUserId:1,
+      }
+    }
+  ])
+  return data ;
+     
+}
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -1073,4 +1311,10 @@ module.exports = {
   getAllSalesmanShopsData,
   getDataAll,
   getAllAsmCurrentdata,
+  createwithAsmwithoutAsm,
+  createwithAsmwithoutAsm,
+  getwithAsmwithoutAsm,
+  getwithAsmwithoutAsm1,
+  WardAdminRoleHistor,
+  getAllWithAsmwithout,
 };
