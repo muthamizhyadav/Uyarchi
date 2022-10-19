@@ -103,6 +103,7 @@ const updateOrderStatus = async (id, updateBody) => {
     ...{
       status: 'Delivered',
       customerDeliveryStatus: 'Delivered',
+      delivered_date: moment(),
     },
   };
   let deliveryStatus = await ShopOrderClone.findById(id);
@@ -517,7 +518,7 @@ const returnStock = async (id) => {
         DeliveryQuantity: '$productorderclones.Qty',
         actualStock: '$returnStock.actualStock',
         actualWastage: '$returnStock.actualWastage',
-        mis:'$returnStock.misMatch',
+        mis: '$returnStock.misMatch',
         productorderclones: { $eq: ['$productorderclones._id', null] },
         UndeliveryQuantity: '$productorderclonesData.UnQty',
         totalSum: { $add: ['$productorderclones.Qty', '$productorderclonesData.UnQty'] },
@@ -2302,7 +2303,6 @@ const submitDispute = async (id, updatebody) => {
   return product;
 };
 
-
 const returnStockData = async (id) => {
   let values = await Product.aggregate([
     // Delivered count
@@ -2469,7 +2469,7 @@ const returnStockData = async (id) => {
         productTitle: 1,
         productid: 1,
         status: '$returnStock.status',
-        image:'$returnStock.image',
+        image: '$returnStock.image',
         // totalpetty: '$totalpetty',
         productorderclones: '$productorderclones',
         productorderclonesData: '$productorderclonesData',
@@ -2479,7 +2479,7 @@ const returnStockData = async (id) => {
         DeliveryQuantity: '$productorderclones.Qty',
         actualStock: '$returnStock.actualStock',
         actualWastage: '$returnStock.actualWastage',
-        mis:'$returnStock.misMatch',
+        mis: '$returnStock.misMatch',
         productorderclones: { $eq: ['$productorderclones._id', null] },
         UndeliveryQuantity: '$productorderclonesData.UnQty',
         totalSum: { $add: ['$productorderclones.Qty', '$productorderclonesData.UnQty'] },
@@ -2495,7 +2495,6 @@ const returnStockData = async (id) => {
 
   return values;
 };
-
 
 module.exports = {
   getPEttyCashQuantity,
