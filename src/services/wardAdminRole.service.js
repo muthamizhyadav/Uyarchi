@@ -1281,6 +1281,27 @@ const WardAdminRoleHistor = async (id,date) =>{
   return data ;
      
 }
+
+const asmdata = async () => {
+   const data = await Users.aggregate([
+    {
+      $match:{
+        $and:[{ userRole: { $eq: '719d9f71-8388-4534-9bfe-3f47faed62ac' }}]
+      }
+    },
+    {
+      $project:{
+         name:1,
+        //  targetTonne:1,
+        //  date:1,
+        //  time:1,
+        //  targetValue:1,
+        //  b2bUserId:1,
+      }
+    }
+   ])
+   return data;
+}
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -1318,4 +1339,5 @@ module.exports = {
   getwithAsmwithoutAsm1,
   WardAdminRoleHistor,
   getAllWithAsmwithout,
+  asmdata,
 };
