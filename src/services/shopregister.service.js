@@ -740,6 +740,100 @@ const get_raiseorder_issue = async (shopId, orderId) => {
   return shopOrder[0];
 };
 
+
+
+
+
+const get_my_issue_byorder = async (shopId, orderId) => {
+  let last24h = moment().subtract(24, 'h').toDate();
+  let shopOrder = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        shopId: { $eq: shopId },
+        status: { $eq: "Delivered" },
+        _id: orderId,
+        raiseissue: true
+
+      }
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $match: { issueraised: { $eq: true } }
+          },
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              productpacktypeId: 1,
+              packKg: 1,
+              unit: 1,
+              date: 1,
+              time: 1,
+              customerId: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              created: 1,
+              issueraised: 1,
+              issuetype: 1,
+              issue: 1,
+              issuediscription: 1,
+              issuequantity: 1,
+              productTitle: '$products.productTitle',
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $project: {
+        status: 1,
+        delivery_type: 1,
+        Payment: 1,
+        devevery_mode: 1,
+        time_of_delivery: 1,
+        pay_type: 1,
+        paymentMethod: 1,
+        OrderId: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        delivered_date: 1,
+        reason: 1,
+        product: "$productOrderdata",
+        issueDate: 1,
+      }
+    }
+  ])
+  if (shopOrder.length == 0) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Order Not Found');
+  }
+  return shopOrder[0];
+};
+
 const get_raiseproduct = async (shopId, product, body) => {
   let last24h = moment().subtract(24, 'h').toDate();
 
@@ -798,10 +892,10 @@ const get_raiseproduct = async (shopId, product, body) => {
     issue: body.issue,
     issuediscription: body.discription,
     issuequantity: body.issuequantity,
-
+    issueDate: moment()
   }
   let values = await ProductorderClone.findByIdAndUpdate({ _id: orderId.id }, obj, { new: true })
-  await ShopOrderClone.findByIdAndUpdate({ _id: shopOrder[0]._id }, { raiseissue: true }, { new: true })
+  await ShopOrderClone.findByIdAndUpdate({ _id: shopOrder[0]._id }, { raiseissue: true, issueDate: moment() }, { new: true })
   return values;
 }
 
@@ -816,24 +910,24 @@ const get_myissues = async (shopId) => {
       $match: {
         shopId: { $eq: shopId },
         status: { $eq: "Delivered" },
-        raiseissue: {$eq: true}
-    }
-    },
-  {
-    $project: {
-      OrderId: 1,
-      created: 1,
-      delivery_type: 1,
-      status: 1,
-      date: 1,
-      time: 1,
-      time_of_delivery: 1,
-      delivered_date: 1
+        raiseissue: { $eq: true }
       }
-  }
+    },
+    {
+      $project: {
+        OrderId: 1,
+        created: 1,
+        delivery_type: 1,
+        status: 1,
+        date: 1,
+        time: 1,
+        time_of_delivery: 1,
+        delivered_date: 1
+      }
+    }
 
   ])
-return value;
+  return value;
 };
 
 
@@ -852,5 +946,6 @@ module.exports = {
   get_raiseonissue,
   get_raiseorder_issue,
   get_raiseproduct,
-  get_myissues
+  get_myissues,
+  get_my_issue_byorder
 };

@@ -287,6 +287,9 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   raiseissue: {
     type: Boolean,
     default: false
+  },
+  issueDate: {
+    type: Date,
   }
 });
 
@@ -423,7 +426,7 @@ const productorderCloneSchema = new mongoose.Schema({
   },
   issueraised: {
     type: Boolean,
-    default:false
+    default: false
   },
   issuetype: {
     type: String,
@@ -436,6 +439,9 @@ const productorderCloneSchema = new mongoose.Schema({
   },
   issuequantity: {
     type: Number,
+  },
+  issueDate: {
+    type: Date,
   }
 });
 
