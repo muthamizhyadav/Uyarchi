@@ -376,7 +376,7 @@ const getstockDetails = async (id) => {
           {
             $group: {
               _id: null,
-              NDD: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
+              delivered: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
             },
           },
         ],
@@ -415,11 +415,94 @@ const getstockDetails = async (id) => {
           {
             $group: {
               _id: null,
-              Imd: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
+              ImdDelivered: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
             },
           },
         ],
         as: 'Imd_delivered',
+      },
+    },
+
+    // Rejected Stocks
+
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'todaydate',
+        foreignField: 'date',
+        pipeline: [
+          {
+            $match: {
+              productid: id,
+            },
+          },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ status: 'Rejected' }],
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+          {
+            $group: {
+              _id: null,
+              Rejected: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
+            },
+          },
+        ],
+        as: 'rejectedStock',
+      },
+    },
+
+    // Un Delivered stocks
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'todaydate',
+        foreignField: 'date',
+        pipeline: [
+          {
+            $match: {
+              productid: id,
+            },
+          },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ status: 'UnDelivered' }],
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+          {
+            $group: {
+              _id: null,
+              unDelivered: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
+            },
+          },
+        ],
+        as: 'UnDelivered_Stocks',
       },
     },
   ]);
