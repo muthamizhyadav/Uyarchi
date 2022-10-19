@@ -281,6 +281,9 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   delivered_date: {
     type: Date,
   },
+  un_delivered_date: {
+    type: Date,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);

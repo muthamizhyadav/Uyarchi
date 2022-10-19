@@ -135,6 +135,7 @@ const updateOrderStatus_forundelivey = async (id, updateBody) => {
     ...{
       status: 'UnDelivered',
       customerDeliveryStatus: 'UnDelivered',
+      un_delivered_date: moment(),
     },
   };
   let deliveryStatus = await ShopOrderClone.findById(id);
