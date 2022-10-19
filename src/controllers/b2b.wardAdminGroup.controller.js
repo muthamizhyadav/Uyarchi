@@ -298,6 +298,16 @@ const returnStockData = catchAsync(async (req, res) => {
   res.send(details);
 });
 
+const updatemismatchStockStatus = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.updatemismatchStockStatus(req.params.id);
+  res.send(details);
+});
+
+const createfineData = catchAsync(async (req, res) => {
+  const data = await wardAdminGroupService.fineData(req.body);
+  res.send(data);
+});
+
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -377,4 +387,6 @@ module.exports = {
   finishingAccount,
   submitDispute,
   returnStockData,
+  updatemismatchStockStatus,
+  createfineData,
 };

@@ -208,23 +208,37 @@ const getStocks = async () => {
   return values;
 };
 
-
 const getstockDetails = async (id) => {
-
+  let today = moment().format('YYYY-MM-DD');
   let value = await usableStock.aggregate([
     {
-      $sort: { created: -1 }
+      $sort: { created: -1 },
     },
     {
       $match: {
-        productId: { $eq: id }
-      }
+        productId: { $eq: id },
+      },
     },
     {
       $addFields: {
-        todaydate: { "$dateToString": { "format": "%Y-%m-%d", "date": "$created" } }
-
-      }
+        todaydate: { $dateToString: { format: '%Y-%m-%d', date: '$created' } },
+      },
+    },
+    {
+      $addFields: {
+        yesterdate: {
+          $dateSubtract: {
+            startDate: '$created',
+            unit: 'day',
+            amount: 1,
+          },
+        },
+      },
+    },
+    {
+      $addFields: {
+        yesterday: { $dateToString: { format: '%Y-%m-%d', date: '$yesterdate' } },
+      },
     },
     {
       $addFields: {
@@ -260,26 +274,176 @@ const getstockDetails = async (id) => {
               from: 'shoporderclones',
               localField: 'orderId',
               foreignField: '_id',
-              pipeline: [{
-                $match: {
-                  delivery_type: 'IMD'
-                }
-              }],
+              pipeline: [
+                {
+                  $match: {
+                    delivery_type: 'IMD',
+                  },
+                },
+              ],
               as: 'shoporderclones',
             },
           },
           {
-            $unwind: "$shoporderclones"
+            $unwind: '$shoporderclones',
           },
-
+          {
+            $group: {
+              _id: null,
+              Imd: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
+            },
+          },
         ],
         as: 'productorderclones',
       },
     },
-  ])
+    // {
+    //   $unwind: '$productorderclones',
+    // },
+
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'yesterday',
+        foreignField: 'date',
+        pipeline: [
+          {
+            $match: {
+              productid: id,
+            },
+          },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    delivery_type: 'NDD',
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+          {
+            $group: {
+              _id: null,
+              NDD: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
+            },
+          },
+        ],
+        as: 'Ndd',
+      },
+    },
+    // {
+    //   $unwind: '$Ndd',
+    // },
+    {
+      $lookup: {
+        from: 'pettystockmodels',
+        localField: 'date',
+        foreignField: 'date',
+        pipeline: [
+          {
+            $match: { productId: id },
+          },
+          {
+            $group: { _id: null, pettyStock: { $sum: '$pettyStock' } },
+          },
+        ],
+        as: 'pettyStock',
+      },
+    },
+
+    // Today Delivered Stock Work Flow with Ndd And Imd
+
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'yesterday',
+        foreignField: 'date',
+        pipeline: [
+          {
+            $match: {
+              productid: id,
+            },
+          },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ delivery_type: 'NDD' }, { status: 'Delivered' }],
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+          {
+            $group: {
+              _id: null,
+              NDD: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
+            },
+          },
+        ],
+        as: 'Ndd_delivered',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'todaydate',
+        foreignField: 'date',
+        pipeline: [
+          {
+            $match: {
+              productid: id,
+            },
+          },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ delivery_type: 'IMD' }, { status: 'Delivered' }],
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+          {
+            $group: {
+              _id: null,
+              Imd: { $sum: { $multiply: ['$finalQuantity', '$packKg'] } },
+            },
+          },
+        ],
+        as: 'Imd_delivered',
+      },
+    },
+  ]);
 
   return value;
-}
+};
 module.exports = {
   createusableStock,
   getAllusableStock,
@@ -287,5 +451,5 @@ module.exports = {
   updateusableStockbyId,
   getAssignStockbyId,
   getStocks,
-  getstockDetails
+  getstockDetails,
 };
