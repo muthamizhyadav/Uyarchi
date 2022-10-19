@@ -796,7 +796,7 @@ const get_raiseproduct = async (shopId, product, body) => {
 
   }
   let values = await ProductorderClone.findByIdAndUpdate({ _id: orderId.id }, obj, { new: true })
-  await ShopOrderClone.findByIdAndUpdate({ _id: shopOrder._id }, { raiseissue: true }, { new: true })
+  await ShopOrderClone.findByIdAndUpdate({ _id: shopOrder[0]._id }, { raiseissue: true }, { new: true })
   return values;
 }
 
