@@ -171,6 +171,16 @@ const getwithAsmwithoutAsm = catchAsync(async (req, res) => {
   }
   res.send(data);
 });
+
+const WardAdminRoleHistor = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.WardAdminRoleHistor(req.params.id, req.params.date);
+  res.send(data);
+});
+
+const getAllWithAsmwithout = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.getAllWithAsmwithout(req.params.sm, req.params.asm, req.params.date);
+  res.send(data);
+});
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -203,4 +213,6 @@ module.exports = {
   getAllAsmCurrentdata,
   createwithAsmwithoutAsm,
   getwithAsmwithoutAsm,
+  WardAdminRoleHistor,
+  getAllWithAsmwithout,
 };

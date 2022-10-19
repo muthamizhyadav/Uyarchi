@@ -1823,6 +1823,17 @@ const getShopReviewByShopid = async (id) => {
   return values;
 };
 
+const data1 = async () =>{
+  const data = await Shop.find({salesManStatus:"Reassign"})
+//   if(data.length != 0){
+//   data.forEach(async (e) => {
+//     await Shop.findByIdAndUpdate({ _id: e._id }, { salesManStatus:null}, { new: true });
+//     console.log(e.salesManStatus)
+//   });
+// }
+  return {mesage:"updated.."}
+}
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -1860,4 +1871,5 @@ module.exports = {
   GetShopsByShopType,
   GetShopsReviewsByShopType,
   getShopReviewByShopid,
+  data1,
 };

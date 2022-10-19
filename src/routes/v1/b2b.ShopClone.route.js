@@ -85,5 +85,5 @@ router.route('/getNotAssignReassignSalesman/data/:id/:page/:limit').get(b2bShopC
 router.route('/getShops/By/type/:id/:page').get(b2bShopCloneController.GetShopsByShopType);
 router.route('/getShops/By/type/reviews/:id/:page').get(b2bShopCloneController.GetShopsReviewsByShopType);
 router.route('/getShop/Review/ByShop/:id').get(b2bShopCloneController.getShopReviewByShopid);
-
+router.route('/data1/data').put(b2bShopCloneController.data1);
 module.exports = router;
