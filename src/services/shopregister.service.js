@@ -735,7 +735,70 @@ const get_raiseorder_issue = async (shopId, orderId) => {
   return shopOrder[0];
 };
 
+const get_raiseproduct = async (shopId, product, body) => {
+  let last24h = moment().subtract(24, 'h').toDate();
 
+  let orderId = await ProductorderClone.findById(product);
+  if (!orderId) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Product Not Found');
+  }
+  console.log(orderId.id)
+  let shopOrder = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        shopId: { $eq: shopId },
+        status: { $eq: "Delivered" },
+        delivered_date: { $gte: last24h },
+        _id: orderId.orderId
+      }
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $project: {
+        status: 1,
+      }
+    }
+  ]);
+  if (shopOrder.length == 0) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Order Not Found');
+  }
+  let obj = {
+    issueraised: true,
+    issuetype: body.type,
+    issue: body.issue,
+    issuediscription: body.discription,
+    issuequantity: body.issuequantity,
+
+  }
+  let values = await ProductorderClone.findByIdAndUpdate({ _id: orderId.id }, obj, { new: true })
+  await ShopOrderClone.findByIdAndUpdate({ _id: shopOrder._id }, { raiseissue: true }, { new: true })
+  return values;
+}
 
 module.exports = {
   register_shop,
@@ -750,5 +813,6 @@ module.exports = {
   get_pendung_amount,
   get_orderamount,
   get_raiseonissue,
-  get_raiseorder_issue
+  get_raiseorder_issue,
+  get_raiseproduct
 };

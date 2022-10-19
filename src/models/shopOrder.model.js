@@ -284,6 +284,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   un_delivered_date: {
     type: Date,
   },
+  raiseissue: {
+    type: Boolean,
+    default: false
+  }
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
@@ -417,6 +421,21 @@ const productorderCloneSchema = new mongoose.Schema({
   amountwithGST: {
     type: Number,
   },
+  issueraised: {
+    type: Boolean,
+  },
+  issuetype: {
+    type: String,
+  },
+  issue: {
+    type: String,
+  },
+  issuediscription: {
+    type: String,
+  },
+  issuequantity: {
+    type: Number,
+  }
 });
 
 productorderCloneSchema.plugin(toJSON);
