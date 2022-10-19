@@ -67,6 +67,18 @@ const get_raiseorder_issue = catchAsync(async (req, res) => {
   const shop = await registerShop.get_raiseorder_issue(req.shopId, req.params.id);
   res.status(httpStatus.CREATED).send(shop);
 });
+const get_raiseproduct = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_raiseproduct(req.shopId, req.params.id, req.body);
+  res.status(httpStatus.CREATED).send(shop);
+});
+
+const get_myissues = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_myissues(req.shopId, req.params.id, req.body);
+  res.status(httpStatus.CREATED).send(shop);
+});
+
+
+
 module.exports = {
   register_shop,
   verify_otp,
@@ -80,5 +92,7 @@ module.exports = {
   get_pendung_amount,
   get_orderamount,
   get_raiseonissue,
-  get_raiseorder_issue
+  get_raiseorder_issue,
+  get_raiseproduct,
+  get_myissues
 };
