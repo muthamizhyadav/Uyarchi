@@ -121,7 +121,10 @@ const wardAdminGroupSchema = new mongoose.Schema({
   },
   Disputestatus: {
   type: String,
-  }
+  },
+  mismatchStockStatus: {
+    type: String,
+    }
 });
 
 const wardAdminGroup = mongoose.model('wardAdminGroup', wardAdminGroupSchema);
@@ -158,4 +161,39 @@ const wardAdminGroupSchema_ORDER = new mongoose.Schema({
 });
 
 const wardAdminGroupModel_ORDERS = mongoose.model('orderAssign', wardAdminGroupSchema_ORDER);
-module.exports = { wardAdminGroup, wardAdminGroupModel_ORDERS };
+const wardAdminGroupfineSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  groupId: {
+    type: String,
+  },
+  deliveryExecutiveId: {
+    type: String,
+  },
+  status: {
+    type: String,
+  },
+  productId:{
+    type:String,
+  },
+  date: {
+    type: String,
+  },
+  time: {
+    type: String,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const WardAdminGroupfine = mongoose.model('wardAdminGroupfine', wardAdminGroupfineSchema);
+module.exports = { wardAdminGroup, wardAdminGroupModel_ORDERS, WardAdminGroupfine };
