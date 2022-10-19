@@ -205,6 +205,67 @@ const data = await WithoutAsmWithAsm.aggregate([
 return data
 };
 
+const getAllWithAsmwithout = async (sm,asm,date) => {
+  let match ;
+  if(sm != 'null' && asm == 'null' && date == 'null'){
+    match = [{ salesman: { $eq: sm } },{ status: { $eq: "withoutAsm"}}];
+  }
+  else if(sm != 'null' && asm == 'null' && date != 'null'){
+    match = [{ salesman: { $eq: sm } },{ date: { $eq: date } },{ status: { $eq: "withoutAsm"}}];
+  }else if(sm = 'null' && asm != 'null' && date == 'null'){
+    match = [{ wardAdminId: { $eq: asm } },{ status: { $eq: "withAsm"}}];
+  }else if(sm = 'null' && asm != 'null' && date != 'null'){
+    match = [{ wardAdminId: { $eq: asm } }, { date: { $eq: date } },{ status: { $eq: "withAsm"}}];
+  }else if(sm != 'null' && asm != 'null' && date == 'null'){
+    match = [{ wardAdminId: { $eq: asm } },{ salesman: { $eq: sm } },{ status: { $eq: "withAsm"}}];
+  }else if(sm != 'null' && asm != 'null' && date != 'null'){
+    match = [{ wardAdminId: { $eq: asm } },{ salesman: { $eq: sm } },{ date: { $eq: date } },{ status: { $eq: "withAsm"}}];
+  }
+  else{
+    match = [{active: { $eq: true } }];
+  }
+const data = await WithoutAsmWithAsm.aggregate([
+  {
+    $match: {
+      $and: match,
+    },
+  },
+  {
+    $lookup: {
+      from: 'b2busers',
+      localField: 'wardAdminId',
+      foreignField: '_id',
+      as: 'b2busersData',
+    },
+  },
+  {
+    $lookup: {
+      from: 'b2busers',
+      localField: 'salesman',
+      foreignField: '_id',
+      as: 'b2busersDataSales',
+    },
+  },
+  {
+    $project: {
+      Salesmanname: '$b2busersDataSales.name',
+      Asmname:"$b2busersData.name",
+      targetTonne: 1,
+      targetValue: 1,
+      salesman: 1,
+      wardAdminId: 1,
+      status: 1,
+      unit: 1,
+      date: 1,
+      time: 1,
+      _id: 1,
+    },
+  },
+])
+return data
+};
+
+
 const getAll = async (date) => {
   if (date != 'null') {
     match = [{ date: { $eq: date } }];
@@ -1168,6 +1229,57 @@ const getAllAsmCurrentdata = async (id) =>{
   return data ;
      
 }
+
+const WardAdminRoleHistor = async (id,date) =>{
+  let match ;
+  if(id != 'null' && date == 'null'){
+    match = {  
+     $and: [{ b2bUserId: {$eq:id} }]
+    }
+  }else if(id == 'null' && date != 'null'){
+    match = {  
+      $and: [{ date: {$eq:date} }]
+     }
+  }
+  else if(id != 'null' && date != 'null'){
+    match = {  
+      $and: [{ b2bUserId: {$eq:id} },{ date: {$eq:date} }]
+     }
+  }else{
+    match = {  
+      $and: [{ active: {$eq:true} }]
+     }
+  }
+
+  const data = await WardAdminRoleHistory.aggregate([
+    {
+      $match: match
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'b2bUserId',
+        foreignField: '_id',
+        as: 'b2busersdata',
+      },
+    },
+    {
+      $unwind: '$b2busersdata',
+    },
+    {
+      $project:{
+         Name:"$b2busersdata.name",
+         targetTonne:1,
+         date:1,
+         time:1,
+         targetValue:1,
+         b2bUserId:1,
+      }
+    }
+  ])
+  return data ;
+     
+}
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -1203,4 +1315,6 @@ module.exports = {
   createwithAsmwithoutAsm,
   getwithAsmwithoutAsm,
   getwithAsmwithoutAsm1,
+  WardAdminRoleHistor,
+  getAllWithAsmwithout,
 };
