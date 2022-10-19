@@ -37,8 +37,16 @@ const usableStockSchema = new mongoose.Schema({
   },
   closingStock: {
     type: Number,
+    default: 0,
   },
-  oldStock: { type: Number },
+  oldStock: {
+    type: Number,
+    default: 0,
+  },
+  openingStock: {
+    type: Number,
+    default: 0,
+  },
   active: {
     type: Boolean,
     default: true,

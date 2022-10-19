@@ -208,6 +208,42 @@ const getStocks = async () => {
   return values;
 };
 
+
+const getstockDetails = async (id) => {
+
+  let value = await usableStock.aggregate([
+    {
+      $sort: { created: -1 }
+    },
+    {
+      $match: {
+        productId: { $eq: id }
+      }
+    },
+    {
+      $addFields: {
+        todaydate: { "$dateToString": { "format": "%Y-%m-%d", "date": "$created" } }
+
+      }
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'todaydate',
+        foreignField: 'date',
+        pipeline: [{
+          $match: {
+            productid: id,
+            
+          }
+        }],
+        as: 'productorderclones',
+      },
+    },
+  ])
+
+  return value;
+}
 module.exports = {
   createusableStock,
   getAllusableStock,
@@ -215,4 +251,5 @@ module.exports = {
   updateusableStockbyId,
   getAssignStockbyId,
   getStocks,
+  getstockDetails
 };
