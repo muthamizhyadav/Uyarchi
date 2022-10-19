@@ -231,12 +231,30 @@ const getstockDetails = async (id) => {
         from: 'productorderclones',
         localField: 'todaydate',
         foreignField: 'date',
-        pipeline: [{
-          $match: {
-            productid: id,
-            
-          }
-        }],
+        pipeline: [
+          {
+            $match: {
+              productid: id,
+            },
+          },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [{
+                $match: {
+                  delivery_type: 'IMD'
+                }
+              }],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: "$shoporderclones"
+          },
+
+        ],
         as: 'productorderclones',
       },
     },
