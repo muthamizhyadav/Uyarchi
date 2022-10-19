@@ -823,7 +823,8 @@ const get_my_issue_byorder = async (shopId, orderId) => {
         created: 1,
         delivered_date: 1,
         reason: 1,
-        product: "$productOrderdata"
+        product: "$productOrderdata",
+        issueDate: 1,
       }
     }
   ])
