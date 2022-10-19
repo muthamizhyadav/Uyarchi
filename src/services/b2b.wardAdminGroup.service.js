@@ -6,7 +6,7 @@ const { Shop } = require('../models/b2b.ShopClone.model');
 const { ShopOrderClone } = require('../models/shopOrder.model');
 const { ProductorderClone } = require('../models/shopOrder.model');
 const pettyStockModel = require('../models/b2b.pettyStock.model');
-const { wardAdminGroup, wardAdminGroupModel_ORDERS } = require('../models/b2b.wardAdminGroup.model');
+const { wardAdminGroup, wardAdminGroupModel_ORDERS, WardAdminGroupfine } = require('../models/b2b.wardAdminGroup.model');
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 const { Product } = require('../models/product.model');
 const orderPayment = require('../models/orderpayment.model');
@@ -228,6 +228,23 @@ const updateManageStatuscashcollect = async (id, updateBody) => {
     { new: true }
   );
   return Manage;
+};
+
+// mismatchStockStatus
+
+const updatemismatchStockStatus = async (id, updateBody) => {
+  let data = await getById(id);
+  if (!data) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  data = await wardAdminGroup.findByIdAndUpdate(
+    { _id: id },
+    {
+      mismatchStockStatus: 'Finish',
+    },
+    { new: true }
+  );
+  return data;
 };
 
 const updateManageStatuscollected = async (id, updateBody) => {
@@ -2305,7 +2322,7 @@ const submitDispute = async (id, updatebody) => {
 };
 
 const returnStockData = async (id) => {
-  let values = await Product.aggregate([
+  let values = await Product.aggregate([ 
     // Delivered count
     {
       $lookup: {
@@ -2464,6 +2481,7 @@ const returnStockData = async (id) => {
         preserveNullAndEmptyArrays: true,
       },
     },
+    
     {
       $project: {
         _id: 1,
@@ -2496,6 +2514,20 @@ const returnStockData = async (id) => {
 
   return values;
 };
+
+const fineData = async (body)=>{
+  let serverdate = moment().format('YYYY-MM-DD');
+  let servertime = moment().format('hh:mm a');
+  let data = await wardAdminGroup.findById(body.groupId);
+  if(!data){
+    throw new ApiError(httpStatus.NOT_FOUND, 'group not found');
+  }
+  let values = {
+    ...body,
+  ...{ date: serverdate, time: servertime,  deliveryExecutiveId:data.deliveryExecutiveId,},
+}
+return WardAdminGroupfine.create(values);
+}
 
 module.exports = {
   getPEttyCashQuantity,
@@ -2551,4 +2583,6 @@ module.exports = {
   finishingAccount,
   submitDispute,
   returnStockData,
+  updatemismatchStockStatus,
+  fineData,
 };
