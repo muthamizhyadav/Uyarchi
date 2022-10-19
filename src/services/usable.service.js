@@ -243,20 +243,18 @@ const getstockDetails = async (id) => {
     {
       $addFields: {
         yesterdate: {
-          $dateSubtract:
-          {
-            startDate: "$created",
-            unit: "day",
-            amount: 1
-          }
-        }
-
-      }
+          $dateSubtract: {
+            startDate: '$created',
+            unit: 'day',
+            amount: 1,
+          },
+        },
+      },
     },
     {
       $addFields: {
-        yesterday: { "$dateToString": { "format": "%Y-%m-%d", "date": "$yesterdate" } }
-      }
+        yesterday: { $dateToString: { format: '%Y-%m-%d', date: '$yesterdate' } },
+      },
     },
     {
       $lookup: {
@@ -295,6 +293,12 @@ const getstockDetails = async (id) => {
           },
         ],
         as: 'productorderclones',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productorderclones',
+        preserveNullAndEmptyArrays: true,
       },
     },
     // {
@@ -340,6 +344,12 @@ const getstockDetails = async (id) => {
         as: 'Ndd',
       },
     },
+    {
+      $unwind: {
+        path: '$Ndd',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     // {
     //   $unwind: '$Ndd',
     // },
@@ -357,6 +367,12 @@ const getstockDetails = async (id) => {
           },
         ],
         as: 'pettyStock',
+      },
+    },
+    {
+      $unwind: {
+        path: '$pettyStock',
+        preserveNullAndEmptyArrays: true,
       },
     },
 
@@ -402,6 +418,12 @@ const getstockDetails = async (id) => {
       },
     },
     {
+      $unwind: {
+        path: '$Ndd_delivered',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $lookup: {
         from: 'productorderclones',
         localField: 'todaydate',
@@ -438,6 +460,12 @@ const getstockDetails = async (id) => {
           },
         ],
         as: 'Imd_delivered',
+      },
+    },
+    {
+      $unwind: {
+        path: '$Imd_delivered',
+        preserveNullAndEmptyArrays: true,
       },
     },
 
@@ -482,6 +510,12 @@ const getstockDetails = async (id) => {
         as: 'rejectedStock',
       },
     },
+    {
+      $unwind: {
+        path: '$rejectedStock',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
 
     // Un Delivered stocks
     {
@@ -523,8 +557,64 @@ const getstockDetails = async (id) => {
         as: 'UnDelivered_Stocks',
       },
     },
-  ]);
+    {
+      $unwind: {
+        path: '$UnDelivered_Stocks',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
 
+    {
+      $lookup: {
+        from: 'returnstocks',
+        localField: 'todaydate',
+        foreignField: 'date',
+        pipeline: [
+          { $match: { productId: id } },
+          {
+            $group: {
+              _id: null,
+              return: { $sum: '$actualStock' },
+            },
+          },
+        ],
+        as: 'returnstocks',
+      },
+    },
+    {
+      $unwind: {
+        path: '$returnstocks',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        closingStock: 1,
+        oldStock: 1,
+        openingStock: 1,
+        active: 1,
+        archive: 1,
+        b2bStock: 1,
+        b2cStock: 1,
+        productId: 1,
+        date: 1,
+        time: 1,
+        totalStock: 1,
+        wastage: 1,
+        todaydate: 1,
+        yesterdate: 1,
+        yesterday: 1,
+        imd: '$productorderclones.Imd',
+        pettyStock: '$pettyStock.pettyStock',
+        Imd_delivered: '$Imd_delivered.ImdDelivered',
+        UnDelivered_Stocks: '$UnDelivered_Stocks.unDelivered',
+        Ndd_delivered: '$Ndd_delivered',
+        rejectedStock: '$rejectedStock',
+        returnstocks: '$returnstocks.return',
+      },
+    },
+  ]);
   return value;
 };
 module.exports = {
