@@ -805,6 +805,38 @@ const get_raiseproduct = async (shopId, product, body) => {
   return values;
 }
 
+
+const get_myissues = async (shopId) => {
+  let last24h = moment().subtract(24, 'h').toDate();
+  const value = await ShopOrderClone.aggregate([
+    {
+      $sort: { created: -1 }
+    },
+    {
+      $match: {
+        shopId: { $eq: shopId },
+        status: { $eq: "Delivered" },
+        raiseissue: {$eq: true}
+    }
+    },
+  {
+    $project: {
+      OrderId: 1,
+      created: 1,
+      delivery_type: 1,
+      status: 1,
+      date: 1,
+      time: 1,
+      time_of_delivery: 1,
+      delivered_date: 1
+      }
+  }
+
+  ])
+return value;
+};
+
+
 module.exports = {
   register_shop,
   verify_otp,
@@ -819,5 +851,6 @@ module.exports = {
   get_orderamount,
   get_raiseonissue,
   get_raiseorder_issue,
-  get_raiseproduct
+  get_raiseproduct,
+  get_myissues
 };

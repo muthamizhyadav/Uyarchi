@@ -17,6 +17,7 @@ router.route('/orderamount/collect').post(shopverify, shopregister.get_orderamou
 router.route('/raiseonissue/order/all').get(shopverify, shopregister.get_raiseonissue);
 router.route('/raiseorder/issue/:id').get(shopverify, shopregister.get_raiseorder_issue);
 router.route('/raiseproduct/issue/:id').put(shopverify, shopregister.get_raiseproduct);
+router.route('/myissues/get/all').get(shopverify, shopregister.get_myissues);
 
 
 
