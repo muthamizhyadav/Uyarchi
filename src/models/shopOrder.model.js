@@ -423,6 +423,7 @@ const productorderCloneSchema = new mongoose.Schema({
   },
   issueraised: {
     type: Boolean,
+    default:false
   },
   issuetype: {
     type: String,
