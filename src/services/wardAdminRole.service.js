@@ -717,8 +717,9 @@ const createwithoutoutAsmSalesman = async (body) => {
 
 //withoutoutAsmSalesmanCurrentDate
 const withoutoutAsmSalesmanCurrentDate = async (id) => {
+
   let serverdate = moment().format('yyy-MM-DD');
-  const data = await WithoutAsmSalesman.find({ salesman: id, active: true, date: serverdate });
+  const data = await WithoutAsmWithAsm.find({ salesman: id, date: serverdate, status:"withoutAsm"});
   return data;
 };
 
