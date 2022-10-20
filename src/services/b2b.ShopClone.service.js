@@ -164,7 +164,7 @@ const getshop_myshops_asm = async (page, userId) => {
                 {
                   $match: {
                     asmId: { $eq: userId },
-                    status: { $ne: 'Assign' },
+                    status: { $ne: 'Reassign' },
                   }
                 },
 
@@ -187,7 +187,7 @@ const getshop_myshops_asm = async (page, userId) => {
                 {
                   $match: {
                     asmId: { $eq: userId },
-                    status: { $ne: 'Assign' },
+                    status: { $ne: 'Reassign' },
                   }
                 },
 
@@ -204,6 +204,7 @@ const getshop_myshops_asm = async (page, userId) => {
 
           {
             $project: {
+              _id: 1,
               salesManId: "$salesManId",
               asmsalesmen: "$asmsalesmen",
             }
@@ -368,7 +369,7 @@ const getshop_myshops_asm = async (page, userId) => {
                 {
                   $match: {
                     asmId: { $eq: userId },
-                    status: { $ne: 'Assign' },
+                    status: { $ne: 'Reassign' },
                   }
                 },
 
@@ -391,7 +392,7 @@ const getshop_myshops_asm = async (page, userId) => {
                 {
                   $match: {
                     asmId: { $eq: userId },
-                    status: { $ne: 'Assign' },
+                    status: { $ne: 'Reassign' },
                   }
                 },
 
@@ -408,6 +409,7 @@ const getshop_myshops_asm = async (page, userId) => {
 
           {
             $project: {
+              _id: 1,
               salesManId: "$salesManId",
               asmsalesmen: "$asmsalesmen",
             }
@@ -544,7 +546,6 @@ const getshop_myshops_asm = async (page, userId) => {
       },
     },
   ]);
-
   return {
     values: values,
     total: total.length,
