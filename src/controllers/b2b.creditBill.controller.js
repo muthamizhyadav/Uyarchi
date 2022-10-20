@@ -78,7 +78,7 @@ const updateAssigned = catchAsync(async (req, res) => {
   })
 
   const getDeliDetails = catchAsync(async (req, res) => {
-    const name = await creditBillService.getDeliDetails(req.params.AssignedUserId);
+    const name = await creditBillService.getDeliDetails();
     res.send(name);
   })
 
@@ -97,7 +97,7 @@ const updateAssigned = catchAsync(async (req, res) => {
   })
 
   const GroupDetails = catchAsync(async (req, res) => {
-    const name = await creditBillService.getGroupAndBill(req.params.AssignedUserId);
+    const name = await creditBillService.getGroupAndBill(req.params.id);
     res.send(name);
   })
 
