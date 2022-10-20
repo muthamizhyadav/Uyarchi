@@ -96,6 +96,11 @@ const updateAssigned = catchAsync(async (req, res) => {
     res.send(name);
   })
 
+  const GroupDetails = catchAsync(async (req, res) => {
+    const name = await creditBillService.getGroupAndBill(req.params.AssignedUserId);
+    res.send(name);
+  })
+
 
 module.exports = {
 
@@ -118,4 +123,5 @@ module.exports = {
     getFineAccount,
     getDeliveryExecutiveName,
     getgetGroupAndBill,
+    GroupDetails,
 }
