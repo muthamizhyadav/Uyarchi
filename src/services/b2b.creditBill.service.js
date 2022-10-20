@@ -15,6 +15,7 @@ const creditBillGroup = require('../models/b2b.creditBillGroup.model')
 const creditBill = require('../models/b2b.creditBill.model');
 const creditBillPaymentModel = require('../models/b2b.creditBillPayments.History.model')
 const { Roles } = require('../models');
+const { Users } = require('../models/B2Busers.model');
 
 const getShopWithBill = async (page) => {
   let values = await ShopOrderClone.aggregate([
@@ -1041,123 +1042,105 @@ const getShopPendingByPassingShopId = async (id) => {
 }
 
 
-const getDeliDetails = async (AssignedUserId) =>{
+const getDeliDetails = async () =>{
 
-//   let match;
-//   if(AssignedUserId != 'null'){
-//       match = [{ AssignedUserId: { $eq: AssignedUserId }}, { active: { $eq: true }}];
-//   }
-//    else {
-//   match = [{ AssignedUserId: { $ne: null } }, { active: { $eq: true } }];
-// }
-
-  let values = await creditBillGroup.aggregate([
-    {
-      $match: {
-        $and: [{ AssignedUserId: { $eq: AssignedUserId } }],
-      },
-    },
-    // {
-    //   $match: {
-    //     $and: match,
-    //   },
-    // },
-    {
-      $lookup:{
-        from: 'creditbills',
-        localField: '_id',
-        foreignField: 'creditbillId',
-        as: 'nameData'
-      }
-
-    },
+  let values = await Users.aggregate([
  
-    {
-      $project: {
-        groupId:1,
-        AssignedUserId:1,
-        countss: { $size:"$nameData.bill" },
-    }
-  },
-  {
-    $group: {
-        _id: null,
-        TOTAL_OBJECTS: { $sum: "$countss" }
-    }
-}
-
-
-  ]);
- 
-
-  let totalGroup = await creditBillGroup.aggregate([
-   
-      {
-        $match: {
-          $and: [{ AssignedUserId: { $eq: AssignedUserId } }],
+        {
+          $match: {
+            $or: [{ userRole: { $eq: "36151bdd-a8ce-4f80-987e-1f454cd0993f" } },
+            { userRole: { $eq: "fb0dd028-c608-4caa-a7a9-b700389a098d" } }],
+          },
         },
+   {
+    $lookup: {
+      from:'creditbillgroups',
+      localField: '_id',
+      foreignField: 'AssignedUserId',
+      as: 'userDta'
+    }
+   },{ $unwind: "$userDta"},
+  
+   {
+    $project:{
+      name:1,
+      group: "$userDta.groupId",
+      billCount: {
+        $size: "$userDta.Orderdatas.customerBillId"
       },
-      // {
-      //   $match: {
-      //     $and: match,
-      //   },
-      // },
-      {
-        $lookup:{
-          from: 'creditbills',
-          localField: '_id',
-          foreignField: 'creditbillId',
-          as: 'nameData'
-        }
-      },
-   
-   
+    
+       shopCount: {
+       $size: "$userDta.Orderdatas.shopId"},
+   },
+  },
+
+
+
   ]);
+  return values;
+  
+ 
+
+  // let totalGroup = await creditBillGroup.aggregate([
+   
+    
+  //     {
+  //       $match: {
+  //         $and: match,
+  //       },
+  //     },
+  //     {
+  //       $lookup:{
+  //         from: 'creditbills',
+  //         localField: '_id',
+  //         foreignField: 'creditbillId',
+  //         as: 'nameData'
+  //       }
+  //     },
+   
+   
+  // ]);
 
   
-  let getgroupId = await creditBillGroup.aggregate([
-    {
-      $match: {
-        $and: [{ AssignedUserId: { $eq: AssignedUserId } }],
-      },
-    },
-    // {
-    //   $match: {
-    //     $and: match,
-    //   },
-    // },
-    {
-      $lookup:{
-        from: 'creditbills',
-        localField: '_id',
-        foreignField: 'creditbillId',
-        as: 'nameData'
-      }
+  // let getgroupId = await creditBillGroup.aggregate([
+    
+  //   {
+  //     $match: {
+  //       $and: match,
+  //     },
+  //   },
+  //   {
+  //     $lookup:{
+  //       from: 'creditbills',
+  //       localField: '_id',
+  //       foreignField: 'creditbillId',
+  //       as: 'nameData'
+  //     }
 
-    },
-    {
-      $lookup:{
-        from: 'b2busers',
-        localField: 'AssignedUserId',
-        foreignField: '_id',
-        as: 'userData'
-      }
-    },{ $unwind: "$userData"},
-    {
-      $project: {
-        groupId:1,
-        assignedDate:1,
-        AssignedUserId:1,
-        Orderdatas:1,
-        receiveStatus:1,
-        name: "$userData.name",
-        PendingAmount: {$sum:"$Orderdatas.pendingAmount"}
+  //   },
+  //   {
+  //     $lookup:{
+  //       from: 'b2busers',
+  //       localField: 'AssignedUserId',
+  //       foreignField: '_id',
+  //       as: 'userData'
+  //     }
+  //   },{ $unwind: "$userData"},
+  //   {
+  //     $project: {
+  //       groupId:1,
+  //       assignedDate:1,
+  //       AssignedUserId:1,
+  //       Orderdatas:1,
+  //       receiveStatus:1,
+  //       name: "$userData.name",
+  //       PendingAmount: {$sum:"$Orderdatas.pendingAmount"}
         
-      }
-    }
-  ]);
+  //     }
+  //   }
+  // ]);
 
-  return {values: values, getgroupId: getgroupId, totalGroup: totalGroup.length}
+  // return {values: values, getgroupId: getgroupId, totalGroup: totalGroup.length}
 }
 
 
@@ -1393,18 +1376,23 @@ const getDetailsByPassGroupId = async(id)=>{
         from: 'creditbills',
         localField: '_id',
         foreignField: 'creditbillId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'creditbillpaymenthistories',
+              localField: '_id',
+              foreignField: 'creditBillId',
+              as: 'data'
+            }
+          },
+          { $unwind: "$data"},
+        ],
+        
         as: 'creditData'
       }
     },
-    {
-      $lookup: {
-        from: 'creditbillpaymenthistories',
-        localField: 'creditData._id',
-        foreignField: 'creditBillId',
-        as: 'data'
-      }
-    },
-  
+    { $unwind:"$creditData"},
+   
 
     {
       $project: {
@@ -1412,7 +1400,7 @@ const getDetailsByPassGroupId = async(id)=>{
         billNo: "$Orderdatas.customerBillId",
         shopname: "$Orderdatas.shopNmae",
         BalanceAmount: "$Orderdatas.pendingAmount",
-        paymentType:"$data.pay_By",
+        paymentType:"$creditData.data.pay_By",
         PaymentCapacity:"$data.pay_type",
         paymentStatus:"$data.upiStatus",
         AmountPay: "$data.amountPayingWithDEorSM"
