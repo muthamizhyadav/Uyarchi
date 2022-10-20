@@ -141,6 +141,14 @@ const shopSchema = mongoose.Schema({
   DA_Comment: {
     type: String,
   },
+  daStatus: {
+    type: String,
+  },
+  purchaseQTy: {
+    type: String,
+
+  }
+
 });
 
 // assignSchema.plugin(toJSON);
