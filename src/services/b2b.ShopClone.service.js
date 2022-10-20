@@ -2346,8 +2346,20 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
     {
       $match: {
         $or: [
-          { $and: [{ salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }] },
-          { $and: [{ salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: null } }] },
+          {
+            $and: [
+              { salesManStatus: { $ne: 'Assign' } },
+              { salesManStatus: { $ne: 'tempReassign' } },
+              { salesManStatus: { $eq: 'Reassign' } },
+            ],
+          },
+          {
+            $and: [
+              { salesManStatus: { $ne: 'Assign' } },
+              { salesManStatus: { $ne: 'tempReassign' } },
+              { salesManStatus: { $eq: null } },
+            ],
+          },
         ],
       },
     },
@@ -2444,8 +2456,20 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
     {
       $match: {
         $or: [
-          { $and: [{ salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }] },
-          { $and: [{ salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: null } }] },
+          {
+            $and: [
+              { salesManStatus: { $ne: 'Assign' } },
+              { salesManStatus: { $ne: 'tempReassign' } },
+              { salesManStatus: { $eq: 'Reassign' } },
+            ],
+          },
+          {
+            $and: [
+              { salesManStatus: { $ne: 'Assign' } },
+              { salesManStatus: { $ne: 'tempReassign' } },
+              { salesManStatus: { $eq: null } },
+            ],
+          },
         ],
       },
     },
