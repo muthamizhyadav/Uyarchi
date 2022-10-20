@@ -164,7 +164,7 @@ const getshop_myshops_asm = async (page, userId) => {
                 {
                   $match: {
                     asmId: { $eq: userId },
-                    status: { $ne: 'Reassign' },
+                    status: { $eq: 'Assign' },
                   }
                 },
 
@@ -187,7 +187,7 @@ const getshop_myshops_asm = async (page, userId) => {
                 {
                   $match: {
                     asmId: { $eq: userId },
-                    status: { $ne: 'Reassign' },
+                    status: { $eq: 'tempReassign' },
                   }
                 },
 
