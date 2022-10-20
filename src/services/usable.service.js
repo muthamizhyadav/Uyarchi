@@ -615,7 +615,8 @@ const getstockDetails = async (id) => {
       },
     },
   ]);
-  return value;
+  let productDetails = await Product.findById(id);
+  return { value: value, productDetails: productDetails };
 };
 module.exports = {
   createusableStock,
