@@ -6,6 +6,7 @@ const b2bCloneService = require('../services/b2b.ShopClone.service');
 const token = require('../services/token.service');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { AttendanceClone } = require('../models/b2b.ShopClone.model');
+const { Users } = require('../models/B2Busers.model');
 
 const { MarketClone } = require('../models/market.model');
 const createB2bShopClone = catchAsync(async (req, res) => {
@@ -50,7 +51,16 @@ const getshopWardStreetNamesWithAggregation = catchAsync(async (req, res) => {
 });
 
 const getshopmyshops = catchAsync(async (req, res) => {
-  const shop = await b2bCloneService.getshop_myshops(req.params.page,req.userId);
+  const user = await Users.findById(req.userId);
+  let shop
+  if (user.userRole == "fb0dd028-c608-4caa-a7a9-b700389a098d") {
+    shop = await b2bCloneService.getshop_myshops(req.params.page, req.userId);
+    console.log("sales man")
+  }
+  if (user.userRole == "719d9f71-8388-4534-9bfe-3f47faed62ac") {
+    shop = await b2bCloneService.getshop_myshops_asm(req.params.page, req.userId);
+    console.log("asm")
+  }
   res.send(shop);
 });
 
