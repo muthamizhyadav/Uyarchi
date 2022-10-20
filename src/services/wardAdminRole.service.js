@@ -545,6 +545,7 @@ const createAsmSalesman = async (body) => {
 };
 
 const getAsmSalesman = async (id) => {
+  const name = await Users.findById(id)
   let data = await AsmSalesMan.aggregate([
     {
       $match: {
@@ -591,7 +592,7 @@ const getAsmSalesman = async (id) => {
       },
     },
   ]);
-  return data;
+  return {data:data, name:name.name};
 };
 
 const allAssignReassignSalesman = async (id) => {
