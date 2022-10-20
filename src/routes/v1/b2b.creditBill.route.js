@@ -17,10 +17,10 @@ router.route('/get/DelNmae/AfterAssign').get(creditBillController.getDElExecutiv
 router.route('/get/salesman/name').get(creditBillController.getsalesName)
 router.route('/get/data/notAssigned/:page').get(creditBillController.getNotAssignData);
 router.route('/get/shop/pending/:id').get(creditBillController.getShopPendingByPassingShopId);
-router.route('/get/getDeliDetails/:AssignedUserId').get(creditBillController.getDeliDetails);
+router.route('/get/getDeliDetails').get(creditBillController.getDeliDetails);
 router.route('/get/getFineAccount/:id').get(creditBillController.getFineAccount);
 router.route('/get/deliveryExecutiveNmae').get(creditBillController.getDeliveryExecutiveName);
 router.route('/get/details/Group/:id').get(creditBillController.getgetGroupAndBill);
-router.route('/get/group/data/:AssignedUserId').get(creditBillController.GroupDetails)
+router.route('/get/group/data/:id').get(creditBillController.GroupDetails)
 
 module.exports = router;
