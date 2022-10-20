@@ -612,6 +612,7 @@ const getstockDetails = async (id) => {
         Ndd_delivered: '$Ndd_delivered.delivered',
         rejectedStock: '$rejectedStock.Rejected',
         returnstocks: '$returnstocks.return',
+        created: 1,
       },
     },
   ]);
