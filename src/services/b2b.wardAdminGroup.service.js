@@ -2329,6 +2329,7 @@ const returnStockData = async (id) => {
         from: 'wardadmingroupfines',
         localField: '_id',
         foreignField: 'productId',
+        pipeline: [{ $match: { groupId: id } }],
         as: 'wardadmingroupfines',
       },
     },
