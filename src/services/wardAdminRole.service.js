@@ -646,6 +646,7 @@ const createSalesmanShop = async (body) => {
 };
 
 const getSalesman = async (id) => {
+  const name = await Users.findById(id)
   let data = await SalesManShop.aggregate([
     {
       $match:{ $or: [
@@ -715,7 +716,7 @@ const getSalesman = async (id) => {
       },
     },
   ]);
-  return {data:data, salesmanname:data[0].salesmanName};
+  return {data:data, salesmanname:name.name};
 };
 
 // withoutoutAsmSalesman
