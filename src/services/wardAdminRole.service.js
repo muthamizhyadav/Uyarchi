@@ -1104,6 +1104,7 @@ const Return_Assign_To_SalesMan = async (id) => {
 };
 
 const history_Assign_Reaasign_data = async (id,date,idSearch,tempid) => {
+  const name = await Users.findById(id)
   let match ;
  if(date != 'null' && idSearch == 'null' && tempid == 'null') {
     match = { $or: [
@@ -1183,7 +1184,7 @@ const history_Assign_Reaasign_data = async (id,date,idSearch,tempid) => {
     }
 
   ])
-  return data ;
+  return {data, name:name.name} ;
 }
 
 const getAllSalesmanShopsCount = async () =>{
