@@ -958,6 +958,21 @@ const getAssignData_by_SalesMan = async (page) => {
       },
     },
     {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'fromSalesManId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ status: { $ne: 'Reassign' } },{ status: { $ne: 'Assign' } },{ status: { $eq: 'tempReassign' } }],
+            },
+          },
+        ],
+        as: 'salesmanshopsdata',
+      },
+    },
+    {
       $project: {
         _id: 1,
         name: 1,
@@ -966,7 +981,8 @@ const getAssignData_by_SalesMan = async (page) => {
         userRole: 1,
         fromSalesManId: '$saleMan.fromSalesManId',
         no_of_shop: { $size: '$salesMan' },
-        no_of_temperory:{$size:"$salesMandata"}
+        no_of_temperory:{$size:"$salesMandata"},
+        temp:{$size:'$salesmanshopsdata'},
       },
     },
     { $skip: 10 * page },
