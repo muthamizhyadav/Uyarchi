@@ -21,5 +21,6 @@ router.route('/get/getDeliDetails/:AssignedUserId').get(creditBillController.get
 router.route('/get/getFineAccount/:id').get(creditBillController.getFineAccount);
 router.route('/get/deliveryExecutiveNmae').get(creditBillController.getDeliveryExecutiveName);
 router.route('/get/details/Group/:id').get(creditBillController.getgetGroupAndBill);
+router.route('/get/group/data/:AssignedUserId').get(creditBillController.GroupDetails)
 
 module.exports = router;
