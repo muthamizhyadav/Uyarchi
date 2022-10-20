@@ -1658,6 +1658,52 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
       $limit: parseInt(limit),
     },
   ]);
+  let allnoAssing = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ Wardid: { $eq: id } }],
+      },
+    },
+    // {
+    //   $match: {
+    //     $or: [
+    //       { salesManStatus: { $ne: 'Assign' } },
+    //       { salesManStatus: { $eq: null } },
+    //       { salesManStatus: { $eq: 'Reassign' } },
+    //       { salesManStatus: { $ne: 'tempReassign' } },
+    //     ],
+    //   },
+    // },
+    // {
+    //   $match: {
+    //     $or: [
+    //       { $and: [{ salesManStatus: { $ne: 'Assign' }}, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }] },
+    //       { $and: [{ salesManStatus: { $ne: 'Assign' }}, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: null } }] },
+    //     ],
+    //   },
+    // },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streets',
+      },
+    },
+    {
+      $unwind: '$streets',
+    },
+    {
+      $project: {
+        SOwner: 1,
+        SName: 1,
+        mobile: 1,
+        address: 1,
+        locality: '$streets.locality',
+        _id: 1,
+      },
+    },
+  ]);
   let total = await Shop.aggregate([
     {
       $match: {
@@ -1704,7 +1750,7 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
       },
     },
   ]);
-  return { data: data, total: total.length };
+  return { data: data, total: total.length, overall:allnoAssing.length };
 };
 
 const GetShopsByShopType = async (id, page) => {
