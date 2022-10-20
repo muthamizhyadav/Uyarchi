@@ -142,11 +142,7 @@ const getshop_myshops = async (page, userId) => {
   let values = await Shop.aggregate([
     {
       $match: {
-        $or: [{
-          salesManStatus: { $eq: 'Assign' },
-          salesManStatus: { $eq: 'tempReassign' },
-          salesManStatus: { $eq: 'Reassign' }
-        }],
+        $or: [{ salesManStatus: { $eq: 'Assign' } }, { salesManStatus: { $eq: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }],
       },
     },
     {
@@ -292,11 +288,11 @@ const getshop_myshops = async (page, userId) => {
     { $limit: 10 },
   ]);
   let total = await Shop.aggregate([
-    // {
-    //   $match: {
-    //     $and: [{ type: { $eq: 'shop' } }],
-    //   },
-    // },
+    {
+      $match: {
+        $or: [{ salesManStatus: { $eq: 'Assign' } }, { salesManStatus: { $eq: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }],
+      },
+    },
     {
       $lookup: {
         from: 'salesmanshops',
