@@ -1260,9 +1260,6 @@ const getGroupAndBill = async (AssignedUserId) => {
         assignedDate: 1,
         assignedTime: 1,
         receiveStatus: 1,
-        // pendingAmount: '$Orderdatas.pendingAmount',
-        // shopData: "$creditBillData.shopId",
-        // billData: "$creditBillData.bill",
         total: {
           $sum: '$Orderdatas.pendingAmount',
         },
