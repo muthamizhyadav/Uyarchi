@@ -49,6 +49,12 @@ const getshopWardStreetNamesWithAggregation = catchAsync(async (req, res) => {
   res.send(shop);
 });
 
+const getshopmyshops = catchAsync(async (req, res) => {
+  const shop = await b2bCloneService.getshop_myshops(req.params.page,req.userId);
+  res.send(shop);
+});
+
+
 const getshopWardStreetNamesWithAggregation_withfilter = catchAsync(async (req, res) => {
   console.log(req.body);
 
@@ -442,4 +448,5 @@ module.exports = {
   GetShopsReviewsByShopType,
   getShopReviewByShopid,
   data1,
+  getshopmyshops
 };

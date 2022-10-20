@@ -12,6 +12,7 @@ router
   .post(authorization, b2bCloneshopImage.array('photoCapture'), b2bShopCloneController.createB2bShopClone)
   .get(authorization, b2bShopCloneController.getAllB2BshopClone);
 router.route('/aggregation/Names/:page').get(b2bShopCloneController.getshopWardStreetNamesWithAggregation);
+router.route('/myshops/assigned/Names/:page').get(authorization, b2bShopCloneController.getshopmyshops);
 router
   .route('/aggregation/filter/:district/:zone/:ward/:street/:status/:page')
   .get(b2bShopCloneController.getshopWardStreetNamesWithAggregation_withfilter);
