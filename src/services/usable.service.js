@@ -609,13 +609,14 @@ const getstockDetails = async (id) => {
         pettyStock: '$pettyStock.pettyStock',
         Imd_delivered: '$Imd_delivered.ImdDelivered',
         UnDelivered_Stocks: '$UnDelivered_Stocks.unDelivered',
-        Ndd_delivered: '$Ndd_delivered',
-        rejectedStock: '$rejectedStock',
+        Ndd_delivered: '$Ndd_delivered.delivered',
+        rejectedStock: '$rejectedStock.Rejected',
         returnstocks: '$returnstocks.return',
       },
     },
   ]);
-  return value;
+  let productDetails = await Product.findById(id);
+  return { value: value, productDetails: productDetails };
 };
 module.exports = {
   createusableStock,
