@@ -1625,8 +1625,8 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
     {
       $match: {
         $or: [
-          { $and: [{ salesManStatus: { $ne: 'Assign' }}, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }] },
-          { $and: [{ salesManStatus: { $ne: 'Assign' }}, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: null } }] },
+          { $and: [{ salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }] },
+          { $and: [{ salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: null } }] },
         ],
       },
     },
@@ -1723,8 +1723,8 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
     {
       $match: {
         $or: [
-          { $and: [{ salesManStatus: { $ne: 'Assign' }}, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }] },
-          { $and: [{ salesManStatus: { $ne: 'Assign' }}, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: null } }] },
+          { $and: [{ salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }] },
+          { $and: [{ salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: null } }] },
         ],
       },
     },
@@ -1750,7 +1750,7 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
       },
     },
   ]);
-  return { data: data, total: total.length, overall:allnoAssing.length };
+  return { data: data, total: total.length, overall: allnoAssing.length };
 };
 
 const GetShopsByShopType = async (id, page) => {
@@ -1879,7 +1879,6 @@ const data1 = async () =>{
 // }
   return {mesage:"updated.."}
 }
-
 module.exports = {
   createShopClone,
   getAllShopClone,
