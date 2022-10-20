@@ -715,7 +715,7 @@ const getSalesman = async (id) => {
       },
     },
   ]);
-  return data;
+  return {data:data, salesmanname:data[0].salesmanName};
 };
 
 // withoutoutAsmSalesman
