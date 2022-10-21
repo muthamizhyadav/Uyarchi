@@ -19,6 +19,9 @@ const wardAdminRoleSchema = new mongoose.Schema({
   startingTonne:{
     type:Number,
   },
+  type:{
+    type:String,
+  },
   unit:{
     type:String,
   },
@@ -214,6 +217,9 @@ const wardAdminRoleAsmSchema = new mongoose.Schema({
     },
     targetTonne: {
       type: Number,
+    },
+    type:{
+      type:String,
     },
     unit:{
       type:String,
