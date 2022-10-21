@@ -1445,12 +1445,24 @@ const getAlldataASm = async (id) =>{
      
 }
 
-const getAllDatasalesmanDataAndAssign = async () =>{
+const getAllDatasalesmanDataAndAssign = async (id,date) =>{
+  let match;
+  if(id != 'null' && date == 'null'){
+    match = {  
+      $and: [{ salesman: {$eq:id} }]
+     }
+  }else if(id != 'null' && date != 'null'){
+    match = {  
+      $and: [{ salesman: {$eq:id} },{ date: {$eq:date} }]
+     }
+  }else{
+    match = {  
+      $and: [{ active: {$eq:true} }]
+     }
+  }
   const data = await WithoutAsmWithAsm.aggregate([
     {
-      $match: {
-        $and: [{ active: { $eq:true} },],
-      },
+      $match: match
     },
     {
       $lookup: {

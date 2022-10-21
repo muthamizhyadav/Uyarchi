@@ -208,8 +208,9 @@ const getAlldataASm = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+
 const getAllDatasalesmanDataAndAssign = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.getAllDatasalesmanDataAndAssign();
+  const data = await wardAdminRoleService.getAllDatasalesmanDataAndAssign(req.params.id, req.params.date);
   res.send(data);
 });
 
