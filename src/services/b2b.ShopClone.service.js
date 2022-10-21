@@ -2637,14 +2637,14 @@ const getShopReviewByShopid = async (id) => {
 };
 
 const data1 = async () => {
-  const data = await Shop.find({ salesManStatus: 'Assign' });
-  if (data.length != 0) {
-    data.forEach(async (e) => {
-      await Shop.findByIdAndUpdate({ _id: e._id }, { salesManStatus: null }, { new: true });
-      console.log(e.salesManStatus);
-    });
-  }
-  return { mesage: 'updated..' };
+  // const data = await Shop.find({ salesManStatus: 'Assign' });
+  // if (data.length != 0) {
+  //   data.forEach(async (e) => {
+  //     await Shop.findByIdAndUpdate({ _id: e._id }, { salesManStatus: null }, { new: true });
+  //     console.log(e.salesManStatus);
+  //   });
+  // }
+  // return { mesage: 'updated..' };
 };
 
 module.exports = {

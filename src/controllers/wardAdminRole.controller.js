@@ -193,6 +193,11 @@ const asmSalesman = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const telecallerHead = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.telecallerHead();
+  res.send(data);
+});
+
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -229,4 +234,5 @@ module.exports = {
   getAllWithAsmwithout,
   asmdata,
   asmSalesman,
+  telecallerHead,
 };
