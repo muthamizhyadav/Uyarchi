@@ -100,6 +100,26 @@ const telecallerHead  = async () => {
   return data;
 };
 
+// ward wcce
+const wardwcce  = async () => {
+  console.log("efe")
+  const data = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ userRole: { $eq: "33a2ff87-400c-4c15-b607-7730a79b49a9" }}],
+      },
+    }, 
+    {
+      $project: {
+        name:1,
+        phoneNumber:1,
+        userRole:1,
+      },
+    },  
+  ])
+  return data;
+};
+
 const createwithAsmwithoutAsm = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
@@ -1412,6 +1432,19 @@ const asmSalesman = async (id) =>{
   return data ;
 
 }
+const getAlldataASm = async (id) =>{
+  let serverdate = moment().format('YYYY-MM-DD');
+  const data = await WardAdminRole.aggregate([
+    {
+      $match: {
+        $and: [{ b2bUserId: { $eq:id} },{ date: { $eq:serverdate} }],
+      },
+    },
+  ])
+  return data ;
+     
+}
+
 
 module.exports = {
   createwardAdminRole,
@@ -1453,4 +1486,6 @@ module.exports = {
   asmdata,
   asmSalesman,
   telecallerHead,
+  wardwcce,
+  getAlldataASm,
 };
