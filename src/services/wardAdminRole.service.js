@@ -80,6 +80,27 @@ const createwardAdminRole = async (body) => {
   return {message:"created"};
 };
 
+// telecallerHead
+
+const telecallerHead  = async () => {
+  console.log("e2gr")
+  const data = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ userRole: { $eq: "ae601146-dadd-443b-85b2-6c0fbe9f964c" }}],
+      },
+    }, 
+    {
+      $project: {
+        name:1,
+        phoneNumber:1,
+        userRole:1,
+      },
+    },  
+  ])
+  return data;
+};
+
 const createwithAsmwithoutAsm = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
@@ -1076,6 +1097,18 @@ const getUsersWith_skiped = async (id) => {
         $and: [{ _id: { $ne: id } }, { userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
       },
     },
+    // {
+    //   $lookup: {
+    //     from: 'salesmanshops',
+    //     localField: '_id',
+    //     foreignField: 'salesManId',
+    //     as: 'salesmanshopsData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$salesmanshopsData',
+    // },
+
   ]);
   
   return values;
@@ -1420,4 +1453,5 @@ module.exports = {
   getAllWithAsmwithout,
   asmdata,
   asmSalesman,
+  telecallerHead,
 };

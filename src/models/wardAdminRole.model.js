@@ -255,6 +255,9 @@ const wardAdminRoleAsmSchema = new mongoose.Schema({
     b2bUserId: {
       type: String,
     },
+    type:{
+      type:String,
+    },
     unit:{
       type:String,
     },
@@ -287,6 +290,9 @@ const wardAdminRoleAsmSchema = new mongoose.Schema({
       type: Number,
     },
     unit:{
+      type:String,
+    },
+    type:{
       type:String,
     },
     salesman:{
