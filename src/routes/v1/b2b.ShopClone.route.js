@@ -12,6 +12,7 @@ router
   .post(authorization, b2bCloneshopImage.array('photoCapture'), b2bShopCloneController.createB2bShopClone)
   .get(authorization, b2bShopCloneController.getAllB2BshopClone);
 router.route('/aggregation/Names/:page').get(b2bShopCloneController.getshopWardStreetNamesWithAggregation);
+router.route('/myshops/assigned/Names/:page').get(authorization, b2bShopCloneController.getshopmyshops);
 router
   .route('/aggregation/filter/:district/:zone/:ward/:street/:status/:page')
   .get(b2bShopCloneController.getshopWardStreetNamesWithAggregation_withfilter);
@@ -86,4 +87,5 @@ router.route('/getShops/By/type/:id/:page').get(b2bShopCloneController.GetShopsB
 router.route('/getShops/By/type/reviews/:id/:page').get(b2bShopCloneController.GetShopsReviewsByShopType);
 router.route('/getShop/Review/ByShop/:id').get(b2bShopCloneController.getShopReviewByShopid);
 router.route('/data1/data').put(b2bShopCloneController.data1);
+router.route('/order/id').get(b2bShopCloneController.insertOrder);
 module.exports = router;

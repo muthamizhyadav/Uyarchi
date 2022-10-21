@@ -37,6 +37,9 @@ const shopSchema = mongoose.Schema({
   Slat: {
     type: String,
   },
+  displaycount: {
+    type: Number,
+  },
   Slong: {
     type: String,
   },
@@ -146,9 +149,7 @@ const shopSchema = mongoose.Schema({
   },
   purchaseQTy: {
     type: String,
-
-  }
-
+  },
 });
 
 // assignSchema.plugin(toJSON);
