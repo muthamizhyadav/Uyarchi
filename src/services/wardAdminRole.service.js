@@ -1445,6 +1445,41 @@ const getAlldataASm = async (id) =>{
      
 }
 
+const getAllDatasalesmanDataAndAssign = async () =>{
+  const data = await WithoutAsmWithAsm.aggregate([
+    {
+      $match: {
+        $and: [{ active: { $eq:true} },],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'salesman',
+        foreignField: '_id',
+        as: 'b2busersdata',
+      },
+    },
+    {
+      $unwind: '$b2busersdata',
+    },
+    {
+      $project:{
+         salesmanName:"$b2busersdata.name",
+         targetTonne:1,
+         salesman:1,
+         status:1,
+         wardAdminId:1,
+         date:1,
+         time:1,
+
+      }
+    }
+  ])
+  return data ;
+     
+}
+
 
 module.exports = {
   createwardAdminRole,
@@ -1488,4 +1523,5 @@ module.exports = {
   telecallerHead,
   wardwcce,
   getAlldataASm,
+  getAllDatasalesmanDataAndAssign,
 };
