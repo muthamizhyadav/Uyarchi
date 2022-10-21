@@ -2404,6 +2404,7 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
         address: 1,
         locality: '$streets.locality',
         _id: 1,
+        displaycount:1,
       },
     },
     {
@@ -2456,6 +2457,7 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
         address: 1,
         locality: '$streets.locality',
         _id: 1,
+        displaycount: 1,
       },
     },
   ]);
@@ -2514,6 +2516,7 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
         address: 1,
         locality: '$streets.locality',
         _id: 1,
+        displaycount: 1,
       },
     },
   ]);
