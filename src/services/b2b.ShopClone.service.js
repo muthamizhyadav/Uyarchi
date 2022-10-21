@@ -2636,30 +2636,17 @@ const getShopReviewByShopid = async (id) => {
   return values;
 };
 
-<<<<<<< HEAD
-const data1 = async () =>{
-  const data = await Shop.find({salesManStatus:"Reassign"})
-  if(data.length != 0){
-  data.forEach(async (e) => {
-    await Shop.findByIdAndUpdate({ _id: e._id }, { salesManStatus:null}, { new: true });
-    console.log(e.salesManStatus)
-  });
-}
-  return {mesage:"updated.."}
-}
-=======
 const data1 = async () => {
-  const data = await Shop.find({ salesManStatus: 'Assign' });
-  if (data.length != 0) {
-    data.forEach(async (e) => {
-      await Shop.findByIdAndUpdate({ _id: e._id }, { salesManStatus: null }, { new: true });
-      console.log(e.salesManStatus);
-    });
-  }
-  return { mesage: 'updated..' };
+  // const data = await Shop.find({ salesManStatus: 'Assign' });
+  // if (data.length != 0) {
+  //   data.forEach(async (e) => {
+  //     await Shop.findByIdAndUpdate({ _id: e._id }, { salesManStatus: null }, { new: true });
+  //     console.log(e.salesManStatus);
+  //   });
+  // }
+  // return { mesage: 'updated..' };
 };
 
->>>>>>> b34730189ff02dfad0d9c5c82356703dcc49d12e
 module.exports = {
   createShopClone,
   getAllShopClone,
