@@ -1313,6 +1313,15 @@ const getBillDetailsPerOrder = async (id) => {
     {
       $lookup: {
         from: 'b2busers',
+        localField: 'shopData.Uid',
+        foreignField: '_id',
+        as: 'AttenderName',
+      },
+    },
+    { $unwind: '$AttenderName' },
+    {
+      $lookup: {
+        from: 'b2busers',
         localField: 'shopData.deliveryExecutiveId',
         foreignField: '_id',
         as: 'deliveryExecutiveName',
@@ -1357,8 +1366,11 @@ const getBillDetailsPerOrder = async (id) => {
         HSN_Code: 1,
         productTitle: '$productName.productTitle',
         billNo: '$shopData.billNo',
-        billDate: '$shopData.billDate',
-        billTime: '$shopData.billTime',
+        date: '$shopData.customerBilldate',
+        attenName: '$AttenderName.name',
+        time: '$shopData.customerBilltime',
+        billDate: '$shopData.customerBilldate',
+        billTime: '$shopData.customerBilltime',
         OrderId: '$shopData.OrderId',
         billId: '$shopData.customerBillId',
         shopName: '$b2bshopclonedatas.SName',

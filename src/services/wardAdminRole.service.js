@@ -22,27 +22,27 @@ const createwardAdminRole = async (body) => {
   let values = {};
   let values1 = {
     ...body,
-  ...{ date: serverdate, time: time},
-}
-  await WardAdminRoleHistory.create(values1)
-   const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, date:serverdate});
-   if(value.length != 0){
-  value.forEach(async (e) => {
-    e.targetValue += parseInt(body.targetValue)
-    e.targetTonne += parseInt(body.targetTonne)
-    e.startingValue += parseInt(body.targetValue)
-    e.startingTonne += parseInt(body.targetTonne) 
-    await WardAdminRole.updateMany({b2bUserId:e.b2bUserId},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne, startingValue:e.startingValue, startingTonne:e.startingTonne }, { new: true })  
-  });
+    ...{ date: serverdate, time: time },
   }
-    else{
-   values = {
-         ...body,
-       ...{ date: serverdate, time: time, startingValue: parseInt(body.targetValue), startingTonne: parseInt(body.targetTonne),},
-     }
-     await WardAdminRole.create(values)
-       }
-         
+  await WardAdminRoleHistory.create(values1)
+  const value = await WardAdminRole.find({ b2bUserId: body.b2bUserId, date: serverdate });
+  if (value.length != 0) {
+    value.forEach(async (e) => {
+      e.targetValue += parseInt(body.targetValue)
+      e.targetTonne += parseInt(body.targetTonne)
+      e.startingValue += parseInt(body.targetValue)
+      e.startingTonne += parseInt(body.targetTonne)
+      await WardAdminRole.updateMany({ b2bUserId: e.b2bUserId }, { date: serverdate, time: time, targetValue: e.targetValue, targetTonne: e.targetTonne, startingValue: e.startingValue, startingTonne: e.startingTonne }, { new: true })
+    });
+  }
+  else {
+    values = {
+      ...body,
+      ...{ date: serverdate, time: time, startingValue: parseInt(body.targetValue), startingTonne: parseInt(body.targetTonne), },
+    }
+    await WardAdminRole.create(values)
+  }
+
   // const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, unit:body.unit});
   // if(value.length == 0)
   // {
@@ -50,12 +50,12 @@ const createwardAdminRole = async (body) => {
   //     ...body,
   //     ...{ date: serverdate, time: time, startingValue: parseInt(body.targetValue), startingTonne: parseInt(body.targetTonne), targetValue:parseInt(body.targetValue), targetTonne: parseInt(body.targetTonne)  },
   //   };
-  
+
   //    await WardAdminRole.create(values);
   // }else{
   //   if(body.unit == "KG"){
   //   value.forEach(async (e) => {
-     
+
   //     if(e.unit == "KG"){
   //   e.targetValue += parseInt(body.targetValue)
   //   e.targetTonne += parseInt(body.targetTonne)
@@ -77,7 +77,7 @@ const createwardAdminRole = async (body) => {
   // }
   // }
 
-  return {message:"created"};
+  return { message: "created" };
 };
 
 const createwithAsmwithoutAsm = async (body) => {
@@ -85,184 +85,184 @@ const createwithAsmwithoutAsm = async (body) => {
   let time = moment().format('hh:mm a');
   let values1 = {
     ...body,
-  ...{ date: serverdate, time: time},
-}
+    ...{ date: serverdate, time: time },
+  }
   const data = await WithoutAsmWithAsm.create(values1)
   return data;
 };
 
 // get withwithoutData
 
-const getwithAsmwithoutAsm = async (type,date) => {
+const getwithAsmwithoutAsm = async (type, date) => {
   // let type = "withAsm"
   // let type = "withoutAsm"
-  let match ;
-  if(date != 'null'){
-    match = [{ date: { $eq: date } },{ status: { $eq: type } }];
-  }else{
+  let match;
+  if (date != 'null') {
+    match = [{ date: { $eq: date } }, { status: { $eq: type } }];
+  } else {
     match = [{ status: { $eq: type } }];
   }
-const data = await WithoutAsmWithAsm.aggregate([
-  {
-    $match: {
-      $and: match,
-    },
-  },
-  // {
-  //   $lookup: {
-  //     from: 'b2busers',
-  //     localField: '_id',
-  //     foreignField: 'wardAdminId',
-  //     as: 'b2busersData',
-  //   },
-  // },
-  // {
-  //   $unwind: '$b2busersData',
-  // },
-  {
-    $lookup: {
-      from: 'b2busers',
-      localField: 'salesman',
-      foreignField: '_id',
-      as: 'b2busersDataSales',
-    },
-  },
+  const data = await WithoutAsmWithAsm.aggregate([
     {
-    $unwind: '$b2busersDataSales',
-  },
-  {
-    $project: {
-      Salesmanname: '$b2busersDataSales.name',
-      // Asmname:"$b2busersData.name",
-      targetTonne: 1,
-      targetValue: 1,
-      salesman: 1,
-      wardAdminId: 1,
-      status: 1,
-      unit: 1,
-      date: 1,
-      time: 1,
-      _id: 1,
+      $match: {
+        $and: match,
+      },
     },
-  },
-])
-return data
+    // {
+    //   $lookup: {
+    //     from: 'b2busers',
+    //     localField: '_id',
+    //     foreignField: 'wardAdminId',
+    //     as: 'b2busersData',
+    //   },
+    // },
+    // {
+    //   $unwind: '$b2busersData',
+    // },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'salesman',
+        foreignField: '_id',
+        as: 'b2busersDataSales',
+      },
+    },
+    {
+      $unwind: '$b2busersDataSales',
+    },
+    {
+      $project: {
+        Salesmanname: '$b2busersDataSales.name',
+        // Asmname:"$b2busersData.name",
+        targetTonne: 1,
+        targetValue: 1,
+        salesman: 1,
+        wardAdminId: 1,
+        status: 1,
+        unit: 1,
+        date: 1,
+        time: 1,
+        _id: 1,
+      },
+    },
+  ])
+  return data
 };
 
-const getwithAsmwithoutAsm1 = async (type,date) => {
+const getwithAsmwithoutAsm1 = async (type, date) => {
   // let type = "withAsm"
   // let type = "withoutAsm"
-  let match ;
-  if(date != 'null'){
-    match = [{ date: { $eq: date } },{ status: { $eq: type } }];
-  }else{
+  let match;
+  if (date != 'null') {
+    match = [{ date: { $eq: date } }, { status: { $eq: type } }];
+  } else {
     match = [{ status: { $eq: type } }];
   }
-const data = await WithoutAsmWithAsm.aggregate([
-  {
-    $match: {
-      $and: match,
+  const data = await WithoutAsmWithAsm.aggregate([
+    {
+      $match: {
+        $and: match,
+      },
     },
-  },
-  {
-    $lookup: {
-      from: 'b2busers',
-      localField: 'wardAdminId',
-      foreignField: '_id',
-      as: 'b2busersData',
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'wardAdminId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
     },
-  },
-  {
-    $unwind: '$b2busersData',
-  },
-  {
-    $lookup: {
-      from: 'b2busers',
-      localField: 'salesman',
-      foreignField: '_id',
-      as: 'b2busersDataSales',
+    {
+      $unwind: '$b2busersData',
     },
-  },
-  {
-    $unwind: '$b2busersDataSales',
-  },
-  {
-    $project: {
-      Salesmanname: '$b2busersDataSales.name',
-      Asmname:"$b2busersData.name",
-      targetTonne: 1,
-      targetValue: 1,
-      salesman: 1,
-      wardAdminId: 1,
-      status: 1,
-      unit: 1,
-      date: 1,
-      time: 1,
-      _id: 1,
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'salesman',
+        foreignField: '_id',
+        as: 'b2busersDataSales',
+      },
     },
-  },
-])
-return data
+    {
+      $unwind: '$b2busersDataSales',
+    },
+    {
+      $project: {
+        Salesmanname: '$b2busersDataSales.name',
+        Asmname: "$b2busersData.name",
+        targetTonne: 1,
+        targetValue: 1,
+        salesman: 1,
+        wardAdminId: 1,
+        status: 1,
+        unit: 1,
+        date: 1,
+        time: 1,
+        _id: 1,
+      },
+    },
+  ])
+  return data
 };
 
-const getAllWithAsmwithout = async (sm,asm,date) => {
-  let match ;
-  if(sm != 'null' && asm == 'null' && date == 'null'){
-    match = [{ salesman: { $eq: sm } },{ status: { $eq: "withoutAsm"}}];
+const getAllWithAsmwithout = async (sm, asm, date) => {
+  let match;
+  if (sm != 'null' && asm == 'null' && date == 'null') {
+    match = [{ salesman: { $eq: sm } }, { status: { $eq: "withoutAsm" } }];
   }
-  else if(sm != 'null' && asm == 'null' && date != 'null'){
-    match = [{ salesman: { $eq: sm } },{ date: { $eq: date } },{ status: { $eq: "withoutAsm"}}];
-  }else if(sm = 'null' && asm != 'null' && date == 'null'){
-    match = [{ wardAdminId: { $eq: asm } },{ status: { $eq: "withAsm"}}];
-  }else if(sm = 'null' && asm != 'null' && date != 'null'){
-    match = [{ wardAdminId: { $eq: asm } }, { date: { $eq: date } },{ status: { $eq: "withAsm"}}];
-  }else if(sm != 'null' && asm != 'null' && date == 'null'){
-    match = [{ wardAdminId: { $eq: asm } },{ salesman: { $eq: sm } },{ status: { $eq: "withAsm"}}];
-  }else if(sm != 'null' && asm != 'null' && date != 'null'){
-    match = [{ wardAdminId: { $eq: asm } },{ salesman: { $eq: sm } },{ date: { $eq: date } },{ status: { $eq: "withAsm"}}];
+  else if (sm != 'null' && asm == 'null' && date != 'null') {
+    match = [{ salesman: { $eq: sm } }, { date: { $eq: date } }, { status: { $eq: "withoutAsm" } }];
+  } else if (sm = 'null' && asm != 'null' && date == 'null') {
+    match = [{ wardAdminId: { $eq: asm } }, { status: { $eq: "withAsm" } }];
+  } else if (sm = 'null' && asm != 'null' && date != 'null') {
+    match = [{ wardAdminId: { $eq: asm } }, { date: { $eq: date } }, { status: { $eq: "withAsm" } }];
+  } else if (sm != 'null' && asm != 'null' && date == 'null') {
+    match = [{ wardAdminId: { $eq: asm } }, { salesman: { $eq: sm } }, { status: { $eq: "withAsm" } }];
+  } else if (sm != 'null' && asm != 'null' && date != 'null') {
+    match = [{ wardAdminId: { $eq: asm } }, { salesman: { $eq: sm } }, { date: { $eq: date } }, { status: { $eq: "withAsm" } }];
   }
-  else{
-    match = [{active: { $eq: true } }];
+  else {
+    match = [{ active: { $eq: true } }];
   }
-const data = await WithoutAsmWithAsm.aggregate([
-  {
-    $match: {
-      $and: match,
+  const data = await WithoutAsmWithAsm.aggregate([
+    {
+      $match: {
+        $and: match,
+      },
     },
-  },
-  {
-    $lookup: {
-      from: 'b2busers',
-      localField: 'wardAdminId',
-      foreignField: '_id',
-      as: 'b2busersData',
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'wardAdminId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
     },
-  },
-  {
-    $lookup: {
-      from: 'b2busers',
-      localField: 'salesman',
-      foreignField: '_id',
-      as: 'b2busersDataSales',
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'salesman',
+        foreignField: '_id',
+        as: 'b2busersDataSales',
+      },
     },
-  },
-  {
-    $project: {
-      Salesmanname: '$b2busersDataSales.name',
-      Asmname:"$b2busersData.name",
-      targetTonne: 1,
-      targetValue: 1,
-      salesman: 1,
-      wardAdminId: 1,
-      status: 1,
-      unit: 1,
-      date: 1,
-      time: 1,
-      _id: 1,
+    {
+      $project: {
+        Salesmanname: '$b2busersDataSales.name',
+        Asmname: "$b2busersData.name",
+        targetTonne: 1,
+        targetValue: 1,
+        salesman: 1,
+        wardAdminId: 1,
+        status: 1,
+        unit: 1,
+        date: 1,
+        time: 1,
+        _id: 1,
+      },
     },
-  },
-])
-return data
+  ])
+  return data
 };
 
 
@@ -338,35 +338,35 @@ const WardAdminRoleAsmHistorydata = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   let values = {};
-    values = {
-      ...body,
-      ...{ date: serverdate, time: time, targetValue: parseInt(body.targetValue), targetTonne: parseInt(body.targetTonne)  },
-    };
-  
-     await WardAdminRoleAsm.create(values);
+  values = {
+    ...body,
+    ...{ date: serverdate, time: time, targetValue: parseInt(body.targetValue), targetTonne: parseInt(body.targetTonne) },
+  };
 
-  const value = await WardAdminRoleAsmHistory.find({b2bUserId:body.b2bUserId, unit:body.unit});
-  if(value != 0){
-    if(body.unit == "KG"){
-    value.forEach(async (e) => {
-     
-      if(e.unit == "KG"){
-    e.targetValue += parseInt(body.targetValue)
-    e.targetTonne += parseInt(body.targetTonne)
-    await WardAdminRoleAsmHistory.updateMany({b2bUserId:e.b2bUserId, unit:'KG'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne}, { new: true })  
-  }
-  });
-      }else{
-        value.forEach(async (e) => {
-          if(e.unit == "Tonne"){
-        e.targetValue += parseInt(body.targetValue)
-        e.targetTonne += parseInt(body.targetTonne)
-        await WardAdminRoleAsmHistory.updateMany({b2bUserId:e.b2bUserId, unit:'Tonne'},{date: serverdate, time: time, targetValue:e.targetValue, targetTonne:e.targetTonne}, { new: true })
-          }
+  await WardAdminRoleAsm.create(values);
+
+  const value = await WardAdminRoleAsmHistory.find({ b2bUserId: body.b2bUserId, unit: body.unit });
+  if (value != 0) {
+    if (body.unit == "KG") {
+      value.forEach(async (e) => {
+
+        if (e.unit == "KG") {
+          e.targetValue += parseInt(body.targetValue)
+          e.targetTonne += parseInt(body.targetTonne)
+          await WardAdminRoleAsmHistory.updateMany({ b2bUserId: e.b2bUserId, unit: 'KG' }, { date: serverdate, time: time, targetValue: e.targetValue, targetTonne: e.targetTonne }, { new: true })
+        }
       });
+    } else {
+      value.forEach(async (e) => {
+        if (e.unit == "Tonne") {
+          e.targetValue += parseInt(body.targetValue)
+          e.targetTonne += parseInt(body.targetTonne)
+          await WardAdminRoleAsmHistory.updateMany({ b2bUserId: e.b2bUserId, unit: 'Tonne' }, { date: serverdate, time: time, targetValue: e.targetValue, targetTonne: e.targetTonne }, { new: true })
+        }
+      });
+    }
   }
-  }
-   return {data: "created or else updated asmtone and value"};
+  return { data: "created or else updated asmtone and value" };
 };
 
 const getAllWardAdminRoleData = async (id) => {
@@ -457,52 +457,52 @@ const smData = async (date) => {
 };
 
 const total = async (id, updateBody) => {
-    const values = await WardAdminRole.find({b2bUserId:id})
-  if(values.length == 0){
+  const values = await WardAdminRole.find({ b2bUserId: id })
+  if (values.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'wardAdminRole not found');
   }
   values.forEach(async (e) => {
-  let value = parseInt(updateBody.targetValue);
-  let tone = parseInt(updateBody.targetTonne);
-  let asmvalue = e.targetValue;
-  let asmtone = e.targetTonne;
-  let value1 = asmvalue - value;
-  let tone1 = asmtone - tone;
-    await WardAdminRole.updateMany({ b2bUserId: id}, { targetValue: value1, targetTonne: tone1 }, { new: true });
-   })
+    let value = parseInt(updateBody.targetValue);
+    let tone = parseInt(updateBody.targetTonne);
+    let asmvalue = e.targetValue;
+    let asmtone = e.targetTonne;
+    let value1 = asmvalue - value;
+    let tone1 = asmtone - tone;
+    await WardAdminRole.updateMany({ b2bUserId: id }, { targetValue: value1, targetTonne: tone1 }, { new: true });
+  })
   //  const values = await WardAdminRole.find({b2bUserId:id})
   // if(values != 0){
-//   if(updateBody.unit == "KG"){
-//   values.forEach(async (e) => {
-//     if(e.unit == "KG"){
-//   let value = parseInt(updateBody.targetValue);
-//   let tone = parseInt(updateBody.targetTonne);
-//   let asmvalue = e.targetValue;
-//   let asmtone = e.targetTonne;
-//   let value1 = asmvalue - value;
-//   let tone1 = asmtone - tone;
+  //   if(updateBody.unit == "KG"){
+  //   values.forEach(async (e) => {
+  //     if(e.unit == "KG"){
+  //   let value = parseInt(updateBody.targetValue);
+  //   let tone = parseInt(updateBody.targetTonne);
+  //   let asmvalue = e.targetValue;
+  //   let asmtone = e.targetTonne;
+  //   let value1 = asmvalue - value;
+  //   let tone1 = asmtone - tone;
 
-//     await WardAdminRole.updateMany({ b2bUserId: id, unit:"KG"}, { targetValue: value1, targetTonne: tone1 }, { new: true });
-//     }
-//    })
-//   }else{
-//     values.forEach(async (e) => {
-//       if(e.unit == "Tonne"){
-//     let value = parseInt(updateBody.targetValue);
-//     let tone = parseInt(updateBody.targetTonne);
-//     let asmvalue = e.targetValue;
-//     let asmtone = e.targetTonne;
-//     let value1 = asmvalue - value;
-//     let tone1 = asmtone - tone;
-  
-//      await WardAdminRole.updateMany({ b2bUserId: id, unit:"Tonne"}, { targetValue: value1, targetTonne: tone1 }, { new: true });
-//       }
-//      })
-//   }
-// }else{
-//   throw new ApiError(httpStatus.NOT_FOUND, 'wardAdminRole not found');
-// }
-  return {message:"updated"} 
+  //     await WardAdminRole.updateMany({ b2bUserId: id, unit:"KG"}, { targetValue: value1, targetTonne: tone1 }, { new: true });
+  //     }
+  //    })
+  //   }else{
+  //     values.forEach(async (e) => {
+  //       if(e.unit == "Tonne"){
+  //     let value = parseInt(updateBody.targetValue);
+  //     let tone = parseInt(updateBody.targetTonne);
+  //     let asmvalue = e.targetValue;
+  //     let asmtone = e.targetTonne;
+  //     let value1 = asmvalue - value;
+  //     let tone1 = asmtone - tone;
+
+  //      await WardAdminRole.updateMany({ b2bUserId: id, unit:"Tonne"}, { targetValue: value1, targetTonne: tone1 }, { new: true });
+  //       }
+  //      })
+  //   }
+  // }else{
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'wardAdminRole not found');
+  // }
+  return { message: "updated" }
 };
 
 // getAllSalesMandataCurrentdate
@@ -566,16 +566,16 @@ const getAsmSalesman = async (id) => {
     {
       $lookup: {
         from: 'salesmanshops',
-        let:{
+        let: {
           localField: '$salesManId',
         },
-        pipeline:[{ $match:{ $expr: { $eq: ['$salesManId', '$$localField']}}},
+        pipeline: [{ $match: { $expr: { $eq: ['$salesManId', '$$localField'] } } },
         {
           $match: {
             $and: [{ status: { $ne: "Reassign" } }],
           },
         },
-      ],
+        ],
         as: 'b2bshopclonesdata',
       },
     },
@@ -588,11 +588,11 @@ const getAsmSalesman = async (id) => {
         date: 1,
         time: 1,
         _id: 1,
-        Count:{$size:"$b2bshopclonesdata"},
+        Count: { $size: "$b2bshopclonesdata" },
       },
     },
   ]);
-  return {data:data, name:name.name};
+  return { data: data, name: name.name };
 };
 
 const allAssignReassignSalesman = async (id) => {
@@ -650,10 +650,12 @@ const getSalesman = async (id) => {
   const name = await Users.findById(id)
   let data = await SalesManShop.aggregate([
     {
-      $match:{ $or: [
-        { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
-        { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
-      ],}
+      $match: {
+        $or: [
+          { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: "Assign" } }] },
+          { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      }
     },
     {
       $lookup: {
@@ -702,9 +704,9 @@ const getSalesman = async (id) => {
     {
       $project: {
         shopname: '$b2bshopclonesData.SName',
-        salesmanName:'$b2busersData.name',
+        salesmanName: '$b2busersData.name',
         salesManId: 1,
-        fromSalesManId:1,
+        fromSalesManId: 1,
         shopId: 1,
         ward: '$wardsData.ward',
         zone: '$zonesData.zone',
@@ -717,7 +719,7 @@ const getSalesman = async (id) => {
       },
     },
   ]);
-  return {data:data, salesmanname:name.name};
+  return { data: data, salesmanname: name.name };
 };
 
 // withoutoutAsmSalesman
@@ -734,7 +736,7 @@ const createwithoutoutAsmSalesman = async (body) => {
 const withoutoutAsmSalesmanCurrentDate = async (id) => {
 
   let serverdate = moment().format('yyy-MM-DD');
-  const data = await WithoutAsmWithAsm.find({ salesman: id, date: serverdate, status:"withoutAsm"});
+  const data = await WithoutAsmWithAsm.find({ salesman: id, date: serverdate, status: "withoutAsm" });
   return data;
 };
 
@@ -950,7 +952,7 @@ const getAssignData_by_SalesMan = async (page) => {
         pipeline: [
           {
             $match: {
-              $and: [{ status: { $ne: 'Reassign' } },{ status: { $ne: 'Assign' } },{ status: { $eq: 'tempReassign' } }],
+              $and: [{ status: { $ne: 'Reassign' } }, { status: { $ne: 'Assign' } }, { status: { $eq: 'tempReassign' } }],
             },
           },
         ],
@@ -965,7 +967,7 @@ const getAssignData_by_SalesMan = async (page) => {
         pipeline: [
           {
             $match: {
-              $and: [{ status: { $ne: 'Reassign' } },{ status: { $ne: 'Assign' } },{ status: { $eq: 'tempReassign' } }],
+              $and: [{ status: { $ne: 'Reassign' } }, { status: { $ne: 'Assign' } }, { status: { $eq: 'tempReassign' } }],
             },
           },
         ],
@@ -981,8 +983,8 @@ const getAssignData_by_SalesMan = async (page) => {
         userRole: 1,
         fromSalesManId: '$saleMan.fromSalesManId',
         no_of_shop: { $size: '$salesMan' },
-        no_of_temperory:{$size:"$salesMandata"},
-        temp:{$size:'$salesmanshopsdata'},
+        no_of_temperory: { $size: "$salesMandata" },
+        temp: { $size: '$salesmanshopsdata' },
       },
     },
     { $skip: 10 * page },
@@ -1076,16 +1078,38 @@ const getUsersWith_skiped = async (id) => {
         $and: [{ _id: { $ne: id } }, { userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
       },
     },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'fromSalesManId',
+        pipeline: [
+          { $match: { status: "tempReassign",salesManId:id } }
+        ],
+        as: 'salesmanshops',
+      },
+    },
+    {
+      $project: {
+        salesmanshops: { $size: "$salesmanshops" },name:1
+      }
+    },
+    {
+      $match: {
+        salesmanshops: { $eq: 0 }
+      }
+    }
+
   ]);
-  
+
   return values;
 };
 
-const getDataAll= async () => {
+const getDataAll = async () => {
   let values = await Users.aggregate([
     {
       $match: {
-        $and: [ { userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
+        $and: [{ userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
       },
     },
   ]);
@@ -1103,44 +1127,56 @@ const Return_Assign_To_SalesMan = async (id) => {
   return { Message: 'Successfully Re-Assigned to SalesMan' };
 };
 
-const history_Assign_Reaasign_data = async (id,date,idSearch,tempid) => {
+const history_Assign_Reaasign_data = async (id, date, idSearch, tempid) => {
   const name = await Users.findById(id)
-  let match ;
- if(date != 'null' && idSearch == 'null' && tempid == 'null') {
-    match = { $or: [
-      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}] },
-      { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}] },
-    ],}
+  let match;
+  if (date != 'null' && idSearch == 'null' && tempid == 'null') {
+    match = {
+      $or: [
+        { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: "Assign" } }, { date: { $eq: date } }] },
+        { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }, { reAssignDate: { $eq: date } }] },
+      ],
+    }
   }
-  else if(tempid != 'null' && date == 'null' && idSearch == 'null' ){
-    match = { $or: [
-      // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
-     { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {fromSalesManId:{$eq:tempid}}]},
-    ],}
+  else if (tempid != 'null' && date == 'null' && idSearch == 'null') {
+    match = {
+      $or: [
+        // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
+        { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }, { fromSalesManId: { $eq: tempid } }] },
+      ],
+    }
   }
-  else if(tempid != 'null' && date != 'null' && idSearch == 'null'){
-    match = { $or: [
-      // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
-     { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} },{reAssignDate:{$eq:date}},{fromSalesManId:{$eq:tempid}}] },
-    ],}
+  else if (tempid != 'null' && date != 'null' && idSearch == 'null') {
+    match = {
+      $or: [
+        // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
+        { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }, { reAssignDate: { $eq: date } }, { fromSalesManId: { $eq: tempid } }] },
+      ],
+    }
   }
-  else if(date != 'null' && idSearch != 'null' && tempid == 'null'){
-    match = { $or: [
-      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, {date:{$eq:date}}, {salesManId:{$eq:idSearch}}] },
-      { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }, {reAssignDate:{$eq:date}}, {fromSalesManId:{$eq:idSearch}}] },
-    ],}
-  }else if(date == 'null' && idSearch != 'null' && tempid == 'null'){
-    match = { $or: [
-      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} },{salesManId:{$eq:idSearch}}] },
-      { $and: [{ salesManId: {$eq:id} },{ status: { $eq:'tempReassign'} },{fromSalesManId:{$eq:idSearch}}] },
-    ],}
-  }else {
-    match = { $or: [
-      { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }, ] },
-      { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
-    ],}
+  else if (date != 'null' && idSearch != 'null' && tempid == 'null') {
+    match = {
+      $or: [
+        { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: "Assign" } }, { date: { $eq: date } }, { salesManId: { $eq: idSearch } }] },
+        { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }, { reAssignDate: { $eq: date } }, { fromSalesManId: { $eq: idSearch } }] },
+      ],
+    }
+  } else if (date == 'null' && idSearch != 'null' && tempid == 'null') {
+    match = {
+      $or: [
+        { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: "Assign" } }, { salesManId: { $eq: idSearch } }] },
+        { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }, { fromSalesManId: { $eq: idSearch } }] },
+      ],
+    }
+  } else {
+    match = {
+      $or: [
+        { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: "Assign" } },] },
+        { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+      ],
+    }
   }
-// console.log(match)
+  // console.log(match)
   const data = await SalesManShop.aggregate([
     {
       $match: match
@@ -1169,45 +1205,45 @@ const history_Assign_Reaasign_data = async (id,date,idSearch,tempid) => {
       $unwind: '$b2bshopclonesdata',
     },
     {
-      $project:{
+      $project: {
         salesMan: '$Users.name',
-        salesManId:1,
-        shopId:1,
-        status:1,
-        date:1,
-        fromSalesManId:1,
-        time:1,
-        reAssignDate:1,
-        reAssignTime:1,
-        shopname:'$b2bshopclonesdata.SName'
+        salesManId: 1,
+        shopId: 1,
+        status: 1,
+        date: 1,
+        fromSalesManId: 1,
+        time: 1,
+        reAssignDate: 1,
+        reAssignTime: 1,
+        shopname: '$b2bshopclonesdata.SName'
       }
     }
 
   ])
-  return {data, name:name.name} ;
+  return { data, name: name.name };
 }
 
-const getAllSalesmanShopsCount = async () =>{
+const getAllSalesmanShopsCount = async () => {
   const data = await Users.aggregate([
     // {
-      {
-        $match:{
-          $and:[{ userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' }}]
-        }
-      },
+    {
+      $match: {
+        $and: [{ userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }]
+      }
+    },
     {
       $lookup: {
         from: 'salesmanshops',
-        let:{
+        let: {
           localField: '$_id',
         },
-        pipeline:[{ $match:{ $expr: { $eq: ['$salesManId', '$$localField']}}},
+        pipeline: [{ $match: { $expr: { $eq: ['$salesManId', '$$localField'] } } },
         {
           $match: {
             $and: [{ status: { $ne: "Reassign" } }],
           },
         },
-      ],
+        ],
         as: 'b2bshopclonesdata',
       },
     },
@@ -1215,89 +1251,91 @@ const getAllSalesmanShopsCount = async () =>{
     //   $unwind: '$b2bshopclonesdata',
     // },
     {
-      $project:{
+      $project: {
 
-        Count:{$size:"$b2bshopclonesdata"},
+        Count: { $size: "$b2bshopclonesdata" },
       }
     }
 
   ])
-  return data ;
+  return data;
 }
 
-const getAllSalesmanShopsData = async (id) =>{
+const getAllSalesmanShopsData = async (id) => {
 
   const data = await SalesManShop.aggregate([
     // {
-      {
-        $match:{ $or: [
-          { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"Assign"} }] },
-          { $and: [{ salesManId: {$eq:id} }, { status: { $eq:'tempReassign'} }] },
-        ],}
-      },
-      {
-        $lookup: {
-          from: 'b2bshopclones',
-          localField: 'shopId',
-          foreignField: '_id',
-          as: 'b2bshopclonesdata',
-        },
-      },
-      {
-        $unwind: '$b2bshopclonesdata',
-      },
     {
-      $project:{
-         shopName:"$b2bshopclonesdata.SName",
-         shopOwner:"$b2bshopclonesdata.SOwner",
-         mobileNumber:"$b2bshopclonesdata.mobile",
-         status:1,
-         date:1,
-         time:1,
-         reAssignDate:1,
-         reAssignTime:1,
-         shopId:1,
-         salesManId:1,
-         fromSalesManId:1,
+      $match: {
+        $or: [
+          { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: "Assign" } }] },
+          { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesdata',
+    },
+    {
+      $project: {
+        shopName: "$b2bshopclonesdata.SName",
+        shopOwner: "$b2bshopclonesdata.SOwner",
+        mobileNumber: "$b2bshopclonesdata.mobile",
+        status: 1,
+        date: 1,
+        time: 1,
+        reAssignDate: 1,
+        reAssignTime: 1,
+        shopId: 1,
+        salesManId: 1,
+        fromSalesManId: 1,
       }
     }
 
   ])
-  return data ;
+  return data;
 }
 
-const getAllAsmCurrentdata = async (id) =>{
+const getAllAsmCurrentdata = async (id) => {
   let serverdate = moment().format('YYYY-MM-DD');
   const data = await WardAdminRoleHistory.aggregate([
     {
       $match: {
-        $and: [{ b2bUserId: { $eq:id} },{ date: { $eq:serverdate} }],
+        $and: [{ b2bUserId: { $eq: id } }, { date: { $eq: serverdate } }],
       },
     },
   ])
-  return data ;
-     
+  return data;
+
 }
 
-const WardAdminRoleHistor = async (id,date) =>{
-  let match ;
-  if(id != 'null' && date == 'null'){
-    match = {  
-     $and: [{ b2bUserId: {$eq:id} }]
+const WardAdminRoleHistor = async (id, date) => {
+  let match;
+  if (id != 'null' && date == 'null') {
+    match = {
+      $and: [{ b2bUserId: { $eq: id } }]
     }
-  }else if(id == 'null' && date != 'null'){
-    match = {  
-      $and: [{ date: {$eq:date} }]
-     }
+  } else if (id == 'null' && date != 'null') {
+    match = {
+      $and: [{ date: { $eq: date } }]
+    }
   }
-  else if(id != 'null' && date != 'null'){
-    match = {  
-      $and: [{ b2bUserId: {$eq:id} },{ date: {$eq:date} }]
-     }
-  }else{
-    match = {  
-      $and: [{ active: {$eq:true} }]
-     }
+  else if (id != 'null' && date != 'null') {
+    match = {
+      $and: [{ b2bUserId: { $eq: id } }, { date: { $eq: date } }]
+    }
+  } else {
+    match = {
+      $and: [{ active: { $eq: true } }]
+    }
   }
 
   const data = await WardAdminRoleHistory.aggregate([
@@ -1316,30 +1354,30 @@ const WardAdminRoleHistor = async (id,date) =>{
       $unwind: '$b2busersdata',
     },
     {
-      $project:{
-         Name:"$b2busersdata.name",
-         targetTonne:1,
-         date:1,
-         time:1,
-         targetValue:1,
-         b2bUserId:1,
+      $project: {
+        Name: "$b2busersdata.name",
+        targetTonne: 1,
+        date: 1,
+        time: 1,
+        targetValue: 1,
+        b2bUserId: 1,
       }
     }
   ])
-  return data ;
-     
+  return data;
+
 }
 
 const asmdata = async () => {
-   const data = await Users.aggregate([
+  const data = await Users.aggregate([
     {
-      $match:{
-        $and:[{ userRole: { $eq: '719d9f71-8388-4534-9bfe-3f47faed62ac' }}]
+      $match: {
+        $and: [{ userRole: { $eq: '719d9f71-8388-4534-9bfe-3f47faed62ac' } }]
       }
     },
     {
-      $project:{
-         name:1,
+      $project: {
+        name: 1,
         //  targetTonne:1,
         //  date:1,
         //  time:1,
@@ -1347,15 +1385,15 @@ const asmdata = async () => {
         //  b2bUserId:1,
       }
     }
-   ])
-   return data;
+  ])
+  return data;
 }
 
-const asmSalesman = async (id) =>{
+const asmSalesman = async (id) => {
   const data = await AsmSalesMan.aggregate([
     {
-      $match:{
-        $and:[{ asmId: { $eq:id}},{ status: { $eq:"Assign"} }]
+      $match: {
+        $and: [{ asmId: { $eq: id } }, { status: { $eq: "Assign" } }]
       }
     },
     {
@@ -1370,14 +1408,14 @@ const asmSalesman = async (id) =>{
       $unwind: '$b2busersdata',
     },
     {
-      $project:{
-         name:"$b2busersdata.name",
-         salesManId:1,
+      $project: {
+        name: "$b2busersdata.name",
+        salesManId: 1,
       }
     }
 
   ])
-  return data ;
+  return data;
 
 }
 
