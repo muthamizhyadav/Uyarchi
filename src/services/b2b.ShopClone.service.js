@@ -24,6 +24,17 @@ const createShopClone = async (shopBody) => {
   return shop;
 };
 
+const insertOrder = async () => {
+  let i = 0;
+
+  // let shops = await Shop.find();
+  // let up = shops.forEach(async (e) => {
+  //   i = i + 1;
+  //   await Shop.findByIdAndUpdate({ _id: e._id }, { displaycount: i }, { new: true });
+  // });
+  // return up;
+};
+
 const getStreetAndShopDetails = async (supplierId) => {
   let values = await Shop.aggregate([
     {
@@ -137,11 +148,15 @@ const searchShops = async (key) => {
   return values;
 };
 const getshop_myshops_asm = async (page, userId) => {
-  console.log(userId)
+  console.log(userId);
   let values = await Shop.aggregate([
     {
       $match: {
-        $or: [{ salesManStatus: { $eq: 'Assign' } }, { salesManStatus: { $eq: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }],
+        $or: [
+          { salesManStatus: { $eq: 'Assign' } },
+          { salesManStatus: { $eq: 'tempReassign' } },
+          { salesManStatus: { $eq: 'Reassign' } },
+        ],
       },
     },
     {
@@ -152,8 +167,8 @@ const getshop_myshops_asm = async (page, userId) => {
         pipeline: [
           {
             $match: {
-              status: { $ne: 'Reassign' }
-            }
+              status: { $ne: 'Reassign' },
+            },
           },
           {
             $lookup: {
@@ -165,9 +180,8 @@ const getshop_myshops_asm = async (page, userId) => {
                   $match: {
                     asmId: { $eq: userId },
                     status: { $ne: 'Reassign' },
-                  }
+                  },
                 },
-
               ],
               as: 'asmsalesmen',
             },
@@ -188,9 +202,8 @@ const getshop_myshops_asm = async (page, userId) => {
                   $match: {
                     asmId: { $eq: userId },
                     status: { $ne: 'Reassign' },
-                  }
+                  },
                 },
-
               ],
               as: 'salesManId',
             },
@@ -205,21 +218,21 @@ const getshop_myshops_asm = async (page, userId) => {
           {
             $project: {
               _id: 1,
-              salesManId: "$salesManId",
-              asmsalesmen: "$asmsalesmen",
-            }
+              salesManId: '$salesManId',
+              asmsalesmen: '$asmsalesmen',
+            },
           },
           {
             $match: {
-              $or: [{ salesManId: { $ne: null } }, { asmsalesmen: { $ne: null } }]
-            }
-          }
+              $or: [{ salesManId: { $ne: null } }, { asmsalesmen: { $ne: null } }],
+            },
+          },
         ],
         as: 'salesmanshops',
       },
     },
     {
-      $unwind: "$salesmanshops"
+      $unwind: '$salesmanshops',
     },
     {
       $lookup: {
@@ -337,7 +350,7 @@ const getshop_myshops_asm = async (page, userId) => {
         active: 1,
         mobile: 1,
         date: 1,
-        salesmanshops: "$salesmanshops"
+        salesmanshops: '$salesmanshops',
       },
     },
     { $skip: 10 * page },
@@ -346,7 +359,11 @@ const getshop_myshops_asm = async (page, userId) => {
   let total = await Shop.aggregate([
     {
       $match: {
-        $or: [{ salesManStatus: { $eq: 'Assign' } }, { salesManStatus: { $eq: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }],
+        $or: [
+          { salesManStatus: { $eq: 'Assign' } },
+          { salesManStatus: { $eq: 'tempReassign' } },
+          { salesManStatus: { $eq: 'Reassign' } },
+        ],
       },
     },
     {
@@ -357,8 +374,8 @@ const getshop_myshops_asm = async (page, userId) => {
         pipeline: [
           {
             $match: {
-              status: { $ne: 'Reassign' }
-            }
+              status: { $ne: 'Reassign' },
+            },
           },
           {
             $lookup: {
@@ -370,9 +387,8 @@ const getshop_myshops_asm = async (page, userId) => {
                   $match: {
                     asmId: { $eq: userId },
                     status: { $ne: 'Reassign' },
-                  }
+                  },
                 },
-
               ],
               as: 'asmsalesmen',
             },
@@ -393,9 +409,8 @@ const getshop_myshops_asm = async (page, userId) => {
                   $match: {
                     asmId: { $eq: userId },
                     status: { $ne: 'Reassign' },
-                  }
+                  },
                 },
-
               ],
               as: 'salesManId',
             },
@@ -410,21 +425,21 @@ const getshop_myshops_asm = async (page, userId) => {
           {
             $project: {
               _id: 1,
-              salesManId: "$salesManId",
-              asmsalesmen: "$asmsalesmen",
-            }
+              salesManId: '$salesManId',
+              asmsalesmen: '$asmsalesmen',
+            },
           },
           {
             $match: {
-              $or: [{ salesManId: { $ne: null } }, { asmsalesmen: { $ne: null } }]
-            }
-          }
+              $or: [{ salesManId: { $ne: null } }, { asmsalesmen: { $ne: null } }],
+            },
+          },
         ],
         as: 'salesmanshops',
       },
     },
     {
-      $unwind: "$salesmanshops"
+      $unwind: '$salesmanshops',
     },
     {
       $lookup: {
@@ -542,7 +557,7 @@ const getshop_myshops_asm = async (page, userId) => {
         active: 1,
         mobile: 1,
         date: 1,
-        salesmanshops: "$salesmanshops"
+        salesmanshops: '$salesmanshops',
       },
     },
   ]);
@@ -553,11 +568,15 @@ const getshop_myshops_asm = async (page, userId) => {
 };
 
 const getshop_myshops = async (page, userId) => {
-  console.log(userId)
+  console.log(userId);
   let values = await Shop.aggregate([
     {
       $match: {
-        $or: [{ salesManStatus: { $eq: 'Assign' } }, { salesManStatus: { $eq: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }],
+        $or: [
+          { salesManStatus: { $eq: 'Assign' } },
+          { salesManStatus: { $eq: 'tempReassign' } },
+          { salesManStatus: { $eq: 'Reassign' } },
+        ],
       },
     },
     {
@@ -569,17 +588,17 @@ const getshop_myshops = async (page, userId) => {
           {
             $match: {
               $or: [
-                { salesManId: userId, fromSalesManId: userId, status: "Assign" },
-                { salesManId: userId, status: "tempReassign" }
-              ]
-            }
-          }
+                { salesManId: userId, fromSalesManId: userId, status: 'Assign' },
+                { salesManId: userId, status: 'tempReassign' },
+              ],
+            },
+          },
         ],
         as: 'salesmanshops',
       },
     },
     {
-      $unwind: "$salesmanshops"
+      $unwind: '$salesmanshops',
     },
     {
       $lookup: {
@@ -705,7 +724,11 @@ const getshop_myshops = async (page, userId) => {
   let total = await Shop.aggregate([
     {
       $match: {
-        $or: [{ salesManStatus: { $eq: 'Assign' } }, { salesManStatus: { $eq: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }],
+        $or: [
+          { salesManStatus: { $eq: 'Assign' } },
+          { salesManStatus: { $eq: 'tempReassign' } },
+          { salesManStatus: { $eq: 'Reassign' } },
+        ],
       },
     },
     {
@@ -717,17 +740,17 @@ const getshop_myshops = async (page, userId) => {
           {
             $match: {
               $or: [
-                { salesManId: userId, fromSalesManId: userId, status: "Assign" },
-                { salesManId: userId, status: "tempReassign" }
-              ]
-            }
-          }
+                { salesManId: userId, fromSalesManId: userId, status: 'Assign' },
+                { salesManId: userId, status: 'tempReassign' },
+              ],
+            },
+          },
         ],
         as: 'salesmanshops',
       },
     },
     {
-      $unwind: "$salesmanshops"
+      $unwind: '$salesmanshops',
     },
     {
       $lookup: {
@@ -854,8 +877,6 @@ const getshop_myshops = async (page, userId) => {
     total: total.length,
   };
 };
-
-
 
 const getshopWardStreetNamesWithAggregation = async (page) => {
   let values = await Shop.aggregate([
@@ -2615,15 +2636,15 @@ const getShopReviewByShopid = async (id) => {
 };
 
 const data1 = async () => {
-  const data = await Shop.find({ salesManStatus: "Assign" })
+  const data = await Shop.find({ salesManStatus: 'Assign' });
   if (data.length != 0) {
     data.forEach(async (e) => {
       await Shop.findByIdAndUpdate({ _id: e._id }, { salesManStatus: null }, { new: true });
-      console.log(e.salesManStatus)
+      console.log(e.salesManStatus);
     });
   }
-  return { mesage: "updated.." }
-}
+  return { mesage: 'updated..' };
+};
 
 module.exports = {
   createShopClone,
@@ -2664,5 +2685,6 @@ module.exports = {
   getShopReviewByShopid,
   data1,
   getshop_myshops,
-  getshop_myshops_asm
+  getshop_myshops_asm,
+  insertOrder,
 };

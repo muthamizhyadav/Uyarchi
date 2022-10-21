@@ -52,18 +52,17 @@ const getshopWardStreetNamesWithAggregation = catchAsync(async (req, res) => {
 
 const getshopmyshops = catchAsync(async (req, res) => {
   const user = await Users.findById(req.userId);
-  let shop
-  if (user.userRole == "fb0dd028-c608-4caa-a7a9-b700389a098d") {
+  let shop;
+  if (user.userRole == 'fb0dd028-c608-4caa-a7a9-b700389a098d') {
     shop = await b2bCloneService.getshop_myshops(req.params.page, req.userId);
-    console.log("sales man")
+    console.log('sales man');
   }
-  if (user.userRole == "719d9f71-8388-4534-9bfe-3f47faed62ac") {
+  if (user.userRole == '719d9f71-8388-4534-9bfe-3f47faed62ac') {
     shop = await b2bCloneService.getshop_myshops_asm(req.params.page, req.userId);
-    console.log("asm")
+    console.log('asm');
   }
   res.send(shop);
 });
-
 
 const getshopWardStreetNamesWithAggregation_withfilter = catchAsync(async (req, res) => {
   console.log(req.body);
@@ -418,6 +417,11 @@ const data1 = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const insertOrder = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.insertOrder();
+  res.send(data);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -458,5 +462,6 @@ module.exports = {
   GetShopsReviewsByShopType,
   getShopReviewByShopid,
   data1,
-  getshopmyshops
+  getshopmyshops,
+  insertOrder,
 };
