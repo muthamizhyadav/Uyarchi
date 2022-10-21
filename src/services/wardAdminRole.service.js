@@ -10,6 +10,7 @@ const {
   WardAdminRoleHistory,
   WithoutAsmWithAsm,
 } = require('../models/wardAdminRole.model');
+const { Roles } = require('../models');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
 const moment = require('moment');
@@ -83,22 +84,62 @@ const createwardAdminRole = async (body) => {
 // telecallerHead
 
 const telecallerHead  = async () => {
-  const data = await Users.aggregate([
-    {
-      $match: {
-        $and: [{ userRole: { $eq: "ae601146-dadd-443b-85b2-6c0fbe9f964c" }}],
+
+    let serverdate = moment().format('yyy-MM-DD');
+    let data = await Roles.aggregate([
+      {
+        $match: {
+          $and: [{ roleName: { $eq: "Ward CCE(WCCE)" } }],
+        },
       },
-    }, 
-    {
-      $project: {
-        name:1,
-        phoneNumber:1,
-        userRole:1,
+      {
+        $lookup: {
+          from: 'b2busers',
+          localField: '_id',
+          foreignField: 'userRole',
+          pipeline:[
+            {
+              $lookup: {
+                from: 'wardadminroles',
+                let: {
+                  localField: '$_id',
+                },
+                pipeline: [{ $match: { $expr: { $eq: ['$b2bUserId', '$$localField'] } } }
+              , {
+                $match: {
+                  $and: [{ date: { $eq: serverdate } }],
+                },
+              }    ],
+                as: 'wardadminrolesData',
+              },
+            },
+            // {
+            //   $unwind:'$wardadminrolesData',
+            //     // preserveNullAndEmptyArrays: true,
+            // },
+         ],
+          as: 'b2busersData',
+        },
       },
-    },  
-  ])
-  return data;
-};
+      {
+        $unwind: '$b2busersData',
+      },
+      {
+        $project: {
+          name: '$b2busersData.name',
+          b2buserId: '$b2busersData._id',
+          roleName: 1,
+          _id: 1,
+          // wardadminrolesData:'$b2busersData.wardadminrolesData'
+          b2user:'$b2busersData.wardadminrolesData'
+        },
+      },
+      {
+        $match:{ $and:[{ b2user: { $type: 'array', $ne: [] } }] },
+      },
+    ]);
+    return data;
+  };
 
 // ward wcce
 const wardwcce  = async () => {
@@ -1381,6 +1422,60 @@ const WardAdminRoleHistor = async (id,date) =>{
   return data ;
      
 }
+
+const WardAdminRoledatas = async (id,date) =>{
+  let match ;
+  if(id != 'null' && date == 'null'){
+    match = {  
+     $and: [{ b2bUserId: {$eq:id} }]
+    }
+  }else if(id == 'null' && date != 'null'){
+    match = {  
+      $and: [{ date: {$eq:date} }]
+     }
+  }
+  else if(id != 'null' && date != 'null'){
+    match = {  
+      $and: [{ b2bUserId: {$eq:id} },{ date: {$eq:date} }]
+     }
+  }else{
+    match = {  
+      $and: [{ active: {$eq:true} }]
+     }
+  }
+
+  const data = await WardAdminRole.aggregate([
+    {
+      $match: match
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'b2bUserId',
+        foreignField: '_id',
+        as: 'b2busersdata',
+      },
+    },
+    {
+      $unwind: '$b2busersdata',
+    },
+    {
+      $project:{
+         Name:"$b2busersdata.name",
+         targetTonne:1,
+         date:1,
+         time:1,
+         targetValue:1,
+         b2bUserId:1,
+      }
+    }
+  ])
+  return data ;
+     
+}
+
+
+
 
 const asmdata = async () => {
    const data = await Users.aggregate([
