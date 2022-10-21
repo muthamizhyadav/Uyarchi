@@ -1491,7 +1491,18 @@ const getAllDatasalesmanDataAndAssign = async (id,date) =>{
   return data ;
      
 }
-
+const getAlldataSalesmanandtele_wcce= async (id) =>{
+  let serverdate = moment().format('YYYY-MM-DD');
+  const data = await WithoutAsmWithAsm.aggregate([
+    {
+      $match: {
+        $and: [{ salesman: { $eq:id} },{ date: { $eq:serverdate} }],
+      },
+    },
+  ])
+  return data ;
+     
+}
 
 module.exports = {
   createwardAdminRole,
@@ -1536,4 +1547,5 @@ module.exports = {
   wardwcce,
   getAlldataASm,
   getAllDatasalesmanDataAndAssign,
+  getAlldataSalesmanandtele_wcce,
 };

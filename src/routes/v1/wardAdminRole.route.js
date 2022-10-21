@@ -41,4 +41,5 @@ router.route('/telecallerHead/data').get(wardAdminRoleController.telecallerHead)
 router.route('/wardwcce/All').get(wardAdminRoleController.wardwcce);
 router.route('/getAlldataAsm/data/:id').get(wardAdminRoleController.getAlldataASm);
 router.route('/getAllDatasalesmanDataAndAssign/data/:id/:date').get(wardAdminRoleController.getAllDatasalesmanDataAndAssign);
+router.route('/getAlldataSalesmanandtele_wcce/:id').get(wardAdminRoleController.getAlldataSalesmanandtele_wcce);
 module.exports = router;
