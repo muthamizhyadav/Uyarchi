@@ -37,7 +37,7 @@ const creditBillPaymentsSchema = mongoose.Schema({
         type: String,
     },
     amountPayingWithDEorSM: {
-        type: String,
+        type: Number,
     },
     actionStatus: {
         type: String

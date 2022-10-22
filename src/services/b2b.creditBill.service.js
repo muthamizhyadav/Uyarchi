@@ -1276,49 +1276,6 @@ const getGroupAndBill = async (AssignedUserId) => {
 };
 
 const getDetailsByPassGroupId = async (id) => {
-  // let values = await creditBillGroup.aggregate([
-  //   {
-  //     $match: {
-  //       $and: [{ _id: { $eq: id } }],
-  //     },
-  //   },
-  //   { $unwind: '$Orderdatas' },
-  //   {
-  //     $lookup: {
-  //       from: 'creditbills',
-  //       localField: '_id',
-  //       foreignField: 'creditbillId',
-  //       pipeline: [
-  //         {
-  //           $lookup: {
-  //             from: 'creditbillpaymenthistories',
-  //             localField: '_id',
-  //             foreignField: 'creditBillId',
-  //             as: 'data',
-  //           },
-  //         },
-  //         { $unwind: '$data' },
-  //       ],
-
-  //       as: 'creditData',
-  //     },
-  //   },
-  //   { $unwind: '$creditData' },
-
-  //   {
-  //     $project: {
-  //       BillDate: '$Orderdatas.date',
-  //       billNo: '$Orderdatas.customerBillId',
-  //       shopname: '$Orderdatas.shopNmae',
-  //       BalanceAmount: '$Orderdatas.pendingAmount',
-  //       paymentType: '$creditData.data.pay_By',
-  //       PaymentCapacity: '$data.pay_type',
-  //       paymentStatus: '$data.upiStatus',
-  //       AmountPay: '$data.amountPayingWithDEorSM',
-  //     },
-  //   },
-  // ]);
-
   let values = await creditBillPaymentModel.aggregate([
   
     {
@@ -1407,9 +1364,62 @@ const getPaymentTypeCount = async (id)=>{
         as: 'groupDtaa'
       }
     },
-  ]);
-  return values;
+    {
+      $project: {
+      pay_By:1,
+      pay_type:1,
+      upiStatus:1,
+      amountPayingWithDEorSM:1,
+      billN0: "$billData.bill",
+      billDate: "$billData.date",
+      billTime: "$billData.time",
+      shopNmae: "$groupDtaa.shopNmae",
+      BalanceAmount: "$groupDtaa.pendingAmount"
+
+},
+},
+]);
+
+  let total = await creditBillPaymentModel.aggregate([
+    {
+       $lookup: {
+         from: 'creditbills',
+         localField: 'creditBillId',
+         foreignField: '_id',
+         as: 'billData'
+       }
+     },
+     { $unwind: "$billData"},
+     {
+       $lookup: {
+         from:'creditbillgroups',
+         localField: 'billData.creditbillId',
+         pipeline: [
+           {
+             $match: {
+                   $and: [{ _id: { $eq: id } }],
+                 },
+           }
+         ],
+         foreignField: '_id',
+         as: 'groupDtaa'
+       }
+     },
+  
+
+     {
+  $group: {
+    _id: '$pay_By',
+    totalCash: { $sum: '$amountPayingWithDEorSM' },
+  },
+},
+
+
+]);
+return {values: values, total:total}
+
 }
+
 
 
 
