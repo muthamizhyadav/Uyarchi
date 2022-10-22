@@ -25,44 +25,43 @@ const getProductNAmeFromRandom = async()=>{
           return  values;   
 }
 
-const createDestroyStock = async (sampleBody) => {
-  let time = moment().format('HHmm');
-  let date = moment().format('yyyy-MM-DD');
-  let created = moment();
-  let datas = {
-    time : time,
-    date : date,
-    created : created,
-  };
-  let bodyData = { ...datas, ...sampleBody};
-  return destroyStockModel.create(bodyData);
-    
-  };
 
 
-  const getdetailsWithSorting = async (productId, date)=>{
+
+  const getdetailsWithSorting = async (product, date)=>{
     let match;
-    if(productId != 'null' && date != 'null'){
-        match = [{ productId: { $eq: productId }}, { date: { $eq: date }}, { active: { $eq: true }}];
-    }else if (productId != 'null') {
-    match = [{ productId: { $eq: productId } }, { active: { $eq: true } }];
+    if(product != 'null' && date != 'null'){
+        match = [{ product: { $eq: product }}, { date: { $eq: date }}, { active: { $eq: true }}];
+    }else if (product != 'null') {
+    match = [{ product: { $eq: product } }, { active: { $eq: true } }];
    
   } else if (date != 'null') {
     match = [{ date: { $eq: date } }, { active: { $eq: true } }];
   } else {
-    match = [{ productId: { $ne: null } }, { active: { $eq: true } }];
+    match = [{ product: { $ne: null } }, { active: { $eq: true } }];
   }
 
-  let values = await destroyStockModel.aggregate([
+  let values = await randomStockModel.aggregate([
     {
         $match: {
             $and:match,
         },
+       
     },
+    
+    // {
+    //   $match: {
+    //    $expr: {
+    //       $ne: [
+    //         '$totalDestroyCount', '$NSFW_Wastage',
+    //       ],
+    //     },
+    //   }
+    // },
     {
         $lookup: {
           from: 'products',
-          localField: 'productId',
+          localField: 'product',
           foreignField: '_id',
           as: 'clonedProducts',
         },
@@ -71,35 +70,93 @@ const createDestroyStock = async (sampleBody) => {
         $unwind: '$clonedProducts',
       },
       {
+        $lookup:{
+          from: 'destroystocks',
+          localField: '_id',
+          foreignField: 'product',
+          as: 'destoryStockDataaa'
+        }
+      },
+      // {
+      //   $unwind: "$destoryStockDataaa"
+      // },
+     
+      {
         $project:{
             date:1,
             time:1,
-            productId:1,
-            wastage:1,
-
-            // quantityToDestroy:1,
+            product:1,
+            NSFW_Wastage:1,
+            quantityToDestroy:1,
             worthRupees:1,
             productTitle:"$clonedProducts.productTitle",
-            // balanceQuantity: { 
-            //   $subtract: [ "$wastage", "$quantityToDestroy" ] 
-            // } 
+            
+            totalDestroyCount: {  $sum:"$destoryStockDataaa.quantityToDestroy"},
+           
+
+      //          equal : {
+      //     $ne : ["$totalDestroyCount", "$NSFW_Wastage"] 
+      // },
             } 
-        }
+        },
+    //     {
+    //   $match : {
+    //       equal : true   
+    //   }
+    // }
       
   ]);
+ 
   return values;
 
   }
 
-  const updateProduct = async(product,body  )=>{
-    console.log(product);
-    let stack = await randomStockModel.findOne({ product: product });
-    console.log(stack);
-    if (!stack) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'stacks not found');
+  const updateProduct = async(id,updatebody  )=>{
+    let currentDate = moment().format('YYYY-MM-DD');
+    let currenttime =  moment().format('hh:mm a');
+    let updateProduct = await randomStockModel.findById(id);
+    if (!updateProduct) {
+      throw new ApiError(httpStatus.NOT_FOUND, ' Not Found');
     }
-    stack = await randomStockModel.findOneAndUpdate({ product: product }, body, { new: true });
-    return stack;
+
+    updateProduct = await randomStockModel.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+
+    await destroyStockModel.create({
+     
+      date: currentDate,
+      time: currenttime,
+      created: moment(),
+      product: updateProduct._id,
+      quantityToDestroy: updatebody.quantityToDestroy,
+      status: updatebody.status,
+    });
+
+
+    return updateProduct;
+  };
+
+
+  const getHistory = async (id)=>{
+    let values = await destroyStockModel.aggregate([
+      {
+        $match: {
+          $and: [{ product: { $eq: id } }],
+        },
+      },
+     
+      
+    ]);
+    let total = await destroyStockModel.aggregate([
+      {
+        $match: {
+          $and: [{ product: { $eq: id } }],
+        },
+      },
+      { $group: { _id : null, sum : { $sum: "$quantityToDestroy" } }}
+     
+  
+    ]);
+    return {values: values, total: total };
   };
 
 
@@ -111,7 +168,8 @@ const createDestroyStock = async (sampleBody) => {
 
 module.exports = {
     getProductNAmeFromRandom,
-    createDestroyStock,
+    // createDestroyStock,
     getdetailsWithSorting,
     updateProduct,
+    getHistory,
 }

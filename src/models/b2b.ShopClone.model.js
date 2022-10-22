@@ -37,6 +37,9 @@ const shopSchema = mongoose.Schema({
   Slat: {
     type: String,
   },
+  displaycount: {
+    type: Number,
+  },
   Slong: {
     type: String,
   },
@@ -135,9 +138,17 @@ const shopSchema = mongoose.Schema({
   password: {
     type: String,
   },
-  lapsed: {
-    type: Boolean,
-    default: false,
+  lapsedOrder: {
+    type: String,
+  },
+  DA_Comment: {
+    type: String,
+  },
+  daStatus: {
+    type: String,
+  },
+  purchaseQTy: {
+    type: String,
   },
 });
 

@@ -24,6 +24,17 @@ const createShopClone = async (shopBody) => {
   return shop;
 };
 
+const insertOrder = async () => {
+  let i = 0;
+
+  // let shops = await Shop.find();
+  // let up = shops.forEach(async (e) => {
+  //   i = i + 1;
+  //   await Shop.findByIdAndUpdate({ _id: e._id }, { displaycount: i }, { new: true });
+  // });
+  // return up;
+};
+
 const getStreetAndShopDetails = async (supplierId) => {
   let values = await Shop.aggregate([
     {
@@ -136,6 +147,736 @@ const searchShops = async (key) => {
   ]);
   return values;
 };
+const getshop_myshops_asm = async (page, userId) => {
+  console.log(userId);
+  let values = await Shop.aggregate([
+    {
+      $match: {
+        $or: [
+          { salesManStatus: { $eq: 'Assign' } },
+          { salesManStatus: { $eq: 'tempReassign' } },
+          { salesManStatus: { $eq: 'Reassign' } },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              status: { $ne: 'Reassign' },
+            },
+          },
+          {
+            $lookup: {
+              from: 'asmsalesmen',
+              localField: 'fromSalesManId',
+              foreignField: 'salesManId',
+              pipeline: [
+                {
+                  $match: {
+                    asmId: { $eq: userId },
+                    status: { $ne: 'Reassign' },
+                  },
+                },
+              ],
+              as: 'asmsalesmen',
+            },
+          },
+          {
+            $unwind: {
+              path: '$asmsalesmen',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'asmsalesmen',
+              localField: 'salesManId',
+              foreignField: 'salesManId',
+              pipeline: [
+                {
+                  $match: {
+                    asmId: { $eq: userId },
+                    status: { $ne: 'Reassign' },
+                  },
+                },
+              ],
+              as: 'salesManId',
+            },
+          },
+          {
+            $unwind: {
+              path: '$salesManId',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+          {
+            $project: {
+              _id: 1,
+              salesManId: '$salesManId',
+              asmsalesmen: '$asmsalesmen',
+            },
+          },
+          {
+            $match: {
+              $or: [{ salesManId: { $ne: null } }, { asmsalesmen: { $ne: null } }],
+            },
+          },
+        ],
+        as: 'salesmanshops',
+      },
+    },
+    {
+      $unwind: '$salesmanshops',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'zones',
+              localField: 'zoneId',
+              foreignField: '_id',
+
+              as: 'zonedata',
+            },
+          },
+          {
+            $unwind: '$zonedata',
+          },
+          {
+            $project: {
+              ward: 1,
+              zone: '$zonedata.zone',
+              zoneCode: '$zoneData.zoneCode',
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+              area: 1,
+              locality: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      },
+    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
+
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street: '$StreetData.street',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: { $cond: { if: { $isArray: '$shoptype' }, then: '$shoptype.shopList', else: [] } },
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
+        photoCapture: 1,
+        SName: 1,
+        address: 1,
+        Slat: 1,
+        Slong: 1,
+        type: 1,
+        status: 1,
+        created: 1,
+        SOwner: 1,
+        kyc_status: 1,
+        Uid: 1,
+        zone: '$WardData.zone',
+        zoneCode: '$WardData.zoneCode',
+        active: 1,
+        mobile: 1,
+        date: 1,
+        salesmanshops: '$salesmanshops',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await Shop.aggregate([
+    {
+      $match: {
+        $or: [
+          { salesManStatus: { $eq: 'Assign' } },
+          { salesManStatus: { $eq: 'tempReassign' } },
+          { salesManStatus: { $eq: 'Reassign' } },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              status: { $ne: 'Reassign' },
+            },
+          },
+          {
+            $lookup: {
+              from: 'asmsalesmen',
+              localField: 'fromSalesManId',
+              foreignField: 'salesManId',
+              pipeline: [
+                {
+                  $match: {
+                    asmId: { $eq: userId },
+                    status: { $ne: 'Reassign' },
+                  },
+                },
+              ],
+              as: 'asmsalesmen',
+            },
+          },
+          {
+            $unwind: {
+              path: '$asmsalesmen',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'asmsalesmen',
+              localField: 'salesManId',
+              foreignField: 'salesManId',
+              pipeline: [
+                {
+                  $match: {
+                    asmId: { $eq: userId },
+                    status: { $ne: 'Reassign' },
+                  },
+                },
+              ],
+              as: 'salesManId',
+            },
+          },
+          {
+            $unwind: {
+              path: '$salesManId',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+          {
+            $project: {
+              _id: 1,
+              salesManId: '$salesManId',
+              asmsalesmen: '$asmsalesmen',
+            },
+          },
+          {
+            $match: {
+              $or: [{ salesManId: { $ne: null } }, { asmsalesmen: { $ne: null } }],
+            },
+          },
+        ],
+        as: 'salesmanshops',
+      },
+    },
+    {
+      $unwind: '$salesmanshops',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'zones',
+              localField: 'zoneId',
+              foreignField: '_id',
+
+              as: 'zonedata',
+            },
+          },
+          {
+            $unwind: '$zonedata',
+          },
+          {
+            $project: {
+              ward: 1,
+              zone: '$zonedata.zone',
+              zoneCode: '$zoneData.zoneCode',
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+              area: 1,
+              locality: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      },
+    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
+
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street: '$StreetData.street',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: { $cond: { if: { $isArray: '$shoptype' }, then: '$shoptype.shopList', else: [] } },
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
+        photoCapture: 1,
+        SName: 1,
+        address: 1,
+        Slat: 1,
+        Slong: 1,
+        type: 1,
+        status: 1,
+        created: 1,
+        SOwner: 1,
+        kyc_status: 1,
+        Uid: 1,
+        zone: '$WardData.zone',
+        zoneCode: '$WardData.zoneCode',
+        active: 1,
+        mobile: 1,
+        date: 1,
+        salesmanshops: '$salesmanshops',
+      },
+    },
+  ]);
+  return {
+    values: values,
+    total: total.length,
+  };
+};
+
+const getshop_myshops = async (page, userId) => {
+  console.log(userId);
+  let values = await Shop.aggregate([
+    {
+      $match: {
+        $or: [
+          { salesManStatus: { $eq: 'Assign' } },
+          { salesManStatus: { $eq: 'tempReassign' } },
+          { salesManStatus: { $eq: 'Reassign' } },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              $or: [
+                { salesManId: userId, fromSalesManId: userId, status: 'Assign' },
+                { salesManId: userId, status: 'tempReassign' },
+              ],
+            },
+          },
+        ],
+        as: 'salesmanshops',
+      },
+    },
+    {
+      $unwind: '$salesmanshops',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'zones',
+              localField: 'zoneId',
+              foreignField: '_id',
+
+              as: 'zonedata',
+            },
+          },
+          {
+            $unwind: '$zonedata',
+          },
+          {
+            $project: {
+              ward: 1,
+              zone: '$zonedata.zone',
+              zoneCode: '$zoneData.zoneCode',
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+              area: 1,
+              locality: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      },
+    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
+
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street: '$StreetData.street',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: { $cond: { if: { $isArray: '$shoptype' }, then: '$shoptype.shopList', else: [] } },
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
+        photoCapture: 1,
+        SName: 1,
+        address: 1,
+        Slat: 1,
+        Slong: 1,
+        type: 1,
+        status: 1,
+        created: 1,
+        SOwner: 1,
+        kyc_status: 1,
+        Uid: 1,
+        zone: '$WardData.zone',
+        zoneCode: '$WardData.zoneCode',
+        active: 1,
+        mobile: 1,
+        date: 1,
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await Shop.aggregate([
+    {
+      $match: {
+        $or: [
+          { salesManStatus: { $eq: 'Assign' } },
+          { salesManStatus: { $eq: 'tempReassign' } },
+          { salesManStatus: { $eq: 'Reassign' } },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              $or: [
+                { salesManId: userId, fromSalesManId: userId, status: 'Assign' },
+                { salesManId: userId, status: 'tempReassign' },
+              ],
+            },
+          },
+        ],
+        as: 'salesmanshops',
+      },
+    },
+    {
+      $unwind: '$salesmanshops',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'zones',
+              localField: 'zoneId',
+              foreignField: '_id',
+
+              as: 'zonedata',
+            },
+          },
+          {
+            $unwind: '$zonedata',
+          },
+          {
+            $project: {
+              ward: 1,
+              zone: '$zonedata.zone',
+              zoneCode: '$zoneData.zoneCode',
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+              area: 1,
+              locality: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      },
+    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
+
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street: '$StreetData.street',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: { $cond: { if: { $isArray: '$shoptype' }, then: '$shoptype.shopList', else: [] } },
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
+        photoCapture: 1,
+        SName: 1,
+        address: 1,
+        Slat: 1,
+        Slong: 1,
+        type: 1,
+        status: 1,
+        created: 1,
+        SOwner: 1,
+        kyc_status: 1,
+        Uid: 1,
+        zone: '$WardData.zone',
+        zoneCode: '$WardData.zoneCode',
+        active: 1,
+        mobile: 1,
+        date: 1,
+      },
+    },
+  ]);
+
+  return {
+    values: values,
+    total: total.length,
+  };
+};
 
 const getshopWardStreetNamesWithAggregation = async (page) => {
   let values = await Shop.aggregate([
@@ -144,6 +885,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
     //     $and: [{ type: { $eq: 'shop' } }],
     //   },
     // },
+
     {
       $lookup: {
         from: 'b2busers',
@@ -730,6 +1472,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily_all = async (user, 
         active: 1,
         mobile: 1,
         date: 1,
+        displaycount: 1,
       },
     },
   ]);
@@ -1605,16 +2348,41 @@ const getVendorShops = async (key) => {
 
 // getnotAssignSalesmanData
 
-const getnotAssignSalesmanData = async (id,page,limit) =>{
+const getnotAssignSalesmanData = async (id, page, limit) => {
   let data = await Shop.aggregate([
     {
       $match: {
-        $and: [{ Wardid: { $eq:id} }],
+        $and: [{ Wardid: { $eq: id } }],
       },
     },
+    // {
+    //   $match: {
+    //     $or: [
+    //       { salesManStatus: { $ne: 'Assign' } },
+    //       { salesManStatus: { $eq: null } },
+    //       { salesManStatus: { $eq: 'Reassign' } },
+    //       { salesManStatus: { $ne: 'tempReassign' } },
+    //     ],
+    //   },
+    // },
     {
       $match: {
-        $or: [{ salesManStatus: { $ne:'Assign' } },{ salesManStatus: { $eq:null} },{ salesManStatus: { $eq:'Reassign'} }],
+        $or: [
+          {
+            $and: [
+              { salesManStatus: { $ne: 'Assign' } },
+              { salesManStatus: { $ne: 'tempReassign' } },
+              { salesManStatus: { $eq: 'Reassign' } },
+            ],
+          },
+          {
+            $and: [
+              { salesManStatus: { $ne: 'Assign' } },
+              { salesManStatus: { $ne: 'tempReassign' } },
+              { salesManStatus: { $eq: null } },
+            ],
+          },
+        ],
       },
     },
     {
@@ -1626,16 +2394,17 @@ const getnotAssignSalesmanData = async (id,page,limit) =>{
       },
     },
     {
-      $unwind:'$streets',
+      $unwind: '$streets',
     },
     {
       $project: {
-        SOwner:1,
-        SName:1,
-        mobile:1,
-        address:1,
-        locality:'$streets.locality',
+        SOwner: 1,
+        SName: 1,
+        mobile: 1,
+        address: 1,
+        locality: '$streets.locality',
         _id: 1,
+        displaycount:1,
       },
     },
     {
@@ -1644,16 +2413,88 @@ const getnotAssignSalesmanData = async (id,page,limit) =>{
     {
       $limit: parseInt(limit),
     },
-  ])
-  let total = await Shop.aggregate([
+  ]);
+  let allnoAssing = await Shop.aggregate([
     {
       $match: {
-        $and: [{ Wardid: { $eq:id} }],
+        $and: [{ Wardid: { $eq: id } }],
+      },
+    },
+    // {
+    //   $match: {
+    //     $or: [
+    //       { salesManStatus: { $ne: 'Assign' } },
+    //       { salesManStatus: { $eq: null } },
+    //       { salesManStatus: { $eq: 'Reassign' } },
+    //       { salesManStatus: { $ne: 'tempReassign' } },
+    //     ],
+    //   },
+    // },
+    // {
+    //   $match: {
+    //     $or: [
+    //       { $and: [{ salesManStatus: { $ne: 'Assign' }}, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: 'Reassign' } }] },
+    //       { $and: [{ salesManStatus: { $ne: 'Assign' }}, { salesManStatus: { $ne: 'tempReassign' } }, { salesManStatus: { $eq: null } }] },
+    //     ],
+    //   },
+    // },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streets',
       },
     },
     {
+      $unwind: '$streets',
+    },
+    {
+      $project: {
+        SOwner: 1,
+        SName: 1,
+        mobile: 1,
+        address: 1,
+        locality: '$streets.locality',
+        _id: 1,
+        displaycount: 1,
+      },
+    },
+  ]);
+  let total = await Shop.aggregate([
+    {
       $match: {
-        $or: [{ salesManStatus: { $ne:'Assign' } },{ salesManStatus: { $eq:null} },{ salesManStatus: { $eq:'Reassign'} }],
+        $and: [{ Wardid: { $eq: id } }],
+      },
+    },
+    // {
+    //   $match: {
+    //     $or: [
+    //       { salesManStatus: { $ne: 'Assign' } },
+    //       { salesManStatus: { $eq: null } },
+    //       { salesManStatus: { $eq: 'Reassign' } },
+    //       { salesManStatus: { $ne: 'tempReassign' } },
+    //     ],
+    //   },
+    // },
+    {
+      $match: {
+        $or: [
+          {
+            $and: [
+              { salesManStatus: { $ne: 'Assign' } },
+              { salesManStatus: { $ne: 'tempReassign' } },
+              { salesManStatus: { $eq: 'Reassign' } },
+            ],
+          },
+          {
+            $and: [
+              { salesManStatus: { $ne: 'Assign' } },
+              { salesManStatus: { $ne: 'tempReassign' } },
+              { salesManStatus: { $eq: null } },
+            ],
+          },
+        ],
       },
     },
     {
@@ -1665,55 +2506,149 @@ const getnotAssignSalesmanData = async (id,page,limit) =>{
       },
     },
     {
-      $unwind:'$streets',
+      $unwind: '$streets',
     },
     {
       $project: {
-        SOwner:1,
-        SName:1,
-        mobile:1,
-        address:1,
-        locality:'$streets.locality',
+        SOwner: 1,
+        SName: 1,
+        mobile: 1,
+        address: 1,
+        locality: '$streets.locality',
         _id: 1,
+        displaycount: 1,
       },
     },
-  ])
-  return {data:data, total:total.length} ;
-}
+  ]);
+  return { data: data, total: total.length, overall: allnoAssing.length };
+};
 
-const GetShopsByShopType = async (id, page)=>{
-  let shops = await Shop.aggregate([{
-    $match: {
-      $and: [{ SType: { $eq:id} }],
+const GetShopsByShopType = async (id, page) => {
+  let shops = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ SType: { $eq: id } }],
+      },
     },
-  },
-  {
-    $project:{
-      _id:1,
-      photoCapture:1,
-      SName:1,
-      type:1,
-      SOwner:1,
-      mobile:1,
-      address:1,
-    }
-  },
-  {
-    $skip: 10 * page,
-  },
+    {
+      $project: {
+        _id: 1,
+        photoCapture: 1,
+        SName: 1,
+        type: 1,
+        SOwner: 1,
+        mobile: 1,
+        address: 1,
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
     {
       $limit: 10,
     },
-  ])
+  ]);
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ SType: { $eq:id} }],
+        $and: [{ SType: { $eq: id } }],
       },
     },
-  ])
-  return {shops: shops, total: total.length}
-}
+  ]);
+  return { shops: shops, total: total.length };
+};
+
+const GetShopsReviewsByShopType = async (id, page) => {
+  let shops = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ SType: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'shopreviews',
+        localField: '_id',
+        foreignField: 'shopId',
+        as: 'Reviews',
+      },
+    },
+    // {
+    //   $unwind: {
+    //     path: '$Reviews',
+    //     preserveNullAndEmptyArrays: true,
+    //   },
+    // },
+    {
+      $project: {
+        _id: 1,
+        photoCapture: 1,
+        SName: 1,
+        type: 1,
+        SOwner: 1,
+        mobile: 1,
+        address: 1,
+        reviews: '$Reviews',
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ SType: { $eq: id } }],
+      },
+    },
+  ]);
+  return { shops: shops, total: total.length };
+};
+
+const getShopReviewByShopid = async (id) => {
+  let values = await Shop.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'shopreviews',
+        localField: '_id',
+        foreignField: 'shopId',
+        as: 'Reviews',
+      },
+    },
+    {
+      $unwind: '$Reviews',
+    },
+    {
+      $project: {
+        _id: 1,
+        SName: 1,
+        reviewvId: '$Reviews._id',
+        Rating: '$Reviews.Rating',
+        Name: '$Reviews.Name',
+        MobileNumber: '$Reviews.MobileNumber',
+        Review: '$Reviews.Review',
+      },
+    },
+  ]);
+  return values;
+};
+
+const data1 = async () => {
+  // const data = await Shop.find({ salesManStatus: 'Assign' });
+  // if (data.length != 0) {
+  //   data.forEach(async (e) => {
+  //     await Shop.findByIdAndUpdate({ _id: e._id }, { salesManStatus: null }, { new: true });
+  //     console.log(e.salesManStatus);
+  //   });
+  // }
+  // return { mesage: 'updated..' };
+};
 
 module.exports = {
   createShopClone,
@@ -1750,4 +2685,10 @@ module.exports = {
   getVendorShops,
   getnotAssignSalesmanData,
   GetShopsByShopType,
+  GetShopsReviewsByShopType,
+  getShopReviewByShopid,
+  data1,
+  getshop_myshops,
+  getshop_myshops_asm,
+  insertOrder,
 };

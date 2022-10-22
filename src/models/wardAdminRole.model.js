@@ -14,10 +14,13 @@ const wardAdminRoleSchema = new mongoose.Schema({
     type: Number,
   },
   startingValue:{
-    type:String,
+    type:Number,
   },
   startingTonne:{
     type:Number,
+  },
+  type:{
+    type:String,
   },
   unit:{
     type:String,
@@ -70,6 +73,9 @@ const wardAdminRoleAsmSchema = new mongoose.Schema({
     },
     b2bUserId: {
       type: String,
+    },
+    unit:{
+      type:String,
     },
     date: {
       type: String,
@@ -132,6 +138,9 @@ const wardAdminRoleAsmSchema = new mongoose.Schema({
       default: v4,
     },
     salesManId: {
+      type: String,
+    },
+    fromSalesManId: {
       type: String,
     },
     shopId:{
@@ -198,5 +207,125 @@ const wardAdminRoleAsmSchema = new mongoose.Schema({
   });
   
   const WithoutAsmSalesman = mongoose.model('withoutAsmSalesman', withoutAsmSalesmanSchema);
+  const WardAdminRoleAsmHistorySchema = new mongoose.Schema({
+    _id: {
+      type: String,
+      default: v4,
+    },
+    targetValue: {
+      type: Number,
+    },
+    targetTonne: {
+      type: Number,
+    },
+    type:{
+      type:String,
+    },
+    unit:{
+      type:String,
+    },
+    wardAdminId:{
+      type:String,
+    },
+    b2bUserId:{
+      type:String,
+    },
+    date: {
+      type: String,
+    },
+    time: {
+      type: String,
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    archive: {
+      type: Boolean,
+      default: false,
+    },
+  });
+  
+  const WardAdminRoleAsmHistory = mongoose.model('WardAdminRoleAsmHistory', WardAdminRoleAsmHistorySchema);
+  const wardAdminRoleHistorySchema = new mongoose.Schema({
+    _id: {
+      type: String,
+      default: v4,
+    },
+    targetValue: {
+      type: Number,
+    },
+    targetTonne: {
+      type: Number,
+    },
+    b2bUserId: {
+      type: String,
+    },
+    type:{
+      type:String,
+    },
+    unit:{
+      type:String,
+    },
+    date: {
+      type: String,
+    },
+    time: {
+      type: String,
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    archive: {
+      type: Boolean,
+      default: false,
+    },
+  });
+  
+  const WardAdminRoleHistory = mongoose.model('wardAdminRoleHistory', wardAdminRoleHistorySchema);
+  const withoutAsmWithAsmSchema = new mongoose.Schema({
+    _id: {
+      type: String,
+      default: v4,
+    },
+    targetValue: {
+      type: Number,
+    },
+    targetTonne: {
+      type: Number,
+    },
+    unit:{
+      type:String,
+    },
+    type:{
+      type:String,
+    },
+    salesman:{
+      type:String,
+    },
+    wardAdminId: {
+      type: String,
+    },
+    status:{
+      type:String,
+    },
+    date: {
+      type: String,
+    },
+    time: {
+      type: String,
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    archive: {
+      type: Boolean,
+      default: false,
+    },
+  });
+  
+  const WithoutAsmWithAsm = mongoose.model('withoutAsmWithAsm', withoutAsmWithAsmSchema);
 
-module.exports = {WardAdminRole, WardAdminRoleAsm, AsmSalesMan, SalesManShop, WithoutAsmSalesman};
+module.exports = {WardAdminRole, WardAdminRoleAsm, AsmSalesMan, SalesManShop, WithoutAsmSalesman, WardAdminRoleAsmHistory, WardAdminRoleHistory, WithoutAsmWithAsm};

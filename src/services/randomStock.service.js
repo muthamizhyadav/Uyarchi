@@ -25,7 +25,7 @@ const getProduct = async () => {
 };
 
 const createrandomStock = async (body) => {
-  let time = moment().format('HHmm');
+  let time = moment().format('hh:mm a');
   let date = moment().format('yyyy-MM-DD');
   let created = moment();
   let datas = {
@@ -54,7 +54,10 @@ const getAll = async (product, date) => {
     {
       $match: {
         $and: match,
-      },
+       
+      }
+    
+      
     },
     {
       $lookup: {
@@ -66,6 +69,14 @@ const getAll = async (product, date) => {
     },
     {
       $unwind: '$clonedProducts',
+    },
+    {
+      $lookup: {
+        from: 'destroystocks',
+        localField: '_id',
+        foreignField: 'product',
+        as: 'destroystocksData'
+      }
     },
     {
       $project: {
@@ -81,13 +92,20 @@ const getAll = async (product, date) => {
         wastedImageFile:1,
         quantityToDestroy:1,
         status:1,
-         balanceQuantity: { 
-              $subtract: [ "$NSFW_Wastage", "$quantityToDestroy" ] 
-            } 
-
-
+        totalDestroyCount: {  $sum:"$destroystocksData.quantityToDestroy"},
+        result: { 
+          $subtract: [ "$NSFW_Wastage",  {$sum:"$destroystocksData.quantityToDestroy"} ] } 
+      //   equal : {
+      //     $ne : [{$sum:"$destroystocksData.quantityToDestroy"}, "$NSFW_Wastage"] 
+      // },
+        
       },
     },
+    // {
+    //   $match : {
+    //       equal : true   
+    //   }
+    // }
   ]);
   return values;
 };

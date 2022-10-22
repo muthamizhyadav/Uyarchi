@@ -258,6 +258,39 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   paymentMethod: {
     type: String,
   },
+  RE_order_status: {
+    type: String,
+  },
+  Re_order_userId: {
+    type: String,
+  },
+  RE_order_Id: {
+    type: String,
+  },
+  reorder_status: {
+    type: Boolean,
+  },
+  creditBillAssignedStatus: {
+    type: String,
+    default: 'Pending',
+  },
+  statusOfBill: {
+    type: String,
+    default: 'Pending',
+  },
+  delivered_date: {
+    type: Date,
+  },
+  un_delivered_date: {
+    type: Date,
+  },
+  raiseissue: {
+    type: Boolean,
+    default: false
+  },
+  issueDate: {
+    type: Date,
+  }
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
@@ -335,7 +368,7 @@ const productorderCloneSchema = new mongoose.Schema({
     type: String,
   },
   packKg: {
-    type: String,
+    type: Number,
   },
   quantity: {
     type: Number,
@@ -388,6 +421,28 @@ const productorderCloneSchema = new mongoose.Schema({
   finalPricePerKg: {
     type: Number,
   },
+  amountwithGST: {
+    type: Number,
+  },
+  issueraised: {
+    type: Boolean,
+    default: false
+  },
+  issuetype: {
+    type: String,
+  },
+  issue: {
+    type: String,
+  },
+  issuediscription: {
+    type: String,
+  },
+  issuequantity: {
+    type: Number,
+  },
+  issueDate: {
+    type: Date,
+  }
 });
 
 productorderCloneSchema.plugin(toJSON);

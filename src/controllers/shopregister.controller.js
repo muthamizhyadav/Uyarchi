@@ -40,6 +40,49 @@ const get_myorder = catchAsync(async (req, res) => {
   const shop = await registerShop.get_myorder(req);
   res.status(httpStatus.CREATED).send(shop);
 });
+const get_mypayments = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_mypayments(req);
+  res.status(httpStatus.CREATED).send(shop);
+});
+
+const getpayment_history = catchAsync(async (req, res) => {
+  const shop = await registerShop.getpayment_history(req.shopId, req.params.id);
+  res.status(httpStatus.CREATED).send(shop);
+});
+
+const get_pendung_amount = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_pendung_amount(req.shopId, req.params.id);
+  res.status(httpStatus.CREATED).send(shop);
+});
+const get_orderamount = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_orderamount(req.shopId, req.body);
+  res.status(httpStatus.CREATED).send(shop);
+});
+
+const get_raiseonissue = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_raiseonissue(req.shopId);
+  res.status(httpStatus.CREATED).send(shop);
+});
+const get_raiseorder_issue = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_raiseorder_issue(req.shopId, req.params.id);
+  res.status(httpStatus.CREATED).send(shop);
+});
+const get_my_issue_byorder = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_my_issue_byorder(req.shopId, req.params.id);
+  res.status(httpStatus.CREATED).send(shop);
+});
+
+const get_raiseproduct = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_raiseproduct(req.shopId, req.params.id, req.body);
+  res.status(httpStatus.CREATED).send(shop);
+});
+
+const get_myissues = catchAsync(async (req, res) => {
+  const shop = await registerShop.get_myissues(req.shopId, req.params.id, req.body);
+  res.status(httpStatus.CREATED).send(shop);
+});
+
+
 
 module.exports = {
   register_shop,
@@ -49,4 +92,13 @@ module.exports = {
   get_myDetails,
   get_myorder,
   change_password,
+  get_mypayments,
+  getpayment_history,
+  get_pendung_amount,
+  get_orderamount,
+  get_raiseonissue,
+  get_raiseorder_issue,
+  get_raiseproduct,
+  get_myissues,
+  get_my_issue_byorder
 };

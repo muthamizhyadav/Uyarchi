@@ -208,6 +208,26 @@ const getAssigned_details = catchAsync(async (req, res) => {
   res.send(orderAssign);
 });
 
+const mismatchCount = catchAsync(async (req, res) => {
+  const orderAssign = await wardAdminService.mismatchCount(req.params.page);
+  res.send(orderAssign);
+});
+
+const mismatchGroup = catchAsync(async (req, res) => {
+  const orderAssign = await wardAdminService.mismatchGroup(req.params.id);
+  res.send(orderAssign);
+});
+
+const Mismatch_Stock_Reconcilation = catchAsync(async (req, res) => {
+  const data = await wardAdminService.Mismatch_Stock_Reconcilation();
+  res.send(data);
+});
+
+const Mismatch_Stock_Reconcilation1 = catchAsync(async (req, res) => {
+  const data = await wardAdminService.Mismatch_Stock_Reconcilation1(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   getDetails,
   getproductDetails,
@@ -240,4 +260,8 @@ module.exports = {
   updatePackedStatus,
   wardloadExecutivepacked,
   wardloadExecutivebtgroup,
+  mismatchCount,
+  mismatchGroup,
+  Mismatch_Stock_Reconcilation,
+  Mismatch_Stock_Reconcilation1,
 };

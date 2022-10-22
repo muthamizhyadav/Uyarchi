@@ -24,8 +24,13 @@ const getdetailsWithSorting = catchAsync(async (req, res) => {
 })
 
 const updateProduct = catchAsync(async (req, res) => {
-    const product = await destroyStockService.updateProduct(req.params.product, req.body);
+    const product = await destroyStockService.updateProduct(req.params.id, req.body);
     res.send(product);
+  });
+
+  const getHistory = catchAsync(async (req, res) => {
+    const getHistory = await destroyStockService.getHistory(req.params.id);
+    res.send(getHistory)
   });
 
 module.exports = {
@@ -33,4 +38,5 @@ module.exports = {
     createDestroyStock,
     getdetailsWithSorting,
     updateProduct,
+    getHistory,
 }

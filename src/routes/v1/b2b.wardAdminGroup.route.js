@@ -95,9 +95,7 @@ router.route('/submitPEttyCashGivenByWDE/submit/:id').put(wardAdminGroupControll
 
 router.route('/get/details/pettyCash/:id').get(wardAdminGroupController.getPEttyCashQuantity);
 
-router
-  .route('/create/detatisl/About/pettyStock/returnstock')
-  .post(returnStockWastage.array('wastageImageUpload'), wardAdminGroupController.uploadWastageImage);
+router.route('/create/detatisl/About/pettyStock/returnstock').post(returnStockWastage.array('wastageImageUpload'), wardAdminGroupController.uploadWastageImage);
 
 router.route('/get/return/stock/:id').get(wardAdminGroupController.returnStock);
 
@@ -115,4 +113,9 @@ router.route('/update/groupDetails/:id').put(wardAdminGroupController.createAddO
 
 // router.route('/get/getDeliveryDetails/:page').get(wardAdminGroupController.getDeliveryDetails);
 
+router.route('/get/details/finishing/account/:id/:page').get(wardAdminGroupController.finishingAccount);
+router.route('/submit/Dispute/:id').put(wardAdminGroupController.submitDispute);
+router.route('/returnStockData/:id').get(wardAdminGroupController.returnStockData);
+router.route('/updatemismatchStockStatus/:id').put(wardAdminGroupController.updatemismatchStockStatus);
+router.route('/createfineData/').post(wardAdminGroupController.createfineData);
 module.exports = router;

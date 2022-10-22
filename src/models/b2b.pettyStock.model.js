@@ -18,10 +18,10 @@ const pettyStockSchema = new mongoose.Schema({
     type: String,
   },
   QTY: {
-    type: String,
+    type: Number,
   },
   pettyStock: {
-    type: String,
+    type: Number,
   },
   totalQtyIncludingPettyStock: {
     type: Number,

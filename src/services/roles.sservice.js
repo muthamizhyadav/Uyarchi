@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { Roles } = require('../models');
 const ApiError = require('../utils/ApiError');
+const moment = require('moment');
 
 const createRoles = async (rolesBody) => {
   return Roles.create(rolesBody);
@@ -57,6 +58,60 @@ const getroleWardAdmin = async () => {
         from: 'b2busers',
         localField: '_id',
         foreignField: 'userRole',
+      //   pipeline:[
+      //     {
+      //       $lookup: {
+      //         from: 'wardadminroles',
+      //         let: {
+      //           localField: '$_id',
+      //         },
+      //         pipeline: [{ $match: { $expr: { $eq: ['$b2bUserId', '$$localField'] } } }],
+      //         as: 'wardadminrolesData',
+      //       },
+      //     },
+      //     {
+      //       $unwind: {
+      //         path: '$wardadminrolesData',
+      //         preserveNullAndEmptyArrays: true,
+      //       },
+      //     },
+      //  ],
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $project: {
+        name: '$b2busersData.name',
+        b2buserId: '$b2busersData._id',
+        roleName: 1,
+        _id: 1,
+        // wardadminrolesData:'$b2busersData.wardadminrolesData'
+      },
+    },
+    // {
+    //   $match: { wardadminrolesData: { $eq: null } },
+    // },
+  ]);
+  return data;
+};
+
+// notAssignTonneValueSalesmanager
+const notAssignTonneValueSalesmanager = async () => {
+  let serverdate = moment().format('yyy-MM-DD');
+  let data = await Roles.aggregate([
+    {
+      $match: {
+        $and: [{ roleName: { $eq: 'Ward Admin Sales Manager (WASM)' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: '_id',
+        foreignField: 'userRole',
         pipeline:[
           {
             $lookup: {
@@ -64,16 +119,19 @@ const getroleWardAdmin = async () => {
               let: {
                 localField: '$_id',
               },
-              pipeline: [{ $match: { $expr: { $eq: ['$b2bUserId', '$$localField'] } } }],
+              pipeline: [{ $match: { $expr: { $eq: ['$b2bUserId', '$$localField'] } } }
+            , {
+              $match: {
+                $and: [{ date: { $eq: serverdate } }],
+              },
+            }    ],
               as: 'wardadminrolesData',
             },
           },
-          {
-            $unwind: {
-              path: '$wardadminrolesData',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
+          // {
+          //   $unwind:'$wardadminrolesData',
+          //     // preserveNullAndEmptyArrays: true,
+          // },
        ],
         as: 'b2busersData',
       },
@@ -87,11 +145,12 @@ const getroleWardAdmin = async () => {
         b2buserId: '$b2busersData._id',
         roleName: 1,
         _id: 1,
-        wardadminrolesData:'$b2busersData.wardadminrolesData'
+        // wardadminrolesData:'$b2busersData.wardadminrolesData'
+        b2user:'$b2busersData.wardadminrolesData'
       },
     },
     {
-      $match: { wardadminrolesData: { $eq: null } },
+      $match:{ $and:[{ b2user: { $type: 'array', $ne: [] } }] },
     },
   ]);
   return data;
@@ -109,24 +168,24 @@ const getroleWardAdminAsm = async () => {
         from: 'b2busers',
         localField: '_id',
         foreignField: 'userRole',
-        pipeline: [
-          {
-            $lookup: {
-              from: 'wardadminroleasms',
-              let: {
-                localField: '$_id',
-              },
-              pipeline: [{ $match: { $expr: { $eq: ['$b2bUserId', '$$localField'] } } }],
-              as: 'wardadminroleasmsData',
-            },
-          },
-          {
-            $unwind: {
-              path: '$wardadminroleasmsData',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-        ],
+        // pipeline: [
+        //   {
+        //     $lookup: {
+        //       from: 'wardadminroleasms',
+        //       let: {
+        //         localField: '$_id',
+        //       },
+        //       pipeline: [{ $match: { $expr: { $eq: ['$b2bUserId', '$$localField'] } } }],
+        //       as: 'wardadminroleasmsData',
+        //     },
+        //   },
+        //   {
+        //     $unwind: {
+        //       path: '$wardadminroleasmsData',
+        //       preserveNullAndEmptyArrays: true,
+        //     },
+        //   },
+        // ],
         as: 'b2busersData',
       },
     },
@@ -140,12 +199,12 @@ const getroleWardAdminAsm = async () => {
         b2buserId: '$b2busersData._id',
         roleName: 1,
         _id: 1,
-        wardadminroleasmsData: '$b2busersData.wardadminroleasmsData',
+        // wardadminroleasmsData: '$b2busersData.wardadminroleasmsData',
       },
     },
-    {
-      $match: { wardadminroleasmsData: { $eq: null } },
-    },
+    // {
+    //   $match: { wardadminroleasmsData: { $eq: null } },
+    // },
   ]);
   return data;
 };
@@ -180,7 +239,7 @@ const getAlldataSalesManager = async () =>{
   return data ;
 }
 
-const getAlldataSalesMan = async () =>{
+const getAlldataSalesMan = async (page) =>{
   let data = await Roles.aggregate([
     {
       $match: {
@@ -192,11 +251,13 @@ const getAlldataSalesMan = async () =>{
         from: 'b2busers',
         localField: '_id',
         foreignField: 'userRole',
-        pipeline:[ {
+        pipeline:[ 
+          {
           $match: {
             $or: [{ salesManagerStatus: { $ne:'Assign' } },{ salesManagerStatus: { $eq:null} },{ salesManagerStatus: { $eq:'Reassign'} }],
           },
-        },],
+        }    
+      ],
         as: 'b2busersData',
       },
     },
@@ -207,12 +268,79 @@ const getAlldataSalesMan = async () =>{
       $project: {
         name: '$b2busersData.name',
         b2buserId: '$b2busersData._id',
+        mobileNumber:'$b2busersData.phoneNumber',
+        email:"$b2busersData.email",
+        roleName: 1,
+        _id: 1,
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ])
+  let total = await Roles.aggregate([
+    {
+      $match: {
+        $and: [{ roleName: { $eq: 'Ward Field Sales Executive(WFSE)' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: '_id',
+        foreignField: 'userRole',
+        pipeline:[ 
+          {
+          $match: {
+            $or: [{ salesManagerStatus: { $ne:'Assign' } },{ salesManagerStatus: { $eq:null} },{ salesManagerStatus: { $eq:'Reassign'} }],
+          },
+        }    
+      ],
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    }, 
+    {
+      $project: {
+        name: '$b2busersData.name',
+        b2buserId: '$b2busersData._id',
+        mobileNumber:'$b2busersData.phoneNumber',
+        email:"$b2busersData.email",
         roleName: 1,
         _id: 1,
       },
     },
   ])
-  return data ;
+  let over = await Roles.aggregate([
+    {
+      $match: {
+        $and: [{ roleName: { $eq: 'Ward Field Sales Executive(WFSE)' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: '_id',
+        foreignField: 'userRole',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    }, 
+    {
+      $project: {
+        name: '$b2busersData.name',
+        b2buserId: '$b2busersData._id',
+        mobileNumber:'$b2busersData.phoneNumber',
+        email:"$b2busersData.email",
+        roleName: 1,
+        _id: 1,
+      },
+    },
+  ])
+  return {data, total:total.length, overallCount:over.length} ;
 }
 
 // get all salesman 
@@ -320,4 +448,5 @@ module.exports = {
   getAlldataSalesMan,
   getsalesman,
   getAllSalesmanShops,
+  notAssignTonneValueSalesmanager,
 };

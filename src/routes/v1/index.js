@@ -90,14 +90,31 @@ const wardAdminRole = require('./wardAdminRole.route');
 const registerShop = require('./shopregister.route');
 const randomStock = require('./randomStock.route');
 const destoryStock = require('./destoryStock.route')
+const shopRoute = require('./shop-review.route');
+const vehicleRoute = require('./b2b.vehicle.allocation.route');
+const creditBill = require('./b2b.creditBill.route');
+
+const returnStockroute = require('./returnStock.route');
 const defaultRoutes = [
   {
     path: '/registerShop',
     route: registerShop,
   },
   {
+    path: '/shop',
+    route: registerShop,
+  },
+  {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/shop-review',
+    route: shopRoute,
+  },
+  {
+    path: '/return-stock',
+    route: returnStockroute,
   },
   {
     path: '/LapsedOrder',
@@ -437,6 +454,14 @@ const defaultRoutes = [
   {
     path: '/destoryStockpath',
     route: destoryStock,
+  },
+  {
+    path: '/vehiclepath',
+    route: vehicleRoute,
+  },
+  {
+    path: '/creditBillPath',
+    route: creditBill
   }
   // {
   //   path: '/sales',

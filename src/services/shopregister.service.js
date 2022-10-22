@@ -7,6 +7,7 @@ const sentOTP = require('../config/registershop.config');
 const OTP = require('../models/saveOtp.model');
 const bcrypt = require('bcryptjs');
 const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone } = require('../models/shopOrder.model');
+const OrderPayment = require('../models/orderpayment.model');
 
 const register_shop = async (body) => {
   const mobileNumber = body.mobile;
@@ -168,10 +169,783 @@ const get_myorder = async (req) => {
       },
     },
   ]);
-  if (odrers.length == 0) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Order Not Found');
-  }
+  // if (odrers.length == 0) {
+  //   throw new ApiError(httpStatus.UNAUTHORIZED, 'Order Not Found');
+  // }
   return odrers;
 };
 
-module.exports = { register_shop, verify_otp, set_password, login_now, get_myDetails, get_myorder, change_password };
+const get_mypayments = async (req) => {
+  const odrers = await ShopOrderClone.aggregate([
+    { $match: { shopId: req.shopId } },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              productpacktypeId: 1,
+              packKg: 1,
+              unit: 1,
+              date: 1,
+              time: 1,
+              customerId: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              created: 1,
+              productTitle: '$products.productTitle',
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              GSTamount: {
+                $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100],
+              },
+              totalRupees: {
+                $add: [
+                  { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                  { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
+                ],
+              },
+              CGSTAmount: {
+                $divide: [
+                  { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
+                  2,
+                ],
+              },
+              SGSTAmount: {
+                $divide: [
+                  { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
+                  2,
+                ],
+              },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              GSTamount: { $sum: { $round: ['$GSTamount', 0] } },
+              totalRupees: { $sum: { $round: ['$totalRupees', 0] } },
+              CGSTAmount: { $sum: { $round: ['$CGSTAmount', 0] } },
+              SGSTAmount: { $sum: { $round: ['$SGSTAmount', 0] } },
+            },
+          },
+        ],
+        as: 'productorderclonesdata',
+      },
+    },
+    {
+      $unwind: '$productorderclonesdata',
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              paidAmt: { $sum: '$paidAmt' },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: '$orderpayments',
+    },
+    {
+      $addFields: {
+        totalpaid: '$orderpayments.paidAmt',
+      },
+    },
+    {
+      $addFields: {
+        totalRupees: { $round: ['$productorderclonesdata.totalRupees', 0] },
+      },
+    },
+    {
+      $addFields: {
+        GSTamount: { $round: ['$productorderclonesdata.GSTamount', 0] },
+      },
+    },
+    {
+      $addFields: {
+        CGSTAmount: { $round: ['$productorderclonesdata.CGSTAmount', 0] },
+      },
+    },
+    {
+      $addFields: {
+        SGSTAmount: { $round: ['$productorderclonesdata.SGSTAmount', 0] },
+      },
+    },
+    {
+      $project: {
+        product: '$productOrderdata',
+        _id: 1,
+        GSTamount: 1,
+        CGSTAmount: 1,
+        SGSTAmount: 1,
+        status: 1,
+        productStatus: 1,
+        customerDeliveryStatus: 1,
+        receiveStatus: 1,
+        pettyCashReceiveStatus: 1,
+        AssignedStatus: 1,
+        completeStatus: 1,
+        UnDeliveredStatus: 1,
+        customerBilldate: 1,
+        customerBilltime: 1,
+        lapsedOrder: 1,
+        delivery_type: 1,
+        Payment: 1,
+        devevery_mode: 1,
+        time_of_delivery: 1,
+        total: 1,
+        // gsttotal: 1,
+        // subtotal: 1,
+        // SGST: 1,
+        // CGST: 1,
+        paidamount: 1,
+        Uid: 1,
+        OrderId: 1,
+        customerBillId: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        timeslot: 1,
+        orderpayments: '$orderpayments',
+        totalpaid: 1,
+        totalRupees: 1,
+        pendingAmount: { $subtract: ['$totalRupees', '$orderpayments.paidAmt'] },
+        pendingAmountstatus: { $ne: ['$totalRupees', '$orderpayments.paidAmt'] },
+        pay_type: 1,
+        // productorderclonesdata: '$productorderclonesdata',
+      },
+    },
+    {
+      $match: { pendingAmountstatus: true },
+    },
+  ]);
+  // if (odrers.length == 0) {
+  //   throw new ApiError(httpStatus.UNAUTHORIZED, 'Order Not Found');
+  // }
+  return odrers;
+};
+
+const getpayment_history = async (shopId, id) => {
+  let orderHistory = await OrderPayment.aggregate([
+    { $match: { orderId: id } },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: { shopId: { $eq: shopId } },
+          },
+        ],
+        as: 'shoporderclones',
+      },
+    },
+    {
+      $unwind: '$shoporderclones',
+    },
+    {
+      $project: {
+        _id: 1,
+        payment: 1,
+        active: 1,
+        archive: 1,
+        paidAmt: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        orderId: 1,
+        type: 1,
+        pay_type: 1,
+        paymentMethod: 1,
+        paymentstutes: 1,
+        OrderId: '$shoporderclones.OrderId',
+        customerBillId: '$shoporderclones.customerBillId',
+        created: '$shoporderclones.created',
+      },
+    },
+  ]);
+  return orderHistory;
+};
+const get_pendung_amount = async (shopId, id) => {
+  const odrers = await ShopOrderClone.aggregate([
+    { $match: { shopId: shopId, _id: id } },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              productpacktypeId: 1,
+              packKg: 1,
+              unit: 1,
+              date: 1,
+              time: 1,
+              customerId: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              created: 1,
+              productTitle: '$products.productTitle',
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              GSTamount: {
+                $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100],
+              },
+              totalRupees: {
+                $add: [
+                  { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                  { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
+                ],
+              },
+              CGSTAmount: {
+                $divide: [
+                  { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
+                  2,
+                ],
+              },
+              SGSTAmount: {
+                $divide: [
+                  { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
+                  2,
+                ],
+              },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              GSTamount: { $sum: { $round: ['$GSTamount', 0] } },
+              totalRupees: { $sum: { $round: ['$totalRupees', 0] } },
+              CGSTAmount: { $sum: { $round: ['$CGSTAmount', 0] } },
+              SGSTAmount: { $sum: { $round: ['$SGSTAmount', 0] } },
+            },
+          },
+        ],
+        as: 'productorderclonesdata',
+      },
+    },
+    {
+      $unwind: '$productorderclonesdata',
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              paidAmt: { $sum: '$paidAmt' },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: '$orderpayments',
+    },
+    {
+      $addFields: {
+        totalpaid: '$orderpayments.paidAmt',
+      },
+    },
+    {
+      $addFields: {
+        totalRupees: { $round: ['$productorderclonesdata.totalRupees', 0] },
+      },
+    },
+    {
+      $addFields: {
+        GSTamount: { $round: ['$productorderclonesdata.GSTamount', 0] },
+      },
+    },
+    {
+      $addFields: {
+        CGSTAmount: { $round: ['$productorderclonesdata.CGSTAmount', 0] },
+      },
+    },
+    {
+      $addFields: {
+        SGSTAmount: { $round: ['$productorderclonesdata.SGSTAmount', 0] },
+      },
+    },
+    {
+      $project: {
+        product: '$productOrderdata',
+        _id: 1,
+        GSTamount: 1,
+        CGSTAmount: 1,
+        SGSTAmount: 1,
+        status: 1,
+        productStatus: 1,
+        customerDeliveryStatus: 1,
+        receiveStatus: 1,
+        pettyCashReceiveStatus: 1,
+        AssignedStatus: 1,
+        completeStatus: 1,
+        UnDeliveredStatus: 1,
+        customerBilldate: 1,
+        customerBilltime: 1,
+        lapsedOrder: 1,
+        delivery_type: 1,
+        Payment: 1,
+        devevery_mode: 1,
+        time_of_delivery: 1,
+        total: 1,
+        // gsttotal: 1,
+        // subtotal: 1,
+        // SGST: 1,
+        // CGST: 1,
+        paidamount: 1,
+        Uid: 1,
+        OrderId: 1,
+        customerBillId: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        timeslot: 1,
+        orderpayments: '$orderpayments',
+        totalpaid: 1,
+        totalRupees: 1,
+        pendingAmount: { $subtract: ['$totalRupees', '$orderpayments.paidAmt'] },
+        pendingAmountstatus: { $ne: ['$totalRuees', '$orderpayments.paidAmt'] },
+        pay_type: 1,
+      },
+    },
+    // {
+    //   $match: { pendingAmountstatus: true },
+    // },
+  ]);
+  if (odrers.length == 0) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Order Not Found');
+  }
+  return odrers[0];
+};
+
+const get_orderamount = async (shopId, body) => {
+  const shop = await Shop.findById(shopId);
+  if (!shop) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Shop Not Registered');
+  }
+  let created = moment();
+  let date = moment().format('YYYY-MM-DD');
+  let time = moment().format('hhmm');
+
+  const order = await OrderPayment.create({
+    orderId: body.orderId,
+    payment: 'self',
+    paidAmt: body.paidamount,
+    paymentMethod: 'self',
+    created: created,
+    date: date,
+    time: time,
+  });
+  return order;
+};
+
+
+
+const get_raiseonissue = async (shopId) => {
+  let last24h = moment().subtract(24, 'h').toDate();
+  const value = await ShopOrderClone.aggregate([
+    {
+      $sort: { created: -1 }
+    },
+    {
+      $match: {
+        shopId: { $eq: shopId },
+        status: { $eq: "Delivered" },
+        delivered_date: { $gte: last24h },
+      }
+    },
+    {
+      $project: {
+        OrderId: 1,
+        created: 1,
+        delivery_type: 1,
+        status: 1,
+        date: 1,
+        time: 1,
+        time_of_delivery: 1,
+        delivered_date: 1
+      }
+    }
+
+  ])
+  return value;
+};
+
+
+
+const get_raiseorder_issue = async (shopId, orderId) => {
+  let last24h = moment().subtract(24, 'h').toDate();
+  let shopOrder = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        shopId: { $eq: shopId },
+        status: { $eq: "Delivered" },
+        delivered_date: { $gte: last24h },
+        _id: orderId
+      }
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              productpacktypeId: 1,
+              packKg: 1,
+              unit: 1,
+              date: 1,
+              time: 1,
+              customerId: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              created: 1,
+              issueraised: 1,
+              issuetype: 1,
+              issue: 1,
+              issuediscription: 1,
+              issuequantity: 1,
+              productTitle: '$products.productTitle',
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $project: {
+        status: 1,
+        delivery_type: 1,
+        Payment: 1,
+        devevery_mode: 1,
+        time_of_delivery: 1,
+        pay_type: 1,
+        paymentMethod: 1,
+        OrderId: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        delivered_date: 1,
+        reason: 1,
+        product: "$productOrderdata"
+      }
+    }
+  ])
+  if (shopOrder.length == 0) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Order Not Found');
+  }
+  return shopOrder[0];
+};
+
+
+
+
+
+const get_my_issue_byorder = async (shopId, orderId) => {
+  let last24h = moment().subtract(24, 'h').toDate();
+  let shopOrder = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        shopId: { $eq: shopId },
+        status: { $eq: "Delivered" },
+        _id: orderId,
+        raiseissue: true
+
+      }
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $match: { issueraised: { $eq: true } }
+          },
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              productpacktypeId: 1,
+              packKg: 1,
+              unit: 1,
+              date: 1,
+              time: 1,
+              customerId: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              created: 1,
+              issueraised: 1,
+              issuetype: 1,
+              issue: 1,
+              issuediscription: 1,
+              issuequantity: 1,
+              productTitle: '$products.productTitle',
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $project: {
+        status: 1,
+        delivery_type: 1,
+        Payment: 1,
+        devevery_mode: 1,
+        time_of_delivery: 1,
+        pay_type: 1,
+        paymentMethod: 1,
+        OrderId: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        delivered_date: 1,
+        reason: 1,
+        product: "$productOrderdata",
+        issueDate: 1,
+      }
+    }
+  ])
+  if (shopOrder.length == 0) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Order Not Found');
+  }
+  return shopOrder[0];
+};
+
+const get_raiseproduct = async (shopId, product, body) => {
+  let last24h = moment().subtract(24, 'h').toDate();
+
+  let orderId = await ProductorderClone.findById(product);
+  if (!orderId) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Product Not Found');
+  }
+  console.log(orderId.id)
+  let shopOrder = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        shopId: { $eq: shopId },
+        status: { $eq: "Delivered" },
+        delivered_date: { $gte: last24h },
+        _id: orderId.orderId
+      }
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $project: {
+        status: 1,
+      }
+    }
+  ]);
+  if (shopOrder.length == 0) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Order Not Found');
+  }
+  let obj = {
+    issueraised: true,
+    issuetype: body.type,
+    issue: body.issue,
+    issuediscription: body.discription,
+    issuequantity: body.issuequantity,
+    issueDate: moment()
+  }
+  let values = await ProductorderClone.findByIdAndUpdate({ _id: orderId.id }, obj, { new: true })
+  await ShopOrderClone.findByIdAndUpdate({ _id: shopOrder[0]._id }, { raiseissue: true, issueDate: moment() }, { new: true })
+  return values;
+}
+
+
+const get_myissues = async (shopId) => {
+  let last24h = moment().subtract(24, 'h').toDate();
+  const value = await ShopOrderClone.aggregate([
+    {
+      $sort: { created: -1 }
+    },
+    {
+      $match: {
+        shopId: { $eq: shopId },
+        status: { $eq: "Delivered" },
+        raiseissue: { $eq: true }
+      }
+    },
+    {
+      $project: {
+        OrderId: 1,
+        created: 1,
+        delivery_type: 1,
+        status: 1,
+        date: 1,
+        time: 1,
+        time_of_delivery: 1,
+        delivered_date: 1
+      }
+    }
+
+  ])
+  return value;
+};
+
+
+module.exports = {
+  register_shop,
+  verify_otp,
+  set_password,
+  login_now,
+  get_myDetails,
+  get_myorder,
+  change_password,
+  get_mypayments,
+  getpayment_history,
+  get_pendung_amount,
+  get_orderamount,
+  get_raiseonissue,
+  get_raiseorder_issue,
+  get_raiseproduct,
+  get_myissues,
+  get_my_issue_byorder
+};

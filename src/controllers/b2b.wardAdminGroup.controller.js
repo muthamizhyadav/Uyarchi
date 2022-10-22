@@ -245,6 +245,7 @@ const getPEttyCashQuantity = catchAsync(async (req, res) => {
 });
 
 const returnStock = catchAsync(async (req, res) => {
+  console.log(req.params.id)
   const returnStock = await wardAdminGroupService.returnStock(req.params.id);
   res.send(returnStock);
 });
@@ -279,6 +280,32 @@ const submitCashGivenByWDE = catchAsync(async (req, res) => {
 const createAddOrdINGrp = catchAsync(async (req, res) => {
   const cashAsGivenByWDE = await wardAdminGroupService.createAddOrdINGrp(req.params.id, req.body);
   res.send(cashAsGivenByWDE);
+});
+
+const finishingAccount = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.finishingAccount(req.params.id,req.params.page);
+  res.send(details);
+});
+
+
+const submitDispute = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.submitDispute(req.params.id,req.body);
+  res.send(details);
+});
+
+const returnStockData = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.returnStockData(req.params.id);
+  res.send(details);
+});
+
+const updatemismatchStockStatus = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.updatemismatchStockStatus(req.params.id);
+  res.send(details);
+});
+
+const createfineData = catchAsync(async (req, res) => {
+  const data = await wardAdminGroupService.fineData(req.body);
+  res.send(data);
 });
 
 module.exports = {
@@ -356,4 +383,10 @@ module.exports = {
   createAddOrdINGrp,
   cashgetAssigned,
   deliverygetAssigned,
+
+  finishingAccount,
+  submitDispute,
+  returnStockData,
+  updatemismatchStockStatus,
+  createfineData,
 };

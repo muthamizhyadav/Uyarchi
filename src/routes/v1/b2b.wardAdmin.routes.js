@@ -47,7 +47,7 @@ router.route('/wardloadingExecutive/getPackedProductDetails/:range/:page').get(w
 
 router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
 
-router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
+// router.route('/getWardDeliveryExecutive/name').get(wardAdminController.wardDeliveryExecutive);
 
 router.route('/delivery/Executive/Name/:id').put(wardAdminController.deliveryexecutive);
 
@@ -58,4 +58,9 @@ router.route('/update/acknowleded/status/single/:id').put(wardAdminController.up
 router.route('/get/status/Count').get(wardAdminController.countStatus);
 // checked Modified
 router.route('/order/Assign').get(wardAdminController.getAssigned_details);
+// mismatcheddata
+router.route('/mismatchCount/:page').get(wardAdminController.mismatchCount);
+router.route('/mismatchGroup/:id').get(wardAdminController.mismatchGroup);
+router.route('/Mismatch_Stock_Reconcilation').get(wardAdminController.Mismatch_Stock_Reconcilation);
+router.route('/Mismatch_Stock_Reconcilation1/:id').get(wardAdminController.Mismatch_Stock_Reconcilation1);
 module.exports = router;
