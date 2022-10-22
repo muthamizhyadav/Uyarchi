@@ -48,7 +48,9 @@ const creditBillPaymentsSchema = mongoose.Schema({
     reasonScheduleOrDate: {
         type: String
     },
-   
+    disputeAmount: {
+        type: Number
+    },
 
 
 });

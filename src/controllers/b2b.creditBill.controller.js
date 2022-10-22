@@ -102,7 +102,8 @@ const updateAssigned = catchAsync(async (req, res) => {
   })
 
   const submitDispute = catchAsync(async (req, res)=>{
-    const dispute = await creditBillService.submitDispute(req.params.id);
+    const dispute = await creditBillService.submitDispute(req.params.id,req.body);
+    console.log(req.params.id,req.body);
     res.send(dispute)
   });
 

@@ -720,37 +720,7 @@ const getNotAssignData = async (page) => {
       },
     },
     { $unwind: '$paymentData' },
-    // {
-    //   $lookup:{
-    //     from: 'creditbills',
-    //     localField: '_id',
-    //     foreignField: 'orderId',
-    //     pipeline: [{
 
-    //         $lookup: {
-    //           from: 'creditbillpaymenthistories',
-    //           localField: '_id',
-    //           foreignField: 'creditBillId',
-    //           pipeline: [
-    //             {
-    //               $project: {
-    //                 HistoryAmount:{"$sum": "$amountPayingWithDEorSM"}
-
-    //               },
-    //             },],
-    //           as: 'historyDtaa'
-    //         }
-
-    //     },{$unwind:"$historyDtaa"}],
-    //     as: 'creditData'
-    //   }
-    // },
-    // {
-    //   $unwind: {
-    //     path: '$creditData',
-    //     preserveNullAndEmptyArrays: true,
-    //   },
-    // },
 
     {
       $lookup: {
@@ -829,8 +799,15 @@ const getNotAssignData = async (page) => {
             else: false,
           },
         },
+     
       },
     },
+    {
+      $match: {
+        $and: [{ condition1: { $eq: true } }],
+      },
+    },
+   
   ]);
 
   let total = await ShopOrderClone.aggregate([
@@ -839,6 +816,7 @@ const getNotAssignData = async (page) => {
         $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
       },
     },
+
     {
       $lookup: {
         from: 'orderpayments',
@@ -853,6 +831,7 @@ const getNotAssignData = async (page) => {
       },
     },
     { $unwind: '$paymentData' },
+
 
     {
       $lookup: {
@@ -903,6 +882,42 @@ const getNotAssignData = async (page) => {
     },
 
     { $unwind: '$productData' },
+    { $skip: 10 * page },
+    { $limit: 10 },
+    {
+      $project: {
+        customerBillId: 1,
+        OrderId: 1,
+        date: 1,
+        statusOfBill: 1,
+        executeName: '$dataa.AssignedUserId',
+        shopNmae: '$shopDtaa.SName',
+        shopId: '$shopDtaa._id',
+        creditBillAssignedStatus: 1,
+        BillAmount: { $round: ['$productData.price', 0] },
+        totalHistory: {
+          $sum: '$creditData.historyDtaa.amountPayingWithDEorSM',
+        },
+
+        paidAmount: '$paymentData.price',
+
+        pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+
+        condition1: {
+          $cond: {
+            if: { $ne: [{ $subtract: [{ $round: ['$productData.price', 0] }, '$paymentData.price'] }, 0] },
+            then: true,
+            else: false,
+          },
+        },
+     
+      },
+    },
+    {
+      $match: {
+        $and: [{ condition1: { $eq: true } }],
+      },
+    },
   ]);
 
   return { values: values, total: total.length };
@@ -1328,9 +1343,10 @@ const getDetailsByPassGroupId = async (id) => {
 };
 
 const submitDispute = async (id, updatebody) => {
+  console.log(id,updatebody)
   let product = await creditBillGroup.findById(id);
   if (!product) {
-    throw new ApiError(httpStatus.NOT_FOUND, ' Not Found');
+    throw new ApiError(httpStatus.NOT_FOUND, ' srfegfNot Found');
   }
   product = await creditBillGroup.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
   console.log(product);
