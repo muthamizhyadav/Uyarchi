@@ -42,6 +42,9 @@ const manageExpenseSchma = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  reason: {
+    type: String,
+  },
 });
 
 const ManageExpenses = mongoose.model('ManageExpenses', manageExpenseSchma);
