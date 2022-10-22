@@ -230,10 +230,10 @@ const getAllWithPaginationBilled = async (page, status) => {
     },
     { $match: { totalAmt: { $eq: true } } },
     {
-      $limit: 10,
+      $skip: 10 * page,
     },
     {
-      $skip: 10 * page,
+      $limit: 10,
     },
   ]);
   let total = await ReceivedProduct.aggregate([
@@ -265,6 +265,80 @@ const getAllWithPaginationBilled = async (page, status) => {
     {
       $unwind: '$supplierData',
     },
+    {
+      $lookup: {
+        from: 'transportbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'expensesbills',
+              localField: '_id',
+              foreignField: 'billId',
+              as: 'TransactionData',
+            },
+          },
+        ],
+        as: 'transportBillData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'expensesbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Counts: { $sum: '$Amount' } } }],
+        as: 'totalAmt',
+      },
+    },
+    { $unwind: { path: '$totalAmt', preserveNullAndEmptyArrays: true } },
+
+    {
+      $lookup: {
+        from: 'transportbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Counts: { $sum: '$billAmount' } } }],
+        as: 'TotalExpenseData',
+      },
+    },
+    {
+      $unwind: '$TotalExpenseData',
+    },
+    {
+      $lookup: {
+        from: 'expensesbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Counts: { $sum: '$Amount' } } }],
+        as: 'TotalPaidExpensesData',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        status: 1,
+        vehicleType: 1,
+        vehicleNumber: 1,
+        driverName: 1,
+        driverNumber: 1,
+        weighBridgeEmpty: 1,
+        totalAmt: { $ne: ['$totalAmt.Counts', '$TotalExpenseData.Counts'] },
+        weighBridgeLoadedProduct: 1,
+        supplierId: 1,
+        date: 1,
+        time: 1,
+        supplierName: '$supplierData.primaryContactName',
+        supplierContact: '$supplierData.primaryContactNumber',
+        Count: '$ReceivedData.Count',
+        TotalExpense: '$TotalExpenseData.Counts',
+        transportHistory: '$transportBillData',
+        BillNo: 1,
+        TotalPaidExpensesData: '$TotalPaidExpensesData',
+      },
+    },
+    { $match: { totalAmt: { $eq: true } } },
   ]);
   return { values: value, total: total.length };
 };
@@ -359,14 +433,13 @@ const getSupplierDetailByGroupId = async (id) => {
     },
     {
       $project: {
-        _id:"$suppliers._id",
-        primaryContactName:"$suppliers.primaryContactName",
-        primaryContactNumber: "$suppliers.primaryContactNumber",
-        secondaryContactName: "$suppliers.secondaryContactName",
-        secondaryContactNumber: "$suppliers.secondaryContactNumber",
-
-      }
-    }
+        _id: '$suppliers._id',
+        primaryContactName: '$suppliers.primaryContactName',
+        primaryContactNumber: '$suppliers.primaryContactNumber',
+        secondaryContactName: '$suppliers.secondaryContactName',
+        secondaryContactNumber: '$suppliers.secondaryContactNumber',
+      },
+    },
   ]);
   if (values.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
