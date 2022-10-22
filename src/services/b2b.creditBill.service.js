@@ -720,37 +720,7 @@ const getNotAssignData = async (page) => {
       },
     },
     { $unwind: '$paymentData' },
-    // {
-    //   $lookup:{
-    //     from: 'creditbills',
-    //     localField: '_id',
-    //     foreignField: 'orderId',
-    //     pipeline: [{
 
-    //         $lookup: {
-    //           from: 'creditbillpaymenthistories',
-    //           localField: '_id',
-    //           foreignField: 'creditBillId',
-    //           pipeline: [
-    //             {
-    //               $project: {
-    //                 HistoryAmount:{"$sum": "$amountPayingWithDEorSM"}
-
-    //               },
-    //             },],
-    //           as: 'historyDtaa'
-    //         }
-
-    //     },{$unwind:"$historyDtaa"}],
-    //     as: 'creditData'
-    //   }
-    // },
-    // {
-    //   $unwind: {
-    //     path: '$creditData',
-    //     preserveNullAndEmptyArrays: true,
-    //   },
-    // },
 
     {
       $lookup: {
@@ -829,8 +799,15 @@ const getNotAssignData = async (page) => {
             else: false,
           },
         },
+     
       },
     },
+    {
+      $match: {
+        $and: [{ condition1: { $eq: true } }],
+      },
+    },
+   
   ]);
 
   let total = await ShopOrderClone.aggregate([
@@ -839,6 +816,7 @@ const getNotAssignData = async (page) => {
         $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
       },
     },
+
     {
       $lookup: {
         from: 'orderpayments',
@@ -853,6 +831,7 @@ const getNotAssignData = async (page) => {
       },
     },
     { $unwind: '$paymentData' },
+
 
     {
       $lookup: {
@@ -903,6 +882,42 @@ const getNotAssignData = async (page) => {
     },
 
     { $unwind: '$productData' },
+    { $skip: 10 * page },
+    { $limit: 10 },
+    {
+      $project: {
+        customerBillId: 1,
+        OrderId: 1,
+        date: 1,
+        statusOfBill: 1,
+        executeName: '$dataa.AssignedUserId',
+        shopNmae: '$shopDtaa.SName',
+        shopId: '$shopDtaa._id',
+        creditBillAssignedStatus: 1,
+        BillAmount: { $round: ['$productData.price', 0] },
+        totalHistory: {
+          $sum: '$creditData.historyDtaa.amountPayingWithDEorSM',
+        },
+
+        paidAmount: '$paymentData.price',
+
+        pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+
+        condition1: {
+          $cond: {
+            if: { $ne: [{ $subtract: [{ $round: ['$productData.price', 0] }, '$paymentData.price'] }, 0] },
+            then: true,
+            else: false,
+          },
+        },
+     
+      },
+    },
+    {
+      $match: {
+        $and: [{ condition1: { $eq: true } }],
+      },
+    },
   ]);
 
   return { values: values, total: total.length };
@@ -1276,50 +1291,121 @@ const getGroupAndBill = async (AssignedUserId) => {
 };
 
 const getDetailsByPassGroupId = async (id) => {
-  let values = await creditBillGroup.aggregate([
-    {
-      $match: {
-        $and: [{ _id: { $eq: id } }],
-      },
-    },
-    { $unwind: '$Orderdatas' },
+  let values = await creditBillPaymentModel.aggregate([
+  
     {
       $lookup: {
         from: 'creditbills',
-        localField: '_id',
-        foreignField: 'creditbillId',
+        localField: 'creditBillId',
+        foreignField: '_id',
+        as: 'billData'
+      }
+    },
+    { $unwind: "$billData"},
+    {
+      $lookup: {
+        from:'creditbillgroups',
+        localField: 'billData.creditbillId',
         pipeline: [
           {
-            $lookup: {
-              from: 'creditbillpaymenthistories',
-              localField: '_id',
-              foreignField: 'creditBillId',
-              as: 'data',
-            },
-          },
-          { $unwind: '$data' },
+            $match: {
+                  $and: [{ _id: { $eq: id } }],
+                },
+          }
         ],
-
-        as: 'creditData',
+        foreignField: '_id',
+        as: 'groupDtaa'
       },
+    
     },
-    { $unwind: '$creditData' },
+   
+    { $unwind: "$groupDtaa"},
+    
+  
 
-    {
-      $project: {
-        BillDate: '$Orderdatas.date',
-        billNo: '$Orderdatas.customerBillId',
-        shopname: '$Orderdatas.shopNmae',
-        BalanceAmount: '$Orderdatas.pendingAmount',
-        paymentType: '$creditData.data.pay_By',
-        PaymentCapacity: '$data.pay_type',
-        paymentStatus: '$data.upiStatus',
-        AmountPay: '$data.amountPayingWithDEorSM',
-      },
+        {
+          $project: {
+          pay_By:1,
+          pay_type:1,
+          upiStatus:1,
+          amountPayingWithDEorSM:1,
+          billN0: "$billData.bill",
+          billDate: "$billData.date",
+          billTime: "$billData.time",
+          shopNmae: "$groupDtaa.shopNmae",
+          BalanceAmount: "$groupDtaa.pendingAmount"
+
     },
-  ]);
+  },
+   
+  ])
   return values;
 };
+
+const submitDispute = async (id, updatebody) => {
+  console.log(id,updatebody)
+  let product = await creditBillGroup.findById(id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, ' srfegfNot Found');
+  }
+  product = await creditBillGroup.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  console.log(product);
+  return product;
+};
+
+
+const getPaymentTypeCount = async (id)=>{
+  let values = await creditBillPaymentModel.aggregate([
+
+   {
+      $lookup: {
+        from: 'creditbills',
+        localField: 'creditBillId',
+        foreignField: '_id',
+        as: 'billData'
+      }
+    },
+    { $unwind: "$billData"},
+    {
+      $lookup: {
+        from:'creditbillgroups',
+        localField: 'billData.creditbillId',
+        pipeline: [
+          {
+            $match: {
+                  $and: [{ _id: { $eq: id } }],
+                },
+          }
+        ],
+        foreignField: '_id',
+        as: 'groupDtaa'
+      }
+    }, { $unwind: '$groupDtaa'},
+    {
+      $project: {
+      pay_By:1,
+      pay_type:1,
+      upiStatus:1,
+      amountPayingWithDEorSM:1,
+      billN0: "$billData.bill",
+      billDate: "$billData.date",
+      billTime: "$billData.time",
+      shopNmae: "$groupDtaa.shopNmae",
+      BalanceAmount: "$groupDtaa.pendingAmount"
+
+},
+},
+// {$group : {_id:'$pay_By', count:{$sum:'$amountPayingWithDEorSM'}}},
+
+]);
+return values;
+
+}
+
+
+
+
+
 
 module.exports = {
   getShopWithBill,
@@ -1342,4 +1428,6 @@ module.exports = {
   getDeliveryExecutiveName,
   getDetailsByPassGroupId,
   getGroupAndBill,
+  submitDispute,
+  getPaymentTypeCount,
 };

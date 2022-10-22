@@ -101,6 +101,18 @@ const updateAssigned = catchAsync(async (req, res) => {
     res.send(name);
   })
 
+  const submitDispute = catchAsync(async (req, res)=>{
+    const dispute = await creditBillService.submitDispute(req.params.id,req.body);
+    console.log(req.params.id,req.body);
+    res.send(dispute)
+  });
+
+  const getPaymentTypeCount = catchAsync(async (req, res) => {
+    const getDta = await creditBillService.getPaymentTypeCount(req.params.id);
+    res.send(getDta);
+  })
+  
+
 
 module.exports = {
 
@@ -124,4 +136,6 @@ module.exports = {
     getDeliveryExecutiveName,
     getgetGroupAndBill,
     GroupDetails,
+    submitDispute,
+    getPaymentTypeCount,
 }
