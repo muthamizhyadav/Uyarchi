@@ -1276,50 +1276,144 @@ const getGroupAndBill = async (AssignedUserId) => {
 };
 
 const getDetailsByPassGroupId = async (id) => {
-  let values = await creditBillGroup.aggregate([
-    {
-      $match: {
-        $and: [{ _id: { $eq: id } }],
-      },
-    },
-    { $unwind: '$Orderdatas' },
+  // let values = await creditBillGroup.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [{ _id: { $eq: id } }],
+  //     },
+  //   },
+  //   { $unwind: '$Orderdatas' },
+  //   {
+  //     $lookup: {
+  //       from: 'creditbills',
+  //       localField: '_id',
+  //       foreignField: 'creditbillId',
+  //       pipeline: [
+  //         {
+  //           $lookup: {
+  //             from: 'creditbillpaymenthistories',
+  //             localField: '_id',
+  //             foreignField: 'creditBillId',
+  //             as: 'data',
+  //           },
+  //         },
+  //         { $unwind: '$data' },
+  //       ],
+
+  //       as: 'creditData',
+  //     },
+  //   },
+  //   { $unwind: '$creditData' },
+
+  //   {
+  //     $project: {
+  //       BillDate: '$Orderdatas.date',
+  //       billNo: '$Orderdatas.customerBillId',
+  //       shopname: '$Orderdatas.shopNmae',
+  //       BalanceAmount: '$Orderdatas.pendingAmount',
+  //       paymentType: '$creditData.data.pay_By',
+  //       PaymentCapacity: '$data.pay_type',
+  //       paymentStatus: '$data.upiStatus',
+  //       AmountPay: '$data.amountPayingWithDEorSM',
+  //     },
+  //   },
+  // ]);
+
+  let values = await creditBillPaymentModel.aggregate([
+  
     {
       $lookup: {
         from: 'creditbills',
-        localField: '_id',
-        foreignField: 'creditbillId',
+        localField: 'creditBillId',
+        foreignField: '_id',
+        as: 'billData'
+      }
+    },
+    { $unwind: "$billData"},
+    {
+      $lookup: {
+        from:'creditbillgroups',
+        localField: 'billData.creditbillId',
         pipeline: [
           {
-            $lookup: {
-              from: 'creditbillpaymenthistories',
-              localField: '_id',
-              foreignField: 'creditBillId',
-              as: 'data',
-            },
-          },
-          { $unwind: '$data' },
+            $match: {
+                  $and: [{ _id: { $eq: id } }],
+                },
+          }
         ],
-
-        as: 'creditData',
+        foreignField: '_id',
+        as: 'groupDtaa'
       },
+    
     },
-    { $unwind: '$creditData' },
+   
+    { $unwind: "$groupDtaa"},
+    
+  
 
+        {
+          $project: {
+          pay_By:1,
+          pay_type:1,
+          upiStatus:1,
+          amountPayingWithDEorSM:1,
+          billN0: "$billData.bill",
+          billDate: "$billData.date",
+          billTime: "$billData.time",
+          shopNmae: "$groupDtaa.shopNmae",
+          BalanceAmount: "$groupDtaa.pendingAmount"
+
+    },
+  },
+   
+  ])
+  return values;
+};
+
+const submitDispute = async (id, updatebody) => {
+  let product = await creditBillGroup.findById(id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, ' Not Found');
+  }
+  product = await creditBillGroup.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  console.log(product);
+  return product;
+};
+
+
+const getPaymentTypeCount = async (id)=>{
+  let values = await creditBillPaymentModel.aggregate([
+   {
+      $lookup: {
+        from: 'creditbills',
+        localField: 'creditBillId',
+        foreignField: '_id',
+        as: 'billData'
+      }
+    },
+    { $unwind: "$billData"},
     {
-      $project: {
-        BillDate: '$Orderdatas.date',
-        billNo: '$Orderdatas.customerBillId',
-        shopname: '$Orderdatas.shopNmae',
-        BalanceAmount: '$Orderdatas.pendingAmount',
-        paymentType: '$creditData.data.pay_By',
-        PaymentCapacity: '$data.pay_type',
-        paymentStatus: '$data.upiStatus',
-        AmountPay: '$data.amountPayingWithDEorSM',
-      },
+      $lookup: {
+        from:'creditbillgroups',
+        localField: 'billData.creditbillId',
+        pipeline: [
+          {
+            $match: {
+                  $and: [{ _id: { $eq: id } }],
+                },
+          }
+        ],
+        foreignField: '_id',
+        as: 'groupDtaa'
+      }
     },
   ]);
   return values;
-};
+}
+
+
+
+
 
 module.exports = {
   getShopWithBill,
@@ -1342,4 +1436,6 @@ module.exports = {
   getDeliveryExecutiveName,
   getDetailsByPassGroupId,
   getGroupAndBill,
+  submitDispute,
+  getPaymentTypeCount,
 };
