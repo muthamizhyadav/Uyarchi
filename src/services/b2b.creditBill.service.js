@@ -1356,6 +1356,7 @@ const submitDispute = async (id, updatebody) => {
 
 const getPaymentTypeCount = async (id)=>{
   let values = await creditBillPaymentModel.aggregate([
+
    {
       $lookup: {
         from: 'creditbills',
@@ -1379,7 +1380,7 @@ const getPaymentTypeCount = async (id)=>{
         foreignField: '_id',
         as: 'groupDtaa'
       }
-    },
+    }, { $unwind: '$groupDtaa'},
     {
       $project: {
       pay_By:1,
@@ -1394,45 +1395,10 @@ const getPaymentTypeCount = async (id)=>{
 
 },
 },
-]);
-
-  let total = await creditBillPaymentModel.aggregate([
-    {
-       $lookup: {
-         from: 'creditbills',
-         localField: 'creditBillId',
-         foreignField: '_id',
-         as: 'billData'
-       }
-     },
-     { $unwind: "$billData"},
-     {
-       $lookup: {
-         from:'creditbillgroups',
-         localField: 'billData.creditbillId',
-         pipeline: [
-           {
-             $match: {
-                   $and: [{ _id: { $eq: id } }],
-                 },
-           }
-         ],
-         foreignField: '_id',
-         as: 'groupDtaa'
-       }
-     },
-  
-
-     {
-  $group: {
-    _id: '$pay_By',
-    totalCash: { $sum: '$amountPayingWithDEorSM' },
-  },
-},
-
+// {$group : {_id:'$pay_By', count:{$sum:'$amountPayingWithDEorSM'}}},
 
 ]);
-return {values: values, total:total}
+return values;
 
 }
 
