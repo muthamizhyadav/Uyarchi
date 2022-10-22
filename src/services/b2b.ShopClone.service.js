@@ -2555,7 +2555,36 @@ const GetShopsByShopType = async (id, page) => {
       },
     },
   ]);
-  return { shops: shops, total: total.length };
+  let totalcount = await Shop.aggregate([
+    {
+      $match: {
+        SType: '07299efb-1aa4-40e6-ad5f-a03ffecdc0a5',
+        SType: '66077e16-aa5f-401f-abcc-e1842d151b14',
+        SType: '2d2a9e39-34a1-4dde-9767-a37251854cc5',
+        SType: '57fdca99-9b2c-47aa-838b-eed600d3264a',
+        SType: 'c974636a-6324-4426-9440-d599353c9a18',
+        SType: '4372526e-266a-4474-a140-7e633015b15c',
+        SType: '602e637e-11e8-4901-b80f-db8a467afda2',
+      },
+    },
+  ]);
+  // let shoptype = await Shop.aggregate([
+  //   {
+  //     $match: { SType: id },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'shoplists',
+  //       localField: 'SType',
+  //       foreignField: '_id',
+  //       as: 'shoptype',
+  //     },
+  //   },
+  //   {
+  //     $unwind: '$shoptype',
+  //   },
+  // ]);
+  return { shops: shops, total: total.length, totalcount: totalcount.length};
 };
 
 const GetShopsReviewsByShopType = async (id, page) => {
@@ -2605,20 +2634,7 @@ const GetShopsReviewsByShopType = async (id, page) => {
       },
     },
   ]);
-  let totalcount = await Shop.aggregate([
-    {
-      $match: {
-        SType: '07299efb-1aa4-40e6-ad5f-a03ffecdc0a5',
-        SType: '66077e16-aa5f-401f-abcc-e1842d151b14',
-        SType: '2d2a9e39-34a1-4dde-9767-a37251854cc5',
-        SType: '57fdca99-9b2c-47aa-838b-eed600d3264a',
-        SType: 'c974636a-6324-4426-9440-d599353c9a18',
-        SType: '4372526e-266a-4474-a140-7e633015b15c',
-        SType: '602e637e-11e8-4901-b80f-db8a467afda2',
-      },
-    },
-  ]);
-  return { shops: shops, total: total.length, totalcount: totalcount.length };
+  return { shops: shops, total: total.length };
 };
 
 const getShopReviewByShopid = async (id) => {
