@@ -118,4 +118,6 @@ router.route('/submit/Dispute/:id').put(wardAdminGroupController.submitDispute);
 router.route('/returnStockData/:id').get(wardAdminGroupController.returnStockData);
 router.route('/updatemismatchStockStatus/:id').put(wardAdminGroupController.updatemismatchStockStatus);
 router.route('/createfineData/').post(wardAdminGroupController.createfineData);
+
+router.route('/get/orderData/ByPassing/GroupId/:id').get(wardAdminGroupController.getOrderDataByPassing);
 module.exports = router;
