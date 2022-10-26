@@ -3308,6 +3308,18 @@ const getshopDetails=  async (id)=>{
     },
     {
       $lookup: {
+        from: 'b2busers',
+        localField: 'Uid', 
+        foreignField: '_id', 
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    
+    {
+      $lookup: {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
@@ -3365,6 +3377,7 @@ const getshopDetails=  async (id)=>{
         time_of_delivery: 1,
         BillAmount:"$productData.price",
         paidamount: 1,
+        userName: '$b2busersData.name',
       },
     },
   ]);
