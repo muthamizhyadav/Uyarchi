@@ -994,7 +994,7 @@ const wardDeliveryExecutive = async () => {
           {
             $match: {
               manageDeliveryStatus: { $ne: 'Delivery Completed' },
-              date: { $eq: today },
+              GroupBillDate: { $eq: today },
             },
           },
         ],
