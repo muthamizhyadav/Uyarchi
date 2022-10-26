@@ -15,7 +15,7 @@ const createVideoUpload = async (body) => {
 };
 
 const getvideoByShopId = async (id) => {
-  let values = await videoUploadService.findById(id);
+  let values = await videoUploadService.findOne({ shopId: id });
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'No Video Found in This Shop');
   }
