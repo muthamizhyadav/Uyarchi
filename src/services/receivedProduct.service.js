@@ -522,8 +522,22 @@ const BillNumber = async (id, bodydata) => {
   return LoadedProduct;
 };
 
-const getSupplierBillsDetails = async (page) => {
+const getSupplierBillsDetails = async (page, find) => {
+  match = [{ active: true }]
+  if (find != 'null') {
+    match = [
+      { primaryContactName: { $regex: find, $options: 'i' } },
+      {
+        primaryContactNumber: { $regex: find, $options: 'i' }
+      }
+    ]
+  }
   let values = await Supplier.aggregate([
+    {
+      $match: {
+        $or: match
+      },
+    },
     {
       $lookup: {
         from: 'receivedproducts',
@@ -645,7 +659,128 @@ const getSupplierBillsDetails = async (page) => {
       $skip: 10 * page,
     },
   ]);
-  return values;
+  let total = await Supplier.aggregate([
+    {
+      $match: {
+        $or: match
+      },
+    },
+    {
+      $lookup: {
+        from: 'receivedproducts',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'supplierbills',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$Amount' } } }],
+              as: 'supplierbills',
+            },
+          },
+          { $unwind: { path: '$supplierbills', preserveNullAndEmptyArrays: true } },
+          {
+            $lookup: {
+              from: 'receivedstocks',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
+              as: 'pendingData',
+            },
+          },
+          {
+            $unwind: '$pendingData',
+          },
+          {
+            $project: {
+              pendingData: '$pendingData.billingTotal',
+              supplierbills: '$supplierbills.billingTotal',
+              totalAmt: { $ne: ['$pendingData.billingTotal', '$supplierbills.billingTotal'] },
+            },
+          },
+
+          {
+            $match: { totalAmt: true },
+          },
+        ],
+        as: 'pendingDataall',
+      },
+    },
+    {
+      $lookup: {
+        from: 'receivedproducts',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $ne: [0, '$pendingAmount'],
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'supplierbills',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [{ $group: { _id: null, Amount: { $sum: '$Amount' } } }],
+              as: 'PaymentData',
+            },
+          },
+          {
+            $unwind: '$PaymentData',
+          },
+          // {
+          //   $project: {
+          //     PaymentData: '$PaymentData',
+          //   },
+          // },
+        ],
+        as: 'receivedData',
+      },
+    },
+    {
+      $unwind: { path: '$receivedData', preserveNullAndEmptyArrays: true },
+    },
+    {
+      $lookup: {
+        from: 'receivedproducts',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $ne: [0, '$pendingAmount'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
+              },
+            },
+          },
+          { $group: { _id: null, total: { $sum: 1 } } },
+        ],
+        as: 'receivedDatacount',
+      },
+    },
+    {
+      $unwind: '$receivedDatacount',
+    },
+    {
+      $project: {
+        // PaymentDatasss: '$pendingDataall',
+        PaymentData: { $sum: '$pendingDataall.pendingData' },
+        paidamount: { $sum: '$pendingDataall.supplierbills' },
+        // receivedData: '$receivedDatacount',
+        primaryContactName: 1,
+        receivedDatacount: '$receivedDatacount.total',
+        primaryContactNumber: 1,
+        _id: 1,
+      },
+    },
+    { $match: { PaymentData: { $ne: 0 } } },
+  ]);
+  return { values: values, total: total.length };
 };
 
 const getreceivedProductBySupplier = async (page) => {
