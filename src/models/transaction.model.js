@@ -45,6 +45,13 @@ const transactionSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  paidTO: {
+    type: String,
+  },
+  supplierId: {
+    type: String,
+
+  }
 });
 
 const transaction = mongoose.model('ExpensesBills', transactionSchema);
