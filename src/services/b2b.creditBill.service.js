@@ -378,6 +378,8 @@ const getShopHistory = async (AssignedUserId, date) => {
 
         amount: { $subtract: ['$pendingAmount', '$amountPayingWithDEorSM'] },
 
+        paidAmountAfter: { '$add' : [ '$paidAmount', '$amountPayingWithDEorSM' ] },
+
         condition1: {
           $cond: {
             if: { $ne: [{ $subtract: [{ $round: ['$productData.price', 0] }, '$paymentData.price'] }, 0] },

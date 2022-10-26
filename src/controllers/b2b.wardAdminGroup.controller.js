@@ -308,6 +308,12 @@ const createfineData = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+
+const getOrderDataByPassing = catchAsync(async (req,res) => {
+  const data = await wardAdminGroupService.getOrderDataByPassing(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -389,4 +395,6 @@ module.exports = {
   returnStockData,
   updatemismatchStockStatus,
   createfineData,
+
+  getOrderDataByPassing,
 };
