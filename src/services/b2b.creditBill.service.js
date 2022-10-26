@@ -1347,8 +1347,8 @@ const getDetailsByPassGroupId = async (id) => {
   
          
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
-          //  pendingamountFromGroup: { $subtract:[ ['$productData.price', '$paymentData.price']  ,parseInt('$amountPayingWithDEorSM')]},
-          pendingamountFromGroup: { $subtract:[ { $round: { $subtract: ['$productData.price', '$paymentData.price'] } } ,"$amountPayingWithDEorSM"]}
+        // pendingamountFromGroup: {{ $round: { $subtract: ['$productData.price', '$paymentData.price'] }} ,parseInt('$amountPayingWithDEorSM')},
+   
 
     },
   },
