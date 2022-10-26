@@ -206,6 +206,17 @@ const getAllWithPaginationBilled = async (page, status) => {
       },
     },
     {
+      $lookup: {
+        from: 'expensesbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          { $sort: { created: -1 } }
+        ],
+        as: 'paiddetails',
+      },
+    },
+    {
       $project: {
         _id: 1,
         status: 1,
@@ -226,7 +237,8 @@ const getAllWithPaginationBilled = async (page, status) => {
         transportHistory: '$transportBillData',
         BillNo: 1,
         TotalPaidExpensesData: '$TotalPaidExpensesData',
-        created: 1
+        created: 1,
+        paiddetails: "$paiddetails"
       },
     },
     { $match: { totalAmt: { $eq: true } } },
