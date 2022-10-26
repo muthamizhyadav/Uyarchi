@@ -771,8 +771,7 @@ const getNotAssignData = async (page) => {
     },
 
     { $unwind: '$productData' },
-    { $skip: 10 * page },
-    { $limit: 10 },
+   
     {
       $project: {
         customerBillId: 1,
@@ -807,6 +806,8 @@ const getNotAssignData = async (page) => {
         $and: [{ condition1: { $eq: true } }],
       },
     },
+    { $skip: 10 * page },
+    { $limit: 10 },
    
   ]);
 
@@ -882,45 +883,45 @@ const getNotAssignData = async (page) => {
     },
 
     { $unwind: '$productData' },
-    // { $skip: 10 * page },
-    // { $limit: 10 },
-    // {
-    //   $project: {
-    //     customerBillId: 1,
-    //     OrderId: 1,
-    //     date: 1,
-    //     statusOfBill: 1,
-    //     executeName: '$dataa.AssignedUserId',
-    //     shopNmae: '$shopDtaa.SName',
-    //     shopId: '$shopDtaa._id',
-    //     creditBillAssignedStatus: 1,
-    //     BillAmount: { $round: ['$productData.price', 0] },
-    //     totalHistory: {
-    //       $sum: '$creditData.historyDtaa.amountPayingWithDEorSM',
-    //     },
+   
+    {
+      $project: {
+        customerBillId: 1,
+        OrderId: 1,
+        date: 1,
+        statusOfBill: 1,
+        executeName: '$dataa.AssignedUserId',
+        shopNmae: '$shopDtaa.SName',
+        shopId: '$shopDtaa._id',
+        creditBillAssignedStatus: 1,
+        BillAmount: { $round: ['$productData.price', 0] },
+        totalHistory: {
+          $sum: '$creditData.historyDtaa.amountPayingWithDEorSM',
+        },
 
-    //     paidAmount: '$paymentData.price',
+        paidAmount: '$paymentData.price',
 
-    //     pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+        pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
 
-    //     condition1: {
-    //       $cond: {
-    //         if: { $ne: [{ $subtract: [{ $round: ['$productData.price', 0] }, '$paymentData.price'] }, 0] },
-    //         then: true,
-    //         else: false,
-    //       },
-    //     },
+        condition1: {
+          $cond: {
+            if: { $ne: [{ $subtract: [{ $round: ['$productData.price', 0] }, '$paymentData.price'] }, 0] },
+            then: true,
+            else: false,
+          },
+        },
      
-    //   },
-    // },
+      },
+    },
     {
       $match: {
         $and: [{ condition1: { $eq: true } }],
       },
     },
   ]);
+  // return values;
 
-  return { values: values, total: total.length };
+ return { values: values, total: total.length };
 };
 
 const getShopPendingByPassingShopId = async (id) => {
