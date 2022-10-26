@@ -1157,17 +1157,35 @@ const getUsersWith_skiped = async (id) => {
         $and: [{ _id: { $ne: id } }, { userRole: { $eq: 'fb0dd028-c608-4caa-a7a9-b700389a098d' } }],
       },
     },
-    // {
-    //   $lookup: {
-    //     from: 'salesmanshops',
-    //     localField: '_id',
-    //     foreignField: 'salesManId',
-    //     as: 'salesmanshopsData',
-    //   },
-    // },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }],
+            },
+          },
+        ],
+        foreignField: 'fromSalesManId',
+        as: 'salesmanshopsData',
+      },
+    },
     // {
     //   $unwind: '$salesmanshopsData',
     // },
+    {
+      $project: {
+        data: { $size: '$salesmanshopsData' },
+       name:1,
+      },
+    },
+    {
+      $match: {
+        $and: [{ data: { $eq:0} }],
+      },
+    },
 
   ]);
   
