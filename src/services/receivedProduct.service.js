@@ -226,6 +226,7 @@ const getAllWithPaginationBilled = async (page, status) => {
         transportHistory: '$transportBillData',
         BillNo: 1,
         TotalPaidExpensesData: '$TotalPaidExpensesData',
+        created: 1
       },
     },
     { $match: { totalAmt: { $eq: true } } },
@@ -400,7 +401,7 @@ const getAllWithPaginationBilled_Supplier = async (id, status) => {
         PaymentData: '$PaymentData',
         pendingAmount: 1,
         supplierBillImg: 1,
-        created: 1
+        created: 1,
       },
     },
   ]);
