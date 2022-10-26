@@ -1261,6 +1261,71 @@ const getDetailsByPassGroupId = async (id) => {
     },
    
     { $unwind: "$groupDtaa"},
+    {
+      $lookup:{
+        from: 'b2bshopclones',
+        localField: 'billData.shopId',
+        foreignField: '_id',
+        as: 'shopNameData'
+      }
+    },
+    { $unwind: "$shopNameData"},
+
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: 'billData.orderId',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
+        as: 'paymentData',
+      },
+    },
+    { $unwind: '$paymentData' },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'billData.orderId',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+
+    { $unwind: '$productData' },
+ 
     
   
 
@@ -1273,8 +1338,17 @@ const getDetailsByPassGroupId = async (id) => {
           billN0: "$billData.bill",
           billDate: "$billData.date",
           billTime: "$billData.time",
-          shopNmae: "$groupDtaa.shopNmae",
-          BalanceAmount: "$groupDtaa.pendingAmount"
+          shopNmae: "$Orderdatas.shopNmae",
+          BalanceAmount: "$Orderdatas.pendingAmount",
+          shopNmae: "$shopNameData.SName",
+         
+          BillAmount: { $round: ['$productData.price', 0] },
+          paidAmount: '$paymentData.price',
+  
+         
+        pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+          //  pendingamountFromGroup: { $subtract:[ ['$productData.price', '$paymentData.price']  ,parseInt('$amountPayingWithDEorSM')]},
+          pendingamountFromGroup: { $subtract:[ { $round: { $subtract: ['$productData.price', '$paymentData.price'] } } ,"$amountPayingWithDEorSM"]}
 
     },
   },
