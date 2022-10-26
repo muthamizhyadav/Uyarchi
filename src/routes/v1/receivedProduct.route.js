@@ -14,7 +14,7 @@ router
   .put(receivedProductController.updateReceivedProduct)
   .delete(receivedProductController.deleteReceivedOrdersById);
 router.route('/BillNumber/:id').put(receivedProductController.BillNumber);
-router.route('/getSupplierBills/:page').get(receivedProductController.getSupplierBillsDetails);
+router.route('/getSupplierBills/:filter/:page').get(receivedProductController.getSupplierBillsDetails);
 router
   .route('/upload/image/:id')
   .put(
