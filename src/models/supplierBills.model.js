@@ -17,6 +17,9 @@ const supplierbillsSchema = new mongoose.Schema({
   Amount: {
     type: Number,
   },
+  supplierId: {
+    type: String,
+  },
   transactionId: {
     type: String,
   },
