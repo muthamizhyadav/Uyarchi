@@ -37,7 +37,8 @@ const creditBillPaymentsSchema = mongoose.Schema({
         type: String,
     },
     amountPayingWithDEorSM: {
-        type: String,
+        type: Number,
+        defaultP: 0,
     },
     actionStatus: {
         type: String
@@ -48,7 +49,9 @@ const creditBillPaymentsSchema = mongoose.Schema({
     reasonScheduleOrDate: {
         type: String
     },
-   
+    disputeAmount: {
+        type: Number
+    },
 
 
 });

@@ -89,16 +89,20 @@ const LapsedRoute = require('./lapsed.route');
 const wardAdminRole = require('./wardAdminRole.route');
 const registerShop = require('./shopregister.route');
 const randomStock = require('./randomStock.route');
-const destoryStock = require('./destoryStock.route')
+const destoryStock = require('./destoryStock.route');
 const shopRoute = require('./shop-review.route');
 const vehicleRoute = require('./b2b.vehicle.allocation.route');
 const creditBill = require('./b2b.creditBill.route');
-
+const vidoRoute = require('./videoUpload.route');
 const returnStockroute = require('./returnStock.route');
 const defaultRoutes = [
   {
     path: '/registerShop',
     route: registerShop,
+  },
+  {
+    path: '/video',
+    route: vidoRoute,
   },
   {
     path: '/shop',
@@ -461,8 +465,8 @@ const defaultRoutes = [
   },
   {
     path: '/creditBillPath',
-    route: creditBill
-  }
+    route: creditBill,
+  },
   // {
   //   path: '/sales',
   //   route: salesApp,

@@ -225,10 +225,42 @@ const getShopOrderCloneById = async (id) => {
               unit: 1,
               productTitle: '$products.productTitle',
               created: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              GST_Number: 1,
+              GSTamount: {
+                $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$priceperkg'] }, '$GST_Number'] }, 100],
+              },
             },
           },
         ],
         as: 'productData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: {
+                  $multiply: ['$finalQuantity', '$priceperkg'],
+                },
+              },
+            },
+          },
+        ],
+        as: 'productDatadetails',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productDatadetails',
+        preserveNullAndEmptyArrays: true,
       },
     },
     {
@@ -254,6 +286,11 @@ const getShopOrderCloneById = async (id) => {
         mobile: '$shopData.mobile',
         pay_type: 1,
         paymentMethod: 1,
+        productDatadetails: "$productDatadetails",
+        total: '$productDatadetails.amount',
+        TotalGstAmount: { $sum: '$productData.GSTamount' },
+        totalSum: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] },
+
       },
     },
   ]);
@@ -389,7 +426,7 @@ const updateshop_order = async (id, body) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not found');
   }
   let timeslot = body.time_of_delivery.replace('-', '');
-  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, {...body,...{timeslot:timeslot}}, { new: true });
+  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { ...body, ...{ timeslot: timeslot } }, { new: true });
   let order = await OrderPayment.findOne({ orderId: shoporder._id, type: 'advanced' });
   let currentDate = moment().format('YYYY-MM-DD');
   let currenttime = moment().format('HHmmss');
@@ -599,7 +636,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
       lapsedd = true;
       console.log(e);
     }
-    retrunValue.push({...e,...{lapsed:lapsedd}});
+    retrunValue.push({ ...e, ...{ lapsed: lapsedd } });
   });
   // console.log(value);
   return {

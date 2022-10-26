@@ -52,7 +52,11 @@ const creditBillSchema = mongoose.Schema({
       },
       AssignedUserId: {
         type: String
-      }
+      },
+      Disputestatus: {
+        type: String,
+        status: "Pending"
+        },
 
 
 });

@@ -230,10 +230,10 @@ const getAllWithPaginationBilled = async (page, status) => {
     },
     { $match: { totalAmt: { $eq: true } } },
     {
-      $limit: 10,
+      $skip: 10 * page,
     },
     {
-      $skip: 10 * page,
+      $limit: 10,
     },
   ]);
   let total = await ReceivedProduct.aggregate([
@@ -265,6 +265,80 @@ const getAllWithPaginationBilled = async (page, status) => {
     {
       $unwind: '$supplierData',
     },
+    {
+      $lookup: {
+        from: 'transportbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'expensesbills',
+              localField: '_id',
+              foreignField: 'billId',
+              as: 'TransactionData',
+            },
+          },
+        ],
+        as: 'transportBillData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'expensesbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Counts: { $sum: '$Amount' } } }],
+        as: 'totalAmt',
+      },
+    },
+    { $unwind: { path: '$totalAmt', preserveNullAndEmptyArrays: true } },
+
+    {
+      $lookup: {
+        from: 'transportbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Counts: { $sum: '$billAmount' } } }],
+        as: 'TotalExpenseData',
+      },
+    },
+    {
+      $unwind: '$TotalExpenseData',
+    },
+    {
+      $lookup: {
+        from: 'expensesbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Counts: { $sum: '$Amount' } } }],
+        as: 'TotalPaidExpensesData',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        status: 1,
+        vehicleType: 1,
+        vehicleNumber: 1,
+        driverName: 1,
+        driverNumber: 1,
+        weighBridgeEmpty: 1,
+        totalAmt: { $ne: ['$totalAmt.Counts', '$TotalExpenseData.Counts'] },
+        weighBridgeLoadedProduct: 1,
+        supplierId: 1,
+        date: 1,
+        time: 1,
+        supplierName: '$supplierData.primaryContactName',
+        supplierContact: '$supplierData.primaryContactNumber',
+        Count: '$ReceivedData.Count',
+        TotalExpense: '$TotalExpenseData.Counts',
+        transportHistory: '$transportBillData',
+        BillNo: 1,
+        TotalPaidExpensesData: '$TotalPaidExpensesData',
+      },
+    },
+    { $match: { totalAmt: { $eq: true } } },
   ]);
   return { values: value, total: total.length };
 };
@@ -359,14 +433,13 @@ const getSupplierDetailByGroupId = async (id) => {
     },
     {
       $project: {
-        _id:"$suppliers._id",
-        primaryContactName:"$suppliers.primaryContactName",
-        primaryContactNumber: "$suppliers.primaryContactNumber",
-        secondaryContactName: "$suppliers.secondaryContactName",
-        secondaryContactNumber: "$suppliers.secondaryContactNumber",
-
-      }
-    }
+        _id: '$suppliers._id',
+        primaryContactName: '$suppliers.primaryContactName',
+        primaryContactNumber: '$suppliers.primaryContactNumber',
+        secondaryContactName: '$suppliers.secondaryContactName',
+        secondaryContactNumber: '$suppliers.secondaryContactNumber',
+      },
+    },
   ]);
   if (values.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
@@ -449,8 +522,22 @@ const BillNumber = async (id, bodydata) => {
   return LoadedProduct;
 };
 
-const getSupplierBillsDetails = async (page) => {
+const getSupplierBillsDetails = async (page, find) => {
+  match = [{ active: true }]
+  if (find != 'null') {
+    match = [
+      { primaryContactName: { $regex: find, $options: 'i' } },
+      {
+        primaryContactNumber: { $regex: find, $options: 'i' }
+      }
+    ]
+  }
   let values = await Supplier.aggregate([
+    {
+      $match: {
+        $or: match
+      },
+    },
     {
       $lookup: {
         from: 'receivedproducts',
@@ -458,53 +545,29 @@ const getSupplierBillsDetails = async (page) => {
         foreignField: 'supplierId',
         pipeline: [
           {
-            $lookup: {
-              from: 'supplierbills',
-              localField: '_id',
-              foreignField: 'groupId',
-              pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$Amount' } } }],
-              as: 'supplierbills',
-            },
+            $match: {
+              status: { $eq: "Billed" }
+            }
           },
-          { $unwind: { path: '$supplierbills', preserveNullAndEmptyArrays: true } },
           {
             $lookup: {
               from: 'receivedstocks',
               localField: '_id',
               foreignField: 'groupId',
-              pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
-              as: 'pendingData',
-            },
-          },
-          {
-            $unwind: '$pendingData',
-          },
-          {
-            $project: {
-              pendingData: '$pendingData.billingTotal',
-              supplierbills: '$supplierbills.billingTotal',
-              totalAmt: { $ne: ['$pendingData.billingTotal', '$supplierbills.billingTotal'] },
-            },
-          },
-
-          {
-            $match: { totalAmt: true },
-          },
-        ],
-        as: 'pendingDataall',
-      },
-    },
-    {
-      $lookup: {
-        from: 'receivedproducts',
-        localField: '_id',
-        foreignField: 'supplierId',
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $ne: [0, '$pendingAmount'],
-              },
+              pipeline: [
+                { $match: { status: { $eq: "Billed" } } },
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: {
+                        $multiply: ['$billingQuantity', '$billingPrice'],
+                      },
+                    },
+                  }
+                }
+              ],
+              as: 'receivedstocks',
             },
           },
           {
@@ -512,59 +575,87 @@ const getSupplierBillsDetails = async (page) => {
               from: 'supplierbills',
               localField: '_id',
               foreignField: 'groupId',
-              pipeline: [{ $group: { _id: null, Amount: { $sum: '$Amount' } } }],
-              as: 'PaymentData',
+              pipeline: [
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: "$Amount"
+                    },
+                  }
+                }
+              ],
+              as: 'supplierbills',
             },
           },
           {
-            $unwind: '$PaymentData',
-          },
-          // {
-          //   $project: {
-          //     PaymentData: '$PaymentData',
-          //   },
-          // },
-        ],
-        as: 'receivedData',
-      },
-    },
-    {
-      $unwind: { path: '$receivedData', preserveNullAndEmptyArrays: true },
-    },
-    {
-      $lookup: {
-        from: 'receivedproducts',
-        localField: '_id',
-        foreignField: 'supplierId',
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $ne: [0, '$pendingAmount'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
-              },
+            $unwind: {
+              path: '$supplierbills',
+              preserveNullAndEmptyArrays: true,
             },
           },
-          { $group: { _id: null, total: { $sum: 1 } } },
+          {
+            $unwind: {
+              path: '$receivedstocks',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+
+              paidAmount: { $ifNull: ["$supplierbills.amount", 0] },
+              totalAmount: { $ifNull: ["$receivedstocks.amount", 0] },
+            }
+          },
+          {
+            $project: {
+              paidAmount: 1,
+              totalAmount: 1,
+              pendingAmount: { $subtract: ["$totalAmount", "$paidAmount"] },
+              match: { $eq: ["$totalAmount", "$paidAmount"] }
+            }
+          },
+          {
+            $match: { match: { $ne: true } }
+          },
+          {
+            $group: {
+              _id: null,
+              pendingBillcount: { $sum: 1 },
+              pendingAmount: { $sum: "$pendingAmount" }
+            }
+          }
         ],
-        as: 'receivedDatacount',
+        as: 'receivedproducts',
       },
     },
     {
-      $unwind: '$receivedDatacount',
+      $unwind: "$receivedproducts"
     },
     {
       $project: {
-        // PaymentDatasss: '$pendingDataall',
-        PaymentData: { $sum: '$pendingDataall.pendingData' },
-        paidamount: { $sum: '$pendingDataall.supplierbills' },
-        // receivedData: '$receivedDatacount',
-        primaryContactName: 1,
-        receivedDatacount: '$receivedDatacount.total',
-        primaryContactNumber: 1,
         _id: 1,
-      },
+        tradeName: 1,
+        companytype: 1,
+        primaryContactName: 1,
+        primaryContactNumber: 1,
+        secondaryContactName: 1,
+        secondaryContactNumber: 1,
+        RegisteredAddress: 1,
+        countries: 1,
+        state: 1,
+        district: 1,
+        gstNo: 1,
+        email: 1,
+        pinCode: 1,
+        gpsLocat: 1,
+        pendingAmount: "$receivedproducts.pendingAmount",
+        pendingBillcount: "$receivedproducts.pendingBillcount"
+      }
     },
-    { $match: { PaymentData: { $ne: 0 } } },
+    {
+      $match: { pendingAmount: { $ne: 0 } }
+    },
     {
       $limit: 10,
     },
@@ -572,7 +663,133 @@ const getSupplierBillsDetails = async (page) => {
       $skip: 10 * page,
     },
   ]);
-  return values;
+  let total = await Supplier.aggregate([
+    {
+      $match: {
+        $or: match
+      },
+    },
+    {
+      $lookup: {
+        from: 'receivedproducts',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $match: {
+              status: { $eq: "Billed" }
+            }
+          },
+          {
+            $lookup: {
+              from: 'receivedstocks',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [
+                { $match: { status: { $eq: "Billed" } } },
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: {
+                        $multiply: ['$billingQuantity', '$billingPrice'],
+                      },
+                    },
+                  }
+                }
+              ],
+              as: 'receivedstocks',
+            },
+          },
+          {
+            $lookup: {
+              from: 'supplierbills',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: "$Amount"
+                    },
+                  }
+                }
+              ],
+              as: 'supplierbills',
+            },
+          },
+          {
+            $unwind: {
+              path: '$supplierbills',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $unwind: {
+              path: '$receivedstocks',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+
+              paidAmount: { $ifNull: ["$supplierbills.amount", 0] },
+              totalAmount: { $ifNull: ["$receivedstocks.amount", 0] },
+            }
+          },
+          {
+            $project: {
+              paidAmount: 1,
+              totalAmount: 1,
+              pendingAmount: { $subtract: ["$totalAmount", "$paidAmount"] },
+              match: { $eq: ["$totalAmount", "$paidAmount"] }
+            }
+          },
+          {
+            $match: { match: { $ne: true } }
+          },
+          {
+            $group: {
+              _id: null,
+              pendingBillcount: { $sum: 1 },
+              pendingAmount: { $sum: "$pendingAmount" }
+            }
+          }
+        ],
+        as: 'receivedproducts',
+      },
+    },
+    {
+      $unwind: "$receivedproducts"
+    },
+    {
+      $project: {
+        _id: 1,
+        tradeName: 1,
+        companytype: 1,
+        primaryContactName: 1,
+        primaryContactNumber: 1,
+        secondaryContactName: 1,
+        secondaryContactNumber: 1,
+        RegisteredAddress: 1,
+        countries: 1,
+        state: 1,
+        district: 1,
+        gstNo: 1,
+        email: 1,
+        pinCode: 1,
+        gpsLocat: 1,
+        pendingAmount: "$receivedproducts.pendingAmount",
+        pendingBillcount: "$receivedproducts.pendingBillcount"
+      }
+    },
+    {
+      $match: { pendingAmount: { $ne: 0 } }
+    },
+
+  ]);
+  return { values: values, total: total.length };
 };
 
 const getreceivedProductBySupplier = async (page) => {
