@@ -1732,7 +1732,7 @@ const getAllGroup = async (page) => {
   let values = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ manageDeliveryStatus: { $eq: 'Delivery Completed' } }],
+        $and: [{ status: { $eq: 'Packed' } }],
       },
     },
     // {
@@ -1769,7 +1769,7 @@ const getAllGroup = async (page) => {
   let total = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ manageDeliveryStatus: { $eq: 'Delivery Completed' } }],
+        $and: [{ status: { $eq: 'Packed' } }],
       },
     },
   ]);
