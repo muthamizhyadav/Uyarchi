@@ -2640,7 +2640,7 @@ const getShopReviewByShopid = async (id) => {
 };
 
 const data1 = async () => {
-  // const data = await Shop.find({ salesManStatus: 'Assign' });
+  // const data = await Shop.find({ salesManStatus: 'Reassign' });
   // if (data.length != 0) {
   //   data.forEach(async (e) => {
   //     await Shop.findByIdAndUpdate({ _id: e._id }, { salesManStatus: null }, { new: true });
