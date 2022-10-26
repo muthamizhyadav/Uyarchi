@@ -226,11 +226,41 @@ const getShopOrderCloneById = async (id) => {
               productTitle: '$products.productTitle',
               created: 1,
               finalQuantity: 1,
-              finalPricePerKg: 1
+              finalPricePerKg: 1,
+              GST_Number: 1,
+              GSTamount: {
+                $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$priceperkg'] }, '$GST_Number'] }, 100],
+              },
             },
           },
         ],
         as: 'productData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: {
+                  $multiply: ['$finalQuantity', '$priceperkg'],
+                },
+              },
+            },
+          },
+        ],
+        as: 'productDatadetails',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productDatadetails',
+        preserveNullAndEmptyArrays: true,
       },
     },
     {
@@ -256,6 +286,11 @@ const getShopOrderCloneById = async (id) => {
         mobile: '$shopData.mobile',
         pay_type: 1,
         paymentMethod: 1,
+        productDatadetails: "$productDatadetails",
+        total: '$productDatadetails.amount',
+        TotalGstAmount: { $sum: '$productData.GSTamount' },
+        totalSum: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] },
+
       },
     },
   ]);
