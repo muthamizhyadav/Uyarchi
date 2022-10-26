@@ -275,6 +275,15 @@ const getproductdetails = async (id) => {
       $unwind: '$shopData',
     },
     {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'paymentDta'
+      }
+    },
+    { $unwind: '$paymentDta'},
+    {
       $project: {
         productData: '$productData',
         shopName: '$shopData.SName',
@@ -282,9 +291,11 @@ const getproductdetails = async (id) => {
         shopId: 1,
         status: 1,
         OrderId: 1,
+        paidAMount: '$paymentDta.paidAmt',
         total: '$productDatadetails.amount',
         TotalGstAmount: { $sum: '$productData.GSTamount' },
         totalSum: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] },
+        pendingAmount: { $subtract: ['$productDatadetails.amount', '$paymentDta.paidAmt'] },
       },
     },
   ]);
