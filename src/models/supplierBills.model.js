@@ -29,7 +29,10 @@ const supplierbillsSchema = new mongoose.Schema({
   time: {
     type: Number,
   },
-  PaymentMethod: {
+  paymentMethod: {
+    type: String,
+  },
+  paidTo: {
     type: String,
   },
   status: {
