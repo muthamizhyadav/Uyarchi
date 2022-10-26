@@ -804,7 +804,7 @@ const wardloadExecutivePacked = async (range, page) => {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
-        pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
+        pipeline: [{ $group: { _id: null, Qty: { $sum: '$finalQuantity' } } }],
         as: 'orderData',
       },
     },
@@ -836,7 +836,7 @@ const wardloadExecutivePacked = async (range, page) => {
             $project: {
               total: {
                 $sum: {
-                  $multiply: ['$packtypesData.quantity', '$quantity'],
+                  $multiply: ['$packtypesData.quantity', '$finalQuantity'],
                 },
               },
               unit: 1,
@@ -929,7 +929,7 @@ const wardloadExecutivePacked = async (range, page) => {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
-        pipeline: [{ $group: { _id: null, Qty: { $sum: '$quantity' } } }],
+        pipeline: [{ $group: { _id: null, Qty: { $sum: '$finalQuantity' } } }],
         as: 'orderData',
       },
     },
@@ -961,7 +961,7 @@ const wardloadExecutivePacked = async (range, page) => {
             $project: {
               total: {
                 $sum: {
-                  $multiply: ['$packtypesData.quantity', '$quantity'],
+                  $multiply: ['$packtypesData.quantity', '$finalQuantity'],
                 },
               },
               unit: 1,
