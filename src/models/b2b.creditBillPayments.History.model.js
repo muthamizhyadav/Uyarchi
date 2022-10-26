@@ -38,6 +38,7 @@ const creditBillPaymentsSchema = mongoose.Schema({
     },
     amountPayingWithDEorSM: {
         type: Number,
+        defaultP: 0,
     },
     actionStatus: {
         type: String
