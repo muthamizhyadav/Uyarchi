@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const videoUploadService = require('../models/videoUpload.model');
 const moment = require('moment');
+
 const createVideoUpload = async (body) => {
   let values = { ...body, ...{ created: moment() } };
   let shopfind = await videoUploadService.findOne({ shopId: body.shopId });
@@ -13,6 +14,15 @@ const createVideoUpload = async (body) => {
   }
 };
 
+const getvideoByShopId = async (id) => {
+  let values = await videoUploadService.findById(id);
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'No Video Found in This Shop');
+  }
+  return values;
+};
+
 module.exports = {
   createVideoUpload,
+  getvideoByShopId,
 };

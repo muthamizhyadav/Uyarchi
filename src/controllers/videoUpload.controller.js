@@ -15,6 +15,12 @@ const createVideoUpload = catchAsync(async (req, res) => {
   await video.save();
 });
 
+const getvideoByShopId = catchAsync(async (req, res) => {
+  const video = await videoUploadService.getvideoByShopId(req.params.id);
+  res.send(video);
+});
+
 module.exports = {
   createVideoUpload,
+  getvideoByShopId
 };
