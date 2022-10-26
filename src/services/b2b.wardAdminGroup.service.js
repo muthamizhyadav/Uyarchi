@@ -1512,234 +1512,13 @@ const getBillDetailsPerOrder = async (id) => {
         },
       },
     },
-    { $group: { _id: null, Qty: { $sum: '$totalRupees' } } }
+    { $group: { _id: null, totalRupees: { $sum: '$totalRupees' }, CGSTAmount: { $sum: '$CGSTAmount' }, SGSTAmount: { $sum: '$SGSTAmount' },GSTamount:{$sum:"$GSTamount"} } }
 
-  ]);
-  let totalCGst = await ProductorderClone.aggregate([
-    {
-      $match: {
-        $and: [{ orderId: { $eq: id } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'orderId',
-        foreignField: '_id',
-        as: 'shopData',
-      },
-    },
-
-    { $unwind: '$shopData' },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'shopData.Uid',
-        foreignField: '_id',
-        as: 'AttenderName',
-      },
-    },
-    { $unwind: '$AttenderName' },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'shopData.deliveryExecutiveId',
-        foreignField: '_id',
-        as: 'deliveryExecutiveName',
-      },
-    },
-    { $unwind: '$deliveryExecutiveName' },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopData.shopId',
-        foreignField: '_id',
-        as: 'b2bshopclonedatas',
-      },
-    },
-    { $unwind: '$b2bshopclonedatas' },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: 'shopData._id',
-        foreignField: 'orderId',
-        pipeline: [{ $group: { _id: null, Qty: { $sum: '$finalQuantity' } } }],
-        as: 'TotalQuantityData',
-      },
-    },
-    { $unwind: '$TotalQuantityData' },
-    {
-      $lookup: {
-        from: 'products',
-        localField: 'productid',
-        foreignField: '_id',
-        as: 'productName',
-      },
-    },
-    { $unwind: '$productName' },
-
-    {
-      $project: {
-        productid: 1,
-        finalPricePerKg: 1,
-        finalQuantity: 1,
-        GST_Number: 1,
-        HSN_Code: 1,
-        productTitle: '$productName.productTitle',
-        billNo: '$shopData.billNo',
-        date: '$shopData.customerBilldate',
-        attenName: '$AttenderName.name',
-        time: '$shopData.customerBilltime',
-        billDate: '$shopData.customerBilldate',
-        billTime: '$shopData.customerBilltime',
-        OrderId: '$shopData.OrderId',
-        billId: '$shopData.customerBillId',
-        shopName: '$b2bshopclonedatas.SName',
-        address: '$b2bshopclonedatas.address',
-        mobile: '$b2bshopclonedatas.mobile',
-        shopType: '$b2bshopclonedatas.type',
-        SOwner: '$b2bshopclonedatas.SOwner',
-        Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
-        totalQuantity: '$TotalQuantityData.Qty',
-        OperatorName: '$deliveryExecutiveName.name',
-        GSTamount: { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
-        totalRupees: {
-          $add: [
-            { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
-            { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
-          ],
-        },
-        CGSTAmount: {
-          $divide: [
-            { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
-            2,
-          ],
-        },
-        SGSTAmount: {
-          $divide: [
-            { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
-            2,
-          ],
-        },
-      },
-    },
-    { $group: { _id: null, Qty: { $sum: '$CGSTAmount' } } }
 
   ]);
 
 
-  let totalSGst = await ProductorderClone.aggregate([
-    {
-      $match: {
-        $and: [{ orderId: { $eq: id } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'orderId',
-        foreignField: '_id',
-        as: 'shopData',
-      },
-    },
-
-    { $unwind: '$shopData' },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'shopData.Uid',
-        foreignField: '_id',
-        as: 'AttenderName',
-      },
-    },
-    { $unwind: '$AttenderName' },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'shopData.deliveryExecutiveId',
-        foreignField: '_id',
-        as: 'deliveryExecutiveName',
-      },
-    },
-    { $unwind: '$deliveryExecutiveName' },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopData.shopId',
-        foreignField: '_id',
-        as: 'b2bshopclonedatas',
-      },
-    },
-    { $unwind: '$b2bshopclonedatas' },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: 'shopData._id',
-        foreignField: 'orderId',
-        pipeline: [{ $group: { _id: null, Qty: { $sum: '$finalQuantity' } } }],
-        as: 'TotalQuantityData',
-      },
-    },
-    { $unwind: '$TotalQuantityData' },
-    {
-      $lookup: {
-        from: 'products',
-        localField: 'productid',
-        foreignField: '_id',
-        as: 'productName',
-      },
-    },
-    { $unwind: '$productName' },
-
-    {
-      $project: {
-        productid: 1,
-        finalPricePerKg: 1,
-        finalQuantity: 1,
-        GST_Number: 1,
-        HSN_Code: 1,
-        productTitle: '$productName.productTitle',
-        billNo: '$shopData.billNo',
-        date: '$shopData.customerBilldate',
-        attenName: '$AttenderName.name',
-        time: '$shopData.customerBilltime',
-        billDate: '$shopData.customerBilldate',
-        billTime: '$shopData.customerBilltime',
-        OrderId: '$shopData.OrderId',
-        billId: '$shopData.customerBillId',
-        shopName: '$b2bshopclonedatas.SName',
-        address: '$b2bshopclonedatas.address',
-        mobile: '$b2bshopclonedatas.mobile',
-        shopType: '$b2bshopclonedatas.type',
-        SOwner: '$b2bshopclonedatas.SOwner',
-        Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
-        totalQuantity: '$TotalQuantityData.Qty',
-        OperatorName: '$deliveryExecutiveName.name',
-        GSTamount: { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
-        totalRupees: {
-          $add: [
-            { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
-            { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
-          ],
-        },
-        CGSTAmount: {
-          $divide: [
-            { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
-            2,
-          ],
-        },
-        SGSTAmount: {
-          $divide: [
-            { $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$finalPricePerKg'] }, '$GST_Number'] }, 100] },
-            2,
-          ],
-        },
-      },
-    },
-    { $group: { _id: null, Qty: { $sum: '$SGSTAmount' } } }
-  ]);
-  
-  return {datas: datas, totalGst: totalGst ,totalCGst:totalCGst,totalSGst:totalSGst};
+  return { datas: datas, totalGst: totalGst[0] };
 };
 
 const getReturnWDEtoWLE = async (id, page) => {
@@ -2670,7 +2449,7 @@ const submitDispute = async (id, updatebody) => {
 };
 
 const returnStockData = async (id) => {
-  let values = await Product.aggregate([ 
+  let values = await Product.aggregate([
     // Delivered count
     {
       $lookup: {
@@ -2838,7 +2617,7 @@ const returnStockData = async (id) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-    
+
     {
       $project: {
         _id: 1,
@@ -2860,7 +2639,7 @@ const returnStockData = async (id) => {
         UndeliveryQuantity: '$productorderclonesData.UnQty',
         totalSum: { $add: ['$productorderclones.Qty', '$productorderclonesData.UnQty'] },
         productorderclonesData: { $eq: ['$productorderclonesData._id', null] },
-        fineStatus:"$wardadmingroupfines.status"
+        fineStatus: "$wardadmingroupfines.status"
       },
     },
     {
@@ -2873,18 +2652,18 @@ const returnStockData = async (id) => {
   return values;
 };
 
-const fineData = async (body)=>{
+const fineData = async (body) => {
   let serverdate = moment().format('YYYY-MM-DD');
   let servertime = moment().format('hh:mm a');
   let data = await wardAdminGroup.findById(body.groupId);
-  if(!data){
+  if (!data) {
     throw new ApiError(httpStatus.NOT_FOUND, 'group not found');
   }
   let values = {
     ...body,
-  ...{ date: serverdate, time: servertime,  deliveryExecutiveId:data.deliveryExecutiveId,},
-}
-return WardAdminGroupfine.create(values);
+    ...{ date: serverdate, time: servertime, deliveryExecutiveId: data.deliveryExecutiveId, },
+  }
+  return WardAdminGroupfine.create(values);
 }
 
 module.exports = {
