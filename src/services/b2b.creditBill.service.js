@@ -272,6 +272,16 @@ const getShopHistory = async (AssignedUserId, date) => {
     { $unwind: '$shopDtaa' },
     {
       $lookup: {
+        from: 'creditbillpaymenthistories',
+        localField: '_id',
+        foreignField: 'creditBillId',
+        as: 'creditData'
+      }
+
+    },
+    { $unwind: '$creditData' },
+    {
+      $lookup: {
         from: 'productorderclones',
         localField: 'orderId',
         foreignField: 'orderId',
@@ -315,7 +325,8 @@ const getShopHistory = async (AssignedUserId, date) => {
         customerBillId: '$shoporderclonedata.customerBillId',
         OrderId: '$shoporderclonedata.OrderId',
         date: '$shoporderclonedata.date',
-        statusOfBill: '$shoporderclonedata.creditBillAssignedStatus',
+        statusOfBill: '$creditData.reasonScheduleOrDate',
+    paymentStatus: '$creditData.pay_type',
         executeName: '$dataa.AssignedUserId',
         shopNmae: '$shopDtaa.SName',
         shopId: '$shopDtaa._id',
@@ -1383,6 +1394,18 @@ const getPaymentTypeCount = async (id)=>{
       }
     }, { $unwind: '$groupDtaa'},
     {
+      $lookup: {
+        from: 'creditbillpaymenthistories',
+        localField: 'billData._id',
+        foreignField: 'creditBillId',
+        as: 'data'
+
+      }
+    }, 
+    {
+      $unwind: "$data"
+    },
+    {
       $project: {
       pay_By:1,
       pay_type:1,
@@ -1392,20 +1415,20 @@ const getPaymentTypeCount = async (id)=>{
       billDate: "$billData.date",
       billTime: "$billData.time",
       shopNmae: "$groupDtaa.shopNmae",
-      BalanceAmount: "$groupDtaa.pendingAmount"
+      BalanceAmount: "$groupDtaa.pendingAmount",
+      // aaaa: "$data.pay_By",
+      // bbb: "$data.amountPayingWithDEorSM",
 
 },
 },
-{$group : {_id:'$pay_By', count:{$sum:'$amountPayingWithDEorSM'}}},
+{$group : {_id:'$pay_By', TotalAmount:{$sum:'$amountPayingWithDEorSM'}}},
 
 ]);
+
+
 return values;
 
 }
-
-
-
-
 
 
 module.exports = {
