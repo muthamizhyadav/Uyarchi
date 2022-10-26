@@ -3275,6 +3275,89 @@ $unwind: '$b2busers',
   ])
   return data ;
 }
+
+
+const getshopDetails=  async (id)=>{
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq:id }}],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId', //Uid
+        foreignField: '_id', //Uid
+        as: 'userData',
+      },
+    },
+    {
+      $unwind: '$userData',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    { $unwind: '$productData' },
+   
+    {
+      $project: {
+        shopId: 1,
+        OrderId: 1,
+        status: 1,
+        Payment: 1,
+        delivery_type: 1,
+        overallTotal: 1,
+        name: '$userNameData.name',
+        shopType: '$userData.type',
+        shopName: '$userData.SName',
+        totalItems: { $size: '$product' },
+        created: 1,
+        time: 1,
+        date: 1,
+        time_of_delivery: 1,
+        BillAmount:"$productData.price",
+        paidamount: 1,
+      },
+    },
+  ]);
+  return values;
+}
 module.exports = {
   getdetails,
   getproductdetails,
@@ -3308,5 +3391,7 @@ module.exports = {
   mismatchCount,
   mismatchGroup,
   Mismatch_Stock_Reconcilation,
-  Mismatch_Stock_Reconcilation1
+  Mismatch_Stock_Reconcilation1,
+
+  getshopDetails,
 };

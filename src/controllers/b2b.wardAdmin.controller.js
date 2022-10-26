@@ -228,6 +228,11 @@ const Mismatch_Stock_Reconcilation1 = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getshopDetails = catchAsync(async (req, res) => {
+  const data = await wardAdminService.getshopDetails(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   getDetails,
   getproductDetails,
@@ -264,4 +269,6 @@ module.exports = {
   mismatchGroup,
   Mismatch_Stock_Reconcilation,
   Mismatch_Stock_Reconcilation1,
+
+  getshopDetails,
 };
