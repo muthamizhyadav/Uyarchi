@@ -8,7 +8,7 @@ const Verfy = require('../config/OtpVerify');
 const RegisterOtp = require('../config/registerOtp');
 const moment = require('moment');
 const { verfiy } = require('../config/registerOTP.Verify');
-
+const { ShopList } = require('../models/product.model');
 // Shop Clone Serive
 
 const createShopClone = async (shopBody) => {
@@ -2555,6 +2555,7 @@ const GetShopsByShopType = async (id, page) => {
       },
     },
   ]);
+  let typename = await ShopList.findById(id);
   // SType: '07299efb-1aa4-40e6-ad5f-a03ffecdc0a5',
   //           SType: '66077e16-aa5f-401f-abcc-e1842d151b14',
   //           SType: '2d2a9e39-34a1-4dde-9767-a37251854cc5',
@@ -2586,7 +2587,7 @@ const GetShopsByShopType = async (id, page) => {
   //     $unwind: '$shoptype',
   //   },
   // ]);
-  return { shops: shops, total: total.length, totalcount: totalcount };
+  return { shops: shops, total: total.length, totalcount: totalcount, typename: typename.shopList };
 };
 
 const GetShopsReviewsByShopType = async (id, page) => {
