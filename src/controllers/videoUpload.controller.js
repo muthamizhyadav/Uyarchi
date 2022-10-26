@@ -5,6 +5,7 @@ const videoUploadService = require('../services/videoUpload.service');
 
 const createVideoUpload = catchAsync(async (req, res) => {
   const video = await videoUploadService.createVideoUpload(req.body);
+  video.video = [];
   if (req.files) {
     req.files.forEach(function (files, index, arr) {
       video.video.push('images/video/' + files.filename);
