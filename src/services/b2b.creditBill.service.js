@@ -1396,7 +1396,7 @@ const getPaymentTypeCount = async (id)=>{
 
 },
 },
-// {$group : {_id:'$pay_By', count:{$sum:'$amountPayingWithDEorSM'}}},
+{$group : {_id:'$pay_By', count:{$sum:'$amountPayingWithDEorSM'}}},
 
 ]);
 return values;
