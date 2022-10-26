@@ -630,7 +630,10 @@ const getSupplierBillsDetails = async (page, find) => {
       },
     },
     {
-      $unwind: "$receivedproducts"
+      $unwind: {
+        path: '$receivedproducts',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $lookup: {
@@ -649,25 +652,6 @@ const getSupplierBillsDetails = async (page, find) => {
           },
         ],
         as: 'supplierbills',
-      },
-    },
-    {
-      $lookup: {
-        from: 'supplierbills',
-        localField: '_id',
-        foreignField: 'supplierId',
-        pipeline: [
-          {
-            $sort: { created: -1 }
-          },
-        ],
-        as: 'supplierbillsONE',
-      },
-    },
-    {
-      $unwind: {
-        path: '$supplierbillsONE',
-        preserveNullAndEmptyArrays: true,
       },
     },
     {
@@ -690,7 +674,7 @@ const getSupplierBillsDetails = async (page, find) => {
         pendingAmount: "$receivedproducts.pendingAmount",
         pendingBillcount: "$receivedproducts.pendingBillcount",
         supplierbills: "$supplierbills",
-        lastBill: "$supplierbillsONE"
+        // lastBill: "$supplierbillsONE"
       }
     },
     {
