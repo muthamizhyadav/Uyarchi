@@ -7,8 +7,13 @@ const createSupplierbills = async (body) => {
   const { groupId, pendingAmount } = body;
   let currentTime = moment().format('HHmmss');
   let currentDate = moment().format('YYYY-MM-DD');
-  let values = { ...body, ...{ created: moment(), time: currentTime, date: currentDate } };
-  await ReceivedProduct.findByIdAndUpdate({ _id: groupId }, { pendingAmount: pendingAmount }, { new: true });
+  let reci = await ReceivedProduct.findByIdAndUpdate({ _id: groupId }, { pendingAmount: pendingAmount }, { new: true });
+  let values = {
+    ...body, ...{
+      created: moment(), time: currentTime, date: currentDate, supplierId: reci.supplierId
+    }
+  };
+
   let supplierbills = await SupplierBills.create(values);
   return supplierbills;
 };
