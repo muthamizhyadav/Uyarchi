@@ -181,6 +181,7 @@ const getAllShopOrderClone = async (date, page) => {
 };
 
 const getShopOrderCloneById = async (id) => {
+  console.log("hello")
   let Values = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -294,6 +295,56 @@ const getShopOrderCloneById = async (id) => {
     },
 
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'RE_order_Id',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: "$paidAmt"
+                    },
+                  },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              amount: "$orderpayments.amount"
+            }
+          }
+        ],
+        as: 'shoporderclones',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shoporderclones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        reorderamount: { $ifNull: ["$shoporderclones.amount", 0] }
+      }
+    },
+    {
       $project: {
         _id: 1,
         status: 1,
@@ -320,7 +371,10 @@ const getShopOrderCloneById = async (id) => {
         total: '$productDatadetails.amount',
         TotalGstAmount: { $sum: '$productData.GSTamount' },
         totalSum: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] },
-        paidamount: "$orderpayments.amount"
+        paidamount: {
+          $sum: ["$orderpayments.amount", "$reorderamount"],
+        },
+        shoporderclones: "$shoporderclones",
 
       },
     },
