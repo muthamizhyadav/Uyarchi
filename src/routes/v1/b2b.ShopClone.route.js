@@ -81,7 +81,7 @@ router.route('/shopSearch/:key').get(b2bShopCloneController.searchShops);
 router.route('/getVendorShops/uyar-dial/:key').get(b2bShopCloneController.getVendorShops);
 
 // salesmanShops
-router.route('/getNotAssignReassignSalesman/data/:id/:page/:limit').get(b2bShopCloneController.getNotAssignSalesManData);
+router.route('/getNotAssignReassignSalesman/data/:id/:page/:limit/:uid/:date').get(b2bShopCloneController.getNotAssignSalesManData);
 
 router.route('/getShops/By/type/:id/:page').get(b2bShopCloneController.GetShopsByShopType);
 router.route('/getShops/By/type/reviews/:id/:page').get(b2bShopCloneController.GetShopsReviewsByShopType);

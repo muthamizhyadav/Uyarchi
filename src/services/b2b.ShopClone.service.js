@@ -2348,11 +2348,28 @@ const getVendorShops = async (key) => {
 
 // getnotAssignSalesmanData
 
-const getnotAssignSalesmanData = async (id, page, limit) => {
+const getnotAssignSalesmanData = async (id, page, limit, uid, date) => {
+  let match;
+  if(uid != 'null' && date == 'null'){
+
+     match = [{ Wardid: { $eq: id } },{ Uid: { $eq: uid } }]
+      
+   
+  }else if(uid != 'null' && date != 'null'){
+    match =  [{ Wardid: { $eq: id } },{ Uid: { $eq: uid }}, { date: { $eq: date }}]
+
+  }else if(uid == 'null' && date != 'null'){
+    match = [{ Wardid: { $eq: id } }, { date: { $eq: date }}]
+
+  }else {
+    match = [{ Wardid: { $eq: id } }]
+  }
+  console.log(match)
   let data = await Shop.aggregate([
+
     {
       $match: {
-        $and: [{ Wardid: { $eq: id } }],
+        $and: match,
       },
     },
     // {
@@ -2417,7 +2434,7 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
   let allnoAssing = await Shop.aggregate([
     {
       $match: {
-        $and: [{ Wardid: { $eq: id } }],
+        $and: match,
       },
     },
     // {
@@ -2464,7 +2481,7 @@ const getnotAssignSalesmanData = async (id, page, limit) => {
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ Wardid: { $eq: id } }],
+        $and: match,
       },
     },
     // {
