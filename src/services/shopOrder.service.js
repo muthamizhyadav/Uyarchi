@@ -646,6 +646,30 @@ const getShopNameCloneWithPagination = async (page, userId) => {
       $unwind: '$shopData',
     },
     {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: "$paidAmt"
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 1,
         created: 1,
@@ -658,7 +682,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         CGST: 1,
         OrderId: 1,
         productTotal: { $size: '$product' },
-        paidamount: 1,
+        paidamount: "$orderpayments.amount",
         shopName: '$shopData.SName',
         contact: '$shopData.mobile',
         status: 1,
