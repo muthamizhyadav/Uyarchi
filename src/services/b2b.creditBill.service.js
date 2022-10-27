@@ -892,7 +892,7 @@ const getShopPendingByPassingShopId = async (id) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }],
+        $and: [{ shopId: { $eq: id } }],
       },
     },
     {
