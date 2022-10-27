@@ -892,7 +892,7 @@ const getShopPendingByPassingShopId = async (id) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ shopId: { $eq: id } }],
+        $and: [{ _id: { $eq: id } }],
       },
     },
     {
@@ -959,6 +959,24 @@ const getShopPendingByPassingShopId = async (id) => {
     },
 
     { $unwind: '$productData' },
+    {
+      $lookup: {
+        from:'creditbills',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'billDta'
+      }
+    },
+    { $unwind: '$billDta'},
+    {
+      $lookup: {
+        from: 'creditbillpaymenthistories',
+        localField: 'billDta._id',
+        foreignField: 'creditBillId',
+        as: 'datasss'
+      }
+    },
+    { $unwind: '$datasss'},
 
     {
       $project: {
@@ -974,6 +992,8 @@ const getShopPendingByPassingShopId = async (id) => {
         paidAmount: '$paymentData.price',
 
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+        amountPayingByPayAndAct: "$datasss.amountPayingWithDEorSM",
+
 
         condition1: {
           $cond: {
@@ -984,6 +1004,34 @@ const getShopPendingByPassingShopId = async (id) => {
         },
       },
     },
+    {
+      $project: {
+        customerBillId: 1,
+        OrderId: 1,
+        date: 1,
+        statusOfBill: 1,
+        executeName: 1,
+        shopNmae: 1,
+        shopId: 1,
+        creditBillAssignedStatus: 1,
+        BillAmount: 1,
+        paidAmount: 1,
+
+        pendingAmount: 1,
+        amountPayingByPayAndAct: 1,
+        BalancePendingAmount: { $subtract:[ "$BillAmount", "$amountPayingByPayAndAct"]},
+
+
+        condition1: {
+          $cond: {
+            if: { $ne: [{ $subtract: [{ $round: ['$productData.price', 0] }, '$paymentData.price'] }, 0] },
+            then: true,
+            else: false,
+          },
+        },
+      },
+    },
+    
   ]);
   return values;
 };
