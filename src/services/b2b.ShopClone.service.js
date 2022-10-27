@@ -1499,8 +1499,11 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   if (status != 'null') {
     streetMatch = { status: status };
   }
-  if (user != 'null') {
+  if (user != 'null' && status != 'data_approved') {
     userMatch = { Uid: user };
+  }
+  else {
+    userMatch = { DA_USER: user }
   }
   if (startdata != 'null' && enddate != 'null') {
     dateMatch = { filterDate: { $gte: startdata, $lte: enddate } };
