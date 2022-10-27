@@ -147,7 +147,7 @@ const updateDisableSupplierById = async (id) => {
 const productDealingWithsupplier = async (id) => {
   let currentDate = moment().format('YYYY-MM-DD');
   let currentDateorder = moment().format('DD-MM-YYYY');
-  return Supplier.aggregate([
+  let Supplier = Supplier.aggregate([
     {
       $match: {
         productDealingWith: {
@@ -219,18 +219,20 @@ const productDealingWithsupplier = async (id) => {
             },
           },
           {
-          
-              $match: {
-                $expr: {
-                  $ne: ['$orderType', 'sudden'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
-                },
+
+            $match: {
+              $expr: {
+                $ne: ['$orderType', 'sudden'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
               },
+            },
           },
         ],
         as: 'callStatus',
       },
     },
   ]);
+  let product = await Product.findById(id)
+  return { Supplier: Supplier, product: product }
 };
 
 const getSupplierDataByProductId = async (id) => {
