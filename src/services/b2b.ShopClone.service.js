@@ -1502,7 +1502,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   if (user != 'null' && status != 'data_approved') {
     userMatch = { Uid: user };
   }
-  else {
+  else if (user != 'null' && status == 'data_approved') {
     userMatch = { DA_USER: user }
   }
   if (startdata != 'null' && enddate != 'null') {
