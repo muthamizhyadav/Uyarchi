@@ -263,6 +263,32 @@ const getShopOrderCloneById = async (id) => {
         preserveNullAndEmptyArrays: true,
       },
     },
+
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: "$paidAmt"
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
     {
       $project: {
         _id: 1,
@@ -290,6 +316,7 @@ const getShopOrderCloneById = async (id) => {
         total: '$productDatadetails.amount',
         TotalGstAmount: { $sum: '$productData.GSTamount' },
         totalSum: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] },
+        paidamount: "$orderpayments.amount"
 
       },
     },
@@ -420,17 +447,20 @@ const updateShopOrderCloneById = async (id, updatebody) => {
   return shoporderClone;
 };
 
-const updateshop_order = async (id, body) => {
+const updateshop_order = async (id, body, userid) => {
   let shoporder = await ShopOrderClone.findById(id);
   if (!shoporder) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not found');
   }
   let timeslot = body.time_of_delivery.replace('-', '');
-  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { ...body, ...{ timeslot: timeslot } }, { new: true });
-  let order = await OrderPayment.findOne({ orderId: shoporder._id, type: 'advanced' });
+  let Payment = body.Payment;
+  if (body.Payment == 'Continue' || body.Payment == 'addmore') {
+    Payment = 'Paynow';
+  }
+  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { ...body, ...{ timeslot: timeslot, Payment: Payment } }, { new: true });
   let currentDate = moment().format('YYYY-MM-DD');
   let currenttime = moment().format('HHmmss');
-  if (!order) {
+  if (body.Payment == 'addmore' || body.Payment == 'Paynow') {
     await OrderPayment.create({
       uid: userid,
       paidAmt: body.paidamount,
@@ -440,9 +470,8 @@ const updateshop_order = async (id, body) => {
       orderId: shoporder._id,
       type: 'advanced',
     });
-  } else {
-    await OrderPayment.findByIdAndUpdate({ _id: order._id }, { paidAmt: body.paidamount }, { new: true });
   }
+
 
   await ProductorderClone.deleteMany({ orderId: id });
   let { product, date, time, shopId } = body;

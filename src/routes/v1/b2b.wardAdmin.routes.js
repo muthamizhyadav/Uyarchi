@@ -65,4 +65,6 @@ router.route('/Mismatch_Stock_Reconcilation').get(wardAdminController.Mismatch_S
 router.route('/Mismatch_Stock_Reconcilation1/:id').get(wardAdminController.Mismatch_Stock_Reconcilation1);
 
 router.route('/get/shop/details/:id').get(wardAdminController.getshopDetails);
+
+
 module.exports = router;

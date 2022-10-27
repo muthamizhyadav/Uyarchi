@@ -206,6 +206,17 @@ const getAllWithPaginationBilled = async (page, status) => {
       },
     },
     {
+      $lookup: {
+        from: 'expensesbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          { $sort: { created: -1 } }
+        ],
+        as: 'paiddetails',
+      },
+    },
+    {
       $project: {
         _id: 1,
         status: 1,
@@ -226,6 +237,8 @@ const getAllWithPaginationBilled = async (page, status) => {
         transportHistory: '$transportBillData',
         BillNo: 1,
         TotalPaidExpensesData: '$TotalPaidExpensesData',
+        created: 1,
+        paiddetails: "$paiddetails"
       },
     },
     { $match: { totalAmt: { $eq: true } } },
@@ -399,6 +412,8 @@ const getAllWithPaginationBilled_Supplier = async (id, status) => {
         PaymentDetails: '$PaymentDetails',
         PaymentData: '$PaymentData',
         pendingAmount: 1,
+        supplierBillImg: 1,
+        created: 1,
       },
     },
   ]);
@@ -630,7 +645,29 @@ const getSupplierBillsDetails = async (page, find) => {
       },
     },
     {
-      $unwind: "$receivedproducts"
+      $unwind: {
+        path: '$receivedproducts',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierbills',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $sort: { created: -1 }
+          },
+          {
+            $limit: 10,
+          },
+          {
+            $skip: 10 * page,
+          },
+        ],
+        as: 'supplierbills',
+      },
     },
     {
       $project: {
@@ -650,7 +687,9 @@ const getSupplierBillsDetails = async (page, find) => {
         pinCode: 1,
         gpsLocat: 1,
         pendingAmount: "$receivedproducts.pendingAmount",
-        pendingBillcount: "$receivedproducts.pendingBillcount"
+        pendingBillcount: "$receivedproducts.pendingBillcount",
+        supplierbills: "$supplierbills",
+        // lastBill: "$supplierbillsONE"
       }
     },
     {
@@ -760,6 +799,7 @@ const getSupplierBillsDetails = async (page, find) => {
         as: 'receivedproducts',
       },
     },
+
     {
       $unwind: "$receivedproducts"
     },

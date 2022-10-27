@@ -3369,7 +3369,7 @@ const getshopDetails=  async (id)=>{
         name: '$userNameData.name',
         shopType: '$userData.type',
         shopName: '$userData.SName',
-    mobile: "$userData.mobile",
+        mobile: "$userData.mobile",
         totalItems: { $size: '$product' },
         created: 1,
         customerBilltime: 1,

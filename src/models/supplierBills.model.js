@@ -17,6 +17,9 @@ const supplierbillsSchema = new mongoose.Schema({
   Amount: {
     type: Number,
   },
+  supplierId: {
+    type: String,
+  },
   transactionId: {
     type: String,
   },
@@ -26,7 +29,10 @@ const supplierbillsSchema = new mongoose.Schema({
   time: {
     type: Number,
   },
-  PaymentMethod: {
+  paymentMethod: {
+    type: String,
+  },
+  paidTo: {
     type: String,
   },
   status: {

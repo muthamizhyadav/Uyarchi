@@ -1732,7 +1732,7 @@ const getAllGroup = async (page) => {
   let values = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ manageDeliveryStatus: { $eq: 'Delivery Completed' } }],
+        $and: [{ status: { $eq: 'Packed' } }],
       },
     },
     // {
@@ -1769,7 +1769,7 @@ const getAllGroup = async (page) => {
   let total = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ manageDeliveryStatus: { $eq: 'Delivery Completed' } }],
+        $and: [{ status: { $eq: 'Packed' } }],
       },
     },
   ]);
@@ -2666,6 +2666,45 @@ const fineData = async (body) => {
   return WardAdminGroupfine.create(values);
 }
 
+
+const getOrderDataByPassing = async (id) =>{
+  let values = await wardAdminGroupModel_ORDERS.aggregate([
+    {
+      $match: {
+        $and: [{wardAdminGroupID: { $eq:id } }],
+      }
+    },
+    {
+      $lookup:{
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        as: 'shopData'
+      }
+    },
+    { $unwind: "$shopData"},
+    {
+      $lookup:{
+        from: 'b2bshopclones',
+        localField: 'shopData.shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesdata'
+      }
+    },
+    { $unwind: "$b2bshopclonesdata"},
+    {
+      $project: {
+        orderId: "$shopData.OrderId",
+        delivery_type: "$shopData.delivery_type",
+        shopName: "$b2bshopclonesdata.SName",
+        mobile: "$b2bshopclonesdata.mobile"
+
+      }
+    }
+  ]);
+  return values;
+}
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -2722,4 +2761,6 @@ module.exports = {
   returnStockData,
   updatemismatchStockStatus,
   fineData,
+
+  getOrderDataByPassing,
 };
