@@ -84,6 +84,10 @@ const createshopOrderClone = async (body, userid) => {
     //   paidamount = shoss.paidamount + paidamount;
     // }
   }
+  let Payment = body.Payment;
+  if (body.Payment == 'Continue' || body.Payment == 'addmore') {
+    Payment = 'Paynow';
+  }
   let bod = {
     ...body,
     ...{
@@ -96,6 +100,7 @@ const createshopOrderClone = async (body, userid) => {
       timeslot: timeslot,
       paidamount: paidamount,
       reorder_status: reorder_status,
+      Payment: Payment
     },
   };
 
@@ -176,6 +181,7 @@ const getAllShopOrderClone = async (date, page) => {
 };
 
 const getShopOrderCloneById = async (id) => {
+  console.log("hello")
   let Values = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -263,7 +269,6 @@ const getShopOrderCloneById = async (id) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-
     {
       $lookup: {
         from: 'orderpayments',
@@ -289,6 +294,56 @@ const getShopOrderCloneById = async (id) => {
       },
     },
 
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'RE_order_Id',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: "$paidAmt"
+                    },
+                  },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              amount: "$orderpayments.amount"
+            }
+          }
+        ],
+        as: 'shoporderclones',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shoporderclones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        reorderamount: { $ifNull: ["$shoporderclones.amount", 0] }
+      }
+    },
     {
       $project: {
         _id: 1,
@@ -316,7 +371,10 @@ const getShopOrderCloneById = async (id) => {
         total: '$productDatadetails.amount',
         TotalGstAmount: { $sum: '$productData.GSTamount' },
         totalSum: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] },
-        paidamount: "$orderpayments.amount"
+        paidamount: {
+          $sum: ["$orderpayments.amount", "$reorderamount"],
+        },
+        shoporderclones: "$shoporderclones",
 
       },
     },
@@ -446,6 +504,7 @@ const updateShopOrderCloneById = async (id, updatebody) => {
   shoporderClone = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
   return shoporderClone;
 };
+
 
 const updateshop_order = async (id, body, userid) => {
   let shoporder = await ShopOrderClone.findById(id);
