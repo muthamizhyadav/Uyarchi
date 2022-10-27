@@ -386,6 +386,15 @@ const deleteB2bUsersbyId = async (id) => {
   return users;
 };
 
+const shopverification = async (id) => {
+  let users = await Users.findById(id);
+  show = false;
+  if (users.userRole == 'fb0dd028-c608-4caa-a7a9-b700389a098d') {
+    show = true
+  }
+  return { show: show };
+};
+
 module.exports = {
   createUser,
   UsersLogin,
@@ -406,4 +415,5 @@ module.exports = {
   updateB2bUsers,
   getUsersDataById,
   deleteB2bUsersbyId,
+  shopverification
 };
