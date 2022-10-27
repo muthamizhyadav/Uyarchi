@@ -81,10 +81,29 @@ const createwardAdminRole = async (body) => {
   return {message:"created"};
 };
 
+// telecaller Names
+
+const telecallernames  = async () => {
+    let data = await Users.aggregate([
+      {
+        $match: {
+          $and: [{ userRole: { $eq: "ae601146-dadd-443b-85b2-6c0fbe9f964c" } }],
+        },
+      }, 
+      {
+        $project: {
+          name:1,
+          b2buserId:1,
+          roleName: 1,
+          _id: 1,
+        },
+      },
+    ]);
+    return data;
+  };
 // telecallerHead
 
-const telecallerHead  = async () => {
-
+  const telecallerHead  = async () => {
     let serverdate = moment().format('yyy-MM-DD');
     let data = await Roles.aggregate([
       {
@@ -1661,4 +1680,5 @@ module.exports = {
   getAlldataASm,
   getAllDatasalesmanDataAndAssign,
   getAlldataSalesmanandtele_wcce,
+  telecallernames,
 };
