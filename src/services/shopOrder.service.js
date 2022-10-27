@@ -84,6 +84,10 @@ const createshopOrderClone = async (body, userid) => {
     //   paidamount = shoss.paidamount + paidamount;
     // }
   }
+  let Payment = body.Payment;
+  if (body.Payment == 'Continue' || body.Payment == 'addmore') {
+    Payment = 'Paynow';
+  }
   let bod = {
     ...body,
     ...{
@@ -96,6 +100,7 @@ const createshopOrderClone = async (body, userid) => {
       timeslot: timeslot,
       paidamount: paidamount,
       reorder_status: reorder_status,
+      Payment: Payment
     },
   };
 
@@ -263,7 +268,6 @@ const getShopOrderCloneById = async (id) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-
     {
       $lookup: {
         from: 'orderpayments',
@@ -446,6 +450,7 @@ const updateShopOrderCloneById = async (id, updatebody) => {
   shoporderClone = await ShopOrderClone.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
   return shoporderClone;
 };
+
 
 const updateshop_order = async (id, body, userid) => {
   let shoporder = await ShopOrderClone.findById(id);

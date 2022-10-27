@@ -33,6 +33,7 @@ const getShopOrderCloneById = catchAsync(async (req, res) => {
   res.send(shopOrderClone[0]);
 });
 
+
 const updateShopOrderCloneById = catchAsync(async (req, res) => {
   const shopOrderClone = await shopOrderService.updateShopOrderCloneById(req.params.id, req.body);
   res.send(shopOrderClone);

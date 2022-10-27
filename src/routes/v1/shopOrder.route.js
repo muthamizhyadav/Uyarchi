@@ -40,7 +40,7 @@ router
 
 router.route('/telecaller').get(shopOrderController.getAll);
 router.route('/createorderId').post(shopOrderController.createOrderId);
-router.route('/update/:id').put(shopOrderController.updateshop_order);
+router.route('/update/:id').put(authorization, shopOrderController.updateshop_order);
 router.route('/getShop/details/:id').get(shopOrderController.getShopDetailsByOrder);
 // data undelivered
 router.route('/undelivered/data/:page').get(shopOrderController.undelivered);
