@@ -231,8 +231,54 @@ const productDealingWithsupplier = async (id) => {
       },
     },
   ]);
-  let product = await Product.findById(id)
-  return { Supplier: Suppliers, product: product }
+  let today = moment().format("YYYY-MM-DD")
+  let product = await Product.aggregate([
+    { $match: { _id: { $eq: id } } },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          { $match: { date: { $eq: today } } },
+          { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
+        ],
+        as: 'productorders',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productorders',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'estimatedorders',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [
+          { $match: { date: { $eq: today } } },
+        ],
+        as: 'estimatedorders',
+      },
+    },
+    {
+      $unwind: {
+        path: '$estimatedorders',
+        preserveNullAndEmptyArrays: true,
+      },
+    }, {
+      $project: {
+        _id: 1,
+        productTitle: 1,
+        estimatedQTY: "$estimatedorders.closedQty",
+        liveStock: "$productorders.Qty",
+      }
+    }
+  ])
+
+  return { Supplier: Suppliers, product: product[0] }
 };
 
 const getSupplierDataByProductId = async (id) => {
