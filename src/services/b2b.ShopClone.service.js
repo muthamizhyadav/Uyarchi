@@ -2409,7 +2409,7 @@ const getnotAssignSalesmanData = async (id, page, limit, uid, date) => {
   }else {
     match = [{ Wardid: { $eq: id } }]
   }
-  console.log(match)
+  // console.log(match)
   let data = await Shop.aggregate([
 
     {

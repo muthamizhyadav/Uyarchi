@@ -37,9 +37,10 @@ router.route('/WardAdminRoleHistor/:id/:date').get(wardAdminRoleController.WardA
 router.route('/getAllWithAsmwithout/:sm/:asm/:date').get(wardAdminRoleController.getAllWithAsmwithout);
 router.route('/asmdata/data').get(wardAdminRoleController.asmdata);
 router.route('/asmSalesman/data/:id').get(wardAdminRoleController.asmSalesman);
-router.route('/telecallerHead/data').get(wardAdminRoleController.telecallerHead);
+router.route('/telecallerHead/data/data1').get(wardAdminRoleController.telecallerHead);
 router.route('/wardwcce/All').get(wardAdminRoleController.wardwcce);
 router.route('/getAlldataAsm/data/:id').get(wardAdminRoleController.getAlldataASm);
 router.route('/getAllDatasalesmanDataAndAssign/data/:id/:date').get(wardAdminRoleController.getAllDatasalesmanDataAndAssign);
 router.route('/getAlldataSalesmanandtele_wcce/:id').get(wardAdminRoleController.getAlldataSalesmanandtele_wcce);
+router.route('/telecallernames/data').get(wardAdminRoleController.telecallernames);
 module.exports = router;
