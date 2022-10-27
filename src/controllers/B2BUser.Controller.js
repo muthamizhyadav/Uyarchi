@@ -51,7 +51,7 @@ const B2bUsersLogout = catchAsync(async (req, res) => {
   res.send();
 });
 
-const smsGateway = catchAsync(async (req, res) => {});
+const smsGateway = catchAsync(async (req, res) => { });
 
 const getAllUsers = catchAsync(async (req, res) => {
   const user = await b2bUsersService.getAllUsers(req.params.page);
@@ -129,6 +129,11 @@ const deleteB2bUsersbyId = catchAsync(async (req, res) => {
   res.status(204).send({ message: 'Deleted' });
 });
 
+const shopverification = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.shopverification(req.userId);
+  res.send(users);
+});
+
 module.exports = {
   createB2bUsers,
   getsalesExecuteRolesUsers,
@@ -150,4 +155,5 @@ module.exports = {
   updateB2bUsers,
   getUsersDataById,
   deleteB2bUsersbyId,
+  shopverification
 };

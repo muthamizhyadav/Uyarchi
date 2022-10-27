@@ -20,7 +20,13 @@ const getvideoByShopId = catchAsync(async (req, res) => {
   res.send(video);
 });
 
+const get_Shop_VideoBy_ShopId = catchAsync(async (req, res) => {
+  const video = await videoUploadService.get_Shop_VideoBy_ShopId(req.params.id);
+  res.send(video);
+});
+
 module.exports = {
   createVideoUpload,
-  getvideoByShopId
+  getvideoByShopId,
+  get_Shop_VideoBy_ShopId,
 };

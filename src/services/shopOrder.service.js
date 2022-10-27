@@ -646,6 +646,80 @@ const getShopNameCloneWithPagination = async (page, userId) => {
       $unwind: '$shopData',
     },
     {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: "$paidAmt"
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'RE_order_Id',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: "$paidAmt"
+                    },
+                  },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              amount: "$orderpayments.amount"
+            }
+          }
+        ],
+        as: 'shoporderclones',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shoporderclones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        reorderamount: { $ifNull: ["$shoporderclones.amount", 0] }
+      }
+    },
+    {
       $project: {
         _id: 1,
         created: 1,
@@ -658,12 +732,13 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         CGST: 1,
         OrderId: 1,
         productTotal: { $size: '$product' },
-        paidamount: 1,
+        paidamount: { $sum: ["$orderpayments.amount","$reorderamount"] },
         shopName: '$shopData.SName',
         contact: '$shopData.mobile',
         status: 1,
         timeslot: 1,
         date: 1,
+
       },
     },
     { $skip: 10 * page },
