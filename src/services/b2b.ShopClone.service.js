@@ -1501,14 +1501,12 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   }
   if (user != 'null' && status != 'data_approved') {
     userMatch = { Uid: user };
-  }
-  else if (user != 'null' && status == 'data_approved') {
-    userMatch = { DA_USER: user }
+  } else if (user != 'null' && status == 'data_approved') {
+    userMatch = { DA_USER: user };
   }
   if (startdata != 'null' && enddate != 'null' && status != 'data_approved') {
     dateMatch = { filterDate: { $gte: startdata, $lte: enddate } };
-  }
-  else if (startdata != 'null' && enddate != 'null' && status == 'data_approved') {
+  } else if (startdata != 'null' && enddate != 'null' && status == 'data_approved') {
     dateMatch = { DA_DATE: { $gte: startdata, $lte: enddate } };
   }
   if (starttime != 'null') {
@@ -1519,10 +1517,9 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   }
   if (status != 'data_approved') {
     timeMatch = { time: { $gte: startTime, $lte: endTime } };
-  }
-  else {
+  } else {
     timeMatch = {
-      DA_TIME: { $gte: startTime, $lte: endTime }
+      DA_TIME: { $gte: startTime, $lte: endTime },
     };
   }
 
@@ -1648,7 +1645,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         DA_DATE: 1,
         DA_TIME: 1,
         DA_CREATED: 1,
-        DA_USERNAME: "$DA_USERNAME.name",
+        DA_USERNAME: '$DA_USERNAME.name',
         purchaseQTy: 1,
       },
     },
@@ -1737,7 +1734,6 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   //   await Shop.findByIdAndUpdate({ _id: e._id }, { status: "Pending" });
   // });
 
-
   return {
     values: values,
     total: total.length,
@@ -1765,7 +1761,11 @@ const updateShopStatus = async (id, status, bodyData, userID) => {
   }
   let servertime = moment().format('HHmm');
   let serverdate = moment().format('YYYY-MM-DD');
-  shop = await Shop.findByIdAndUpdate({ _id: id }, { ...bodyData, ...{ status: status, DA_DATE: serverdate, DA_USER: userID, DA_CREATED: moment(), DA_TIME: servertime } }, { new: true });
+  shop = await Shop.findByIdAndUpdate(
+    { _id: id },
+    { ...bodyData, ...{ status: status, DA_DATE: serverdate, DA_USER: userID, DA_CREATED: moment(), DA_TIME: servertime } },
+    { new: true }
+  );
   return shop;
 };
 
@@ -2395,23 +2395,17 @@ const getVendorShops = async (key) => {
 
 const getnotAssignSalesmanData = async (id, page, limit, uid, date) => {
   let match;
-  if(uid != 'null' && date == 'null'){
-
-     match = [{ Wardid: { $eq: id } },{ Uid: { $eq: uid } }]
-      
-   
-  }else if(uid != 'null' && date != 'null'){
-    match =  [{ Wardid: { $eq: id } },{ Uid: { $eq: uid }}, { date: { $eq: date }}]
-
-  }else if(uid == 'null' && date != 'null'){
-    match = [{ Wardid: { $eq: id } }, { date: { $eq: date }}]
-
-  }else {
-    match = [{ Wardid: { $eq: id } }]
+  if (uid != 'null' && date == 'null') {
+    match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }];
+  } else if (uid != 'null' && date != 'null') {
+    match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { date: { $eq: date } }];
+  } else if (uid == 'null' && date != 'null') {
+    match = [{ Wardid: { $eq: id } }, { date: { $eq: date } }];
+  } else {
+    match = [{ Wardid: { $eq: id } }];
   }
   // console.log(match)
   let data = await Shop.aggregate([
-
     {
       $match: {
         $and: match,
@@ -2744,6 +2738,42 @@ const data1 = async () => {
   // return { mesage: 'updated..' };
 };
 
+const get_total_vendorShop = async (page) => {
+  let values = await Shop.aggregate([
+    {
+      $match: {
+        SType: '07299efb-1aa4-40e6-ad5f-a03ffecdc0a5',
+        SType: '66077e16-aa5f-401f-abcc-e1842d151b14',
+        SType: '2d2a9e39-34a1-4dde-9767-a37251854cc5',
+        SType: '57fdca99-9b2c-47aa-838b-eed600d3264a',
+        SType: 'c974636a-6324-4426-9440-d599353c9a18',
+        SType: '4372526e-266a-4474-a140-7e633015b15c',
+        SType: '602e637e-11e8-4901-b80f-db8a467afda2',
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await Shop.aggregate([
+    {
+      $match: {
+        SType: '07299efb-1aa4-40e6-ad5f-a03ffecdc0a5',
+        SType: '66077e16-aa5f-401f-abcc-e1842d151b14',
+        SType: '2d2a9e39-34a1-4dde-9767-a37251854cc5',
+        SType: '57fdca99-9b2c-47aa-838b-eed600d3264a',
+        SType: 'c974636a-6324-4426-9440-d599353c9a18',
+        SType: '4372526e-266a-4474-a140-7e633015b15c',
+        SType: '602e637e-11e8-4901-b80f-db8a467afda2',
+      },
+    },
+  ]);
+  return { values: values, total: total.length };
+};
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -2785,4 +2815,5 @@ module.exports = {
   getshop_myshops,
   getshop_myshops_asm,
   insertOrder,
+  get_total_vendorShop,
 };

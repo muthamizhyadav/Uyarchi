@@ -393,7 +393,13 @@ const getVendorShops = catchAsync(async (req, res) => {
 });
 
 const getNotAssignSalesManData = catchAsync(async (req, res) => {
-  const data = await b2bCloneService.getnotAssignSalesmanData(req.params.id, req.params.page, req.params.limit, req.params.uid, req.params.date);
+  const data = await b2bCloneService.getnotAssignSalesmanData(
+    req.params.id,
+    req.params.page,
+    req.params.limit,
+    req.params.uid,
+    req.params.date
+  );
   res.send(data);
 });
 
@@ -419,6 +425,11 @@ const data1 = catchAsync(async (req, res) => {
 
 const insertOrder = catchAsync(async (req, res) => {
   const data = await b2bCloneService.insertOrder();
+  res.send(data);
+});
+
+const get_total_vendorShop = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.get_total_vendorShop(req.params.page);
   res.send(data);
 });
 
@@ -464,4 +475,5 @@ module.exports = {
   data1,
   getshopmyshops,
   insertOrder,
+  get_total_vendorShop,
 };
