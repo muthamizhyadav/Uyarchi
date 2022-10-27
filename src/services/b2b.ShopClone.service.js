@@ -1530,7 +1530,6 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
     {
       $sort: { filterDate: -1 },
     },
-    // { type: { $eq: 'shop' } },
     {
       $match: {
         $and: [userMatch, dateMatch, timeMatch, streetMatch],
@@ -1592,7 +1591,6 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
     {
       $unwind: '$StreetData',
     },
-    // shoplists
     {
       $lookup: {
         from: 'shoplists',
@@ -1601,9 +1599,27 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         as: 'shoptype',
       },
     },
-    // {
-    //   $unwind: '$shoptype',
-    // },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'DA_USER',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'DA_USERNAME',
+      },
+    },
+    {
+      $unwind: {
+        path: '$DA_USERNAME',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
         // _id:1,
@@ -1627,6 +1643,13 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         active: 1,
         mobile: 1,
         date: 1,
+        DA_CREATED: 1,
+        DA_Comment: 1,
+        DA_DATE: 1,
+        DA_TIME: 1,
+        DA_CREATED: 1,
+        DA_USERNAME: "$DA_USERNAME.name",
+        purchaseQTy: 1,
       },
     },
     { $skip: 10 * page },
