@@ -1708,6 +1708,7 @@ const getAllDatasalesmanDataAndAssign = async (id,date,page) =>{
          salesmanName:"$b2busersdata.name",
          asmname:"$b2busersdata1.name",
          targetTonne:1,
+         targetValue:1,
          salesman:1,
          status:1,
          wardAdminId:1,
@@ -1715,7 +1716,13 @@ const getAllDatasalesmanDataAndAssign = async (id,date,page) =>{
          time:1,
 
       }
-    }
+    },
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
   ])
   const total = await WithoutAsmWithAsm.aggregate([
     {
@@ -1748,6 +1755,7 @@ const getAllDatasalesmanDataAndAssign = async (id,date,page) =>{
          salesmanName:"$b2busersdata.name",
          asmname:"$b2busersdata1.name",
          targetTonne:1,
+         targetValue:1,
          salesman:1,
          status:1,
          wardAdminId:1,
@@ -1755,12 +1763,6 @@ const getAllDatasalesmanDataAndAssign = async (id,date,page) =>{
          time:1,
 
       }
-    },
-    {
-      $skip: 10 * parseInt(page),
-    },
-    {
-      $limit: 10,
     },
 
   ])
