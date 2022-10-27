@@ -1715,12 +1715,14 @@ const updateShopById = async (id, updateBody) => {
   return shop;
 };
 
-const updateShopStatus = async (id, status, bodyData) => {
+const updateShopStatus = async (id, status, bodyData, userID) => {
   let shop = await getShopById(id);
   if (!shop) {
     throw new ApiError(httpStatus.NOT_FOUND, 'shop Not Found');
   }
-  shop = await Shop.findByIdAndUpdate({ _id: id }, { ...bodyData, ...{ status: status } }, { new: true });
+  let servertime = moment().format('HHmm');
+  let serverdate = moment().format('YYYY-MM-DD');
+  shop = await Shop.findByIdAndUpdate({ _id: id }, { ...bodyData, ...{ status: status, DA_DATE: serverdate, DA_USER: userID, DA_CREATED: moment(), DA_TIME: servertime } }, { new: true });
   return shop;
 };
 

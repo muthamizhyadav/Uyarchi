@@ -146,7 +146,20 @@ const shopSchema = mongoose.Schema({
   },
   purchaseQTy: {
     type: String,
+  },
+  DA_DATE: {
+    type: String,
+  },
+  DA_USER: {
+    type: String,
+  },
+  DA_CREATED: {
+    type: Date,
+  },
+  DA_TIME: {
+    type: String,
   }
+
 
 });
 

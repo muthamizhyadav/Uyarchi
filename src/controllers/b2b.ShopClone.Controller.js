@@ -337,7 +337,7 @@ const getAllAttendanceCloneforMapView = catchAsync(async (req, res) => {
 });
 
 const updateShopStatusdataapproved = catchAsync(async (req, res) => {
-  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'data_approved', req.body);
+  const shops = await b2bCloneService.updateShopStatus(req.params.id, 'data_approved', req.body, req.userId);
   res.send(shops);
 });
 
