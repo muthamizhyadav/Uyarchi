@@ -229,6 +229,11 @@ const WardAdminRoleHistorydata = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const WardAdminRoledatas = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.WardAdminRoledatas(req.params.id, req.params.date, req.params.page);
+  res.send(data);
+});
+
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -272,4 +277,5 @@ module.exports = {
   getAlldataSalesmanandtele_wcce,
   telecallernames,
   WardAdminRoleHistorydata,
+  WardAdminRoledatas,
 };
