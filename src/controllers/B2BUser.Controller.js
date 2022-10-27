@@ -131,7 +131,7 @@ const deleteB2bUsersbyId = catchAsync(async (req, res) => {
 
 const shopverification = catchAsync(async (req, res) => {
   const users = await b2bUsersService.shopverification(req.userId);
-  res.status(204).send({ message: 'Deleted' });
+  res.send(users);
 });
 
 module.exports = {
