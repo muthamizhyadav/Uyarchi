@@ -27,7 +27,8 @@ const createwardAdminRole = async (body) => {
 }
   await WardAdminRoleHistory.create(values1)
    const value = await WardAdminRole.find({b2bUserId:body.b2bUserId, date:serverdate});
-   if(value.length != 0){
+   if(value.length != 0)
+   {
   value.forEach(async (e) => {
     e.targetValue += parseInt(body.targetValue)
     e.targetTonne += parseInt(body.targetTonne)
@@ -1409,7 +1410,7 @@ const getAllAsmCurrentdata = async (id) =>{
      
 }
 
-const WardAdminRoleHistor = async (id,date) =>{
+const WardAdminRoleHistor = async (id,date,page) =>{
   let match ;
   if(id != 'null' && date == 'null'){
     match = {  
@@ -1431,6 +1432,40 @@ const WardAdminRoleHistor = async (id,date) =>{
   }
 
   const data = await WardAdminRoleHistory.aggregate([
+    { $sort: { date: -1} },
+    {
+      $match: match
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'b2bUserId',
+        foreignField: '_id',
+        as: 'b2busersdata',
+      },
+    },
+    {
+      $unwind: '$b2busersdata',
+    },
+    {
+      $project:{
+         Name:"$b2busersdata.name",
+         targetTonne:1,
+         date:1,
+         time:1,
+         targetValue:1,
+         b2bUserId:1,
+      }
+    },
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
+  ])
+  const total = await WardAdminRoleHistory.aggregate([
+    { $sort: { date: -1} },
     {
       $match: match
     },
@@ -1456,7 +1491,7 @@ const WardAdminRoleHistor = async (id,date) =>{
       }
     }
   ])
-  return data ;
+  return {date:data, total:total.length} ;
      
 }
 
@@ -1577,7 +1612,7 @@ const getAlldataASm = async (id) =>{
      
 }
 
-const getAllDatasalesmanDataAndAssign = async (id,date) =>{
+const getAllDatasalesmanDataAndAssign = async (id,date,page) =>{
   let match;
   if(id != 'null' && date == 'null'){
     match = {  
@@ -1593,6 +1628,7 @@ const getAllDatasalesmanDataAndAssign = async (id,date) =>{
      }
   }
   const data = await WithoutAsmWithAsm.aggregate([
+    { $sort: { date: -1} },
     {
       $match: match
     },
@@ -1608,8 +1644,20 @@ const getAllDatasalesmanDataAndAssign = async (id,date) =>{
       $unwind: '$b2busersdata',
     },
     {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'wardAdminId',
+        foreignField: '_id',
+        as: 'b2busersdata1',
+      },
+    },
+    // {
+    //   $unwind: '$b2busersdata1',
+    // },
+    {
       $project:{
          salesmanName:"$b2busersdata.name",
+         asmname:"$b2busersdata1.name",
          targetTonne:1,
          salesman:1,
          status:1,
@@ -1620,7 +1668,54 @@ const getAllDatasalesmanDataAndAssign = async (id,date) =>{
       }
     }
   ])
-  return data ;
+  const total = await WithoutAsmWithAsm.aggregate([
+    {
+      $match: match
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'salesman',
+        foreignField: '_id',
+        as: 'b2busersdata',
+      },
+    },
+    {
+      $unwind: '$b2busersdata',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'wardAdminId',
+        foreignField: '_id',
+        as: 'b2busersdata1',
+      },
+    },
+    // {
+    //   $unwind: '$b2busersdata1',
+    // },
+    {
+      $project:{
+         salesmanName:"$b2busersdata.name",
+         asmname:"$b2busersdata1.name",
+         targetTonne:1,
+         salesman:1,
+         status:1,
+         wardAdminId:1,
+         date:1,
+         time:1,
+
+      }
+    },
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
+
+  ])
+  return {data:data, total:total.length} ;
      
 }
 const getAlldataSalesmanandtele_wcce= async (id) =>{
@@ -1631,6 +1726,40 @@ const getAlldataSalesmanandtele_wcce= async (id) =>{
         $and: [{ salesman: { $eq:id} },{ date: { $eq:serverdate} }],
       },
     },
+  ])
+  return data ;
+     
+}
+
+const WardAdminRoleHistorydata = async (id,date) =>{
+  const data = await WardAdminRoleHistory.aggregate([
+    {
+      $match: {
+        $and: [{ b2bUserId: { $eq:id} },{ date: { $eq:date} }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'b2bUserId',
+        foreignField: '_id',
+        as: 'b2busersdata',
+      },
+    },
+    {
+      $unwind: '$b2busersdata',
+    },
+    {
+      $project:{
+         asmname:"$b2busersdata.name",
+         targetTonne:1,
+         type:1,
+         targetValue:1,
+         date:1,
+         time:1,
+      }
+    }
+
   ])
   return data ;
      
@@ -1681,4 +1810,5 @@ module.exports = {
   getAllDatasalesmanDataAndAssign,
   getAlldataSalesmanandtele_wcce,
   telecallernames,
+  WardAdminRoleHistorydata,
 };
