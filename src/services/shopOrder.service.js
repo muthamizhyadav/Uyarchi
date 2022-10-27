@@ -426,11 +426,14 @@ const updateshop_order = async (id, body) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not found');
   }
   let timeslot = body.time_of_delivery.replace('-', '');
+  let Payment = body.Payment;
+  if (body.Payment == 'Continue' || body.Payment == 'addmore') {
+    Payment = 'Paynow';
+  }
   shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { ...body, ...{ timeslot: timeslot } }, { new: true });
-  let order = await OrderPayment.findOne({ orderId: shoporder._id, type: 'advanced' });
   let currentDate = moment().format('YYYY-MM-DD');
   let currenttime = moment().format('HHmmss');
-  if (!order) {
+  if (body.Payment == 'addmore' || body.Payment == 'Paynow') {
     await OrderPayment.create({
       uid: userid,
       paidAmt: body.paidamount,
@@ -440,9 +443,8 @@ const updateshop_order = async (id, body) => {
       orderId: shoporder._id,
       type: 'advanced',
     });
-  } else {
-    await OrderPayment.findByIdAndUpdate({ _id: order._id }, { paidAmt: body.paidamount }, { new: true });
   }
+
 
   await ProductorderClone.deleteMany({ orderId: id });
   let { product, date, time, shopId } = body;

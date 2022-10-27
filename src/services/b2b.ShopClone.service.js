@@ -1731,6 +1731,13 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
     //   $unwind: '$shoptype',
     // },
   ]);
+
+  // let da = await Shop.find({ status: "data_approved" })
+  // da.forEach(async(e) => {
+  //   await Shop.findByIdAndUpdate({ _id: e._id }, { status: "Pending" });
+  // });
+
+
   return {
     values: values,
     total: total.length,
