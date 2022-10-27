@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-const { Supplier } = require('../models');
+const Supplier = require('../models/supplier.model');
 const { Product } = require('../models/product.model');
 const { ProductorderSchema } = require('../models/shopOrder.model');
 const CallStatus = require('../models/callStatus');
@@ -147,7 +147,7 @@ const updateDisableSupplierById = async (id) => {
 const productDealingWithsupplier = async (id) => {
   let currentDate = moment().format('YYYY-MM-DD');
   let currentDateorder = moment().format('DD-MM-YYYY');
-  return Supplier.aggregate([
+  let Suppliers = await Supplier.aggregate([
     {
       $match: {
         productDealingWith: {
@@ -219,18 +219,20 @@ const productDealingWithsupplier = async (id) => {
             },
           },
           {
-          
-              $match: {
-                $expr: {
-                  $ne: ['$orderType', 'sudden'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
-                },
+
+            $match: {
+              $expr: {
+                $ne: ['$orderType', 'sudden'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
               },
+            },
           },
         ],
         as: 'callStatus',
       },
     },
   ]);
+  let product = await Product.findById(id)
+  return { Supplier: Suppliers, product: product }
 };
 
 const getSupplierDataByProductId = async (id) => {

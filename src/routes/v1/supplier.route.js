@@ -14,7 +14,7 @@ router
   .route('/disable/:id')
   .get(supplierController.getDisableSupplierById)
   .put(supplierController.updateDisableSupplierById);
-router.route('/products/dealing/:id/:date').get(supplierController.productDealingWithsupplier);
+router.route('/products/dealing/:id/').get(supplierController.productDealingWithsupplier);
 router.route('/dealing/:date').get(supplierController.getSupplierWithApprovedstatus);
 router.route('/product/supplier/:supplierId/:date').get(supplierController.getproductsWithSupplierId);
 router.route('/products/aggregate/:date').get(supplierController.getproductfromCallStatus);
