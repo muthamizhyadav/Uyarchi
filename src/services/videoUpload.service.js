@@ -23,7 +23,16 @@ const getvideoByShopId = async (id) => {
   return values;
 };
 
+const get_Shop_VideoBy_ShopId = async (id) => {
+  let values = await videoUploadService.findOne({ shopId: id });
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'No Video Fount In This Shop');
+  }
+  return values;
+};
+
 module.exports = {
   createVideoUpload,
   getvideoByShopId,
+  get_Shop_VideoBy_ShopId,
 };
