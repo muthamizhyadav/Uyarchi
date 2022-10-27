@@ -1499,11 +1499,17 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   if (status != 'null') {
     streetMatch = { status: status };
   }
-  if (user != 'null') {
+  if (user != 'null' && status != 'data_approved') {
     userMatch = { Uid: user };
   }
-  if (startdata != 'null' && enddate != 'null') {
+  else if (user != 'null' && status == 'data_approved') {
+    userMatch = { DA_USER: user }
+  }
+  if (startdata != 'null' && enddate != 'null' && status != 'data_approved') {
     dateMatch = { filterDate: { $gte: startdata, $lte: enddate } };
+  }
+  else if (startdata != 'null' && enddate != 'null' && status == 'data_approved') {
+    dateMatch = { DA_DATE: { $gte: startdata, $lte: enddate } };
   }
   if (starttime != 'null') {
     startTime = parseInt(starttime);
@@ -1511,13 +1517,19 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   if (endtime != 'null') {
     endTime = parseInt(endtime);
   }
-  timeMatch = { time: { $gte: startTime, $lte: endTime } };
+  if (status != 'data_approved') {
+    timeMatch = { time: { $gte: startTime, $lte: endTime } };
+  }
+  else {
+    timeMatch = {
+      DA_TIME: { $gte: startTime, $lte: endTime }
+    };
+  }
 
   let values = await Shop.aggregate([
     {
       $sort: { filterDate: -1 },
     },
-    // { type: { $eq: 'shop' } },
     {
       $match: {
         $and: [userMatch, dateMatch, timeMatch, streetMatch],
@@ -1579,7 +1591,6 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
     {
       $unwind: '$StreetData',
     },
-    // shoplists
     {
       $lookup: {
         from: 'shoplists',
@@ -1588,9 +1599,27 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         as: 'shoptype',
       },
     },
-    // {
-    //   $unwind: '$shoptype',
-    // },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'DA_USER',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'DA_USERNAME',
+      },
+    },
+    {
+      $unwind: {
+        path: '$DA_USERNAME',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
         // _id:1,
@@ -1614,6 +1643,13 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         active: 1,
         mobile: 1,
         date: 1,
+        DA_CREATED: 1,
+        DA_Comment: 1,
+        DA_DATE: 1,
+        DA_TIME: 1,
+        DA_CREATED: 1,
+        DA_USERNAME: "$DA_USERNAME.name",
+        purchaseQTy: 1,
       },
     },
     { $skip: 10 * page },
@@ -1715,12 +1751,14 @@ const updateShopById = async (id, updateBody) => {
   return shop;
 };
 
-const updateShopStatus = async (id, status, bodyData) => {
+const updateShopStatus = async (id, status, bodyData, userID) => {
   let shop = await getShopById(id);
   if (!shop) {
     throw new ApiError(httpStatus.NOT_FOUND, 'shop Not Found');
   }
-  shop = await Shop.findByIdAndUpdate({ _id: id }, { ...bodyData, ...{ status: status } }, { new: true });
+  let servertime = moment().format('HHmm');
+  let serverdate = moment().format('YYYY-MM-DD');
+  shop = await Shop.findByIdAndUpdate({ _id: id }, { ...bodyData, ...{ status: status, DA_DATE: serverdate, DA_USER: userID, DA_CREATED: moment(), DA_TIME: servertime } }, { new: true });
   return shop;
 };
 
