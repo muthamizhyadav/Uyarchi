@@ -430,7 +430,7 @@ const updateshop_order = async (id, body, userid) => {
   if (body.Payment == 'Continue' || body.Payment == 'addmore') {
     Payment = 'Paynow';
   }
-  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { ...body, ...{ timeslot: timeslot } }, { new: true });
+  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { ...body, ...{ timeslot: timeslot, Payment: Payment } }, { new: true });
   let currentDate = moment().format('YYYY-MM-DD');
   let currenttime = moment().format('HHmmss');
   if (body.Payment == 'addmore' || body.Payment == 'Paynow') {
