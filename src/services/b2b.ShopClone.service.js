@@ -1505,8 +1505,11 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   else if (user != 'null' && status == 'data_approved') {
     userMatch = { DA_USER: user }
   }
-  if (startdata != 'null' && enddate != 'null') {
+  if (startdata != 'null' && enddate != 'null' && status != 'data_approved') {
     dateMatch = { filterDate: { $gte: startdata, $lte: enddate } };
+  }
+  else if (startdata != 'null' && enddate != 'null' && status == 'data_approved') {
+    dateMatch = { DA_DATE: { $gte: startdata, $lte: enddate } };
   }
   if (starttime != 'null') {
     startTime = parseInt(starttime);
@@ -1514,7 +1517,14 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   if (endtime != 'null') {
     endTime = parseInt(endtime);
   }
-  timeMatch = { time: { $gte: startTime, $lte: endTime } };
+  if (status != 'data_approved') {
+    timeMatch = { time: { $gte: startTime, $lte: endTime } };
+  }
+  else {
+    timeMatch = {
+      DA_TIME: { $gte: startTime, $lte: endTime }
+    };
+  }
 
   let values = await Shop.aggregate([
     {

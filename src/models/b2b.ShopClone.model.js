@@ -157,7 +157,7 @@ const shopSchema = mongoose.Schema({
     type: Date,
   },
   DA_TIME: {
-    type: String,
+    type: Number,
   }
 
 
