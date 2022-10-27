@@ -81,11 +81,15 @@ router.route('/shopSearch/:key').get(b2bShopCloneController.searchShops);
 router.route('/getVendorShops/uyar-dial/:key').get(b2bShopCloneController.getVendorShops);
 
 // salesmanShops
-router.route('/getNotAssignReassignSalesman/data/:id/:page/:limit/:uid/:date').get(b2bShopCloneController.getNotAssignSalesManData);
+router
+  .route('/getNotAssignReassignSalesman/data/:id/:page/:limit/:uid/:date')
+  .get(b2bShopCloneController.getNotAssignSalesManData);
 
 router.route('/getShops/By/type/:id/:page').get(b2bShopCloneController.GetShopsByShopType);
 router.route('/getShops/By/type/reviews/:id/:page').get(b2bShopCloneController.GetShopsReviewsByShopType);
 router.route('/getShop/Review/ByShop/:id').get(b2bShopCloneController.getShopReviewByShopid);
 router.route('/data1/data').put(b2bShopCloneController.data1);
 router.route('/order/id').get(b2bShopCloneController.insertOrder);
+router.route('/vendor/shop/:page').get(b2bShopCloneController.get_total_vendorShop);
+
 module.exports = router;
