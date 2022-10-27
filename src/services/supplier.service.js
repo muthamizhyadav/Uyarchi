@@ -147,7 +147,7 @@ const updateDisableSupplierById = async (id) => {
 const productDealingWithsupplier = async (id) => {
   let currentDate = moment().format('YYYY-MM-DD');
   let currentDateorder = moment().format('DD-MM-YYYY');
-  let Supplier = await Supplier.aggregate([
+  let Suppliers = await Supplier.aggregate([
     {
       $match: {
         productDealingWith: {
@@ -232,7 +232,7 @@ const productDealingWithsupplier = async (id) => {
     },
   ]);
   let product = await Product.findById(id)
-  return { Supplier: Supplier, product: product }
+  return { Supplier: Suppliers, product: product }
 };
 
 const getSupplierDataByProductId = async (id) => {
