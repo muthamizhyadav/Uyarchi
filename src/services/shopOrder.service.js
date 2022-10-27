@@ -420,7 +420,7 @@ const updateShopOrderCloneById = async (id, updatebody) => {
   return shoporderClone;
 };
 
-const updateshop_order = async (id, body) => {
+const updateshop_order = async (id, body, userid) => {
   let shoporder = await ShopOrderClone.findById(id);
   if (!shoporder) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Not found');

@@ -162,7 +162,7 @@ const createOrderId = catchAsync(async (req, res) => {
 });
 
 const updateshop_order = catchAsync(async (req, res) => {
-  const data = await shopOrderService.updateshop_order(req.params.id, req.body);
+  const data = await shopOrderService.updateshop_order(req.params.id, req.body, req.userId);
   res.send(data);
 });
 
