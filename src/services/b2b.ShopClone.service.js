@@ -2728,7 +2728,7 @@ const getShopReviewByShopid = async (id) => {
 };
 
 const data1 = async () => {
-  const data = await Shop.find({ salesManStatus: 'tempReassign' });
+  const data = await Shop.find({salesManStatus: { $in: ["Reassign", "Assign", "tempReassign"] }});
   if (data.length != 0) {
     data.forEach(async (e) => {
       await Shop.findByIdAndUpdate({ _id: e._id }, { salesManStatus: null }, { new: true });
