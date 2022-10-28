@@ -264,15 +264,15 @@ const getShopHistory = async (AssignedUserId, date) => {
       },
     },
     { $unwind: '$shopDtaa' },
-    {
-      $lookup: {
-        from: 'creditbillpaymenthistories',
-        localField: '_id',
-        foreignField: 'creditBillId',
-        as: 'creditData',
-      },
-    },
-    { $unwind: '$creditData' },
+    // {
+    //   $lookup: {
+    //     from: 'creditbillpaymenthistories',
+    //     localField: '_id',
+    //     foreignField: 'creditBillId',
+    //     as: 'creditData',
+    //   },
+    // },
+    // { $unwind: '$creditData' },
     {
       $lookup: {
         from: 'productorderclones',
@@ -312,15 +312,15 @@ const getShopHistory = async (AssignedUserId, date) => {
       },
     },
     { $unwind: '$productData' },
-    {
-      $lookup: {
-        from: 'creditbillpaymenthistories',
-        localField: '_id',
-        foreignField: 'creditBillId',
-        as: 'creditDtaa',
-      },
-    },
-    { $unwind: '$creditDtaa' },
+    // {
+    //   $lookup: {
+    //     from: 'creditbillpaymenthistories',
+    //     localField: '_id',
+    //     foreignField: 'creditBillId',
+    //     as: 'creditDtaa',
+    //   },
+    // },
+    // { $unwind: '$creditDtaa' },
 
     {
       $project: {
