@@ -84,6 +84,10 @@ const callStatusSchema = mongoose.Schema({
   created: {
     type: Date,
   },
+  order_Type: {
+    type: String,
+
+  }
 });
 
 callStatusSchema.plugin(toJSON);
