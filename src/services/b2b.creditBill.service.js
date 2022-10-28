@@ -2,14 +2,8 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 let currentDate = moment().format('DD-MM-YYYY');
-const { Shop } = require('../models/b2b.ShopClone.model');
 const { ShopOrderClone } = require('../models/shopOrder.model');
 const Role = require('../models/roles.model');
-const { ProductorderClone } = require('../models/shopOrder.model');
-const pettyStockModel = require('../models/b2b.pettyStock.model');
-const { wardAdminGroup, wardAdminGroupModel_ORDERS } = require('../models/b2b.wardAdminGroup.model');
-const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
-const { Product } = require('../models/product.model');
 const orderPayment = require('../models/orderpayment.model');
 const creditBillGroup = require('../models/b2b.creditBillGroup.model');
 const creditBill = require('../models/b2b.creditBill.model');
@@ -330,6 +324,7 @@ const getShopHistory = async (AssignedUserId, date) => {
 
     {
       $project: {
+        shopordercloneId: "$shoporderclonedata._id",
         customerBillId: '$shoporderclonedata.customerBillId',
         OrderId: '$shoporderclonedata.OrderId',
         date: '$shoporderclonedata.date',
@@ -359,6 +354,7 @@ const getShopHistory = async (AssignedUserId, date) => {
 
     {
       $project: {
+        shopordercloneId: 1,
         customerBillId: 1,
         OrderId: 1,
         date: 1,
@@ -669,11 +665,11 @@ const getsalesName = async () => {
 
 const getNotAssignData = async (page) => {
   let values = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
+    //   },
+    // },
 
     {
       $lookup: {
@@ -739,6 +735,32 @@ const getNotAssignData = async (page) => {
     },
 
     { $unwind: '$productData' },
+    {
+      $lookup: {
+        from:'creditbills',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'creditbillsData',
+      }
+    },
+    { $unwind: '$creditbillsData'},
+    {
+      $lookup: {
+        from:'creditbillpaymenthistories',
+        localField: 'creditbillsData._id',
+        foreignField: 'creditBillId',
+        pipeline: [
+          {
+      $match: {
+        $and: [{ pay_type: { $eq: 'Partialy' } }],
+      },
+    },
+        ],
+        as: 'creditbillpaymenthistoriesData',
+      }
+    },
+    // { $unwind: '$creditbillpaymenthistoriesData'},
+
 
     {
       $project: {
@@ -773,16 +795,17 @@ const getNotAssignData = async (page) => {
         $and: [{ condition1: { $eq: true } }],
       },
     },
+    
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
 
   let total = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
-      },
-    },
+     // {
+    //   $match: {
+    //     $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
+    //   },
+    // },
 
     {
       $lookup: {
@@ -848,6 +871,32 @@ const getNotAssignData = async (page) => {
     },
 
     { $unwind: '$productData' },
+    {
+      $lookup: {
+        from:'creditbills',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'creditbillsData',
+      }
+    },
+    { $unwind: '$creditbillsData'},
+    {
+      $lookup: {
+        from:'creditbillpaymenthistories',
+        localField: 'creditbillsData._id',
+        foreignField: 'creditBillId',
+        pipeline: [
+          {
+      $match: {
+        $and: [{ pay_type: { $eq: 'Partialy' } }],
+      },
+    },
+        ],
+        as: 'creditbillpaymenthistoriesData',
+      }
+    },
+    // { $unwind: '$creditbillpaymenthistoriesData'},
+
 
     {
       $project: {
