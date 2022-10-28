@@ -1338,12 +1338,13 @@ const getGroupAndBill = async (AssignedUserId) => {
 };
 
 const getDetailsByPassGroupId = async (id) => {
-  let values = await creditBillPaymentModel.aggregate([
-    {
+
+  let values = await ShopOrderClone.aggregate([
+       {
       $lookup: {
         from: 'creditbills',
-        localField: 'creditBillId',
-        foreignField: '_id',
+        localField: '_id',
+        foreignField: 'orderId',
         as: 'billData',
       },
     },
@@ -1378,7 +1379,7 @@ const getDetailsByPassGroupId = async (id) => {
     {
       $lookup: {
         from: 'orderpayments',
-        localField: 'billData.orderId',
+        localField: '_id',
         foreignField: 'orderId',
         pipeline: [
           {
@@ -1389,10 +1390,21 @@ const getDetailsByPassGroupId = async (id) => {
       },
     },
     { $unwind: '$paymentData' },
+    
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+
+        as: 'paymentDatadata',
+      },
+    },
+    // { $unwind: '$paymentDatadata' },
     {
       $lookup: {
         from: 'productorderclones',
-        localField: 'billData.orderId',
+        localField: '_id',
         foreignField: 'orderId',
         pipeline: [
           {
@@ -1432,13 +1444,13 @@ const getDetailsByPassGroupId = async (id) => {
 
     {
       $project: {
-        pay_By: 1,
-        pay_type: 1,
-        upiStatus: 1,
-        amountPayingWithDEorSM: 1,
-        billN0: '$billData.bill',
-        billDate: '$billData.date',
-        billTime: '$billData.time',
+        // pay_By: 1,
+        // pay_type: 1,
+        // upiStatus: 1,
+        // amountPayingWithDEorSM: 1,
+        billN0: 1,
+        billDate: 1,
+        billTime: 1,
         shopNmae: '$Orderdatas.shopNmae',
         BalanceAmount: '$Orderdatas.pendingAmount',
         shopNmae: '$shopNameData.SName',
@@ -1447,18 +1459,14 @@ const getDetailsByPassGroupId = async (id) => {
         paidAmount: '$paymentData.price',
 
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
-        //  pendingamountFromGroup: { $subtract:[ ['$productData.price', '$paymentData.price']  ,parseInt('$amountPayingWithDEorSM')]},
-        // pendingamountFromGroup: {
-        //   $subtract: [{ $round: { $subtract: ['$productData.price', '$paymentData.price'] } }, '$amountPayingWithDEorSM'],
-        // },
       },
     },
     {
       $project: {
-        pay_By: 1,
-        pay_type: 1,
-        upiStatus: 1,
-        amountPayingWithDEorSM: 1,
+        // pay_By: 1,
+        // pay_type: 1,
+        // upiStatus: 1,
+        // amountPayingWithDEorSM: 1,
         billN0: 1,
         billDate: 1,
         billTime: 1,
@@ -1470,14 +1478,147 @@ const getDetailsByPassGroupId = async (id) => {
         paidAmount: 1,
 
         pendingAmount: 1,
-        //  pendingamountFromGroup: { $subtract:[ ['$productData.price', '$paymentData.price']  ,parseInt('$amountPayingWithDEorSM')]},
-        // pendingamountFromGroup: {
-        //   $subtract: [{ $round: { $subtract: ['$productData.price', '$paymentData.price'] } }, '$amountPayingWithDEorSM'],
-        // },
-        // amount:{parseInt("$amountPayingWithDEorSM")}
         amount: { $subtract: ['$pendingAmount', '$amountPayingWithDEorSM'] },
       },
     },
+
+
+
+
+
+
+    
+  // let values = await creditBillPaymentModel.aggregate([
+  //   {
+  //     $lookup: {
+  //       from: 'creditbills',
+  //       localField: 'creditBillId',
+  //       foreignField: '_id',
+  //       as: 'billData',
+  //     },
+  //   },
+  //   { $unwind: '$billData' },
+  //   {
+  //     $lookup: {
+  //       from: 'creditbillgroups',
+  //       localField: 'billData.creditbillId',
+  //       pipeline: [
+  //         {
+  //           $match: {
+  //             $and: [{ _id: { $eq: id } }],
+  //           },
+  //         },
+  //       ],
+  //       foreignField: '_id',
+  //       as: 'groupDtaa',
+  //     },
+  //   },
+
+  //   { $unwind: '$groupDtaa' },
+  //   {
+  //     $lookup: {
+  //       from: 'b2bshopclones',
+  //       localField: 'billData.shopId',
+  //       foreignField: '_id',
+  //       as: 'shopNameData',
+  //     },
+  //   },
+  //   { $unwind: '$shopNameData' },
+
+  //   {
+  //     $lookup: {
+  //       from: 'orderpayments',
+  //       localField: 'billData.orderId',
+  //       foreignField: 'orderId',
+  //       pipeline: [
+  //         {
+  //           $group: { _id: null, price: { $sum: '$paidAmt' } },
+  //         },
+  //       ],
+  //       as: 'paymentData',
+  //     },
+  //   },
+  //   { $unwind: '$paymentData' },
+  //   {
+  //     $lookup: {
+  //       from: 'productorderclones',
+  //       localField: 'billData.orderId',
+  //       foreignField: 'orderId',
+  //       pipeline: [
+  //         {
+  //           $project: {
+  //             Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+  //             GST_Number: 1,
+  //           },
+  //         },
+  //         {
+  //           $project: {
+  //             sum: '$sum',
+  //             percentage: {
+  //               $divide: [
+  //                 {
+  //                   $multiply: ['$GST_Number', '$Amount'],
+  //                 },
+  //                 100,
+  //               ],
+  //             },
+  //             value: '$Amount',
+  //           },
+  //         },
+  //         {
+  //           $project: {
+  //             price: { $sum: ['$value', '$percentage'] },
+  //             value: '$value',
+  //             GST: '$percentage',
+  //           },
+  //         },
+  //         { $group: { _id: null, price: { $sum: '$price' } } },
+  //       ],
+  //       as: 'productData',
+  //     },
+  //   },
+
+  //   { $unwind: '$productData' },
+
+  //   {
+  //     $project: {
+  //       pay_By: 1,
+  //       pay_type: 1,
+  //       upiStatus: 1,
+  //       amountPayingWithDEorSM: 1,
+  //       billN0: '$billData.bill',
+  //       billDate: '$billData.date',
+  //       billTime: '$billData.time',
+  //       shopNmae: '$Orderdatas.shopNmae',
+  //       BalanceAmount: '$Orderdatas.pendingAmount',
+  //       shopNmae: '$shopNameData.SName',
+
+  //       BillAmount: { $round: ['$productData.price', 0] },
+  //       paidAmount: '$paymentData.price',
+
+  //       pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+  //     },
+  //   },
+  //   {
+  //     $project: {
+  //       pay_By: 1,
+  //       pay_type: 1,
+  //       upiStatus: 1,
+  //       amountPayingWithDEorSM: 1,
+  //       billN0: 1,
+  //       billDate: 1,
+  //       billTime: 1,
+  //       shopNmae: 1,
+  //       BalanceAmount: 1,
+  //       shopNmae: 1,
+
+  //       BillAmount: 1,
+  //       paidAmount: 1,
+
+  //       pendingAmount: 1,
+  //       amount: { $subtract: ['$pendingAmount', '$amountPayingWithDEorSM'] },
+  //     },
+  //   },
   ]);
   return values;
 };
