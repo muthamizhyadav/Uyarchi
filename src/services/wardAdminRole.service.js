@@ -957,7 +957,7 @@ const createtemperaryAssigndata = async (body) => {
   let serverdate = moment().format('YYYY-MM-DD');
   let time = moment().format('hh:mm a');
   body.arr.forEach(async (e) => {
-    let data = await SalesManShop.find({ shopId: e, status:"Assign" });
+    let data = await SalesManShop.find({ shopId: e, status: { $in: ["Assign", "tempReassign"] } });
     console.log(data);
     if (data.length != 0) {
       data.forEach(async (f) => {
@@ -975,17 +975,18 @@ const createtemperaryAssigndata = async (body) => {
           { new: true }
         );
       });
-    } else {
-      body.arr.forEach(async (e) => {
-        await SalesManShop.create({
-          shopId: e,
-          status: body.status,
-          salesManId: body.salesManId,
-          date: serverdate,
-          time: time,
-        });
-      });
-    }
+    } 
+    // else {
+    //   body.arr.forEach(async (e) => {
+    //     await SalesManShop.create({
+    //       shopId: e,
+    //       status: body.status,
+    //       salesManId: body.salesManId,
+    //       date: serverdate,
+    //       time: time,
+    //     });
+    //   });
+    // }
   });
 
   return { data: 'created' };
