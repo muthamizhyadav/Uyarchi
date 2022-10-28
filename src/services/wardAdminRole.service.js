@@ -1711,6 +1711,7 @@ const getAllDatasalesmanDataAndAssign = async (id,date,page) =>{
          targetValue:1,
          salesman:1,
          status:1,
+         type:1,
          wardAdminId:1,
          date:1,
          time:1,
