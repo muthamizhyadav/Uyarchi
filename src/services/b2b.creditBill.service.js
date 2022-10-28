@@ -995,24 +995,24 @@ const getShopPendingByPassingShopId = async (id) => {
     },
 
     { $unwind: '$productData' },
-    {
-      $lookup: {
-        from:'creditbills',
-        localField: '_id',
-        foreignField: 'orderId',
-        as: 'billDta'
-      }
-    },
-    { $unwind: '$billDta'},
-    {
-      $lookup: {
-        from: 'creditbillpaymenthistories',
-        localField: 'billDta._id',
-        foreignField: 'creditBillId',
-        as: 'datasss'
-      }
-    },
-    { $unwind: '$datasss'},
+    // {
+    //   $lookup: {
+    //     from:'creditbills',
+    //     localField: '_id',
+    //     foreignField: 'orderId',
+    //     as: 'billDta'
+    //   }
+    // },
+    // { $unwind: '$billDta'},
+    // {
+    //   $lookup: {
+    //     from: 'creditbillpaymenthistories',
+    //     localField: 'billDta._id',
+    //     foreignField: 'creditBillId',
+    //     as: 'datasss'
+    //   }
+    // },
+    // { $unwind: '$datasss'},
 
     {
       $project: {

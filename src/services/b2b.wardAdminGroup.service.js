@@ -1060,6 +1060,16 @@ const getDeliveryOrderSeparate = async (id, page) => {
               pipeline: [
                 {
                   $lookup: {
+                    from: 'b2bshopclones',
+                    localField: 'shopId',
+                    foreignField: '_id',
+                    as: 'datass'
+                  }
+
+
+                },
+                {
+                  $lookup: {
                     from: 'productorderclones',
                     localField: '_id',
                     foreignField: 'orderId',
@@ -1109,6 +1119,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
                 },
                 {
                   $project: {
+                    shopName: '$datass.SName',
                     _id: 1,
                     status: 1,
                     productStatus: 1,
@@ -1149,6 +1160,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
             },
           },
           { $unwind: '$shopDatas' },
+        
           {
             $project: {
               _id: '$shopDatas._id',
@@ -1175,6 +1187,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
               totalPrice: '$shopDatas.totalPrice',
               paidamount: '$shopDatas.paidamount',
               productCount: '$shopDatas.productCount',
+              shopName: "$shopDatas.shopName"
             },
           },
         ],
