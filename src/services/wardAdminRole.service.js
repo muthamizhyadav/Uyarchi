@@ -726,7 +726,7 @@ const createSalesmanShop = async (body) => {
     });
   } else {
     arr.forEach(async (e) => {
-      let data = await SalesManShop.find({ salesManId: body.salesManId, shopId: e, status: 'Assign' });
+      let data = await SalesManShop.find({ salesManId: body.salesManId, shopId: e, status: { $in: ["Assign", "tempReassign"] }});
       data.forEach(async (f) => {
         await Shop.findByIdAndUpdate({ _id: f.shopId }, { salesManStatus: body.status }, { new: true });
         await SalesManShop.findByIdAndUpdate(
