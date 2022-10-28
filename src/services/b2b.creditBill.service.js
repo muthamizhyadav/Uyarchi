@@ -743,23 +743,9 @@ const getNotAssignData = async (page) => {
         as: 'creditbillsData',
       }
     },
-    { $unwind: '$creditbillsData'},
-    {
-      $lookup: {
-        from:'creditbillpaymenthistories',
-        localField: 'creditbillsData._id',
-        foreignField: 'creditBillId',
-        pipeline: [
-          {
-      $match: {
-        $and: [{ pay_type: { $eq: 'Partialy' } }],
-      },
-    },
-        ],
-        as: 'creditbillpaymenthistoriesData',
-      }
-    },
-    // { $unwind: '$creditbillpaymenthistoriesData'},
+    // { $unwind: '$creditbillsData'},
+    
+    
 
 
     {
@@ -879,23 +865,8 @@ const getNotAssignData = async (page) => {
         as: 'creditbillsData',
       }
     },
-    { $unwind: '$creditbillsData'},
-    {
-      $lookup: {
-        from:'creditbillpaymenthistories',
-        localField: 'creditbillsData._id',
-        foreignField: 'creditBillId',
-        pipeline: [
-          {
-      $match: {
-        $and: [{ pay_type: { $eq: 'Partialy' } }],
-      },
-    },
-        ],
-        as: 'creditbillpaymenthistoriesData',
-      }
-    },
-    // { $unwind: '$creditbillpaymenthistoriesData'},
+    // { $unwind: '$creditbillsData'},
+    
 
 
     {
