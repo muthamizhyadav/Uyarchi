@@ -625,6 +625,7 @@ const getShopNameWithPagination = async (page, userId) => {
 };
 
 const getShopNameCloneWithPagination = async (page, userId) => {
+  let today = moment().format('yyyy-MM-DD');
   let value = await ShopOrderClone.aggregate([
     {
       $sort: { date: -1, time: -1 },
@@ -732,13 +733,13 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         CGST: 1,
         OrderId: 1,
         productTotal: { $size: '$product' },
-        paidamount: { $sum: ["$orderpayments.amount","$reorderamount"] },
+        paidamount: { $sum: ["$orderpayments.amount", "$reorderamount"] },
         shopName: '$shopData.SName',
         contact: '$shopData.mobile',
         status: 1,
         timeslot: 1,
         date: 1,
-
+        datematch: { $eq: ["$date", today ] }
       },
     },
     { $skip: 10 * page },
@@ -746,7 +747,6 @@ const getShopNameCloneWithPagination = async (page, userId) => {
   ]);
   let retrunValue = [];
   let total = await ShopOrderClone.find({ Uid: { $eq: userId } }).count();
-  let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
   let threeDay = moment().subtract(2, 'days').format('yyyy-MM-DD');
   let hover = moment().subtract(-1, 'hours').format('H');

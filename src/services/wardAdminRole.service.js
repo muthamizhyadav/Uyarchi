@@ -726,7 +726,7 @@ const createSalesmanShop = async (body) => {
     });
   } else {
     arr.forEach(async (e) => {
-      let data = await SalesManShop.find({ salesManId: body.salesManId, shopId: e, status: 'Assign' });
+      let data = await SalesManShop.find({ salesManId: body.salesManId, shopId: e, status: { $in: ["Assign", "tempReassign"] }});
       data.forEach(async (f) => {
         await Shop.findByIdAndUpdate({ _id: f.shopId }, { salesManStatus: body.status }, { new: true });
         await SalesManShop.findByIdAndUpdate(
@@ -957,7 +957,7 @@ const createtemperaryAssigndata = async (body) => {
   let serverdate = moment().format('YYYY-MM-DD');
   let time = moment().format('hh:mm a');
   body.arr.forEach(async (e) => {
-    let data = await SalesManShop.find({ shopId: e });
+    let data = await SalesManShop.find({ shopId: e, status: { $in: ["Assign", "tempReassign"] } });
     console.log(data);
     if (data.length != 0) {
       data.forEach(async (f) => {
@@ -975,17 +975,18 @@ const createtemperaryAssigndata = async (body) => {
           { new: true }
         );
       });
-    } else {
-      body.arr.forEach(async (e) => {
-        await SalesManShop.create({
-          shopId: e,
-          status: body.status,
-          salesManId: body.salesManId,
-          date: serverdate,
-          time: time,
-        });
-      });
-    }
+    } 
+    // else {
+    //   body.arr.forEach(async (e) => {
+    //     await SalesManShop.create({
+    //       shopId: e,
+    //       status: body.status,
+    //       salesManId: body.salesManId,
+    //       date: serverdate,
+    //       time: time,
+    //     });
+    //   });
+    // }
   });
 
   return { data: 'created' };
@@ -1711,6 +1712,7 @@ const getAllDatasalesmanDataAndAssign = async (id,date,page) =>{
          targetValue:1,
          salesman:1,
          status:1,
+         type:1,
          wardAdminId:1,
          date:1,
          time:1,
