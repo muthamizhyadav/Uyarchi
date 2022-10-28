@@ -393,7 +393,57 @@ const getAllWithPaginationBilled_Supplier = async (id, status) => {
         as: 'PaymentData',
       },
     },
-
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'callstatuses',
+              localField: 'callstatusId',
+              foreignField: '_id',
+              as: 'callstatuses',
+            },
+          },
+          {
+            $unwind: "$callstatuses"
+          },
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productId',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: "$products"
+          },
+          {
+            $project: {
+              _id: 1,
+              orderType: "$callstatuses.orderType",
+              order_Type: "$callstatuses.order_Type",
+              proudctTitle: "$products.productTitle",
+              // proudctTitle: "$products",
+              status: 1,
+              created: 1,
+              incomingQuantity: 1,
+              incomingWastage: 1,
+              FQ1: 1,
+              FQ2: 1,
+              FQ3: 1,
+              billingPrice: 1,
+              billingQuantity: 1,
+              billingTotal: 1,
+            }
+          }
+        ],
+        as: 'ReceivedDatass',
+      },
+    },
     {
       $project: {
         _id: 1,
@@ -414,6 +464,7 @@ const getAllWithPaginationBilled_Supplier = async (id, status) => {
         pendingAmount: 1,
         supplierBillImg: 1,
         created: 1,
+        ReceivedDatass: "$ReceivedDatass"
       },
     },
   ]);
