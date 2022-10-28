@@ -123,6 +123,7 @@ const updateOrderStatus = async (id, updateBody) => {
     created: moment(),
     orderId: deliveryStatus._id,
     type: updateBody.reason,
+    payment: updateBody.payment,
     pay_type: updateBody.pay_types,
     paymentMethod: updateBody.paymentMethods,
     paymentstutes: updateBody.paymentstutes,
