@@ -743,7 +743,7 @@ const getNotAssignData = async (page) => {
         as: 'creditbillsData',
       }
     },
-    // { $unwind: '$creditbillsData'},
+    { $unwind: '$creditbillsData'},
     
     
 
@@ -865,8 +865,23 @@ const getNotAssignData = async (page) => {
         as: 'creditbillsData',
       }
     },
-    // { $unwind: '$creditbillsData'},
-    
+    { $unwind: '$creditbillsData'},
+    {
+      $lookup: {
+        from:'creditbillpaymenthistories',
+        localField: 'creditbillsData._id',
+        foreignField: 'creditBillId',
+        pipeline: [
+          {
+      $match: {
+        $and: [{ pay_type: { $eq: 'Partialy' } }],
+      },
+    },
+        ],
+        as: 'creditbillpaymenthistoriesData',
+      }
+    },
+    // { $unwind: '$creditbillpaymenthistoriesData'},
 
 
     {
@@ -878,6 +893,7 @@ const getNotAssignData = async (page) => {
         executeName: '$dataa.AssignedUserId',
         shopNmae: '$shopDtaa.SName',
         shopId: '$shopDtaa._id',
+        initialPaidAmount: "$shoporderclonedata.paidamount",
         creditBillAssignedStatus: 1,
         BillAmount: { $round: ['$productData.price', 0] },
         totalHistory: {
