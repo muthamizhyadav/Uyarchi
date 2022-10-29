@@ -282,7 +282,7 @@ const getproductdetails = async (id) => {
         as: 'paymentDta'
       }
     },
-    { $unwind: '$paymentDta'},
+    { $unwind: '$paymentDta' },
     {
       $project: {
         productData: '$productData',
@@ -294,8 +294,8 @@ const getproductdetails = async (id) => {
         paidAMount: '$paymentDta.paidAmt',
         total: '$productDatadetails.amount',
         TotalGstAmount: { $sum: '$productData.GSTamount' },
-        totalSum: { $round:{$add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] }},
-        pendingAmount: { $subtract: [{ $round:{$add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] }}, '$paymentDta.paidAmt'] },
+        totalSum: { $round: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] } },
+        pendingAmount: { $subtract: [{ $round: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] } }, '$paymentDta.paidAmt'] },
       },
     },
   ]);
@@ -763,6 +763,41 @@ const wardloadExecutivePacked = async (range, page) => {
       { date: { $eq: today }, delivery_type: { $eq: 'IMD' } },
     ],
   };
+  let hover = moment().subtract(-3, 'hours').format('H');
+  let before = moment().subtract(1, 'hours').format('H');
+  let timeslot = [
+    { start: 10, end: 20 },
+    { start: 20, end: 30 },
+    { start: 30, end: 40 },
+    { start: 40, end: 50 },
+    { start: 50, end: 60 },
+    { start: 60, end: 70 },
+    { start: 70, end: 80 },
+    { start: 80, end: 90 },
+    { start: 900, end: 1000 },
+    { start: 1000, end: 1100 },
+    { start: 1100, end: 1200 },
+    { start: 1200, end: 1300 },
+    { start: 1300, end: 1400 },
+    { start: 1400, end: 1500 },
+    { start: 1500, end: 1600 },
+    { start: 1600, end: 1700 },
+    { start: 1700, end: 1800 },
+    { start: 1800, end: 1900 },
+    { start: 1900, end: 2000 },
+    { start: 2000, end: 2100 },
+    { start: 2100, end: 2200 },
+    { start: 2200, end: 2300 },
+    { start: 2300, end: 2400 },
+    { start: 2400, end: 2500 },
+  ];
+  let lapsed = timeslot[hover].start;
+  let beforelapsed = timeslot[before].start;
+
+  console.log(lapsed)
+  console.log(beforelapsed)
+
+
   rangematch = { time_of_delivery: { $eq: range } };
   if (range == 'all') {
     rangematch = { active: true };
@@ -886,6 +921,8 @@ const wardloadExecutivePacked = async (range, page) => {
         streetName: '$shopData.street',
         ward: '$wardData.ward',
         productOrderCloneData: '$productOrderCloneData',
+        timeslot: 1,
+        timeslottrue: { $and: [{ $lte: ["$timeslot", lapsed] }, { $gte: ["$timeslot", beforelapsed] }] }
       },
     },
 
@@ -3169,68 +3206,68 @@ const mismatchGroup = async (id) => {
   return data;
 };
 
- const Mismatch_Stock_Reconcilation = async () =>{
+const Mismatch_Stock_Reconcilation = async () => {
   let count = 0
-       const data = await Users.aggregate([
-        {
-          $match: {
-            $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' } }],
-          },
-        },
-        {
-          $lookup: {
-            from: 'wardadmingroups',
-            localField: '_id',
-            foreignField: 'deliveryExecutiveId',
-              pipeline:[
-                {
-                  $lookup: {
-                    from: 'returnstocks',
-                    let: {
-                               localField: '$_id',
-                          },
-                    pipeline: [{ $match: { $expr: { $eq: ['$groupId', '$$localField'] } } },
-                    {    
-                      $match: {
-                        $and: [{ misMatch: { $ne:null} },{ misMatch: { $ne:count} }],
-                      },
-                    },
-                    ],
-
-                    as: 'returnstocks',
-                  },
-                },
-                {
-                  $match:{
-                     $and: [{ returnstocks: { $type: 'array', $ne: [] } }]
-                  }
-                },
-              ],
-            as: 'wardadmingroupsData',
+  const data = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: '_id',
+        foreignField: 'deliveryExecutiveId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'returnstocks',
+              let: {
+                localField: '$_id',
               },
+              pipeline: [{ $match: { $expr: { $eq: ['$groupId', '$$localField'] } } },
+              {
+                $match: {
+                  $and: [{ misMatch: { $ne: null } }, { misMatch: { $ne: count } }],
+                },
+              },
+              ],
+
+              as: 'returnstocks',
+            },
           },
-          // {
-          //   $group: {
-          //     _id: null,
-          //      count: { $sum: { returnstocks: { $type: 'array', $ne: [] } } }
-          //   },
-          // },
-        {
-          $project: {
-            name:1,
-            data:{$size:"$wardadmingroupsData.returnstocks"},
-            // groupid:"$wardadmingroupsData._id",
+          {
+            $match: {
+              $and: [{ returnstocks: { $type: 'array', $ne: [] } }]
+            }
           },
-        },
-       ])
-       return data;
- }		
+        ],
+        as: 'wardadmingroupsData',
+      },
+    },
+    // {
+    //   $group: {
+    //     _id: null,
+    //      count: { $sum: { returnstocks: { $type: 'array', $ne: [] } } }
+    //   },
+    // },
+    {
+      $project: {
+        name: 1,
+        data: { $size: "$wardadmingroupsData.returnstocks" },
+        // groupid:"$wardadmingroupsData._id",
+      },
+    },
+  ])
+  return data;
+}
 
 const Mismatch_Stock_Reconcilation1 = async (id) => {
   let data = await wardAdminGroup.aggregate([
     {
-      $match:{
-        $and: [{ deliveryExecutiveId: { $eq:id }}],
+      $match: {
+        $and: [{ deliveryExecutiveId: { $eq: id } }],
       }
     },
     {
@@ -3240,42 +3277,42 @@ const Mismatch_Stock_Reconcilation1 = async (id) => {
         foreignField: '_id',
         as: 'b2busers',
       },
-    },  
-{
-$unwind: '$b2busers',
-},
+    },
+    {
+      $unwind: '$b2busers',
+    },
 
     {
       $lookup: {
         from: 'returnstocks',
         localField: '_id',
         foreignField: 'groupId',
-        pipeline:[
+        pipeline: [
           {
-                    $match: {
-                      $and: [{ misMatch: { $ne:null }}],
-                    },
-                  },
-                  {
-                    $group: {
-                      _id: null,
-                      total: { $sum: '$misMatch' },
-                    },
-                  },
+            $match: {
+              $and: [{ misMatch: { $ne: null } }],
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: '$misMatch' },
+            },
+          },
         ],
         as: 'returnstocksData',
       },
     },
     {
       $unwind: '$returnstocksData',
-      },
-    
+    },
+
     {
       $project: {
-        name:"$b2busers.name",
-        groupId:1,
-        mismatch:"$returnstocksData.total",
-        assignDate:1,
+        name: "$b2busers.name",
+        groupId: 1,
+        mismatch: "$returnstocksData.total",
+        assignDate: 1,
       },
     },
     // {
@@ -3284,15 +3321,15 @@ $unwind: '$b2busers',
     //   },
     // },
   ])
-  return data ;
+  return data;
 }
 
 
-const getshopDetails=  async (id)=>{
+const getshopDetails = async (id) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq:id }}],
+        $and: [{ _id: { $eq: id } }],
       },
     },
     {
@@ -3309,15 +3346,15 @@ const getshopDetails=  async (id)=>{
     {
       $lookup: {
         from: 'b2busers',
-        localField: 'Uid', 
-        foreignField: '_id', 
+        localField: 'Uid',
+        foreignField: '_id',
         as: 'b2busersData',
       },
     },
     {
       $unwind: '$b2busersData',
     },
-    
+
     {
       $lookup: {
         from: 'productorderclones',
@@ -3357,7 +3394,7 @@ const getshopDetails=  async (id)=>{
       },
     },
     { $unwind: '$productData' },
-   
+
     {
       $project: {
         shopId: 1,
@@ -3375,7 +3412,7 @@ const getshopDetails=  async (id)=>{
         customerBilltime: 1,
         date: 1,
         time_of_delivery: 1,
-        BillAmount:"$productData.price",
+        BillAmount: "$productData.price",
         paidamount: 1,
         userName: '$b2busersData.name',
       },

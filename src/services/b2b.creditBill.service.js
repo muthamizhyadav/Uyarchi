@@ -1396,6 +1396,15 @@ const getDetailsByPassGroupId = async (id) => {
         from: 'orderpayments',
         localField: '_id',
         foreignField: 'orderId',
+        pipeline: [
+          {
+            
+                        $match: {
+                          $and: [{ statusType: { $eq: "creditBill" } }],
+                        },
+              
+          },
+        ],
 
         as: 'paymentDatadata',
       },
@@ -1444,13 +1453,10 @@ const getDetailsByPassGroupId = async (id) => {
 
     {
       $project: {
-        // pay_By: 1,
-        // pay_type: 1,
-        // upiStatus: 1,
-        // amountPayingWithDEorSM: 1,
-        billN0: 1,
-        billDate: 1,
-        billTime: 1,
+   
+        customerBillId: 1,
+        customerBilldate: 1,
+        customerBilltime: 1,
         shopNmae: '$Orderdatas.shopNmae',
         BalanceAmount: '$Orderdatas.pendingAmount',
         shopNmae: '$shopNameData.SName',
@@ -1463,13 +1469,10 @@ const getDetailsByPassGroupId = async (id) => {
     },
     {
       $project: {
-        // pay_By: 1,
-        // pay_type: 1,
-        // upiStatus: 1,
-        // amountPayingWithDEorSM: 1,
-        billN0: 1,
-        billDate: 1,
-        billTime: 1,
+       
+        customerBillId: 1,
+        customerBilldate: 1,
+        customerBilltime: 1,
         shopNmae: 1,
         BalanceAmount: 1,
         shopNmae: 1,
