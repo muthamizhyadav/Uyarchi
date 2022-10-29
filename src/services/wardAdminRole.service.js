@@ -13,6 +13,7 @@ const {
 const { Roles } = require('../models');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
+const  Ward  = require('../models/ward.model');
 const moment = require('moment');
 const { findByIdAndUpdate } = require('../models/b2b.pettyStock.model');
 const { ValidationRequestList } = require('twilio/lib/rest/api/v2010/account/validationRequest');
@@ -1818,6 +1819,64 @@ const WardAdminRoleHistorydata = async (id,date) =>{
      
 }
 
+const assignShopsSalesman = async (id) =>{
+  const data = await Ward.aggregate([
+    // {
+    //   $match: {
+    //     $and: [{ _id: { $eq:id} }],
+    //   },
+    // },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: '_id',
+        foreignField: 'Wardid',
+        pipeline:[
+     {
+      $match: {
+        $and: [{ Uid: { $eq:id} }],
+      },
+    },
+        ],     
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: 'b2bshopclonesdata._id',
+        pipeline:[
+          {
+            $match: {
+              $and: [{ status: { $in:["Assign", "tempReassign"]} }],
+            },
+          },
+        ],
+        foreignField: 'shopId',
+        as: 'salesmanshopsdata',
+      },
+    },
+    {
+      $project:{
+         shopCount:{$size:"$b2bshopclonesdata"},
+        //  data:"$b2bshopclonesdata",
+         ward:1,
+         assignCount:{$size:"$salesmanshopsdata"},
+         unAssignCount: { $subtract: [{$size:"$b2bshopclonesdata"},{$size:"$salesmanshopsdata"}] },
+      }
+    },
+      {
+      $match: {
+        $and: [{ shopCount: { $ne:0} }],
+      },
+    },
+
+  ])
+  return data ;
+     
+}
+
+
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -1865,4 +1924,5 @@ module.exports = {
   telecallernames,
   WardAdminRoleHistorydata,
   WardAdminRoledatas,
+  assignShopsSalesman,
 };
