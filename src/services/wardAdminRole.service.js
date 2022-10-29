@@ -1857,7 +1857,7 @@ const WardAdminRoleHistorydata = async (id, date) => {
   return data;
 };
 
-const assignShopsSalesman = async (id) => {
+const assignShopsSalesman = async (id,page) => {
   const data = await Ward.aggregate([
     // {
     //   $match: {
@@ -1908,11 +1908,69 @@ const assignShopsSalesman = async (id) => {
         $and: [{ shopCount: { $ne: 0 } }],
       },
     },
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
   ]);
-  return data;
+  const total = await Ward.aggregate([
+    // {
+    //   $match: {
+    //     $and: [{ _id: { $eq:id} }],
+    //   },
+    // },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: '_id',
+        foreignField: 'Wardid',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ Uid: { $eq: id } }],
+            },
+          },
+        ],
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: 'b2bshopclonesdata._id',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ status: { $in: ['Assign', 'tempReassign'] } }],
+            },
+          },
+        ],
+        foreignField: 'shopId',
+        as: 'salesmanshopsdata',
+      },
+    },
+    {
+      $project: {
+        shopCount: { $size: '$b2bshopclonesdata' },
+        userId: id,
+        ward: 1,
+        assignCount: { $size: '$salesmanshopsdata' },
+        unAssignCount: { $subtract: [{ $size: '$b2bshopclonesdata' }, { $size: '$salesmanshopsdata' }] },
+      },
+    },
+    {
+      $match: {
+        $and: [{ shopCount: { $ne: 0 } }],
+      },
+    },
+  ]);
+  return {data:data, count:total.length};
+
 };
 
-const assignShopsSalesmandatewise = async (id, wardid) => {
+const assignShopsSalesmandatewise = async (id, wardid,page) => {
   const data = await Shop.aggregate([
     {
       $match: {
@@ -1949,9 +2007,136 @@ const assignShopsSalesmandatewise = async (id, wardid) => {
     {
       $sort: { _id: -1 },
     },
-    
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
   ]);
-  return data;
+  const total = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ Wardid: { $eq: wardid } }, { Uid: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ status: { $in: ['Assign', 'tempReassign'] } }],
+            },
+          },
+        ],
+        as: 'salesmanshopsdata',
+      },
+    },
+    {
+      $addFields: {
+        assignCount: { $size: '$salesmanshopsdata' },
+      },
+    },
+    {
+      $group: {
+        _id: '$filterDate',
+        shopCount: { $sum: 1 },
+        assignCount: { $sum: '$assignCount' },
+      },
+    },
+    {
+      $sort: { _id: -1 },
+    },
+  ]);
+  return {data:data, count:total.length};
+};
+
+const assignShopsOnlydatewise = async (id, wardid,page) => {
+  const data = await SalesManShop.aggregate([
+    {
+      $match: {
+        $and: [{ Uid: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ status: { $in: ['Assign', 'tempReassign'] } }],
+            },
+          },
+        ],
+        as: 'salesmanshopsdata',
+      },
+    },
+    {
+      $addFields: {
+        assignCount: { $size: '$salesmanshopsdata' },
+      },
+    },
+    {
+      $group: {
+        _id: '$salesmanshopsdata.date',
+        // assignedShop: { $sum: 1 },
+        assignCount: { $sum: '$assignCount' },
+      },
+    },
+    {
+      $sort: { _id: -1 },
+    },
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  const total = await SalesManShop.aggregate([
+    {
+      $match: {
+        $and: [{ Wardid: { $eq: wardid } }, { Uid: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ status: { $in: ['Assign', 'tempReassign'] } }],
+            },
+          },
+        ],
+        as: 'salesmanshopsdata',
+      },
+    },
+    {
+      $addFields: {
+        assignCount: { $size: '$salesmanshopsdata' },
+      },
+    },
+    {
+      $group: {
+        _id: '$salesmanshopsdata.date',
+        // assignedShop: { $sum: 1 },
+        assignCount: { $sum: '$assignCount' },
+      },
+    },
+    {
+      $sort: { _id: -1 },
+    },
+  ]);
+
+  return {data:data, count:total.length};
 };
 
 module.exports = {
@@ -2003,4 +2188,5 @@ module.exports = {
   WardAdminRoledatas,
   assignShopsSalesman,
   assignShopsSalesmandatewise,
+  assignShopsOnlydatewise,
 };

@@ -235,12 +235,17 @@ const WardAdminRoledatas = catchAsync(async (req, res) => {
 });
 
 const assignShopsSalesman = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.assignShopsSalesman(req.params.id);
+  const data = await wardAdminRoleService.assignShopsSalesman(req.params.id, req.params.page);
   res.send(data);
 });
 
 const assignShopsSalesmandatewise = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.assignShopsSalesmandatewise(req.params.id, req.params.wardid);
+  const data = await wardAdminRoleService.assignShopsSalesmandatewise(req.params.id, req.params.wardid, req.params.page);
+  res.send(data);
+});
+
+const assignShopsOnlydatewise = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.assignShopsOnlydatewise(req.params.id, req.params.wardid, req.params.page);
   res.send(data);
 });
 
@@ -290,4 +295,5 @@ module.exports = {
   WardAdminRoledatas,
   assignShopsSalesman,
   assignShopsSalesmandatewise,
+  assignShopsOnlydatewise,
 };
