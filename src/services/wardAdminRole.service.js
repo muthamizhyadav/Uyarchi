@@ -1883,6 +1883,7 @@ const assignShopsSalesman = async (id, page) => {
       $lookup: {
         from: 'salesmanshops',
         localField: 'b2bshopclonesdata._id',
+        foreignField: 'shopId',
         pipeline: [
           {
             $match: {
@@ -1890,17 +1891,28 @@ const assignShopsSalesman = async (id, page) => {
             },
           },
         ],
-        foreignField: 'shopId',
         as: 'salesmanshopsdata',
       },
     },
+     {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'salesmanshopsdata.shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesdatalat',
+      },
+    },
+    // {
+    //   $unwind:'$b2bshopclonesdatalat'
+    // },
     {
       $project: {
         shopCount: { $size: '$b2bshopclonesdata' },
         userId: id,
         ward: 1,
-        assignCount: { $size: '$salesmanshopsdata' },
-        unAssignCount: { $subtract: [{ $size: '$b2bshopclonesdata' }, { $size: '$salesmanshopsdata' }] },
+        latLong:"$b2bshopclonesdatalat",
+        assignCount:{ $size: '$salesmanshopsdata' },
+        unAssignCount: { $subtract: [{ $size: '$b2bshopclonesdata' }, {$size:'$salesmanshopsdata'}] },
       },
     },
     {
