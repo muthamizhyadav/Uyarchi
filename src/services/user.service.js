@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
-
+const { paginate } = require('../models/plugins');
 /**
  * Create a user
  * @param {Object} userBody

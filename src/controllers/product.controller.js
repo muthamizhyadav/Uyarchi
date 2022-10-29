@@ -8,13 +8,6 @@ const moment = require('moment');
 const createProduct = catchAsync(async (req, res) => {
   const { body } = req;
   const product = await productService.createProduct(body);
-  // if (req.files.length != 0) {
-  //   let path = '';
-  //   req.files.forEach(function (files, index, arr) {
-  //     path = 'images/' + files.filename;
-  //   });
-  //   product.image = path;
-  // }
   if (req.files) {
     let path = '';
     path = 'images/';
