@@ -239,6 +239,11 @@ const assignShopsSalesman = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const assignShopsSalesmandatewise = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.assignShopsSalesmandatewise(req.params.id, req.params.wardid);
+  res.send(data);
+});
+
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -284,4 +289,5 @@ module.exports = {
   WardAdminRoleHistorydata,
   WardAdminRoledatas,
   assignShopsSalesman,
+  assignShopsSalesmandatewise,
 };

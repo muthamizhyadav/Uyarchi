@@ -46,4 +46,5 @@ router.route('/telecallernames/data').get(wardAdminRoleController.telecallername
 router.route('/WardAdminRoleHistorydata/:id/:date').get(wardAdminRoleController.WardAdminRoleHistorydata);
 router.route('/WardAdminRoledatas/:id/:date/:page').get(wardAdminRoleController.WardAdminRoledatas);
 router.route('/assignShopsSalesman/data/:id').get(wardAdminRoleController.assignShopsSalesman);
+router.route('/assignShopsSalesmandatewise/data/:id/:wardid').get(wardAdminRoleController.assignShopsSalesmandatewise);
 module.exports = router;
