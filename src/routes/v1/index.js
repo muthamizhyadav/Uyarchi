@@ -96,6 +96,7 @@ const creditBill = require('./b2b.creditBill.route');
 const vidoRoute = require('./videoUpload.route');
 const returnStockroute = require('./returnStock.route');
 const vehicleRoutes = require('./vehicle.DE.route');
+const telecallerAssignroute = require('./telecallerAssign.route');
 const defaultRoutes = [
   {
     path: '/registerShop',
@@ -471,6 +472,10 @@ const defaultRoutes = [
   {
     path: '/creditBillPath',
     route: creditBill,
+  },
+  {
+    path: '/telecallerAssign',
+    route: telecallerAssignroute,
   },
   // {
   //   path: '/sales',

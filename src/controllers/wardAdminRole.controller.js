@@ -173,7 +173,7 @@ const getwithAsmwithoutAsm = catchAsync(async (req, res) => {
 });
 
 const WardAdminRoleHistor = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.WardAdminRoleHistor(req.params.id, req.params.date);
+  const data = await wardAdminRoleService.WardAdminRoleHistor(req.params.id, req.params.date, req.params.page);
   res.send(data);
 });
 
@@ -210,7 +210,7 @@ const getAlldataASm = catchAsync(async (req, res) => {
 
 
 const getAllDatasalesmanDataAndAssign = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.getAllDatasalesmanDataAndAssign(req.params.id, req.params.date);
+  const data = await wardAdminRoleService.getAllDatasalesmanDataAndAssign(req.params.id, req.params.date, req.params.page);
   res.send(data);
 });
 
@@ -221,6 +221,31 @@ const getAlldataSalesmanandtele_wcce = catchAsync(async (req, res) => {
 
 const telecallernames = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.telecallernames();
+  res.send(data);
+});
+
+const WardAdminRoleHistorydata = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.WardAdminRoleHistorydata(req.params.id, req.params.date);
+  res.send(data);
+});
+
+const WardAdminRoledatas = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.WardAdminRoledatas(req.params.id, req.params.date, req.params.page);
+  res.send(data);
+});
+
+const assignShopsSalesman = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.assignShopsSalesman(req.params.id, req.params.page);
+  res.send(data);
+});
+
+const assignShopsSalesmandatewise = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.assignShopsSalesmandatewise(req.params.id, req.params.wardid, req.params.page);
+  res.send(data);
+});
+
+const assignShopsOnlydatewise = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.assignShopsOnlydatewise(req.params.id, req.params.wardid, req.params.page);
   res.send(data);
 });
 
@@ -266,4 +291,9 @@ module.exports = {
   getAllDatasalesmanDataAndAssign,
   getAlldataSalesmanandtele_wcce,
   telecallernames,
+  WardAdminRoleHistorydata,
+  WardAdminRoledatas,
+  assignShopsSalesman,
+  assignShopsSalesmandatewise,
+  assignShopsOnlydatewise,
 };

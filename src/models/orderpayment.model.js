@@ -55,6 +55,7 @@ const OrderPaymentSchema = new mongoose.Schema({
   reorder_status: {
     type: Boolean,
   },
+  
 });
 
 const OrderPayment = new mongoose.model('orderPayment', OrderPaymentSchema);
