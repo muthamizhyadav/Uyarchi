@@ -1881,6 +1881,58 @@ const assignShopsSalesman = async (id, page) => {
     },
     {
       $lookup: {
+        from: 'b2bshopclones',
+        localField: '_id',
+        foreignField: 'Wardid',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ Uid: { $eq: id } }],
+            },
+          },
+          {
+            $lookup: {
+              from: 'salesmanshops',
+              localField: '_id',
+              foreignField: 'shopId',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ status: { $in: ['Assign', 'tempReassign'] } }],
+                  },
+                },
+              ],
+              as: 'salesmanshopsdata',
+            },
+          },
+          {
+            $unwind: {
+              path: '$salesmanshopsdata',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $addFields: {
+              assign: { $ifNull: ['$salesmanshopsdata', false] },
+            },
+          },
+          {
+            $match: {
+              assign: false
+            }
+          },
+          {
+            $project: {
+              Slat: 1,
+              Slong: 1
+            }
+          }
+        ],
+        as: 'latsalesmanshopsdata',
+      },
+    },
+    {
+      $lookup: {
         from: 'salesmanshops',
         localField: 'b2bshopclonesdata._id',
         foreignField: 'shopId',
@@ -1894,14 +1946,15 @@ const assignShopsSalesman = async (id, page) => {
         as: 'salesmanshopsdata',
       },
     },
-     {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'salesmanshopsdata.shopId',
-        foreignField: '_id',
-        as: 'b2bshopclonesdatalat',
-      },
-    },
+
+    // {
+    //   $lookup: {
+    //     from: 'b2bshopclones',
+    //     localField: 'salesmanshopsdata.shopId',
+    //     foreignField: '_id',
+    //     as: 'b2bshopclonesdatalat',
+    //   },
+    // },
     // {
     //   $unwind:'$b2bshopclonesdatalat'
     // },
@@ -1910,9 +1963,12 @@ const assignShopsSalesman = async (id, page) => {
         shopCount: { $size: '$b2bshopclonesdata' },
         userId: id,
         ward: 1,
-        latLong:"$b2bshopclonesdatalat",
-        assignCount:{ $size: '$salesmanshopsdata' },
-        unAssignCount: { $subtract: [{ $size: '$b2bshopclonesdata' }, {$size:'$salesmanshopsdata'}] },
+        // latLong:"$b2bshopclonesdatalat",
+        assignCount: { $size: '$salesmanshopsdata' },
+        unAssignCount: { $subtract: [{ $size: '$b2bshopclonesdata' }, { $size: '$salesmanshopsdata' }] },
+        latun: { $size: "$latsalesmanshopsdata" },
+        lat: "$latsalesmanshopsdata",
+
       },
     },
     {
@@ -2104,7 +2160,7 @@ const assignShopsOnlydatewise = async (id, wardid, page) => {
     },
     {
       $group: {
-        _id: { date: '$date', fromSalesManId: "$fromSalesManId",  name: "$b2busers.name" },
+        _id: { date: '$date', fromSalesManId: "$fromSalesManId", name: "$b2busers.name" },
         assignedShop: { $sum: 1 },
       },
     },
@@ -2155,7 +2211,7 @@ const assignShopsOnlydatewise = async (id, wardid, page) => {
     },
     {
       $group: {
-        _id: { date: '$date', fromSalesManId: "$fromSalesManId",  name: "$b2busers.name" },
+        _id: { date: '$date', fromSalesManId: "$fromSalesManId", name: "$b2busers.name" },
         assignedShop: { $sum: 1 },
       },
     },
