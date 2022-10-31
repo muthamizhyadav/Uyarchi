@@ -38,4 +38,44 @@ const TelecallerteamSchema = new mongoose.Schema({
   });
   
   const Telecallerteam = mongoose.model('Telecallerteam', TelecallerteamSchema);
-  module.exports = Telecallerteam;
+  const TelecallerShopSchema = new mongoose.Schema({
+    _id: {
+      type: String,
+      default: v4,
+    },
+    telecallerteamId: {
+      type: String,
+    },
+    fromtelecallerteamId:{
+      type:String,
+    },
+    date: {
+      type: String,
+    },
+    time: {
+      type: String,
+    },
+    reAssignDate:{
+      type:String,
+    },
+    reAssignTime:{
+      type:String,
+    },
+    status:{
+      type:String,
+    },
+    shopId:{
+      type:String,
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    archive: {
+      type: Boolean,
+      default: false,
+    },
+  });
+  
+  const TelecallerShop = mongoose.model('TelecallerShop', TelecallerShopSchema);
+  module.exports = {Telecallerteam, TelecallerShop };

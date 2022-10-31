@@ -81,7 +81,7 @@ router.route('/pagination/product/:id').get(productController.productPaginationF
 router.route('/product/filter/:date').get(productController.productDateTimeFilter);
 router.route('/prod/:id/:date').get(productController.aggregationWithProductId);
 router.route('/dealProduct/supplier/:id').get(productController.productDealingWithsupplier);
-router.route('/getAll/Trends/:wardId/:street/:page').get(productController.getAllTrends);
+router.route('/getAll/Trends/:wardId/:street/:shoptype/:page').get(productController.getAllTrends);
 router.route('/trendsCounts/:productId/:date/:wardId/:street').get(productController.gettrendsCount);
 
 // cost price calculation
@@ -100,5 +100,7 @@ router.route('/stock/segregation/:date/:page').get(productController.incommingSt
 router.route('/stock/Assgin/:date/:page').get(productController.AssignStockGetall);
 router.route('/getsetsales/dataOnly/:page').get(productController.getDataOnlySetSales);
 router.route('/setprice/details/:page').get(productController.get_Set_price_product);
+router.route('/getproduct/stock/:type').get(productController.get_random_product);
+
 
 module.exports = router;
