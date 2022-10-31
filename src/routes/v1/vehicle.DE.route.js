@@ -6,10 +6,12 @@ const router = express.Router();
 // create Vehicle Route && fetch Active Vehicles
 router
   .route('/')
-  .post(middleware.fields([{ name: 'RC_book_image' }, { name: 'vehicle_image' }]), vehicleController.createVehicle);
+  .post(middleware.fields([{ name: 'RC_book_image' }, { name: 'vehicle_image' }]), vehicleController.createVehicle)
+  .get(vehicleController.getAll_Vehicle_Details);
 router.route('/:page').get(vehicleController.getVehicle);
 
 // fect deliveryExecutives && activeVehicles
 router.route('/De/vehicles').get(vehicleController.getVehicle_and_DE);
+
 // exports
 module.exports = router;

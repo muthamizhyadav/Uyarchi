@@ -38,8 +38,14 @@ const getVehicle_and_DE = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getAll_Vehicle_Details = catchAsync(async (req, res) => {
+  const data = await VehicleService.getAll_Vehicle_Details();
+  res.send(data);
+});
+
 module.exports = {
   createVehicle,
   getVehicle,
   getVehicle_and_DE,
+  getAll_Vehicle_Details,
 };
