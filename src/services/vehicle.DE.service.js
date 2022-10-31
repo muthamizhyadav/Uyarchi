@@ -30,7 +30,7 @@ const getVehicle_and_DE = async () => {
 };
 
 const getAll_Vehicle_Details = async () => {
-  const vehicles = await Vehicle.aggregate([{}]);
+  const vehicles = await Vehicle.find();
   return vehicles;
 };
 
