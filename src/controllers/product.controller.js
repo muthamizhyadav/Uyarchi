@@ -43,7 +43,7 @@ const getStockbyBillId = catchAsync(async (req, res) => {
 });
 
 const getAllTrends = catchAsync(async (req, res) => {
-  const trends = await productService.getTrendsData(req.params.wardId, req.params.street, req.params.page);
+  const trends = await productService.getTrendsData(req.params.wardId, req.params.street,req.params.shoptype, req.params.page);
   res.send(trends);
 });
 

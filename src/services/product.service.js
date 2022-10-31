@@ -62,7 +62,7 @@ const setTrendsValueforProduct = async (id, updateBody) => {
   return product;
 };
 
-const getTrendsData = async (wardId, street, page) => {
+const getTrendsData = async (wardId, street, shoptype, page) => {
   const date = moment().format('DD-MM-YYYY');
   let match;
   if (street != 'null') {
@@ -75,6 +75,12 @@ const getTrendsData = async (wardId, street, page) => {
     wardmatch = { wardId: wardId };
   } else {
     wardmatch = { active: true };
+  }
+  let shoptypematch;
+  if (shoptype != 'null') {
+    shoptypematch = { SType: shoptype };
+  } else {
+    shoptypematch = { active: true };
   }
   let values = await Product.aggregate([
     {
@@ -125,6 +131,16 @@ const getTrendsData = async (wardId, street, page) => {
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    date: { $eq: date },
+                  },
+                },
+                {
+                  $match: { $and: [shoptypematch] },
+                },
+              ],
               as: 'b2bshop',
             },
           },
@@ -155,6 +171,7 @@ const getTrendsData = async (wardId, street, page) => {
               longitude: '$b2bshop.Slong',
               latitude: '$b2bshop.Slat',
               ShopName: '$b2bshop.SName',
+              shopType: '$b2bshop.SType',
               date: 1,
             },
           },
