@@ -14,8 +14,20 @@ const VehicleSchema = mongoose.Schema({
   vehicle_Name: {
     type: String,
   },
+  vehicle_Owner_Name: {
+    type: String,
+  },
+  ownerShip_Type: {
+    type: String,
+  },
   RC_book_image: {
     type: Array,
+  },
+  vehicleNo: {
+    type: String,
+  },
+  tonne_Capacity: {
+    type: String,
   },
   vehicle_image: {
     type: Array,
