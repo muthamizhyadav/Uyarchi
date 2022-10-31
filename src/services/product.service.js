@@ -160,8 +160,20 @@ const getTrendsData = async (wardId, street, shoptype, page) => {
             $unwind: '$StreetData',
           },
           {
+            $lookup: {
+              from: 'wards',
+              localField: 'StreetData.wardId',
+              foreignField: '_id',
+              as: 'wardData',
+            },
+          },
+          {
+            $unwind: '$wardData',
+          },
+          {
             $project: {
               street: '$StreetData.street',
+              ward: '$wardData.ward',
               Rate: 1,
               Weight: 1,
               Unit: 1,
