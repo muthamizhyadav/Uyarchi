@@ -55,6 +55,12 @@ const OrderPaymentSchema = new mongoose.Schema({
   reorder_status: {
     type: Boolean,
   },
+  creditBillStatus: {
+    type: String,
+  },
+  reasonScheduleOrDate:{
+    type: String,
+  }
   
 });
 
