@@ -30,7 +30,17 @@ const getVehicle_and_DE = async () => {
 };
 
 const getAll_Vehicle_Details = async () => {
-  const vehicles = await Vehicle.find();
+  const vehicles = await Vehicle.aggregate([
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: '_id',
+        foreignField: 'vehicleId',
+        pipeline: [],
+        as: 'wardAdmin',
+      },
+    },
+  ]);
   return vehicles;
 };
 
