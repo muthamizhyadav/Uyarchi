@@ -601,6 +601,18 @@ const getSingleProductEstimations = async (id) => {
         // foreignField: 'productid',
         pipeline: [
           { $match: { $expr: { $and: [{ $eq: ['$productid', '$$productId'] }, { $eq: ['$date', '$$date'] }] } } },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [{ $match: { delivery_type: 'NDD' } }],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
           { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
         ],
         as: 'productorders',
