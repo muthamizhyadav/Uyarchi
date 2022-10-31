@@ -1900,6 +1900,29 @@ const get_Set_price_product = async (page) => {
   return { value: retrunvalue, total: await Product.find().count() };
 };
 
+
+const getstock_close_product = async () => {
+
+  const product = await Product.aggregate([
+    { $sort: { productTitle: 1 } },
+    {
+      $lookup: {
+        from: 'usablestocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [{ $match: { date: { $eq: moment().format('DD-MM-YYYY') } } }],
+        as: 'usablestocks',
+      },
+    },
+    {
+      $unwind: "$usablestocks"
+    }
+
+  ])
+
+  return product;
+
+}
 module.exports = {
   createProduct,
   getTrendsData,
@@ -1969,4 +1992,5 @@ module.exports = {
   AssignStockGetall,
   getDataOnlySetSales,
   get_Set_price_product,
+  getstock_close_product
 };
