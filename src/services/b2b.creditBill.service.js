@@ -671,6 +671,22 @@ const getNotAssignData = async (page) => {
     //   },
     // },
 
+    // {
+    //   $lookup: {
+    //     from: 'orderpayments',
+    //     localField: '_id',
+    //     foreignField: 'orderId',
+    //     pipeline: [
+    //      {
+    //   $match: {
+    //     $and: [{ creditBillStatus: { $ne: 'creditBill' } }],
+    //   },
+    // },
+    //     ],
+    //     as: 'dataorder'
+    //   }
+    // },
+
     {
       $lookup: {
         from: 'orderpayments',
