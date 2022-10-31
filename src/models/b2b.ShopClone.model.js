@@ -150,6 +150,12 @@ const shopSchema = mongoose.Schema({
   purchaseQTy: {
     type: String,
   },
+  da_lot: {
+    type: Number,
+  },
+  da_long: {
+    type: Number,
+  },
   DA_DATE: {
     type: String,
   },
@@ -161,9 +167,7 @@ const shopSchema = mongoose.Schema({
   },
   DA_TIME: {
     type: Number,
-  }
-
-
+  },
 });
 
 // assignSchema.plugin(toJSON);

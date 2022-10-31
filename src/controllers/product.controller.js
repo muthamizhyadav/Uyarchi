@@ -8,13 +8,6 @@ const moment = require('moment');
 const createProduct = catchAsync(async (req, res) => {
   const { body } = req;
   const product = await productService.createProduct(body);
-  // if (req.files.length != 0) {
-  //   let path = '';
-  //   req.files.forEach(function (files, index, arr) {
-  //     path = 'images/' + files.filename;
-  //   });
-  //   product.image = path;
-  // }
   if (req.files) {
     let path = '';
     path = 'images/';
@@ -50,7 +43,7 @@ const getStockbyBillId = catchAsync(async (req, res) => {
 });
 
 const getAllTrends = catchAsync(async (req, res) => {
-  const trends = await productService.getTrendsData(req.params.wardId, req.params.street, req.params.page);
+  const trends = await productService.getTrendsData(req.params.wardId, req.params.street,req.params.shoptype, req.params.page);
   res.send(trends);
 });
 
@@ -466,6 +459,14 @@ const get_Set_price_product = catchAsync(async (req, res) => {
   const product = await productService.get_Set_price_product(req.params.page);
   res.send(product);
 });
+
+const get_random_product = catchAsync(async (req, res) => {
+  let product;
+  if (req.params.type == 'Closing') {
+    product = await productService.getstock_close_product(req.params.page);
+  }
+  res.send(product);
+});
 module.exports = {
   createProduct,
   getAllienceBySupplierId,
@@ -534,4 +535,5 @@ module.exports = {
   AssignStockGetall,
   getDataOnlySetSales,
   get_Set_price_product,
+  get_random_product
 };

@@ -293,7 +293,7 @@ const updateShop = catchAsync(async (req, res) => {
 });
 
 const deleteApartment = catchAsync(async (req, res) => {
-  await apartmentTableService.deleteapartmentById(req.params.apartmentId);
+  await apartmentTableService.deleteapartmentById(req.params.apartmenPtId);
   res.status(httpStatus.NO_CONTENT).send();
 });
 

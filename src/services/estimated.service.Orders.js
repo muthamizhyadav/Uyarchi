@@ -12,6 +12,7 @@ const createEstimatedOrders = async (body) => {
 };
 
 const getEstimatedByDate = async (date, page) => {
+  let today = moment().format('YYYY-MM-DD');
   let values = await Product.aggregate([
     {
       $lookup: {
@@ -19,7 +20,7 @@ const getEstimatedByDate = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date } },
+          { $match: { date: today } },
           { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
         ],
         as: 'productDetails',
@@ -34,7 +35,7 @@ const getEstimatedByDate = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date, preOrderClose: { $eq: false } } },
+          { $match: { date: today, preOrderClose: { $eq: false } } },
           {
             $lookup: {
               from: 'b2bshopclones',
@@ -52,6 +53,7 @@ const getEstimatedByDate = async (date, page) => {
               localField: 'orderId',
               foreignField: '_id',
               pipeline: [
+                { $match: { delivery_type: 'NDD' } },
                 {
                   $lookup: {
                     from: 'b2busers',
@@ -94,7 +96,7 @@ const getEstimatedByDate = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date, preOrderClose: { $eq: true } } },
+          { $match: { date: today, preOrderClose: { $eq: true } } },
           {
             $lookup: {
               from: 'b2bshopclones',
@@ -112,6 +114,7 @@ const getEstimatedByDate = async (date, page) => {
               localField: 'orderId',
               foreignField: '_id',
               pipeline: [
+                { $match: { delivery_type: 'NDD' } },
                 {
                   $lookup: {
                     from: 'b2busers',
@@ -153,7 +156,7 @@ const getEstimatedByDate = async (date, page) => {
         from: 'estimatedorders',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [{ $match: { date: date } }],
+        pipeline: [{ $match: { date: today } }],
         as: 'estimatedDetails',
       },
     },
@@ -191,7 +194,7 @@ const getEstimatedByDate = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date } },
+          { $match: { date: today } },
           { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
         ],
         as: 'productDetails',
@@ -206,7 +209,7 @@ const getEstimatedByDate = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date, preOrderClose: { $eq: false } } },
+          { $match: { date: today, preOrderClose: { $eq: false } } },
           {
             $lookup: {
               from: 'b2bshopclones',
@@ -266,7 +269,7 @@ const getEstimatedByDate = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date, preOrderClose: { $eq: true } } },
+          { $match: { date: today, preOrderClose: { $eq: true } } },
           {
             $lookup: {
               from: 'b2bshopclones',
@@ -325,7 +328,7 @@ const getEstimatedByDate = async (date, page) => {
         from: 'estimatedorders',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [{ $match: { date: date } }],
+        pipeline: [{ $match: { date: today } }],
         as: 'estimatedDetails',
       },
     },
@@ -598,6 +601,18 @@ const getSingleProductEstimations = async (id) => {
         // foreignField: 'productid',
         pipeline: [
           { $match: { $expr: { $and: [{ $eq: ['$productid', '$$productId'] }, { $eq: ['$date', '$$date'] }] } } },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [{ $match: { delivery_type: 'NDD' } }],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
           { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
         ],
         as: 'productorders',

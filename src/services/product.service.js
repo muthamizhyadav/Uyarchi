@@ -62,7 +62,7 @@ const setTrendsValueforProduct = async (id, updateBody) => {
   return product;
 };
 
-const getTrendsData = async (wardId, street, page) => {
+const getTrendsData = async (wardId, street, shoptype, page) => {
   const date = moment().format('DD-MM-YYYY');
   let match;
   if (street != 'null') {
@@ -75,6 +75,12 @@ const getTrendsData = async (wardId, street, page) => {
     wardmatch = { wardId: wardId };
   } else {
     wardmatch = { active: true };
+  }
+  let shoptypematch;
+  if (shoptype != 'null') {
+    shoptypematch = { SType: shoptype };
+  } else {
+    shoptypematch = { active: true };
   }
   let values = await Product.aggregate([
     {
@@ -125,6 +131,16 @@ const getTrendsData = async (wardId, street, page) => {
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    date: { $eq: date },
+                  },
+                },
+                {
+                  $match: { $and: [shoptypematch] },
+                },
+              ],
               as: 'b2bshop',
             },
           },
@@ -155,6 +171,7 @@ const getTrendsData = async (wardId, street, page) => {
               longitude: '$b2bshop.Slong',
               latitude: '$b2bshop.Slat',
               ShopName: '$b2bshop.SName',
+              shopType: '$b2bshop.SType',
               date: 1,
             },
           },
@@ -615,6 +632,7 @@ const createMainWherehouseLoadingExecute = async (MWLEbody) => {
 };
 
 const AccountDetails = async (date, page) => {
+  let today = moment().format('YYYY-MM-DD');
   let values = await Product.aggregate([
     {
       $lookup: {
@@ -622,7 +640,206 @@ const AccountDetails = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date } },
+          { $match: { date: today } },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [{ $match: { delivery_type: 'NDD' } }],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+          { $group: { _id: null, Qty: { $sum: { $multiply: ['$quantity', '$packKg'] } }, Avg: { $avg: '$priceperkg' } } },
+        ],
+        as: 'productDetails',
+      },
+    },
+    {
+      $unwind: '$productDetails',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          { $match: { date: today, preOrderClose: { $eq: false } } },
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'customerId',
+              foreignField: '_id',
+              as: 'shopData',
+            },
+          },
+          {
+            $unwind: '$shopData',
+          },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                { $match: { delivery_type: 'NDD' } },
+                {
+                  $lookup: {
+                    from: 'b2busers',
+                    localField: 'Uid',
+                    foreignField: '_id',
+                    as: 'UsersData',
+                  },
+                },
+                {
+                  $unwind: '$UsersData',
+                },
+                {
+                  $project: {
+                    userName: '$UsersData.name',
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+
+          {
+            $project: {
+              shopName: '$shopData.SName',
+              orderby: '$shoporderclones.userName',
+              quantity: { $multiply: ['$quantity', '$packKg'] },
+              // priceperkg: 1,
+            },
+          },
+          { $group: { _id: { shopName: '$shopName', orderby: '$orderby' }, quantity: { $sum: '$quantity' } } },
+          {
+            $project: {
+              shopName: '$_id.shopName',
+              orderby: '$_id.orderby',
+              quantity: 1,
+              _id: 1,
+            },
+          },
+        ],
+        as: 'liveStock',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          { $match: { date: today, preOrderClose: { $eq: true } } },
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'customerId',
+              foreignField: '_id',
+              as: 'shopData',
+            },
+          },
+          {
+            $unwind: '$shopData',
+          },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                { $match: { delivery_type: 'NDD' } },
+                {
+                  $lookup: {
+                    from: 'b2busers',
+                    localField: 'Uid',
+                    foreignField: '_id',
+                    as: 'UsersData',
+                  },
+                },
+                {
+                  $unwind: '$UsersData',
+                },
+                {
+                  $project: {
+                    userName: '$UsersData.name',
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+
+          {
+            $project: {
+              shopName: '$shopData.SName',
+              orderby: '$shoporderclones.userName',
+              quantity: 1,
+              priceperkg: 1,
+            },
+          },
+        ],
+        as: 'orderDetails',
+      },
+    },
+    {
+      $lookup: {
+        from: 'estimatedorders',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [{ $match: { date: today } }],
+        as: 'estimatedDetails',
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+
+    {
+      $project: {
+        _id: 1,
+        productTitle: 1,
+        Qty: '$productDetails.Qty',
+        Avg: '$productDetails.Avg',
+        orderDetails: '$orderDetails',
+        estimatedDetails: '$estimatedDetails',
+        liveStock: '$liveStock',
+      },
+    },
+  ]);
+  let total = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          { $match: { date: today } },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [{ $match: { delivery_type: 'NDD' } }],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
           { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
         ],
         as: 'productDetails',
@@ -637,7 +854,7 @@ const AccountDetails = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date, preOrderClose: { $eq: false } } },
+          { $match: { date: today, preOrderClose: { $eq: false } } },
           {
             $lookup: {
               from: 'b2bshopclones',
@@ -697,7 +914,7 @@ const AccountDetails = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date, preOrderClose: { $eq: true } } },
+          { $match: { date: today, preOrderClose: { $eq: true } } },
           {
             $lookup: {
               from: 'b2bshopclones',
@@ -756,44 +973,9 @@ const AccountDetails = async (date, page) => {
         from: 'estimatedorders',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [{ $match: { date: date } }],
+        pipeline: [{ $match: { date: today } }],
         as: 'estimatedDetails',
       },
-    },
-    {
-      $skip: 10 * page,
-    },
-    {
-      $limit: 10,
-    },
-
-    {
-      $project: {
-        _id: 1,
-        productTitle: 1,
-        Qty: '$productDetails.Qty',
-        Avg: '$productDetails.Avg',
-        orderDetails: '$orderDetails',
-        estimatedDetails: '$estimatedDetails',
-        liveStock: '$liveStock',
-      },
-    },
-  ]);
-  let total = await Product.aggregate([
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'productid',
-        pipeline: [
-          { $match: { date: date } },
-          { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
-        ],
-        as: 'productDetails',
-      },
-    },
-    {
-      $unwind: '$productDetails',
     },
   ]);
   return { values: values, total: total.length };
@@ -1718,6 +1900,29 @@ const get_Set_price_product = async (page) => {
   return { value: retrunvalue, total: await Product.find().count() };
 };
 
+
+const getstock_close_product = async () => {
+
+  const product = await Product.aggregate([
+    { $sort: { productTitle: 1 } },
+    {
+      $lookup: {
+        from: 'usablestocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [{ $match: { date: { $eq: moment().format('DD-MM-YYYY') } } }],
+        as: 'usablestocks',
+      },
+    },
+    {
+      $unwind: "$usablestocks"
+    }
+
+  ])
+
+  return product;
+
+}
 module.exports = {
   createProduct,
   getTrendsData,
@@ -1787,4 +1992,5 @@ module.exports = {
   AssignStockGetall,
   getDataOnlySetSales,
   get_Set_price_product,
+  getstock_close_product
 };

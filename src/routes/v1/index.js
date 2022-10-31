@@ -95,11 +95,16 @@ const vehicleRoute = require('./b2b.vehicle.allocation.route');
 const creditBill = require('./b2b.creditBill.route');
 const vidoRoute = require('./videoUpload.route');
 const returnStockroute = require('./returnStock.route');
+const vehicleRoutes = require('./vehicle.DE.route');
 const telecallerAssignroute = require('./telecallerAssign.route');
 const defaultRoutes = [
   {
     path: '/registerShop',
     route: registerShop,
+  },
+  {
+    path: '/vehicle',
+    route: vehicleRoutes,
   },
   {
     path: '/video',
