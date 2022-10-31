@@ -179,9 +179,9 @@ const getTrendsData = async (wardId, street, shoptype, page) => {
         as: 'Productdetails',
       },
     },
-    {
-      $unwind: '$Productdetails',
-    },
+    // {
+    //   $unwind: '$Productdetails',
+    // },
     {
       $project: {
         productDetails: '$Productdetails',
@@ -293,9 +293,9 @@ const getTrendsData = async (wardId, street, shoptype, page) => {
         as: 'Productdetails',
       },
     },
-    {
-      $unwind: '$Productdetails',
-    },
+    // {
+    //   $unwind: '$Productdetails',
+    // },
   ]);
   return { values: values, total: total.length };
 };
