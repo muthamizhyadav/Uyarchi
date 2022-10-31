@@ -279,12 +279,29 @@ const getproductdetails = async (id) => {
         from: 'orderpayments',
         localField: '_id',
         foreignField: 'orderId',
+        // pipeline: [
+        //   { $group: { _id: null, total: { $sum: '$paidAmt' } } },
+        // ],
         as: 'paymentDta'
       }
     },
     { $unwind: '$paymentDta' },
+
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $group: { _id: null, total: { $sum: '$paidAmt' } } },
+        ],
+        as: 'paymentDtadata'
+      }
+    },
+    { $unwind: '$paymentDtadata' },
     {
       $project: {
+        editPendingAmount: "$paymentDtadata.total",
         productData: '$productData',
         shopName: '$shopData.SName',
         shopAddress: '$shopData.address',
@@ -295,8 +312,12 @@ const getproductdetails = async (id) => {
         total: '$productDatadetails.amount',
         TotalGstAmount: { $sum: '$productData.GSTamount' },
         totalSum: { $round: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] } },
-        pendingAmount: { $subtract: [{ $round: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] } }, '$paymentDta.paidAmt'] },
-      },
+        // pendingAmount: { $subtract: [{ $round: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] } }, '$paymentDta.paidAmt'] },
+
+        lastpendingamountAfterEdit: {
+          $subtract: [{ $round: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] } }, "$paymentDtadata.total"] },
+        }
+      
     },
   ]);
   if (values.length == 0) {

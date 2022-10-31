@@ -128,6 +128,9 @@ const shopSchema = mongoose.Schema({
   salesManStatus: {
     type: String,
   },
+  telecallerStatus: {
+    type: String,
+  },
   registered: {
     type: Boolean,
     default: false,
