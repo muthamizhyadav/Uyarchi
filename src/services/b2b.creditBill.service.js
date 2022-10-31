@@ -1436,25 +1436,25 @@ const getDetailsByPassGroupId = async (id) => {
 
     { $unwind: '$productData' },
 
-    // {
-    //   $project: {
+    {
+      $project: {
    
-    //     customerBillId: 1,
-    //     customerBilldate: 1,
-    //     customerBilltime: 1,
-    //     lastPaymentMode: "$paymentDatadata.payment",
-    //     lastPaymentType: "$paymentDatadata.paymentMethod",
-    //     shopNmae: '$Orderdatas.shopNmae',
-    //     BalanceAmount: '$Orderdatas.pendingAmount',
-    //     shopNmae: '$shopNameData.SName',
+        customerBillId: 1,
+        customerBilldate: 1,
+        customerBilltime: 1,
+        lastPaymentMode: "$paymentDatadata.payment",
+        lastPaymentType: "$paymentDatadata.paymentMethod",
+        shopNmae: '$Orderdatas.shopNmae',
+        BalanceAmount: '$Orderdatas.pendingAmount',
+        shopNmae: '$shopNameData.SName',
 
-    //     BillAmount: { $round: ['$productData.price', 0] },
-    //     paidAmount: '$paymentData.price',
+        BillAmount: { $round: ['$productData.price', 0] },
+        paidAmount: '$paymentData.price',
 
-    //     pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
-    //   },
+        pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+      },
     
-    // },
+    },
 
 
 
