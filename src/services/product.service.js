@@ -696,8 +696,17 @@ const AccountDetails = async (date, page) => {
             $project: {
               shopName: '$shopData.SName',
               orderby: '$shoporderclones.userName',
+              quantity: { $multiply: ['$quantity', '$packKg'] },
+              // priceperkg: 1,
+            },
+          },
+          { $group: { _id: { shopName: '$shopName', orderby: '$orderby' }, quantity: { $sum: '$quantity' } } },
+          {
+            $project: {
+              shopName: '$_id.shopName',
+              orderby: '$_id.orderby',
               quantity: 1,
-              priceperkg: 1,
+              _id: 1,
             },
           },
         ],
