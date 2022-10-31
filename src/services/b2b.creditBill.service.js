@@ -1394,7 +1394,7 @@ const getDetailsByPassGroupId = async (id) => {
         as: 'paymentDatadata',
       },
     },
-    { $unwind: '$paymentDatadata' },
+    // { $unwind: '$paymentDatadata' },
     {
       $lookup: {
         from: 'productorderclones',
@@ -1436,44 +1436,25 @@ const getDetailsByPassGroupId = async (id) => {
 
     { $unwind: '$productData' },
 
-    {
-      $project: {
+    // {
+    //   $project: {
    
-        customerBillId: 1,
-        customerBilldate: 1,
-        customerBilltime: 1,
-        lastPaymentMode: "$paymentDatadata.payment",
-        lastPaymentType: "$paymentDatadata.paymentMethod",
-        shopNmae: '$Orderdatas.shopNmae',
-        BalanceAmount: '$Orderdatas.pendingAmount',
-        shopNmae: '$shopNameData.SName',
+    //     customerBillId: 1,
+    //     customerBilldate: 1,
+    //     customerBilltime: 1,
+    //     lastPaymentMode: "$paymentDatadata.payment",
+    //     lastPaymentType: "$paymentDatadata.paymentMethod",
+    //     shopNmae: '$Orderdatas.shopNmae',
+    //     BalanceAmount: '$Orderdatas.pendingAmount',
+    //     shopNmae: '$shopNameData.SName',
 
-        BillAmount: { $round: ['$productData.price', 0] },
-        paidAmount: '$paymentData.price',
+    //     BillAmount: { $round: ['$productData.price', 0] },
+    //     paidAmount: '$paymentData.price',
 
-        pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
-      },
-    },
-    {
-      $project: {
-       
-        customerBillId: 1,
-        customerBilldate: 1,
-        customerBilltime: 1,
-        shopNmae: 1,
-        BalanceAmount: 1,
-        shopNmae: 1,
-        lastPaymentMode: 1,
-        lastPaymentType:1,
-
-
-        BillAmount: 1,
-        paidAmount: 1,
-
-        pendingAmount: 1,
-        amount: { $subtract: ['$pendingAmount', '$amountPayingWithDEorSM'] },
-      },
-    },
+    //     pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+    //   },
+    
+    // },
 
 
 

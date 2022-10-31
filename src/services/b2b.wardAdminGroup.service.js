@@ -127,6 +127,7 @@ const updateOrderStatus = async (id, updateBody) => {
     pay_type: updateBody.pay_types,
     paymentMethod: updateBody.paymentMethods,
     paymentstutes: updateBody.paymentstutes,
+    creditBillStatus: updateBody.creditBillStatus,
   });
   return deliveryStatus;
 };
