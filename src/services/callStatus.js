@@ -286,6 +286,28 @@ const getCallstatusForSuddenOrders = async (page) => {
     {
       $sort: { date: -1, time: -1 },
     },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        as: 'SupplierData',
+      },
+    },
+    {
+      $unwind: '$SupplierData',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: '$productData',
+    },
   ]);
   return { values: values, total: total.length };
 };
