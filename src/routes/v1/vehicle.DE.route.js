@@ -11,5 +11,6 @@ router.route('/:page').get(vehicleController.getVehicle);
 
 // fect deliveryExecutives && activeVehicles
 router.route('/De/vehicles').get(vehicleController.getVehicle_and_DE);
+
 // exports
 module.exports = router;

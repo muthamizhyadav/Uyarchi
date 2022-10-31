@@ -29,7 +29,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-
+  vehicleId: {
+    type: String,
+  },
   archive: {
     type: Boolean,
     default: false,
@@ -110,21 +112,21 @@ const wardAdminGroupSchema = new mongoose.Schema({
   GroupBillId: {
     type: String,
   },
-  GroupBillDate:{
+  GroupBillDate: {
     type: String,
   },
-  GroupBillTime:{
+  GroupBillTime: {
     type: String,
   },
   ByCashIncPettyCash: {
     type: Number,
   },
   Disputestatus: {
-  type: String,
+    type: String,
   },
   mismatchStockStatus: {
     type: String,
-    }
+  },
 });
 
 const wardAdminGroup = mongoose.model('wardAdminGroup', wardAdminGroupSchema);
@@ -143,6 +145,9 @@ const wardAdminGroupSchema_ORDER = new mongoose.Schema({
   status: {
     type: String,
     default: 'Assigned',
+  },
+  vehicleId: {
+    type: String,
   },
   created: {
     type: Date,
@@ -175,8 +180,8 @@ const wardAdminGroupfineSchema = new mongoose.Schema({
   status: {
     type: String,
   },
-  productId:{
-    type:String,
+  productId: {
+    type: String,
   },
   date: {
     type: String,

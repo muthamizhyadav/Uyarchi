@@ -29,8 +29,14 @@ const getVehicle_and_DE = async () => {
   return { DeliveryExecutives: DeliveryExecutives, activeVehicles: getVehicle };
 };
 
+const getAll_Vehicle_Details = async () => {
+  const vehicles = await Vehicle.find();
+  return vehicles;
+};
+
 module.exports = {
   createVehicle,
   getVehicle,
   getVehicle_and_DE,
+  getAll_Vehicle_Details,
 };
