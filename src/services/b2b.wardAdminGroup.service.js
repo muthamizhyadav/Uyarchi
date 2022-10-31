@@ -2194,34 +2194,81 @@ const finishingAccount = async (id, page) => {
         preserveNullAndEmptyArrays: true,
       },
     },
+
     {
       $project: {
-        wardAdminGroupID: 1,
-        deliveryStatus: '$shopData.status',
-        order: '$shopData.OrderId',
-        originalOrderId: '$shopData._id',
-        customerBillId: '$shopData.customerBillId',
-
-        productAmountWithGST: { $round: ['$shopData.productData.price', 1] },
-        initialPaymentType: '$orderData.paymentMethod',
-        initialpaymenyCapacity: '$orderData.pay_type',
-        paidAmount: '$orderData.paidAmt',
-
-        type: '$orderDataNotEqual.type',
-        paytype: '$orderDataNotEqual.payType',
-        FinalPaymentType: '$orderDataNotEqual.paymentMethod',
-        Finalpaymentcapacity: '$orderDataNotEqual.pay_type',
-        finalpaidAmount: '$orderDataNotEqual.paidAmt',
-
-        addTwoAmount: {
-          $add: ['$orderDataNotEqual.paidAmt', '$orderData.paidAmt'],
-        },
-
-        PendinAmount: {
+        orderId: "$shopData.OrderId",
+        BillId: "$shopData.customerBillId",
+        DeliveryStatus: "$shopData.customerDeliveryStatus",
+        initialPaymentMode: "$orderData.payment",
+        payType: "$orderData.paymentMethod",
+        InitialPaidAmount: "$orderData.paidAmt",
+        TotalOrderAmountWithGST: "$shopData.productData.price",
+        InitialPendingAmount: {
           $subtract: ['$shopData.productData.price', '$orderData.paidAmt'],
         },
-      },
+
+        FinalPaymentMode: "$orderDataNotEqual.payment",
+        paymentType: "$orderDataNotEqual.paymentMethod",
+        FinalPaidAmount: "$orderDataNotEqual.paidAmt",
+        AddIniAndFinal: {
+          $add: ['$orderDataNotEqual.paidAmt', '$orderData.paidAmt'],
+        },
+     
+      // FinalPendingAmount: {
+      //   $subtract: ["$TotalOrderAmountWithGST","$AddIniAndFinal"]
+      // },
     },
+  },
+  {
+    $project: {
+      orderId: 1,
+      BillId: 1,
+      DeliveryStatus: 1,
+      initialPaymentMode: 1,
+      payType: 1,
+      InitialPaidAmount: 1,
+      TotalOrderAmountWithGST: 1,
+      InitialPendingAmount: 1,
+
+      FinalPaymentMode:1,
+      paymentType: 1,
+      FinalPaidAmount: 1,
+      AddIniAndFinal: 1,
+   
+    FinalPendingAmount: {
+      $subtract: ["$TotalOrderAmountWithGST","$AddIniAndFinal"]
+    },
+  },
+},
+    // {
+    //   $project: {
+    //     wardAdminGroupID: 1,
+    //     deliveryStatus: '$shopData.status',
+    //     order: '$shopData.OrderId',
+    //     originalOrderId: '$shopData._id',
+    //     customerBillId: '$shopData.customerBillId',
+
+    //     productAmountWithGST: { $round: ['$shopData.productData.price', 1] },
+    //     initialPaymentType: '$orderData.paymentMethod',
+    //     initialpaymenyCapacity: '$orderData.pay_type',
+    //     paidAmount: '$orderData.paidAmt',
+
+    //     type: '$orderDataNotEqual.type',
+    //     paytype: '$orderDataNotEqual.payType',
+    //     FinalPaymentType: '$orderDataNotEqual.paymentMethod',
+    //     Finalpaymentcapacity: '$orderDataNotEqual.pay_type',
+    //     finalpaidAmount: '$orderDataNotEqual.paidAmt',
+
+    //     addTwoAmount: {
+    //       $add: ['$orderDataNotEqual.paidAmt', '$orderData.paidAmt'],
+    //     },
+
+    //     PendinAmount: {
+    //       $subtract: ['$shopData.productData.price', '$orderData.paidAmt'],
+    //     },
+    //   },
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
