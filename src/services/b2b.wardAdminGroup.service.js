@@ -1066,9 +1066,23 @@ const getDeliveryOrderSeparate = async (id, page) => {
                     foreignField: '_id',
                     as: 'datass'
                   }
-
-
                 },
+                {
+                  $lookup: {
+                    from : 'orderpayments',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    pipeline: [
+                      {
+                        $group: { _id: null, price: { $sum: '$paidAmt' } } 
+                      }
+                    ],
+                    as: 'orderpaymentsData'
+                  }
+                },
+                { $unwind: "$orderpaymentsData"},
+               
+               
                 {
                   $lookup: {
                     from: 'productorderclones',
@@ -1154,6 +1168,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
                     productCount: {
                       $size: '$productorderclonescount',
                     },
+                    totalamountOverAll: "$orderpaymentsData.price",
                   },
                 },
               ],
@@ -1161,6 +1176,8 @@ const getDeliveryOrderSeparate = async (id, page) => {
             },
           },
           { $unwind: '$shopDatas' },
+
+          
         
           {
             $project: {
@@ -1188,13 +1205,18 @@ const getDeliveryOrderSeparate = async (id, page) => {
               totalPrice: '$shopDatas.totalPrice',
               paidamount: '$shopDatas.paidamount',
               productCount: '$shopDatas.productCount',
-              shopName: "$shopDatas.shopName"
+              shopName: "$shopDatas.shopName",
+              overAllTotalAmount : "$shopDatas.totalamountOverAll",
+              amountAfterSubtract : {
+                $subtract: ["$shopDatas.totalPrice","$shopDatas.totalamountOverAll"]
+              }
             },
           },
         ],
         as: 'orderassigns',
       },
     },
+ 
 
     {
       $project: {

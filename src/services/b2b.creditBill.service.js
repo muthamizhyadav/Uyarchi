@@ -1629,11 +1629,16 @@ const getDetailsByPassGroupId = async (id) => {
         shopNmae: '$Orderdatas.shopNmae',
         BalanceAmount: '$Orderdatas.pendingAmount',
         shopNmae: '$shopNameData.SName',
-
         BillAmount: { $round: ['$productData.price', 0] },
         paidAmount: '$paymentData.price',
-
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+        condition1: {
+          $cond: {
+            if: { $ne: [{ $round: { $subtract: ['$productData.price', '$paymentData.price'] } }, 0] },
+            then: true,
+            else: false,
+          },
+        },
       },
     
     },
@@ -1753,11 +1758,150 @@ const getDetailsByPassGroupId = async (id) => {
 
  { $unwind: '$productData' },
 
+]);
+
+
+let totalTrue = await ShopOrderClone.aggregate([
+  {
+ $lookup: {
+   from: 'creditbills',
+   localField: '_id',
+   foreignField: 'orderId',
+   as: 'billData',
+ },
+},
+{ $unwind: '$billData' },
+{
+ $lookup: {
+   from: 'creditbillgroups',
+   localField: 'billData.creditbillId',
+   pipeline: [
+     {
+       $match: {
+         $and: [{ _id: { $eq: id } }],
+       },
+     },
+   ],
+   foreignField: '_id',
+   as: 'groupDtaa',
+ },
+},
+
+{ $unwind: '$groupDtaa' },
+{
+ $lookup: {
+   from: 'b2bshopclones',
+   localField: 'billData.shopId',
+   foreignField: '_id',
+   as: 'shopNameData',
+ },
+},
+{ $unwind: '$shopNameData' },
+
+{
+ $lookup: {
+   from: 'orderpayments',
+   localField: '_id',
+   foreignField: 'orderId',
+   pipeline: [
+     {
+       $group: { _id: null, price: { $sum: '$paidAmt' } },
+     },
+   ],
+   as: 'paymentData',
+ },
+},
+{ $unwind: '$paymentData' },
+
+{
+ $lookup: {
+   from: 'orderpayments',
+   localField: '_id',
+   foreignField: 'orderId',
+   pipeline: [
+     {
+       
+                   $match: {
+                     $and: [{ creditBillStatus: { $eq: "creditBill" } }],
+                   },
+         
+     },
+   ],
+
+   as: 'paymentDatadata',
+ },
+},
+// { $unwind: '$paymentDatadata' },
+{
+ $lookup: {
+   from: 'productorderclones',
+   localField: '_id',
+   foreignField: 'orderId',
+   pipeline: [
+     {
+       $project: {
+         Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+         GST_Number: 1,
+       },
+     },
+     {
+       $project: {
+         sum: '$sum',
+         percentage: {
+           $divide: [
+             {
+               $multiply: ['$GST_Number', '$Amount'],
+             },
+             100,
+           ],
+         },
+         value: '$Amount',
+       },
+     },
+     {
+       $project: {
+         price: { $sum: ['$value', '$percentage'] },
+         value: '$value',
+         GST: '$percentage',
+       },
+     },
+     { $group: { _id: null, price: { $sum: '$price' } } },
+   ],
+   as: 'productData',
+ },
+},
+
+{ $unwind: '$productData' },
+
+{
+ $project: {
+
+   customerBillId: 1,
+   customerBilldate: 1,
+   customerBilltime: 1,
+   lastPaymentMode: "$paymentDatadata.payment",
+   lastPaymentType: "$paymentDatadata.paymentMethod",
+   shopNmae: '$Orderdatas.shopNmae',
+   BalanceAmount: '$Orderdatas.pendingAmount',
+   shopNmae: '$shopNameData.SName',
+   BillAmount: { $round: ['$productData.price', 0] },
+   paidAmount: '$paymentData.price',
+   pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+   condition1: {
+     $cond: {
+       if: { $ne: [{ $round: { $subtract: ['$productData.price', '$paymentData.price'] } }, 0] },
+       then: true,
+       else: false,
+     },
+   },
+ },
+
+},
 
 
 
 ]);
-  return {values: values, total: total.length};
+  return {values: values, total: total.length, totalTrue: totalTrue.length,};
 };
 
 const submitDispute = async (id, updatebody) => {
