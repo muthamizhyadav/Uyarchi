@@ -2580,6 +2580,7 @@ const getnotAssignSalesmanData = async (id, page, limit, uid, date) => {
 };
 
 const GetShopsByShopType = async (id, page) => {
+  console.log(id);
   let match;
   if (id == 'null') {
     match = {
@@ -2608,12 +2609,12 @@ const GetShopsByShopType = async (id, page) => {
       ],
     };
   } else {
-    match = [{ SType: { $eq: id } }];
+    match = { SType: { $eq: id } };
   }
   let shops = await Shop.aggregate([
     {
       $match: {
-        $and: match,
+        $and: [match],
       },
     },
     {
@@ -2637,18 +2638,10 @@ const GetShopsByShopType = async (id, page) => {
   let total = await Shop.aggregate([
     {
       $match: {
-        $and: [{ SType: { $eq: id } }],
+        $and: [match],
       },
     },
   ]);
-  let typename = await ShopList.findById(id);
-  // SType: '07299efb-1aa4-40e6-ad5f-a03ffecdc0a5',
-  //           SType: '66077e16-aa5f-401f-abcc-e1842d151b14',
-  //           SType: '2d2a9e39-34a1-4dde-9767-a37251854cc5',
-  //           SType: '57fdca99-9b2c-47aa-838b-eed600d3264a',
-  //           SType: 'c974636a-6324-4426-9440-d599353c9a18',
-  //           SType: '4372526e-266a-4474-a140-7e633015b15c',
-  //           SType: '602e637e-11e8-4901-b80f-db8a467afda2',
   let totalcounts = await Shop.find({ SType: '66077e16-aa5f-401f-abcc-e1842d151b14' }).count();
   let totalcounts1 = await Shop.find({ SType: '2d2a9e39-34a1-4dde-9767-a37251854cc5' }).count();
   let totalcounts2 = await Shop.find({ SType: '57fdca99-9b2c-47aa-838b-eed600d3264a' }).count();
@@ -2657,23 +2650,8 @@ const GetShopsByShopType = async (id, page) => {
   let totalcounts5 = await Shop.find({ SType: '602e637e-11e8-4901-b80f-db8a467afda2' }).count();
   let totalcounts6 = await Shop.find({ SType: '07299efb-1aa4-40e6-ad5f-a03ffecdc0a5' }).count();
   let totalcount = totalcounts + totalcounts1 + totalcounts2 + totalcounts3 + totalcounts4 + totalcounts5 + totalcounts6;
-  // let shoptype = await Shop.aggregate([
-  //   {
-  //     $match: { SType: id },
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'shoplists',
-  //       localField: 'SType',
-  //       foreignField: '_id',
-  //       as: 'shoptype',
-  //     },
-  //   },
-  //   {
-  //     $unwind: '$shoptype',
-  //   },
-  // ]);
-  return { shops: shops, total: total.length, totalcount: totalcount, typename: typename.shopList };
+
+  return { shops: shops, total: total.length, totalcount: totalcount };
 };
 
 const GetShopsReviewsByShopType = async (id, page) => {
