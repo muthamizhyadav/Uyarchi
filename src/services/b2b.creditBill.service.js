@@ -1474,12 +1474,12 @@ const submitDispute = async (id, updatebody) => {
 };
 
 const getPaymentTypeCount = async (id) => {
-  let values = await creditBillPaymentModel.aggregate([
+  let values = await orderPayment.aggregate([
     {
       $lookup: {
         from: 'creditbills',
-        localField: 'creditBillId',
-        foreignField: '_id',
+        localField: 'orderId',
+        foreignField: 'orderId',
         as: 'billData',
       },
     },
@@ -1501,32 +1501,15 @@ const getPaymentTypeCount = async (id) => {
     },
     { $unwind: '$groupDtaa' },
     {
-      $lookup: {
-        from: 'creditbillpaymenthistories',
-        localField: 'billData._id',
-        foreignField: 'creditBillId',
-        as: 'data',
-      },
-    },
-    {
-      $unwind: '$data',
-    },
-    {
       $project: {
-        pay_By: 1,
-        pay_type: 1,
-        upiStatus: 1,
-        amountPayingWithDEorSM: 1,
-        billN0: '$billData.bill',
-        billDate: '$billData.date',
-        billTime: '$billData.time',
-        shopNmae: '$groupDtaa.shopNmae',
-        BalanceAmount: '$groupDtaa.pendingAmount',
-        // aaaa: "$data.pay_By",
-        // bbb: "$data.amountPayingWithDEorSM",
-      },
+        paymentMethod:1,
+        paidAmt:1,
+        billNo: "$billData.bill"
+      }
     },
-    { $group: { _id: '$pay_By', TotalAmount: { $sum: '$amountPayingWithDEorSM' } } },
+  
+   
+    { $group: { _id: '$paymentMethod', TotalAmount: { $sum: '$paidAmt' } } },
   ]);
 
   return values;
