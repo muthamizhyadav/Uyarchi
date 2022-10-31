@@ -269,6 +269,7 @@ const getCallstatusForSuddenOrders = async (page) => {
         status: 1,
         exp_date: 1,
         productid: 1,
+        order_Type: 1,
         supplierid: 1,
       },
     },
