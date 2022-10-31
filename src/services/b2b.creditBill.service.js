@@ -1476,6 +1476,12 @@ const submitDispute = async (id, updatebody) => {
 const getPaymentTypeCount = async (id) => {
   let values = await orderPayment.aggregate([
     {
+      $match: {
+        $and: [{ creditBillStatus: { $eq: "creditBill" } }],
+
+      }
+    },
+    {
       $lookup: {
         from: 'creditbills',
         localField: 'orderId',
