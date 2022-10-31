@@ -615,6 +615,7 @@ const createMainWherehouseLoadingExecute = async (MWLEbody) => {
 };
 
 const AccountDetails = async (date, page) => {
+  let today = moment().format('YYYY-MM-DD');
   let values = await Product.aggregate([
     {
       $lookup: {
@@ -622,8 +623,20 @@ const AccountDetails = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date } },
-          { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
+          { $match: { date: today } },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [{ $match: { delivery_type: 'NDD' } }],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+          { $group: { _id: null, Qty: { $sum: { $multiply: ['$quantity', '$packKg'] } }, Avg: { $avg: '$priceperkg' } } },
         ],
         as: 'productDetails',
       },
@@ -637,7 +650,7 @@ const AccountDetails = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date, preOrderClose: { $eq: false } } },
+          { $match: { date: today, preOrderClose: { $eq: false } } },
           {
             $lookup: {
               from: 'b2bshopclones',
@@ -697,7 +710,7 @@ const AccountDetails = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date, preOrderClose: { $eq: true } } },
+          { $match: { date: today, preOrderClose: { $eq: true } } },
           {
             $lookup: {
               from: 'b2bshopclones',
@@ -756,7 +769,7 @@ const AccountDetails = async (date, page) => {
         from: 'estimatedorders',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [{ $match: { date: date } }],
+        pipeline: [{ $match: { date: today } }],
         as: 'estimatedDetails',
       },
     },
@@ -786,7 +799,19 @@ const AccountDetails = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: date } },
+          { $match: { date: today } },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [{ $match: { delivery_type: 'NDD' } }],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
           { $group: { _id: null, Qty: { $sum: '$quantity' }, Avg: { $avg: '$priceperkg' } } },
         ],
         as: 'productDetails',
@@ -794,6 +819,135 @@ const AccountDetails = async (date, page) => {
     },
     {
       $unwind: '$productDetails',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          { $match: { date: today, preOrderClose: { $eq: false } } },
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'customerId',
+              foreignField: '_id',
+              as: 'shopData',
+            },
+          },
+          {
+            $unwind: '$shopData',
+          },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'b2busers',
+                    localField: 'Uid',
+                    foreignField: '_id',
+                    as: 'UsersData',
+                  },
+                },
+                {
+                  $unwind: '$UsersData',
+                },
+                {
+                  $project: {
+                    userName: '$UsersData.name',
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+
+          {
+            $project: {
+              shopName: '$shopData.SName',
+              orderby: '$shoporderclones.userName',
+              quantity: 1,
+              priceperkg: 1,
+            },
+          },
+        ],
+        as: 'liveStock',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'productid',
+        pipeline: [
+          { $match: { date: today, preOrderClose: { $eq: true } } },
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'customerId',
+              foreignField: '_id',
+              as: 'shopData',
+            },
+          },
+          {
+            $unwind: '$shopData',
+          },
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'b2busers',
+                    localField: 'Uid',
+                    foreignField: '_id',
+                    as: 'UsersData',
+                  },
+                },
+                {
+                  $unwind: '$UsersData',
+                },
+                {
+                  $project: {
+                    userName: '$UsersData.name',
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+
+          {
+            $project: {
+              shopName: '$shopData.SName',
+              orderby: '$shoporderclones.userName',
+              quantity: 1,
+              priceperkg: 1,
+            },
+          },
+        ],
+        as: 'orderDetails',
+      },
+    },
+    {
+      $lookup: {
+        from: 'estimatedorders',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [{ $match: { date: today } }],
+        as: 'estimatedDetails',
+      },
     },
   ]);
   return { values: values, total: total.length };
