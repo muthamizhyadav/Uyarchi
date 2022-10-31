@@ -179,6 +179,9 @@ const getTrendsData = async (wardId, street, shoptype, page) => {
         as: 'Productdetails',
       },
     },
+    // {
+    //   $unwind: '$Productdetails',
+    // },
     {
       $project: {
         productDetails: '$Productdetails',
@@ -242,6 +245,16 @@ const getTrendsData = async (wardId, street, shoptype, page) => {
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    date: { $eq: date },
+                  },
+                },
+                {
+                  $match: { $and: [shoptypematch] },
+                },
+              ],
               as: 'b2bshop',
             },
           },
@@ -272,6 +285,7 @@ const getTrendsData = async (wardId, street, shoptype, page) => {
               longitude: '$b2bshop.Slong',
               latitude: '$b2bshop.Slat',
               ShopName: '$b2bshop.SName',
+              shopType: '$b2bshop.SType',
               date: 1,
             },
           },
@@ -279,6 +293,9 @@ const getTrendsData = async (wardId, street, shoptype, page) => {
         as: 'Productdetails',
       },
     },
+    // {
+    //   $unwind: '$Productdetails',
+    // },
   ]);
   return { values: values, total: total.length };
 };
@@ -1900,9 +1917,7 @@ const get_Set_price_product = async (page) => {
   return { value: retrunvalue, total: await Product.find().count() };
 };
 
-
 const getstock_close_product = async () => {
-
   const product = await Product.aggregate([
     { $sort: { productTitle: 1 } },
     {
@@ -1915,14 +1930,12 @@ const getstock_close_product = async () => {
       },
     },
     {
-      $unwind: "$usablestocks"
-    }
-
-  ])
+      $unwind: '$usablestocks',
+    },
+  ]);
 
   return product;
-
-}
+};
 module.exports = {
   createProduct,
   getTrendsData,
@@ -1992,5 +2005,5 @@ module.exports = {
   AssignStockGetall,
   getDataOnlySetSales,
   get_Set_price_product,
-  getstock_close_product
+  getstock_close_product,
 };
