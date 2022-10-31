@@ -6,8 +6,7 @@ const router = express.Router();
 // create Vehicle Route && fetch Active Vehicles
 router
   .route('/')
-  .post(middleware.fields([{ name: 'RC_book_image' }, { name: 'vehicle_image' }]), vehicleController.createVehicle)
-  .get(vehicleController.getAll_Vehicle_Details);
+  .post(middleware.fields([{ name: 'RC_book_image' }, { name: 'vehicle_image' }]), vehicleController.createVehicle);
 router.route('/:page').get(vehicleController.getVehicle);
 
 // fect deliveryExecutives && activeVehicles
