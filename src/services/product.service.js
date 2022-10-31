@@ -650,7 +650,7 @@ const AccountDetails = async (date, page) => {
         localField: '_id',
         foreignField: 'productid',
         pipeline: [
-          { $match: { date: today, preOrderClose: { $eq: false } } },
+          { $match: { date: today} },
           {
             $lookup: {
               from: 'b2bshopclones',
