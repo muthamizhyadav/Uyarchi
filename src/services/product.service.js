@@ -738,6 +738,7 @@ const AccountDetails = async (date, page) => {
               localField: 'orderId',
               foreignField: '_id',
               pipeline: [
+                { $match: { delivery_type: 'NDD' } },
                 {
                   $lookup: {
                     from: 'b2busers',

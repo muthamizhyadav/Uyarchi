@@ -27,7 +27,7 @@ const createVehicle = catchAsync(async (req, res) => {
 // Fetch Active Vehicle Controller
 
 const getVehicle = catchAsync(async (req, res) => {
-  const data = await VehicleService.getVehicle();
+  const data = await VehicleService.getVehicle(req.params.page);
   res.send(data);
 });
 

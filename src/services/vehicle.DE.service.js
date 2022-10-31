@@ -13,9 +13,10 @@ const createVehicle = async (body) => {
 
 // fetch All Active Vehicles for DeliveryExecutive
 
-const getVehicle = async () => {
-  let values = await Vehicle.find();
-  return values;
+const getVehicle = async (page) => {
+  let values = await Vehicle.aggregate([{ $skip: 10 * page }, { $limit: 10 }]);
+  let total = await Vehicle.find().count();
+  return { values: values, total: total };
 };
 
 // fetch ward DeliveryExecutives && active Vehicles
