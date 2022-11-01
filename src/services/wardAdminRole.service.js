@@ -1919,15 +1919,15 @@ const assignShopsSalesman = async (id, page) => {
           },
           {
             $match: {
-              assign: false
-            }
+              assign: false,
+            },
           },
           {
             $project: {
               Slat: 1,
-              Slong: 1
-            }
-          }
+              Slong: 1,
+            },
+          },
         ],
         as: 'latsalesmanshopsdata',
       },
@@ -1967,9 +1967,8 @@ const assignShopsSalesman = async (id, page) => {
         // latLong:"$b2bshopclonesdatalat",
         assignCount: { $size: '$salesmanshopsdata' },
         unAssignCount: { $subtract: [{ $size: '$b2bshopclonesdata' }, { $size: '$salesmanshopsdata' }] },
-        latun: { $size: "$latsalesmanshopsdata" },
-        lat: "$latsalesmanshopsdata",
-
+        latun: { $size: '$latsalesmanshopsdata' },
+        lat: '$latsalesmanshopsdata',
       },
     },
     {
@@ -2036,7 +2035,6 @@ const assignShopsSalesman = async (id, page) => {
     },
   ]);
   return { data: data, count: total.length };
-
 };
 
 const assignShopsSalesmandatewise = async (id, wardid, page) => {
@@ -2064,6 +2062,11 @@ const assignShopsSalesmandatewise = async (id, wardid, page) => {
     {
       $addFields: {
         assignCount: { $size: '$salesmanshopsdata' },
+      },
+    },
+    {
+      $addFields: {
+        data: { $size: '$salesmanshopsdata' },
       },
     },
     {
@@ -2120,7 +2123,14 @@ const assignShopsSalesmandatewise = async (id, wardid, page) => {
       $sort: { _id: -1 },
     },
   ]);
-  return { data: data, count: total.length };
+  const shopdata = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ Wardid: { $eq: wardid } }, { Uid: { $eq: id } }],
+      },
+    },
+  ]);
+  return { data: data, count: total.length, shopdata: shopdata };
 };
 
 const assignShopsOnlydatewise = async (id, wardid, page) => {
@@ -2146,7 +2156,7 @@ const assignShopsOnlydatewise = async (id, wardid, page) => {
       },
     },
     {
-      $unwind: "$b2bshopclones"
+      $unwind: '$b2bshopclones',
     },
     {
       $lookup: {
@@ -2157,11 +2167,11 @@ const assignShopsOnlydatewise = async (id, wardid, page) => {
       },
     },
     {
-      $unwind: "$b2busers"
+      $unwind: '$b2busers',
     },
     {
       $group: {
-        _id: { date: '$date', fromSalesManId: "$fromSalesManId", name: "$b2busers.name" },
+        _id: { date: '$date', fromSalesManId: '$fromSalesManId', name: '$b2busers.name' },
         assignedShop: { $sum: 1 },
       },
     },
@@ -2197,7 +2207,7 @@ const assignShopsOnlydatewise = async (id, wardid, page) => {
       },
     },
     {
-      $unwind: "$b2bshopclones"
+      $unwind: '$b2bshopclones',
     },
     {
       $lookup: {
@@ -2208,11 +2218,11 @@ const assignShopsOnlydatewise = async (id, wardid, page) => {
       },
     },
     {
-      $unwind: "$b2busers"
+      $unwind: '$b2busers',
     },
     {
       $group: {
-        _id: { date: '$date', fromSalesManId: "$fromSalesManId", name: "$b2busers.name" },
+        _id: { date: '$date', fromSalesManId: '$fromSalesManId', name: '$b2busers.name' },
         assignedShop: { $sum: 1 },
       },
     },

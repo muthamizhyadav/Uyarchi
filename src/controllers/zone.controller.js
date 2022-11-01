@@ -54,6 +54,11 @@ const deleteZone = catchAsync(async (req, res) => {
   await ZoneService.deleteZoneById(req.params.zoneId);
   res.status(httpStatus.NO_CONTENT).send();
 });
+
+const getCounts_Street = catchAsync(async (req, res) => {
+  const data = await ZoneService.getCounts_Street(req.body);
+  res.send(data);
+});
 module.exports = {
   createZone,
   getAllZones,
@@ -63,4 +68,5 @@ module.exports = {
   updateZone,
   deleteZone,
   zonePagination,
+  getCounts_Street,
 };

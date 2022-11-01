@@ -97,10 +97,15 @@ const vidoRoute = require('./videoUpload.route');
 const returnStockroute = require('./returnStock.route');
 const vehicleRoutes = require('./vehicle.DE.route');
 const telecallerAssignroute = require('./telecallerAssign.route');
+const BillAdjRoute = require('./Bill.Adj.route');
 const defaultRoutes = [
   {
     path: '/registerShop',
     route: registerShop,
+  },
+  {
+    path: '/Bill_Adjustment',
+    route: BillAdjRoute,
   },
   {
     path: '/vehicle',
