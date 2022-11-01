@@ -2393,7 +2393,7 @@ const getVendorShops = async (key) => {
 
 // getnotAssignSalesmanData
 
-const getnotAssignSalesmanData = async (id, page, limit, uid, date) => {
+const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
   let match;
   if (uid != 'null' && date == 'null') {
     match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }];
@@ -2404,23 +2404,12 @@ const getnotAssignSalesmanData = async (id, page, limit, uid, date) => {
   } else {
     match = [{ Wardid: { $eq: id } }];
   }
-  // console.log(match)
   let data = await Shop.aggregate([
     {
       $match: {
         $and: match,
       },
     },
-    // {
-    //   $match: {
-    //     $or: [
-    //       { salesManStatus: { $ne: 'Assign' } },
-    //       { salesManStatus: { $eq: null } },
-    //       { salesManStatus: { $eq: 'Reassign' } },
-    //       { salesManStatus: { $ne: 'tempReassign' } },
-    //     ],
-    //   },
-    // },
     {
       $match: {
         $or: [
@@ -2446,6 +2435,7 @@ const getnotAssignSalesmanData = async (id, page, limit, uid, date) => {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
+        pipeline: [{ $match: { _id: street } }],
         as: 'streets',
       },
     },
@@ -2458,6 +2448,7 @@ const getnotAssignSalesmanData = async (id, page, limit, uid, date) => {
         SName: 1,
         mobile: 1,
         address: 1,
+        streetId: '$streets._id',
         locality: '$streets.locality',
         _id: 1,
         displaycount: 1,
@@ -2499,6 +2490,7 @@ const getnotAssignSalesmanData = async (id, page, limit, uid, date) => {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
+        pipeline: [{ $match: { _id: street } }],
         as: 'streets',
       },
     },
@@ -2558,6 +2550,7 @@ const getnotAssignSalesmanData = async (id, page, limit, uid, date) => {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
+        pipeline: [{ $match: { _id: street } }],
         as: 'streets',
       },
     },

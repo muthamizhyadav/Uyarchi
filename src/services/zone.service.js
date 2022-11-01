@@ -100,6 +100,44 @@ const deleteZoneById = async (zoneId) => {
   (zone.active = false), (zone.archive = true), await zone.save();
   return zone;
 };
+
+const getCounts_Street = async (zonecode) => {
+  let { zoneCode } = zonecode;
+  let values = await Zone.aggregate([
+    {
+      $match: { zoneCode: zoneCode },
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: '_id',
+        foreignField: 'zoneId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'streets',
+              localField: '_id',
+              foreignField: 'wardId',
+              pipeline: [{ $group: { _id: null, myCount: { $sum: 1 } } }],
+              as: 'streetData',
+            },
+          },
+        ],
+        as: 'wards',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        zoneCode: 1,
+        wardcount: { $size: '$wards' },
+        wards: '$wards.streetData',
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createZone,
   getAllZone,
@@ -110,4 +148,5 @@ module.exports = {
   // getZOnes,
   deleteZoneById,
   queryZone,
+  getCounts_Street,
 };

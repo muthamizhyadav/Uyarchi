@@ -13,5 +13,6 @@ router
 
 router.route('/zoneByDistrict/:districtId').get(zoneController.getZoneByDistrict);
 router.route('/page/:id').get(zoneController.zonePagination);
+router.route('/counts/street').get(zoneController.getCounts_Street);
 
 module.exports = router;
