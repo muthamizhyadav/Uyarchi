@@ -1253,7 +1253,21 @@ const getShopPendingByPassingShopId = async (id) => {
 };
 
 const getDeliDetails = async () => {
+  // let match;
+  // if(id != 'null' ){
+  //   match = [{ id: { $eq: id } },  { active: { $eq: true } }];
+  // } else if (id != 'null') {
+  //   match = [{ id: { $eq: id } }, { active: { $eq: true } }];
+  // }else {
+  //   match = [{ id: { $ne: null } }, { active: { $eq: true } }];
+  // }
+  
   let values = await Users.aggregate([
+    // {
+    //   $match: {
+    //     $and: match,
+    //   },
+    // },
     {
       $match: {
         $or: [
@@ -1268,6 +1282,7 @@ const getDeliDetails = async () => {
         localField: '_id',
         foreignField: 'AssignedUserId',
         pipeline: [
+          
           {
             $match: {
               receiveStatus: { $eq: 'Pending' },
