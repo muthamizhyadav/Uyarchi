@@ -2448,6 +2448,8 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         SName: 1,
         mobile: 1,
         address: 1,
+        Slat: 1,
+        Slong: 1,
         streetId: '$streets._id',
         locality: '$streets.locality',
         _id: 1,
