@@ -2240,7 +2240,12 @@ const finishingAccount = async (id, page) => {
         as: 'orderDataNotEqual1',
       },
     },
-//     { $unwind:"$orderDataNotEqual1"},
+    {
+      $unwind: {
+        path: '$orderDataNotEqual1',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     
 
     {
