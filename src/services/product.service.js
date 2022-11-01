@@ -132,11 +132,6 @@ const getTrendsData = async (wardId, street, shoptype, page) => {
               localField: 'shopId',
               foreignField: '_id',
               pipeline: [
-                // {
-                //   $match: {
-                //     date: { $eq: '31-10-2022' },
-                //   },
-                // },
                 {
                   $match: { $and: [shoptypematch] },
                 },
