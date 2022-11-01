@@ -60,7 +60,8 @@ const OrderPaymentSchema = new mongoose.Schema({
   },
   reasonScheduleOrDate:{
     type: String,
-  }
+  },
+
   
 });
 

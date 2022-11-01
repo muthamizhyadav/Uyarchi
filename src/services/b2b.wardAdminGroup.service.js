@@ -128,6 +128,7 @@ const updateOrderStatus = async (id, updateBody) => {
     paymentMethod: updateBody.paymentMethods,
     paymentstutes: updateBody.paymentstutes,
     creditBillStatus: updateBody.creditBillStatus,
+    reasonScheduleOrDate: updateBody.reasonScheduleOrDate,
   });
   return deliveryStatus;
 };
@@ -2232,7 +2233,7 @@ const finishingAccount = async (id, page) => {
         InitialPaidAmount: "$orderData.paidAmt",
         TotalOrderAmountWithGST: "$shopData.productData.price",
         InitialPendingAmount: {
-          $subtract: [ {$add: ['$orderData.price', '$orderDataNotEqual.price']}, '$shopData.productData.price'],
+          $subtract: [ '$shopData.productData.price','$orderData.price' ],
         },
 
         FinalPaymentMode: "$orderDataNotEqual.payment",
