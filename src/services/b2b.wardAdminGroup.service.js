@@ -2166,9 +2166,6 @@ const finishingAccount = async (id, page) => {
         $and: [{ wardAdminGroupID: { $eq: id } }],
       },
     },
- 
-    
-  
 
     {
       $lookup: {
@@ -2486,7 +2483,8 @@ const finishingAccount = async (id, page) => {
     {
       $project: {
         // partialCount: '$partialCount.shopdatadata.pay_type',
-        deleieveryName: "$b2buserDta.name"
+        deleieveryName: "$b2buserDta.name",
+        route: "$wardadmingroupsData.route"
       },
     },
   ]);
