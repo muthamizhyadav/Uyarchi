@@ -254,6 +254,20 @@ const getShopHistory = async (AssignedUserId, date,page) => {
       },
     },
     { $unwind: '$paymentData' },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: 'orderId',
+        foreignField: 'orderId',
+        // pipeline: [
+        //   {
+        //     $group: { _id: null, price: { $sum: '$paidAmt' } },
+        //   },
+        // ],
+        as: 'paymentDataData',
+      },
+    },
+    { $unwind: '$paymentDataData' },
 
     {
       $lookup: {
@@ -312,18 +326,11 @@ const getShopHistory = async (AssignedUserId, date,page) => {
       },
     },
     { $unwind: '$productData' },
-    // {
-    //   $lookup: {
-    //     from: 'creditbillpaymenthistories',
-    //     localField: '_id',
-    //     foreignField: 'creditBillId',
-    //     as: 'creditDtaa',
-    //   },
-    // },
-    // { $unwind: '$creditDtaa' },
+   
 
     {
       $project: {
+        creditBillStatus: "$paymentDataData.creditBillStatus",
         shopordercloneId: "$shoporderclonedata._id",
         customerBillId: '$shoporderclonedata.customerBillId',
         OrderId: '$shoporderclonedata.OrderId',
@@ -351,9 +358,15 @@ const getShopHistory = async (AssignedUserId, date,page) => {
         },
       },
     },
+    // {
+    //   $match: {
+    //     $and: [{ condition1: { $eq: true } }],
+    //   },
+    // },
 
     {
       $project: {
+     creditBillStatus:1,
         shopordercloneId: 1,
         customerBillId: 1,
         OrderId: 1,
@@ -385,6 +398,11 @@ const getShopHistory = async (AssignedUserId, date,page) => {
         },
       },
     },
+    // {
+    //   $match: {
+    //     $and: [{ condition1: { $eq: true } }],
+    //   },
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -429,15 +447,7 @@ const getShopHistory = async (AssignedUserId, date,page) => {
       },
     },
     { $unwind: '$shopDtaa' },
-    // {
-    //   $lookup: {
-    //     from: 'creditbillpaymenthistories',
-    //     localField: '_id',
-    //     foreignField: 'creditBillId',
-    //     as: 'creditData',
-    //   },
-    // },
-    // { $unwind: '$creditData' },
+    
     {
       $lookup: {
         from: 'productorderclones',
@@ -477,15 +487,7 @@ const getShopHistory = async (AssignedUserId, date,page) => {
       },
     },
     { $unwind: '$productData' },
-    // {
-    //   $lookup: {
-    //     from: 'creditbillpaymenthistories',
-    //     localField: '_id',
-    //     foreignField: 'creditBillId',
-    //     as: 'creditDtaa',
-    //   },
-    // },
-    // { $unwind: '$creditDtaa' },
+   
 
     {
       $project: {
@@ -495,6 +497,7 @@ const getShopHistory = async (AssignedUserId, date,page) => {
         date: '$shoporderclonedata.date',
         statusOfBill: '$creditData.reasonScheduleOrDate',
         paymentStatus: '$creditData.pay_type',
+
         executeName: '$dataa.AssignedUserId',
         shopNmae: '$shopDtaa.SName',
         shopId: '$shopDtaa._id',
@@ -516,6 +519,11 @@ const getShopHistory = async (AssignedUserId, date,page) => {
         },
       },
     },
+    // {
+    //   $match: {
+    //     $and: [{ condition1: { $eq: true } }],
+    //   },
+    // },
 
     {
       $project: {
@@ -550,6 +558,11 @@ const getShopHistory = async (AssignedUserId, date,page) => {
         },
       },
     },
+    // {
+    //   $match: {
+    //     $and: [{ condition1: { $eq: true } }],
+    //   },
+    // },
    
   ]);
   return {values: values, total: total.length };
