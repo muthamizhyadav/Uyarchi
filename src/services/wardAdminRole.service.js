@@ -2064,6 +2064,11 @@ const assignShopsSalesmandatewise = async (id, wardid, page) => {
       },
     },
     {
+      $addFields: {
+        data: { $size: '$salesmanshopsdata' },
+      },
+    },
+    {
       $group: {
         _id: '$filterDate',
         shopCount: { $sum: 1 },
@@ -2117,7 +2122,14 @@ const assignShopsSalesmandatewise = async (id, wardid, page) => {
       $sort: { _id: -1 },
     },
   ]);
-  return { data: data, count: total.length };
+  const shopdata = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ Wardid: { $eq: wardid } }, { Uid: { $eq: id } }],
+      },
+    },
+  ]);
+  return { data: data, count: total.length, shopdata: shopdata };
 };
 
 const assignShopsOnlydatewise = async (id, wardid, page) => {
