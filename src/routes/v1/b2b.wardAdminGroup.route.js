@@ -120,4 +120,6 @@ router.route('/updatemismatchStockStatus/:id').put(wardAdminGroupController.upda
 router.route('/createfineData/').post(wardAdminGroupController.createfineData);
 
 router.route('/get/orderData/ByPassing/GroupId/:id').get(wardAdminGroupController.getOrderDataByPassing);
+
+router.route('/get/detatils/dele/name/forSorting').get(wardAdminGroupController.deliveryExecutiveSorting);
 module.exports = router;

@@ -2863,7 +2863,7 @@ const deliveryExecutiveSorting = async()=>{
     {
       $unwind: '$b2busersData',
     },
-    // { $group : { _id : "$product" ,Names : { $addToSet : "$productName.productTitle" } }}
+    { $group : { _id : "$deliveryExecutiveId" ,name : { $addToSet : "$b2busersData.name" } }}
   ]);
   return values;
 }
