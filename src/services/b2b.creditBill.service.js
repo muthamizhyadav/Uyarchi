@@ -1515,24 +1515,72 @@ const getGroupAndBill = async (AssignedUserId) => {
         ],
         as: 'orderpaymentsData'
       }
-    }
-    // {
-    //   $project: {
-    //     groupId: 1,
-    //     assignedDate: 1,
-    //     assignedTime: 1,
-    //     receiveStatus: 1,
-    //     total: {
-    //       $sum: '$Orderdatas.pendingAmount',
-    //     },
-    //     shopCount: {
-    //       $size: '$creditBillData.shopId',
-    //     },
-    //     BillCount: {
-    //       $size: '$creditBillData.bill',
-    //     },
-    //   },
-    // },
+    },
+    { $unwind: "$orderpaymentsData"},
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: 'creditBillData.orderId',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+
+    { $unwind: '$productData' },
+    {
+      $project: {
+        groupId: 1,
+        assignedDate: 1,
+        assignedTime: 1,
+        receiveStatus: 1,
+        total: {
+          $sum: '$Orderdatas.pendingAmount',
+        },
+        shopCount: {
+          $size: '$creditBillData.shopId',
+        },
+        BillCount: {
+          $size: '$creditBillData.bill',
+        },
+        originalPrice: "$productData.price",
+        paidAmount: "$orderpaymentsData.price",
+        PendingAmount: {$round: {
+          $subtract: ["$productData.price","$orderpaymentsData.price"]
+        }
+      },
+      
+      },
+    },
   ]);
   return data;
 };
