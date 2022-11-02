@@ -1766,13 +1766,47 @@ const getPettyCashDetails = async (id, page) => {
   return { values: values, total: total.length };
 };
 
-const getAllGroup = async (page) => {
+const getAllGroup = async (id,date,FinishingStatus,page) => {
+  let match;
+  if (id != 'null' && date != 'null' && FinishingStatus != 'null') {
+    match = [{ deliveryExecutiveId: { $eq: id } }, { assignDate: { $eq: date } },{ FinishingStatus: { $eq: FinishingStatus } },  { active: { $eq: true } }];
+  } else if (id != 'null') {
+    match = [{ deliveryExecutiveId: { $eq: id } }, { active: { $eq: true } }];
+  } else if (date != 'null') {
+    match = [{ assignDate: { $eq: date } }, { active: { $eq: true } }];
+  } else if (FinishingStatus != 'null'){
+    match = [{ FinishingStatus: { $eq: FinishingStatus } },{ active: { $eq: true } }]
+  }
+   else   {
+    match = [{ deliveryExecutiveId: { $ne: null } }, { active: { $eq: true } }];
+  }
+  // else  {
+  //   match = [{ assignDate: { $ne: null } }, { active: { $eq: true } }];
+  // }
+  // else {
+  //   match = [{ FinishingStatus: { $ne: null } }, { active: { $eq: true } }];
+  // }
+
   let values = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: match,
+      },
+    },
     {
       $match: {
         $and: [{ status: { $eq: 'Packed' } }],
       },
     },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2buserDta'
+      }
+    },
+    { $unwind: "$b2buserDta"},
     // {
     //   $unwind: '$Orderdatas',
     // },
@@ -1797,6 +1831,9 @@ const getAllGroup = async (page) => {
         totalOrders: 1,
         pettyCash: 1,
         status: 1,
+        deliveryexecutiveName: "$b2buserDta.name",
+        FinishingStatus: 1,
+        route:1,
         shoporderclonesId: '$shopIDDatas._id',
       },
     },
@@ -1805,6 +1842,11 @@ const getAllGroup = async (page) => {
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: match,
+      },
+    },
     {
       $match: {
         $and: [{ status: { $eq: 'Packed' } }],
@@ -2131,6 +2173,7 @@ const finishingAccount = async (id, page) => {
         localField: 'orderId',
         foreignField: '_id',
         pipeline: [
+     
           {
             $lookup: {
               from: 'productorderclones',
@@ -2250,6 +2293,7 @@ const finishingAccount = async (id, page) => {
 
     {
       $project: {
+         deliveryExecutiveName: "$shopData.b2buserDta.name",
          initialpaid: "$orderData.price",
          finalpaid: "$orderDataNotEqual.price",
         orderId: "$shopData.OrderId",
@@ -2279,6 +2323,7 @@ const finishingAccount = async (id, page) => {
   },
   {
     $project: {
+      deliveryExecutiveName:1,
       orderId: 1,
       BillId: 1,
       DeliveryStatus: 1,
@@ -2409,33 +2454,37 @@ const finishingAccount = async (id, page) => {
     },
   ]);
 
-  let partialCount = await wardAdminGroupModel_ORDERS.aggregate([
+  let DeliveryExecutiveName = await wardAdminGroupModel_ORDERS.aggregate([
     {
       $match: {
         $and: [{ wardAdminGroupID: { $eq: id } }],
       },
     },
+
     {
       $lookup: {
-        from: 'shoporderclones',
-        localField: 'orderId',
+        from: 'wardadmingroups',
+        localField: 'wardAdminGroupID',
         foreignField: '_id',
-        pipeline: [
-          {
-            $match: {
-              $or: [{ pay_type: { $eq: 'Partial' } }, { paymentMethod: { $eq: 'By Credit' } }],
-            },
-          },
-        ],
-        as: 'shopdatadata',
-      },
+        as: 'wardadmingroupsData'
+      }
     },
+    { $unwind: "$wardadmingroupsData"},
     {
-      $unwind: '$shopdatadata',
+      $lookup: {
+        from: 'b2busers',
+        localField: 'wardadmingroupsData.deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2buserDta'
+      }
     },
+    { $unwind: "$b2buserDta"},
+    
     {
       $project: {
-        partialCount: '$partialCount.shopdatadata.pay_type',
+        // partialCount: '$partialCount.shopdatadata.pay_type',
+        deleieveryName: "$b2buserDta.name",
+        route: "$wardadmingroupsData.route"
       },
     },
   ]);
@@ -2526,7 +2575,7 @@ const finishingAccount = async (id, page) => {
   return {
     data: data,
     total: total.length,
-    partialCount: partialCount,
+    DeliveryExecutiveName: DeliveryExecutiveName,
     partialTotalCount: partialTotalCount.length,
     UnDeliveredTotal: UnDeliveredTotal,
     UnDeliveredTotalCount: UnDeliveredTotalCount.length,
@@ -2800,6 +2849,25 @@ const getOrderDataByPassing = async (id) =>{
   return values;
 }
 
+
+const deliveryExecutiveSorting = async()=>{
+  let values = await wardAdminGroup.aggregate([
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    { $group : { _id : "$deliveryExecutiveId" ,name : { $addToSet : "$b2busersData.name" } }}
+  ]);
+  return values;
+}
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -2858,4 +2926,6 @@ module.exports = {
   fineData,
 
   getOrderDataByPassing,
+
+  deliveryExecutiveSorting,
 };

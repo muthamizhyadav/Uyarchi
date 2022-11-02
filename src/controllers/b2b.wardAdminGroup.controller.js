@@ -220,7 +220,7 @@ const getPettyCashDetails = catchAsync(async (req, res) => {
 });
 
 const getAllGroup = catchAsync(async (req, res) => {
-  const group = await wardAdminGroupService.getAllGroup(req.params.page);
+  const group = await wardAdminGroupService.getAllGroup(req.params.id,req.params.date,req.params.FinishingStatus,req.params.page);
   res.send(group);
 });
 
@@ -314,6 +314,10 @@ const getOrderDataByPassing = catchAsync(async (req,res) => {
   res.send(data);
 });
 
+const deliveryExecutiveSorting = catchAsync(async (req,res) => {
+  const sorting = await wardAdminGroupService.deliveryExecutiveSorting();
+  res.send(sorting);
+})
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -397,4 +401,6 @@ module.exports = {
   createfineData,
 
   getOrderDataByPassing,
+
+  deliveryExecutiveSorting,
 };

@@ -127,6 +127,10 @@ const wardAdminGroupSchema = new mongoose.Schema({
   mismatchStockStatus: {
     type: String,
   },
+  FinishingStatus: {
+    type: String,
+    default: "Pending"
+  }
 });
 
 const wardAdminGroup = mongoose.model('wardAdminGroup', wardAdminGroupSchema);

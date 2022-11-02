@@ -259,11 +259,11 @@ const getShopHistory = async (AssignedUserId, date,page) => {
         from: 'orderpayments',
         localField: 'orderId',
         foreignField: 'orderId',
-        // pipeline: [
-        //   {
-        //     $group: { _id: null, price: { $sum: '$paidAmt' } },
-        //   },
-        // ],
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
         as: 'paymentDataData',
       },
     },
@@ -278,15 +278,7 @@ const getShopHistory = async (AssignedUserId, date,page) => {
       },
     },
     { $unwind: '$shopDtaa' },
-    // {
-    //   $lookup: {
-    //     from: 'creditbillpaymenthistories',
-    //     localField: '_id',
-    //     foreignField: 'creditBillId',
-    //     as: 'creditData',
-    //   },
-    // },
-    // { $unwind: '$creditData' },
+   
     {
       $lookup: {
         from: 'productorderclones',
@@ -844,11 +836,11 @@ const getsalesName = async () => {
 
 const getNotAssignData = async (page) => {
   let values = await ShopOrderClone.aggregate([
-    // {
-    //   $match: {
-    //     $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
-    //   },
-    // },
+    {
+      $match: {
+        $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
+      },
+    },
 
     // {
     //   $lookup: {
@@ -982,11 +974,11 @@ const getNotAssignData = async (page) => {
   ]);
 
   let total = await ShopOrderClone.aggregate([
-     // {
-    //   $match: {
-    //     $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
-    //   },
-    // },
+     {
+      $match: {
+        $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
+      },
+    },
 
     {
       $lookup: {
@@ -1253,7 +1245,21 @@ const getShopPendingByPassingShopId = async (id) => {
 };
 
 const getDeliDetails = async () => {
+  // let match;
+  // if(id != 'null' ){
+  //   match = [{ id: { $eq: id } },  { active: { $eq: true } }];
+  // } else if (id != 'null') {
+  //   match = [{ id: { $eq: id } }, { active: { $eq: true } }];
+  // }else {
+  //   match = [{ id: { $ne: null } }, { active: { $eq: true } }];
+  // }
+  
   let values = await Users.aggregate([
+    // {
+    //   $match: {
+    //     $and: match,
+    //   },
+    // },
     {
       $match: {
         $or: [
@@ -1268,6 +1274,7 @@ const getDeliDetails = async () => {
         localField: '_id',
         foreignField: 'AssignedUserId',
         pipeline: [
+          
           {
             $match: {
               receiveStatus: { $eq: 'Pending' },

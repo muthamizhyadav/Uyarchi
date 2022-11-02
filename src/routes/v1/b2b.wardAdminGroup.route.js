@@ -81,7 +81,7 @@ router.route('/cash/update/status/notAloocate/:id').put(wardAdminGroupController
 
 router.route('/get/getPettyCashDetails/:id/:page').get(wardAdminGroupController.getPettyCashDetails);
 
-router.route('/get/AllGroup/details/:page').get(wardAdminGroupController.getAllGroup);
+router.route('/get/AllGroup/details/:id/:date/:FinishingStatus/:page').get(wardAdminGroupController.getAllGroup);
 
 router.route('/update/pettycash/return/:id').put(wardAdminGroupController.updatePettyCashReturnStatus);
 
@@ -120,4 +120,6 @@ router.route('/updatemismatchStockStatus/:id').put(wardAdminGroupController.upda
 router.route('/createfineData/').post(wardAdminGroupController.createfineData);
 
 router.route('/get/orderData/ByPassing/GroupId/:id').get(wardAdminGroupController.getOrderDataByPassing);
+
+router.route('/get/detatils/dele/name/forSorting').get(wardAdminGroupController.deliveryExecutiveSorting);
 module.exports = router;
