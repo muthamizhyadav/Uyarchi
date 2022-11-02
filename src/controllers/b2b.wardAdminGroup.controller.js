@@ -317,7 +317,12 @@ const getOrderDataByPassing = catchAsync(async (req,res) => {
 const deliveryExecutiveSorting = catchAsync(async (req,res) => {
   const sorting = await wardAdminGroupService.deliveryExecutiveSorting();
   res.send(sorting);
-})
+});
+
+const getGroupDetailsForDE = catchAsync(async (req,res) => {
+  const groupDetails = await wardAdminGroupService.getGroupDetailsForDE(req.params.page);
+  res.send(groupDetails)
+});
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -403,4 +408,5 @@ module.exports = {
   getOrderDataByPassing,
 
   deliveryExecutiveSorting,
+  getGroupDetailsForDE,
 };

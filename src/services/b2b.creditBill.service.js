@@ -1504,22 +1504,35 @@ const getGroupAndBill = async (AssignedUserId) => {
       },
     },
     {
-      $project: {
-        groupId: 1,
-        assignedDate: 1,
-        assignedTime: 1,
-        receiveStatus: 1,
-        total: {
-          $sum: '$Orderdatas.pendingAmount',
-        },
-        shopCount: {
-          $size: '$creditBillData.shopId',
-        },
-        BillCount: {
-          $size: '$creditBillData.bill',
-        },
-      },
-    },
+      $lookup: {
+        from: 'orderpayments',
+        localField: 'creditBillData.orderId',
+        foreignField: 'orderId',
+        pipeline: [
+          
+            { $group: { _id: null, price: { $sum: '$paidAmt' } } }
+          
+        ],
+        as: 'orderpaymentsData'
+      }
+    }
+    // {
+    //   $project: {
+    //     groupId: 1,
+    //     assignedDate: 1,
+    //     assignedTime: 1,
+    //     receiveStatus: 1,
+    //     total: {
+    //       $sum: '$Orderdatas.pendingAmount',
+    //     },
+    //     shopCount: {
+    //       $size: '$creditBillData.shopId',
+    //     },
+    //     BillCount: {
+    //       $size: '$creditBillData.bill',
+    //     },
+    //   },
+    // },
   ]);
   return data;
 };

@@ -1765,7 +1765,92 @@ const getPettyCashDetails = async (id, page) => {
   ]);
   return { values: values, total: total.length };
 };
+const getGroupDetailsForDE = async (page)=>{
+  let values = await wardAdminGroup.aggregate([
+   
+    {
+      $match: {
+        $and: [{ status: { $eq: 'Packed' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2buserDta'
+      }
+    },
+    { $unwind: "$b2buserDta"},
+    {
+      $unwind: '$Orderdatas',
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'Orderdatas._id',
+        foreignField: '_id',
+        as: 'shopIDDatas',
+      },
+    },
+    {
+      $unwind: '$shopIDDatas',
+    },
+    {
+      $project: {
+        groupId: 1,
+        assignDate: 1,
+        assignTime: 1,
+        deliveryExecutiveId: 1,
+        manageDeliveryStatus: 1,
+        totalOrders: 1,
+        pettyCash: 1,
+        status: 1,
+        deliveryexecutiveName: "$b2buserDta.name",
+        // FinishingStatus: 1,
+        // route:1,
+        shoporderclonesId: '$shopIDDatas._id',
+      },
+    },
 
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+
+  let total = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ status: { $eq: 'Packed' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2buserDta'
+      }
+    },
+    { $unwind: "$b2buserDta"},
+    {
+      $unwind: '$Orderdatas',
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'Orderdatas._id',
+        foreignField: '_id',
+        as: 'shopIDDatas',
+      },
+    },
+    {
+      $unwind: '$shopIDDatas',
+    },
+  ]);
+    
+  return {values: values, total: total.length};
+
+}
 const getAllGroup = async (id,date,FinishingStatus,page) => {
   let match;
   if (id != 'null' && date != 'null' && FinishingStatus != 'null') {
@@ -2868,6 +2953,9 @@ const deliveryExecutiveSorting = async()=>{
   return values;
 }
 
+
+
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -2928,4 +3016,5 @@ module.exports = {
   getOrderDataByPassing,
 
   deliveryExecutiveSorting,
+  getGroupDetailsForDE,
 };
