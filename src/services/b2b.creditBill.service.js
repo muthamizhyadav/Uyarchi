@@ -259,11 +259,11 @@ const getShopHistory = async (AssignedUserId, date,page) => {
         from: 'orderpayments',
         localField: 'orderId',
         foreignField: 'orderId',
-        // pipeline: [
-        //   {
-        //     $group: { _id: null, price: { $sum: '$paidAmt' } },
-        //   },
-        // ],
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
         as: 'paymentDataData',
       },
     },
@@ -278,15 +278,7 @@ const getShopHistory = async (AssignedUserId, date,page) => {
       },
     },
     { $unwind: '$shopDtaa' },
-    // {
-    //   $lookup: {
-    //     from: 'creditbillpaymenthistories',
-    //     localField: '_id',
-    //     foreignField: 'creditBillId',
-    //     as: 'creditData',
-    //   },
-    // },
-    // { $unwind: '$creditData' },
+   
     {
       $lookup: {
         from: 'productorderclones',
@@ -844,11 +836,11 @@ const getsalesName = async () => {
 
 const getNotAssignData = async (page) => {
   let values = await ShopOrderClone.aggregate([
-    // {
-    //   $match: {
-    //     $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
-    //   },
-    // },
+    {
+      $match: {
+        $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
+      },
+    },
 
     // {
     //   $lookup: {
@@ -982,11 +974,11 @@ const getNotAssignData = async (page) => {
   ]);
 
   let total = await ShopOrderClone.aggregate([
-     // {
-    //   $match: {
-    //     $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
-    //   },
-    // },
+     {
+      $match: {
+        $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }],
+      },
+    },
 
     {
       $lookup: {

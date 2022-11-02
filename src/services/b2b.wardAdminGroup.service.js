@@ -1777,7 +1777,7 @@ const getAllGroup = async (id,date,FinishingStatus,page) => {
   } else if (FinishingStatus != 'null'){
     match = [{ FinishingStatus: { $eq: FinishingStatus } },{ active: { $eq: true } }]
   }
-   else  {
+   else   {
     match = [{ deliveryExecutiveId: { $ne: null } }, { active: { $eq: true } }];
   }
   // else  {
@@ -2849,6 +2849,25 @@ const getOrderDataByPassing = async (id) =>{
   return values;
 }
 
+
+const deliveryExecutiveSorting = async()=>{
+  let values = await wardAdminGroup.aggregate([
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    // { $group : { _id : "$product" ,Names : { $addToSet : "$productName.productTitle" } }}
+  ]);
+  return values;
+}
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -2907,4 +2926,6 @@ module.exports = {
   fineData,
 
   getOrderDataByPassing,
+
+  deliveryExecutiveSorting,
 };
