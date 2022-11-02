@@ -122,4 +122,5 @@ router.route('/createfineData/').post(wardAdminGroupController.createfineData);
 router.route('/get/orderData/ByPassing/GroupId/:id').get(wardAdminGroupController.getOrderDataByPassing);
 
 router.route('/get/detatils/dele/name/forSorting').get(wardAdminGroupController.deliveryExecutiveSorting);
+router.route('/get/AllGroup/details/:page').get(wardAdminGroupController.getGroupDetailsForDE);
 module.exports = router;
