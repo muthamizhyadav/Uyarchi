@@ -9,6 +9,7 @@ const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 const { Users } = require('../models/B2Busers.model');
 const CallHistory = require('../models/b2b.callHistory.model');
+
 const createshopOrder = async (shopOrderBody, userid) => {
   let { product, date, time, shopId, time_of_delivery } = shopOrderBody;
   let timeslot = time_of_delivery.replace('-', '');
@@ -100,7 +101,7 @@ const createshopOrderClone = async (body, userid) => {
       timeslot: timeslot,
       paidamount: paidamount,
       reorder_status: reorder_status,
-      Payment: Payment
+      Payment: Payment,
     },
   };
 
@@ -181,7 +182,7 @@ const getAllShopOrderClone = async (date, page) => {
 };
 
 const getShopOrderCloneById = async (id) => {
-  console.log("hello")
+  console.log('hello');
   let Values = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -279,7 +280,7 @@ const getShopOrderCloneById = async (id) => {
             $group: {
               _id: null,
               amount: {
-                $sum: "$paidAmt"
+                $sum: '$paidAmt',
               },
             },
           },
@@ -310,7 +311,7 @@ const getShopOrderCloneById = async (id) => {
                   $group: {
                     _id: null,
                     amount: {
-                      $sum: "$paidAmt"
+                      $sum: '$paidAmt',
                     },
                   },
                 },
@@ -326,9 +327,9 @@ const getShopOrderCloneById = async (id) => {
           },
           {
             $project: {
-              amount: "$orderpayments.amount"
-            }
-          }
+              amount: '$orderpayments.amount',
+            },
+          },
         ],
         as: 'shoporderclones',
       },
@@ -341,8 +342,8 @@ const getShopOrderCloneById = async (id) => {
     },
     {
       $addFields: {
-        reorderamount: { $ifNull: ["$shoporderclones.amount", 0] }
-      }
+        reorderamount: { $ifNull: ['$shoporderclones.amount', 0] },
+      },
     },
     {
       $project: {
@@ -367,15 +368,14 @@ const getShopOrderCloneById = async (id) => {
         mobile: '$shopData.mobile',
         pay_type: 1,
         paymentMethod: 1,
-        productDatadetails: "$productDatadetails",
+        productDatadetails: '$productDatadetails',
         total: '$productDatadetails.amount',
         TotalGstAmount: { $sum: '$productData.GSTamount' },
         totalSum: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] },
         paidamount: {
-          $sum: ["$orderpayments.amount", "$reorderamount"],
+          $sum: ['$orderpayments.amount', '$reorderamount'],
         },
-        shoporderclones: "$shoporderclones",
-
+        shoporderclones: '$shoporderclones',
       },
     },
   ]);
@@ -505,7 +505,6 @@ const updateShopOrderCloneById = async (id, updatebody) => {
   return shoporderClone;
 };
 
-
 const updateshop_order = async (id, body, userid) => {
   let shoporder = await ShopOrderClone.findById(id);
   if (!shoporder) {
@@ -516,7 +515,11 @@ const updateshop_order = async (id, body, userid) => {
   if (body.Payment == 'Continue' || body.Payment == 'addmore') {
     Payment = 'Paynow';
   }
-  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { ...body, ...{ timeslot: timeslot, Payment: Payment } }, { new: true });
+  shoporder = await ShopOrderClone.findByIdAndUpdate(
+    { _id: id },
+    { ...body, ...{ timeslot: timeslot, Payment: Payment } },
+    { new: true }
+  );
   let currentDate = moment().format('YYYY-MM-DD');
   let currenttime = moment().format('HHmmss');
   if (body.Payment == 'addmore' || body.Payment == 'Paynow') {
@@ -530,7 +533,6 @@ const updateshop_order = async (id, body, userid) => {
       type: 'advanced',
     });
   }
-
 
   await ProductorderClone.deleteMany({ orderId: id });
   let { product, date, time, shopId } = body;
@@ -656,7 +658,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
             $group: {
               _id: null,
               amount: {
-                $sum: "$paidAmt"
+                $sum: '$paidAmt',
               },
             },
           },
@@ -686,7 +688,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
                   $group: {
                     _id: null,
                     amount: {
-                      $sum: "$paidAmt"
+                      $sum: '$paidAmt',
                     },
                   },
                 },
@@ -702,9 +704,9 @@ const getShopNameCloneWithPagination = async (page, userId) => {
           },
           {
             $project: {
-              amount: "$orderpayments.amount"
-            }
-          }
+              amount: '$orderpayments.amount',
+            },
+          },
         ],
         as: 'shoporderclones',
       },
@@ -717,8 +719,8 @@ const getShopNameCloneWithPagination = async (page, userId) => {
     },
     {
       $addFields: {
-        reorderamount: { $ifNull: ["$shoporderclones.amount", 0] }
-      }
+        reorderamount: { $ifNull: ['$shoporderclones.amount', 0] },
+      },
     },
     {
       $project: {
@@ -733,13 +735,13 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         CGST: 1,
         OrderId: 1,
         productTotal: { $size: '$product' },
-        paidamount: { $sum: ["$orderpayments.amount", "$reorderamount"] },
+        paidamount: { $sum: ['$orderpayments.amount', '$reorderamount'] },
         shopName: '$shopData.SName',
         contact: '$shopData.mobile',
         status: 1,
         timeslot: 1,
         date: 1,
-        datematch: { $eq: ["$date", today ] }
+        datematch: { $eq: ['$date', today] },
       },
     },
     { $skip: 10 * page },
@@ -2595,6 +2597,32 @@ const lapsedordercount = async (method) => {
   };
 };
 
+const getBills_ByShop = async (shopId) => {
+  let values = await OrderPayment.aggregate([
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        pipeline: [{ $match: { shopId: shopId } }],
+        as: 'orders',
+      },
+    },
+    {
+      $unwind: '$orders',
+    },
+    {
+      $project: {
+        _id: 1,
+        payment: 1,
+        paidAmt: 1,
+        date: 1,
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -2641,4 +2669,5 @@ module.exports = {
   lapsed_declined,
   lapsed_reschedule,
   lapsedordercount,
+  getBills_ByShop,
 };

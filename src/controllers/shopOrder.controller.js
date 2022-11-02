@@ -33,7 +33,6 @@ const getShopOrderCloneById = catchAsync(async (req, res) => {
   res.send(shopOrderClone[0]);
 });
 
-
 const updateShopOrderCloneById = catchAsync(async (req, res) => {
   const shopOrderClone = await shopOrderService.updateShopOrderCloneById(req.params.id, req.body);
   res.send(shopOrderClone);
@@ -302,6 +301,12 @@ const lapsedordercountUndelivered = catchAsync(async (req, res) => {
   const data = await shopOrderService.lapsedordercount('un');
   res.send(data);
 });
+
+const getBills_ByShop = catchAsync(async (req, res) => {
+  const data = await shopOrderService.getBills_ByShop(req.params.shopId);
+  res.send(data);
+});
+
 module.exports = {
   createshopOrder,
   getAllShopOrder,
@@ -345,4 +350,5 @@ module.exports = {
   lapsedordercount,
   lapsedordercountReject,
   lapsedordercountUndelivered,
+  getBills_ByShop,
 };
