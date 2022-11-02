@@ -307,6 +307,11 @@ const getBills_ByShop = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getBills_DetailsByshop = catchAsync(async (req, res) => {
+  const data = await shopOrderService.getBills_DetailsByshop(req.params.shopId);
+  res.send(data);
+});
+
 module.exports = {
   createshopOrder,
   getAllShopOrder,
@@ -351,4 +356,5 @@ module.exports = {
   lapsedordercountReject,
   lapsedordercountUndelivered,
   getBills_ByShop,
+  getBills_DetailsByshop,
 };

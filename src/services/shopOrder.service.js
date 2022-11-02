@@ -2623,6 +2623,155 @@ const getBills_ByShop = async (shopId) => {
   return values;
 };
 
+const getBills_DetailsByshop = async (shopId) => {
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: { shopId: shopId },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: '$paidAmt',
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: '$orderpayments',
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              packKg: 1,
+              unit: 1,
+              productTitle: '$products.productTitle',
+              created: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              GST_Number: 1,
+              GSTamount: {
+                $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$priceperkg'] }, '$GST_Number'] }, 100],
+              },
+            },
+          },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: {
+                  $multiply: ['$finalQuantity', '$priceperkg'],
+                },
+              },
+            },
+          },
+        ],
+        as: 'productDatadetails',
+      },
+    },
+    {
+      $unwind: '$productDatadetails',
+    },
+    {
+      $lookup: {
+        from: 'billadjustments',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        as: 'adjBill',
+      },
+    },
+    {
+      $unwind: '$adjBill',
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'adjBill.shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+    {
+      $project: {
+        _id: 1,
+        TotalGstAmount: { $sum: '$productData.GSTamount' },
+        paidAmt: '$orderpayments.amount',
+        orderAmt: '$productDatadetails.amount',
+        shopId: 1,
+        adjBill: '$adjBill.un_Billed_amt',
+        shops: '$shops.SName',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        totalPendingAmount: { $add: ['$orderAmt', '$TotalGstAmount'] },
+        paidAmt: '$paidAmt',
+        shopId: 1,
+        adjBill: '$adjBill',
+        shops: '$shops',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        totalPendingAmount: { $round: [{ $subtract: ['$totalPendingAmount', '$paidAmt'] }] },
+        shopId: 1,
+        Un_billedAmt: '$adjBill',
+        shops: '$shops',
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -2670,4 +2819,5 @@ module.exports = {
   lapsed_reschedule,
   lapsedordercount,
   getBills_ByShop,
+  getBills_DetailsByshop,
 };
