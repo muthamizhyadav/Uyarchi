@@ -1647,6 +1647,8 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         DA_CREATED: 1,
         DA_USERNAME: '$DA_USERNAME.name',
         purchaseQTy: 1,
+        da_lot: 1,
+        da_long: 1
       },
     },
     { $skip: 10 * page },
