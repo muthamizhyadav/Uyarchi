@@ -123,7 +123,7 @@ const getProductNameDetails = async () => {
     {
       $unwind: '$productName',
     },
-    { $group : { _id : "$product" ,Names : { $addToSet : "$productName.productTitle" } }}
+    // { $group : { _id : "$product" ,Names : { $addToSet : "$productName.productTitle" } }}
   
   ]);
   let datas = await randomStockModel.aggregate([
