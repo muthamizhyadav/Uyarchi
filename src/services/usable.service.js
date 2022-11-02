@@ -620,6 +620,18 @@ const getstockDetails = async (id) => {
   let productDetails = await Product.findById(id);
   return { value: value, productDetails: productDetails };
 };
+
+const updatestcokDetails = async (body) => {
+  console.log(body.stock_type)
+  // body.product.forEach((res)=>{
+  //   // console.log(res.wastedImageFile)
+  //   res.wastedImageFile.forEach((s)=>{
+  //       console.log(s.res)
+  //   })
+  // })
+  return { success: true };
+
+}
 module.exports = {
   createusableStock,
   getAllusableStock,
@@ -628,4 +640,5 @@ module.exports = {
   getAssignStockbyId,
   getStocks,
   getstockDetails,
+  updatestcokDetails
 };
