@@ -304,7 +304,7 @@ const getShopHistory = async (userId, page) => {
     {
       $project: {
         _id: 1,
-        orderId:1,
+        orderId: 1,
         shopId: 1,
         date: 1,
         SName: "$b2bshopclones.SName",
@@ -1870,7 +1870,44 @@ const getPaymentTypeCount = async (id) => {
 
   return values;
 };
-
+const getdeliveryExcutive = async (userId, page) => {
+  let group = await creditBillGroup.aggregate([
+    {
+      $match: {
+        AssignedUserId: { $eq: userId }
+      }
+    },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              count: { $sum: 1 }
+            }
+          }
+        ],
+        as: 'creditbills',
+      },
+    },
+    { $unwind: '$creditbills' },
+    {
+      $project: {
+        _id: 1,
+        receiveStatus: 1,
+        AssignedUserId: 1,
+        groupId: 1,
+        assignedDate: 1,
+        assignedTime: 1,
+        creditbillcount: "$creditbill.count"
+      }
+    }
+  ]);
+  return group;
+}
 module.exports = {
   getShopWithBill,
   getWardExecutiveName,
@@ -1893,4 +1930,5 @@ module.exports = {
   getGroupAndBill,
   submitDispute,
   getPaymentTypeCount,
+  getdeliveryExcutive
 };

@@ -24,5 +24,6 @@ router.route('/get/details/Group/:id').get(creditBillController.getgetGroupAndBi
 router.route('/get/payment/overAll/:id').get(creditBillController.getPaymentTypeCount);
 router.route('/get/group/data/:id').get(creditBillController.GroupDetails);
 router.route('/submit/Dispute/:id').put(creditBillController.submitDispute);
+router.route('/getdelivery/excutive/all/:page').get(authorization,creditBillController.getdeliveryExcutive);
 
 module.exports = router;
