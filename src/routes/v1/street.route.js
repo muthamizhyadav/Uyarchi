@@ -29,4 +29,5 @@ router.route('/getDummy/streets').get(streetController.getDummyStreet);
 router.route('/getward/ward/:wardId').get(streetController.getStreetWard);
 router.route('/renameStreet').post(streetController.renameStreet);
 router.route('/getstreet/By/ward/:wardId').get(streetController.getwardBystreetAngular);
+router.route('/Street/:wardId').get(streetController.getAllUnAssignedStreetandCount);
 module.exports = router;

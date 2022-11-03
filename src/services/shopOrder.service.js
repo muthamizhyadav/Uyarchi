@@ -723,6 +723,47 @@ const getShopNameCloneWithPagination = async (page, userId) => {
       },
     },
     {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productorderclones',
+      },
+    },
+    {
+      $unwind: "$productorderclones"
+    },
+    {
       $project: {
         _id: 1,
         created: 1,
@@ -730,7 +771,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         time_of_delivery: 1,
         total: 1,
         gsttotal: 1,
-        subtotal: 1,
+        subtotal: {$round:"$productorderclones.price"},
         SGST: 1,
         CGST: 1,
         OrderId: 1,
@@ -807,7 +848,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
   return {
     value: retrunValue,
     total: total,
-    retrunValue: retrunValue,
+    // retrunValue: retrunValue,
   };
 };
 

@@ -585,6 +585,68 @@ const getStreetByWard = async (wardId) => {
   return street;
 };
 
+
+
+const getAllUnAssignedStreetandCount = async (wardId) => {
+  const ress = await Street.aggregate([
+    {
+      $match: {
+        $and: [{ wardId: { $eq: wardId } }],
+      },
+    },
+    { $sort: { street: 1 } },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: '_id',
+        foreignField: 'Strid',
+        pipeline:[
+          {
+            $match: {
+              $and: [{ wardId: { $eq: wardId } }],
+            },
+          },
+          {
+            $match: {
+              $or: [
+                {
+                  $and: [
+                    { salesManStatus: { $ne: 'Assign' } },
+                    { salesManStatus: { $ne: 'tempReassign' } },
+                    { salesManStatus: { $eq: 'Reassign' } },
+                  ],
+                },
+                {
+                  $and: [
+                    { salesManStatus: { $ne: 'Assign' } },
+                    { salesManStatus: { $ne: 'tempReassign' } },
+                    { salesManStatus: { $eq: null } },
+                  ],
+                },
+              ],
+            },
+          },
+          // {
+          //   $group: {
+          //     _id: null,
+          //     unAssignCount: { $sum: 1 },
+          //   },
+          // },
+        ],
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
+      $project:{
+        street:1,
+        count:{$size:'$b2bshopclonesdata'}
+      }
+    }
+  ]);
+
+  return ress;
+};
+
 module.exports = {
   createStreet,
   getStreetById,
@@ -609,4 +671,5 @@ module.exports = {
   getDummy,
   // getStreetByWard,
   // rename,
+  getAllUnAssignedStreetandCount,
 };
