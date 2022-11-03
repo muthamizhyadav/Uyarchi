@@ -569,13 +569,6 @@ const updateAssignedStatusPerBill = async (id) => {
   return Status;
 };
 
-const updateAssignedStatusByMultiSelect = async (body) => {
-  body.arr.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { creditBillAssignedStatus: 'Assigned' }, { new: true });
-  });
-
-  return 'status updated successfully';
-};
 
 const createGroup = async (body) => {
   let serverdates = moment().format('YYYY-MM-DD');
@@ -616,16 +609,14 @@ const createGroup = async (body) => {
   };
   let wardAdminGroupcreate = await creditBillGroup.create(values);
   body.Orderdatas.forEach(async (e) => {
-    let productId = e._id;
+    let orderId = e._id;
     let shopId = e.shopId;
-    let bill = e.customerBillId;
-
+    await ShopOrderClone.findByIdAndUpdate({ _id: orderId }, { creditBillAssignedStatus: "Assigned" });
     await creditBill.create({
       AssignedUserId: body.AssignedUserId,
-      orderId: productId,
+      orderId: orderId,
       shopId: shopId,
       creditbillId: wardAdminGroupcreate._id,
-      bill: bill,
       date: serverdates,
       time: servertime,
       created: moment(),
@@ -2038,7 +2029,6 @@ module.exports = {
   payingCAshWithDEorSM,
   getManageCreditBillAssigning,
   getcreditBillDetailsByPassExecID,
-  updateAssignedStatusByMultiSelect,
   getHistoryByPassOrderId,
   getDElExecutiveName,
   getsalesName,
