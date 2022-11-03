@@ -19,4 +19,5 @@ router.route('/getSalesMan/data').get(roleController.getSalesMan);
 router.route('/getAllSalesmanShops/data').get(roleController.getAllSalesmanShops);
 router.route('/notAssignTonneValueSalesmanager/data').get(roleController.notAssignTonneValueSalesmanager);
 router.route('/getMenues/:id').get(roleController.getMenu);
+router.route('/get_user/munus/').get(authorization,roleController.get_user_menu);
 module.exports = router;
