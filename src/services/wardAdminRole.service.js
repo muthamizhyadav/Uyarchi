@@ -814,6 +814,17 @@ const getSalesman = async (id) => {
     },
     {
       $lookup: {
+        from: 'b2busers',
+        localField: 'b2bshopclonesData.Uid',
+        foreignField: '_id',
+        as: 'b2busersCreatedData',
+      },
+    },
+    {
+      $unwind: '$b2busersCreatedData',
+    },
+    {
+      $lookup: {
         from: 'wards',
         localField: 'b2bshopclonesData.Wardid',
         foreignField: '_id',
@@ -838,6 +849,8 @@ const getSalesman = async (id) => {
       $project: {
         shopname: '$b2bshopclonesData.SName',
         salesmanName: '$b2busersData.name',
+        createdname:'$b2busersCreatedData.name',
+        createddate:'$b2bshopclonesData.date',
         salesManId: 1,
         fromSalesManId: 1,
         shopId: 1,
