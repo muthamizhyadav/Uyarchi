@@ -1885,10 +1885,12 @@ const getdeliveryExcutive = async (userId, page) => {
   return { value: group, total: total.length };
 }
 const submitfinish = async (userId, id) => {
-  const group = await creditBillGroup.findOne({ _id: id, AssignedUserId: userId }, { receiveStatus: "finish" }, { new: true });
+  let group = await creditBillGroup.findOne({ _id: id, AssignedUserId: userId });
   if (!group) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
+  group = await creditBillGroup.findByIdAndUpdate({ _id: id, AssignedUserId: userId }, { receiveStatus: "finish" }, { new: true });
+
   return group;
 }
 module.exports = {
