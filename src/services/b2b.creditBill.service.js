@@ -304,6 +304,7 @@ const getShopHistory = async (userId, page) => {
     {
       $project: {
         _id: 1,
+        orderId:1,
         shopId: 1,
         date: 1,
         SName: "$b2bshopclones.SName",
