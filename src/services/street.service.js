@@ -603,7 +603,7 @@ const getAllUnAssignedStreetandCount = async (wardId) => {
         pipeline:[
           {
             $match: {
-              $and: [{ wardId: { $eq: wardId } }],
+              $and: [{ Wardid: { $eq: wardId } }],
             },
           },
           {
