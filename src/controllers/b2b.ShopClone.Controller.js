@@ -434,6 +434,11 @@ const get_total_vendorShop = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const searchShops_By_Name = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.searchShops_By_Name(req.params.key);
+  res.send(data);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -477,4 +482,5 @@ module.exports = {
   getshopmyshops,
   insertOrder,
   get_total_vendorShop,
+  searchShops_By_Name,
 };

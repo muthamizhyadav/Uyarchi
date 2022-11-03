@@ -222,7 +222,6 @@ const getwithAsmwithoutAsm = async (type, date) => {
   }
   const data = await WithoutAsmWithAsm.aggregate([
     {
-      
       $match: {
         $and: match,
       },
@@ -849,8 +848,8 @@ const getSalesman = async (id) => {
       $project: {
         shopname: '$b2bshopclonesData.SName',
         salesmanName: '$b2busersData.name',
-        createdname:'$b2busersCreatedData.name',
-        createddate:'$b2bshopclonesData.date',
+        createdname: '$b2busersCreatedData.name',
+        createddate: '$b2bshopclonesData.date',
         salesManId: 1,
         fromSalesManId: 1,
         shopId: 1,
@@ -865,7 +864,30 @@ const getSalesman = async (id) => {
       },
     },
   ]);
-  return { data: data, salesmanname: name.name };
+  let lastdata = await SalesManShop.aggregate([
+    {
+      $sort: { date: -1 },
+    },
+  
+    {
+      $match: {
+        $or: [
+          { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+          // { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      },
+    },
+    {
+      $group: {
+        _id: { date: '$date' },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $limit: 1,
+    },
+  ]);
+  return { data: data, salesmanname: name.name, lastdata };
 };
 
 // withoutoutAsmSalesman

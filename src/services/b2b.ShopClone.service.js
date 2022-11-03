@@ -130,6 +130,20 @@ const filterShopwithNameAndContact = async (key) => {
   return returns;
 };
 
+const searchShops_By_Name = async (key) => {
+  let values = await Shop.aggregate([
+    {
+      $match: {
+        $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }],
+      },
+    },
+    {
+      $limit: 100,
+    },
+  ]);
+  return values;
+};
+
 const getAllShopClone = async () => {
   return Shop.find();
 };
@@ -1648,7 +1662,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         DA_USERNAME: '$DA_USERNAME.name',
         purchaseQTy: 1,
         da_lot: 1,
-        da_long: 1
+        da_long: 1,
       },
     },
     { $skip: 10 * page },
@@ -2398,30 +2412,23 @@ const getVendorShops = async (key) => {
 const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
   let match;
   if (uid != 'null' && date == 'null' && street == 'null') {
-    match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } },];
-  }
-  else if (uid == 'null' && date == 'null' && street != 'null') {
-    match = [{ Wardid: { $eq: id } },{ Strid: { $eq: street } }];
-  }
-  else if (uid != 'null' && date == 'null' && street != 'null') {
+    match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }];
+  } else if (uid == 'null' && date == 'null' && street != 'null') {
+    match = [{ Wardid: { $eq: id } }, { Strid: { $eq: street } }];
+  } else if (uid != 'null' && date == 'null' && street != 'null') {
     match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { Strid: { $eq: street } }];
-  }
-   else if (uid != 'null' && date != 'null' && street == 'null') {
+  } else if (uid != 'null' && date != 'null' && street == 'null') {
     match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { date: { $eq: date } }];
-  }
-   else if (uid == 'null' && date != 'null' && street == 'null') {
+  } else if (uid == 'null' && date != 'null' && street == 'null') {
     match = [{ Wardid: { $eq: id } }, { date: { $eq: date } }];
-  }
-  else if (uid == 'null' && date != 'null' && street != 'null') {
+  } else if (uid == 'null' && date != 'null' && street != 'null') {
     match = [{ Wardid: { $eq: id } }, { date: { $eq: date } }, { Strid: { $eq: street } }];
-  }
-  else if (uid != 'null' && date != 'null' && street != 'null') {
+  } else if (uid != 'null' && date != 'null' && street != 'null') {
     match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { date: { $eq: date } }, { Strid: { $eq: street } }];
-  }
-  else {
+  } else {
     match = [{ Wardid: { $eq: id } }];
   }
-  console.log(match)
+  console.log(match);
   let data = await Shop.aggregate([
     {
       $match: {
@@ -2469,15 +2476,15 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         Slat: 1,
         Slong: 1,
         streetId: '$streets._id',
-        streetname:"$streets.street",
+        streetname: '$streets.street',
         locality: '$streets.locality',
         _id: 1,
         displaycount: 1,
       },
     },
     {
-       $sort: {streetId:1}
-      },
+      $sort: { streetId: 1 },
+    },
     {
       $skip: parseInt(limit) * parseInt(page),
     },
@@ -2873,4 +2880,5 @@ module.exports = {
   getshop_myshops_asm,
   insertOrder,
   get_total_vendorShop,
+  searchShops_By_Name,
 };
