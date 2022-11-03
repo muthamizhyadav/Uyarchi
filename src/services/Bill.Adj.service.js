@@ -207,7 +207,7 @@ const getCustomer_bills = async (id) => {
         payment_method: 1,
         date: 1,
         shopName: '$shopdata.SName',
-        pendingAmount: '$shoporder.pendingAmount',
+        pendingAmount: { $ifNull: ['$shoporder.pendingAmount', 0] },
       },
     },
   ]);

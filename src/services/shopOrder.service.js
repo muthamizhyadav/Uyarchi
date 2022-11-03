@@ -2714,7 +2714,10 @@ const getBills_DetailsByshop = async (shopId) => {
       },
     },
     {
-      $unwind: '$productDatadetails',
+      $unwind: {
+        path: '$productDatadetails',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $lookup: {
@@ -2725,18 +2728,24 @@ const getBills_DetailsByshop = async (shopId) => {
       },
     },
     {
-      $unwind: '$adjBill',
+      $unwind: {
+        path: '$adjBill',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $lookup: {
         from: 'b2bshopclones',
-        localField: 'adjBill.shopId',
+        localField: 'shopId',
         foreignField: '_id',
         as: 'shops',
       },
     },
     {
-      $unwind: '$shops',
+      $unwind: {
+        path: '$shops',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $project: {
@@ -2744,28 +2753,36 @@ const getBills_DetailsByshop = async (shopId) => {
         TotalGstAmount: { $sum: '$productData.GSTamount' },
         paidAmt: '$orderpayments.amount',
         orderAmt: '$productDatadetails.amount',
+        date: 1,
         shopId: 1,
         adjBill: '$adjBill.un_Billed_amt',
         shops: '$shops.SName',
+        OrderId: 1,
       },
     },
     {
       $project: {
         _id: 1,
-        totalPendingAmount: { $add: ['$orderAmt', '$TotalGstAmount'] },
+        totalAmount: { $add: ['$orderAmt', '$TotalGstAmount'] },
         paidAmt: '$paidAmt',
         shopId: 1,
         adjBill: '$adjBill',
         shops: '$shops',
+        date: 1,
+        OrderId: 1,
       },
     },
     {
       $project: {
         _id: 1,
-        totalPendingAmount: { $round: [{ $subtract: ['$totalPendingAmount', '$paidAmt'] }] },
+        totalPendingAmount: { $round: [{ $subtract: ['$totalAmount', '$paidAmt'] }] },
         shopId: 1,
-        Un_billedAmt: '$adjBill',
+        paidAmt: 1,
+        totalAmount: 1,
+        Un_billedAmt: { $ifNull: ['$adjBill', 0] },
         shops: '$shops',
+        date: 1,
+        OrderId: 1,
       },
     },
   ]);
