@@ -212,12 +212,13 @@ const getsalesmanName = async () => {
   return values;
 };
 
-const getShopHistory = async (userId, page) => {
+const getShopHistory = async (userId, id) => {
+  console.log(id)
   console.log(userId)
   let values = await creditBill.aggregate([
     {
       $match: {
-        $and: [{ AssignedUserId: { $eq: userId } }],
+        $and: [{ AssignedUserId: { $eq: userId } }, { creditbillId: { $eq: id } }],
       },
     },
     {
@@ -316,100 +317,10 @@ const getShopHistory = async (userId, page) => {
         orderpaymentsData_value: "$orderpaymentsData_value"
       }
     },
-    { $skip: 10 * page },
-    { $limit: 10 },
   ]);
 
-  let total = await creditBill.aggregate([
-    {
-      $match: {
-        $and: [{ AssignedUserId: { $eq: userId } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: 'orderId',
-        foreignField: 'orderId',
-        pipeline: [
-          {
-            $project: {
-              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
-              GST_Number: 1,
-            },
-          },
-          {
-            $project: {
-              sum: '$sum',
-              percentage: {
-                $divide: [
-                  {
-                    $multiply: ['$GST_Number', '$Amount'],
-                  },
-                  100,
-                ],
-              },
-              value: '$Amount',
-            },
-          },
-          {
-            $project: {
-              price: { $sum: ['$value', '$percentage'] },
-              value: '$value',
-              GST: '$percentage',
-            },
-          },
-          { $group: { _id: null, price: { $sum: '$price' } } },
-        ],
-        as: 'productorderclones',
-      },
-    },
-    {
-      $unwind: "$productorderclones"
-    },
-    {
-      $lookup: {
-        from: 'orderpayments',
-        localField: 'orderId',
-        foreignField: 'orderId',
-        pipeline: [
-          {
-            $group: { _id: null, price: { $sum: '$paidAmt' } }
-          }
-        ],
-        as: 'orderpaymentsData'
-      }
-    },
-    { $unwind: "$orderpaymentsData" },
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'orderId',
-        foreignField: '_id',
-        as: 'shoporderclones'
-      }
-    },
-    { $unwind: "$shoporderclones" },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        as: 'b2bshopclones'
-      }
-    },
-    { $unwind: "$b2bshopclones" },
-    {
-      $lookup: {
-        from: 'orderpayments',
-        localField: 'orderId',
-        foreignField: 'orderId',
-        as: 'orderpaymentsData_value'
-      }
-    },
 
-  ]);
-  return { values: values, total: total.length };
+  return values;
 };
 
 const updateAssignedStatusPerBill = async (id) => {
