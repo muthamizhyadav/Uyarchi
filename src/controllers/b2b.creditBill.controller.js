@@ -108,11 +108,15 @@ const getPaymentTypeCount = catchAsync(async (req, res) => {
 })
 
 const getdeliveryExcutive = catchAsync(async (req, res) => {
-  const getDta = await creditBillService.getdeliveryExcutive(req.userId,req.params.page);
+  const getDta = await creditBillService.getdeliveryExcutive(req.userId, req.params.page);
   res.send(getDta);
 })
 
-
+const submitfinish = catchAsync(async (req, res) => {
+  const dispute = await creditBillService.submitfinish(req.userId,req.params.id);
+  console.log(req.params.id, req.body);
+  res.send(dispute)
+});
 
 
 
@@ -139,5 +143,6 @@ module.exports = {
   GroupDetails,
   submitDispute,
   getPaymentTypeCount,
-  getdeliveryExcutive
+  getdeliveryExcutive,
+  submitfinish
 }
