@@ -568,6 +568,11 @@ const get_user_menu = async (userRole) => {
                     delete: "$menueassigns.delete",
                     point: "$menueassigns.point",
                   }
+                },
+                {
+                  $sort: {
+                    point: 1
+                  }
                 }
 
               ],
@@ -595,6 +600,11 @@ const get_user_menu = async (userRole) => {
         delete: "$menueassigns.delete",
         point: "$menueassigns.point",
         child: "$menueassigns.menues",
+      }
+    },
+    {
+      $sort: {
+        point: 1
       }
     }
   ])
