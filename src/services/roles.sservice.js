@@ -45,16 +45,13 @@ const getMenu = async (id) => {
         from: 'menueassigns',
         localField: '_id',
         foreignField: 'menuid',
-        // pipeline: [
-        //   {
-        //     $group: {
-        //       _id: null,
-        //       amount: {
-        //         $sum: '$paidAmt',
-        //       },
-        //     },
-        //   },
-        // ],
+        pipeline: [
+          {
+            $match: {
+              rolesId: id
+            }
+          }
+        ],
         as: 'menueassigns',
       },
     },
