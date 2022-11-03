@@ -31,6 +31,14 @@ const getRolesById = async (id) => {
   if (!role) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Roles  Not Found');
   }
+  return role;
+};
+
+const getMenu = async (id) => {
+  // const role = Roles.findById(id);
+  // if (!role) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'Roles  Not Found');
+  // }
   let menues = await Menu.find();
   return menues;
 };
@@ -464,4 +472,5 @@ module.exports = {
   getsalesman,
   getAllSalesmanShops,
   notAssignTonneValueSalesmanager,
+  getMenu,
 };
