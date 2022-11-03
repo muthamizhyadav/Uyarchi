@@ -94,7 +94,43 @@ const createGroup = async (body) => {
 
   return wardAdminGroupcreate;
 };
-
+const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
+  let currentDate = moment().format('YYYY-MM-DD');
+  let currenttime = moment().format('HHmmss');
+  // let body = {
+  //   ...updateBody,
+  //   ...{
+  //     status: 'Delivered',
+  //     customerDeliveryStatus: 'Delivered',
+  //     delivered_date: moment(),
+  //   },
+  // };
+  let deliveryStatus = await ShopOrderClone.findById(id);
+  console.log(deliveryStatus);
+  if (!deliveryStatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+  }
+  // deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
+  let paidamount = updateBody.paidamount;
+  if (paidamount == null) {
+    paidamount = 0;
+  }
+  await orderPayment.create({
+    paidAmt: paidamount,
+    date: currentDate,
+    time: currenttime,
+    created: moment(),
+    orderId: deliveryStatus._id,
+    payment: updateBody.payment,
+    pay_type: updateBody.pay_types,
+    paymentMethod: updateBody.paymentMethods,
+    paymentstutes: updateBody.paymentstutes,
+    uid: userId,
+    type: "creditBill",
+    reasonScheduleOrDate: updateBody.reasonScheduleOrDate,
+  });
+  return deliveryStatus;
+};
 const updateOrderStatus = async (id, updateBody) => {
   let currentDate = moment().format('YYYY-MM-DD');
   let currenttime = moment().format('HHmmss');
@@ -1070,20 +1106,20 @@ const getDeliveryOrderSeparate = async (id, page) => {
                 },
                 {
                   $lookup: {
-                    from : 'orderpayments',
+                    from: 'orderpayments',
                     localField: '_id',
                     foreignField: 'orderId',
                     pipeline: [
                       {
-                        $group: { _id: null, price: { $sum: '$paidAmt' } } 
+                        $group: { _id: null, price: { $sum: '$paidAmt' } }
                       }
                     ],
                     as: 'orderpaymentsData'
                   }
                 },
-                { $unwind: "$orderpaymentsData"},
-               
-               
+                { $unwind: "$orderpaymentsData" },
+
+
                 {
                   $lookup: {
                     from: 'productorderclones',
@@ -1178,8 +1214,8 @@ const getDeliveryOrderSeparate = async (id, page) => {
           },
           { $unwind: '$shopDatas' },
 
-          
-        
+
+
           {
             $project: {
               _id: '$shopDatas._id',
@@ -1207,9 +1243,9 @@ const getDeliveryOrderSeparate = async (id, page) => {
               paidamount: '$shopDatas.paidamount',
               productCount: '$shopDatas.productCount',
               shopName: "$shopDatas.shopName",
-              overAllTotalAmount : "$shopDatas.totalamountOverAll",
-              amountAfterSubtract : {
-                $subtract: ["$shopDatas.totalPrice","$shopDatas.totalamountOverAll"]
+              overAllTotalAmount: "$shopDatas.totalamountOverAll",
+              amountAfterSubtract: {
+                $subtract: ["$shopDatas.totalPrice", "$shopDatas.totalamountOverAll"]
               }
             },
           },
@@ -1217,7 +1253,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
         as: 'orderassigns',
       },
     },
- 
+
 
     {
       $project: {
@@ -1550,7 +1586,7 @@ const getBillDetailsPerOrder = async (id) => {
         },
       },
     },
-    { $group: { _id: null, totalRupees: { $sum: '$totalRupees' }, CGSTAmount: { $sum: '$CGSTAmount' }, SGSTAmount: { $sum: '$SGSTAmount' },GSTamount:{$sum:"$GSTamount"} } }
+    { $group: { _id: null, totalRupees: { $sum: '$totalRupees' }, CGSTAmount: { $sum: '$CGSTAmount' }, SGSTAmount: { $sum: '$SGSTAmount' }, GSTamount: { $sum: "$GSTamount" } } }
 
 
   ]);
@@ -1765,9 +1801,9 @@ const getPettyCashDetails = async (id, page) => {
   ]);
   return { values: values, total: total.length };
 };
-const getGroupDetailsForDE = async (page)=>{
+const getGroupDetailsForDE = async (page) => {
   let values = await wardAdminGroup.aggregate([
-   
+
     {
       $match: {
         $and: [{ status: { $eq: 'Packed' } }],
@@ -1781,7 +1817,7 @@ const getGroupDetailsForDE = async (page)=>{
         as: 'b2buserDta'
       }
     },
-    { $unwind: "$b2buserDta"},
+    { $unwind: "$b2buserDta" },
     {
       $unwind: '$Orderdatas',
     },
@@ -1831,7 +1867,7 @@ const getGroupDetailsForDE = async (page)=>{
         as: 'b2buserDta'
       }
     },
-    { $unwind: "$b2buserDta"},
+    { $unwind: "$b2buserDta" },
     {
       $unwind: '$Orderdatas',
     },
@@ -1847,22 +1883,22 @@ const getGroupDetailsForDE = async (page)=>{
       $unwind: '$shopIDDatas',
     },
   ]);
-    
-  return {values: values, total: total.length};
+
+  return { values: values, total: total.length };
 
 }
-const getAllGroup = async (id,date,FinishingStatus,page) => {
+const getAllGroup = async (id, date, FinishingStatus, page) => {
   let match;
   if (id != 'null' && date != 'null' && FinishingStatus != 'null') {
-    match = [{ deliveryExecutiveId: { $eq: id } }, { assignDate: { $eq: date } },{ FinishingStatus: { $eq: FinishingStatus } },  { active: { $eq: true } }];
+    match = [{ deliveryExecutiveId: { $eq: id } }, { assignDate: { $eq: date } }, { FinishingStatus: { $eq: FinishingStatus } }, { active: { $eq: true } }];
   } else if (id != 'null') {
     match = [{ deliveryExecutiveId: { $eq: id } }, { active: { $eq: true } }];
   } else if (date != 'null') {
     match = [{ assignDate: { $eq: date } }, { active: { $eq: true } }];
-  } else if (FinishingStatus != 'null'){
-    match = [{ FinishingStatus: { $eq: FinishingStatus } },{ active: { $eq: true } }]
+  } else if (FinishingStatus != 'null') {
+    match = [{ FinishingStatus: { $eq: FinishingStatus } }, { active: { $eq: true } }]
   }
-   else   {
+  else {
     match = [{ deliveryExecutiveId: { $ne: null } }, { active: { $eq: true } }];
   }
   // else  {
@@ -1891,7 +1927,7 @@ const getAllGroup = async (id,date,FinishingStatus,page) => {
         as: 'b2buserDta'
       }
     },
-    { $unwind: "$b2buserDta"},
+    { $unwind: "$b2buserDta" },
     // {
     //   $unwind: '$Orderdatas',
     // },
@@ -1918,7 +1954,7 @@ const getAllGroup = async (id,date,FinishingStatus,page) => {
         status: 1,
         deliveryexecutiveName: "$b2buserDta.name",
         FinishingStatus: 1,
-        route:1,
+        route: 1,
         shoporderclonesId: '$shopIDDatas._id',
       },
     },
@@ -2258,7 +2294,7 @@ const finishingAccount = async (id, page) => {
         localField: 'orderId',
         foreignField: '_id',
         pipeline: [
-     
+
           {
             $lookup: {
               from: 'productorderclones',
@@ -2320,15 +2356,15 @@ const finishingAccount = async (id, page) => {
         as: 'orderData',
       },
     },
-   
+
     {
       $unwind: {
         path: '$orderData',
         preserveNullAndEmptyArrays: true,
       },
     },
-   
-    
+
+
     {
       $lookup: {
         from: 'orderpayments',
@@ -2363,7 +2399,7 @@ const finishingAccount = async (id, page) => {
               $and: [{ type: { $ne: 'advanced' } }],
             },
           },
-          
+
         ],
         as: 'orderDataNotEqual1',
       },
@@ -2374,13 +2410,13 @@ const finishingAccount = async (id, page) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-    
+
 
     {
       $project: {
-         deliveryExecutiveName: "$shopData.b2buserDta.name",
-         initialpaid: "$orderData.price",
-         finalpaid: "$orderDataNotEqual.price",
+        deliveryExecutiveName: "$shopData.b2buserDta.name",
+        initialpaid: "$orderData.price",
+        finalpaid: "$orderDataNotEqual.price",
         orderId: "$shopData.OrderId",
         BillId: "$shopData.customerBillId",
         DeliveryStatus: "$shopData.customerDeliveryStatus",
@@ -2389,7 +2425,7 @@ const finishingAccount = async (id, page) => {
         InitialPaidAmount: "$orderData.paidAmt",
         TotalOrderAmountWithGST: "$shopData.productData.price",
         InitialPendingAmount: {
-          $subtract: [ '$shopData.productData.price','$orderData.price' ],
+          $subtract: ['$shopData.productData.price', '$orderData.price'],
         },
 
         FinalPaymentMode: "$orderDataNotEqual1.payment",
@@ -2400,37 +2436,37 @@ const finishingAccount = async (id, page) => {
         },
 
 
-     
-      // FinalPendingAmount: {
-      //   $subtract: ["$TotalOrderAmountWithGST","$AddIniAndFinal"]
-      // },
-    },
-  },
-  {
-    $project: {
-      deliveryExecutiveName:1,
-      orderId: 1,
-      BillId: 1,
-      DeliveryStatus: 1,
-      initialPaymentMode: 1,
-      payType: 1,
-      initialpaid:1,
-      finalpaid:1,
-      InitialPaidAmount: 1,
-      TotalOrderAmountWithGST: 1,
-      InitialPendingAmount: 1,
 
-      FinalPaymentMode:1,
-      paymentType: 1,
-      FinalPaidAmount: 1,
-      AddIniAndFinal: 1,
-   
-    FinalPendingAmount: {
-      $subtract: ["$TotalOrderAmountWithGST","$AddIniAndFinal"]
+        // FinalPendingAmount: {
+        //   $subtract: ["$TotalOrderAmountWithGST","$AddIniAndFinal"]
+        // },
+      },
     },
-  },
-},
-   
+    {
+      $project: {
+        deliveryExecutiveName: 1,
+        orderId: 1,
+        BillId: 1,
+        DeliveryStatus: 1,
+        initialPaymentMode: 1,
+        payType: 1,
+        initialpaid: 1,
+        finalpaid: 1,
+        InitialPaidAmount: 1,
+        TotalOrderAmountWithGST: 1,
+        InitialPendingAmount: 1,
+
+        FinalPaymentMode: 1,
+        paymentType: 1,
+        FinalPaidAmount: 1,
+        AddIniAndFinal: 1,
+
+        FinalPendingAmount: {
+          $subtract: ["$TotalOrderAmountWithGST", "$AddIniAndFinal"]
+        },
+      },
+    },
+
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -2554,7 +2590,7 @@ const finishingAccount = async (id, page) => {
         as: 'wardadmingroupsData'
       }
     },
-    { $unwind: "$wardadmingroupsData"},
+    { $unwind: "$wardadmingroupsData" },
     {
       $lookup: {
         from: 'b2busers',
@@ -2563,8 +2599,8 @@ const finishingAccount = async (id, page) => {
         as: 'b2buserDta'
       }
     },
-    { $unwind: "$b2buserDta"},
-    
+    { $unwind: "$b2buserDta" },
+
     {
       $project: {
         // partialCount: '$partialCount.shopdatadata.pay_type',
@@ -2896,31 +2932,31 @@ const fineData = async (body) => {
 }
 
 
-const getOrderDataByPassing = async (id) =>{
+const getOrderDataByPassing = async (id) => {
   let values = await wardAdminGroupModel_ORDERS.aggregate([
     {
       $match: {
-        $and: [{wardAdminGroupID: { $eq:id } }],
+        $and: [{ wardAdminGroupID: { $eq: id } }],
       }
     },
     {
-      $lookup:{
+      $lookup: {
         from: 'shoporderclones',
         localField: 'orderId',
         foreignField: '_id',
         as: 'shopData'
       }
     },
-    { $unwind: "$shopData"},
+    { $unwind: "$shopData" },
     {
-      $lookup:{
+      $lookup: {
         from: 'b2bshopclones',
         localField: 'shopData.shopId',
         foreignField: '_id',
         as: 'b2bshopclonesdata'
       }
     },
-    { $unwind: "$b2bshopclonesdata"},
+    { $unwind: "$b2bshopclonesdata" },
     {
       $project: {
         orderId: "$shopData.OrderId",
@@ -2935,7 +2971,7 @@ const getOrderDataByPassing = async (id) =>{
 }
 
 
-const deliveryExecutiveSorting = async()=>{
+const deliveryExecutiveSorting = async () => {
   let values = await wardAdminGroup.aggregate([
     {
       $lookup: {
@@ -2948,7 +2984,7 @@ const deliveryExecutiveSorting = async()=>{
     {
       $unwind: '$b2busersData',
     },
-    { $group : { _id : "$deliveryExecutiveId" ,name : { $addToSet : "$b2busersData.name" } }}
+    { $group: { _id: "$deliveryExecutiveId", name: { $addToSet: "$b2busersData.name" } } }
   ]);
   return values;
 }
@@ -3017,4 +3053,5 @@ module.exports = {
 
   deliveryExecutiveSorting,
   getGroupDetailsForDE,
+  creditupdateDeliveryCompleted
 };

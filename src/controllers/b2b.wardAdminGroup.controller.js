@@ -70,7 +70,10 @@ const updateDeliveryCompleted = catchAsync(async (req, res) => {
   const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, req.body);
   res.send(deliveryCompleted);
 });
-
+const creditupdateDeliveryCompleted = catchAsync(async (req, res) => {
+  const deliveryCompleted = await wardAdminGroupService.creditupdateDeliveryCompleted(req.params.id, req.body,req.userId);
+  res.send(deliveryCompleted);
+});
 const UpdateUnDeliveredStatus = catchAsync(async (req, res) => {
   const deliveryStatus = await wardAdminGroupService.updateOrderStatus_forundelivey(req.params.id, req.body);
   res.send(deliveryStatus);
@@ -409,4 +412,5 @@ module.exports = {
 
   deliveryExecutiveSorting,
   getGroupDetailsForDE,
+  creditupdateDeliveryCompleted
 };

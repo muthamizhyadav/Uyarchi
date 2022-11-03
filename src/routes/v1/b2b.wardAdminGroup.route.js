@@ -2,6 +2,7 @@ const express = require('express');
 const wardAdminGroupController = require('../../controllers/b2b.wardAdminGroup.controller');
 const returnStockWastage = require('../../middlewares/returnStockWastage');
 const router = express.Router();
+const authorization = require('../../controllers/tokenVerify.controller');
 
 router.route('/craeteGroupId').post(wardAdminGroupController.createGroupOrder);
 
@@ -18,6 +19,7 @@ router.route('/update/pickedPettycash/collected/:id').put(wardAdminGroupControll
 router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
 
 router.route('/update/delivered/:id').put(wardAdminGroupController.updateDeliveryCompleted);
+router.route('/credit/update/delivered/:id').put(authorization,wardAdminGroupController.creditupdateDeliveryCompleted);
 
 router.route('/update/unDelivered/:id').put(wardAdminGroupController.UpdateUnDeliveredStatus);
 
