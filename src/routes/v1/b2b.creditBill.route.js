@@ -4,10 +4,10 @@ const authorization = require('../../controllers/tokenVerify.controller');
 
 const router = express.Router();
 
-router.route( '/get/getShopWithBill/:page').get(creditBillController.getShopWithBill);
+router.route('/get/getShopWithBill/:page').get(creditBillController.getShopWithBill);
 router.route('/get/wardAdmin/delivery/ExecutiveName').get(creditBillController.getWardExecutiveName);
 router.route('/get/wardAdmin/salesMAn/name').get(creditBillController.getsalesmanName);
-router.route( '/get/shop/hostory/detatisl/:page').get(authorization,creditBillController.getShopHistory);
+router.route('/get/shop/hostory/detatisl/:id').get(authorization, creditBillController.getShopHistory);
 router.route('/post/creditBill/details/create').post(creditBillController.createGroupcredit);
 router.route('/put/payingCash/with/DE/SM/:id').put(creditBillController.payingCAshWithDEorSM);
 router.route('/get/getManageCreditBillAssigning/deliveryExecutivename').get(creditBillController.getManageCreditBillAssigning);
@@ -24,5 +24,7 @@ router.route('/get/details/Group/:id').get(creditBillController.getgetGroupAndBi
 router.route('/get/payment/overAll/:id').get(creditBillController.getPaymentTypeCount);
 router.route('/get/group/data/:id').get(creditBillController.GroupDetails);
 router.route('/submit/Dispute/:id').put(creditBillController.submitDispute);
+router.route('/getdelivery/excutive/all/:page').get(authorization, creditBillController.getdeliveryExcutive);
+router.route('/update/finish/credit/:id').put(authorization,creditBillController.submitfinish);
 
 module.exports = router;

@@ -128,6 +128,7 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
     uid: userId,
     type: "creditBill",
     reasonScheduleOrDate: updateBody.reasonScheduleOrDate,
+    creditID:updateBody.groupID
   });
   return deliveryStatus;
 };
