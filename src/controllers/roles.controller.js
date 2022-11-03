@@ -95,6 +95,10 @@ const getMenu = catchAsync(async (req, res) => {
   const data = await RolesService.getMenu(req.params.id);
   res.send(data);
 });
+const get_user_menu = catchAsync(async (req, res) => {
+  const data = await RolesService.get_user_menu(req.userRole);
+  res.send(data);
+});
 module.exports = {
   createRoles,
   getAllRoles,
@@ -111,4 +115,5 @@ module.exports = {
   getAllSalesmanShops,
   getMenu,
   notAssignTonneValueSalesmanager,
+  get_user_menu
 };
