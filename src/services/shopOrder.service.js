@@ -771,7 +771,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         time_of_delivery: 1,
         total: 1,
         gsttotal: 1,
-        subtotal: "$productorderclones.price",
+        subtotal: {$round:"$productorderclones.price"},
         SGST: 1,
         CGST: 1,
         OrderId: 1,
@@ -848,7 +848,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
   return {
     value: retrunValue,
     total: total,
-    retrunValue: retrunValue,
+    // retrunValue: retrunValue,
   };
 };
 
