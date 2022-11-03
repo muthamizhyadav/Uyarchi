@@ -1906,7 +1906,31 @@ const getdeliveryExcutive = async (userId, page) => {
       }
     }
   ]);
-  return group;
+  let total = await creditBillGroup.aggregate([
+    {
+      $match: {
+        AssignedUserId: { $eq: userId }
+      }
+    },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              count: { $sum: 1 }
+            }
+          }
+        ],
+        as: 'creditbills',
+      },
+    },
+    { $unwind: '$creditbills' },
+  ]);
+  return { value: group, total: total.length };
 }
 module.exports = {
   getShopWithBill,
