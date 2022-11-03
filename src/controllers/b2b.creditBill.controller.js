@@ -24,11 +24,6 @@ const getShopHistory = catchAsync(async (req, res) => {
     res.send(bill);
 })
 
-const updateAssignedStatusPerBill = catchAsync(async (req, res) => {
-    const bill = await creditBillService.updateAssignedStatusByMultiSelect(req.body);
-    res.send(bill);
-})
-
 const createGroupcredit = catchAsync(async (req, res) => {
     const shopOrderClone = await creditBillService.createGroup(req.body);
     res.send(shopOrderClone);
@@ -120,7 +115,6 @@ module.exports = {
     getWardExecutiveName,
     getsalesmanName,
     getShopHistory,
-    updateAssignedStatusPerBill,
     createGroupcredit,
     payingCAshWithDEorSM,
     getManageCreditBillAssigning,
