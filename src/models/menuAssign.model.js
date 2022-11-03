@@ -26,7 +26,7 @@ const MenueAssign_Schema = mongoose.Schema({
     type: Boolean,
   },
   point: {
-    type: Boolean,
+    type: Number,
   },
   active: {
     type: Boolean,

@@ -39,25 +39,68 @@ const getMenu = async (id) => {
   // if (!role) {
   //   throw new ApiError(httpStatus.NOT_FOUND, 'Roles  Not Found');
   // }
-  let menues = await Menu.find();
+  let menues = await Menu.aggregate([
+    {
+      $lookup: {
+        from: 'menueassigns',
+        localField: '_id',
+        foreignField: 'menuid',
+        // pipeline: [
+        //   {
+        //     $group: {
+        //       _id: null,
+        //       amount: {
+        //         $sum: '$paidAmt',
+        //       },
+        //     },
+        //   },
+        // ],
+        as: 'menueassigns',
+      },
+    },
+    {
+      $unwind: {
+        path: '$menueassigns',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        menuName: 1,
+        route: 1,
+        parentMenu: 1,
+        read: "$menueassigns.read",
+        write: "$menueassigns.write",
+        update: "$menueassigns.update",
+        delete: "$menueassigns.delete",
+        point: "$menueassigns.point",
+      }
+    }
+  ]);
   return menues;
 };
 
 const updateRolesById = async (roleId, updateBody) => {
-  const role = await MenueAssign.findByIdAndDelete({ rolesId: roleId })
+  // const role = await MenueAssign.deleteMany({ rolesId: roleId })
+  try {
+    await MenueAssign.deleteMany({ rolesId: roleId })
+  } catch (e) {
+    print(e);
+  }
   updateBody.forEach(async (e) => {
     console.log(e)
     await MenueAssign.create({
       rolesId: roleId,
       menuid: e.menuid,
-      read: e.read,
-      write: e.write,
-      update: e.update,
-      delete: e.delete,
+      read: e.read == null ? false : true,
+      write: e.write == null ? false : true,
+      update: e.update == null ? false : true,
+      delete: e.delete == null ? false : true,
       point: e.point,
     })
   })
-  return role;
+  return updateBody;
 };
 
 const deleterolesById = async (roleId) => {
