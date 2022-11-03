@@ -1346,6 +1346,63 @@ const getGroupAndBill = async (AssignedUserId) => {
       },
     },
     {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'creditID',
+        pipeline: [
+          {
+            $match: { paymentMethod: "UPI" }
+          },
+          {
+            $group: { _id: { paymentMethod: "$paymentMethod" }, price: { $sum: '$paidAmt' } },
+          },
+          {
+            $project: {
+              paymentMethod: "$_id.paymentMethod",
+              price: 1
+            }
+          }
+        ],
+        as: 'creditbills_type',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditbills_type',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'creditID',
+        pipeline: [
+          {
+            $match: { paymentMethod: "By Cash" }
+          },
+          {
+            $group: { _id: { paymentMethod: "$paymentMethod" }, price: { $sum: '$paidAmt' } },
+          },
+          {
+            $project: {
+              paymentMethod: "$_id.paymentMethod",
+              price: 1
+            }
+          }
+        ],
+        as: 'creditbills_type_cash',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditbills_type_cash',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
       $project: {
         _id: 1,
         groupId: 1,
@@ -1355,7 +1412,9 @@ const getGroupAndBill = async (AssignedUserId) => {
         totalAmount: "$creditBillData.totalAmount",
         billCount: "$creditBillData.billCount",
         totalpaidAmount: "$creditBillData.totalpaidAmount",
-        collectedAmount: "$orderpaymentsnow.price"
+        collectedAmount: "$orderpaymentsnow.price",
+        creditbills_type_upi: "$creditbills_type.price",
+        creditbills_type_cash: "$creditbills_type_cash.price"
       }
     }
 
