@@ -2397,15 +2397,31 @@ const getVendorShops = async (key) => {
 
 const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
   let match;
-  if (uid != 'null' && date == 'null') {
-    match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }];
-  } else if (uid != 'null' && date != 'null') {
+  if (uid != 'null' && date == 'null' && street == 'null') {
+    match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } },];
+  }
+  else if (uid == 'null' && date == 'null' && street != 'null') {
+    match = [{ Wardid: { $eq: id } },{ Strid: { $eq: street } }];
+  }
+  else if (uid != 'null' && date == 'null' && street != 'null') {
+    match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { Strid: { $eq: street } }];
+  }
+   else if (uid != 'null' && date != 'null' && street == 'null') {
     match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { date: { $eq: date } }];
-  } else if (uid == 'null' && date != 'null') {
+  }
+   else if (uid == 'null' && date != 'null' && street == 'null') {
     match = [{ Wardid: { $eq: id } }, { date: { $eq: date } }];
-  } else {
+  }
+  else if (uid == 'null' && date != 'null' && street != 'null') {
+    match = [{ Wardid: { $eq: id } }, { date: { $eq: date } }, { Strid: { $eq: street } }];
+  }
+  else if (uid != 'null' && date != 'null' && street != 'null') {
+    match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { date: { $eq: date } }, { Strid: { $eq: street } }];
+  }
+  else {
     match = [{ Wardid: { $eq: id } }];
   }
+  console.log(match)
   let data = await Shop.aggregate([
     {
       $match: {
@@ -2437,7 +2453,7 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
-        pipeline: [{ $match: { _id: street } }],
+        // pipeline: [{ $match: { _id: street } }],
         as: 'streets',
       },
     },
@@ -2453,11 +2469,15 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         Slat: 1,
         Slong: 1,
         streetId: '$streets._id',
+        streetname:"$streets.street",
         locality: '$streets.locality',
         _id: 1,
         displaycount: 1,
       },
     },
+    {
+       $sort: {streetId:1}
+      },
     {
       $skip: parseInt(limit) * parseInt(page),
     },
@@ -2494,7 +2514,7 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
-        pipeline: [{ $match: { _id: street } }],
+        // pipeline: [{ $match: { _id: street } }],
         as: 'streets',
       },
     },
@@ -2554,7 +2574,7 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
-        pipeline: [{ $match: { _id: street } }],
+        // pipeline: [{ $match: { _id: street } }],
         as: 'streets',
       },
     },
