@@ -44,7 +44,19 @@ const getMenu = async (id) => {
 };
 
 const updateRolesById = async (roleId, updateBody) => {
-  const role = await Roles.findByIdAndUpdate({ _id: roleId }, updateBody, { new: true });
+  const role = await MenueAssign.findByIdAndDelete({ rolesId: roleId })
+  updateBody.forEach(async (e) => {
+    console.log(e)
+    await MenueAssign.create({
+      rolesId: roleId,
+      menuid: e.menuid,
+      read: e.read,
+      write: e.write,
+      update: e.update,
+      delete: e.delete,
+      point: e.point,
+    })
+  })
   return role;
 };
 

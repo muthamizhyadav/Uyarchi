@@ -7,16 +7,7 @@ const MenueAssign_Schema = mongoose.Schema({
     type: String,
     default: v4,
   },
-  menuname: {
-    type: String,
-  },
-  parentMenu: {
-    type: String,
-  },
-  parentName: {
-    type: String,
-  },
-  route: {
+  rolesId: {
     type: String,
   },
   menuid: {
@@ -41,6 +32,7 @@ const MenueAssign_Schema = mongoose.Schema({
     type: Boolean,
     default: true,
   },
+
 });
 
 const MenueAssign = mongoose.model('MenueAssign', MenueAssign_Schema);
