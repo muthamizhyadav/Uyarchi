@@ -1011,12 +1011,11 @@ const getDeliDetails = async () => {
         localField: '_id',
         foreignField: 'AssignedUserId',
         pipeline: [
-
-          {
-            $match: {
-              receiveStatus: { $eq: 'Pending' },
-            },
-          },
+          // {
+          //   $match: {
+          //     receiveStatus: { $eq: 'Pending' },
+          //   },
+          // },
           {
             $lookup: {
               from: 'creditbills',
