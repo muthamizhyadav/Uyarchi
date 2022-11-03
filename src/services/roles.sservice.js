@@ -513,6 +513,93 @@ const getAllSalesmanShops = async () => {
   return data;
 };
 
+const get_user_menu = async (userRole) => {
+  console.log(userRole)
+  let menus = await Menu.aggregate([
+    {
+      $match: { parentMenu: "0" }
+    },
+    {
+      $lookup: {
+        from: 'menueassigns',
+        localField: '_id',
+        foreignField: 'menuid',
+        pipeline: [
+          {
+            $match: {
+              rolesId: { $eq: userRole }
+            }
+          },
+          {
+            $lookup: {
+              from: 'menues',
+              localField: 'menuid',
+              foreignField: 'parentMenu',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'menueassigns',
+                    localField: '_id',
+                    foreignField: 'menuid',
+                    pipeline: [
+                      {
+                        $match: {
+                          rolesId: { $eq: userRole }
+                        }
+                      },
+                    ],
+                    as: "menueassigns"
+                  }
+
+                },
+                {
+                  $unwind: '$menueassigns',
+                },
+                {
+                  $project: {
+                    menuName: 1,
+                    _id: 1,
+                    route: 1,
+                    parentMenu: 1,
+                    parentName: 1,
+                    read: "$menueassigns.read",
+                    write: "$menueassigns.write",
+                    update: "$menueassigns.update",
+                    delete: "$menueassigns.delete",
+                    point: "$menueassigns.point",
+                  }
+                }
+
+              ],
+              as: 'menues',
+            },
+          },
+
+        ],
+        as: 'menueassigns',
+      },
+    },
+    {
+      $unwind: '$menueassigns',
+    },
+    {
+      $project: {
+        menuName: 1,
+        _id: 1,
+        route: 1,
+        parentMenu: 1,
+        parentName: 1,
+        read: "$menueassigns.read",
+        write: "$menueassigns.write",
+        update: "$menueassigns.update",
+        delete: "$menueassigns.delete",
+        point: "$menueassigns.point",
+        child: "$menueassigns.menues",
+      }
+    }
+  ])
+  return menus;
+}
 module.exports = {
   createRoles,
   getAllRoles,
@@ -528,4 +615,5 @@ module.exports = {
   getAllSalesmanShops,
   notAssignTonneValueSalesmanager,
   getMenu,
+  get_user_menu
 };
