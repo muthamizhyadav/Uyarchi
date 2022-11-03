@@ -1237,88 +1237,129 @@ const getGroupAndBill = async (AssignedUserId) => {
         from: 'creditbills',
         localField: '_id',
         foreignField: 'creditbillId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              price: "$productData.price",
+              orderpayments: "$orderpayments",
+              orderpaymentsnow: "$orderpaymentsnow"
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              totalAmount: { $sum: "$price" },
+              billCount: { $sum: 1 },
+              totalpaidAmount: { $sum: "$orderpayments.price" }
+            }
+          }
+        ],
         as: 'creditBillData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditBillData',
+        preserveNullAndEmptyArrays: true,
       },
     },
     {
       $lookup: {
         from: 'orderpayments',
-        localField: 'creditBillData.orderId',
-        foreignField: 'orderId',
-        pipeline: [
-
-          { $group: { _id: null, price: { $sum: '$paidAmt' } } }
-
-        ],
-        as: 'orderpaymentsData'
-      }
-    },
-    { $unwind: "$orderpaymentsData" },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: 'creditBillData.orderId',
-        foreignField: 'orderId',
+        localField: '_id',
+        foreignField: 'creditID',
         pipeline: [
           {
-            $project: {
-              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
-              GST_Number: 1,
-            },
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
           },
-          {
-            $project: {
-              sum: '$sum',
-              percentage: {
-                $divide: [
-                  {
-                    $multiply: ['$GST_Number', '$Amount'],
-                  },
-                  100,
-                ],
-              },
-              value: '$Amount',
-            },
-          },
-          {
-            $project: {
-              price: { $sum: ['$value', '$percentage'] },
-              value: '$value',
-              GST: '$percentage',
-            },
-          },
-          { $group: { _id: null, price: { $sum: '$price' } } },
         ],
-        as: 'productData',
+        as: 'orderpaymentsnow',
       },
     },
-
-    { $unwind: '$productData' },
+    {
+      $unwind: {
+        path: '$orderpaymentsnow',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
+        _id: 1,
         groupId: 1,
         assignedDate: 1,
         assignedTime: 1,
         receiveStatus: 1,
-        total: {
-          $sum: '$Orderdatas.pendingAmount',
-        },
-        shopCount: {
-          $size: '$creditBillData.shopId',
-        },
-        BillCount: {
-          $size: '$creditBillData.bill',
-        },
-        originalPrice: "$productData.price",
-        paidAmount: "$orderpaymentsData.price",
-        PendingAmount: {
-          $round: {
-            $subtract: ["$productData.price", "$orderpaymentsData.price"]
-          }
-        },
+        totalAmount: "$creditBillData.totalAmount",
+        billCount: "$creditBillData.billCount",
+        totalpaidAmount: "$creditBillData.totalpaidAmount",
+        collectedAmount: "$orderpaymentsnow.price"
+      }
+    }
 
-      },
-    },
   ]);
   return data;
 };
