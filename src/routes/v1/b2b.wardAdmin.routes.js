@@ -11,7 +11,7 @@ router.route('/updateProductById/:orderId').put(wardAdminController.updateProduc
 
 // router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusMatchingAppOrModi);
 router.route('/getDetails/:type/:time/:status/:limit/:page').get(wardAdminController.statusMatchingAppOrModi);
-router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
+// router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 // checked modified
 // checked
 router.route('/updateAcknowledge').put(wardAdminController.updateAcknowledge);
@@ -65,6 +65,5 @@ router.route('/Mismatch_Stock_Reconcilation').get(wardAdminController.Mismatch_S
 router.route('/Mismatch_Stock_Reconcilation1/:id').get(wardAdminController.Mismatch_Stock_Reconcilation1);
 
 router.route('/get/shop/details/:id').get(wardAdminController.getshopDetails);
-
 
 module.exports = router;

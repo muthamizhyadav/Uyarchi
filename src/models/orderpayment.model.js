@@ -58,11 +58,13 @@ const OrderPaymentSchema = new mongoose.Schema({
   creditBillStatus: {
     type: String,
   },
-  reasonScheduleOrDate:{
+  reasonScheduleOrDate: {
+    type: String,
+  },
+  creditID: {
     type: String,
   },
 
-  
 });
 
 const OrderPayment = new mongoose.model('orderPayment', OrderPaymentSchema);

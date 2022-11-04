@@ -66,30 +66,39 @@ const getroleWardAdminAsm = catchAsync(async (req, res) => {
   res.send(role);
 });
 
-const getAlldataSalesManager = catchAsync(async(req, res) => {
-    const data = await RolesService.getAlldataSalesManager();
-    res.send(data);
-})
+const getAlldataSalesManager = catchAsync(async (req, res) => {
+  const data = await RolesService.getAlldataSalesManager();
+  res.send(data);
+});
 
-const getAlldataSalesMan = catchAsync(async(req, res) => {
+const getAlldataSalesMan = catchAsync(async (req, res) => {
   const data = await RolesService.getAlldataSalesMan(req.params.page);
   res.send(data);
-})
+});
 
-const getSalesMan = catchAsync(async(req, res) => {
+const getSalesMan = catchAsync(async (req, res) => {
   const data = await RolesService.getsalesman();
   res.send(data);
-})
+});
 
-const getAllSalesmanShops = catchAsync(async(req, res) => {
+const getAllSalesmanShops = catchAsync(async (req, res) => {
   const data = await RolesService.getAllSalesmanShops();
   res.send(data);
-})
+});
 
-const notAssignTonneValueSalesmanager = catchAsync(async(req, res) => {
+const notAssignTonneValueSalesmanager = catchAsync(async (req, res) => {
   const data = await RolesService.notAssignTonneValueSalesmanager();
   res.send(data);
-})
+});
+
+const getMenu = catchAsync(async (req, res) => {
+  const data = await RolesService.getMenu(req.params.id);
+  res.send(data);
+});
+const get_user_menu = catchAsync(async (req, res) => {
+  const data = await RolesService.get_user_menu(req.userRole);
+  res.send(data);
+});
 module.exports = {
   createRoles,
   getAllRoles,
@@ -104,5 +113,7 @@ module.exports = {
   getAlldataSalesMan,
   getSalesMan,
   getAllSalesmanShops,
+  getMenu,
   notAssignTonneValueSalesmanager,
+  get_user_menu
 };

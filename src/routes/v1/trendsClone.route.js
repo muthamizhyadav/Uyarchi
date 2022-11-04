@@ -7,4 +7,5 @@ router.route('/:trendsId').get(trendsCloneController.getTrendsById).put(trendsCl
 router.route('/pagination/:id').get(trendsCloneController.trendsPagination);
 router.route('/updateProduct/FromTrends/:id').put(trendsCloneController.updateProductFromTrendsClone);
 router.route('/getAll/:wardId/:street/:page').get(trendsCloneController.getTrendsClone);
+router.route('/get/trends/report/Bydate/:date').get(trendsCloneController.getTrends_Report_by_data);
 module.exports = router;

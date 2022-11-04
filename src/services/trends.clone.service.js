@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const TrendsClone = require('../models/trendsClone.model');
+const { Users } = require('../models/B2Busers.model');
 const moment = require('moment');
 
 const createTrendsClone = async (body) => {
@@ -126,6 +127,52 @@ const updateProductFromTrendsClone = async (id, updateBody) => {
   return await TrendsClone.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
 };
 
+const getTrends_Report_by_data = async (date) => {
+  let values = await Users.aggregate([
+    {
+      $lookup: {
+        from: 'trendsclones',
+        localField: '_id',
+        foreignField: 'Uid',
+        pipeline: [
+          { $match: { date: date } },
+
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'shopid',
+              foreignField: '_id',
+              as: 'shops',
+            },
+          },
+          {
+            $unwind: {
+              preserveNullAndEmptyArrays: true,
+              path: '$shops',
+            },
+          },
+        ],
+        as: 'trends',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        email: 1,
+        phoneNumber: 1,
+        salary: 1,
+        trends: '$trends.shops.SName',
+        total: { $size: '$trends.shops' },
+      },
+    },
+    {
+      $match: { total: { $gt: 0 } },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createTrendsClone,
   TrendsClonePagination,
@@ -135,4 +182,5 @@ module.exports = {
   updateTrendsCloneById,
   deleteTrendsCloneById,
   getTrendsClone,
+  getTrends_Report_by_data,
 };

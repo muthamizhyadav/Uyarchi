@@ -114,7 +114,10 @@ const getTrendsClone = catchAsync(async (req, res) => {
   const trends = await trendsCloneService.getTrendsClone(req.params.wardId, req.params.street, req.params.page);
   res.send(trends);
 });
-
+const getTrends_Report_by_data = catchAsync(async (req, res) => {
+  const data = await trendsCloneService.getTrends_Report_by_data(req.params.date);
+  res.send(data);
+});
 module.exports = {
   createTrends,
   getAllTrends,
@@ -123,4 +126,5 @@ module.exports = {
   updateProductFromTrendsClone,
   updateTrendsById,
   getTrendsClone,
+  getTrends_Report_by_data,
 };
