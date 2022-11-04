@@ -298,6 +298,81 @@ const getproductdetails = async (id) => {
     },
     { $unwind: '$paymentDtadata' },
     {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: '$paidAmt',
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'RE_order_Id',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: '$paidAmt',
+                    },
+                  },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              amount: '$orderpayments.amount',
+            },
+          },
+        ],
+        as: 'shoporderclones',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shoporderclones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        reorderamount: { $ifNull: ['$shoporderclones.amount', 0] },
+      },
+    },
+    {
       $project: {
         editPendingAmount: '$paymentDtadata.total',
         productData: '$productData',
@@ -306,7 +381,10 @@ const getproductdetails = async (id) => {
         shopId: 1,
         status: 1,
         OrderId: 1,
-        paidAMount: '$paymentDta.paidAmt',
+        // paidAMount: '$paymentDta.paidAmt',
+        paidAMount: {
+          $sum: ['$orderpayments.amount', '$reorderamount'],
+        },
         total: '$productDatadetails.amount',
         TotalGstAmount: { $sum: '$productData.GSTamount' },
         totalSum: { $round: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] } },
@@ -567,11 +645,6 @@ const wardloadExecutive = async (id) => {
                     productTitle: '$products.productTitle',
                   },
                 },
-                {
-                  $match: {
-                    finalQuantity: { $gt: 0 },
-                  },
-                },
               ],
               as: 'product',
             },
@@ -615,8 +688,6 @@ const wardloadExecutive = async (id) => {
               statusUpdate: 1,
               WA_assigned_Time: 1,
               shopname: '$shopdetails.SName',
-              shopAddress: '$shopdetails.address',
-              shopContact: '$shopdetails.mobile',
               deliveryExecutiveId: 1,
               product: '$product',
             },
@@ -659,8 +730,6 @@ const wardloadExecutive = async (id) => {
         WA_assigned_Time: '$shoporderclones.WA_assigned_Time',
         deliveryExecutiveId: '$shoporderclones.deliveryExecutiveId',
         shopname: '$shoporderclones.shopname',
-        shopAddress:'$shoporderclones.shopAddress',
-        shopContact:'$shoporderclones.shopContact',
         product: '$shoporderclones.product',
         orderId: '$shoporderclones._id',
       },
@@ -3548,11 +3617,11 @@ const getshopDetails = async (id) => {
         paidamount: {
           $sum: ['$orderpayments.amount', '$reorderamount'],
         },
-      userName: '$b2busersData.name',
-    },
+        userName: '$b2busersData.name',
+      },
     },
   ]);
-return values;
+  return values;
 };
 module.exports = {
   getdetails,
