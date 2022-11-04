@@ -219,7 +219,7 @@ const getShopHistory = async (userId, id) => {
   let values = await creditBill.aggregate([
     {
       $match: {
-        $and: [{ creditbillId: { $eq: id } }],
+        $and: [{ AssignedUserId: { $eq: userId } },{ creditbillId: { $eq: id } }],
       },
     },
     {
