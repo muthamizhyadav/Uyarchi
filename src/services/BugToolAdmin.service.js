@@ -51,9 +51,36 @@ bugToolUser.forEach(async (e) => {
 return data
 };
 
-// const BugToolusersAndId = async () =>{
+const BugToolusersAndId = async (id) =>{
+   const data = await  AddProjectAdminSeprate.aggregate([
+    {
+      $match: {
+        $and: [{ bugToolUserId: { $eq:id}}],
+      },
+    },
+    {
+      $lookup: {
+        from: 'bugtoolusers',
+        localField: 'bugToolUser',
+        foreignField: '_id',
+        as: 'bugtoolusers',
+      },
+    },
+    {
+      $unwind: '$bugtoolusers',
+    },
 
-// }
+    {
+      $project:{
+        name:'$bugtoolusers.name',
+        email:'$bugtoolusers.email',
+        type:"$bugtoolusers.Type",
+        phoneNumber:'$bugtoolusers.phoneNumber'
+      }
+    }
+      ])
+      return data ;
+}
 
 const getAllProject = async () => {
   return AddProjectAdmin.find({active:true});
@@ -100,4 +127,7 @@ module.exports = {
     updateByProjectId,
     deleteUserById,
     deleteProjectById,
+    BugToolusersAndId,
+    getAllprojectById,
+    getAlluserById,
 };

@@ -50,6 +50,27 @@ const deleteProjectById = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const BugToolusersAndId = catchAsync(async (req, res) => {
+  const data = await BugToolAdminService.BugToolusersAndId(req.params.id);  
+  res.send(data);
+});
+
+const getAllprojectById = catchAsync(async (req, res) => {
+  const data = await BugToolAdminService.getAllprojectById(req.params.id);  
+  if(!data && data.active == true){
+    throw new ApiError(httpStatus.NOT_FOUND, 'project Not Fount.');
+  }
+  res.send(data);
+});
+
+const getAlluserById = catchAsync(async (req, res) => {
+  const data = await BugToolAdminService.getAlluserById(req.params.id); 
+  if(!data && data.active == true){
+    throw new ApiError(httpStatus.NOT_FOUND, 'project Not Fount.');
+  } 
+  res.send(data);
+});
+
 module.exports = {
     createBugToolAdminService,
     getAll,
@@ -59,5 +80,7 @@ module.exports = {
     updateByProjectId,
     deleteUserById,
     deleteProjectById,
-
+    BugToolusersAndId,
+    getAllprojectById,
+    getAlluserById,
 };
