@@ -909,6 +909,17 @@ const wardloadExecutivePacked = async (range, page) => {
               unit: 1,
             },
           },
+          {
+            $match: {
+              total: { $gt: 0 },
+            },
+          },
+          {
+            $project: {
+              total: 1,
+              unit: 1,
+            },
+          },
         ],
         as: 'productOrderCloneData',
       },
@@ -932,7 +943,6 @@ const wardloadExecutivePacked = async (range, page) => {
         // orderId: '$orderDatafortotal.orderId',
         // orderDate: '$orderDatafortotal.date',
         // orderTime: '$orderDatafortotal.time',
-        totalItems: { $size: '$orderDatafortotal' },
         Qty: '$orderData.Qty',
         locality: '$streetsData.locality',
         area: '$streetsData.area',
@@ -943,6 +953,7 @@ const wardloadExecutivePacked = async (range, page) => {
         ward: '$wardData.ward',
         productOrderCloneData: '$productOrderCloneData',
         timeslot: 1,
+        totalItems: { $size: '$productOrderCloneData' },
         timeslottrue: { $and: [{ $lte: ['$timeslot', lapsed] }, { $gte: ['$timeslot', beforelapsed] }] },
       },
     },
@@ -952,6 +963,7 @@ const wardloadExecutivePacked = async (range, page) => {
   ]);
 
   let total = await ShopOrderClone.aggregate([
+    { $sort: { time_of_delivery: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
         $and: [
@@ -992,7 +1004,6 @@ const wardloadExecutivePacked = async (range, page) => {
       },
     },
     { $unwind: '$wardData' },
-
     {
       $lookup: {
         from: 'productorderclones',
@@ -1036,10 +1047,22 @@ const wardloadExecutivePacked = async (range, page) => {
               unit: 1,
             },
           },
+          {
+            $match: {
+              total: { $gt: 0 },
+            },
+          },
+          {
+            $project: {
+              total: 1,
+              unit: 1,
+            },
+          },
         ],
         as: 'productOrderCloneData',
       },
     },
+    // { $unwind: '$productOrderCloneData' },
   ]);
   let result = await gettimeslatcountassign(range);
   return { data: data, total: total.length, total_count: result };
@@ -2455,7 +2478,7 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
         // UserName: '$userData.name',
         // orderId: '$orderData.orderId',
         totalItems: { $size: '$orderData' },
-        devevery_mode:1,
+        devevery_mode: 1,
         created: 1,
         time: 1,
         time_of_delivery: 1,
@@ -2682,6 +2705,7 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
         status: 1,
         Payment: 1,
         delivery_type: 1,
+        devevery_mode: 1,
         overallTotal: 1,
         name: '$userNameData.name',
         shopType: '$userData.type',
@@ -2692,7 +2716,6 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
         created: 1,
         time: 1,
         time_of_delivery: 1,
-        devevery_mode:1,
       },
     },
     { $skip: parseInt(limit) * page },
@@ -2943,6 +2966,7 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
         status: 1,
         Payment: 1,
         delivery_type: 1,
+        devevery_mode: 1,
         overallTotal: 1,
         name: '$userNameData.name',
         shopType: '$userData.type',
@@ -2953,7 +2977,6 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
         created: 1,
         time: 1,
         time_of_delivery: 1,
-        devevery_mode:1,
       },
     },
     { $skip: parseInt(limit) * page },
