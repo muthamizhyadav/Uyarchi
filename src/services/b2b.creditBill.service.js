@@ -215,10 +215,11 @@ const getsalesmanName = async () => {
 const getShopHistory = async (userId, id) => {
   console.log(id)
   console.log(userId)
+  // { AssignedUserId: { $eq: userId } },
   let values = await creditBill.aggregate([
     {
       $match: {
-        $and: [{ AssignedUserId: { $eq: userId } }, { creditbillId: { $eq: id } }],
+        $and: [{ AssignedUserId: { $eq: userId } },{ creditbillId: { $eq: id } }],
       },
     },
     {
@@ -314,13 +315,16 @@ const getShopHistory = async (userId, id) => {
         created: "$shoporderclones.created",
         TotalAmount: { $round: ["$productorderclones.price", 0] },
         paidAmount: "$orderpaymentsData.price",
-        orderpaymentsData_value: "$orderpaymentsData_value"
+        orderpaymentsData_value: "$orderpaymentsData_value",
+        Schedulereason: 1,
+        reasonScheduleOrDate: 1
+
       }
     },
   ]);
+  let group = await creditBillGroup.findById(id)
 
-
-  return values;
+  return { value: values, groupstatus: group.receiveStatus };
 };
 
 const updateAssignedStatusPerBill = async (id) => {
@@ -1534,7 +1538,30 @@ const getDetailsByPassGroupId = async (id) => {
     },
 
     { $unwind: '$productData' },
-
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $sort: {
+              created: -1
+            }
+          },
+          {
+            $limit: 1,
+          }
+        ],
+        as: 'creditBillData_last',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditBillData_last',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
 
@@ -1549,6 +1576,8 @@ const getDetailsByPassGroupId = async (id) => {
         BillAmount: { $round: ['$productData.price', 0] },
         paidAmount: '$paymentData.price',
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+        paymentMethod: "$creditBillData_last.paymentMethod",
+        payment_type: "$creditBillData_last.payment",
         condition1: {
           $cond: {
             if: { $ne: [{ $round: { $subtract: ['$productData.price', '$paymentData.price'] } }, 0] },

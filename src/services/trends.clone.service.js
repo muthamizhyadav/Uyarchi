@@ -162,7 +162,7 @@ const getTrends_Report_by_data = async (date) => {
         email: 1,
         phoneNumber: 1,
         salary: 1,
-        trends: '$trends.shops.SName',
+        trends: '$trends.shops',
         total: { $size: '$trends.shops' },
       },
     },

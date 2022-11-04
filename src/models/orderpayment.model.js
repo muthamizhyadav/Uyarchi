@@ -30,7 +30,7 @@ const OrderPaymentSchema = new mongoose.Schema({
   },
   payment: {
     type: String,
-    default: 'Paynow',
+    // default: 'Paynow',
   },
   active: {
     type: Boolean,
@@ -62,6 +62,9 @@ const OrderPaymentSchema = new mongoose.Schema({
     type: String,
   },
   creditID: {
+    type: String,
+  },
+  Schedulereason: {
     type: String,
   },
 

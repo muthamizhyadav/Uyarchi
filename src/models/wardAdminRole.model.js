@@ -170,7 +170,10 @@ const wardAdminRoleAsmSchema = new mongoose.Schema({
       default: false,
     },
     created:{
-      type:Date,
+      type:String,
+    },
+    createdTime:{
+      type:Number
     }
   });
   

@@ -43,7 +43,7 @@ const getStockbyBillId = catchAsync(async (req, res) => {
 });
 
 const getAllTrends = catchAsync(async (req, res) => {
-  const trends = await productService.getTrendsData(req.params.wardId, req.params.street,req.params.shoptype, req.params.page);
+  const trends = await productService.getTrendsData(req.params.wardId, req.params.street, req.params.shoptype, req.params.page);
   res.send(trends);
 });
 
@@ -464,6 +464,12 @@ const get_random_product = catchAsync(async (req, res) => {
   let product;
   if (req.params.type == 'Closing') {
     product = await productService.getstock_close_product(req.params.page);
+  }
+  if (req.params.type == 'Random') {
+    product = await productService.getstock_random_product(req.params.page);
+  }
+  if (req.params.type == 'Opening') {
+    product = await productService.getstock_opening_product(req.params.page);
   }
   res.send(product);
 });

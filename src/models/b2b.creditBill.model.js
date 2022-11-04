@@ -10,7 +10,7 @@ const creditBillSchema = mongoose.Schema({
     },
     orderId: {
         type: String,
-        
+
     },
     shopId: {
         type: String
@@ -25,15 +25,15 @@ const creditBillSchema = mongoose.Schema({
         type: String,
     },
     bill: {
-        type:String,
-    },
-    pay_By:{
         type: String,
     },
-    pay_type:{
-        type:String
+    pay_By: {
+        type: String,
     },
-    upiStatus:{
+    pay_type: {
+        type: String
+    },
+    upiStatus: {
         type: String,
     },
     amountPayingWithDEorSM: {
@@ -45,21 +45,26 @@ const creditBillSchema = mongoose.Schema({
     active: {
         type: Boolean,
         default: true,
-      },
-      archive: {
+    },
+    archive: {
         type: Boolean,
         default: false,
-      },
-      AssignedUserId: {
+    },
+    AssignedUserId: {
         type: String
-      },
-      Disputestatus: {
+    },
+    Disputestatus: {
         type: String,
         status: "Pending"
-        },
-
+    },
+    reasonScheduleOrDate: {
+        type: String,
+    },
+    Schedulereason: {
+        type: String,
+    },
 
 });
 
-const creditBill = mongoose.model('creditBill',creditBillSchema);
+const creditBill = mongoose.model('creditBill', creditBillSchema);
 module.exports = creditBill;
