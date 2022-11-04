@@ -869,7 +869,7 @@ const getSalesman = async (id) => {
   ]);
   let lastdata = await SalesManShop.aggregate([
     {
-      $sort: {created:-1},
+      $sort: {created:-1, createdTime:-1},
     },
   
     {
@@ -882,7 +882,7 @@ const getSalesman = async (id) => {
     },
     {
       $group: {
-        _id: { created:'$created' },
+        _id: { created:'$created', createdTime:'$createdTime'},
         count: { $sum: 1 },
       },
     },
