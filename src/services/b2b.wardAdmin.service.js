@@ -3443,7 +3443,81 @@ const getshopDetails = async (id) => {
       },
     },
     { $unwind: '$productData' },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: '$paidAmt',
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
 
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'RE_order_Id',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: '$paidAmt',
+                    },
+                  },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              amount: '$orderpayments.amount',
+            },
+          },
+        ],
+        as: 'shoporderclones',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shoporderclones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        reorderamount: { $ifNull: ['$shoporderclones.amount', 0] },
+      },
+    },
     {
       $project: {
         shopId: 1,
@@ -3462,12 +3536,14 @@ const getshopDetails = async (id) => {
         date: 1,
         time_of_delivery: 1,
         BillAmount: '$productData.price',
-        paidamount: 1,
-        userName: '$b2busersData.name',
-      },
+        paidamount: {
+          $sum: ['$orderpayments.amount', '$reorderamount'],
+        },
+      userName: '$b2busersData.name',
+    },
     },
   ]);
-  return values;
+return values;
 };
 module.exports = {
   getdetails,
