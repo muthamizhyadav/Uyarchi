@@ -13,7 +13,7 @@ const createAdminAddUser = async (body) => {
 };
 
 const getAll = async () => {
-  return AdminAddUser.find({active:true, disable:false});
+  return AdminAddUser.find({active:true});
 };
 
 const getAlluserById = async (id) => {
