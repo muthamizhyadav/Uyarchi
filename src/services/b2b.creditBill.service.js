@@ -592,7 +592,7 @@ const getNotAssignData = async (page) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }, { status: { $eq: "Delivered" } }],
+        $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }, { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }],
       },
     },
     {
@@ -1346,6 +1346,63 @@ const getGroupAndBill = async (AssignedUserId) => {
       },
     },
     {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'creditID',
+        pipeline: [
+          {
+            $match: { paymentMethod: "UPI" }
+          },
+          {
+            $group: { _id: { paymentMethod: "$paymentMethod" }, price: { $sum: '$paidAmt' } },
+          },
+          {
+            $project: {
+              paymentMethod: "$_id.paymentMethod",
+              price: 1
+            }
+          }
+        ],
+        as: 'creditbills_type',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditbills_type',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'creditID',
+        pipeline: [
+          {
+            $match: { paymentMethod: "By Cash" }
+          },
+          {
+            $group: { _id: { paymentMethod: "$paymentMethod" }, price: { $sum: '$paidAmt' } },
+          },
+          {
+            $project: {
+              paymentMethod: "$_id.paymentMethod",
+              price: 1
+            }
+          }
+        ],
+        as: 'creditbills_type_cash',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditbills_type_cash',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
       $project: {
         _id: 1,
         groupId: 1,
@@ -1355,7 +1412,9 @@ const getGroupAndBill = async (AssignedUserId) => {
         totalAmount: "$creditBillData.totalAmount",
         billCount: "$creditBillData.billCount",
         totalpaidAmount: "$creditBillData.totalpaidAmount",
-        collectedAmount: "$orderpaymentsnow.price"
+        collectedAmount: "$orderpaymentsnow.price",
+        creditbills_type_upi: "$creditbills_type.price",
+        creditbills_type_cash: "$creditbills_type_cash.price"
       }
     }
 
@@ -1764,13 +1823,17 @@ const getDetailsByPassGroupId = async (id) => {
 };
 
 const submitDispute = async (id, updatebody) => {
-  console.log(id, updatebody);
+  // console.log(id, updatebody);
   let product = await creditBillGroup.findById(id);
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, ' srfegfNot Found');
   }
-  product = await creditBillGroup.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  product = await creditBillGroup.findByIdAndUpdate({ _id: id }, { ...updatebody, ...{ finishDate: moment() } }, { new: true });
   console.log(product);
+  let creditBill_array = await creditBill.find({ creditbillId: id });
+  creditBill_array.forEach(async (e) => {
+    await ShopOrderClone.findByIdAndUpdate({ _id: e.orderId }, { creditBillAssignedStatus: "Pending" }, { new: true });
+  })
   return product;
 };
 

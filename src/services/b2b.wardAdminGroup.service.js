@@ -106,14 +106,91 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
   //   },
   // };
   let deliveryStatus = await ShopOrderClone.findById(id);
-  console.log(deliveryStatus);
+  let pending = await ShopOrderClone.aggregate([
+    { $match: { _id: { $eq: id } } },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    }, {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
+        as: 'paymentData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$paymentData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+        paymentData: "$paymentData.price",
+        productData: "$productData.price",
+      }
+    }
+  ])
+  console.log(pending);
+
   if (!deliveryStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  // deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
   let paidamount = updateBody.paidamount;
   if (paidamount == null) {
     paidamount = 0;
+  }
+  if (pending.length != 0) {
+    if (pending[0].pendingAmount == paidamount) {
+      await ShopOrderClone.findByIdAndUpdate({ _id: id }, { statusOfBill: "Paid" }, { new: true });
+    }
   }
   await orderPayment.create({
     paidAmt: paidamount,
@@ -128,7 +205,7 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
     uid: userId,
     type: "creditBill",
     reasonScheduleOrDate: updateBody.reasonScheduleOrDate,
-    creditID:updateBody.groupID
+    creditID: updateBody.groupID
   });
   return deliveryStatus;
 };
