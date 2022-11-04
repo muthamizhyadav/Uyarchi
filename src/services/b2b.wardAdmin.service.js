@@ -282,8 +282,8 @@ const getproductdetails = async (id) => {
         // pipeline: [
         //   { $group: { _id: null, total: { $sum: '$paidAmt' } } },
         // ],
-        as: 'paymentDta'
-      }
+        as: 'paymentDta',
+      },
     },
     { $unwind: '$paymentDta' },
 
@@ -292,16 +292,14 @@ const getproductdetails = async (id) => {
         from: 'orderpayments',
         localField: '_id',
         foreignField: 'orderId',
-        pipeline: [
-          { $group: { _id: null, total: { $sum: '$paidAmt' } } },
-        ],
-        as: 'paymentDtadata'
-      }
+        pipeline: [{ $group: { _id: null, total: { $sum: '$paidAmt' } } }],
+        as: 'paymentDtadata',
+      },
     },
     { $unwind: '$paymentDtadata' },
     {
       $project: {
-        editPendingAmount: "$paymentDtadata.total",
+        editPendingAmount: '$paymentDtadata.total',
         productData: '$productData',
         shopName: '$shopData.SName',
         shopAddress: '$shopData.address',
@@ -315,9 +313,12 @@ const getproductdetails = async (id) => {
         // pendingAmount: { $subtract: [{ $round: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] } }, '$paymentDta.paidAmt'] },
 
         lastpendingamountAfterEdit: {
-          $subtract: [{ $round: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] } }, "$paymentDtadata.total"] },
-        }
-      
+          $subtract: [
+            { $round: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] } },
+            '$paymentDtadata.total',
+          ],
+        },
+      },
     },
   ]);
   if (values.length == 0) {
@@ -815,9 +816,8 @@ const wardloadExecutivePacked = async (range, page) => {
   let lapsed = timeslot[hover].start;
   let beforelapsed = timeslot[before].start;
 
-  console.log(lapsed)
-  console.log(beforelapsed)
-
+  console.log(lapsed);
+  console.log(beforelapsed);
 
   rangematch = { time_of_delivery: { $eq: range } };
   if (range == 'all') {
@@ -909,6 +909,17 @@ const wardloadExecutivePacked = async (range, page) => {
               unit: 1,
             },
           },
+          {
+            $match: {
+              total: { $gt: 0 },
+            },
+          },
+          {
+            $project: {
+              total: 1,
+              unit: 1,
+            },
+          },
         ],
         as: 'productOrderCloneData',
       },
@@ -932,7 +943,6 @@ const wardloadExecutivePacked = async (range, page) => {
         // orderId: '$orderDatafortotal.orderId',
         // orderDate: '$orderDatafortotal.date',
         // orderTime: '$orderDatafortotal.time',
-        totalItems: { $size: '$orderDatafortotal' },
         Qty: '$orderData.Qty',
         locality: '$streetsData.locality',
         area: '$streetsData.area',
@@ -943,7 +953,8 @@ const wardloadExecutivePacked = async (range, page) => {
         ward: '$wardData.ward',
         productOrderCloneData: '$productOrderCloneData',
         timeslot: 1,
-        timeslottrue: { $and: [{ $lte: ["$timeslot", lapsed] }, { $gte: ["$timeslot", beforelapsed] }] }
+        totalItems: { $size: '$productOrderCloneData' },
+        timeslottrue: { $and: [{ $lte: ['$timeslot', lapsed] }, { $gte: ['$timeslot', beforelapsed] }] },
       },
     },
 
@@ -952,6 +963,7 @@ const wardloadExecutivePacked = async (range, page) => {
   ]);
 
   let total = await ShopOrderClone.aggregate([
+    { $sort: { time_of_delivery: 1, delivery_type: -1, created: 1 } },
     {
       $match: {
         $and: [
@@ -992,7 +1004,6 @@ const wardloadExecutivePacked = async (range, page) => {
       },
     },
     { $unwind: '$wardData' },
-
     {
       $lookup: {
         from: 'productorderclones',
@@ -1036,10 +1047,22 @@ const wardloadExecutivePacked = async (range, page) => {
               unit: 1,
             },
           },
+          {
+            $match: {
+              total: { $gt: 0 },
+            },
+          },
+          {
+            $project: {
+              total: 1,
+              unit: 1,
+            },
+          },
         ],
         as: 'productOrderCloneData',
       },
     },
+    // { $unwind: '$productOrderCloneData' },
   ]);
   let result = await gettimeslatcountassign(range);
   return { data: data, total: total.length, total_count: result };
@@ -1315,6 +1338,7 @@ const getdetailsDataStatusOdered = async (type, time, status, limit, page) => {
         created: 1,
         time: 1,
         time_of_delivery: 1,
+        devevery_mode: 1,
       },
     },
     { $skip: parseInt(limit) * page },
@@ -1539,6 +1563,7 @@ const getdetailsDataStatusAcknowledged = async (type, time, status, limit, page)
         Payment: 1,
         delivery_type: 1,
         overallTotal: 1,
+        devevery_mode: 1,
         name: '$userNameData.name',
         shopType: '$userData.type',
         shopName: '$userData.SName',
@@ -2453,6 +2478,7 @@ const getdetailsDataStatusRejected = async (type, time, status, limit, page) => 
         // UserName: '$userData.name',
         // orderId: '$orderData.orderId',
         totalItems: { $size: '$orderData' },
+        devevery_mode: 1,
         created: 1,
         time: 1,
         time_of_delivery: 1,
@@ -2679,6 +2705,7 @@ const getAppOrModifiedStatus = async (type, time, status, limit, page) => {
         status: 1,
         Payment: 1,
         delivery_type: 1,
+        devevery_mode: 1,
         overallTotal: 1,
         name: '$userNameData.name',
         shopType: '$userData.type',
@@ -2939,6 +2966,7 @@ const getdetailsDataStatuslasped = async (type, time, status, limit, page) => {
         status: 1,
         Payment: 1,
         delivery_type: 1,
+        devevery_mode: 1,
         overallTotal: 1,
         name: '$userNameData.name',
         shopType: '$userData.type',
@@ -3228,7 +3256,7 @@ const mismatchGroup = async (id) => {
 };
 
 const Mismatch_Stock_Reconcilation = async () => {
-  let count = 0
+  let count = 0;
   const data = await Users.aggregate([
     {
       $match: {
@@ -3247,12 +3275,13 @@ const Mismatch_Stock_Reconcilation = async () => {
               let: {
                 localField: '$_id',
               },
-              pipeline: [{ $match: { $expr: { $eq: ['$groupId', '$$localField'] } } },
-              {
-                $match: {
-                  $and: [{ misMatch: { $ne: null } }, { misMatch: { $ne: count } }],
+              pipeline: [
+                { $match: { $expr: { $eq: ['$groupId', '$$localField'] } } },
+                {
+                  $match: {
+                    $and: [{ misMatch: { $ne: null } }, { misMatch: { $ne: count } }],
+                  },
                 },
-              },
               ],
 
               as: 'returnstocks',
@@ -3260,8 +3289,8 @@ const Mismatch_Stock_Reconcilation = async () => {
           },
           {
             $match: {
-              $and: [{ returnstocks: { $type: 'array', $ne: [] } }]
-            }
+              $and: [{ returnstocks: { $type: 'array', $ne: [] } }],
+            },
           },
         ],
         as: 'wardadmingroupsData',
@@ -3276,20 +3305,20 @@ const Mismatch_Stock_Reconcilation = async () => {
     {
       $project: {
         name: 1,
-        data: { $size: "$wardadmingroupsData.returnstocks" },
+        data: { $size: '$wardadmingroupsData.returnstocks' },
         // groupid:"$wardadmingroupsData._id",
       },
     },
-  ])
+  ]);
   return data;
-}
+};
 
 const Mismatch_Stock_Reconcilation1 = async (id) => {
   let data = await wardAdminGroup.aggregate([
     {
       $match: {
         $and: [{ deliveryExecutiveId: { $eq: id } }],
-      }
+      },
     },
     {
       $lookup: {
@@ -3330,21 +3359,20 @@ const Mismatch_Stock_Reconcilation1 = async (id) => {
 
     {
       $project: {
-        name: "$b2busers.name",
+        name: '$b2busers.name',
         groupId: 1,
-        mismatch: "$returnstocksData.total",
+        mismatch: '$returnstocksData.total',
         assignDate: 1,
       },
     },
     // {
     //       $match: {
-    //       $and: [{ mismatch: { $type: 'array', $ne: [] } }] 
+    //       $and: [{ mismatch: { $type: 'array', $ne: [] } }]
     //   },
     // },
-  ])
+  ]);
   return data;
-}
-
+};
 
 const getshopDetails = async (id) => {
   let values = await ShopOrderClone.aggregate([
@@ -3427,20 +3455,20 @@ const getshopDetails = async (id) => {
         name: '$userNameData.name',
         shopType: '$userData.type',
         shopName: '$userData.SName',
-        mobile: "$userData.mobile",
+        mobile: '$userData.mobile',
         totalItems: { $size: '$product' },
         created: 1,
         customerBilltime: 1,
         date: 1,
         time_of_delivery: 1,
-        BillAmount: "$productData.price",
+        BillAmount: '$productData.price',
         paidamount: 1,
         userName: '$b2busersData.name',
       },
     },
   ]);
   return values;
-}
+};
 module.exports = {
   getdetails,
   getproductdetails,
