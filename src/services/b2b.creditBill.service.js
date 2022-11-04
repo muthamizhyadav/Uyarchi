@@ -609,7 +609,6 @@ const getNotAssignData = async (page) => {
       },
     },
     { $unwind: '$paymentData' },
-
     {
       $lookup: {
         from: 'b2bshopclones',
@@ -1828,7 +1827,7 @@ const submitDispute = async (id, updatebody) => {
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, ' srfegfNot Found');
   }
-  product = await creditBillGroup.findByIdAndUpdate({ _id: id }, { ...updatebody, ...{ finishDate: moment() } }, { new: true });
+  product = await creditBillGroup.findByIdAndUpdate({ _id: id }, { ...updatebody, ...{ finishDate: moment(), receiveStatus: "received" } }, { new: true });
   console.log(product);
   let creditBill_array = await creditBill.find({ creditbillId: id });
   creditBill_array.forEach(async (e) => {
