@@ -1227,7 +1227,7 @@ const getGroupAndBill = async (AssignedUserId) => {
   let data = await creditBillGroup.aggregate([
     {
       $match: {
-        $and: [{ AssignedUserId: { $eq: AssignedUserId } }],
+        $and: [{ AssignedUserId: { $eq: AssignedUserId } }, { receiveStatus: { $ne: "received" } }],
       },
     },
     {
