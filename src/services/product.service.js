@@ -1943,6 +1943,76 @@ const getstock_close_product = async () => {
 
   return product;
 };
+const getstock_random_product = async () => {
+  const product = await Product.aggregate([
+    { $sort: { productTitle: 1 } },
+    {
+      $lookup: {
+        from: 'usablestocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [{ $match: { date: { $eq: moment().format('DD-MM-YYYY') } } }],
+        as: 'usablestocks',
+      },
+    },
+    {
+      $unwind: '$usablestocks',
+    },
+  ]);
+
+  return product;
+};
+
+const getstock_opening_product = async () => {
+  const product = await Product.aggregate([
+    { $sort: { productTitle: 1 } },
+    {
+      $lookup: {
+        from: 'usablestocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [{ $match: { date: { $eq: moment().format('DD-MM-YYYY') } } }],
+        as: 'usablestocks',
+      },
+    },
+    {
+      $unwind: {
+        path: '$usablestocks',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        usablestocks_macth: { $ifNull: ["$usablestocks", false] },
+      },
+    },
+    {
+      $match: {
+        $and: [{ usablestocks_macth: { $eq: false } }]
+      }
+    },
+    {
+      $lookup: {
+        from: 'usablestocks',
+        localField: '_id',
+        foreignField: 'productId',
+        pipeline: [{ $match: { date: { $eq: moment().subtract(1, 'days').format('DD-MM-YYYY') }, closingStock: { $ne: 0 } } }],
+        as: 'usablestocksusablestocks',
+      },
+    },
+    {
+      $unwind: '$usablestocksusablestocks'
+    },
+    {
+      $project: {
+        _id: 1,
+        productTitle: 1
+      }
+    }
+  ]);
+
+  return product;
+};
 module.exports = {
   createProduct,
   getTrendsData,
@@ -2013,4 +2083,6 @@ module.exports = {
   getDataOnlySetSales,
   get_Set_price_product,
   getstock_close_product,
+  getstock_random_product,
+  getstock_opening_product
 };

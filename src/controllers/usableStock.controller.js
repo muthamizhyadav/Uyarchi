@@ -45,7 +45,7 @@ const updatestcokDetails = catchAsync(async (req, res) => {
     usable = await usableStockService.updatestcokDetails(req.body);
   }
   if (req.body.stock_type == 'Opening') {
-
+    usable = await usableStockService.updatestcokDetails_Opening(req.body);
   }
   if (req.body.stock_type == 'Random') {
 
