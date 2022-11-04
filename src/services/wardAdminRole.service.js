@@ -736,6 +736,7 @@ const allAssignReassignSalesman = async (id) => {
 
 const createSalesmanShop = async (body) => {
   let { arr } = body;
+  let creat = moment()
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   if (body.status == 'Assign') {
@@ -749,7 +750,7 @@ const createSalesmanShop = async (body) => {
         fromSalesManId: body.fromSalesManId,
         time: time,
         date: serverdate,
-        created:moment()
+        created:creat,
       });
     });
   } else {
