@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { AdminAddUser, AddProjectAdmin } = require('../models/BugToolAdmin.model');
+const { AdminAddUser, AddProjectAdmin, AddProjectAdminSeprate } = require('../models/BugToolAdmin.model');
 const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 const createAdminAddUser = async (body) => {
@@ -30,14 +30,30 @@ const updateByUserId = async (id, updateBody) => {
 };
 
 const createAdminAddproject = async (body) => {
+  const {bugToolUser} = body
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   let values = {
       ...body,
       ...{ date: serverdate, time: time },
-    };
-return AddProjectAdmin.create(values);
+    };   
+const data = await AddProjectAdmin.create(values);
+bugToolUser.forEach(async (e) => {
+  await AddProjectAdminSeprate.create({
+    bugToolUser: e,
+    projectName:body.projectName,
+    projectSpec:body.projectSpec,
+    date: serverdate,
+    time: time,
+    bugToolUserId:data._id
+  });
+})
+return data
 };
+
+// const BugToolusersAndId = async () =>{
+
+// }
 
 const getAllProject = async () => {
   return AddProjectAdmin.find({active:true});

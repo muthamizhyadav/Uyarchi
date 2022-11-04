@@ -749,6 +749,7 @@ const createSalesmanShop = async (body) => {
         fromSalesManId: body.fromSalesManId,
         time: time,
         date: serverdate,
+        created:moment()
       });
     });
   } else {
@@ -866,7 +867,7 @@ const getSalesman = async (id) => {
   ]);
   let lastdata = await SalesManShop.aggregate([
     {
-      $sort: { date: -1 },
+      $sort: {created:-1},
     },
   
     {
@@ -879,7 +880,7 @@ const getSalesman = async (id) => {
     },
     {
       $group: {
-        _id: { date: '$date' },
+        _id: { created:'$created' },
         count: { $sum: 1 },
       },
     },
