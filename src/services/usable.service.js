@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { usableStock } = require('../models/usableStock.model');
+const { usableStock, Stockhistory } = require('../models/usableStock.model');
 const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 const { Product, Stock, ConfirmStock, LoadingExecute, BillRaise, ManageBill, ShopList } = require('../models/product.model');
@@ -622,7 +622,39 @@ const getstockDetails = async (id) => {
 };
 
 const updatestcokDetails = async (body) => {
-  console.log(body.stock_type)
+  console.log(body)
+  const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
+  const tomorrow = moment().subtract(-1, 'days').format('DD-MM-YYYY');
+  const todayfor = moment().format('DD-MM-YYYY');
+  body.product.forEach(async (e) => {
+    console.log(e)
+    let NSFQ1 = e.NSFQ1 == null ? 0 : e.NSFQ1;
+    let NSFQ2 = e.NSFQ2 == null ? 0 : e.NSFQ2;
+    let NSFQ3 = e.NSFQ3 == null ? 0 : e.NSFQ3;
+    let NSFW_Wastage = e.NSFW_Wastage == null ? 0 : e.NSFW_Wastage;
+    // let wastedImageFile = e.wastedImageFile == null ? 0 : e.wastedImageFile;
+    let Pid = e.Pid
+    let total = NSFQ1 + NSFQ2 + NSFQ3;
+    let usablestocks = await usableStock.findOne({ productId: Pid, date: todayfor });
+    if (usablestocks) {
+      console.log(usablestocks, 'asd')
+      await usableStock.findByIdAndUpdate({ _id: usablestocks._id }, { closingStock: total, status: "Closed", closingWastage: NSFW_Wastage, closingTime: moment() }, { new: true });
+      // await usablestocks.create({
+      //   b2cStock: 0,
+      //   b2bStock: 0,
+      //   date: tomorrow,
+      //   created: moment().subtract(-1, 'days'),
+      //   FQ1: NSFQ1,
+      //   FQ2: NSFQ2,
+      //   FQ3: NSFQ3,
+      //   totalStock: total,
+      //   openingStock: totalStock,
+      //   openingStock: totalStock,
+      // })
+
+    }
+    // console.log(usablestocks)
+  })
   // body.product.forEach((res)=>{
   //   // console.log(res.wastedImageFile)
   //   res.wastedImageFile.forEach((s)=>{
