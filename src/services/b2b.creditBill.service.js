@@ -1823,13 +1823,17 @@ const getDetailsByPassGroupId = async (id) => {
 };
 
 const submitDispute = async (id, updatebody) => {
-  console.log(id, updatebody);
+  // console.log(id, updatebody);
   let product = await creditBillGroup.findById(id);
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, ' srfegfNot Found');
   }
-  product = await creditBillGroup.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  product = await creditBillGroup.findByIdAndUpdate({ _id: id }, { ...updatebody, ...{ finishDate: moment() } }, { new: true });
   console.log(product);
+  let creditBill_array = await creditBill.find({ creditbillId: id });
+  creditBill_array.forEach(async (e) => {
+    await ShopOrderClone.findByIdAndUpdate({ _id: e.orderId }, { creditBillAssignedStatus: "Pending" }, { new: true });
+  })
   return product;
 };
 
