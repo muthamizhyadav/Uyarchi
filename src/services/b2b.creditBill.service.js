@@ -312,7 +312,7 @@ const getShopHistory = async (userId, id) => {
         OrderId: "$shoporderclones.OrderId",
         customerBillId: "$shoporderclones.customerBillId",
         created: "$shoporderclones.created",
-        TotalAmount: "$productorderclones.price",
+        TotalAmount: { $round: ["$productorderclones.price", 0] },
         paidAmount: "$orderpaymentsData.price",
         orderpaymentsData_value: "$orderpaymentsData_value"
       }
@@ -609,7 +609,6 @@ const getNotAssignData = async (page) => {
       },
     },
     { $unwind: '$paymentData' },
-
     {
       $lookup: {
         from: 'b2bshopclones',
@@ -1011,11 +1010,11 @@ const getDeliDetails = async () => {
         localField: '_id',
         foreignField: 'AssignedUserId',
         pipeline: [
-          // {
-          //   $match: {
-          //     receiveStatus: { $eq: 'Pending' },
-          //   },
-          // },
+          {
+            $match: {
+              receiveStatus: { $ne: 'received' },
+            },
+          },
           {
             $lookup: {
               from: 'creditbills',
@@ -1228,7 +1227,7 @@ const getGroupAndBill = async (AssignedUserId) => {
   let data = await creditBillGroup.aggregate([
     {
       $match: {
-        $and: [{ AssignedUserId: { $eq: AssignedUserId } }],
+        $and: [{ AssignedUserId: { $eq: AssignedUserId } }, { receiveStatus: { $ne: "received" } }],
       },
     },
     {
@@ -1828,7 +1827,7 @@ const submitDispute = async (id, updatebody) => {
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, ' srfegfNot Found');
   }
-  product = await creditBillGroup.findByIdAndUpdate({ _id: id }, { ...updatebody, ...{ finishDate: moment() } }, { new: true });
+  product = await creditBillGroup.findByIdAndUpdate({ _id: id }, { ...updatebody, ...{ finishDate: moment(), receiveStatus: "received" } }, { new: true });
   console.log(product);
   let creditBill_array = await creditBill.find({ creditbillId: id });
   creditBill_array.forEach(async (e) => {
@@ -1888,7 +1887,8 @@ const getdeliveryExcutive = async (userId, page) => {
   let group = await creditBillGroup.aggregate([
     {
       $match: {
-        AssignedUserId: { $eq: userId }
+        AssignedUserId: { $eq: userId },
+        receiveStatus: { $ne: "received" },
       }
     },
     {
