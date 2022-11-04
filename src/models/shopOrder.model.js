@@ -290,6 +290,9 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   issueDate: {
     type: Date,
+  },
+  Scheduledate: {
+    type: String,
   }
 });
 

@@ -10,6 +10,8 @@ const { wardAdminGroup, wardAdminGroupModel_ORDERS, WardAdminGroupfine } = requi
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 const { Product } = require('../models/product.model');
 const orderPayment = require('../models/orderpayment.model');
+const creditBillGroup = require('../models/b2b.creditBillGroup.model');
+const creditBill = require('../models/b2b.creditBill.model');
 const createGroup = async (body) => {
   let serverdates = moment().format('YYYY-MM-DD');
   console.log(typeof serverdates);
@@ -105,9 +107,12 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
   //     delivered_date: moment(),
   //   },
   // };
-  let deliveryStatus = await ShopOrderClone.findById(id);
+  // creditBillGroup = require('../models/b2b.creditBillGroup.model');
+  // const creditBill
+  let creditBills = await creditBill.findById(id);
+  let deliveryStatus = await ShopOrderClone.findById(creditBills.orderId);
   let pending = await ShopOrderClone.aggregate([
-    { $match: { _id: { $eq: id } } },
+    { $match: { _id: { $eq: creditBills.orderId } } },
     {
       $lookup: {
         from: 'productorderclones',
@@ -178,10 +183,9 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
       }
     }
   ])
-  console.log(pending);
 
   if (!deliveryStatus) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
   let paidamount = updateBody.paidamount;
   if (paidamount == null) {
@@ -189,24 +193,31 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
   }
   if (pending.length != 0) {
     if (pending[0].pendingAmount == paidamount) {
-      await ShopOrderClone.findByIdAndUpdate({ _id: id }, { statusOfBill: "Paid" }, { new: true });
+      await ShopOrderClone.findByIdAndUpdate({ _id: creditBills.orderId }, { statusOfBill: "Paid" }, { new: true });
     }
   }
-  await orderPayment.create({
-    paidAmt: paidamount,
-    date: currentDate,
-    time: currenttime,
-    created: moment(),
-    orderId: deliveryStatus._id,
-    payment: updateBody.payment,
-    pay_type: updateBody.pay_types,
-    paymentMethod: updateBody.paymentMethods,
-    paymentstutes: updateBody.paymentstutes,
-    uid: userId,
-    type: "creditBill",
-    reasonScheduleOrDate: updateBody.reasonScheduleOrDate,
-    creditID: updateBody.groupID
-  });
+  await ShopOrderClone.findByIdAndUpdate({ _id: creditBills.orderId }, { Scheduledate: updateBody.reasonScheduleOrDate }, { new: true });
+  if (updateBody.reasonScheduleOrDate == null || updateBody.reasonScheduleOrDate == '') {
+    await orderPayment.create({
+      paidAmt: paidamount,
+      date: currentDate,
+      time: currenttime,
+      created: moment(),
+      orderId: creditBills.orderId,
+      payment: updateBody.payment,
+      pay_type: updateBody.pay_types,
+      paymentMethod: updateBody.paymentMethods,
+      paymentstutes: updateBody.paymentstutes,
+      uid: userId,
+      type: "creditBill",
+      reasonScheduleOrDate: updateBody.reasonScheduleOrDate,
+      creditID: updateBody.groupID,
+      Schedulereason: updateBody.Schedulereason
+    });
+  }
+  else {
+    await creditBill.findByIdAndUpdate({ _id: id }, { reasonScheduleOrDate: updateBody.reasonScheduleOrDate, Schedulereason: updateBody.Schedulereason }, { new: true });
+  }
   return deliveryStatus;
 };
 const updateOrderStatus = async (id, updateBody) => {
