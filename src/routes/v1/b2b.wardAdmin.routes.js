@@ -11,7 +11,7 @@ router.route('/updateProductById/:orderId').put(wardAdminController.updateProduc
 
 // router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusMatchingAppOrModi);
 router.route('/getDetails/:type/:time/:status/:limit/:page').get(wardAdminController.statusMatchingAppOrModi);
-router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
+// router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 // checked modified
 // checked
 router.route('/updateAcknowledge').put(wardAdminController.updateAcknowledge);
