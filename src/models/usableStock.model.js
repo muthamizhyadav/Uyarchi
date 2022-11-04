@@ -25,6 +25,7 @@ const usableStockSchema = new mongoose.Schema({
   },
   status: {
     type: String,
+    default: "Pending"
   },
   date: {
     type: String,
@@ -39,6 +40,18 @@ const usableStockSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  // status: {
+  //   type: Number,
+  //   default: 0,
+  // },
+  closingWastage: {
+    type: Number,
+    default: 0,
+  },
+  closingTime: {
+    type: Date,
+    default: 0,
+  },
   oldStock: {
     type: Number,
     default: 0,
@@ -46,6 +59,10 @@ const usableStockSchema = new mongoose.Schema({
   openingStock: {
     type: Number,
     default: 0,
+  },
+  openingWastage: {
+    type: Number,
+    // default: 0,
   },
   active: {
     type: Boolean,

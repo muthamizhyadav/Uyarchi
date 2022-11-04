@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { AdminAddUser, AddProjectAdmin } = require('../models/BugToolAdmin.model');
+const { AdminAddUser, AddProjectAdmin, AddProjectAdminSeprate, TesterReport } = require('../models/BugToolAdmin.model');
 const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 const createAdminAddUser = async (body) => {
@@ -13,7 +13,21 @@ const createAdminAddUser = async (body) => {
 };
 
 const getAll = async () => {
-  return AdminAddUser.find({active:true, disable:false});
+  return AdminAddUser.find({active:true});
+};
+const UsersLogin = async (userBody) => {
+  const { email, password } = userBody;
+  let userName = await AdminAddUser.findOne({ email: email });
+  if (!userName) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'email Not Registered');
+  } else {
+    if (await userName.isPasswordMatch(password)) {
+      console.log('Password Macthed');
+    } else {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "Passwoed Doesn't Match");
+    }
+  }
+  return userName;
 };
 
 const getAlluserById = async (id) => {
@@ -30,14 +44,57 @@ const updateByUserId = async (id, updateBody) => {
 };
 
 const createAdminAddproject = async (body) => {
+  const {bugToolUser} = body
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   let values = {
       ...body,
       ...{ date: serverdate, time: time },
-    };
-return AddProjectAdmin.create(values);
+    };   
+const data = await AddProjectAdmin.create(values);
+bugToolUser.forEach(async (e) => {
+  await AddProjectAdminSeprate.create({
+    bugToolUser: e,
+    projectName:body.projectName,
+    projectSpec:body.projectSpec,
+    date: serverdate,
+    time: time,
+    bugToolUserId:data._id
+  });
+})
+return data
 };
+
+const BugToolusersAndId = async (id) =>{
+   const data = await  AddProjectAdminSeprate.aggregate([
+    {
+      $match: {
+        $and: [{ bugToolUserId: { $eq:id}}],
+      },
+    },
+    {
+      $lookup: {
+        from: 'bugtoolusers',
+        localField: 'bugToolUser',
+        foreignField: '_id',
+        as: 'bugtoolusers',
+      },
+    },
+    {
+      $unwind: '$bugtoolusers',
+    },
+
+    {
+      $project:{
+        name:'$bugtoolusers.name',
+        email:'$bugtoolusers.email',
+        type:"$bugtoolusers.Type",
+        phoneNumber:'$bugtoolusers.phoneNumber'
+      }
+    }
+      ])
+      return data ;
+}
 
 const getAllProject = async () => {
   return AddProjectAdmin.find({active:true});
@@ -75,6 +132,107 @@ const deleteProjectById = async (id) => {
   return data;
 };
 
+const createTesterIssue = async (body) => {
+  const data = await AdminAddUser.findById(body.testerId)
+  if(!data){
+    throw new ApiError(httpStatus.NOT_FOUND, 'user not found');
+  }
+  let serverdate = moment().format('yyy-MM-DD');
+  let time = moment().format('hh:mm a');
+  let values = {
+      ...body,
+      ...{ date: serverdate, time: time, testerId:body.testerId},
+
+    };
+return TesterReport.create(values);
+};
+
+
+
+const getAllTesterIssues = async (project,category,status) => {
+  let match;
+  if(project != 'null' && category == 'null' && status == 'null'){
+    match=  match = {
+      $and: [{ project: { $eq: project} }],
+    };
+  }else if(project != 'null' && category != 'null' && status == 'null'){
+    match=  match = {
+      $and: [{ project: { $eq: project} },{category:{$eq:category}}],
+    };
+  }else if(project != 'null' && category != 'null' && status != 'null'){
+    match=  match = {
+      $and: [{ project: { $eq: project} },{category:{$eq:category}}, {status:{$eq:status}}],
+    };
+  }else if(project != 'null' && category == 'null' && status != 'null'){
+    match=  match = {
+      $and: [{ project: { $eq: project} },{status:{$eq:status}}],
+    };
+  }else if(project == 'null' && category != 'null' && status != 'null'){
+    match=  match = {
+      $and: [{ category: { $eq: category} },{status:{$eq:status}}],
+    };
+  }else if(project == 'null' && category != 'null' && status == 'null'){
+    match=  match = {
+      $and: [{ category: { $eq: category} }],
+    };
+  }
+  else if(project == 'null' && category == 'null' && status != 'null'){
+    match=  match = {
+      $and: [{ status: { $eq: status} }],
+    };
+  }else{
+    match=  match = {
+      $and: [{ active: { $eq: true} }],
+    };
+  }
+  console.log(match)
+  const data = await TesterReport.aggregate([
+    {
+      $match: match,
+    },
+    {
+      $lookup: {
+        from: 'bugtoolusers',
+        localField: 'assignTo',
+        foreignField: '_id',
+        as: 'bugtoolusers',
+      },
+    },
+    {
+      $unwind: '$bugtoolusers',
+    }, 
+    {
+      $project:{
+        project:1,
+        category:1,
+        severity:1,
+        summary:1,
+        testerId:1,
+        asignName:"$bugtoolusers.name",
+        date:1,
+        time:1,
+        status:1,
+      }
+    } 
+  ])
+  return data;
+};
+
+const getIdtesterissues = async (id) => {
+  return TesterReport.findById(id);
+};
+
+
+const updatetesterissue = async (id, updateBody) => {
+  console.log(id)
+  let data = await getIdtesterissues(id);
+  if (!data && data.active == true) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'issue not found');
+  }
+  data = await TesterReport.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return data;
+};
+
 module.exports = {
     createAdminAddUser,
     getAll,
@@ -84,4 +242,12 @@ module.exports = {
     updateByProjectId,
     deleteUserById,
     deleteProjectById,
+    BugToolusersAndId,
+    getAllprojectById,
+    getAlluserById,
+    createTesterIssue,
+    getAllTesterIssues,
+    getIdtesterissues,
+    updatetesterissue,
+    UsersLogin,
 };

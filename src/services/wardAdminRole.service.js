@@ -17,7 +17,6 @@ const Ward = require('../models/ward.model');
 const moment = require('moment');
 const { findByIdAndUpdate } = require('../models/b2b.pettyStock.model');
 const { ValidationRequestList } = require('twilio/lib/rest/api/v2010/account/validationRequest');
-
 const createwardAdminRole = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
@@ -736,6 +735,7 @@ const allAssignReassignSalesman = async (id) => {
 
 const createSalesmanShop = async (body) => {
   let { arr } = body;
+  let creat = moment().format()
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   if (body.status == 'Assign') {
@@ -749,6 +749,7 @@ const createSalesmanShop = async (body) => {
         fromSalesManId: body.fromSalesManId,
         time: time,
         date: serverdate,
+        created:creat,
       });
     });
   } else {
@@ -866,7 +867,7 @@ const getSalesman = async (id) => {
   ]);
   let lastdata = await SalesManShop.aggregate([
     {
-      $sort: { date: -1 },
+      $sort: {created:-1},
     },
   
     {
@@ -879,7 +880,7 @@ const getSalesman = async (id) => {
     },
     {
       $group: {
-        _id: { date: '$date' },
+        _id: { created:'$created' },
         count: { $sum: 1 },
       },
     },

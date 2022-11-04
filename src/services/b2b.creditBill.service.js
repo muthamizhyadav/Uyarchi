@@ -318,9 +318,9 @@ const getShopHistory = async (userId, id) => {
       }
     },
   ]);
+  let group = await creditBillGroup.findById(id)
 
-
-  return values;
+  return { value: values, groupstatus: group.receiveStatus };
 };
 
 const updateAssignedStatusPerBill = async (id) => {
@@ -1534,7 +1534,30 @@ const getDetailsByPassGroupId = async (id) => {
     },
 
     { $unwind: '$productData' },
-
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $sort: {
+              created: -1
+            }
+          },
+          {
+            $limit: 1,
+          }
+        ],
+        as: 'creditBillData_last',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditBillData_last',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
 
@@ -1549,6 +1572,8 @@ const getDetailsByPassGroupId = async (id) => {
         BillAmount: { $round: ['$productData.price', 0] },
         paidAmount: '$paymentData.price',
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+        paymentMethod: "$creditBillData_last.paymentMethod",
+        payment_type: "$creditBillData_last.payment",
         condition1: {
           $cond: {
             if: { $ne: [{ $round: { $subtract: ['$productData.price', '$paymentData.price'] } }, 0] },
