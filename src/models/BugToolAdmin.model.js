@@ -65,8 +65,14 @@ const AddProjectAdminSchema = mongoose.Schema(
       type: String,
     },
     bugToolUser: {
-      type: String,
+      type: Array,
     }, 
+    date:{
+      type:String,
+    },
+    time:{
+      type:String,
+    },
     active: {
       type: Boolean,
       default: true,
@@ -74,4 +80,35 @@ const AddProjectAdminSchema = mongoose.Schema(
   },
 );
 const AddProjectAdmin = mongoose.model('AddProjectAdmin', AddProjectAdminSchema);
-module.exports = { AdminAddUser, AddProjectAdmin};
+const AddProjectAdminSeprateSchema = mongoose.Schema(
+  {
+    _id: {
+      type: String,
+      default: v4,
+    },
+    projectName: {
+      type: String,
+    },
+    projectSpec: {
+      type: String,
+    },
+    bugToolUser: {
+      type: String,
+    },   
+    bugToolUserId:{
+      type:String,
+    },
+    date:{
+      type:String,
+    },
+    time:{
+      type:String,
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+  },
+);
+const AddProjectAdminSeprate = mongoose.model('AddProjectAdminSeprate', AddProjectAdminSeprateSchema);
+module.exports = { AdminAddUser, AddProjectAdmin, AddProjectAdminSeprate};

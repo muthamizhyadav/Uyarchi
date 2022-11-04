@@ -169,6 +169,9 @@ const wardAdminRoleAsmSchema = new mongoose.Schema({
       type: Boolean,
       default: false,
     },
+    created:{
+      type:Date,
+    }
   });
   
   const SalesManShop = mongoose.model('SalesManShop', SalesManShopSchema);

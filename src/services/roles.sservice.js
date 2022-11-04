@@ -436,10 +436,31 @@ const getsalesman = async () => {
       $unwind: '$b2busersData',
     },
     {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: 'b2busersData._id',
+        foreignField: 'fromSalesManId',
+       pipeline:[ {
+          $match: {
+            $or: [
+              {
+                $and: [
+                  { status: { $eq: 'Assign' } },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+        as: 'salesmanshops',
+      },
+    },
+    {
       $project: {
         name: '$b2busersData.name',
         b2buserId: '$b2busersData._id',
         roleName: 1,
+        count:{$size:"$salesmanshops"},
         _id: 1,
       },
     },

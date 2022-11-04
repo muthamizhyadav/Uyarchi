@@ -730,6 +730,8 @@ const wardloadExecutive = async (id) => {
         WA_assigned_Time: '$shoporderclones.WA_assigned_Time',
         deliveryExecutiveId: '$shoporderclones.deliveryExecutiveId',
         shopname: '$shoporderclones.shopname',
+        shopAddress: '$shoporderclones.shopAddress',
+        shopContact: '$shoporderclones.shopContact',
         product: '$shoporderclones.product',
         orderId: '$shoporderclones._id',
       },

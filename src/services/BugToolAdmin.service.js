@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { AdminAddUser, AddProjectAdmin } = require('../models/BugToolAdmin.model');
+const { AdminAddUser, AddProjectAdmin, AddProjectAdminSeprate } = require('../models/BugToolAdmin.model');
 const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 const createAdminAddUser = async (body) => {
@@ -13,7 +13,7 @@ const createAdminAddUser = async (body) => {
 };
 
 const getAll = async () => {
-  return AdminAddUser.find({active:true, disable:false});
+  return AdminAddUser.find({active:true});
 };
 
 const getAlluserById = async (id) => {
@@ -30,14 +30,57 @@ const updateByUserId = async (id, updateBody) => {
 };
 
 const createAdminAddproject = async (body) => {
+  const {bugToolUser} = body
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   let values = {
       ...body,
       ...{ date: serverdate, time: time },
-    };
-return AddProjectAdmin.create(values);
+    };   
+const data = await AddProjectAdmin.create(values);
+bugToolUser.forEach(async (e) => {
+  await AddProjectAdminSeprate.create({
+    bugToolUser: e,
+    projectName:body.projectName,
+    projectSpec:body.projectSpec,
+    date: serverdate,
+    time: time,
+    bugToolUserId:data._id
+  });
+})
+return data
 };
+
+const BugToolusersAndId = async (id) =>{
+   const data = await  AddProjectAdminSeprate.aggregate([
+    {
+      $match: {
+        $and: [{ bugToolUserId: { $eq:id}}],
+      },
+    },
+    {
+      $lookup: {
+        from: 'bugtoolusers',
+        localField: 'bugToolUser',
+        foreignField: '_id',
+        as: 'bugtoolusers',
+      },
+    },
+    {
+      $unwind: '$bugtoolusers',
+    },
+
+    {
+      $project:{
+        name:'$bugtoolusers.name',
+        email:'$bugtoolusers.email',
+        type:"$bugtoolusers.Type",
+        phoneNumber:'$bugtoolusers.phoneNumber'
+      }
+    }
+      ])
+      return data ;
+}
 
 const getAllProject = async () => {
   return AddProjectAdmin.find({active:true});
@@ -84,4 +127,7 @@ module.exports = {
     updateByProjectId,
     deleteUserById,
     deleteProjectById,
+    BugToolusersAndId,
+    getAllprojectById,
+    getAlluserById,
 };
