@@ -219,7 +219,7 @@ const getShopHistory = async (userId, id) => {
   let values = await creditBill.aggregate([
     {
       $match: {
-        $and: [{ AssignedUserId: { $eq: userId } },{ creditbillId: { $eq: id } }],
+        $and: [{ AssignedUserId: { $eq: userId } }, { creditbillId: { $eq: id } }],
       },
     },
     {
@@ -677,6 +677,7 @@ const getNotAssignData = async (page) => {
 
     {
       $project: {
+        Scheduledate: 1,
         customerBillId: 1,
         OrderId: 1,
         date: 1,
