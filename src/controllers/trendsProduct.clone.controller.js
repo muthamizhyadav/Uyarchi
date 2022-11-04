@@ -45,6 +45,8 @@ const getShopsByIdFromTrends = catchAsync(async (req, res) => {
   res.send(trends);
 });
 
+
+
 module.exports = {
   getStreetsByWardIdAndProducts,
   getProductByProductIdFromTrendProduct,
