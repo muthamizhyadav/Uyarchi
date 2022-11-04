@@ -673,14 +673,14 @@ const updatestcokDetails_Opening = async (body) => {
   const todayfor = moment().format('DD-MM-YYYY');
   const time = moment().format('hhmmss');
   body.product.forEach(async (e) => {
-    console.log(e)
+    // console.log(e)
     let NSFQ1 = e.NSFQ1 == null || e.NSFQ1 == '' ? 0 : e.NSFQ1;
     let NSFQ2 = e.NSFQ2 == null || e.NSFQ2 == '' ? 0 : e.NSFQ2;
     let NSFQ3 = e.NSFQ3 == null || e.NSFQ3 == '' ? 0 : e.NSFQ3;
     let NSFW_Wastage = e.NSFW_Wastage == null || e.NSFW_Wastage == '' ? 0 : e.NSFW_Wastage;
     let Pid = e.Pid
     let total = NSFQ1 + NSFQ2 + NSFQ3;
-    await usablestocks.create({
+    let groupstatus = await usableStock.create({
       b2cStock: 0,
       b2bStock: 0,
       date: todayfor,
@@ -690,9 +690,20 @@ const updatestcokDetails_Opening = async (body) => {
       FQ2: NSFQ2,
       FQ3: NSFQ3,
       totalStock: total,
-      openingStock: totalStock,
+      openingStock: total,
       wastage: NSFW_Wastage,
-      status: "Opening"
+      status: "Opening",
+      productId: Pid
+    });
+    await Stockhistory.create({
+      usableStock: groupstatus._id,
+      FQ1: NSFQ1,
+      FQ2: NSFQ2,
+      FQ3: NSFQ3,
+      wastage: NSFW_Wastage,
+      date: todayfor,
+      time: time,
+      created: moment(),
     })
   })
   return { success: true };
