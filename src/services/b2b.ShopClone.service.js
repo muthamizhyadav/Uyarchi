@@ -2428,7 +2428,7 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
   } else {
     match = [{ Wardid: { $eq: id } }];
   }
-  console.log(match);
+  // console.log(match);
   let data = await Shop.aggregate([
     {
       $match: {
@@ -2468,6 +2468,28 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
       $unwind: '$streets',
     },
     {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        as: 'wards',
+      },
+    },
+    {
+      $unwind: '$wards',
+    },
+    {
+      $lookup: {
+        from: 'zones',
+        localField: 'wards.zoneId',
+        foreignField: '_id',
+        as: 'zones',
+      },
+    },
+    {
+      $unwind: '$zones',
+    },
+    {
       $project: {
         SOwner: 1,
         SName: 1,
@@ -2475,6 +2497,8 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         address: 1,
         Slat: 1,
         Slong: 1,
+        ward:'$wards.ward',
+        zone:'$zones.zone',
         streetId: '$streets._id',
         streetname: '$streets.street',
         locality: '$streets.locality',
