@@ -2108,7 +2108,11 @@ const assignShopsSalesmandatewise = async (id, wardid, page) => {
       $group: {
         _id: '$filterDate',
         shopCount: { $sum: 1 },
-        assignCount: { $sum: '$assignCount' },
+        assignCount: { $sum: '$assignCount'},
+        // Slong: { $push:['$Slong','$Slat']},
+        //  categoryId: { $sum: "$Slong"},
+        //  parentId: { $sum: "$Uid"}
+
       },
     },
     {

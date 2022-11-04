@@ -98,6 +98,7 @@ const returnStockroute = require('./returnStock.route');
 const vehicleRoutes = require('./vehicle.DE.route');
 const telecallerAssignroute = require('./telecallerAssign.route');
 const BillAdjRoute = require('./Bill.Adj.route');
+const BugToolAdminRoute = require('./BugToolAdmin.route');
 const defaultRoutes = [
   {
     path: '/registerShop',
@@ -482,6 +483,10 @@ const defaultRoutes = [
     path: '/telecallerAssign',
     route: telecallerAssignroute,
   },
+  {
+    path:'/BugToolAdmin',
+    route:BugToolAdminRoute,
+  }
   // {
   //   path: '/sales',
   //   route: salesApp,
