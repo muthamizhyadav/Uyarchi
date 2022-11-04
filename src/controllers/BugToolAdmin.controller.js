@@ -104,8 +104,16 @@ const getIdtesterissues = catchAsync(async (req, res) => {
 });
 
 const updatetesterIssue = catchAsync(async (req, res) => {
+
   const data = await BugToolAdminService.updatetesterissue(req.params.id, req.body);
-  res.send(data);
+  if (req.files) {
+    let path = '';
+    req.files.forEach(function (files, index, arr) {
+      path = 'images/reportIssue/'+files.filename
+    });
+    data.chooseImage = path;
+  }
+  res.send(data );
 });
 
 module.exports = {
