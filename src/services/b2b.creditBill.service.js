@@ -1887,7 +1887,8 @@ const getdeliveryExcutive = async (userId, page) => {
   let group = await creditBillGroup.aggregate([
     {
       $match: {
-        AssignedUserId: { $eq: userId }
+        AssignedUserId: { $eq: userId },
+        receiveStatus: { $ne: "received" },
       }
     },
     {
