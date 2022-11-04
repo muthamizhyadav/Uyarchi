@@ -138,7 +138,7 @@ const searchShops_By_Name = async (key) => {
       },
     },
     {
-      $limit: 100,
+      $limit: 20,
     },
   ]);
   return values;
