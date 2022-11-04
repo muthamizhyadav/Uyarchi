@@ -312,7 +312,7 @@ const getShopHistory = async (userId, id) => {
         OrderId: "$shoporderclones.OrderId",
         customerBillId: "$shoporderclones.customerBillId",
         created: "$shoporderclones.created",
-        TotalAmount: "$productorderclones.price",
+        TotalAmount: { $round: ["$productorderclones.price", 0] },
         paidAmount: "$orderpaymentsData.price",
         orderpaymentsData_value: "$orderpaymentsData_value"
       }
