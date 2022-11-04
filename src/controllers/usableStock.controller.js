@@ -40,8 +40,16 @@ const getstockDetails = catchAsync(async (req, res) => {
 });
 
 const updatestcokDetails = catchAsync(async (req, res) => {
-  const usable = await usableStockService.updatestcokDetails(req.body);
-  console.log(res.files)
+  let usable;
+  if (req.body.stock_type == 'Closing') {
+    usable = await usableStockService.updatestcokDetails(req.body);
+  }
+  if (req.body.stock_type == 'Opening') {
+
+  }
+  if (req.body.stock_type == 'Random') {
+
+  }
   res.send(usable);
 });
 
