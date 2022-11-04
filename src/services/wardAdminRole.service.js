@@ -735,7 +735,8 @@ const allAssignReassignSalesman = async (id) => {
 
 const createSalesmanShop = async (body) => {
   let { arr } = body;
-  let creat = moment().format()
+  let creat = moment().format('yyy-MM-DD')
+  let creat1  = moment().format('HHmmss');
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   if (body.status == 'Assign') {
@@ -750,6 +751,7 @@ const createSalesmanShop = async (body) => {
         time: time,
         date: serverdate,
         created:creat,
+        createdTime:creat1
       });
     });
   } else {
@@ -867,7 +869,7 @@ const getSalesman = async (id) => {
   ]);
   let lastdata = await SalesManShop.aggregate([
     {
-      $sort: {created:-1},
+      $sort: {created:-1, createdTime:-1},
     },
   
     {
@@ -880,7 +882,7 @@ const getSalesman = async (id) => {
     },
     {
       $group: {
-        _id: { created:'$created' },
+        _id: { created:'$created', createdTime:'$createdTime'},
         count: { $sum: 1 },
       },
     },
