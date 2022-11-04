@@ -219,7 +219,7 @@ const getShopHistory = async (userId, id) => {
   let values = await creditBill.aggregate([
     {
       $match: {
-        $and: [ { creditbillId: { $eq: id } }],
+        $and: [{ creditbillId: { $eq: id } }],
       },
     },
     {
@@ -316,6 +316,9 @@ const getShopHistory = async (userId, id) => {
         TotalAmount: { $round: ["$productorderclones.price", 0] },
         paidAmount: "$orderpaymentsData.price",
         orderpaymentsData_value: "$orderpaymentsData_value",
+        Schedulereason: 1,
+        reasonScheduleOrDate: 1
+
       }
     },
   ]);
