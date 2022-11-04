@@ -592,7 +592,7 @@ const getNotAssignData = async (page) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }, { status: { $eq: "Delivered" } }],
+        $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }, { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }],
       },
     },
     {
