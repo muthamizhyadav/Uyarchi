@@ -318,9 +318,9 @@ const getShopHistory = async (userId, id) => {
       }
     },
   ]);
+  let group = await creditBillGroup.findById(id)
 
-
-  return values;
+  return { value: values, groupstatus: group.receiveStatus };
 };
 
 const updateAssignedStatusPerBill = async (id) => {
