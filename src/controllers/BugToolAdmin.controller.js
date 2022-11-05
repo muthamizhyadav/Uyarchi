@@ -20,7 +20,7 @@ const B2bUsersLogin = catchAsync(async (req, res) => {
 });
 
 const getAll = catchAsync(async (req, res) => {
-  const data = await BugToolAdminService.getAll();  
+  const data = await BugToolAdminService.getAll(req.params.page);  
   res.send(data);
 });
 
@@ -43,7 +43,7 @@ const createAdminAddproject = catchAsync(async (req, res) => {
 });
 
 const getAllProject = catchAsync(async (req, res) => {
-  const data = await BugToolAdminService.getAllProject();  
+  const data = await BugToolAdminService.getAllProject(req.params.page);  
   res.send(data);
 });
 
@@ -94,7 +94,7 @@ const createTesterissue = catchAsync(async (req, res) => {
 });
 
 const getAllTesterIssues = catchAsync(async (req, res) => {
-  const data = await BugToolAdminService.getAllTesterIssues(req.params.project, req.params.category, req.params.status);  
+  const data = await BugToolAdminService.getAllTesterIssues(req.params.project, req.params.category, req.params.status, req.params.page);  
   res.send(data);
 });
 
@@ -118,7 +118,7 @@ const updatetesterIssue = catchAsync(async (req, res) => {
 
 
 const getAllTesterIssuestoDeveloper = catchAsync(async (req, res) => {
-  const data = await BugToolAdminService.getAllTesterIssuestoDeveloper(req.params.id, req.params.project, req.params.category, req.params.status);  
+  const data = await BugToolAdminService.getAllTesterIssuestoDeveloper(req.params.id, req.params.project, req.params.category, req.params.status, req.params.page);  
   res.send(data);
 });
 
