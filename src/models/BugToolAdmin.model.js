@@ -176,6 +176,9 @@ const TesterReportSchema = mongoose.Schema(
     description:{
       type:String,
     },
+    reason:{
+      type:String,
+    },
     status:{
       type:String,
     },
