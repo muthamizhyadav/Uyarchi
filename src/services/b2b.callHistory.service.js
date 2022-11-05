@@ -144,157 +144,160 @@ const getAll = async () => {
 };
 
 const callingStatusreport = async (date) => {
-  let yesterday = moment(date, 'DD-MM-YYYY').add(-1, 'days').format('DD-MM-yyyy');
-  console.log(yesterday);
-  let serverdate = date;
-  let acceptCount = await Shop.find({ callingStatus: 'accept', historydate: serverdate, lapsed: { $ne: true } }).count();
-  let callbackCount = await Shop.find({ callingStatus: 'callback', historydate: serverdate, lapsed: { $ne: true } }).count();
-  let rescheduleCount = await Shop.aggregate([
-    {
-      $match: {
-        $and: [
-          { sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') } },
-          { historydate: { $eq: date } },
-          { callingStatus: { $eq: 'reschedule' } },
-          { lapsed: { $ne: true } },
-        ],
-      },
-    },
-    {
-      $lookup: {
-        from: 'callhistories',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline: [
-          {
-            $sort: { date: -1, historytime: -1 },
-          },
-          { $limit: 10 },
-        ],
-        as: 'callhistories',
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        count: {
-          $sum: 1,
-        },
-      },
-    },
-  ]);
-  let pendingCount = await Shop.aggregate([
-    {
-      $match: {
-        $and: [{ historydate: { $ne: date } }],
-      },
-    },
-    { $sort: { historydate: -1, sorttime: -1 } },
-    {
-      $lookup: {
-        from: 'callhistories',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline: [
-          {
-            $sort: { date: -1, historytime: -1 },
-          },
-          { $limit: 10 },
-        ],
-        as: 'callhistories',
-      },
-    },
-    {
-      $lookup: {
-        from: 'shoplists',
-        localField: 'SType',
-        foreignField: '_id',
-        as: 'shoplists',
-      },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: '_id',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $match: {
-              callingStatus: 'reschedule',
-              sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
-            },
-          },
-          { $group: { _id: null } },
-        ],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: {
-        path: '$b2bshopclones',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        photoCapture: 1,
-        callingStatus: 1,
-        callingStatusSort: 1,
-        active: 1,
-        archive: 1,
-        Wardid: 1,
-        type: 1,
-        SName: 1,
-        SType: 1,
-        SOwner: 1,
-        mobile: 1,
-        Slat: 1,
-        Strid: 1,
-        sortdatetime: 1,
-        Slong: 1,
-        address: 1,
-        date: 1,
-        time: 1,
-        created: 1,
-        status: 1,
-        Uid: 1,
-        shopData: 1,
-        shopData: '$callhistories',
-        shoptypeName: '$shoplists',
-        match: { $ne: ['$b2bshopclones._id', null] },
-      },
-    },
-    {
-      $match: { match: true },
-    },
-    {
-      $group: {
-        _id: null,
-        count: {
-          $sum: 1,
-        },
-      },
-    },
-  ]);
-  let oncall = await Shop.find({ callingStatus: 'On Call' }).count();
-  let oldReschedule = await Shop.find({
-    callingStatus: 'reschedule',
-    historydate: { $ne: date },
-    lapsed: { $ne: true },
-    sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
-  }).count();
-  // let Reschedule = await Shop.find({ callingStatus: 'reschedule', historydate: date }).count();
-  let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate, lapsed: { $ne: true } }).count();
+  // let yesterday = moment(date, 'DD-MM-YYYY').add(-1, 'days').format('DD-MM-yyyy');
+  // console.log(yesterday);
+  // let serverdate = date;
+  // let acceptCount = await Shop.find({ callingStatus: 'accept', historydate: serverdate, lapsed: { $ne: true } }).count();
+  // let callbackCount = await Shop.find({ callingStatus: 'callback', historydate: serverdate, lapsed: { $ne: true } }).count();
+  // let rescheduleCount = await Shop.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [
+  //         { sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') } },
+  //         { historydate: { $eq: date } },
+  //         { callingStatus: { $eq: 'reschedule' } },
+  //         { lapsed: { $ne: true } },
+  //       ],
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'callhistories',
+  //       localField: '_id',
+  //       foreignField: 'shopId',
+  //       pipeline: [
+  //         {
+  //           $sort: { date: -1, historytime: -1 },
+  //         },
+  //         { $limit: 10 },
+  //       ],
+  //       as: 'callhistories',
+  //     },
+  //   },
+  //   {
+  //     $group: {
+  //       _id: null,
+  //       count: {
+  //         $sum: 1,
+  //       },
+  //     },
+  //   },
+  // ]);
+  // let pendingCount = await Shop.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [{ historydate: { $ne: date } }],
+  //     },
+  //   },
+  //   { $sort: { historydate: -1, sorttime: -1 } },
+  //   {
+  //     $lookup: {
+  //       from: 'callhistories',
+  //       localField: '_id',
+  //       foreignField: 'shopId',
+  //       pipeline: [
+  //         {
+  //           $sort: { date: -1, historytime: -1 },
+  //         },
+  //         { $limit: 10 },
+  //       ],
+  //       as: 'callhistories',
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'shoplists',
+  //       localField: 'SType',
+  //       foreignField: '_id',
+  //       as: 'shoplists',
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'b2bshopclones',
+  //       localField: '_id',
+  //       foreignField: '_id',
+  //       pipeline: [
+  //         {
+  //           $match: {
+  //             callingStatus: 'reschedule',
+  //             sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
+  //           },
+  //         },
+  //         { $group: { _id: null } },
+  //       ],
+  //       as: 'b2bshopclones',
+  //     },
+  //   },
+  //   {
+  //     $unwind: {
+  //       path: '$b2bshopclones',
+  //       preserveNullAndEmptyArrays: true,
+  //     },
+  //   },
+  //   {
+  //     $project: {
+  //       _id: 1,
+  //       photoCapture: 1,
+  //       callingStatus: 1,
+  //       callingStatusSort: 1,
+  //       active: 1,
+  //       archive: 1,
+  //       Wardid: 1,
+  //       type: 1,
+  //       SName: 1,
+  //       SType: 1,
+  //       SOwner: 1,
+  //       mobile: 1,
+  //       Slat: 1,
+  //       Strid: 1,
+  //       sortdatetime: 1,
+  //       Slong: 1,
+  //       address: 1,
+  //       date: 1,
+  //       time: 1,
+  //       created: 1,
+  //       status: 1,
+  //       Uid: 1,
+  //       shopData: 1,
+  //       shopData: '$callhistories',
+  //       shoptypeName: '$shoplists',
+  //       match: { $ne: ['$b2bshopclones._id', null] },
+  //     },
+  //   },
+  //   {
+  //     $match: { match: true },
+  //   },
+  //   {
+  //     $group: {
+  //       _id: null,
+  //       count: {
+  //         $sum: 1,
+  //       },
+  //     },
+  //   },
+  // ]);
+  // let oncall = await Shop.find({ callingStatus: 'On Call' }).count();
+  // let oldReschedule = await Shop.find({
+  //   callingStatus: 'reschedule',
+  //   historydate: { $ne: date },
+  //   lapsed: { $ne: true },
+  //   sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
+  // }).count();
+  // // let Reschedule = await Shop.find({ callingStatus: 'reschedule', historydate: date }).count();
+  // let declinedCount = await Shop.find({ callingStatus: 'declined', historydate: serverdate, lapsed: { $ne: true } }).count();
+  // return {
+  //   acceptCount: acceptCount,
+  //   callbackCount: callbackCount,
+  //   rescheduleCount: rescheduleCount.length != 0 ? rescheduleCount[0].count : 0,
+  //   pendingCount: pendingCount.length != 0 ? pendingCount[0].count : 0,
+  //   declinedCount: declinedCount,
+  //   Oncall: oncall,
+  //   oldReschedule: oldReschedule,
+  // };
   return {
-    acceptCount: acceptCount,
-    callbackCount: callbackCount,
-    rescheduleCount: rescheduleCount.length != 0 ? rescheduleCount[0].count : 0,
-    pendingCount: pendingCount.length != 0 ? pendingCount[0].count : 0,
-    declinedCount: declinedCount,
-    Oncall: oncall,
-    oldReschedule: oldReschedule,
-  };
+    success: true
+  }
 };
 
 const getById = async (id) => {
