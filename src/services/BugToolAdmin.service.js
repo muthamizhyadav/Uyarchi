@@ -34,6 +34,11 @@ const getAll = async (page) => {
   ])
   return {data, total:total.length};
 };
+
+const gaetAllUser = async () =>{
+  const data = await AdminAddUser.find({active:true})
+  return data;
+}
 const UsersLogin = async (userBody) => {
   const { email, password } = userBody;
   let userName = await AdminAddUser.findOne({ email: email });
@@ -534,4 +539,5 @@ module.exports = {
   updatetesterissue,
   UsersLogin,
   getAllTesterIssuestoDeveloper,
+  gaetAllUser,
 };
