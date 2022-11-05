@@ -89,7 +89,8 @@ const BugToolusersAndId = async (id) =>{
         name:'$bugtoolusers.name',
         email:'$bugtoolusers.email',
         type:"$bugtoolusers.Type",
-        phoneNumber:'$bugtoolusers.phoneNumber'
+        phoneNumber:'$bugtoolusers.phoneNumber',
+        userId:"$bugtoolusers._id",
       }
     }
       ])
@@ -105,11 +106,39 @@ const getAllprojectById = async (id) => {
 };
 
 const updateByProjectId = async (id, updateBody) => {
-  console.log(id)
-  let data = await getAllprojectById(id);
-  if (!data && data.active == true) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Addproject not found');
+  let serverdate = moment().format('yyy-MM-DD');
+  let time = moment().format('hh:mm a');
+  const {arr} = updateBody
+  console.log(arr)
+  let projectdeveloper = await AddProjectAdminSeprate.find({bugToolUserId:id, active:true})
+  for(let i = 0; i < projectdeveloper.length ; i++){
+        for(let j = 0; j < arr.length; j++) {
+     if(projectdeveloper[i].bugToolUser == arr[j]){
+      console.log(projectdeveloper[i].bugToolUser,"fn")
+      await AddProjectAdminSeprate.findOneAndUpdate({ bugToolUser:projectdeveloper[i].bugToolUser, bugToolUserId:id}, {active:true}, {new:true});
+     }else{
+      console.log(projectdeveloper[i].bugToolUser,"rgt")
+      await AddProjectAdminSeprate.findOneAndUpdate({ bugToolUser:projectdeveloper[i].bugToolUser, bugToolUserId:id}, {active:false}, {new:true});
+     }
+      // let data1 = await AddProjectAdminSeprate.find({bugToolUserId:id, bugToolUser:arr[i], active:true})
+      // console.log(data1)
+      // if(data1.length == 0){
+      //   await AddProjectAdminSeprate.create({
+      //     bugToolUser: arr[i],
+      //     projectName:updateBody.projectName,
+      //     projectSpec:updateBody.projectSpec,
+      //     date: serverdate,
+      //     time: time,
+      //     bugToolUserId:id
+      //   });
+      // }
+    }
   }
+  
+  // let data = await getAllprojectById(id);
+  // if (!data && data.active == true) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'Addproject not found');
+  // }
   data = await AddProjectAdmin.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return data;
 };
