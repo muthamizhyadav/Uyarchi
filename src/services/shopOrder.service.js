@@ -2668,7 +2668,7 @@ const getBills_ByShop = async (shopId) => {
 const getBills_DetailsByshop = async (shopId) => {
   let values = await ShopOrderClone.aggregate([
     {
-      $match: { shopId: shopId },
+      $match: { $and: [{ shopId: shopId }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }] },
     },
     {
       $lookup: {
