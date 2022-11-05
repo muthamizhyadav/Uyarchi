@@ -197,7 +197,7 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
     }
   }
   await ShopOrderClone.findByIdAndUpdate({ _id: creditBills.orderId }, { Scheduledate: updateBody.reasonScheduleOrDate, Schedulereason: updateBody.Schedulereason }, { new: true });
-  if (updateBody.reasonScheduleOrDate == null || updateBody.reasonScheduleOrDate == '') {
+  if (updateBody.Schedulereason == null || updateBody.Schedulereason == '') {
     await orderPayment.create({
       paidAmt: paidamount,
       date: currentDate,

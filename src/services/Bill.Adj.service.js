@@ -329,8 +329,103 @@ const getCustomer_bills = async (page) => {
   return { values: values, total: total.length };
 };
 
+const adjustment_bill = async (id) => {
+  console.log(id)
+  let shoporder = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { shopId: { $eq: id } },
+          { status: { $eq: "Delivered" } },
+          { statusOfBill: { $eq: "Pending" } }
+        ]
+      }
+    },
+    {
+      $sort: { date: 1 }
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
+        as: 'paymentData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$paymentData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        OrderId: 1,
+        created: 1,
+        paidAmount: "$paymentData.price",
+        totalAmount: "$productData.price",
+        pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+      }
+    }
+  ])
+  let billadj = await BillAdjustment.findOne({ shopId: id });
+
+  return shoporder;
+}
+
 module.exports = {
   createBill_Adjustment,
   getBillAdjustment_ById,
   getCustomer_bills,
+  adjustment_bill
 };
