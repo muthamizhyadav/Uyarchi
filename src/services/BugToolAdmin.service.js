@@ -108,16 +108,14 @@ const getAllprojectById = async (id) => {
 const updateByProjectId = async (id, updateBody) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
-  const {arr} = updateBody
-  console.log(arr)
+  const {bugToolUser} = updateBody
+  console.log(bugToolUser)
   let projectdeveloper = await AddProjectAdminSeprate.find({bugToolUserId:id, active:true})
   for(let i = 0; i < projectdeveloper.length ; i++){
-        for(let j = 0; j < arr.length; j++) {
-     if(projectdeveloper[i].bugToolUser == arr[j]){
+        for(let j = 0; j < bugToolUser.length; j++) {
+     if(projectdeveloper[i].bugToolUser != bugToolUser[j]){
+      // console.log(bugToolUser[j],"rg")
       console.log(projectdeveloper[i].bugToolUser,"fn")
-      await AddProjectAdminSeprate.findOneAndUpdate({ bugToolUser:projectdeveloper[i].bugToolUser, bugToolUserId:id}, {active:true}, {new:true});
-     }else{
-      console.log(projectdeveloper[i].bugToolUser,"rgt")
       await AddProjectAdminSeprate.findOneAndUpdate({ bugToolUser:projectdeveloper[i].bugToolUser, bugToolUserId:id}, {active:false}, {new:true});
      }
       // let data1 = await AddProjectAdminSeprate.find({bugToolUserId:id, bugToolUser:arr[i], active:true})

@@ -2519,6 +2519,33 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
       $limit: parseInt(limit),
     },
   ]);
+  let temp = await Shop.aggregate([
+    {
+      $match: {
+        $and: match,
+      },
+    },
+    {
+      $match: {
+        $or: [
+          {
+            $and: [
+              { salesManStatus: { $ne: 'Assign' } },
+              { salesManStatus: { $eq: 'tempReassign' } },
+              { salesManStatus: { $ne: 'Reassign' } },
+            ],
+          },
+          {
+            $and: [
+              { salesManStatus: { $ne: 'Assign' } },
+              { salesManStatus: { $eq: 'tempReassign' } },
+              { salesManStatus: { $ne: null } },
+            ],
+          },
+        ],
+      },
+    },
+  ]);
   let allnoAssing = await Shop.aggregate([
     {
       $match: {
@@ -2627,7 +2654,7 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
       },
     },
   ]);
-  return { data: data, total: total.length, overall: allnoAssing.length };
+  return { data: data, total: total.length, overall: allnoAssing.length, temp:temp.length};
 };
 
 const GetShopsByShopType = async (id, page) => {
