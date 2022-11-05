@@ -1405,7 +1405,121 @@ const getGroupAndBill = async (AssignedUserId) => {
         preserveNullAndEmptyArrays: true,
       },
     },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'creditID',
+        pipeline: [
+          {
+            $group: {
+              _id: { orderId: "$orderId" },
+              count: { $sum: 1 }
+            }
+          }
+        ],
+        as: 'creditID',
+      },
+    },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
 
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              price: "$productData.price",
+              orderpayments: "$orderpayments",
+              orderpaymentsnow: "$orderpaymentsnow",
+              pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } }
+            }
+          },
+          {
+            $match: {
+              pendingAmount: { $ne: 0 }
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              billCount: { $sum: 1 },
+            }
+          }
+        ],
+        as: 'creditBillDatapending',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditBillDatapending',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
         _id: 1,
@@ -1418,7 +1532,10 @@ const getGroupAndBill = async (AssignedUserId) => {
         totalpaidAmount: "$creditBillData.totalpaidAmount",
         collectedAmount: "$orderpaymentsnow.price",
         creditbills_type_upi: "$creditbills_type.price",
-        creditbills_type_cash: "$creditbills_type_cash.price"
+        creditbills_type_cash: "$creditbills_type_cash.price",
+        collectedbillCount: { $size: "$creditID" },
+        pendingbillCount: "$creditBillDatapending.billCount",
+        noncollectedbillCount: { $subtract: ['$creditBillData.billCount', { $size: "$creditID" }] }
       }
     }
 
