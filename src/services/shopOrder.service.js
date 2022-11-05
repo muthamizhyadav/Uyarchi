@@ -9,6 +9,7 @@ const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 const { Users } = require('../models/B2Busers.model');
 const CallHistory = require('../models/b2b.callHistory.model');
+const BillAdj = require('../models/Bill.Adj.model');
 
 const createshopOrder = async (shopOrderBody, userid) => {
   let { product, date, time, shopId, time_of_delivery } = shopOrderBody;
@@ -771,7 +772,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         time_of_delivery: 1,
         total: 1,
         gsttotal: 1,
-        subtotal: { $round: "$productorderclones.price" },
+        subtotal: { $round: '$productorderclones.price' },
         SGST: 1,
         CGST: 1,
         OrderId: 1,
@@ -2768,7 +2769,7 @@ const getBills_DetailsByshop = async (shopId) => {
     {
       $project: {
         paidAmt: { $ifNull: ['$orderpayments.amount', 0] },
-        totalPendingAmount: { $subtract: ['$productData.price', {$ifNull: ['$orderpayments.amount',0]} ]  },
+        totalPendingAmount: { $subtract: ['$productData.price', { $ifNull: ['$orderpayments.amount', 0] }] },
         totalAmount: '$productData.price',
         adjBill: '$adjBill.un_Billed_amt',
         shops: '$shops.SName',
@@ -2777,17 +2778,16 @@ const getBills_DetailsByshop = async (shopId) => {
       },
     },
   ]);
-  return values;
+  let shops = await BillAdj.findOne({ shopId: shopId });
+  return { values: values, shops: shops };
 };
-
 
 const vieworderbill_byshop = async (id) => {
   let value = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ shopId: { $eq: id } }, { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }]
-
-      }
+        $and: [{ shopId: { $eq: id } }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
+      },
     },
     {
       $lookup: {
@@ -2826,7 +2826,6 @@ const vieworderbill_byshop = async (id) => {
         ],
         as: 'productData',
       },
-
     },
     {
       $unwind: {
@@ -2860,11 +2859,11 @@ const vieworderbill_byshop = async (id) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $sort: { date: -1, time: -1 }
+            $sort: { date: -1, time: -1 },
           },
           {
-            $limit: 1
-          }
+            $limit: 1,
+          },
         ],
         as: 'lastpaid',
       },
@@ -2878,8 +2877,8 @@ const vieworderbill_byshop = async (id) => {
     {
       $project: {
         _id: 1,
-        orderpayments: "$orderpayments.price",
-        productData: "$productData.price",
+        orderpayments: '$orderpayments.price',
+        productData: '$productData.price',
         pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
         OrderId: 1,
         created: 1,
@@ -2890,17 +2889,16 @@ const vieworderbill_byshop = async (id) => {
         customerBillId: 1,
         delivered_date: 1,
         Scheduledate: 1,
-        lastpaidamount: "$lastpaid.paidAmt",
-        payment: "$lastpaid.payment",
-        paymentMethod: "$lastpaid.paymentMethod",
-        paymentstutes: "$lastpaid.paymentstutes",
-
-      }
-    }
-  ])
+        lastpaidamount: '$lastpaid.paidAmt',
+        payment: '$lastpaid.payment',
+        paymentMethod: '$lastpaid.paymentMethod',
+        paymentstutes: '$lastpaid.paymentstutes',
+      },
+    },
+  ]);
   let shop = await Shop.findById(id);
   return { value: value, shop: shop };
-}
+};
 
 module.exports = {
   // product
@@ -2950,5 +2948,5 @@ module.exports = {
   lapsedordercount,
   getBills_ByShop,
   getBills_DetailsByshop,
-  vieworderbill_byshop
+  vieworderbill_byshop,
 };
