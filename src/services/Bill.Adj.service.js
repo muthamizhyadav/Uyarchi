@@ -86,70 +86,40 @@ const getCustomer_bills = async (page) => {
               foreignField: 'orderId',
               pipeline: [
                 {
-                  $lookup: {
-                    from: 'products',
-                    localField: 'productid',
-                    foreignField: '_id',
-                    as: 'products',
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
                   },
-                },
-                {
-                  $unwind: '$products',
                 },
                 {
                   $project: {
-                    _id: 1,
-                    status: 1,
-                    orderId: 1,
-                    productid: 1,
-                    quantity: 1,
-                    priceperkg: 1,
-                    GST_Number: 1,
-                    HSN_Code: 1,
-                    packtypeId: 1,
-                    packKg: 1,
-                    unit: 1,
-                    productTitle: '$products.productTitle',
-                    created: 1,
-                    finalQuantity: 1,
-                    finalPricePerKg: 1,
-                    GST_Number: 1,
-                    GSTamount: {
-                      $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$priceperkg'] }, '$GST_Number'] }, 100],
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
                     },
+                    value: '$Amount',
                   },
                 },
-                { $group: { _id: null, gstTotal: { $sum: '$GSTamount' } } },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
               ],
               as: 'productData',
             },
           },
           {
-            $unwind: '$productData',
-          },
-          {
-            $lookup: {
-              from: 'productorderclones',
-              localField: '_id',
-              foreignField: 'orderId',
-              pipeline: [
-                {
-                  $group: {
-                    _id: null,
-                    amount: {
-                      $sum: {
-                        $multiply: ['$finalQuantity', '$priceperkg'],
-                      },
-                    },
-                  },
-                },
-              ],
-              as: 'productDatadetails',
-            },
-          },
-          {
             $unwind: {
-              path: '$productDatadetails',
+              path: '$productData',
               preserveNullAndEmptyArrays: true,
             },
           },
@@ -177,18 +147,6 @@ const getCustomer_bills = async (page) => {
               preserveNullAndEmptyArrays: true,
             },
           },
-          {
-            $project: {
-              total: { $round: [{ $add: ['$productData.gstTotal', '$productDatadetails.amount'] }] },
-              orderpayments: '$orderpayments.amount',
-            },
-          },
-          {
-            $project: {
-              pendingAmt: { $subtract: ['$total', '$orderpayments'] },
-            },
-          },
-          { $group: { _id: null, pendingAmount: { $sum: '$pendingAmt' } } },
         ],
         as: 'shoporder',
       },
@@ -207,7 +165,21 @@ const getCustomer_bills = async (page) => {
         payment_method: 1,
         date: 1,
         shopName: '$shopdata.SName',
-        pendingAmount: { $ifNull: ['$shoporder.pendingAmount', 0] },
+        totalAmount: { $ifNull: ['$shoporder.productData.price', 0] },
+        paidAmt: { $ifNull: ['$shoporder.orderpayments.amount', 0] },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        shopId: 1,
+        un_Billed_amt: 1,
+        payment_method: 1,
+        date: 1,
+        shopName: 1,
+        totalAmount: 1,
+        paidAmt: 1,
+        totalPendingAmount: { $subtract: ['$totalAmount', '$paidAmt'] },
       },
     },
     { $skip: 10 * page },

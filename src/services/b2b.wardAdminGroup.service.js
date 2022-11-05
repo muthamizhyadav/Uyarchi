@@ -196,7 +196,7 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
       await ShopOrderClone.findByIdAndUpdate({ _id: creditBills.orderId }, { statusOfBill: "Paid" }, { new: true });
     }
   }
-  await ShopOrderClone.findByIdAndUpdate({ _id: creditBills.orderId }, { Scheduledate: updateBody.reasonScheduleOrDate }, { new: true });
+  await ShopOrderClone.findByIdAndUpdate({ _id: creditBills.orderId }, { Scheduledate: updateBody.reasonScheduleOrDate, Schedulereason: updateBody.Schedulereason }, { new: true });
   if (updateBody.reasonScheduleOrDate == null || updateBody.reasonScheduleOrDate == '') {
     await orderPayment.create({
       paidAmt: paidamount,
@@ -216,6 +216,22 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
     });
   }
   else {
+    await orderPayment.create({
+      paidAmt: 0,
+      date: currentDate,
+      time: currenttime,
+      created: moment(),
+      orderId: creditBills.orderId,
+      payment: "Scheduled",
+      pay_type: updateBody.pay_types,
+      paymentMethod: updateBody.paymentMethods,
+      paymentstutes: updateBody.paymentstutes,
+      uid: userId,
+      type: "creditBill",
+      reasonScheduleOrDate: updateBody.reasonScheduleOrDate,
+      creditID: updateBody.groupID,
+      Schedulereason: updateBody.Schedulereason
+    });
     await creditBill.findByIdAndUpdate({ _id: id }, { reasonScheduleOrDate: updateBody.reasonScheduleOrDate, Schedulereason: updateBody.Schedulereason }, { new: true });
   }
   return deliveryStatus;

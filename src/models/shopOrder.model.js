@@ -293,7 +293,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   Scheduledate: {
     type: String,
-  }
+  },
+  Schedulereason: {
+    type: String,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
