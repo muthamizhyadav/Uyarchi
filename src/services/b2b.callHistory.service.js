@@ -819,7 +819,8 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
           {
             $match: {
               $and: [
-                { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }]
+                { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }
+              ]
             }
           },
           {
