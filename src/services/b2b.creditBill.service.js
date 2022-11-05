@@ -677,6 +677,7 @@ const getNotAssignData = async (page) => {
 
     {
       $project: {
+        Schedulereason: 1,
         Scheduledate: 1,
         customerBillId: 1,
         OrderId: 1,
