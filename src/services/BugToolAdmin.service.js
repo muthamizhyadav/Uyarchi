@@ -12,8 +12,27 @@ const createAdminAddUser = async (body) => {
   return AdminAddUser.create(values);
 };
 
-const getAll = async () => {
-  return AdminAddUser.find({ active: true });
+const getAll = async (page) => {
+  const data = await AdminAddUser.aggregate([
+    {
+      $match: {
+        $and: [{ active: { $eq: true } }],
+      },
+    },
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
+  ])
+  const total = await AdminAddUser.aggregate([
+    {
+      $match:
+        { $and: [{ active: { $eq: true } }] }
+    },
+  ])
+  return {data, total:total.length};
 };
 const UsersLogin = async (userBody) => {
   const { email, password } = userBody;
@@ -97,8 +116,26 @@ const BugToolusersAndId = async (id) => {
   return data;
 }
 
-const getAllProject = async () => {
-  return AddProjectAdmin.find({ active: true });
+const getAllProject = async (page) => {
+  const data = await AddProjectAdmin.aggregate([
+    {
+      $match:
+        { $and: [{ active: { $eq: true } }] }
+    },
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
+  ])
+  const total = await AddProjectAdmin.aggregate([
+    {
+      $match:
+        { $and: [{ active: { $eq: true } }] }
+    },
+  ])
+  return {data, total:total.length};
 };
 
 const getAllprojectById = async (id) => {
@@ -206,7 +243,7 @@ const createTesterIssue = async (body) => {
 
 
 
-const getAllTesterIssues = async (project, category, status) => {
+const getAllTesterIssues = async (project, category, status,page) => {
   let match;
   if (project != 'null' && category == 'null' && status == 'null') {
     match = {
@@ -282,9 +319,56 @@ const getAllTesterIssues = async (project, category, status) => {
         time: 1,
         status: 1,
       }
+    },
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
+  ])
+  const total = await TesterReport.aggregate([
+    {
+      $match: match,
+    },
+    {
+      $lookup: {
+        from: 'bugtoolusers',
+        localField: 'assignTo',
+        foreignField: '_id',
+        as: 'bugtoolusers',
+      },
+    },
+    {
+      $unwind: '$bugtoolusers',
+    },
+    {
+      $lookup: {
+        from: 'addprojectadmins',
+        localField: 'project',
+        foreignField: '_id',
+        as: 'addprojectadmins',
+      },
+    },
+    {
+      $unwind: '$addprojectadmins',
+    },
+    {
+      $project: {
+        project: 1,
+        category: 1,
+        severity: 1,
+        summary: 1,
+        testerId: 1,
+        asignName: "$bugtoolusers.name",
+        projectName: '$addprojectadmins.projectName',
+        date: 1,
+        time: 1,
+        status: 1,
+      }
     }
   ])
-  return data;
+  return {data, total:total.length};
 };
 
 const getIdtesterissues = async (id) => {
@@ -303,7 +387,7 @@ const updatetesterissue = async (id, updateBody) => {
 
 
 
-const getAllTesterIssuestoDeveloper = async (id, project, category, status) => {
+const getAllTesterIssuestoDeveloper = async (id, project, category, status, page) => {
   let match;
   if (id != 'null' && project != 'null' && category == 'null' && status == 'null') {
     match = {
@@ -379,9 +463,56 @@ const getAllTesterIssuestoDeveloper = async (id, project, category, status) => {
         time: 1,
         status: 1,
       }
+    },
+    {
+      $skip: 10 * parseInt(page),
+    },
+    {
+      $limit: 10,
+    },
+  ])
+  const total = await TesterReport.aggregate([
+    {
+      $match: match,
+    },
+    {
+      $lookup: {
+        from: 'bugtoolusers',
+        localField: 'testerId',
+        foreignField: '_id',
+        as: 'bugtoolusers',
+      },
+    },
+    {
+      $unwind: '$bugtoolusers',
+    },
+    {
+      $lookup: {
+        from: 'addprojectadmins',
+        localField: 'project',
+        foreignField: '_id',
+        as: 'addprojectadmins',
+      },
+    },
+    {
+      $unwind: '$addprojectadmins',
+    },
+    {
+      $project: {
+        project: 1,
+        category: 1,
+        severity: 1,
+        summary: 1,
+        testerId: 1,
+        testerName: "$bugtoolusers.name",
+        projectName: '$addprojectadmins.projectName',
+        date: 1,
+        time: 1,
+        status: 1,
+      }
     }
   ])
-  return data;
+  return {data, total:total.length};
 };
 
 
