@@ -236,6 +236,31 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
   }
   return deliveryStatus;
 };
+
+const scheduleshopdate = async (id, updateBody, userId) => {
+  let currentDate = moment().format('YYYY-MM-DD');
+  let currenttime = moment().format('HHmmss');
+  let deliveryStatus = await ShopOrderClone.findById(id);
+  if (!deliveryStatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  let paidamount = 0;
+  await ShopOrderClone.findByIdAndUpdate({ _id: id }, { Scheduledate: updateBody.reasonScheduleOrDate, Schedulereason: updateBody.Schedulereason }, { new: true });
+  await orderPayment.create({
+    paidAmt: 0,
+    date: currentDate,
+    time: currenttime,
+    created: moment(),
+    orderId: id,
+    payment: "Scheduled",
+    uid: userId,
+    type: "Scheduled",
+    reasonScheduleOrDate: updateBody.reasonScheduleOrDate,
+    Schedulereason: updateBody.Schedulereason
+  });
+  return deliveryStatus;
+};
+
 const updateOrderStatus = async (id, updateBody) => {
   let currentDate = moment().format('YYYY-MM-DD');
   let currenttime = moment().format('HHmmss');
@@ -3158,5 +3183,6 @@ module.exports = {
 
   deliveryExecutiveSorting,
   getGroupDetailsForDE,
-  creditupdateDeliveryCompleted
+  creditupdateDeliveryCompleted,
+  scheduleshopdate
 };
