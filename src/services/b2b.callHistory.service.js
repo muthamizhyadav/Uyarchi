@@ -850,110 +850,110 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await Shop.aggregate([
-    {
-      $match: {
-        $and: [{ historydate: { $ne: date } }, { lapsed: { $ne: true } }, keys],
-      },
-    },
-    { $sort: { historydate: -1, sorttime: -1 } },
-    {
-      $lookup: {
-        from: 'callhistories',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline: [
-          {
-            $sort: { date: -1, historytime: -1 },
-          },
-          { $limit: 10 },
-        ],
-        as: 'callhistories',
-      },
-    },
-    {
-      $lookup: {
-        from: 'shoplists',
-        localField: 'SType',
-        foreignField: '_id',
-        as: 'shoplists',
-      },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: '_id',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $match: {
-              callingStatus: 'reschedule',
-              sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
-            },
-          },
-          { $group: { _id: null } },
-        ],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: {
-        path: '$b2bshopclones',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        photoCapture: 1,
-        callingStatus: 1,
-        callingStatusSort: 1,
-        active: 1,
-        archive: 1,
-        Wardid: 1,
-        type: 1,
-        SName: 1,
-        SType: 1,
-        SOwner: 1,
-        mobile: 1,
-        Slat: 1,
-        Strid: 1,
-        sortdatetime: 1,
-        Slong: 1,
-        address: 1,
-        date: 1,
-        historydate: 1,
-        time: 1,
-        created: 1,
-        status: 1,
-        Uid: 1,
-        shopData: 1,
-        shopData: '$callhistories',
-        shoptypeName: '$shoplists',
-        match: { $ne: ['$b2bshopclones._id', null] },
-      },
-    },
-    {
-      $match: { match: true },
-    },
-    // {
-    //   $group: {
-    //     _id: null,
-    //     count: {
-    //       $sum: 1,
-    //     },
-    //   },
-    // },
-    {
-      $count: 'passing_scores',
-    },
-  ]);
-  console.log(total);
+  // let total = await Shop.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [{ historydate: { $ne: date } }, { lapsed: { $ne: true } }, keys],
+  //     },
+  //   },
+  //   { $sort: { historydate: -1, sorttime: -1 } },
+  //   {
+  //     $lookup: {
+  //       from: 'callhistories',
+  //       localField: '_id',
+  //       foreignField: 'shopId',
+  //       pipeline: [
+  //         {
+  //           $sort: { date: -1, historytime: -1 },
+  //         },
+  //         { $limit: 10 },
+  //       ],
+  //       as: 'callhistories',
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'shoplists',
+  //       localField: 'SType',
+  //       foreignField: '_id',
+  //       as: 'shoplists',
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'b2bshopclones',
+  //       localField: '_id',
+  //       foreignField: '_id',
+  //       pipeline: [
+  //         {
+  //           $match: {
+  //             callingStatus: 'reschedule',
+  //             sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') },
+  //           },
+  //         },
+  //         { $group: { _id: null } },
+  //       ],
+  //       as: 'b2bshopclones',
+  //     },
+  //   },
+  //   {
+  //     $unwind: {
+  //       path: '$b2bshopclones',
+  //       preserveNullAndEmptyArrays: true,
+  //     },
+  //   },
+  //   {
+  //     $project: {
+  //       _id: 1,
+  //       photoCapture: 1,
+  //       callingStatus: 1,
+  //       callingStatusSort: 1,
+  //       active: 1,
+  //       archive: 1,
+  //       Wardid: 1,
+  //       type: 1,
+  //       SName: 1,
+  //       SType: 1,
+  //       SOwner: 1,
+  //       mobile: 1,
+  //       Slat: 1,
+  //       Strid: 1,
+  //       sortdatetime: 1,
+  //       Slong: 1,
+  //       address: 1,
+  //       date: 1,
+  //       historydate: 1,
+  //       time: 1,
+  //       created: 1,
+  //       status: 1,
+  //       Uid: 1,
+  //       shopData: 1,
+  //       shopData: '$callhistories',
+  //       shoptypeName: '$shoplists',
+  //       match: { $ne: ['$b2bshopclones._id', null] },
+  //     },
+  //   },
+  //   {
+  //     $match: { match: true },
+  //   },
+  //   // {
+  //   //   $group: {
+  //   //     _id: null,
+  //   //     count: {
+  //   //       $sum: 1,
+  //   //     },
+  //   //   },
+  //   // },
+  //   {
+  //     $count: 'passing_scores',
+  //   },
+  // ]);
+  // console.log(total);
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
   return {
     values: values,
-    total: total.length != 0 ? total[0].passing_scores : 0,
+    // total: total.length != 0 ? total[0].passing_scores : 0,
     RoleName: role.roleName,
     userName: user.name,
   };
@@ -1274,36 +1274,36 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await Shop.aggregate([
-    {
-      $match: {
-        $and: [keys, { callingStatus: { $eq: status } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'callhistories',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline: [
-          {
-            $sort: { date: -1, historytime: -1 },
-          },
-          { $limit: 10 },
-        ],
-        as: 'callhistories',
-      },
-    },
-    {
-      $count: 'passing_scores',
-    },
-  ]);
+  // let total = await Shop.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [keys, { callingStatus: { $eq: status } }],
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'callhistories',
+  //       localField: '_id',
+  //       foreignField: 'shopId',
+  //       pipeline: [
+  //         {
+  //           $sort: { date: -1, historytime: -1 },
+  //         },
+  //         { $limit: 10 },
+  //       ],
+  //       as: 'callhistories',
+  //     },
+  //   },
+  //   {
+  //     $count: 'passing_scores',
+  //   },
+  // ]);
 
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
   return {
     values: values,
-    total: total.length != 0 ? total[0].passing_scores : 0,
+    // total: total.length != 0 ? total[0].passing_scores : 0,
     RoleName: role.roleName,
     userName: user.name,
   };
@@ -1624,36 +1624,36 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await Shop.aggregate([
-    {
-      $match: {
-        $and: [{ historydate: { $eq: date } }, { callingStatus: { $eq: status } }, { lapsed: { $ne: true } }],
-      },
-    },
-    {
-      $lookup: {
-        from: 'callhistories',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline: [
-          {
-            $sort: { date: -1, historytime: -1 },
-          },
-          { $limit: 10 },
-        ],
-        as: 'callhistories',
-      },
-    },
-    {
-      $count: 'passing_scores',
-    },
-  ]);
-  console.log(total);
+  // let total = await Shop.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [{ historydate: { $eq: date } }, { callingStatus: { $eq: status } }, { lapsed: { $ne: true } }],
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'callhistories',
+  //       localField: '_id',
+  //       foreignField: 'shopId',
+  //       pipeline: [
+  //         {
+  //           $sort: { date: -1, historytime: -1 },
+  //         },
+  //         { $limit: 10 },
+  //       ],
+  //       as: 'callhistories',
+  //     },
+  //   },
+  //   {
+  //     $count: 'passing_scores',
+  //   },
+  // ]);
+  // console.log(total);
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
   return {
     values: values,
-    total: total.length != 0 ? total[0].passing_scores : 0,
+    // total: total.length != 0 ? total[0].passing_scores : 0,
     RoleName: role.roleName,
     userName: user.name,
   };
@@ -1977,41 +1977,41 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await Shop.aggregate([
-    {
-      $match: {
-        $and: [
-          { sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') } },
-          keys,
-          { lapsed: { $ne: true } },
-          { callingStatus: { $eq: status } },
-        ],
-      },
-    },
-    {
-      $lookup: {
-        from: 'callhistories',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline: [
-          {
-            $sort: { date: -1, historytime: -1 },
-          },
-          { $limit: 10 },
-        ],
-        as: 'callhistories',
-      },
-    },
-    {
-      $count: 'passing_scores',
-    },
-  ]);
+  // let total = await Shop.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [
+  //         { sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') } },
+  //         keys,
+  //         { lapsed: { $ne: true } },
+  //         { callingStatus: { $eq: status } },
+  //       ],
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'callhistories',
+  //       localField: '_id',
+  //       foreignField: 'shopId',
+  //       pipeline: [
+  //         {
+  //           $sort: { date: -1, historytime: -1 },
+  //         },
+  //         { $limit: 10 },
+  //       ],
+  //       as: 'callhistories',
+  //     },
+  //   },
+  //   {
+  //     $count: 'passing_scores',
+  //   },
+  // ]);
 
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
   return {
     values: values,
-    total: total.length != 0 ? total[0].passing_scores : 0,
+    // total: total.length != 0 ? total[0].passing_scores : 0,
     RoleName: role.roleName,
     userName: user.name,
   };
@@ -2844,42 +2844,42 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total = await Shop.aggregate([
-    {
-      $match: {
-        $and: [keys],
-      },
-    },
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline: [
-          {
-            $match: faildstatusMatch,
-          },
-          {
-            $group: {
-              _id: null,
-            },
-          },
-        ],
-        as: 'shoporderclonesun',
-      },
-    },
-    { $unwind: '$shoporderclonesun' },
-    {
-      $count: 'passing_scores',
-    },
-    // { $group: { _id: null, count: { $sum: 1 } } },
-  ]);
-  console.log(total);
+  // let total = await Shop.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [keys],
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'shoporderclones',
+  //       localField: '_id',
+  //       foreignField: 'shopId',
+  //       pipeline: [
+  //         {
+  //           $match: faildstatusMatch,
+  //         },
+  //         {
+  //           $group: {
+  //             _id: null,
+  //           },
+  //         },
+  //       ],
+  //       as: 'shoporderclonesun',
+  //     },
+  //   },
+  //   { $unwind: '$shoporderclonesun' },
+  //   {
+  //     $count: 'passing_scores',
+  //   },
+  //   // { $group: { _id: null, count: { $sum: 1 } } },
+  // ]);
+  // console.log(total);
   let role = await Role.findOne({ _id: userRole });
   let user = await Users.findOne({ _id: userId });
   return {
     values: values,
-    total: total.length != 0 ? total[0].passing_scores : 0,
+    // total: total.length != 0 ? total[0].passing_scores : 0,
     RoleName: role.roleName,
     userName: user.name,
   };
