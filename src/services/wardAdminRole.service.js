@@ -869,10 +869,6 @@ const getSalesman = async (id) => {
   ]);
   let lastdata = await SalesManShop.aggregate([
     {
-      $sort: {created:-1, createdTime:-1},
-    },
-  
-    {
       $match: {
         $or: [
           { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
@@ -882,15 +878,25 @@ const getSalesman = async (id) => {
     },
     {
       $group: {
-        _id: { created:'$created', createdTime:'$createdTime'},
+        _id: {  createdTime:'$createdTime',created:'$created',},
         count: { $sum: 1 },
       },
+    },
+    {
+      $project:{
+        date:"$_id.created",
+        createdTime:"$_id.createdTime",
+        count:1
+      }
+    },
+    {
+      $sort: { date:-1,createdTime:-1},
     },
     {
       $limit: 1,
     },
   ]);
-  return { data: data, salesmanname: name.name, lastdata };
+  return { data: data, salesmanname: name.name, lastdata};
 };
 
 // withoutoutAsmSalesman

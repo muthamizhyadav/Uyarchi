@@ -1932,7 +1932,9 @@ const getstock_close_product = async () => {
         from: 'usablestocks',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [{ $match: { date: { $eq: moment().format('DD-MM-YYYY') } } }],
+        pipeline: [{
+          $match: { date: { $eq: moment().format('DD-MM-YYYY') }, status: { $ne: 'Closed' } }
+        }],
         as: 'usablestocks',
       },
     },

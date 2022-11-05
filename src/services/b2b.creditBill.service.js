@@ -215,6 +215,7 @@ const getsalesmanName = async () => {
 const getShopHistory = async (userId, id) => {
   console.log(id)
   console.log(userId)
+  // { AssignedUserId: { $eq: userId } },
   let values = await creditBill.aggregate([
     {
       $match: {
@@ -314,7 +315,10 @@ const getShopHistory = async (userId, id) => {
         created: "$shoporderclones.created",
         TotalAmount: { $round: ["$productorderclones.price", 0] },
         paidAmount: "$orderpaymentsData.price",
-        orderpaymentsData_value: "$orderpaymentsData_value"
+        orderpaymentsData_value: "$orderpaymentsData_value",
+        Schedulereason: 1,
+        reasonScheduleOrDate: 1
+
       }
     },
   ]);
@@ -673,6 +677,7 @@ const getNotAssignData = async (page) => {
 
     {
       $project: {
+        Scheduledate: 1,
         customerBillId: 1,
         OrderId: 1,
         date: 1,
