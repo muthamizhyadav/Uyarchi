@@ -311,8 +311,12 @@ const getBills_DetailsByshop = catchAsync(async (req, res) => {
   const data = await shopOrderService.getBills_DetailsByshop(req.params.shopId);
   res.send(data);
 });
-
+const vieworderbill_byshop = catchAsync(async (req, res) => {
+  const data = await shopOrderService.vieworderbill_byshop(req.params.shopId);
+  res.send(data);
+});
 module.exports = {
+  vieworderbill_byshop,
   createshopOrder,
   getAllShopOrder,
   getShopOrderById,

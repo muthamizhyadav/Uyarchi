@@ -771,7 +771,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         time_of_delivery: 1,
         total: 1,
         gsttotal: 1,
-        subtotal: { $round: '$productorderclones.price' },
+        subtotal: { $round: "$productorderclones.price" },
         SGST: 1,
         CGST: 1,
         OrderId: 1,
@@ -2780,6 +2780,128 @@ const getBills_DetailsByshop = async (shopId) => {
   return values;
 };
 
+
+const vieworderbill_byshop = async (id) => {
+  let value = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ shopId: { $eq: id } }, { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }]
+
+      }
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $sort: { date: -1, time: -1 }
+          },
+          {
+            $limit: 1
+          }
+        ],
+        as: 'lastpaid',
+      },
+    },
+    {
+      $unwind: {
+        path: '$lastpaid',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        orderpayments: "$orderpayments.price",
+        productData: "$productData.price",
+        pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
+        OrderId: 1,
+        created: 1,
+        status: 1,
+        delivery_type: 1,
+        time_of_delivery: 1,
+        paymentMethod: 1,
+        customerBillId: 1,
+        delivered_date: 1,
+        Scheduledate: 1,
+        lastpaidamount: "$lastpaid.paidAmt",
+        payment: "$lastpaid.payment",
+        paymentMethod: "$lastpaid.paymentMethod",
+        paymentstutes: "$lastpaid.paymentstutes",
+
+      }
+    }
+  ])
+  let shop = await Shop.findById(id);
+  return { value: value, shop: shop };
+}
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -2828,4 +2950,5 @@ module.exports = {
   lapsedordercount,
   getBills_ByShop,
   getBills_DetailsByshop,
+  vieworderbill_byshop
 };
