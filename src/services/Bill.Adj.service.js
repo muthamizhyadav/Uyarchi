@@ -4,6 +4,7 @@ const moment = require('moment');
 const BillAdjustment = require('../models/Bill.Adj.model');
 const AdjbillHistories = require('../models/Adj.Bill.history.model');
 const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone } = require('../models/shopOrder.model');
+const OrderPayment = require('../models/orderpayment.model');
 
 // create Bill AdjustMent Flow
 
@@ -329,8 +330,8 @@ const getCustomer_bills = async (page) => {
   return { values: values, total: total.length };
 };
 
-const adjustment_bill = async (id) => {
-  console.log(id)
+const adjustment_bill = async (id, userId) => {
+  // console.log(id)
   let shoporder = await ShopOrderClone.aggregate([
     {
       $match: {
@@ -417,10 +418,60 @@ const adjustment_bill = async (id) => {
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
       }
     }
-  ])
-  let billadj = await BillAdjustment.findOne({ shopId: id });
+  ]);
+  // console.log(shoporder)
+  if (shoporder.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Pending Bill Not Available');
+  }
+  shoporder.forEach(async (e) => {
+    // console.log(e)
+    let billadj = await BillAdjustment.findOne({ shopId: id });
+    let pendingAmount = e.pendingAmount;
+    let unbilled = billadj.un_Billed_amt;
+    // console.log(billadj)
+    if (unbilled > 0) {
+      if (pendingAmount > 0) {
+        let reduceAmount = unbilled - pendingAmount
+        if (reduceAmount >= 0) {
+          // console.log(unbilled)
+          // console.log(pendingAmount)
+          // console.log(reduceAmount);
+          await BillAdjustment.findByIdAndUpdate({ _id: billadj._id }, { un_Billed_amt: reduceAmount }, { new: true });
+          await ShopOrderClone.findByIdAndUpdate({ _id: e._id }, { statusOfBill: "Paid" }, { new: true });
+          await OrderPayment.create({
+            paidAmt: pendingAmount,
+            created: moment(),
+            date: moment().format('YYYY-MM-DD'),
+            time: moment().format('hhmmss'),
+            orderId: e._id,
+            payment: "Adjustment",
+            type: "Adjustment",
+            uid: userId,
+          });
+        }
+        else {
+          reduceAmount = unbilled
+          // console.log(unbilled)
+          // console.log(pendingAmount)
+          // console.log(reduceAmount);
+          await BillAdjustment.findByIdAndUpdate({ _id: billadj._id }, { un_Billed_amt: 0 }, { new: true });
+          await OrderPayment.create({
+            paidAmt: reduceAmount,
+            created: moment(),
+            date: moment().format('YYYY-MM-DD'),
+            time: moment().format('hhmmss'),
+            orderId: e._id,
+            payment: "Adjustment",
+            type: "Adjustment",
+            uid: userId
+          });
+        }
+      }
+    }
+  })
+  let billadjss = await BillAdjustment.findOne({ shopId: id });
 
-  return shoporder;
+  return billadjss;
 }
 
 module.exports = {

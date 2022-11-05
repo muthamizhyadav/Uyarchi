@@ -23,7 +23,7 @@ const getCustomer_bills = catchAsync(async (req, res) => {
   res.send(data);
 });
 const adjustment_bill = catchAsync(async (req, res) => {
-  const data = await BillAdjService.adjustment_bill(req.params.id);
+  const data = await BillAdjService.adjustment_bill(req.params.id,req.userId);
   res.send(data);
 });
 
