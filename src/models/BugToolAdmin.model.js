@@ -181,6 +181,7 @@ const TesterReportSchema = mongoose.Schema(
     },
     status:{
       type:String,
+      default:"Assigned",
     },
     date:{
       type:String,
