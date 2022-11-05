@@ -152,36 +152,36 @@ return TesterReport.create(values);
 const getAllTesterIssues = async (project,category,status) => {
   let match;
   if(project != 'null' && category == 'null' && status == 'null'){
-    match=  match = {
+     match = {
       $and: [{ project: { $eq: project} }],
     };
   }else if(project != 'null' && category != 'null' && status == 'null'){
-    match=  match = {
+     match = {
       $and: [{ project: { $eq: project} },{category:{$eq:category}}],
     };
   }else if(project != 'null' && category != 'null' && status != 'null'){
-    match=  match = {
+     match = {
       $and: [{ project: { $eq: project} },{category:{$eq:category}}, {status:{$eq:status}}],
     };
   }else if(project != 'null' && category == 'null' && status != 'null'){
-    match=  match = {
+     match = {
       $and: [{ project: { $eq: project} },{status:{$eq:status}}],
     };
   }else if(project == 'null' && category != 'null' && status != 'null'){
-    match=  match = {
+     match = {
       $and: [{ category: { $eq: category} },{status:{$eq:status}}],
     };
   }else if(project == 'null' && category != 'null' && status == 'null'){
-    match=  match = {
+     match = {
       $and: [{ category: { $eq: category} }],
     };
   }
   else if(project == 'null' && category == 'null' && status != 'null'){
-    match=  match = {
+      match = {
       $and: [{ status: { $eq: status} }],
     };
   }else{
-    match=  match = {
+     match = {
       $and: [{ active: { $eq: true} }],
     };
   }
@@ -202,6 +202,17 @@ const getAllTesterIssues = async (project,category,status) => {
       $unwind: '$bugtoolusers',
     }, 
     {
+      $lookup: {
+        from: 'addprojectadmins',
+        localField: 'project',
+        foreignField: '_id',
+        as: 'addprojectadmins',
+      },
+    },
+    {
+      $unwind: '$addprojectadmins',
+    },
+    {
       $project:{
         project:1,
         category:1,
@@ -209,6 +220,7 @@ const getAllTesterIssues = async (project,category,status) => {
         summary:1,
         testerId:1,
         asignName:"$bugtoolusers.name",
+        projectName:'$addprojectadmins.projectName',
         date:1,
         time:1,
         status:1,
@@ -224,7 +236,6 @@ const getIdtesterissues = async (id) => {
 
 
 const updatetesterissue = async (id, updateBody) => {
-  console.log(id)
   let data = await getIdtesterissues(id);
   if (!data && data.active == true) {
     throw new ApiError(httpStatus.NOT_FOUND, 'issue not found');
