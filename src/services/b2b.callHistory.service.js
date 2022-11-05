@@ -811,6 +811,105 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
       },
     },
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              $and: [
+                { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }]
+            }
+          },
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              orderpayments: "$orderpayments.price",
+              productData: "$productData.price",
+              pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              pendingAmount: { $sum: "$pendingAmount" }
+            }
+          }
+        ],
+        as: 'pending_amount'
+      }
+    },
+    {
+      $unwind: {
+        path: '$pending_amount',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -845,6 +944,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
         lastfiveorder: '$lastfiveorder',
+        pendingamount: "$pending_amount.pendingAmount",
       },
     },
     {
@@ -1239,6 +1339,105 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
       },
     },
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              $and: [
+                { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }]
+            }
+          },
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              orderpayments: "$orderpayments.price",
+              productData: "$productData.price",
+              pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              pendingAmount: { $sum: "$pendingAmount" }
+            }
+          }
+        ],
+        as: 'pending_amount'
+      }
+    },
+    {
+      $unwind: {
+        path: '$pending_amount',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -1272,6 +1471,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
         lastfiveorder: '$lastfiveorder',
+        pendingamount: "$pending_amount.pendingAmount",
       },
     },
     { $skip: 10 * page },
@@ -1587,6 +1787,104 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         ],
         as: 'lastfiveorder',
       },
+    }, {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              $and: [
+                { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }]
+            }
+          },
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              orderpayments: "$orderpayments.price",
+              productData: "$productData.price",
+              pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              pendingAmount: { $sum: "$pendingAmount" }
+            }
+          }
+        ],
+        as: 'pending_amount'
+      }
+    },
+    {
+      $unwind: {
+        path: '$pending_amount',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $project: {
@@ -1622,6 +1920,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
         lastfiveorder: '$lastfiveorder',
+        pendingamount: "$pending_amount.pendingAmount",
       },
     },
     { $skip: 10 * page },
@@ -1940,6 +2239,104 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         ],
         as: 'lastfiveorder',
       },
+    }, {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              $and: [
+                { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }]
+            }
+          },
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              orderpayments: "$orderpayments.price",
+              productData: "$productData.price",
+              pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              pendingAmount: { $sum: "$pendingAmount" }
+            }
+          }
+        ],
+        as: 'pending_amount'
+      }
+    },
+    {
+      $unwind: {
+        path: '$pending_amount',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $project: {
@@ -1975,6 +2372,7 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
         lastfiveorder: '$lastfiveorder',
+        pendingamount: "$pending_amount.pendingAmount",
       },
     },
     { $skip: 10 * page },
@@ -2808,6 +3206,105 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
       },
     },
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              $and: [
+                { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }]
+            }
+          },
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              orderpayments: "$orderpayments.price",
+              productData: "$productData.price",
+              pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              pendingAmount: { $sum: "$pendingAmount" }
+            }
+          }
+        ],
+        as: 'pending_amount'
+      }
+    },
+    {
+      $unwind: {
+        path: '$pending_amount',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 1,
         photoCapture: 1,
@@ -2842,6 +3339,8 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
         shoporderclonesun: '$shoporderclonesun',
         lapsedOrder: 1,
         lastfiveorder: '$lastfiveorder',
+        pendingamount: "$pending_amount.pendingAmount",
+
       },
     },
     { $skip: 10 * page },
