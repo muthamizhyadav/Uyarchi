@@ -17,4 +17,5 @@ router.route('/getAllTesterIssues/:project/:category/:status').get(BugToolAdminC
 router.route('/getIdtesterissues/:id').get(BugToolAdminController.getIdtesterissues)
 router.route('/updatetesterIssue/:id').put(BugToolAdminController.updatetesterIssue)
 router.route('/login').post(BugToolAdminController.B2bUsersLogin)
+router.route('/getAllTesterIssuestoDeveloper/:id/:project/:category/:status').get(BugToolAdminController.getAllTesterIssuestoDeveloper)
 module.exports = router;

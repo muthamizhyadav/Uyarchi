@@ -59,5 +59,6 @@ router.route('/lapsed/ordercount/Reject').get(shopOrderController.lapsedordercou
 router.route('/lapsed/ordercount/Undelivered').get(shopOrderController.lapsedordercountUndelivered);
 router.route('/getBills/byshop/:shopId').get(shopOrderController.getBills_ByShop);
 router.route('/getBills/details/byshop/:shopId').get(shopOrderController.getBills_DetailsByshop);
+router.route('/vieworderbill/byshop/:shopId').get(authorization, shopOrderController.vieworderbill_byshop);
 
 module.exports = router;

@@ -19,7 +19,7 @@ const getBillAdjustmentById = catchAsync(async (req, res) => {
 // get ShopOrderBills
 
 const getCustomer_bills = catchAsync(async (req, res) => {
-  const data = await BillAdjService.getCustomer_bills();
+  const data = await BillAdjService.getCustomer_bills(req.params.page);
   res.send(data);
 });
 

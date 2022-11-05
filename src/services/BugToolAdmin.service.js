@@ -152,36 +152,36 @@ return TesterReport.create(values);
 const getAllTesterIssues = async (project,category,status) => {
   let match;
   if(project != 'null' && category == 'null' && status == 'null'){
-    match=  match = {
+     match = {
       $and: [{ project: { $eq: project} }],
     };
   }else if(project != 'null' && category != 'null' && status == 'null'){
-    match=  match = {
+     match = {
       $and: [{ project: { $eq: project} },{category:{$eq:category}}],
     };
   }else if(project != 'null' && category != 'null' && status != 'null'){
-    match=  match = {
+     match = {
       $and: [{ project: { $eq: project} },{category:{$eq:category}}, {status:{$eq:status}}],
     };
   }else if(project != 'null' && category == 'null' && status != 'null'){
-    match=  match = {
+     match = {
       $and: [{ project: { $eq: project} },{status:{$eq:status}}],
     };
   }else if(project == 'null' && category != 'null' && status != 'null'){
-    match=  match = {
+     match = {
       $and: [{ category: { $eq: category} },{status:{$eq:status}}],
     };
   }else if(project == 'null' && category != 'null' && status == 'null'){
-    match=  match = {
+     match = {
       $and: [{ category: { $eq: category} }],
     };
   }
   else if(project == 'null' && category == 'null' && status != 'null'){
-    match=  match = {
+      match = {
       $and: [{ status: { $eq: status} }],
     };
   }else{
-    match=  match = {
+     match = {
       $and: [{ active: { $eq: true} }],
     };
   }
@@ -202,6 +202,17 @@ const getAllTesterIssues = async (project,category,status) => {
       $unwind: '$bugtoolusers',
     }, 
     {
+      $lookup: {
+        from: 'addprojectadmins',
+        localField: 'project',
+        foreignField: '_id',
+        as: 'addprojectadmins',
+      },
+    },
+    {
+      $unwind: '$addprojectadmins',
+    },
+    {
       $project:{
         project:1,
         category:1,
@@ -209,6 +220,7 @@ const getAllTesterIssues = async (project,category,status) => {
         summary:1,
         testerId:1,
         asignName:"$bugtoolusers.name",
+        projectName:'$addprojectadmins.projectName',
         date:1,
         time:1,
         status:1,
@@ -224,7 +236,6 @@ const getIdtesterissues = async (id) => {
 
 
 const updatetesterissue = async (id, updateBody) => {
-  console.log(id)
   let data = await getIdtesterissues(id);
   if (!data && data.active == true) {
     throw new ApiError(httpStatus.NOT_FOUND, 'issue not found');
@@ -232,6 +243,90 @@ const updatetesterissue = async (id, updateBody) => {
   data = await TesterReport.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return data;
 };
+
+
+
+const getAllTesterIssuestoDeveloper = async (id,project,category,status) => {
+  let match;
+  if(id != 'null' && project != 'null' && category == 'null' && status == 'null'){
+     match = {
+      $and: [{ assignTo: { $eq: id} },{ project: { $eq: project} }],
+    };
+  }else if(id != 'null' && project != 'null' && category != 'null' && status == 'null'){
+     match = {
+      $and: [{ assignTo: { $eq: id} },{ project: { $eq: project} },{category:{$eq:category}}],
+    };
+  }else if(id != 'null' && project != 'null' && category != 'null' && status != 'null'){
+     match = {
+      $and: [{ assignTo: { $eq: id} },{ project: { $eq: project} },{category:{$eq:category}}, {status:{$eq:status}}],
+    };
+  }else if(id != 'null' && project != 'null' && category == 'null' && status != 'null'){
+     match = {
+      $and: [{ assignTo: { $eq: id} },{ project: { $eq: project} },{status:{$eq:status}}],
+    };
+  }else if(id != 'null' && project == 'null' && category != 'null' && status != 'null'){
+     match = {
+      $and: [{ assignTo: { $eq: id} },{ category: { $eq: category} },{status:{$eq:status}}],
+    };
+  }else if(id != 'null' && project == 'null' && category != 'null' && status == 'null'){
+     match = {
+      $and: [{ assignTo: { $eq: id} },{ category: { $eq: category} }],
+    };
+  }
+  else if(id != 'null' && project == 'null' && category == 'null' && status != 'null'){
+      match = {
+      $and: [{ assignTo: { $eq: id} },{ status: { $eq: status} }],
+    };
+  }else{
+     match = {
+      $and: [{ assignTo: { $eq: id} },{ active: { $eq: true} }],
+    };
+  }
+  console.log(match)
+  const data = await TesterReport.aggregate([
+    {
+      $match: match,
+    },
+    {
+      $lookup: {
+        from: 'bugtoolusers',
+        localField: 'testerId',
+        foreignField: '_id',
+        as: 'bugtoolusers',
+      },
+    },
+    {
+      $unwind: '$bugtoolusers',
+    }, 
+    {
+      $lookup: {
+        from: 'addprojectadmins',
+        localField: 'project',
+        foreignField: '_id',
+        as: 'addprojectadmins',
+      },
+    },
+    {
+      $unwind: '$addprojectadmins',
+    },
+    {
+      $project:{
+        project:1,
+        category:1,
+        severity:1,
+        summary:1,
+        testerId:1,
+        testerName:"$bugtoolusers.name",
+        projectName:'$addprojectadmins.projectName',
+        date:1,
+        time:1,
+        status:1,
+      }
+    } 
+  ])
+  return data;
+};
+
 
 module.exports = {
     createAdminAddUser,
@@ -250,4 +345,5 @@ module.exports = {
     getIdtesterissues,
     updatetesterissue,
     UsersLogin,
+    getAllTesterIssuestoDeveloper,
 };

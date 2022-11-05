@@ -2411,24 +2411,27 @@ const getVendorShops = async (key) => {
 
 const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
   let match;
-  if (uid != 'null' && date == 'null' && street == 'null') {
+  if (id != 'null' && uid != 'null' && date == 'null' && street == 'null') {
     match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }];
-  } else if (uid == 'null' && date == 'null' && street != 'null') {
+  } else if ( id != 'null' && uid == 'null' && date == 'null' && street != 'null') {
     match = [{ Wardid: { $eq: id } }, { Strid: { $eq: street } }];
-  } else if (uid != 'null' && date == 'null' && street != 'null') {
+  } else if ( id != 'null' && uid != 'null' && date == 'null' && street != 'null') {
     match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { Strid: { $eq: street } }];
-  } else if (uid != 'null' && date != 'null' && street == 'null') {
+  } else if ( id != 'null' && uid != 'null' && date != 'null' && street == 'null') {
     match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { date: { $eq: date } }];
-  } else if (uid == 'null' && date != 'null' && street == 'null') {
+  } else if ( id != 'null' && uid == 'null' && date != 'null' && street == 'null') {
     match = [{ Wardid: { $eq: id } }, { date: { $eq: date } }];
-  } else if (uid == 'null' && date != 'null' && street != 'null') {
+  } else if (id != 'null' && uid == 'null' && date != 'null' && street != 'null') {
     match = [{ Wardid: { $eq: id } }, { date: { $eq: date } }, { Strid: { $eq: street } }];
-  } else if (uid != 'null' && date != 'null' && street != 'null') {
+  } else if ( id != 'null' && uid != 'null' && date != 'null' && street != 'null') {
     match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { date: { $eq: date } }, { Strid: { $eq: street } }];
-  } else {
+  }else if(id =='null' && uid != 'null' && date == 'null' && street == 'null'){
+    match = [{ Uid: { $eq: uid } }];
+  } 
+   else {
     match = [{ Wardid: { $eq: id } }];
   }
-  // console.log(match);
+  console.log(match);
   let data = await Shop.aggregate([
     {
       $match: {
