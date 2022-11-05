@@ -122,6 +122,12 @@ const getAllTesterIssuestoDeveloper = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+
+const gaetAllUser = catchAsync(async (req, res) => {
+  const data = await BugToolAdminService.gaetAllUser();  
+  res.send(data);
+});
+
 module.exports = {
     createBugToolAdminService,
     getAll,
@@ -140,4 +146,5 @@ module.exports = {
     updatetesterIssue,
     B2bUsersLogin,
     getAllTesterIssuestoDeveloper,
+    gaetAllUser,
 };
