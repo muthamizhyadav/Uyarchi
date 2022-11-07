@@ -372,7 +372,7 @@ const getShopOrderCloneById = async (id) => {
         productDatadetails: '$productDatadetails',
         total: '$productDatadetails.amount',
         TotalGstAmount: { $sum: '$productData.GSTamount' },
-        totalSum: {$round:{ $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] }},
+        totalSum: { $round: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] } },
         paidamount: {
           $sum: ['$orderpayments.amount', '$reorderamount'],
         },
@@ -2668,7 +2668,7 @@ const getBills_ByShop = async (shopId) => {
 const getBills_DetailsByshop = async (shopId) => {
   let values = await ShopOrderClone.aggregate([
     {
-      $match: { $and: [{ shopId: shopId }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }] },
+      $match: { $and: [{ shopId: shopId }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $ne: 'Paid' } }] },
     },
     {
       $lookup: {
