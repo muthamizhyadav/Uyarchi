@@ -48,12 +48,12 @@ const updatestcokDetails = catchAsync(async (req, res) => {
     usable = await usableStockService.updatestcokDetails_Opening(req.body);
   }
   if (req.body.stock_type == 'Random') {
-
+    usable = await usableStockService.updatestcokDetails_Random(req.body);
   }
   res.send(usable);
 });
 const updaterandom_product = catchAsync(async (req, res) => {
-  const receicedProduct = await usableStockService.updaterandom_product(req.body,req.userId);
+  const receicedProduct = await usableStockService.updaterandom_product(req.body, req.userId);
   res.send(receicedProduct);
 });
 module.exports = {

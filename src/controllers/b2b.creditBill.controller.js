@@ -120,7 +120,7 @@ const submitfinish = catchAsync(async (req, res) => {
 
 
 const getCreditBillMaster = catchAsync(async(req,res)=>{
-  const creditBillMaster = await creditBillService.getCreditBillMaster(req.params.page);
+  const creditBillMaster = await creditBillService.getCreditBillMaster(req.query);
   res.send(creditBillMaster);
 })
 

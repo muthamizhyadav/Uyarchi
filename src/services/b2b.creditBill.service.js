@@ -2104,36 +2104,91 @@ const submitfinish = async (userId, id) => {
   return group;
 }
 
-const getCreditBillMaster = async(page) =>{
+const getCreditBillMaster = async (query) => {
+  let page = query.page == null ? 0 : parseInt(query.page);
+  if (page == null || page < 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Ivalid Page Count');
+  }
+  let zone = query.zone
+  let ward = query.ward
+  let search = query.search
+  let date = query.date;
+  let user = query.user;
+  let zoneMatch = { active: true }
+  let wardMatch = { active: true }
+  let searchMatch = { active: true }
+  let dateMatch = { active: true };
+  let userMatch = { active: true };
+  startdate = null;
+  enddata = null;
+  if (zone != null && zone != '') {
+    zoneMatch = { zoneId: { $eq: zone } }
+  }
+  if (ward != null && ward != '') {
+    wardMatch = { Wardid: { $eq: ward } }
+  }
+  if (search != null && search != '') {
+    searchMatch = {
+      $or: [{ SName: { $regex: search, $options: 'i' } }, { mobile: { $regex: search, $options: 'i' } }],
+    }
+  }
+  if (date != null && date != '') {
+    date = date.split(",")
+    startdate = date[0]
+    enddata = date[1]
+    console.log(startdate)
+    console.log(enddata)
+    dateMatch = { $and: [{ Scheduledate: { $gte: startdate } }, { Scheduledate: { $lte: enddata } }] }
+  }
+  if (user != null && user != '') {
+    userMatch = { AssignedUserId: { $eq: user } }
+  }
+  console.log(zone);
+  console.log(ward);
+  console.log(search);
+  console.log(date);
+  console.log(userMatch);
+  // Scheduledate
+
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [ { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }],
-      },
+        $and: [dateMatch, { status: { $eq: 'Delivered' } },]
+      }
     },
-    {
-      $lookup: {
-        from: 'orderpayments',
-        localField: '_id',
-        foreignField: 'orderId',
-        pipeline: [
-          {
-            $group: { _id: null, price: { $sum: '$paidAmt' } },
-          },
-        ],
-        as: 'paymentData',
-      },
-    },
-    { $unwind: '$paymentData' },
     {
       $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
-        as: 'shopDtaa',
+        pipeline: [
+          {
+            $match: {
+              $and: [wardMatch, searchMatch]
+            }
+          },
+          {
+            $lookup: {
+              from: 'wards',
+              localField: 'Wardid',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [zoneMatch,]
+                  }
+                },
+              ],
+              as: 'wards',
+            },
+          },
+          { $unwind: '$wards' },
+        ],
+        as: 'b2bshopclones',
       },
     },
-    { $unwind: '$shopDtaa' },
+
+    { $unwind: '$b2bshopclones' },
     {
       $lookup: {
         from: 'productorderclones',
@@ -2172,101 +2227,224 @@ const getCreditBillMaster = async(page) =>{
         as: 'productData',
       },
     },
-
     { $unwind: '$productData' },
     {
       $lookup: {
-        from:'creditbills',
+        from: 'orderpayments',
         localField: '_id',
         foreignField: 'orderId',
-        as: 'creditbillsData',
-      }
+        pipeline: [
+          { $limit: 1 }
+        ],
+        as: 'orderpayments',
+      },
     },
-    { $unwind: '$creditbillsData'},
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $lookup: {
-        from: 'b2busers',
-        localField: 'creditbillsData.AssignedUserId',
-        foreignField: '_id',
-        as: 'b2busersData'
-      }
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: '$paidAmt',
+              },
+            },
+          },
+        ],
+        as: 'orderpaymentsall',
+      },
     },
-    { $unwind: '$b2busersData' },
-    
-
-
-
+    {
+      $unwind: {
+        path: '$orderpaymentsall',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
 
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'RE_order_Id',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: '$paidAmt',
+                    },
+                  },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              amount: '$orderpayments.amount',
+            },
+          },
+        ],
+        as: 'shoporderclones',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shoporderclones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        reorderamount: { $ifNull: ['$shoporderclones.amount', 0] },
+      },
+    },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'b2busers',
+              localField: 'AssignedUserId',
+              foreignField: '_id',
+              as: 'b2busers',
+            },
+          },
+          {
+            $unwind: {
+              path: '$b2busers',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'creditbillgroups',
+              localField: 'creditbillId',
+              foreignField: '_id',
+              pipeline: [
+                { $match: { receiveStatus: { $ne: "received" } } }
+              ],
+              as: 'creditbillgroups',
+            },
+          },
+          {
+            $unwind: {
+              path: '$creditbillgroups',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              assignedUserName: "$b2busers.name",
+              AssignedUserId: 1
+            }
+          }
+        ],
+        as: 'creditbills',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditbills',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
-        Schedulereason: 1,
-        Scheduledate: 1,
         customerBillId: 1,
         OrderId: 1,
-        date: 1,
-        statusOfBill: 1,
+        created: 1,
+        _id: 1,
+        SName: "$b2bshopclones.SName",
+        delivered_date: 1,
+        TotalAmount: { $round: "$productData.price" },
+        lastPaidAmount: "$orderpayments.paidAmt",
+        paidAMount: {
+          $sum: ['$orderpaymentsall.amount', '$reorderamount'],
+        },
+        pendingAmount: {
+          $subtract: [{ $round: "$productData.price" }, { $sum: ['$orderpaymentsall.amount', '$reorderamount'], }]
+        },
+        Schedulereason: 1,
         creditBillAssignedStatus: 1,
-        executeName: '$dataa.AssignedUserId',
-        shopNmae: '$shopDtaa.SName',
-        shopId: '$shopDtaa._id',
-        asignedUserName: "$b2busersData.name",
-       
-        BillAmount: { $round: ['$productData.price', 0] },
-        totalHistory: {
-          $sum: '$creditData.historyDtaa.amountPayingWithDEorSM',
-        },
-
-        paidAmount: '$paymentData.price',
-
-        pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
-
-        condition1: {
-          $cond: {
-            if: { $ne: [{ $subtract: [{ $round: ['$productData.price', 0] }, '$paymentData.price'] }, 0] },
-            then: true,
-            else: false,
-          },
-        },
-      },
+        creditbills: "$creditbills",
+        assignedUserName: "$creditbills.assignedUserName",
+        AssignedUserId: "$creditbills.AssignedUserId",
+        active: 1
+      }
     },
     {
       $match: {
-        $and: [{ condition1: { $eq: true } }],
-      },
+        $and: [userMatch]
+      }
     },
 
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-  let total =  await ShopOrderClone.aggregate([
+  let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [ { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }],
-      },
+        $and: [dateMatch, { status: { $eq: 'Delivered' } },]
+      }
     },
-    {
-      $lookup: {
-        from: 'orderpayments',
-        localField: '_id',
-        foreignField: 'orderId',
-        pipeline: [
-          {
-            $group: { _id: null, price: { $sum: '$paidAmt' } },
-          },
-        ],
-        as: 'paymentData',
-      },
-    },
-    { $unwind: '$paymentData' },
     {
       $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
-        as: 'shopDtaa',
+        pipeline: [
+          {
+            $match: {
+              $and: [wardMatch, searchMatch]
+            }
+          },
+          {
+            $lookup: {
+              from: 'wards',
+              localField: 'Wardid',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [zoneMatch,]
+                  }
+                },
+              ],
+              as: 'wards',
+            },
+          },
+          { $unwind: '$wards' },
+        ],
+        as: 'b2bshopclones',
       },
     },
-    { $unwind: '$shopDtaa' },
+
+    { $unwind: '$b2bshopclones' },
     {
       $lookup: {
         from: 'productorderclones',
@@ -2305,70 +2483,183 @@ const getCreditBillMaster = async(page) =>{
         as: 'productData',
       },
     },
-
     { $unwind: '$productData' },
     {
       $lookup: {
-        from:'creditbills',
+        from: 'orderpayments',
         localField: '_id',
         foreignField: 'orderId',
-        as: 'creditbillsData',
-      }
+        pipeline: [
+          { $limit: 1 }
+        ],
+        as: 'orderpayments',
+      },
     },
-    { $unwind: '$creditbillsData'},
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $lookup: {
-        from: 'b2busers',
-        localField: 'creditbillsData.AssignedUserId',
-        foreignField: '_id',
-        as: 'b2busersData'
-      }
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: '$paidAmt',
+              },
+            },
+          },
+        ],
+        as: 'orderpaymentsall',
+      },
     },
-    { $unwind: '$b2busersData' },
-    
-
-
-
+    {
+      $unwind: {
+        path: '$orderpaymentsall',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
 
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'RE_order_Id',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: '$paidAmt',
+                    },
+                  },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              amount: '$orderpayments.amount',
+            },
+          },
+        ],
+        as: 'shoporderclones',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shoporderclones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        reorderamount: { $ifNull: ['$shoporderclones.amount', 0] },
+      },
+    },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'b2busers',
+              localField: 'AssignedUserId',
+              foreignField: '_id',
+              as: 'b2busers',
+            },
+          },
+          {
+            $unwind: {
+              path: '$b2busers',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'creditbillgroups',
+              localField: 'creditbillId',
+              foreignField: '_id',
+              pipeline: [
+                { $match: { receiveStatus: { $ne: "received" } } }
+              ],
+              as: 'creditbillgroups',
+            },
+          },
+          {
+            $unwind: {
+              path: '$creditbillgroups',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              assignedUserName: "$b2busers.name",
+              AssignedUserId: 1
+            }
+          }
+        ],
+        as: 'creditbills',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditbills',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
-        Schedulereason: 1,
-        Scheduledate: 1,
         customerBillId: 1,
         OrderId: 1,
-        date: 1,
-        statusOfBill: 1,
+        created: 1,
+        _id: 1,
+        SName: "$b2bshopclones.SName",
+        delivered_date: 1,
+        TotalAmount: { $round: "$productData.price" },
+        lastPaidAmount: "$orderpayments.paidAmt",
+        paidAMount: {
+          $sum: ['$orderpaymentsall.amount', '$reorderamount'],
+        },
+        pendingAmount: {
+          $subtract: [{ $round: "$productData.price" }, { $sum: ['$orderpaymentsall.amount', '$reorderamount'], }]
+        },
+        Schedulereason: 1,
         creditBillAssignedStatus: 1,
-        executeName: '$dataa.AssignedUserId',
-        shopNmae: '$shopDtaa.SName',
-        shopId: '$shopDtaa._id',
-        asignedUserName: "$b2busersData.name",
-       
-        BillAmount: { $round: ['$productData.price', 0] },
-        totalHistory: {
-          $sum: '$creditData.historyDtaa.amountPayingWithDEorSM',
-        },
-
-        paidAmount: '$paymentData.price',
-
-        pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
-
-        condition1: {
-          $cond: {
-            if: { $ne: [{ $subtract: [{ $round: ['$productData.price', 0] }, '$paymentData.price'] }, 0] },
-            then: true,
-            else: false,
-          },
-        },
-      },
+        creditbills: "$creditbills",
+        assignedUserName: "$creditbills.assignedUserName",
+        AssignedUserId: "$creditbills.AssignedUserId",
+        active: 1
+      }
     },
     {
       $match: {
-        $and: [{ condition1: { $eq: true } }],
-      },
+        $and: [userMatch]
+      }
     },
   ]);
-  return {values: values, total: total.length};
+  return { values: values, total: total.length };
 }
 module.exports = {
   getShopWithBill,
