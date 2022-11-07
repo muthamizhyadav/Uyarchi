@@ -119,6 +119,11 @@ const submitfinish = catchAsync(async (req, res) => {
 });
 
 
+const getCreditBillMaster = catchAsync(async(req,res)=>{
+  const creditBillMaster = await creditBillService.getCreditBillMaster(req.params.page);
+  res.send(creditBillMaster);
+})
+
 
 module.exports = {
 
@@ -144,5 +149,6 @@ module.exports = {
   submitDispute,
   getPaymentTypeCount,
   getdeliveryExcutive,
-  submitfinish
+  submitfinish,
+  getCreditBillMaster,
 }
