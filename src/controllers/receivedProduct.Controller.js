@@ -105,7 +105,10 @@ const getSupplierDetailByGroupId = catchAsync(async (req, res) => {
   const receicedProduct = await ReceivedProductService.getSupplierDetailByGroupId(req.params.id);
   res.send(receicedProduct);
 });
-
+const updaterandom_product = catchAsync(async (req, res) => {
+  const receicedProduct = await ReceivedProductService.updaterandom_product(req.body);
+  res.send(receicedProduct);
+});
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,
@@ -119,4 +122,5 @@ module.exports = {
   uploadImageById,
   getreceivedProductBySupplier,
   getSupplierDetailByGroupId,
+  updaterandom_product
 };

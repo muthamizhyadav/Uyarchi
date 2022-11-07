@@ -23,4 +23,8 @@ router
   );
 router.route('/getproducts/BySupplier/:page').get(receivedProductController.getreceivedProductBySupplier);
 router.route('/supplierDetail/byGroup/:id').get(receivedProductController.getSupplierDetailByGroupId);
+
+
+router.route('/updaterandom/product').post(receivedProductController.updaterandom_product);
+
 module.exports = router;

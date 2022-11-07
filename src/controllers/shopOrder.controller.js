@@ -308,7 +308,7 @@ const getBills_ByShop = catchAsync(async (req, res) => {
 });
 
 const getBills_DetailsByshop = catchAsync(async (req, res) => {
-  const data = await shopOrderService.getBills_DetailsByshop(req.params.shopId);
+  const data = await shopOrderService.getBills_DetailsByshop(req.params.shopId, req.params.page);
   res.send(data);
 });
 const vieworderbill_byshop = catchAsync(async (req, res) => {

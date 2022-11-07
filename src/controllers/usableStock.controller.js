@@ -52,7 +52,10 @@ const updatestcokDetails = catchAsync(async (req, res) => {
   }
   res.send(usable);
 });
-
+const updaterandom_product = catchAsync(async (req, res) => {
+  const receicedProduct = await usableStockService.updaterandom_product(req.body,req.userId);
+  res.send(receicedProduct);
+});
 module.exports = {
   createUsableStock,
   getAllUsableStock,
@@ -61,5 +64,6 @@ module.exports = {
   getAssignStockbyId,
   getStocks,
   getstockDetails,
-  updatestcokDetails
+  updatestcokDetails,
+  updaterandom_product
 };
