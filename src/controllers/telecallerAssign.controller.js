@@ -40,7 +40,13 @@ const getTelecallerAssignedShops = catchAsync(async (req, res) => {
 });
 
 const getnotAssignShops = catchAsync(async (req, res) => {
-  const data = await telecallerService.getnotAssignShops(req.params.id, req.params.page, req.params.limit, req.params.uid, req.params.date);
+  const data = await telecallerService.getnotAssignShops(
+    req.params.id,
+    req.params.page,
+    req.params.limit,
+    req.params.uid,
+    req.params.date
+  );
   res.send(data);
 });
 
@@ -79,4 +85,99 @@ const assignShopsOnlydatewise = catchAsync(async (req, res) => {
   res.send(data);
 });
 
-module.exports = { createtelecallerAssignReassign, getAllTelecallerHead, getUnassignedtelecaller, gettelecallerheadTelecallerdata, createTelecallerShop, getAllTelecaller, getTelecallerAssignedShops, getnotAssignShops, getUsersWith_skiped, Return_Assign_To_telecaller, createtemperaryAssigndata, getAssignData_by_Telecaller, assignShopsTelecaller, assignShopsTelecallerdatewise, assignShopsOnlydatewise};
+// salesmanOrder
+
+const createsalesmanAssignReassign = catchAsync(async (req, res) => {
+  const data = await telecallerService.createsalesmanAssignReassign(req.body);
+  res.send(data);
+});
+
+const getAllAsmSalesmanHead = catchAsync(async (req, res) => {
+  const data = await telecallerService.getAllAsmSalesmanHead(req.body);
+  res.send(data);
+});
+
+const getUnassignedsalesmanOrder = catchAsync(async (req, res) => {
+  const data = await telecallerService.getUnassignedsalesmanOrder(req.params.page);
+  res.send(data);
+});
+
+const createsalesmanOrderShop = catchAsync(async (req, res) => {
+  const data = await telecallerService.createsalesmanOrderShop(req.body);
+  res.send(data);
+});
+
+const getsalemanOrderSalesman = catchAsync(async (req, res) => {
+  const data = await telecallerService.getsalemanOrderSalesman(req.params.id);
+  res.send(data);
+});
+
+const getAllSalesman = catchAsync(async (req, res) => {
+  const data = await telecallerService.getAllSalesman();
+  res.send(data);
+});
+
+const getsalesmanOrderAssignedShops = catchAsync(async (req, res) => {
+  const data = await telecallerService.getsalesmanOrderAssignedShops(req.params.id);
+  res.send(data);
+});
+
+const getnotAssignsalesmanOrderShops = catchAsync(async (req, res) => {
+  const data = await telecallerService.getnotAssignsalesmanOrderShops(
+    req.params.id,
+    req.params.page,
+    req.params.limit,
+    req.params.uid,
+    req.params.date
+  );
+  res.send(data);
+});
+
+const getUserssalesmanWith_skiped = catchAsync(async (req, res) => {
+  const data = await telecallerService.getUserssalesmanWith_skiped(req.params.id);
+  res.send(data);
+});
+
+const Return_Assign_To_salesmanOrder = catchAsync(async (req, res) => {
+  const data = await telecallerService.Return_Assign_To_salesmanOrder(req.params.id);
+  res.send(data);
+});
+
+const createsalesmantemperaryAssigndata = catchAsync(async (req, res) => {
+  const data = await telecallerService.createsalesmantemperaryAssigndata(req.body);
+  res.send(data);
+});
+
+const getAssignData_by_SalesmanOrders = catchAsync(async (req, res) => {
+  const data = await telecallerService.getAssignData_by_SalesmanOrders(req.params.page);
+  res.send(data);
+});
+module.exports = {
+  createtelecallerAssignReassign,
+  getAllTelecallerHead,
+  getUnassignedtelecaller,
+  gettelecallerheadTelecallerdata,
+  createTelecallerShop,
+  getAllTelecaller,
+  getTelecallerAssignedShops,
+  getnotAssignShops,
+  getUsersWith_skiped,
+  Return_Assign_To_telecaller,
+  createtemperaryAssigndata,
+  getAssignData_by_Telecaller,
+  assignShopsTelecaller,
+  assignShopsTelecallerdatewise,
+  assignShopsOnlydatewise,
+  createsalesmanAssignReassign,
+  getAllAsmSalesmanHead,
+  getUnassignedsalesmanOrder,
+  getsalemanOrderSalesman,
+  createsalesmanOrderShop,
+  getAllSalesman,
+  getsalesmanOrderAssignedShops,
+  getnotAssignsalesmanOrderShops,
+  getUserssalesmanWith_skiped,
+  Return_Assign_To_salesmanOrder,
+  createsalesmantemperaryAssigndata,
+  getAssignData_by_SalesmanOrders,
+};
