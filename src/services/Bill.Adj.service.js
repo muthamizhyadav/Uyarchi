@@ -423,20 +423,16 @@ const adjustment_bill = async (id, userId) => {
   if (shoporder.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Pending Bill Not Available');
   }
+  let billadj = await BillAdjustment.findOne({ shopId: id });
+  totalAmount = billadj.un_Billed_amt;
   shoporder.forEach(async (e) => {
-    // console.log(e)
-    let billadj = await BillAdjustment.findOne({ shopId: id });
-    let pendingAmount = e.pendingAmount;
-    let unbilled = billadj.un_Billed_amt;
-    // console.log(billadj)
-    if (unbilled > 0) {
+    if (totalAmount > 0) {
+      let pendingAmount = e.pendingAmount;
       if (pendingAmount > 0) {
-        let reduceAmount = unbilled - pendingAmount
+        let reduceAmount = totalAmount - pendingAmount;
         if (reduceAmount >= 0) {
-          // console.log(unbilled)
-          // console.log(pendingAmount)
-          // console.log(reduceAmount);
-          await BillAdjustment.findByIdAndUpdate({ _id: billadj._id }, { un_Billed_amt: reduceAmount }, { new: true });
+          totalAmount = totalAmount - pendingAmount;
+          console.log(pendingAmount, 'asdasda')
           await ShopOrderClone.findByIdAndUpdate({ _id: e._id }, { statusOfBill: "Paid" }, { new: true });
           await OrderPayment.create({
             paidAmt: pendingAmount,
@@ -450,11 +446,10 @@ const adjustment_bill = async (id, userId) => {
           });
         }
         else {
-          reduceAmount = unbilled
-          // console.log(unbilled)
-          // console.log(pendingAmount)
-          // console.log(reduceAmount);
-          await BillAdjustment.findByIdAndUpdate({ _id: billadj._id }, { un_Billed_amt: 0 }, { new: true });
+          console.log(reduceAmount, 'asdas');
+          console.log(totalAmount, 'asdas');
+          reduceAmount = totalAmount
+          totalAmount = 0;
           await OrderPayment.create({
             paidAmt: reduceAmount,
             created: moment(),
@@ -469,9 +464,11 @@ const adjustment_bill = async (id, userId) => {
       }
     }
   })
-  let billadjss = await BillAdjustment.findOne({ shopId: id });
+  console.log(totalAmount)
+  billadj = await BillAdjustment.findByIdAndUpdate({ _id: billadj._id }, { un_Billed_amt: totalAmount }, { new: true });
+  // let billadjss = await BillAdjustment.findOne({ shopId: id });
 
-  return billadjss;
+  return billadj;
 }
 
 module.exports = {
