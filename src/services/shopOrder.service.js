@@ -372,7 +372,7 @@ const getShopOrderCloneById = async (id) => {
         productDatadetails: '$productDatadetails',
         total: '$productDatadetails.amount',
         TotalGstAmount: { $sum: '$productData.GSTamount' },
-        totalSum: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] },
+        totalSum: {$round:{ $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] }},
         paidamount: {
           $sum: ['$orderpayments.amount', '$reorderamount'],
         },
