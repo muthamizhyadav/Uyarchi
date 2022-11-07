@@ -709,6 +709,22 @@ const updatestcokDetails_Opening = async (body) => {
   return { success: true };
 
 }
+
+const updaterandom_product = async (body, userId) => {
+  const today = moment().format('DD-MM-YYYY');
+  body.forEach(async (e) => {
+    let usableStockss = await usableStock.findOne({ productId: e.Pid, date: today });
+    let randomarray = usableStockss.randomStock_History
+    randomarray.push({
+      date: moment().format('YYYY-MM-DD'),
+      time: moment().format('hh:mm a'),
+      user: userId
+    });
+    usableStockss.random_stock = true;
+    usableStockss.save()
+  })
+  return { updated: 'successfull' };
+}
 module.exports = {
   createusableStock,
   getAllusableStock,
@@ -718,5 +734,6 @@ module.exports = {
   getStocks,
   getstockDetails,
   updatestcokDetails,
-  updatestcokDetails_Opening
+  updatestcokDetails_Opening,
+  updaterandom_product
 };

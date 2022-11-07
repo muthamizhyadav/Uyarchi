@@ -773,6 +773,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         total: 1,
         gsttotal: 1,
         subtotal: { $round: '$productorderclones.price' },
+        productorderclones:"$productorderclones",
         SGST: 1,
         CGST: 1,
         OrderId: 1,
