@@ -527,6 +527,11 @@ const adjustment_bill = async (id, userId) => {
 
 const adjustment_bill_pay = async (id, userId, body) => {
   // console.log(id)
+  let billadj = await BillAdjustment.findOne({ shopId: id });
+  totalAmount = body.amount;
+  if (billadj.un_Billed_amt < body.amount) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invalid Amount Available');
+  }
   if (body.orders.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order Not Available');
   }
@@ -677,8 +682,7 @@ const adjustment_bill_pay = async (id, userId, body) => {
   if (shoporder.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Pending Bill Not Available');
   }
-  let billadj = await BillAdjustment.findOne({ shopId: id });
-  totalAmount = billadj.un_Billed_amt;
+
   shoporder.forEach(async (e) => {
     if (totalAmount > 0) {
       let pendingAmount = e.pendingAmount;
@@ -719,7 +723,7 @@ const adjustment_bill_pay = async (id, userId, body) => {
     }
   })
   console.log(totalAmount)
-  billadj = await BillAdjustment.findByIdAndUpdate({ _id: billadj._id }, { un_Billed_amt: totalAmount }, { new: true });
+  billadj = await BillAdjustment.findByIdAndUpdate({ _id: billadj._id }, { un_Billed_amt: billadj.un_Billed_amt - body.amount }, { new: true });
   // let billadjss = await BillAdjustment.findOne({ shopId: id });
 
   return billadj;
