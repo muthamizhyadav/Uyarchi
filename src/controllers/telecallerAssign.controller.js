@@ -152,6 +152,21 @@ const getAssignData_by_SalesmanOrders = catchAsync(async (req, res) => {
   const data = await telecallerService.getAssignData_by_SalesmanOrders(req.params.page);
   res.send(data);
 });
+
+const assignShopsSalesmanOrder = catchAsync(async (req, res) => {
+  const data = await telecallerService.assignShopsSalesmanOrder(req.params.id, req.params.page);
+  res.send(data);
+});
+
+const assignShopssalesmandatewise = catchAsync(async (req, res) => {
+  const data = await telecallerService.assignShopssalesmandatewise(req.params.id, req.params.wardid, req.params.page);
+  res.send(data);
+});
+
+const assignShopssalesmanOnlydatewise = catchAsync(async (req, res) => {
+  const data = await telecallerService.assignShopssalesmanOnlydatewise(req.params.id, req.params.wardid, req.params.page);
+  res.send(data);
+});
 module.exports = {
   createtelecallerAssignReassign,
   getAllTelecallerHead,
@@ -180,4 +195,7 @@ module.exports = {
   Return_Assign_To_salesmanOrder,
   createsalesmantemperaryAssigndata,
   getAssignData_by_SalesmanOrders,
+  assignShopsSalesmanOrder,
+  assignShopssalesmandatewise,
+  assignShopssalesmanOnlydatewise,
 };

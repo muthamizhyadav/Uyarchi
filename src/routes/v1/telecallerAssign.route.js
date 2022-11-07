@@ -38,4 +38,10 @@ router.route('/getUserssalesmanWith_skiped/:id').get(telecallerAssignController.
 router.route('/Return_Assign_To_salesmanOrder/:id').put(telecallerAssignController.Return_Assign_To_salesmanOrder);
 router.route('/createsalesmantemperaryAssigndata').post(telecallerAssignController.createsalesmantemperaryAssigndata);
 router.route('/getAssignData_by_SalesmanOrders/:page').get(telecallerAssignController.getAssignData_by_SalesmanOrders);
+
+//report
+router.route('/assignShopsSalesmanOrder/:id/:page').get(telecallerAssignController.assignShopsSalesmanOrder);
+router.route('/assignShopssalesmandatewise/:id/:wardid/:page').get(telecallerAssignController.assignShopssalesmandatewise);
+router.route('/assignShopssalesmanOnlydatewise/:id/:wardid/:page').get(telecallerAssignController.assignShopssalesmanOnlydatewise);
+
 module.exports = router;
