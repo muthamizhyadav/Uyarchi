@@ -81,6 +81,11 @@ const getCustomer_bills = async (page) => {
         foreignField: 'shopId',
         pipeline: [
           {
+            $match: {
+              $and: [{ shopId: { $eq: '$shopdata.shopId' } }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
+            },
+          },
+          {
             $lookup: {
               from: 'productorderclones',
               localField: '_id',
