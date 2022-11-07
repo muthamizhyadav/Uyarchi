@@ -2136,18 +2136,18 @@ const getCreditBillMaster = async (query) => {
     date = date.split(",")
     startdate = date[0]
     enddata = date[1]
-    console.log(startdate)
-    console.log(enddata)
+    // console.log(startdate)
+    // console.log(enddata)
     dateMatch = { $and: [{ Scheduledate: { $gte: startdate } }, { Scheduledate: { $lte: enddata } }] }
   }
   if (user != null && user != '') {
     userMatch = { AssignedUserId: { $eq: user } }
   }
-  console.log(zone);
-  console.log(ward);
-  console.log(search);
-  console.log(date);
-  console.log(userMatch);
+  // console.log(zone);
+  // console.log(ward);
+  // console.log(search);
+  // console.log(date);
+  // console.log(userMatch);
   // Scheduledate
 
   let values = await ShopOrderClone.aggregate([
