@@ -1,5 +1,6 @@
 const express = require('express');
 const BillAdjController = require('../../controllers/Bill.Adj.controller');
+const authorization = require('../../controllers/tokenVerify.controller');
 
 const router = express.Router();
 
@@ -9,5 +10,6 @@ router.route('/').post(BillAdjController.createBillAdj);
 // get billAdjustment By Id
 router.route('/:id').get(BillAdjController.getBillAdjustmentById);
 router.route('/customer/pendingbills/:page').get(BillAdjController.getCustomer_bills);
+router.route('/adjustment/bill/:id').get(authorization,BillAdjController.adjustment_bill);
 
 module.exports = router;

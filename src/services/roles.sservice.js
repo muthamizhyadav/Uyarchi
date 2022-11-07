@@ -456,11 +456,33 @@ const getsalesman = async () => {
       },
     },
     {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: 'b2busersData._id',
+        foreignField: 'salesManId',
+       pipeline:[ {
+          $match: {
+            $or: [
+              {
+                $and: [
+                  { status: { $eq: 'tempReassign' } },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+        as: 'salesmanshopsdata',
+      },
+    },
+    {
       $project: {
         name: '$b2busersData.name',
         b2buserId: '$b2busersData._id',
         roleName: 1,
-        count:{$size:"$salesmanshops"},
+        assigncount:{$size:"$salesmanshops"},
+        tempcount:{$size:"$salesmanshopsdata"},
+        count:{ $add:[{$size:"$salesmanshops"},{$size:"$salesmanshopsdata"}] },
         _id: 1,
       },
     },

@@ -9,6 +9,7 @@ const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 const { Users } = require('../models/B2Busers.model');
 const CallHistory = require('../models/b2b.callHistory.model');
+const BillAdj = require('../models/Bill.Adj.model');
 
 const createshopOrder = async (shopOrderBody, userid) => {
   let { product, date, time, shopId, time_of_delivery } = shopOrderBody;
@@ -761,7 +762,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
       },
     },
     {
-      $unwind: "$productorderclones"
+      $unwind: '$productorderclones',
     },
     {
       $project: {
@@ -771,7 +772,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         time_of_delivery: 1,
         total: 1,
         gsttotal: 1,
-        subtotal: { $round: "$productorderclones.price" },
+        subtotal: { $round: '$productorderclones.price' },
         SGST: 1,
         CGST: 1,
         OrderId: 1,
@@ -2667,177 +2668,7 @@ const getBills_ByShop = async (shopId) => {
 const getBills_DetailsByshop = async (shopId) => {
   let values = await ShopOrderClone.aggregate([
     {
-      $match: { shopId: shopId },
-    },
-    {
-      $lookup: {
-        from: 'orderpayments',
-        localField: '_id',
-        foreignField: 'orderId',
-        pipeline: [
-          {
-            $group: {
-              _id: null,
-              amount: {
-                $sum: '$paidAmt',
-              },
-            },
-          },
-        ],
-        as: 'orderpayments',
-      },
-    },
-    {
-      $unwind: '$orderpayments',
-    },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'orderId',
-        pipeline: [
-          {
-            $lookup: {
-              from: 'products',
-              localField: 'productid',
-              foreignField: '_id',
-              as: 'products',
-            },
-          },
-          {
-            $unwind: '$products',
-          },
-          {
-            $project: {
-              _id: 1,
-              status: 1,
-              orderId: 1,
-              productid: 1,
-              quantity: 1,
-              priceperkg: 1,
-              GST_Number: 1,
-              HSN_Code: 1,
-              packtypeId: 1,
-              packKg: 1,
-              unit: 1,
-              productTitle: '$products.productTitle',
-              created: 1,
-              finalQuantity: 1,
-              finalPricePerKg: 1,
-              GST_Number: 1,
-              GSTamount: {
-                $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$priceperkg'] }, '$GST_Number'] }, 100],
-              },
-            },
-          },
-        ],
-        as: 'productData',
-      },
-    },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'orderId',
-        pipeline: [
-          {
-            $group: {
-              _id: null,
-              amount: {
-                $sum: {
-                  $multiply: ['$finalQuantity', '$priceperkg'],
-                },
-              },
-            },
-          },
-        ],
-        as: 'productDatadetails',
-      },
-    },
-    {
-      $unwind: {
-        path: '$productDatadetails',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $lookup: {
-        from: 'billadjustments',
-        localField: 'shopId',
-        foreignField: 'shopId',
-        as: 'adjBill',
-      },
-    },
-    {
-      $unwind: {
-        path: '$adjBill',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        as: 'shops',
-      },
-    },
-    {
-      $unwind: {
-        path: '$shops',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        TotalGstAmount: { $sum: '$productData.GSTamount' },
-        paidAmt: '$orderpayments.amount',
-        orderAmt: '$productDatadetails.amount',
-        date: 1,
-        shopId: 1,
-        adjBill: '$adjBill.un_Billed_amt',
-        shops: '$shops.SName',
-        OrderId: 1,
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        totalAmount: { $add: ['$orderAmt', '$TotalGstAmount'] },
-        paidAmt: '$paidAmt',
-        shopId: 1,
-        adjBill: '$adjBill',
-        shops: '$shops',
-        date: 1,
-        OrderId: 1,
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        totalPendingAmount: { $round: [{ $subtract: ['$totalAmount', '$paidAmt'] }] },
-        shopId: 1,
-        paidAmt: 1,
-        totalAmount: 1,
-        Un_billedAmt: { $ifNull: ['$adjBill', 0] },
-        shops: '$shops',
-        date: 1,
-        OrderId: 1,
-      },
-    },
-  ]);
-  return values;
-};
-
-
-const vieworderbill_byshop = async (id) => {
-  let value = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [{ shopId: { $eq: id } }, { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }]
-
-      }
+      $match: { $and: [{ shopId: shopId }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }] },
     },
     {
       $lookup: {
@@ -2876,7 +2707,125 @@ const vieworderbill_byshop = async (id) => {
         ],
         as: 'productData',
       },
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: '$paidAmt',
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'billadjustments',
+        localField: 'shopId',
+        foreignField: 'shopId',
+        as: 'adjBill',
+      },
+    },
+    {
+      $unwind: {
+        path: '$adjBill',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shops',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        paidAmt: { $ifNull: ['$orderpayments.amount', 0] },
+        totalPendingAmount: { $subtract: ['$productData.price', { $ifNull: ['$orderpayments.amount', 0] }] },
+        totalAmount: '$productData.price',
+        adjBill: '$adjBill.un_Billed_amt',
+        shops: '$shops.SName',
+        OrderId: 1,
+        date: 1,
+      },
+    },
+  ]);
+  let shops = await BillAdj.findOne({ shopId: shopId });
+  return { values: values, shops: shops };
+};
 
+const vieworderbill_byshop = async (id) => {
+  let value = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ shopId: { $eq: id } }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
     },
     {
       $unwind: {
@@ -2910,11 +2859,11 @@ const vieworderbill_byshop = async (id) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $sort: { date: -1, time: -1 }
+            $sort: { date: -1, time: -1 },
           },
           {
-            $limit: 1
-          }
+            $limit: 1,
+          },
         ],
         as: 'lastpaid',
       },
@@ -2928,8 +2877,8 @@ const vieworderbill_byshop = async (id) => {
     {
       $project: {
         _id: 1,
-        orderpayments: "$orderpayments.price",
-        productData: "$productData.price",
+        orderpayments: '$orderpayments.price',
+        productData: '$productData.price',
         pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
         OrderId: 1,
         created: 1,
@@ -2940,17 +2889,16 @@ const vieworderbill_byshop = async (id) => {
         customerBillId: 1,
         delivered_date: 1,
         Scheduledate: 1,
-        lastpaidamount: "$lastpaid.paidAmt",
-        payment: "$lastpaid.payment",
-        paymentMethod: "$lastpaid.paymentMethod",
-        paymentstutes: "$lastpaid.paymentstutes",
-
-      }
-    }
-  ])
+        lastpaidamount: '$lastpaid.paidAmt',
+        payment: '$lastpaid.payment',
+        paymentMethod: '$lastpaid.paymentMethod',
+        paymentstutes: '$lastpaid.paymentstutes',
+      },
+    },
+  ]);
   let shop = await Shop.findById(id);
   return { value: value, shop: shop };
-}
+};
 
 module.exports = {
   // product
@@ -3000,5 +2948,5 @@ module.exports = {
   lapsedordercount,
   getBills_ByShop,
   getBills_DetailsByshop,
-  vieworderbill_byshop
+  vieworderbill_byshop,
 };

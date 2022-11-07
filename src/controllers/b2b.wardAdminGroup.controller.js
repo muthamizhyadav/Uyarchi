@@ -71,9 +71,15 @@ const updateDeliveryCompleted = catchAsync(async (req, res) => {
   res.send(deliveryCompleted);
 });
 const creditupdateDeliveryCompleted = catchAsync(async (req, res) => {
-  const deliveryCompleted = await wardAdminGroupService.creditupdateDeliveryCompleted(req.params.id, req.body,req.userId);
+  const deliveryCompleted = await wardAdminGroupService.creditupdateDeliveryCompleted(req.params.id, req.body, req.userId);
   res.send(deliveryCompleted);
 });
+
+const scheduleshopdate = catchAsync(async (req, res) => {
+  const deliveryCompleted = await wardAdminGroupService.scheduleshopdate(req.params.id, req.body, req.userId);
+  res.send(deliveryCompleted);
+});
+
 const UpdateUnDeliveredStatus = catchAsync(async (req, res) => {
   const deliveryStatus = await wardAdminGroupService.updateOrderStatus_forundelivey(req.params.id, req.body);
   res.send(deliveryStatus);
@@ -223,7 +229,7 @@ const getPettyCashDetails = catchAsync(async (req, res) => {
 });
 
 const getAllGroup = catchAsync(async (req, res) => {
-  const group = await wardAdminGroupService.getAllGroup(req.params.id,req.params.date,req.params.FinishingStatus,req.params.page);
+  const group = await wardAdminGroupService.getAllGroup(req.params.id, req.params.date, req.params.FinishingStatus, req.params.page);
   res.send(group);
 });
 
@@ -286,13 +292,13 @@ const createAddOrdINGrp = catchAsync(async (req, res) => {
 });
 
 const finishingAccount = catchAsync(async (req, res) => {
-  const details = await wardAdminGroupService.finishingAccount(req.params.id,req.params.page);
+  const details = await wardAdminGroupService.finishingAccount(req.params.id, req.params.page);
   res.send(details);
 });
 
 
 const submitDispute = catchAsync(async (req, res) => {
-  const details = await wardAdminGroupService.submitDispute(req.params.id,req.body);
+  const details = await wardAdminGroupService.submitDispute(req.params.id, req.body);
   res.send(details);
 });
 
@@ -312,17 +318,17 @@ const createfineData = catchAsync(async (req, res) => {
 });
 
 
-const getOrderDataByPassing = catchAsync(async (req,res) => {
+const getOrderDataByPassing = catchAsync(async (req, res) => {
   const data = await wardAdminGroupService.getOrderDataByPassing(req.params.id);
   res.send(data);
 });
 
-const deliveryExecutiveSorting = catchAsync(async (req,res) => {
+const deliveryExecutiveSorting = catchAsync(async (req, res) => {
   const sorting = await wardAdminGroupService.deliveryExecutiveSorting();
   res.send(sorting);
 });
 
-const getGroupDetailsForDE = catchAsync(async (req,res) => {
+const getGroupDetailsForDE = catchAsync(async (req, res) => {
   const groupDetails = await wardAdminGroupService.getGroupDetailsForDE(req.params.page);
   res.send(groupDetails)
 });
@@ -412,5 +418,6 @@ module.exports = {
 
   deliveryExecutiveSorting,
   getGroupDetailsForDE,
-  creditupdateDeliveryCompleted
+  creditupdateDeliveryCompleted,
+  scheduleshopdate
 };

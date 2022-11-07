@@ -196,8 +196,8 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
       await ShopOrderClone.findByIdAndUpdate({ _id: creditBills.orderId }, { statusOfBill: "Paid" }, { new: true });
     }
   }
-  await ShopOrderClone.findByIdAndUpdate({ _id: creditBills.orderId }, { Scheduledate: updateBody.reasonScheduleOrDate }, { new: true });
-  if (updateBody.reasonScheduleOrDate == null || updateBody.reasonScheduleOrDate == '') {
+  await ShopOrderClone.findByIdAndUpdate({ _id: creditBills.orderId }, { Scheduledate: updateBody.reasonScheduleOrDate, Schedulereason: updateBody.Schedulereason }, { new: true });
+  if (updateBody.Schedulereason == null || updateBody.Schedulereason == '') {
     await orderPayment.create({
       paidAmt: paidamount,
       date: currentDate,
@@ -216,10 +216,51 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
     });
   }
   else {
+    await orderPayment.create({
+      paidAmt: 0,
+      date: currentDate,
+      time: currenttime,
+      created: moment(),
+      orderId: creditBills.orderId,
+      payment: "Scheduled",
+      pay_type: updateBody.pay_types,
+      paymentMethod: updateBody.paymentMethods,
+      paymentstutes: updateBody.paymentstutes,
+      uid: userId,
+      type: "creditBill",
+      reasonScheduleOrDate: updateBody.reasonScheduleOrDate,
+      creditID: updateBody.groupID,
+      Schedulereason: updateBody.Schedulereason
+    });
     await creditBill.findByIdAndUpdate({ _id: id }, { reasonScheduleOrDate: updateBody.reasonScheduleOrDate, Schedulereason: updateBody.Schedulereason }, { new: true });
   }
   return deliveryStatus;
 };
+
+const scheduleshopdate = async (id, updateBody, userId) => {
+  let currentDate = moment().format('YYYY-MM-DD');
+  let currenttime = moment().format('HHmmss');
+  let deliveryStatus = await ShopOrderClone.findById(id);
+  if (!deliveryStatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  let paidamount = 0;
+  await ShopOrderClone.findByIdAndUpdate({ _id: id }, { Scheduledate: updateBody.reasonScheduleOrDate, Schedulereason: updateBody.Schedulereason }, { new: true });
+  await orderPayment.create({
+    paidAmt: 0,
+    date: currentDate,
+    time: currenttime,
+    created: moment(),
+    orderId: id,
+    payment: "Scheduled",
+    uid: userId,
+    type: "Scheduled",
+    reasonScheduleOrDate: updateBody.reasonScheduleOrDate,
+    Schedulereason: updateBody.Schedulereason
+  });
+  return deliveryStatus;
+};
+
 const updateOrderStatus = async (id, updateBody) => {
   let currentDate = moment().format('YYYY-MM-DD');
   let currenttime = moment().format('HHmmss');
@@ -3142,5 +3183,6 @@ module.exports = {
 
   deliveryExecutiveSorting,
   getGroupDetailsForDE,
-  creditupdateDeliveryCompleted
+  creditupdateDeliveryCompleted,
+  scheduleshopdate
 };
