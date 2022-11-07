@@ -81,11 +81,6 @@ const getCustomer_bills = async (page) => {
         foreignField: 'shopId',
         pipeline: [
           {
-            $match: {
-              $and: [{ shopId: { $eq: '$shopdata.shopId' } }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
-            },
-          },
-          {
             $lookup: {
               from: 'productorderclones',
               localField: '_id',
@@ -340,15 +335,11 @@ const adjustment_bill = async (id, userId) => {
   let shoporder = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { shopId: { $eq: id } },
-          { status: { $eq: "Delivered" } },
-          { statusOfBill: { $eq: "Pending" } }
-        ]
-      }
+        $and: [{ shopId: { $eq: id } }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
+      },
     },
     {
-      $sort: { date: 1 }
+      $sort: { date: 1 },
     },
     {
       $lookup: {
@@ -418,11 +409,11 @@ const adjustment_bill = async (id, userId) => {
         _id: 1,
         OrderId: 1,
         created: 1,
-        paidAmount: "$paymentData.price",
-        totalAmount: "$productData.price",
+        paidAmount: '$paymentData.price',
+        totalAmount: '$productData.price',
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
-      }
-    }
+      },
+    },
   ]);
   // console.log(shoporder)
   if (shoporder.length == 0) {
@@ -436,26 +427,25 @@ const adjustment_bill = async (id, userId) => {
     // console.log(billadj)
     if (unbilled > 0) {
       if (pendingAmount > 0) {
-        let reduceAmount = unbilled - pendingAmount
+        let reduceAmount = unbilled - pendingAmount;
         if (reduceAmount >= 0) {
           // console.log(unbilled)
           // console.log(pendingAmount)
           // console.log(reduceAmount);
           await BillAdjustment.findByIdAndUpdate({ _id: billadj._id }, { un_Billed_amt: reduceAmount }, { new: true });
-          await ShopOrderClone.findByIdAndUpdate({ _id: e._id }, { statusOfBill: "Paid" }, { new: true });
+          await ShopOrderClone.findByIdAndUpdate({ _id: e._id }, { statusOfBill: 'Paid' }, { new: true });
           await OrderPayment.create({
             paidAmt: pendingAmount,
             created: moment(),
             date: moment().format('YYYY-MM-DD'),
             time: moment().format('hhmmss'),
             orderId: e._id,
-            payment: "Adjustment",
-            type: "Adjustment",
+            payment: 'Adjustment',
+            type: 'Adjustment',
             uid: userId,
           });
-        }
-        else {
-          reduceAmount = unbilled
+        } else {
+          reduceAmount = unbilled;
           // console.log(unbilled)
           // console.log(pendingAmount)
           // console.log(reduceAmount);
@@ -466,22 +456,22 @@ const adjustment_bill = async (id, userId) => {
             date: moment().format('YYYY-MM-DD'),
             time: moment().format('hhmmss'),
             orderId: e._id,
-            payment: "Adjustment",
-            type: "Adjustment",
-            uid: userId
+            payment: 'Adjustment',
+            type: 'Adjustment',
+            uid: userId,
           });
         }
       }
     }
-  })
+  });
   let billadjss = await BillAdjustment.findOne({ shopId: id });
 
   return billadjss;
-}
+};
 
 module.exports = {
   createBill_Adjustment,
   getBillAdjustment_ById,
   getCustomer_bills,
-  adjustment_bill
+  adjustment_bill,
 };
