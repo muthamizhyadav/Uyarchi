@@ -2769,7 +2769,9 @@ const getBills_DetailsByshop = async (shopId) => {
     {
       $project: {
         paidAmt: { $ifNull: ['$orderpayments.amount', 0] },
-        totalPendingAmount: { $subtract: ['$productData.price', { $ifNull: ['$orderpayments.amount', 0] }] },
+        totalPendingAmount: {
+          $ifNull: [{ $subtract: ['$productData.price', { $ifNull: ['$orderpayments.amount', 0] }] }, 0],
+        },
         totalAmount: '$productData.price',
         adjBill: '$adjBill.un_Billed_amt',
         shops: '$shops.SName',
