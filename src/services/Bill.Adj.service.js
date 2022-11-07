@@ -180,7 +180,7 @@ const getCustomer_bills = async (page) => {
         shopName: 1,
         totalAmount: 1,
         paidAmt: 1,
-        totalPendingAmount: { $subtract: ['$totalAmount', '$paidAmt'] },
+        totalPendingAmount: { $ifNull: [{ $subtract: ['$totalAmount', '$paidAmt'] }, 0] },
       },
     },
     { $skip: 10 * page },
@@ -428,8 +428,8 @@ const adjustment_bill = async (id, userId) => {
         let reduceAmount = totalAmount - pendingAmount;
         if (reduceAmount >= 0) {
           totalAmount = totalAmount - pendingAmount;
-          console.log(pendingAmount, 'asdasda')
-          await ShopOrderClone.findByIdAndUpdate({ _id: e._id }, { statusOfBill: "Paid" }, { new: true });
+          console.log(pendingAmount, 'asdasda');
+          await ShopOrderClone.findByIdAndUpdate({ _id: e._id }, { statusOfBill: 'Paid' }, { new: true });
           await OrderPayment.create({
             paidAmt: pendingAmount,
             created: moment(),
@@ -440,11 +440,10 @@ const adjustment_bill = async (id, userId) => {
             type: 'Adjustment',
             uid: userId,
           });
-        }
-        else {
+        } else {
           console.log(reduceAmount, 'asdas');
           console.log(totalAmount, 'asdas');
-          reduceAmount = totalAmount
+          reduceAmount = totalAmount;
           totalAmount = 0;
           await OrderPayment.create({
             paidAmt: reduceAmount,
@@ -459,13 +458,13 @@ const adjustment_bill = async (id, userId) => {
         }
       }
     }
-  })
-  console.log(totalAmount)
+  });
+  console.log(totalAmount);
   billadj = await BillAdjustment.findByIdAndUpdate({ _id: billadj._id }, { un_Billed_amt: totalAmount }, { new: true });
   // let billadjss = await BillAdjustment.findOne({ shopId: id });
 
   return billadj;
-}
+};
 
 module.exports = {
   createBill_Adjustment,
