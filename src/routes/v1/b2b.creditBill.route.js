@@ -26,5 +26,6 @@ router.route('/get/group/data/:id').get(creditBillController.GroupDetails);
 router.route('/submit/Dispute/:id').put(creditBillController.submitDispute);
 router.route('/getdelivery/excutive/all/:page').get(authorization, creditBillController.getdeliveryExcutive);
 router.route('/update/finish/credit/:id').put(authorization,creditBillController.submitfinish);
+router.route('/get/creditBill/master/:page').get(creditBillController.getCreditBillMaster);
 
 module.exports = router;
