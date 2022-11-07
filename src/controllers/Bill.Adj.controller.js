@@ -23,7 +23,11 @@ const getCustomer_bills = catchAsync(async (req, res) => {
   res.send(data);
 });
 const adjustment_bill = catchAsync(async (req, res) => {
-  const data = await BillAdjService.adjustment_bill(req.params.id,req.userId);
+  const data = await BillAdjService.adjustment_bill(req.params.id, req.userId);
+  res.send(data);
+});
+const adjustment_bill_pay = catchAsync(async (req, res) => {
+  const data = await BillAdjService.adjustment_bill_pay(req.params.id, req.userId,req.body);
   res.send(data);
 });
 
@@ -31,5 +35,6 @@ module.exports = {
   createBillAdj,
   getBillAdjustmentById,
   getCustomer_bills,
-  adjustment_bill
+  adjustment_bill,
+  adjustment_bill_pay
 };
