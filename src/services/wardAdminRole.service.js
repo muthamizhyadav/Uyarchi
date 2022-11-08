@@ -2313,7 +2313,7 @@ const createtartget = async (userId, body) => {
   let target_hist = await TartgetHistory.create({
     targetid: target._id,
     date: moment().format('YYYY-MM-DD'),
-    time: moment().format('hhmmss'),
+    time: moment().format('HHmmss'),
     created: moment(),
     targetKg: body.targetKg,
     targetvalue: body.targetvalue,
