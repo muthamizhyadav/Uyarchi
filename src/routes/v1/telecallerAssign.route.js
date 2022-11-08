@@ -17,6 +17,7 @@ router.route('/getUsersWith_skiped/:id').get(telecallerAssignController.getUsers
 router.route('/Return_Assign_To_telecaller/:id').put(telecallerAssignController.Return_Assign_To_telecaller);
 router.route('/createtemperaryAssigndata').post(telecallerAssignController.createtemperaryAssigndata);
 router.route('/getAssignData_by_Telecaller/:page').get(telecallerAssignController.getAssignData_by_Telecaller);
+router.route('/history_Assign_Reaasign_datatelecaller/:id').get(telecallerAssignController.history_Assign_Reaasign_datatelecaller);
 
 // report
 router.route('/assignShopsTelecaller/:id/:page').get(telecallerAssignController.assignShopsTelecaller);
@@ -38,6 +39,7 @@ router.route('/getUserssalesmanWith_skiped/:id').get(telecallerAssignController.
 router.route('/Return_Assign_To_salesmanOrder/:id').put(telecallerAssignController.Return_Assign_To_salesmanOrder);
 router.route('/createsalesmantemperaryAssigndata').post(telecallerAssignController.createsalesmantemperaryAssigndata);
 router.route('/getAssignData_by_SalesmanOrders/:page').get(telecallerAssignController.getAssignData_by_SalesmanOrders);
+router.route('/history_Assign_Reaasign_datasalesman/:id').get(telecallerAssignController.history_Assign_Reaasign_datasalesman);
 
 //report
 router.route('/assignShopsSalesmanOrder/:id/:page').get(telecallerAssignController.assignShopsSalesmanOrder);
