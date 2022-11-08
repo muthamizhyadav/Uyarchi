@@ -2296,7 +2296,7 @@ const createtartget = async (userId, body) => {
   }
   let target = await Tartgetvalue.findOne({ b2buser: body.b2buser, date: moment().format('YYYY-MM-DD') })
   if (!target) {
-    target = await Tartgetvalue.create(body);
+    target = await Tartgetvalue.create(object);
   }
   else {
     let targetKg = target.targetKg + body.targetKg
