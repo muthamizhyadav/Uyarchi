@@ -256,6 +256,13 @@ const createtartget = catchAsync(async (req, res) => {
   res.send(data);
 })
 
+
+const get_user_target = catchAsync(async (req, res) => {
+  console.log( req.query.id)
+  const data = await wardAdminRoleService.get_user_target(req.userId, req.query.id);
+  res.send(data);
+})
+
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -307,5 +314,6 @@ module.exports = {
 
   // 08-11-2022
 
-  createtartget
+  createtartget,
+  get_user_target
 };

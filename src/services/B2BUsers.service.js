@@ -396,7 +396,7 @@ const shopverification = async (id) => {
 };
 
 const getrolebyuser_user = async (id) => {
-  let users = await Users.find({ userRole: id })
+  let users = await Users.find({ userRole: id });
   return users;
 };
 

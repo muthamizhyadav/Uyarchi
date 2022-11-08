@@ -55,7 +55,8 @@ router.route('/assignShopsOnlydatewise/data/:id/:wardid/:page').get(wardAdminRol
 
 //  08-11-2022
 
-router.route('/createtarget/byuser').post(authorization,wardAdminRoleController.createtartget);
+router.route('/createtarget/byuser').post(authorization, wardAdminRoleController.createtartget);
+router.route('/getuserTartget/byuser').get(authorization, wardAdminRoleController.get_user_target);
 
 
 module.exports = router;

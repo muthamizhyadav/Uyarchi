@@ -2284,6 +2284,9 @@ const assignShopsOnlydatewise = async (id, wardid, page) => {
 };
 
 
+
+
+
 const createtartget = async (userId, body) => {
   // Tartgetvalue, TartgetHistory
   let object = {
@@ -2321,6 +2324,44 @@ const createtartget = async (userId, body) => {
   });
   return target
 }
+
+
+const get_user_target = async (userid, id) => {
+  let todaydata = await TartgetHistory.aggregate([
+    {
+      $lookup: {
+        from: 'targetvalues',
+        localField: 'targetid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              b2buser: { $eq: id },
+              date: { $eq: moment().format('YYYY-MM-DD') }
+            }
+          },
+        ],
+        as: 'targetvalues',
+      },
+    },
+    {
+      $unwind: "$targetvalues"
+    },
+    {
+      $project: {
+        created: 1,
+        date: 1,
+        targetKg: 1,
+        targetvalue: 1,
+        _id: 1,
+      }
+    }
+  ])
+
+  return todaydata;
+}
+
+
 
 module.exports = {
   createwardAdminRole,
@@ -2377,5 +2418,6 @@ module.exports = {
 
 
   // 08-11-2022
-  createtartget
+  createtartget,
+  get_user_target
 };
