@@ -340,26 +340,23 @@ const tartget = new mongoose.Schema({
     type: String,
     default: v4,
   },
-  targetValue: {
-    type: Number,
-  },
-  targetTonne: {
-    type: Number,
-  },
-  unit: {
+  Uid: {
     type: String,
   },
-  type: {
+  teamtype: {
     type: String,
   },
-  salesman: {
+  targetKg: {
     type: String,
   },
-  wardAdminId: {
+  targetvalue: {
     type: String,
   },
-  status: {
+  b2buser: {
     type: String,
+  },
+  created: {
+    type: Date,
   },
   date: {
     type: String,
@@ -385,23 +382,23 @@ const Tartget_History = new mongoose.Schema({
     type: String,
     default: v4,
   },
-  targetValue: {
-    type: Number,
-  },
-  targetTonne: {
-    type: Number,
-  },
-  type: {
+  Uid: {
     type: String,
   },
-  unit: {
+  teamtype: {
     type: String,
   },
-  wardAdminId: {
+  targetKg: {
     type: String,
   },
-  b2bUserId: {
+  targetvalue: {
     type: String,
+  },
+  targetid: {
+    type: String,
+  },
+  created: {
+    type: Date,
   },
   date: {
     type: String,
