@@ -2352,10 +2352,7 @@ const getCreditBillMaster = async (query) => {
             },
           },
           {
-            $unwind: {
-              path: '$creditbillgroups',
-              preserveNullAndEmptyArrays: true,
-            },
+            $unwind: "$creditbillgroups"
           },
           {
             $project: {
@@ -2394,7 +2391,9 @@ const getCreditBillMaster = async (query) => {
         creditbills: "$creditbills",
         assignedUserName: "$creditbills.assignedUserName",
         AssignedUserId: "$creditbills.AssignedUserId",
-        active: 1
+        active: 1,
+        Scheduledate: 1
+
       }
     },
     {
@@ -2608,10 +2607,7 @@ const getCreditBillMaster = async (query) => {
             },
           },
           {
-            $unwind: {
-              path: '$creditbillgroups',
-              preserveNullAndEmptyArrays: true,
-            },
+            $unwind: "$creditbillgroups"
           },
           {
             $project: {
@@ -2650,7 +2646,8 @@ const getCreditBillMaster = async (query) => {
         creditbills: "$creditbills",
         assignedUserName: "$creditbills.assignedUserName",
         AssignedUserId: "$creditbills.AssignedUserId",
-        active: 1
+        active: 1,
+        Scheduledate: 1
       }
     },
     {
@@ -2664,18 +2661,17 @@ const getCreditBillMaster = async (query) => {
 
 
 
-const groupCreditBill = async(AssignedUserId,date) =>{
+const groupCreditBill = async (AssignedUserId, date) => {
   let match;
-  if(AssignedUserId != 'null' && date != 'null'){
-      match = [{ AssignedUserId: { $eq: AssignedUserId }}, { date: { $eq: date }}, { active: { $eq: true }}];
-  }else if (AssignedUserId != 'null') {
-  match = [{ AssignedUserId: { $eq: AssignedUserId } }, { active: { $eq: true } }];
- 
-} else if (date != 'null') {
-  match = [{ date: { $eq: date } }, { active: { $eq: true } }];
-} else {
-  match = [{ AssignedUserId: { $ne: null } }, { active: { $eq: true } }];
-}
+  if (AssignedUserId != 'null' && date != 'null') {
+    match = [{ AssignedUserId: { $eq: AssignedUserId } }, { date: { $eq: date } }, { active: { $eq: true } }];
+  } else if (AssignedUserId != 'null') {
+    match = [{ AssignedUserId: { $eq: AssignedUserId } }, { active: { $eq: true } }];
+  } else if (date != 'null') {
+    match = [{ date: { $eq: date } }, { active: { $eq: true } }];
+  } else {
+    match = [{ AssignedUserId: { $ne: null } }, { active: { $eq: true } }];
+  }
 
 let values = await creditBillGroup.aggregate([
   {
@@ -2692,16 +2688,7 @@ let values = await creditBillGroup.aggregate([
     }
   },
   { $unwind:"$b2busersData"},
-  // {
-  //   $lookup: {
-  //     from: '',
-  //     localField: '',
-  //     foreignField: '',
-  //     as: '',
 
-  //   }
-  // },
-  // { $unwind:"$"},
   {
     $project: {
       executiveName: "$b2busersData.name",
@@ -2716,8 +2703,9 @@ let values = await creditBillGroup.aggregate([
     }
   }
 
-]);
-return values;
+
+  ]);
+  return values;
 
 }
 
