@@ -2361,6 +2361,72 @@ const get_user_target = async (userid, id) => {
   return todaydata;
 }
 
+const getall_targets = async (query) => {
+  let page = query.page == null || query.page == '' ? 0 : query.page;
+  let user = query.user
+  let date = query.date
+  let userMatch = { active: true };
+  let dateMatch = { active: true };
+  if (date != null && date != '') {
+    dateMatch = { date: { $eq: date } };
+  }
+  if (user != null && user != '') {
+    userMatch = { b2buser: { $eq: user } };
+  }
+  let value = await Tartgetvalue.aggregate([
+    {
+      $match: {
+        $and: [dateMatch, userMatch]
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'b2buser',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },
+    {
+      $unwind: {
+        path: '$b2busers',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'targethistories',
+        localField: '_id',
+        foreignField: 'targetid',
+        as: 'targethistories',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        active: 1,
+        archive: 1,
+        teamtype: 1,
+        targetKg: 1,
+        targetvalue: 1,
+        b2buser: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        name: "$b2busers.name",
+        userRole: "$b2busers.userRole",
+        targethistories: "$targethistories",
+      }
+    },
+    { $skip: 10 * page },
+    {
+      $limit: 10
+    },
+  ])
+
+  return { values: value };
+}
+
 
 
 module.exports = {
@@ -2419,5 +2485,6 @@ module.exports = {
 
   // 08-11-2022
   createtartget,
-  get_user_target
+  get_user_target,
+  getall_targets
 };
