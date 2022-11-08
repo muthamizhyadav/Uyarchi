@@ -2605,10 +2605,7 @@ const getCreditBillMaster = async (query) => {
             },
           },
           {
-            $unwind: {
-              path: '$creditbillgroups',
-              preserveNullAndEmptyArrays: true,
-            },
+            $unwind: "$creditbillgroups"
           },
           {
             $project: {
