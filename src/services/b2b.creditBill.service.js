@@ -2391,7 +2391,9 @@ const getCreditBillMaster = async (query) => {
         creditbills: "$creditbills",
         assignedUserName: "$creditbills.assignedUserName",
         AssignedUserId: "$creditbills.AssignedUserId",
-        active: 1
+        active: 1,
+        Scheduledate: 1
+
       }
     },
     {
@@ -2644,7 +2646,8 @@ const getCreditBillMaster = async (query) => {
         creditbills: "$creditbills",
         assignedUserName: "$creditbills.assignedUserName",
         AssignedUserId: "$creditbills.AssignedUserId",
-        active: 1
+        active: 1,
+        Scheduledate: 1
       }
     },
     {
@@ -2658,50 +2661,50 @@ const getCreditBillMaster = async (query) => {
 
 
 
-const groupCreditBill = async(AssignedUserId,date) =>{
+const groupCreditBill = async (AssignedUserId, date) => {
   let match;
-  if(AssignedUserId != 'null' && date != 'null'){
-      match = [{ AssignedUserId: { $eq: AssignedUserId }}, { date: { $eq: date }}, { active: { $eq: true }}];
-  }else if (AssignedUserId != 'null') {
-  match = [{ AssignedUserId: { $eq: AssignedUserId } }, { active: { $eq: true } }];
- 
-} else if (date != 'null') {
-  match = [{ date: { $eq: date } }, { active: { $eq: true } }];
-} else {
-  match = [{ AssignedUserId: { $ne: null } }, { active: { $eq: true } }];
-}
+  if (AssignedUserId != 'null' && date != 'null') {
+    match = [{ AssignedUserId: { $eq: AssignedUserId } }, { date: { $eq: date } }, { active: { $eq: true } }];
+  } else if (AssignedUserId != 'null') {
+    match = [{ AssignedUserId: { $eq: AssignedUserId } }, { active: { $eq: true } }];
 
-let values = await creditBillGroup.aggregate([
-  {
-      $match: {
-          $and:match,
-      },
-  },
-  {
-    $lookup:{
-      from: 'b2busers',
-      localField: 'AssignedUserId',
-      foreignField: '_id',
-      as: 'b2busersData',
-    }
-  },
-  { $unwind:"$b2busersData"},
-  {
-    $project: {
-      executiveName: "$b2busersData.name",
-      groupId:1,
-      assignedTime:1,
-      assignedDate:1,
-      disputeAmount:1,
-      count: { $size:"$Orderdatas"},
-      receiveStatus:1,
-
-
-    }
+  } else if (date != 'null') {
+    match = [{ date: { $eq: date } }, { active: { $eq: true } }];
+  } else {
+    match = [{ AssignedUserId: { $ne: null } }, { active: { $eq: true } }];
   }
 
-]);
-return values;
+  let values = await creditBillGroup.aggregate([
+    {
+      $match: {
+        $and: match,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'AssignedUserId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      }
+    },
+    { $unwind: "$b2busersData" },
+    {
+      $project: {
+        executiveName: "$b2busersData.name",
+        groupId: 1,
+        assignedTime: 1,
+        assignedDate: 1,
+        disputeAmount: 1,
+        count: { $size: "$Orderdatas" },
+        receiveStatus: 1,
+
+
+      }
+    }
+
+  ]);
+  return values;
 
 }
 
