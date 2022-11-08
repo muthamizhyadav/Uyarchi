@@ -27,7 +27,9 @@ router.route('/submit/Dispute/:id').put(creditBillController.submitDispute);
 router.route('/getdelivery/excutive/all/:page').get(authorization, creditBillController.getdeliveryExcutive);
 router.route('/update/finish/credit/:id').put(authorization, creditBillController.submitfinish);
 router.route('/get/creditBill/master').get(creditBillController.getCreditBillMaster);
-router.route('/get/group/master/credit/Bill/:AssignedUserId/:date').get(creditBillController.groupCreditBill)
+// group credit bill master
+router.route('/get/group/master/credit/Bill/:AssignedUserId/:date/:page').get(creditBillController.groupCreditBill);
+router.route('/get/payment/history/:id/').get(creditBillController.getPaymenthistory)
 
 
 router.route('/billdetails/getorderdetails').get(authorization, creditBillController.getbilldetails);

@@ -2662,57 +2662,75 @@ const getCreditBillMaster = async (query) => {
 
 
 
-const groupCreditBill = async (AssignedUserId, date) => {
+const groupCreditBill = async (AssignedUserId, date,page) => {
   let match;
   if (AssignedUserId != 'null' && date != 'null') {
     match = [{ AssignedUserId: { $eq: AssignedUserId } }, { date: { $eq: date } }, { active: { $eq: true } }];
   } else if (AssignedUserId != 'null') {
     match = [{ AssignedUserId: { $eq: AssignedUserId } }, { active: { $eq: true } }];
-
   } else if (date != 'null') {
     match = [{ date: { $eq: date } }, { active: { $eq: true } }];
   } else {
     match = [{ AssignedUserId: { $ne: null } }, { active: { $eq: true } }];
   }
 
-  let values = await creditBillGroup.aggregate([
-    {
+let values = await creditBillGroup.aggregate([
+  {
       $match: {
-        $and: match,
+          $and:match,
       },
+  },
+  {
+    $lookup:{
+      from: 'b2busers',
+      localField: 'AssignedUserId',
+      foreignField: '_id',
+      as: 'b2busersData',
+    }
+  },
+  { $unwind:"$b2busersData"},
+  { $skip: 10 * page },
+  { $limit: 10 },
+
+  {
+    $project: {
+      executiveName: "$b2busersData.name",
+      groupId:1,
+      assignedTime:1,
+      assignedDate:1,
+      disputeAmount:1,
+      count: { $size:"$Orderdatas"},
+      receiveStatus:1,
+    }
+  }
+
+
+  ]);
+  let total = await creditBillGroup.aggregate([
+    {
+        $match: {
+            $and:match,
+        },
     },
     {
-      $lookup: {
+      $lookup:{
         from: 'b2busers',
         localField: 'AssignedUserId',
         foreignField: '_id',
         as: 'b2busersData',
       }
     },
-    { $unwind: "$b2busersData" },
-    {
-      $project: {
-        executiveName: "$b2busersData.name",
-        groupId: 1,
-        assignedTime: 1,
-        assignedDate: 1,
-        disputeAmount: 1,
-        count: { $size: "$Orderdatas" },
-        receiveStatus: 1,
-
-
-      }
-    }
-
+    { $unwind:"$b2busersData"},
   ]);
-  return values;
+  
+  return {values: values, total: total.length};
 
 }
 
 
 
 const getbilldetails = async (query) => {
-  console.log(query.id)
+  // console.log(query.id)
   let id = query.id;
   let order = await ShopOrderClone.aggregate([
     {
@@ -2770,9 +2788,9 @@ const getbilldetails = async (query) => {
     }
   ])
 
-  console.log(order)
+  // console.log(order)
   let totalamount = order.length != 0 ? order[0].price : 0;
-  console.log(totalamount)
+  // console.log(totalamount)
 
   let orderspayments = await OrderPayment.aggregate([
     {
