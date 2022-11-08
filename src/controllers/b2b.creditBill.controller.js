@@ -125,7 +125,7 @@ const getCreditBillMaster = catchAsync(async(req,res)=>{
 })
 
 const groupCreditBill = catchAsync(async(req,res) =>{
-  const getGroupDetails = await creditBillService.groupCreditBill(req.params.AssignedUserId,req.params.date);
+  const getGroupDetails = await creditBillService.groupCreditBill(req.params.AssignedUserId,req.params.date,req.params.page);
   res.send(getGroupDetails);
 });
 

@@ -2661,7 +2661,7 @@ const getCreditBillMaster = async (query) => {
 
 
 
-const groupCreditBill = async (AssignedUserId, date) => {
+const groupCreditBill = async (AssignedUserId, date,page) => {
   let match;
   if (AssignedUserId != 'null' && date != 'null') {
     match = [{ AssignedUserId: { $eq: AssignedUserId } }, { date: { $eq: date } }, { active: { $eq: true } }];
@@ -2688,6 +2688,8 @@ let values = await creditBillGroup.aggregate([
     }
   },
   { $unwind:"$b2busersData"},
+  { $skip: 10 * page },
+  { $limit: 10 },
 
   {
     $project: {
@@ -2698,14 +2700,29 @@ let values = await creditBillGroup.aggregate([
       disputeAmount:1,
       count: { $size:"$Orderdatas"},
       receiveStatus:1,
-
-
     }
   }
 
 
   ]);
-  return values;
+  let total = await creditBillGroup.aggregate([
+    {
+        $match: {
+            $and:match,
+        },
+    },
+    {
+      $lookup:{
+        from: 'b2busers',
+        localField: 'AssignedUserId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      }
+    },
+    { $unwind:"$b2busersData"},
+  ]);
+  
+  return {values: values, total: total.length};
 
 }
 

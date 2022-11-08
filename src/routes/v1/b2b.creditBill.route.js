@@ -28,7 +28,7 @@ router.route('/getdelivery/excutive/all/:page').get(authorization, creditBillCon
 router.route('/update/finish/credit/:id').put(authorization,creditBillController.submitfinish);
 router.route('/get/creditBill/master').get(creditBillController.getCreditBillMaster);
 // group credit bill master
-router.route('/get/group/master/credit/Bill/:AssignedUserId/:date').get(creditBillController.groupCreditBill);
-router.route('/get/payment/history/:id').get(creditBillController.getPaymenthistory)
+router.route('/get/group/master/credit/Bill/:AssignedUserId/:date/:page').get(creditBillController.groupCreditBill);
+router.route('/get/payment/history/:id/').get(creditBillController.getPaymenthistory)
 
 module.exports = router;
