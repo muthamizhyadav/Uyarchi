@@ -2362,15 +2362,15 @@ const get_user_target = async (userid, id) => {
 }
 
 const getall_targets = async (query) => {
-  let page = query.page == null || query.page == '' ? 0 : query.page;
+  let page = query.page == null || query.page == 'null' || query.page == '' ? 0 : query.page;
   let user = query.user
   let date = query.date
   let userMatch = { active: true };
   let dateMatch = { active: true };
-  if (date != null && date != '') {
+  if (date != null && date != '' && date != 'null') {
     dateMatch = { date: { $eq: date } };
   }
-  if (user != null && user != '') {
+  if (user != null && user != '' && user != 'null') {
     userMatch = { b2buser: { $eq: user } };
   }
   let value = await Tartgetvalue.aggregate([
