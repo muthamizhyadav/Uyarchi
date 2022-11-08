@@ -395,6 +395,11 @@ const shopverification = async (id) => {
   return { show: show };
 };
 
+const getrolebyuser_user = async (id) => {
+  let users = await Users.find({ userRole: id })
+  return users;
+};
+
 module.exports = {
   createUser,
   UsersLogin,
@@ -415,5 +420,6 @@ module.exports = {
   updateB2bUsers,
   getUsersDataById,
   deleteB2bUsersbyId,
-  shopverification
+  shopverification,
+  getrolebyuser_user
 };

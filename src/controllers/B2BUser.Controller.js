@@ -134,6 +134,11 @@ const shopverification = catchAsync(async (req, res) => {
   res.send(users);
 });
 
+const getrolebyuser_user = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.getrolebyuser_user(req.query.role);
+  res.send(users);
+});
+
 module.exports = {
   createB2bUsers,
   getsalesExecuteRolesUsers,
@@ -155,5 +160,6 @@ module.exports = {
   updateB2bUsers,
   getUsersDataById,
   deleteB2bUsersbyId,
-  shopverification
+  shopverification,
+  getrolebyuser_user
 };

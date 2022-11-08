@@ -164,10 +164,10 @@ const createwithAsmwithoutAsm = catchAsync(async (req, res) => {
 
 const getwithAsmwithoutAsm = catchAsync(async (req, res) => {
   let data
-  if(req.params.type === "withoutAsm"){
-   data = await wardAdminRoleService.getwithAsmwithoutAsm(req.params.type, req.params.date);
-  }else{
-   data = await wardAdminRoleService.getwithAsmwithoutAsm1(req.params.type, req.params.date);
+  if (req.params.type === "withoutAsm") {
+    data = await wardAdminRoleService.getwithAsmwithoutAsm(req.params.type, req.params.date);
+  } else {
+    data = await wardAdminRoleService.getwithAsmwithoutAsm1(req.params.type, req.params.date);
   }
   res.send(data);
 });
@@ -249,6 +249,13 @@ const assignShopsOnlydatewise = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+
+
+const createtartget = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.createtartget(req.userId, req.body);
+  res.send(data);
+})
+
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -296,4 +303,9 @@ module.exports = {
   assignShopsSalesman,
   assignShopsSalesmandatewise,
   assignShopsOnlydatewise,
+
+
+  // 08-11-2022
+
+  createtartget
 };
