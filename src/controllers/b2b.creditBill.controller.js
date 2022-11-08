@@ -129,6 +129,11 @@ const groupCreditBill = catchAsync(async(req,res) =>{
   res.send(getGroupDetails);
 });
 
+const getPaymenthistory = catchAsync(async(req,res) =>{
+  const PaymentHistory = await creditBillService.getPaymenthistory(req.params.id);
+  res.send(PaymentHistory)
+})
+
 
 module.exports = {
 
@@ -157,4 +162,5 @@ module.exports = {
   submitfinish,
   getCreditBillMaster,
   groupCreditBill,
+  getPaymenthistory,
 }

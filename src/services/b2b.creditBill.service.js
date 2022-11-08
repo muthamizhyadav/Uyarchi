@@ -2692,6 +2692,16 @@ let values = await creditBillGroup.aggregate([
     }
   },
   { $unwind:"$b2busersData"},
+  // {
+  //   $lookup: {
+  //     from: '',
+  //     localField: '',
+  //     foreignField: '',
+  //     as: '',
+
+  //   }
+  // },
+  // { $unwind:"$"},
   {
     $project: {
       executiveName: "$b2busersData.name",
