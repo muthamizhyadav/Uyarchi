@@ -2299,8 +2299,8 @@ const createtartget = async (userId, body) => {
     target = await Tartgetvalue.create(object);
   }
   else {
-    let targetKg = target.targetKg + body.targetKg
-    let targetvalue = target.targetvalue + body.targetvalue
+    let targetKg = target.targetKg + parseInt(body.targetKg)
+    let targetvalue = target.targetvalue + parseInt(body.targetvalue)
     target = await Tartgetvalue.findByIdAndUpdate(
       { _id: target._id },
       {
