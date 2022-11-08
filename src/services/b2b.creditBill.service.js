@@ -2661,6 +2661,59 @@ const getCreditBillMaster = async (query) => {
   ]);
   return { values: values, total: total.length };
 }
+
+
+
+const groupCreditBill = async(AssignedUserId,date) =>{
+  let match;
+  if(AssignedUserId != 'null' && date != 'null'){
+      match = [{ AssignedUserId: { $eq: AssignedUserId }}, { date: { $eq: date }}, { active: { $eq: true }}];
+  }else if (AssignedUserId != 'null') {
+  match = [{ AssignedUserId: { $eq: AssignedUserId } }, { active: { $eq: true } }];
+ 
+} else if (date != 'null') {
+  match = [{ date: { $eq: date } }, { active: { $eq: true } }];
+} else {
+  match = [{ AssignedUserId: { $ne: null } }, { active: { $eq: true } }];
+}
+
+let values = await creditBillGroup.aggregate([
+  {
+      $match: {
+          $and:match,
+      },
+  },
+  {
+    $lookup:{
+      from: 'b2busers',
+      localField: 'AssignedUserId',
+      foreignField: '_id',
+      as: 'b2busersData',
+    }
+  },
+  { $unwind:"$b2busersData"},
+  {
+    $project: {
+      executiveName: "$b2busersData.name",
+      groupId:1,
+      assignedTime:1,
+      assignedDate:1,
+      disputeAmount:1,
+      count: { $size:"$Orderdatas"},
+      receiveStatus:1,
+
+
+    }
+  }
+
+]);
+return values;
+
+}
+
+
+
+
 module.exports = {
   getShopWithBill,
   getWardExecutiveName,
@@ -2686,4 +2739,5 @@ module.exports = {
   getdeliveryExcutive,
   submitfinish,
   getCreditBillMaster,
+  groupCreditBill,
 };
