@@ -113,19 +113,24 @@ const getdeliveryExcutive = catchAsync(async (req, res) => {
 })
 
 const submitfinish = catchAsync(async (req, res) => {
-  const dispute = await creditBillService.submitfinish(req.userId,req.params.id);
+  const dispute = await creditBillService.submitfinish(req.userId, req.params.id);
   console.log(req.params.id, req.body);
   res.send(dispute)
 });
 
 
-const getCreditBillMaster = catchAsync(async(req,res)=>{
+const getCreditBillMaster = catchAsync(async (req, res) => {
   const creditBillMaster = await creditBillService.getCreditBillMaster(req.query);
   res.send(creditBillMaster);
 })
 
-const groupCreditBill = catchAsync(async(req,res) =>{
-  const getGroupDetails = await creditBillService.groupCreditBill(req.params.AssignedUserId,req.params.date);
+const groupCreditBill = catchAsync(async (req, res) => {
+  const getGroupDetails = await creditBillService.groupCreditBill(req.params.AssignedUserId, req.params.date);
+  res.send(getGroupDetails);
+});
+
+const getbilldetails = catchAsync(async (req, res) => {
+  const getGroupDetails = await creditBillService.getbilldetails(req.query);
   res.send(getGroupDetails);
 });
 
@@ -157,4 +162,5 @@ module.exports = {
   submitfinish,
   getCreditBillMaster,
   groupCreditBill,
+  getbilldetails
 }

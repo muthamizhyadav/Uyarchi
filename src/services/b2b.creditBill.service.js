@@ -11,6 +11,7 @@ const creditBillPaymentModel = require('../models/b2b.creditBillPayments.History
 const { Roles } = require('../models');
 const { Users } = require('../models/B2Busers.model');
 
+const OrderPayment = require("../models/orderpayment.model")
 const getShopWithBill = async (page) => {
   let values = await ShopOrderClone.aggregate([
     {
@@ -2710,6 +2711,234 @@ const groupCreditBill = async (AssignedUserId, date) => {
 
 
 
+const getbilldetails = async (query) => {
+  console.log(query.id)
+  let id = query.id;
+  let order = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }]
+      }
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    { $unwind: '$productData' },
+    {
+      $project: {
+        price: { $round: "$productData.price" },
+        customerBillId: 1,
+        OrderId: 1,
+        date: 1,
+        created: 1
+      }
+    }
+  ])
+
+  console.log(order)
+  let totalamount = order.length != 0 ? order[0].price : 0;
+  console.log(totalamount)
+
+  let orderspayments = await OrderPayment.aggregate([
+    {
+      $match: {
+        $and: [{ orderId: { $eq: id } }]
+      }
+    },
+    {
+      $lookup: {
+        from: 'creditbillgroups',
+        localField: 'creditID',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'creditbills',
+              localField: '_id',
+              foreignField: 'creditbillId',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ orderId: { $eq: id } }]
+                  }
+                },
+              ],
+              as: 'creditbills',
+            }
+          },
+          {
+            $unwind: {
+              path: '$creditbills',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'b2busers',
+              localField: 'AssignedUserId',
+              foreignField: '_id',
+              as: 'b2busers',
+            }
+          },
+          {
+            $unwind: {
+              path: '$b2busers',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              Schedulereason: "$creditbills.Schedulereason",
+              reasonScheduleOrDate: "$creditbills.reasonScheduleOrDate",
+              assignedDate: 1,
+              assignedTime: 1,
+              groupId: 1,
+              _id: 1,
+              receiveStatus: 1,
+              assignedUserName: "$b2busers.name"
+            }
+          }
+        ],
+        as: 'creditbillgroups',
+      }
+    },
+    {
+      $unwind: {
+        path: '$creditbillgroups',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        paidAmt: 1,
+        date: 1,
+        created: 1,
+        payment: 1,
+        paymentMethod: 1,
+        paymentstutes: 1,
+        type: 1,
+        groupId: "$creditbillgroups.groupId",
+        receiveStatus: "$creditbillgroups.receiveStatus",
+        assignedDate: "$creditbillgroups.assignedDate",
+        assignedTime: "$creditbillgroups.assignedTime",
+        Schedulereason: "$creditbillgroups.Schedulereason",
+        reasonScheduleOrDate: "$creditbillgroups.reasonScheduleOrDate",
+        assignedUserName: "$creditbillgroups.assignedUserName",
+      }
+    },
+    { $limit: 20 }
+  ])
+
+  let total = await OrderPayment.aggregate([
+    {
+      $match: {
+        $and: [{ orderId: { $eq: id } }]
+      }
+    },
+    {
+      $lookup: {
+        from: 'creditbillgroups',
+        localField: 'creditID',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'creditbills',
+              localField: '_id',
+              foreignField: 'creditbillId',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ orderId: { $eq: id } }]
+                  }
+                },
+              ],
+              as: 'creditbills',
+            }
+          },
+          {
+            $unwind: {
+              path: '$creditbills',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'b2busers',
+              localField: 'AssignedUserId',
+              foreignField: '_id',
+              as: 'b2busers',
+            }
+          },
+          {
+            $unwind: {
+              path: '$b2busers',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              Schedulereason: "$creditbills.Schedulereason",
+              reasonScheduleOrDate: "$creditbills.reasonScheduleOrDate",
+              assignedDate: 1,
+              assignedTime: 1,
+              groupId: 1,
+              _id: 1,
+              receiveStatus: 1,
+              assignedUserName: "$b2busers.name"
+            }
+          }
+        ],
+        as: 'creditbillgroups',
+      }
+    },
+    {
+      $unwind: {
+        path: '$creditbillgroups',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+  ])
+  return { value: orderspayments, orderDetails: order,total:total.length };
+
+}
+
 
 module.exports = {
   getShopWithBill,
@@ -2737,4 +2966,5 @@ module.exports = {
   submitfinish,
   getCreditBillMaster,
   groupCreditBill,
+  getbilldetails
 };
