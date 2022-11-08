@@ -347,10 +347,10 @@ const tartget = new mongoose.Schema({
     type: String,
   },
   targetKg: {
-    type: String,
+    type: Number,
   },
   targetvalue: {
-    type: String,
+    type: Number,
   },
   b2buser: {
     type: String,
@@ -389,10 +389,10 @@ const Tartget_History = new mongoose.Schema({
     type: String,
   },
   targetKg: {
-    type: String,
+    type: Number,
   },
   targetvalue: {
-    type: String,
+    type: Number,
   },
   targetid: {
     type: String,
