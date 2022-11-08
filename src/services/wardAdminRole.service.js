@@ -2423,8 +2423,54 @@ const getall_targets = async (query) => {
       $limit: 10
     },
   ])
+  let total = await Tartgetvalue.aggregate([
+    {
+      $match: {
+        $and: [dateMatch, userMatch]
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'b2buser',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },
+    {
+      $unwind: {
+        path: '$b2busers',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'targethistories',
+        localField: '_id',
+        foreignField: 'targetid',
+        as: 'targethistories',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        active: 1,
+        archive: 1,
+        teamtype: 1,
+        targetKg: 1,
+        targetvalue: 1,
+        b2buser: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        name: "$b2busers.name",
+        userRole: "$b2busers.userRole",
+        targethistories: "$targethistories",
+      }
+    },
+  ])
 
-  return { values: value };
+  return { values: value, total: total.length };
 }
 
 
