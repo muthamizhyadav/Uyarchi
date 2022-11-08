@@ -2409,28 +2409,67 @@ const getVendorShops = async (key) => {
 
 // getnotAssignSalesmanData
 
-const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
+const getnotAssignSalesmanData = async (zone,id, street, page, limit, uid, date) => {
   let match;
-  if (id != 'null' && uid != 'null' && date == 'null' && street == 'null') {
-    match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }];
-  } else if ( id != 'null' && uid == 'null' && date == 'null' && street != 'null') {
-    match = [{ Wardid: { $eq: id } }, { Strid: { $eq: street } }];
-  } else if ( id != 'null' && uid != 'null' && date == 'null' && street != 'null') {
-    match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { Strid: { $eq: street } }];
-  } else if ( id != 'null' && uid != 'null' && date != 'null' && street == 'null') {
-    match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { date: { $eq: date } }];
-  } else if ( id != 'null' && uid == 'null' && date != 'null' && street == 'null') {
-    match = [{ Wardid: { $eq: id } }, { date: { $eq: date } }];
-  } else if (id != 'null' && uid == 'null' && date != 'null' && street != 'null') {
-    match = [{ Wardid: { $eq: id } }, { date: { $eq: date } }, { Strid: { $eq: street } }];
-  } else if ( id != 'null' && uid != 'null' && date != 'null' && street != 'null') {
-    match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { date: { $eq: date } }, { Strid: { $eq: street } }];
-  }else if(id =='null' && uid != 'null' && date == 'null' && street == 'null'){
-    match = [{ Uid: { $eq: uid } }];
-  } 
-   else {
-    match = [{ Wardid: { $eq: id } }];
+  let zoneMatch;
+  let wardMatch;
+  let streetMatch;
+  if(zone != 'null'){
+     zoneMatch = [{ _id: { $eq: zone } }];
+  }else{
+    zoneMatch = [{ active: { $eq: true } }];
   }
+  console.log(zoneMatch)
+  if(id != 'null'){
+    wardMatch = [{ _id: { $eq: id } }];
+ }else{
+  wardMatch = [{ active: { $eq: true } }];
+ }
+ console.log(wardMatch)
+ if(street != 'null'){
+  streetMatch = [{ _id: { $eq: street } }];
+ }else{
+  streetMatch = [{ active: { $eq: true } }];
+}
+console.log(streetMatch)
+
+if(uid != 'null' &&  date == 'null'){
+  match = [{ Uid: { $eq: uid } }];
+}else if(date != 'null' && uid == 'null' ){
+  match = [{ date: { $eq: date } }];
+}else if(uid != 'null' && date != 'null'){
+  match = [{ Uid: { $eq: uid } },{ date: { $eq: date } }];
+}else{
+  match = [{ active: { $eq: true } }];
+}
+
+  // if (id != 'null' && uid != 'null' && date == 'null' && street == 'null') {
+  //   match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }];
+  // } 
+  // else if ( id != 'null' && uid == 'null' && date == 'null' && street != 'null') {
+  //   match = [{ Wardid: { $eq: id } }, { Strid: { $eq: street } }];
+  // } 
+  // else if ( id != 'null' && uid != 'null' && date == 'null' && street != 'null') {
+  //   match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { Strid: { $eq: street } }];
+  // }
+  //  else if ( id != 'null' && uid != 'null' && date != 'null' && street == 'null') {
+  //   match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { date: { $eq: date } }];
+  // }
+  //  else if ( id != 'null' && uid == 'null' && date != 'null' && street == 'null') {
+  //   match = [{ Wardid: { $eq: id } }, { date: { $eq: date } }];
+  // }
+  //  else if (id != 'null' && uid == 'null' && date != 'null' && street != 'null') {
+  //   match = [{ Wardid: { $eq: id } }, { date: { $eq: date } }, { Strid: { $eq: street } }];
+  // } 
+  // else if ( id != 'null' && uid != 'null' && date != 'null' && street != 'null') {
+  //   match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { date: { $eq: date } }, { Strid: { $eq: street } }];
+  // }
+  // else if(id =='null' && uid != 'null' && date == 'null' && street == 'null'){
+  //   match = [{ Uid: { $eq: uid } }];
+  // } 
+  //  else {
+  //   match = [{ Wardid: { $eq: id } }];
+  // }
   console.log(match);
   let data = await Shop.aggregate([
     {
@@ -2463,7 +2502,13 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
-        // pipeline: [{ $match: { _id: street } }],
+        pipeline:[
+          {
+            $match: {
+              $and: streetMatch,
+            },
+          },
+        ],
         as: 'streets',
       },
     },
@@ -2475,6 +2520,13 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         from: 'wards',
         localField: 'Wardid',
         foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: wardMatch,
+            },
+          },
+        ],
         as: 'wards',
       },
     },
@@ -2486,6 +2538,13 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         from: 'zones',
         localField: 'wards.zoneId',
         foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: zoneMatch,
+            },
+          },
+        ],
         as: 'zones',
       },
     },
@@ -2500,7 +2559,11 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         address: 1,
         Slat: 1,
         Slong: 1,
+        Uid:1,
+        date:1,
         ward:'$wards.ward',
+        Wardid:1,
+        zoneId:'$wards.zoneId',
         zone:'$zones.zone',
         streetId: '$streets._id',
         streetname: '$streets.street',
@@ -2545,6 +2608,60 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         ],
       },
     },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: streetMatch,
+            },
+          },
+        ],
+        as: 'streets',
+      },
+    },
+    {
+      $unwind: '$streets',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: wardMatch,
+            },
+          },
+        ],
+        as: 'wards',
+      },
+    },
+    {
+      $unwind: '$wards',
+    },
+    {
+      $lookup: {
+        from: 'zones',
+        localField: 'wards.zoneId',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: zoneMatch,
+            },
+          },
+        ],
+        as: 'zones',
+      },
+    },
+    {
+      $unwind: '$zones',
+    },
   ]);
   let allnoAssing = await Shop.aggregate([
     {
@@ -2575,12 +2692,54 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
-        // pipeline: [{ $match: { _id: street } }],
+        pipeline:[
+          {
+            $match: {
+              $and: streetMatch,
+            },
+          },
+        ],
         as: 'streets',
       },
     },
     {
       $unwind: '$streets',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: wardMatch,
+            },
+          },
+        ],
+        as: 'wards',
+      },
+    },
+    {
+      $unwind: '$wards',
+    },
+    {
+      $lookup: {
+        from: 'zones',
+        localField: 'wards.zoneId',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: zoneMatch,
+            },
+          },
+        ],
+        as: 'zones',
+      },
+    },
+    {
+      $unwind: '$zones',
     },
     {
       $project: {
@@ -2635,12 +2794,54 @@ const getnotAssignSalesmanData = async (id, street, page, limit, uid, date) => {
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
-        // pipeline: [{ $match: { _id: street } }],
+        pipeline:[
+          {
+            $match: {
+              $and: streetMatch,
+            },
+          },
+        ],
         as: 'streets',
       },
     },
     {
       $unwind: '$streets',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: wardMatch,
+            },
+          },
+        ],
+        as: 'wards',
+      },
+    },
+    {
+      $unwind: '$wards',
+    },
+    {
+      $lookup: {
+        from: 'zones',
+        localField: 'wards.zoneId',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: zoneMatch,
+            },
+          },
+        ],
+        as: 'zones',
+      },
+    },
+    {
+      $unwind: '$zones',
     },
     {
       $project: {

@@ -394,6 +394,7 @@ const getVendorShops = catchAsync(async (req, res) => {
 
 const getNotAssignSalesManData = catchAsync(async (req, res) => {
   const data = await b2bCloneService.getnotAssignSalesmanData(
+    req.params.zone,
     req.params.id,
     req.params.street,
     req.params.page,

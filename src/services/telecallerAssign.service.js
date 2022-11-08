@@ -596,6 +596,124 @@ const getUsersWith_skiped = async (id) => {
   return values;
 };
 
+const history_Assign_Reaasign_datatelecaller = async (id) => {
+  const name = await Users.findById(id);
+  // let match;
+  // if (date != 'null' && idSearch == 'null' && tempid == 'null') {
+  //   match = {
+  //     $or: [
+  //       { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }, { date: { $eq: date } }] },
+  //       { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }, { reAssignDate: { $eq: date } }] },
+  //     ],
+  //   };
+  // } else if (tempid != 'null' && date == 'null' && idSearch == 'null') {
+  //   match = {
+  //     $or: [
+  //       // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
+  //       { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }, { fromSalesManId: { $eq: tempid } }] },
+  //     ],
+  //   };
+  // } else if (tempid != 'null' && date != 'null' && idSearch == 'null') {
+  //   match = {
+  //     $or: [
+  //       // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
+  //       {
+  //         $and: [
+  //           { salesManId: { $eq: id } },
+  //           { status: { $eq: 'tempReassign' } },
+  //           { reAssignDate: { $eq: date } },
+  //           { fromSalesManId: { $eq: tempid } },
+  //         ],
+  //       },
+  //     ],
+  //   };
+  // } else if (date != 'null' && idSearch != 'null' && tempid == 'null') {
+  //   match = {
+  //     $or: [
+  //       {
+  //         $and: [
+  //           { fromSalesManId: { $eq: id } },
+  //           { status: { $eq: 'Assign' } },
+  //           { date: { $eq: date } },
+  //           { salesManId: { $eq: idSearch } },
+  //         ],
+  //       },
+  //       {
+  //         $and: [
+  //           { salesManId: { $eq: id } },
+  //           { status: { $eq: 'tempReassign' } },
+  //           { reAssignDate: { $eq: date } },
+  //           { fromSalesManId: { $eq: idSearch } },
+  //         ],
+  //       },
+  //     ],
+  //   };
+  // } else if (date == 'null' && idSearch != 'null' && tempid == 'null') {
+  //   match = {
+  //     $or: [
+  //       { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }, { salesManId: { $eq: idSearch } }] },
+  //       { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }, { fromSalesManId: { $eq: idSearch } }] },
+  //     ],
+  //   };
+  // } else {
+  //   match = {
+  //     $or: [
+  //       { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+  //       { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+  //     ],
+  //   },
+  // }
+  // console.log(match)
+  const data = await TelecallerShop.aggregate([
+    {
+      $match: {
+        $or: [
+          { $and: [{ fromtelecallerteamId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+          { $and: [{ telecallerteamId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'fromtelecallerteamId',
+        foreignField: '_id',
+        as: 'Users',
+      },
+    },
+    {
+      $unwind: '$Users',
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesdata',
+    },
+    {
+      $project: {
+        salesMan: '$Users.name',
+        telecallerteamId: 1,
+        shopId: 1,
+        status: 1,
+        date: 1,
+        fromtelecallerteamId: 1,
+        time: 1,
+        reAssignDate: 1,
+        reAssignTime: 1,
+        shopname: '$b2bshopclonesdata.SName',
+      },
+    },
+  ]);
+  return { data, name: name.name };
+};
+
 const Return_Assign_To_telecaller = async (id) => {
   let currentDate = moment().format('YYYY-MM-DD');
   let currentTime = moment().format('hh:mm a');
@@ -2424,6 +2542,124 @@ const assignShopssalesmanOnlydatewise = async (id, wardid, page) => {
 };
 
 
+const history_Assign_Reaasign_datasalesman = async (id) => {
+  const name = await Users.findById(id);
+  // let match;
+  // if (date != 'null' && idSearch == 'null' && tempid == 'null') {
+  //   match = {
+  //     $or: [
+  //       { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }, { date: { $eq: date } }] },
+  //       { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }, { reAssignDate: { $eq: date } }] },
+  //     ],
+  //   };
+  // } else if (tempid != 'null' && date == 'null' && idSearch == 'null') {
+  //   match = {
+  //     $or: [
+  //       // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
+  //       { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }, { fromSalesManId: { $eq: tempid } }] },
+  //     ],
+  //   };
+  // } else if (tempid != 'null' && date != 'null' && idSearch == 'null') {
+  //   match = {
+  //     $or: [
+  //       // { $and: [{ fromSalesManId: {$eq:id } }, { status: {$eq:"tempReassign"} }, {tempid:{$eq:tempid}}] },
+  //       {
+  //         $and: [
+  //           { salesManId: { $eq: id } },
+  //           { status: { $eq: 'tempReassign' } },
+  //           { reAssignDate: { $eq: date } },
+  //           { fromSalesManId: { $eq: tempid } },
+  //         ],
+  //       },
+  //     ],
+  //   };
+  // } else if (date != 'null' && idSearch != 'null' && tempid == 'null') {
+  //   match = {
+  //     $or: [
+  //       {
+  //         $and: [
+  //           { fromSalesManId: { $eq: id } },
+  //           { status: { $eq: 'Assign' } },
+  //           { date: { $eq: date } },
+  //           { salesManId: { $eq: idSearch } },
+  //         ],
+  //       },
+  //       {
+  //         $and: [
+  //           { salesManId: { $eq: id } },
+  //           { status: { $eq: 'tempReassign' } },
+  //           { reAssignDate: { $eq: date } },
+  //           { fromSalesManId: { $eq: idSearch } },
+  //         ],
+  //       },
+  //     ],
+  //   };
+  // } else if (date == 'null' && idSearch != 'null' && tempid == 'null') {
+  //   match = {
+  //     $or: [
+  //       { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }, { salesManId: { $eq: idSearch } }] },
+  //       { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }, { fromSalesManId: { $eq: idSearch } }] },
+  //     ],
+  //   };
+  // } else {
+  //   match = {
+  //     $or: [
+  //       { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+  //       { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+  //     ],
+  //   },
+  // }
+  // console.log(match)
+  const data = await SalesmanOrderShop.aggregate([
+    {
+      $match: {
+        $or: [
+          { $and: [{ fromsalesmanOrderteamId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+          { $and: [{ salesmanOrderteamId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'fromsalesmanOrderteamId',
+        foreignField: '_id',
+        as: 'Users',
+      },
+    },
+    {
+      $unwind: '$Users',
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
+      $unwind: '$b2bshopclonesdata',
+    },
+    {
+      $project: {
+        salesMan: '$Users.name',
+        salesmanOrderteamId: 1,
+        shopId: 1,
+        status: 1,
+        date: 1,
+        fromsalesmanOrderteamId: 1,
+        time: 1,
+        reAssignDate: 1,
+        reAssignTime: 1,
+        shopname: '$b2bshopclonesdata.SName',
+      },
+    },
+  ]);
+  return { data, name: name.name };
+};
+
   module.exports = {
     createtelecallerAssignReassign,
     getAllTelecallerHead,
@@ -2455,4 +2691,6 @@ const assignShopssalesmanOnlydatewise = async (id, wardid, page) => {
     assignShopsSalesmanOrder,
     assignShopssalesmandatewise,
     assignShopssalesmanOnlydatewise,
+    history_Assign_Reaasign_datatelecaller,
+    history_Assign_Reaasign_datasalesman,
   }
