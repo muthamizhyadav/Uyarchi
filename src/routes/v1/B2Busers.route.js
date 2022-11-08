@@ -28,5 +28,6 @@ router.route('/delete/Users/:id').delete(b2bUsersController.deleteB2bUsersbyId);
 router.route('/shopverification/asm').get(authorization, b2bUsersController.shopverification);
 
 router.route('/getrolebyuser/userid').get(authorization, b2bUsersController.getrolebyuser_user);
+router.route('/gettargetedusers/userid').get(authorization, b2bUsersController.gettargetedusers);
 
 module.exports = router;
