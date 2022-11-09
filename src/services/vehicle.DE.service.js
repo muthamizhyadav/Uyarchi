@@ -30,7 +30,38 @@ const getVehicle_and_DE = async () => {
 };
 
 const getAll_Vehicle_Details = async () => {
-  const vehicles = await Vehicle.find();
+  const vehicles = await Vehicle.aggregate([
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: '_id',
+        foreignField: 'vehicleId',
+        pipeline: [
+          { $match: { manageDeliveryStatus: { $ne: "Delivery Completed" } } }
+        ],
+        as: 'wardadmingroups',
+      }
+    },
+    {
+      $project: {
+        RC_book_image: 1,
+        vehicle_image: 1,
+        active: 1,
+        archive: 1,
+        vehicle_type: 1,
+        vehicle_Owner_Name: 1,
+        ownerShip_Type: 1,
+        vehicleNo: 1,
+        tonne_Capacity: 1,
+        vehicle_Name: 1,
+        created: 1,
+        date: 1,
+        time: 1,
+        wardadmingroups: { $size: "$wardadmingroups" }
+      },
+    },
+    { $match: { wardadmingroups: { $eq: 0 } } }
+  ])
   return vehicles;
 };
 
