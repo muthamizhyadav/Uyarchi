@@ -1306,6 +1306,36 @@ const getAssigned_details = async (pickuptype) => {
       },
     },
     {
+      $lookup: {
+        from: 'wards',
+        localField: 'ward',
+        foreignField: '_id',
+
+        as: 'wards',
+      },
+    },
+    {
+      $unwind: {
+        path: '$wards',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'zones',
+        localField: 'zone',
+        foreignField: '_id',
+
+        as: 'zones',
+      },
+    },
+    {
+      $unwind: {
+        path: '$zones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 1,
         status: 1,
@@ -1327,6 +1357,9 @@ const getAssigned_details = async (pickuptype) => {
         vehicle_type:"$vehicles.vehicle_type",
         vehicleNo:"$vehicles.vehicleNo",
         tonne_Capacity:"$vehicles.tonne_Capacity",
+        pickuplocation:1,
+        zone:"$zones.zone",
+        ward:"$wards.ward",
       },
     },
   ]);
