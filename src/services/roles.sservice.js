@@ -490,6 +490,156 @@ const getsalesman = async () => {
   return data;
 };
 
+// get all telecaller
+
+const gettelecaller = async () => {
+  let data = await Roles.aggregate([
+    {
+      $match: {
+        $and: [{ roleName: { $eq:"Ward CCE(WCCE)"} }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: '_id',
+        foreignField: 'userRole',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $lookup: {
+        from: 'telecallershops',
+        localField: 'b2busersData._id',
+        foreignField: 'fromtelecallerteamId',
+       pipeline:[ {
+          $match: {
+            $or: [
+              {
+                $and: [
+                  { status: { $eq: 'Assign' } },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+        as: 'salesmanshops',
+      },
+    },
+    {
+      $lookup: {
+        from: 'telecallershops',
+        localField: 'b2busersData._id',
+        foreignField: 'telecallerteamId',
+       pipeline:[ {
+          $match: {
+            $or: [
+              {
+                $and: [
+                  { status: { $eq: 'tempReassign' } },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+        as: 'salesmanshopsdata',
+      },
+    },
+    {
+      $project: {
+        name: '$b2busersData.name',
+        b2buserId: '$b2busersData._id',
+        roleName: 1,
+        assigncount:{$size:"$salesmanshops"},
+        tempcount:{$size:"$salesmanshopsdata"},
+        count:{ $add:[{$size:"$salesmanshops"},{$size:"$salesmanshopsdata"}] },
+        _id: 1,
+      },
+    },
+  ]);
+  return data;
+};
+
+// get all salesmanOrder
+
+const getsalesmanOrder = async () => {
+  let data = await Roles.aggregate([
+    {
+      $match: {
+        $and: [{ roleName: { $eq: 'Ward Field Sales Executive(WFSE)'} }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: '_id',
+        foreignField: 'userRole',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $lookup: {
+        from: 'salesmanordershops',
+        localField: 'b2busersData._id',
+        foreignField: 'fromsalesmanOrderteamId',
+       pipeline:[ {
+          $match: {
+            $or: [
+              {
+                $and: [
+                  { status: { $eq: 'Assign' } },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+        as: 'salesmanshops',
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanordershops',
+        localField: 'b2busersData._id',
+        foreignField: 'salesmanOrderteamId',
+       pipeline:[ {
+          $match: {
+            $or: [
+              {
+                $and: [
+                  { status: { $eq: 'tempReassign' } },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+        as: 'salesmanshopsdata',
+      },
+    },
+    {
+      $project: {
+        name: '$b2busersData.name',
+        b2buserId: '$b2busersData._id',
+        roleName: 1,
+        assigncount:{$size:"$salesmanshops"},
+        tempcount:{$size:"$salesmanshopsdata"},
+        count:{ $add:[{$size:"$salesmanshops"},{$size:"$salesmanshopsdata"}] },
+        _id: 1,
+      },
+    },
+  ]);
+  return data;
+};
+
 // getAllSalesmanShops
 const getAllSalesmanShops = async () => {
   let data = await Roles.aggregate([
@@ -665,5 +815,7 @@ module.exports = {
   getAllSalesmanShops,
   notAssignTonneValueSalesmanager,
   getMenu,
-  get_user_menu
+  get_user_menu,
+  getsalesmanOrder,
+  gettelecaller,
 };

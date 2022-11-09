@@ -81,6 +81,16 @@ const getSalesMan = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getsalesmanOrder = catchAsync(async (req, res) => {
+  const data = await RolesService.getsalesmanOrder();
+  res.send(data);
+});
+
+const gettelecaller = catchAsync(async (req, res) => {
+  const data = await RolesService.gettelecaller();
+  res.send(data);
+});
+
 const getAllSalesmanShops = catchAsync(async (req, res) => {
   const data = await RolesService.getAllSalesmanShops();
   res.send(data);
@@ -115,5 +125,7 @@ module.exports = {
   getAllSalesmanShops,
   getMenu,
   notAssignTonneValueSalesmanager,
-  get_user_menu
+  get_user_menu,
+  getsalesmanOrder,
+  gettelecaller,
 };

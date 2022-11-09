@@ -16,6 +16,8 @@ router.route('/getallwardadminAsm/Asm').get(roleController.getroleWardAdminAsm);
 router.route('/getAllSalesManager/data').get(roleController.getAlldataSalesManager);
 router.route('/getAllSalesMan/data/:page').get(roleController.getAlldataSalesMan);
 router.route('/getSalesMan/data').get(roleController.getSalesMan);
+router.route('/gettelecaller/data').get(roleController.gettelecaller);
+router.route('/getsalesmanOrder/data').get(roleController.getsalesmanOrder);
 router.route('/getAllSalesmanShops/data').get(roleController.getAllSalesmanShops);
 router.route('/notAssignTonneValueSalesmanager/data').get(roleController.notAssignTonneValueSalesmanager);
 router.route('/getMenues/:id').get(roleController.getMenu);
