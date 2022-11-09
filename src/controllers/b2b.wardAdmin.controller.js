@@ -203,7 +203,7 @@ const countStatus = catchAsync(async (req, res) => {
 });
 
 const getAssigned_details = catchAsync(async (req, res) => {
-  const orderAssign = await wardAdminService.getAssigned_details();
+  const orderAssign = await wardAdminService.getAssigned_details(req.query.pickuptype);
   res.send(orderAssign);
 });
 

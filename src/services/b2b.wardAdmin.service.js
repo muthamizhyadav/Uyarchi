@@ -1203,11 +1203,11 @@ const wardDeliveryExecutive = async () => {
   return value;
 };
 
-const getAssigned_details = async () => {
+const getAssigned_details = async (pickuptype) => {
   const currentDate = moment().format('YYYY-MM-DD');
   let values = await wardAdminGroup.aggregate([
     {
-      $match: { assignDate: currentDate, status: 'Assigned' },
+      $match: { assignDate: currentDate, status: 'Assigned', pickputype: pickuptype },
     },
     {
       $lookup: {

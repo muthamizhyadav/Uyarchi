@@ -124,8 +124,8 @@ const getCreditBillMaster = catchAsync(async (req, res) => {
   res.send(creditBillMaster);
 })
 
-const groupCreditBill = catchAsync(async(req,res) =>{
-  const getGroupDetails = await creditBillService.groupCreditBill(req.params.AssignedUserId,req.params.date,req.params.page);
+const groupCreditBill = catchAsync(async (req, res) => {
+  const getGroupDetails = await creditBillService.groupCreditBill(req.params.AssignedUserId, req.params.date, req.params.page);
   res.send(getGroupDetails);
 });
 
@@ -134,12 +134,15 @@ const getbilldetails = catchAsync(async (req, res) => {
   res.send(getGroupDetails);
 });
 
-const getPaymenthistory = catchAsync(async(req,res) =>{
+const getPaymenthistory = catchAsync(async (req, res) => {
   const PaymentHistory = await creditBillService.getPaymenthistory(req.params.id);
   res.send(PaymentHistory)
 })
 
-
+const getcreditbill_singlebillview = catchAsync(async (req, res) => {
+  const PaymentHistory = await creditBillService.getcreditbill_singlebillview(req.query);
+  res.send(PaymentHistory)
+})
 module.exports = {
 
   getShopWithBill,
@@ -169,4 +172,5 @@ module.exports = {
   groupCreditBill,
   getbilldetails,
   getPaymenthistory,
+  getcreditbill_singlebillview
 }
