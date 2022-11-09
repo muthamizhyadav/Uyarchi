@@ -130,7 +130,19 @@ const wardAdminGroupSchema = new mongoose.Schema({
   FinishingStatus: {
     type: String,
     default: "Pending"
-  }
+  },
+  zone:{
+    type: String,
+  },
+  ward:{
+    type: String,
+  },
+  pickuplocation:{
+    type: String,
+  },
+  pickputype:{
+    type: String,
+  },
 });
 
 const wardAdminGroup = mongoose.model('wardAdminGroup', wardAdminGroupSchema);
