@@ -35,8 +35,6 @@ router.route('/get/payment/history/:id/').get(creditBillController.getPaymenthis
 router.route('/billdetails/getorderdetails').get(authorization, creditBillController.getbilldetails);
 
 
-// credit group bill view form b2b
-router.route('/getcreditbill/view/singlebill').get(authorization, creditBillController.getcreditbill_singlebillview);
 
 
 module.exports = router;

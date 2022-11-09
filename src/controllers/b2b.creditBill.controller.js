@@ -139,10 +139,6 @@ const getPaymenthistory = catchAsync(async (req, res) => {
   res.send(PaymentHistory)
 })
 
-const getcreditbill_singlebillview = catchAsync(async (req, res) => {
-  const PaymentHistory = await creditBillService.getcreditbill_singlebillview(req.query);
-  res.send(PaymentHistory)
-})
 module.exports = {
 
   getShopWithBill,
@@ -172,5 +168,4 @@ module.exports = {
   groupCreditBill,
   getbilldetails,
   getPaymenthistory,
-  getcreditbill_singlebillview
 }

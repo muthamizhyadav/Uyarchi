@@ -3133,11 +3133,6 @@ const getbilldetails = async (query) => {
 }
 
 
-const getcreditbill_singlebillview = async (query) => {
-  console.log(query)
-  return { admin: "hello" }
-}
-
 
 module.exports = {
   getShopWithBill,
@@ -3166,5 +3161,4 @@ module.exports = {
   getCreditBillMaster,
   groupCreditBill,
   getbilldetails,
-  getcreditbill_singlebillview
 };
