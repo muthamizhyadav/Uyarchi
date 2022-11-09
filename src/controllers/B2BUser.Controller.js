@@ -149,6 +149,11 @@ const gettargetedusers_credit = catchAsync(async (req, res) => {
   const users = await b2bUsersService.gettargetedusers_credit();
   res.send(users);
 });
+
+const get_stationery_user= catchAsync(async (req, res) => {
+  const users = await b2bUsersService.get_stationery_user();
+  res.send(users);
+});
 module.exports = {
   createB2bUsers,
   getsalesExecuteRolesUsers,
@@ -173,5 +178,6 @@ module.exports = {
   shopverification,
   getrolebyuser_user,
   gettargetedusers,
-  gettargetedusers_credit
+  gettargetedusers_credit,
+  get_stationery_user
 };

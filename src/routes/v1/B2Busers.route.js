@@ -30,6 +30,7 @@ router.route('/shopverification/asm').get(authorization, b2bUsersController.shop
 router.route('/getrolebyuser/userid').get(authorization, b2bUsersController.getrolebyuser_user);
 router.route('/gettargetedusers/userid').get(authorization, b2bUsersController.gettargetedusers);
 router.route('/getuser/filter/roles').get(authorization, b2bUsersController.gettargetedusers_credit);
+router.route('/stationeryuser/getall').get(authorization, b2bUsersController.get_stationery_user);
 
 
 
