@@ -1489,9 +1489,6 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily_all = async (user, 
         displaycount: 1,
       },
     },
-    {
-      $limit:100
-    }
   ]);
   return values;
 };
