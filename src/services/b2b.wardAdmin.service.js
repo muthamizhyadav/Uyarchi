@@ -1347,7 +1347,7 @@ const getAssigned_details = async (pickuptype) => {
     },
     {
       $unwind: {
-        path: '$pickuplocation',
+        path: '$managepickuplocations',
         preserveNullAndEmptyArrays: true,
       },
     },
