@@ -412,7 +412,31 @@ const gettargetedusers_credit = async (id) => {
 };
 
 const get_stationery_user = async (id) => {
-  let users = await Users.find({ userRole: { $in: ['ea1d0203-56fa-44f7-a1fb-73d3d5c3eac5'] } });
+  let users = await Users.aggregate([
+    {
+      $match: { userRole: { $in: ['ea1d0203-56fa-44f7-a1fb-73d3d5c3eac5'] } }
+    }
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: '_id',
+        foreignField: 'deliveryExecutiveId',
+        pipeline: [
+          { $match: { manageDeliveryStatus: { $ne: "Delivery Completed" } } }
+        ],
+        as: 'wardadmingroups',
+      }
+    },
+    {
+      _id: 1,
+      phoneNumber:1,
+      name:1,
+      email:1,
+      wardadmingroups: { $size: "$wardadmingroups" }
+
+    },
+    { $match: { wardadmingroups: { $eq: 0 } } }
+  ])
   return users;
 };
 module.exports = {

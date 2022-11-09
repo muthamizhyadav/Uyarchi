@@ -1,4 +1,4 @@
-const express = require('express');
+getPackedProductDetailsconst express = require('express');
 const wardAdminController = require('../../controllers/b2b.wardAdmin.controller');
 const router = express.Router();
 router.route('/create/data').post(wardAdminController.createdata);
