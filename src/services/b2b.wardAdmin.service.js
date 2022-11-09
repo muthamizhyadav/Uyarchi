@@ -896,7 +896,7 @@ const wardloadExecutivePacked = async (range, page, type) => {
   let lapsed = timeslot[hover].start;
   let beforelapsed = timeslot[before].start;
 
-  console.log(lapsed);
+  console.log(type);
   console.log(beforelapsed);
 
   rangematch = { time_of_delivery: { $eq: range } };

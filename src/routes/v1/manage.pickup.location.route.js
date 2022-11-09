@@ -9,4 +9,7 @@ router.route('/getAll/:userId/:date/:page').get(managePickupController.getAllMan
 router.route('/:id').get(managePickupController.getManagePickupById);
 router.route('/getAll/pickup/:userId/:date/:todate').get(managePickupController.getAllManagepickupLocation);
 
+router.route('/getAll/pickuploaction').get(authorization,managePickupController.getallPickuplocation);
+
+
 module.exports = router;
