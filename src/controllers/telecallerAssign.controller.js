@@ -41,7 +41,9 @@ const getTelecallerAssignedShops = catchAsync(async (req, res) => {
 
 const getnotAssignShops = catchAsync(async (req, res) => {
   const data = await telecallerService.getnotAssignShops(
+    req.params.zone,
     req.params.id,
+    req.params.street,
     req.params.page,
     req.params.limit,
     req.params.uid,
@@ -124,7 +126,9 @@ const getsalesmanOrderAssignedShops = catchAsync(async (req, res) => {
 
 const getnotAssignsalesmanOrderShops = catchAsync(async (req, res) => {
   const data = await telecallerService.getnotAssignsalesmanOrderShops(
+    req.params.zone,
     req.params.id,
+    req.params.street,
     req.params.page,
     req.params.limit,
     req.params.uid,
