@@ -404,6 +404,12 @@ const gettargetedusers = async (id) => {
   let users = await Users.find({ userRole: { $in: ['fb0dd028-c608-4caa-a7a9-b700389a098d', '33a2ff87-400c-4c15-b607-7730a79b49a9'] } });
   return users;
 };
+
+
+const gettargetedusers_credit = async (id) => {
+  let users = await Users.find({ userRole: { $in: ['36151bdd-a8ce-4f80-987e-1f454cd0993f', 'fb0dd028-c608-4caa-a7a9-b700389a098d'] } });
+  return users;
+};
 module.exports = {
   createUser,
   UsersLogin,
@@ -426,5 +432,6 @@ module.exports = {
   deleteB2bUsersbyId,
   shopverification,
   getrolebyuser_user,
-  gettargetedusers
+  gettargetedusers,
+  gettargetedusers_credit
 };
