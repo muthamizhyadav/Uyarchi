@@ -220,6 +220,9 @@ const getAllManagepickupLocation = async (userId, date, todate) => {
         userName: '$userData.name',
       },
     },
+    {
+      $limit:100
+    }
   ]);
   return values;
 };
