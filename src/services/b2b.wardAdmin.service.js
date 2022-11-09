@@ -1335,6 +1335,22 @@ const getAssigned_details = async (pickuptype) => {
         preserveNullAndEmptyArrays: true,
       },
     },
+
+    {
+      $lookup: {
+        from: 'managepickuplocations',
+        localField: 'pickuplocation',
+        foreignField: '_id',
+
+        as: 'managepickuplocations',
+      },
+    },
+    {
+      $unwind: {
+        path: '$pickuplocation',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
         _id: 1,
@@ -1360,6 +1376,7 @@ const getAssigned_details = async (pickuptype) => {
         pickuplocation:1,
         zone:"$zones.zone",
         ward:"$wards.ward",
+        locationName:"$managepickuplocations.locationName"
       },
     },
   ]);
