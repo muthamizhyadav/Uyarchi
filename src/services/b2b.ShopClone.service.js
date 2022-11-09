@@ -2409,39 +2409,39 @@ const getVendorShops = async (key) => {
 
 // getnotAssignSalesmanData
 
-const getnotAssignSalesmanData = async (zone,id, street, page, limit, uid, date) => {
+const getnotAssignSalesmanData = async (zone, id, street, page, limit, uid, date) => {
   let match;
   let zoneMatch;
   let wardMatch;
   let streetMatch;
-  if(zone != 'null'){
-     zoneMatch = [{ _id: { $eq: zone } }];
-  }else{
+  if (zone != 'null') {
+    zoneMatch = [{ _id: { $eq: zone } }];
+  } else {
     zoneMatch = [{ active: { $eq: true } }];
   }
   console.log(zoneMatch)
-  if(id != 'null'){
+  if (id != 'null') {
     wardMatch = [{ _id: { $eq: id } }];
- }else{
-  wardMatch = [{ active: { $eq: true } }];
- }
- console.log(wardMatch)
- if(street != 'null'){
-  streetMatch = [{ _id: { $eq: street } }];
- }else{
-  streetMatch = [{ active: { $eq: true } }];
-}
-console.log(streetMatch)
+  } else {
+    wardMatch = [{ active: { $eq: true } }];
+  }
+  console.log(wardMatch)
+  if (street != 'null') {
+    streetMatch = [{ _id: { $eq: street } }];
+  } else {
+    streetMatch = [{ active: { $eq: true } }];
+  }
+  console.log(streetMatch)
 
-if(uid != 'null' &&  date == 'null'){
-  match = [{ Uid: { $eq: uid } }];
-}else if(date != 'null' && uid == 'null' ){
-  match = [{ date: { $eq: date } }];
-}else if(uid != 'null' && date != 'null'){
-  match = [{ Uid: { $eq: uid } },{ date: { $eq: date } }];
-}else{
-  match = [{ active: { $eq: true } }];
-}
+  if (uid != 'null' && date == 'null') {
+    match = [{ Uid: { $eq: uid } }];
+  } else if (date != 'null' && uid == 'null') {
+    match = [{ date: { $eq: date } }];
+  } else if (uid != 'null' && date != 'null') {
+    match = [{ Uid: { $eq: uid } }, { date: { $eq: date } }];
+  } else {
+    match = [{ active: { $eq: true } }];
+  }
 
   // if (id != 'null' && uid != 'null' && date == 'null' && street == 'null') {
   //   match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }];
@@ -2502,7 +2502,7 @@ if(uid != 'null' &&  date == 'null'){
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: streetMatch,
@@ -2520,7 +2520,7 @@ if(uid != 'null' &&  date == 'null'){
         from: 'wards',
         localField: 'Wardid',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: wardMatch,
@@ -2538,7 +2538,7 @@ if(uid != 'null' &&  date == 'null'){
         from: 'zones',
         localField: 'wards.zoneId',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: zoneMatch,
@@ -2559,12 +2559,12 @@ if(uid != 'null' &&  date == 'null'){
         address: 1,
         Slat: 1,
         Slong: 1,
-        Uid:1,
-        date:1,
-        ward:'$wards.ward',
-        Wardid:1,
-        zoneId:'$wards.zoneId',
-        zone:'$zones.zone',
+        Uid: 1,
+        date: 1,
+        ward: '$wards.ward',
+        Wardid: 1,
+        zoneId: '$wards.zoneId',
+        zone: '$zones.zone',
         streetId: '$streets._id',
         streetname: '$streets.street',
         locality: '$streets.locality',
@@ -2613,7 +2613,7 @@ if(uid != 'null' &&  date == 'null'){
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: streetMatch,
@@ -2631,7 +2631,7 @@ if(uid != 'null' &&  date == 'null'){
         from: 'wards',
         localField: 'Wardid',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: wardMatch,
@@ -2649,7 +2649,7 @@ if(uid != 'null' &&  date == 'null'){
         from: 'zones',
         localField: 'wards.zoneId',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: zoneMatch,
@@ -2692,7 +2692,7 @@ if(uid != 'null' &&  date == 'null'){
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: streetMatch,
@@ -2710,7 +2710,7 @@ if(uid != 'null' &&  date == 'null'){
         from: 'wards',
         localField: 'Wardid',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: wardMatch,
@@ -2728,7 +2728,7 @@ if(uid != 'null' &&  date == 'null'){
         from: 'zones',
         localField: 'wards.zoneId',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: zoneMatch,
@@ -2794,7 +2794,7 @@ if(uid != 'null' &&  date == 'null'){
         from: 'streets',
         localField: 'Strid',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: streetMatch,
@@ -2812,7 +2812,7 @@ if(uid != 'null' &&  date == 'null'){
         from: 'wards',
         localField: 'Wardid',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: wardMatch,
@@ -2830,7 +2830,7 @@ if(uid != 'null' &&  date == 'null'){
         from: 'zones',
         localField: 'wards.zoneId',
         foreignField: '_id',
-        pipeline:[
+        pipeline: [
           {
             $match: {
               $and: zoneMatch,
@@ -2855,7 +2855,7 @@ if(uid != 'null' &&  date == 'null'){
       },
     },
   ]);
-  return { data: data, total: total.length, overall: allnoAssing.length, temp:temp.length};
+  return { data: data, total: total.length, overall: allnoAssing.length, temp: temp.length };
 };
 
 const GetShopsByShopType = async (id, page) => {
@@ -3037,10 +3037,10 @@ const data2 = async () => {
 };
 
 const data3 = async () => {
-  const data = await Shop.find({salesmanOrderStatus: { $in: ['Reassign', 'Assign', 'tempReassign'] } });
+  const data = await Shop.find({ salesmanOrderStatus: { $in: ['Reassign', 'Assign', 'tempReassign'] } });
   if (data.length != 0) {
     data.forEach(async (e) => {
-      await Shop.findByIdAndUpdate({ _id: e._id }, {salesmanOrderStatus: null }, { new: true });
+      await Shop.findByIdAndUpdate({ _id: e._id }, { salesmanOrderStatus: null }, { new: true });
       console.log(e.salesmanOrderStatus);
     });
   }
@@ -3115,6 +3115,24 @@ const get_total_vendorShop = async (page) => {
   return { values: values, total: total.length };
 };
 
+
+
+
+const get_wardby_shops = async (query) => {
+  let wardId = query.ward;
+  let shopss = await Shop.aggregate([
+    {
+      $match: { Wardid: { $eq: wardId } }
+    }
+  ]);
+
+  return shopss;
+}
+
+
+
+
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -3160,4 +3178,6 @@ module.exports = {
   searchShops_By_Name,
   data2,
   data3,
+
+  get_wardby_shops
 };

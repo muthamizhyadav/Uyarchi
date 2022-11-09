@@ -95,4 +95,9 @@ router.route('/order/id').get(b2bShopCloneController.insertOrder);
 router.route('/vendor/shop/:page').get(b2bShopCloneController.get_total_vendorShop);
 router.route('/search/shops/bySname/:key').get(b2bShopCloneController.searchShops_By_Name);
 
+
+router.route('/getshops/from/ward').get(b2bShopCloneController.get_wardby_shops);
+
+
+
 module.exports = router;
