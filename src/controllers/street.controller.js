@@ -139,6 +139,17 @@ const getAllUnAssignedStreetandCount = catchAsync(async (req, res) => {
   const street = await StreetService.getAllUnAssignedStreetandCount(req.params.wardId);
   res.send(street);
 });
+
+const getTelecallerAllUnAssignedStreetandCount = catchAsync(async (req, res) => {
+  const street = await StreetService.getTelecallerAllUnAssignedStreetandCount(req.params.wardId);
+  res.send(street);
+});
+
+const getSalesmanAllUnAssignedStreetandCount = catchAsync(async (req, res) => {
+  const street = await StreetService.getSalesmanAllUnAssignedStreetandCount(req.params.wardId);
+  res.send(street);
+});
+
 module.exports = {
   createStreet,
   getStreetDetailsById,
@@ -163,4 +174,6 @@ module.exports = {
   renameStreet,
   getwardBystreetAngular,
   getAllUnAssignedStreetandCount,
+  getTelecallerAllUnAssignedStreetandCount,
+  getSalesmanAllUnAssignedStreetandCount,
 };

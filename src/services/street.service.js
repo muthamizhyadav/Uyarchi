@@ -647,6 +647,126 @@ const getAllUnAssignedStreetandCount = async (wardId) => {
   return ress;
 };
 
+const getTelecallerAllUnAssignedStreetandCount = async (wardId) => {
+  const ress = await Street.aggregate([
+    {
+      $match: {
+        $and: [{ wardId: { $eq: wardId } }],
+      },
+    },
+    { $sort: { street: 1 } },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: '_id',
+        foreignField: 'Strid',
+        pipeline:[
+          {
+            $match: {
+              $and: [{ Wardid: { $eq: wardId } }],
+            },
+          },
+          {
+            $match: {
+              $or: [
+                {
+                  $and: [
+                    { telecallerStatus: { $ne: 'Assign' } },
+                    { telecallerStatus: { $ne: 'tempReassign' } },
+                    { telecallerStatus: { $eq: 'Reassign' } },
+                  ],
+                },
+                {
+                  $and: [
+                    { telecallerStatus: { $ne: 'Assign' } },
+                    { telecallerStatus: { $ne: 'tempReassign' } },
+                    { telecallerStatus: { $eq: null } },
+                  ],
+                },
+              ],
+            },
+          },
+          // {
+          //   $group: {
+          //     _id: null,
+          //     unAssignCount: { $sum: 1 },
+          //   },
+          // },
+        ],
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
+      $project:{
+        street:1,
+        count:{$size:'$b2bshopclonesdata'}
+      }
+    }
+  ]);
+
+  return ress;
+};
+
+const getSalesmanAllUnAssignedStreetandCount = async (wardId) => {
+  const ress = await Street.aggregate([
+    {
+      $match: {
+        $and: [{ wardId: { $eq: wardId } }],
+      },
+    },
+    { $sort: { street: 1 } },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: '_id',
+        foreignField: 'Strid',
+        pipeline:[
+          {
+            $match: {
+              $and: [{ Wardid: { $eq: wardId } }],
+            },
+          },
+          {
+            $match: {
+              $or: [
+                {
+                  $and: [
+                    { salesmanOrderStatus: { $ne: 'Assign' } },
+                    { salesmanOrderStatus: { $ne: 'tempReassign' } },
+                    { salesmanOrderStatus: { $eq: 'Reassign' } },
+                  ],
+                },
+                {
+                  $and: [
+                    { salesmanOrderStatus: { $ne: 'Assign' } },
+                    { salesmanOrderStatus: { $ne: 'tempReassign' } },
+                    { salesmanOrderStatus: { $eq: null } },
+                  ],
+                },
+              ],
+            },
+          },
+          // {
+          //   $group: {
+          //     _id: null,
+          //     unAssignCount: { $sum: 1 },
+          //   },
+          // },
+        ],
+        as: 'b2bshopclonesdata',
+      },
+    },
+    {
+      $project:{
+        street:1,
+        count:{$size:'$b2bshopclonesdata'}
+      }
+    }
+  ]);
+
+  return ress;
+};
+
 module.exports = {
   createStreet,
   getStreetById,
@@ -672,4 +792,6 @@ module.exports = {
   // getStreetByWard,
   // rename,
   getAllUnAssignedStreetandCount,
+  getTelecallerAllUnAssignedStreetandCount,
+  getSalesmanAllUnAssignedStreetandCount,
 };
