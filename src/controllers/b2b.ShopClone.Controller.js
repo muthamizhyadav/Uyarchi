@@ -425,6 +425,16 @@ const data1 = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const data2 = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.data2();
+  res.send(data);
+});
+
+const data3 = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.data3();
+  res.send(data);
+});
+
 const insertOrder = catchAsync(async (req, res) => {
   const data = await b2bCloneService.insertOrder();
   res.send(data);
@@ -484,4 +494,6 @@ module.exports = {
   insertOrder,
   get_total_vendorShop,
   searchShops_By_Name,
+  data2,
+  data3,
 };

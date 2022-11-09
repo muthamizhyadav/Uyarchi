@@ -3025,6 +3025,28 @@ const data1 = async () => {
   return { mesage: 'updated..' };
 };
 
+const data2 = async () => {
+  const data = await Shop.find({ telecallerStatus: { $in: ['Reassign', 'Assign', 'tempReassign'] } });
+  if (data.length != 0) {
+    data.forEach(async (e) => {
+      await Shop.findByIdAndUpdate({ _id: e._id }, { telecallerStatus: null }, { new: true });
+      console.log(e.telecallerStatus);
+    });
+  }
+  return { mesage: 'updated..' };
+};
+
+const data3 = async () => {
+  const data = await Shop.find({salesmanOrderStatus: { $in: ['Reassign', 'Assign', 'tempReassign'] } });
+  if (data.length != 0) {
+    data.forEach(async (e) => {
+      await Shop.findByIdAndUpdate({ _id: e._id }, {salesmanOrderStatus: null }, { new: true });
+      console.log(e.salesmanOrderStatus);
+    });
+  }
+  return { mesage: 'updated..' };
+};
+
 const get_total_vendorShop = async (page) => {
   let values = await Shop.aggregate([
     {
@@ -3136,4 +3158,6 @@ module.exports = {
   insertOrder,
   get_total_vendorShop,
   searchShops_By_Name,
+  data2,
+  data3,
 };

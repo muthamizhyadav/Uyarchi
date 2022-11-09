@@ -89,6 +89,8 @@ router.route('/getShops/By/type/:id/:page').get(b2bShopCloneController.GetShopsB
 router.route('/getShops/By/type/reviews/:id/:page').get(b2bShopCloneController.GetShopsReviewsByShopType);
 router.route('/getShop/Review/ByShop/:id').get(b2bShopCloneController.getShopReviewByShopid);
 router.route('/data1/data').put(b2bShopCloneController.data1);
+router.route('/data2/data').put(b2bShopCloneController.data2);
+router.route('/data3/data').put(b2bShopCloneController.data3);
 router.route('/order/id').get(b2bShopCloneController.insertOrder);
 router.route('/vendor/shop/:page').get(b2bShopCloneController.get_total_vendorShop);
 router.route('/search/shops/bySname/:key').get(b2bShopCloneController.searchShops_By_Name);
