@@ -171,6 +171,9 @@ const shopSchema = mongoose.Schema({
   salesmanOrderStatus: {
     type: String,
   },
+  Pincode: {
+    type: Number,
+  },
 });
 
 // assignSchema.plugin(toJSON);

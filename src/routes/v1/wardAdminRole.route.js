@@ -1,6 +1,7 @@
 const express = require('express');
 const wardAdminRoleController = require('../../controllers/wardAdminRole.controller');
 const router = express.Router();
+const authorization = require('../../controllers/tokenVerify.controller');
 
 router.route('/').post(wardAdminRoleController.createwardAdminRoleService);
 router.route('/:date').get(wardAdminRoleController.getAllwardAdminRole);
@@ -48,4 +49,15 @@ router.route('/WardAdminRoledatas/:id/:date/:page').get(wardAdminRoleController.
 router.route('/assignShopsSalesman/data/:id/:page').get(wardAdminRoleController.assignShopsSalesman);
 router.route('/assignShopsSalesmandatewise/data/:id/:wardid/:page').get(wardAdminRoleController.assignShopsSalesmandatewise);
 router.route('/assignShopsOnlydatewise/data/:id/:wardid/:page').get(wardAdminRoleController.assignShopsOnlydatewise);
+
+
+
+
+//  08-11-2022
+
+router.route('/createtarget/byuser').post(authorization, wardAdminRoleController.createtartget);
+router.route('/getuserTartget/byuser').get(authorization, wardAdminRoleController.get_user_target);
+router.route('/getall/targets/byuser').get(authorization, wardAdminRoleController.getall_targets);
+
+
 module.exports = router;
