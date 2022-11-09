@@ -180,6 +180,8 @@ const createTelecallerShop = async (body) => {
   let { arr } = body;
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
+  let creat = moment().format('yyy-MM-DD')
+  let creat1 = moment().format('HHmmss');
   if (body.status == 'Assign') {
     arr.forEach(async (e) => {
       await Shop.findByIdAndUpdate({ _id: e }, { telecallerStatus: body.status }, { new: true });
@@ -190,6 +192,8 @@ const createTelecallerShop = async (body) => {
         fromtelecallerteamId: body.fromtelecallerteamId,
         time: time,
         date: serverdate,
+        created: creat,
+        createdTime: creat1
       });
     });
   } else {
@@ -369,7 +373,36 @@ const getTelecallerAssignedShops = async (id) => {
       },
     },
   ]);
-  return { data: data, telecallerName: name.name, count:total.length };
+  let lastdata = await TelecallerShop.aggregate([
+    {
+      $match: {
+        $or: [
+          { $and: [{fromtelecallerteamId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+          // { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      },
+    },
+    {
+      $group: {
+        _id: { createdTime: '$createdTime', created: '$created', },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        date: "$_id.created",
+        createdTime: "$_id.createdTime",
+        count: 1
+      }
+    },
+    {
+      $sort: { date: -1, createdTime: -1 },
+    },
+    {
+      $limit: 1,
+    },
+  ])
+  return { data: data, telecallerName: name.name, count:total.length, lastdata};
 };
 
 const getnotAssignShops = async (zone, id, street, page, limit, uid, date) => {
@@ -1702,6 +1735,8 @@ const createsalesmanOrderShop = async (body) => {
   let { arr } = body;
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
+  let creat = moment().format('yyy-MM-DD')
+  let creat1 = moment().format('HHmmss');
   if (body.status == 'Assign') {
     arr.forEach(async (e) => {
       await Shop.findByIdAndUpdate({ _id: e }, { salesmanOrderStatus: body.status }, { new: true });
@@ -1712,6 +1747,8 @@ const createsalesmanOrderShop = async (body) => {
         fromsalesmanOrderteamId: body.fromsalesmanOrderteamId,
         time: time,
         date: serverdate,
+        created: creat,
+        createdTime: creat1
       });
     });
   } else {
@@ -1890,7 +1927,36 @@ const getsalesmanOrderAssignedShops = async (id) => {
       },
     },
   ]);
-  return { data: data, salesmanName: name.name, count:total.length };
+  let lastdata = await SalesmanOrderShop.aggregate([
+    {
+      $match: {
+        $or: [
+          { $and: [{fromsalesmanOrderteamId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+          // { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      },
+    },
+    {
+      $group: {
+        _id: { createdTime: '$createdTime', created: '$created', },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        date: "$_id.created",
+        createdTime: "$_id.createdTime",
+        count: 1
+      }
+    },
+    {
+      $sort: { date: -1, createdTime: -1 },
+    },
+    {
+      $limit: 1,
+    },
+  ])
+  return { data: data, salesmanName: name.name, count:total.length, lastdata};
 };
 
 const getnotAssignsalesmanOrderShops = async (zone,id, street, page, limit, uid, date) => {

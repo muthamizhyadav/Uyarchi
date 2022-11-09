@@ -67,6 +67,12 @@ const TelecallerteamSchema = new mongoose.Schema({
     shopId:{
       type:String,
     },
+    created: {
+      type: String,
+    },
+    createdTime: {
+      type: Number
+    },
     active: {
       type: Boolean,
       default: true,
@@ -145,6 +151,12 @@ const TelecallerteamSchema = new mongoose.Schema({
     },
     shopId:{
       type:String,
+    },
+    created: {
+      type: String,
+    },
+    createdTime: {
+      type: Number
     },
     active: {
       type: Boolean,
