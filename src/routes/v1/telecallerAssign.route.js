@@ -14,13 +14,36 @@ router.route('/getAllTelecaller').get(telecallerAssignController.getAllTelecalle
 router.route('/getTelecallerAssignedShops/:id').get(telecallerAssignController.getTelecallerAssignedShops);
 router.route('/getnotAssignShops/:id/:page/:limit/:uid/:date').get(telecallerAssignController.getnotAssignShops);
 router.route('/getUsersWith_skiped/:id').get(telecallerAssignController.getUsersWith_skiped);
-router.route('/Return_Assign_To_telecaller/:id').get(telecallerAssignController.Return_Assign_To_telecaller);
+router.route('/Return_Assign_To_telecaller/:id').put(telecallerAssignController.Return_Assign_To_telecaller);
 router.route('/createtemperaryAssigndata').post(telecallerAssignController.createtemperaryAssigndata);
 router.route('/getAssignData_by_Telecaller/:page').get(telecallerAssignController.getAssignData_by_Telecaller);
+router.route('/history_Assign_Reaasign_datatelecaller/:id').get(telecallerAssignController.history_Assign_Reaasign_datatelecaller);
 
 // report
 router.route('/assignShopsTelecaller/:id/:page').get(telecallerAssignController.assignShopsTelecaller);
 router.route('/assignShopsTelecallerdatewise/:id/:wardid/:page').get(telecallerAssignController.assignShopsTelecallerdatewise);
 router.route('/assignShopsOnlydatewise/:id/:wardid/:page').get(telecallerAssignController.assignShopsOnlydatewise);
+
+// salemanOrder
+router.route('/createsalesmanAssignReassign').post(telecallerAssignController.createsalesmanAssignReassign);
+router.route('/getAllAsmSalesmanHead').get(telecallerAssignController.getAllAsmSalesmanHead);
+router.route('/getUnassignedsalesmanOrder/:page').get(telecallerAssignController.getUnassignedsalesmanOrder);
+router.route('/getsalemanOrderSalesman/:id').get(telecallerAssignController.getsalemanOrderSalesman);
+
+//salesmanshops
+router.route('/createsalesmanOrderShop').post(telecallerAssignController.createsalesmanOrderShop);
+router.route('/getAllSalesman').get(telecallerAssignController.getAllSalesman);
+router.route('/getsalesmanOrderAssignedShops/:id').get(telecallerAssignController.getsalesmanOrderAssignedShops);
+router.route('/getnotAssignsalesmanOrderShops/:id/:page/:limit/:uid/:date').get(telecallerAssignController.getnotAssignsalesmanOrderShops);
+router.route('/getUserssalesmanWith_skiped/:id').get(telecallerAssignController.getUserssalesmanWith_skiped);
+router.route('/Return_Assign_To_salesmanOrder/:id').put(telecallerAssignController.Return_Assign_To_salesmanOrder);
+router.route('/createsalesmantemperaryAssigndata').post(telecallerAssignController.createsalesmantemperaryAssigndata);
+router.route('/getAssignData_by_SalesmanOrders/:page').get(telecallerAssignController.getAssignData_by_SalesmanOrders);
+router.route('/history_Assign_Reaasign_datasalesman/:id').get(telecallerAssignController.history_Assign_Reaasign_datasalesman);
+
+//report
+router.route('/assignShopsSalesmanOrder/:id/:page').get(telecallerAssignController.assignShopsSalesmanOrder);
+router.route('/assignShopssalesmandatewise/:id/:wardid/:page').get(telecallerAssignController.assignShopssalesmandatewise);
+router.route('/assignShopssalesmanOnlydatewise/:id/:wardid/:page').get(telecallerAssignController.assignShopssalesmanOnlydatewise);
 
 module.exports = router;

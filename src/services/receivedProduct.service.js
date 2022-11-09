@@ -948,6 +948,7 @@ const getreceivedProductBySupplier = async (page) => {
   return values;
 };
 
+
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,

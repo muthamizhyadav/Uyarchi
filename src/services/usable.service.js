@@ -709,6 +709,56 @@ const updatestcokDetails_Opening = async (body) => {
   return { success: true };
 
 }
+
+const updatestcokDetails_Random = async (body) => {
+  console.log(body)
+  const today = moment().format('DD-MM-YYYY');
+  const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
+  const tomorrow = moment().subtract(-1, 'days').format('DD-MM-YYYY');
+  const todayfor = moment().format('DD-MM-YYYY');
+  const time = moment().format('hhmmss');
+  body.product.forEach(async (e) => {
+    console.log(e)
+    let NSFQ1 = e.NSFQ1 == null || e.NSFQ1 == '' ? 0 : e.NSFQ1;
+    let NSFQ2 = e.NSFQ2 == null || e.NSFQ2 == '' ? 0 : e.NSFQ2;
+    let NSFQ3 = e.NSFQ3 == null || e.NSFQ3 == '' ? 0 : e.NSFQ3;
+    let NSFW_Wastage = e.NSFW_Wastage == null || e.NSFW_Wastage == '' ? 0 : e.NSFW_Wastage;
+    let Pid = e.Pid
+    let total = NSFQ1 + NSFQ2 + NSFQ3;
+    let usableStockss = await usableStock.findOne({ productId: e.Pid, date: today });
+    let randomarray = usableStockss.randomStock_History
+    usableStockss.random_stock = false;
+    usableStockss.save()
+    // await Stockhistory.create({
+    //   usableStock: groupstatus._id,
+    //   FQ1: NSFQ1,
+    //   FQ2: NSFQ2,
+    //   FQ3: NSFQ3,
+    //   wastage: NSFW_Wastage,
+    //   date: todayfor,
+    //   time: time,
+    //   created: moment(),
+    // })
+  })
+  return { success: true };
+
+}
+
+const updaterandom_product = async (body, userId) => {
+  const today = moment().format('DD-MM-YYYY');
+  body.forEach(async (e) => {
+    let usableStockss = await usableStock.findOne({ productId: e.Pid, date: today });
+    let randomarray = usableStockss.randomStock_History
+    randomarray.push({
+      date: moment().format('YYYY-MM-DD'),
+      time: moment().format('hh:mm a'),
+      user: userId
+    });
+    usableStockss.random_stock = true;
+    usableStockss.save()
+  })
+  return { updated: 'successfull' };
+}
 module.exports = {
   createusableStock,
   getAllusableStock,
@@ -718,5 +768,7 @@ module.exports = {
   getStocks,
   getstockDetails,
   updatestcokDetails,
-  updatestcokDetails_Opening
+  updatestcokDetails_Opening,
+  updaterandom_product,
+  updatestcokDetails_Random
 };

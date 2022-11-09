@@ -9,6 +9,7 @@ const {
   WardAdminRoleAsmHistory,
   WardAdminRoleHistory,
   WithoutAsmWithAsm,
+  Tartgetvalue, TartgetHistory
 } = require('../models/wardAdminRole.model');
 const { Roles } = require('../models');
 const { Shop } = require('../models/b2b.ShopClone.model');
@@ -17,6 +18,9 @@ const Ward = require('../models/ward.model');
 const moment = require('moment');
 const { findByIdAndUpdate } = require('../models/b2b.pettyStock.model');
 const { ValidationRequestList } = require('twilio/lib/rest/api/v2010/account/validationRequest');
+
+
+
 const createwardAdminRole = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
@@ -736,7 +740,7 @@ const allAssignReassignSalesman = async (id) => {
 const createSalesmanShop = async (body) => {
   let { arr } = body;
   let creat = moment().format('yyy-MM-DD')
-  let creat1  = moment().format('HHmmss');
+  let creat1 = moment().format('HHmmss');
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
   if (body.status == 'Assign') {
@@ -750,8 +754,8 @@ const createSalesmanShop = async (body) => {
         fromSalesManId: body.fromSalesManId,
         time: time,
         date: serverdate,
-        created:creat,
-        createdTime:creat1
+        created: creat,
+        createdTime: creat1
       });
     });
   } else {
@@ -878,25 +882,25 @@ const getSalesman = async (id) => {
     },
     {
       $group: {
-        _id: {  createdTime:'$createdTime',created:'$created',},
+        _id: { createdTime: '$createdTime', created: '$created', },
         count: { $sum: 1 },
       },
     },
     {
-      $project:{
-        date:"$_id.created",
-        createdTime:"$_id.createdTime",
-        count:1
+      $project: {
+        date: "$_id.created",
+        createdTime: "$_id.createdTime",
+        count: 1
       }
     },
     {
-      $sort: { date:-1,createdTime:-1},
+      $sort: { date: -1, createdTime: -1 },
     },
     {
       $limit: 1,
     },
   ]);
-  return { data: data, salesmanname: name.name, lastdata};
+  return { data: data, salesmanname: name.name, lastdata };
 };
 
 // withoutoutAsmSalesman
@@ -2117,7 +2121,7 @@ const assignShopsSalesmandatewise = async (id, wardid, page) => {
       $group: {
         _id: '$filterDate',
         shopCount: { $sum: 1 },
-        assignCount: { $sum: '$assignCount'},
+        assignCount: { $sum: '$assignCount' },
         // Slong: { $push:['$Slong','$Slat']},
         //  categoryId: { $sum: "$Slong"},
         //  parentId: { $sum: "$Uid"}
@@ -2279,6 +2283,198 @@ const assignShopsOnlydatewise = async (id, wardid, page) => {
   return { data: data, count: total.length };
 };
 
+
+
+
+
+const createtartget = async (userId, body) => {
+  // Tartgetvalue, TartgetHistory
+  let object = {
+    ...body, ...{
+      date: moment().format('YYYY-MM-DD'),
+      time: moment().format('hhmmss'),
+      created: moment(),
+      Auther: userId
+    }
+  }
+  let target = await Tartgetvalue.findOne({ b2buser: body.b2buser, date: moment().format('YYYY-MM-DD') })
+  if (!target) {
+    target = await Tartgetvalue.create(object);
+  }
+  else {
+    let targetKg = target.targetKg + parseInt(body.targetKg)
+    let targetvalue = target.targetvalue + parseInt(body.targetvalue)
+    target = await Tartgetvalue.findByIdAndUpdate(
+      { _id: target._id },
+      {
+        targetKg: targetKg,
+        targetvalue: targetvalue,
+      },
+      { new: true }
+    );
+  }
+  let target_hist = await TartgetHistory.create({
+    targetid: target._id,
+    date: moment().format('YYYY-MM-DD'),
+    time: moment().format('HHmm'),
+    created: moment(),
+    targetKg: body.targetKg,
+    targetvalue: body.targetvalue,
+    teamtype: body.teamtype
+  });
+  return target
+}
+
+
+const get_user_target = async (userid, id) => {
+  let todaydata = await TartgetHistory.aggregate([
+    {
+      $lookup: {
+        from: 'targetvalues',
+        localField: 'targetid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              b2buser: { $eq: id },
+              date: { $eq: moment().format('YYYY-MM-DD') }
+            }
+          },
+        ],
+        as: 'targetvalues',
+      },
+    },
+    {
+      $unwind: "$targetvalues"
+    },
+    {
+      $project: {
+        created: 1,
+        date: 1,
+        targetKg: 1,
+        targetvalue: 1,
+        _id: 1,
+      }
+    }
+  ])
+
+  return todaydata;
+}
+
+const getall_targets = async (query) => {
+  let page = query.page == null || query.page == 'null' || query.page == '' ? 0 : query.page;
+  let user = query.user
+  let date = query.date
+  let userMatch = { active: true };
+  let dateMatch = { active: true };
+  if (date != null && date != '' && date != 'null') {
+    dateMatch = { date: { $eq: date } };
+  }
+  if (user != null && user != '' && user != 'null') {
+    userMatch = { b2buser: { $eq: user } };
+  }
+  let value = await Tartgetvalue.aggregate([
+    {
+      $match: {
+        $and: [dateMatch, userMatch]
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'b2buser',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },
+    {
+      $unwind: {
+        path: '$b2busers',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'targethistories',
+        localField: '_id',
+        foreignField: 'targetid',
+        as: 'targethistories',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        active: 1,
+        archive: 1,
+        teamtype: 1,
+        targetKg: 1,
+        targetvalue: 1,
+        b2buser: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        name: "$b2busers.name",
+        userRole: "$b2busers.userRole",
+        targethistories: "$targethistories",
+      }
+    },
+    { $skip: 10 * page },
+    {
+      $limit: 10
+    },
+  ])
+  let total = await Tartgetvalue.aggregate([
+    {
+      $match: {
+        $and: [dateMatch, userMatch]
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'b2buser',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },
+    {
+      $unwind: {
+        path: '$b2busers',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'targethistories',
+        localField: '_id',
+        foreignField: 'targetid',
+        as: 'targethistories',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        active: 1,
+        archive: 1,
+        teamtype: 1,
+        targetKg: 1,
+        targetvalue: 1,
+        b2buser: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        name: "$b2busers.name",
+        userRole: "$b2busers.userRole",
+        targethistories: "$targethistories",
+      }
+    },
+  ])
+
+  return { values: value, total: total.length };
+}
+
+
+
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -2329,4 +2525,12 @@ module.exports = {
   assignShopsSalesman,
   assignShopsSalesmandatewise,
   assignShopsOnlydatewise,
+
+
+
+
+  // 08-11-2022
+  createtartget,
+  get_user_target,
+  getall_targets
 };

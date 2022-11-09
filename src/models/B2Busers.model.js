@@ -64,6 +64,9 @@ const B2BusersSchema = mongoose.Schema(
     telecallerStatus:{
       type:String,
     },
+    salesmanOrderStatus:{
+      type:String,
+    },
     active: {
       type: Boolean,
       default: true,

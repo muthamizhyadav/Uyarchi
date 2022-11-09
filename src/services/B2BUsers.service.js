@@ -395,6 +395,15 @@ const shopverification = async (id) => {
   return { show: show };
 };
 
+const getrolebyuser_user = async (id) => {
+  let users = await Users.find({ userRole: id });
+  return users;
+};
+
+const gettargetedusers = async (id) => {
+  let users = await Users.find({ userRole: { $in: ['fb0dd028-c608-4caa-a7a9-b700389a098d', '33a2ff87-400c-4c15-b607-7730a79b49a9'] } });
+  return users;
+};
 module.exports = {
   createUser,
   UsersLogin,
@@ -415,5 +424,7 @@ module.exports = {
   updateB2bUsers,
   getUsersDataById,
   deleteB2bUsersbyId,
-  shopverification
+  shopverification,
+  getrolebyuser_user,
+  gettargetedusers
 };

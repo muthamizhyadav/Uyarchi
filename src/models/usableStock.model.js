@@ -83,6 +83,12 @@ const usableStockSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  randomStock_History: {
+    type: Array,
+  },
+  random_stock: {
+    type: Boolean,
+  }
 });
 
 const usableStock = mongoose.model('usableStock', usableStockSchema);

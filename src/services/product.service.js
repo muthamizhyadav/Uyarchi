@@ -1953,7 +1953,9 @@ const getstock_random_product = async () => {
         from: 'usablestocks',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [{ $match: { date: { $eq: moment().format('DD-MM-YYYY') } } }],
+        pipeline: [
+          { $match: { date: { $eq: moment().format('DD-MM-YYYY') } ,random_stock:{$eq:true}} }
+        ],
         as: 'usablestocks',
       },
     },

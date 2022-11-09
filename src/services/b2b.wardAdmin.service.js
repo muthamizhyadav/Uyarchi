@@ -856,7 +856,7 @@ const createdata = async (Orderdatas) => {
 
 // AFTER PACKED BY WARD LOADING EXECUTE
 
-const wardloadExecutivePacked = async (range, page) => {
+const wardloadExecutivePacked = async (range, page, type) => {
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
   let dateMatch = {
@@ -916,6 +916,9 @@ const wardloadExecutivePacked = async (range, page) => {
           },
           rangematch,
           dateMatch,
+          {
+            devevery_mode: { $eq: type }
+          }
         ],
       },
     },
@@ -1054,6 +1057,9 @@ const wardloadExecutivePacked = async (range, page) => {
           },
           rangematch,
           dateMatch,
+          {
+            devevery_mode: { $eq: type }
+          }
         ],
       },
     },
@@ -1144,7 +1150,7 @@ const wardloadExecutivePacked = async (range, page) => {
     },
     // { $unwind: '$productOrderCloneData' },
   ]);
-  let result = await gettimeslatcountassign(range);
+  let result = await gettimeslatcountassign(range, type);
   return { data: data, total: total.length, total_count: result };
 };
 
@@ -2348,7 +2354,7 @@ const gettimeslatcount = async (type) => {
   };
 };
 
-const gettimeslatcountassign = async (type) => {
+const gettimeslatcountassign = async (type, devevery_mode) => {
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
   dateMatch = {
@@ -2367,6 +2373,9 @@ const gettimeslatcountassign = async (type) => {
             },
           },
           dateMatch,
+          {
+            devevery_mode: { $eq: devevery_mode }
+          }
         ],
       },
     },
@@ -2382,6 +2391,9 @@ const gettimeslatcountassign = async (type) => {
           },
           { time_of_delivery: { $eq: '5-6' } },
           dateMatch,
+          {
+            devevery_mode: { $eq: devevery_mode }
+          }
         ],
       },
     },
@@ -2397,6 +2409,9 @@ const gettimeslatcountassign = async (type) => {
           },
           { time_of_delivery: { $eq: '6-7' } },
           dateMatch,
+          {
+            devevery_mode: { $eq: devevery_mode }
+          }
         ],
       },
     },
@@ -2412,6 +2427,9 @@ const gettimeslatcountassign = async (type) => {
           },
           { time_of_delivery: { $eq: '7-8' } },
           dateMatch,
+          {
+            devevery_mode: { $eq: devevery_mode }
+          }
         ],
       },
     },
@@ -2427,6 +2445,9 @@ const gettimeslatcountassign = async (type) => {
           },
           { time_of_delivery: { $eq: '8-9' } },
           dateMatch,
+          {
+            devevery_mode: { $eq: devevery_mode }
+          }
         ],
       },
     },
@@ -2442,6 +2463,9 @@ const gettimeslatcountassign = async (type) => {
           },
           { time_of_delivery: { $eq: '9-10' } },
           dateMatch,
+          {
+            devevery_mode: { $eq: devevery_mode }
+          }
         ],
       },
     },
@@ -2457,6 +2481,9 @@ const gettimeslatcountassign = async (type) => {
           },
           { time_of_delivery: { $eq: '10-11' } },
           dateMatch,
+          {
+            devevery_mode: { $eq: devevery_mode }
+          }
         ],
       },
     },

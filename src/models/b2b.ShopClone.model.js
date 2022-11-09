@@ -168,6 +168,12 @@ const shopSchema = mongoose.Schema({
   DA_TIME: {
     type: Number,
   },
+  salesmanOrderStatus: {
+    type: String,
+  },
+  Pincode: {
+    type: Number,
+  },
 });
 
 // assignSchema.plugin(toJSON);
