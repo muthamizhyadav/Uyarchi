@@ -115,10 +115,10 @@ const getallassigngroups = async (query) => {
   let user = query.driver;
   let dateMatch = { active: true }
   let userMatch = { active: true }
-  if (date != null && date != '') {
+  if (date != null && date != '' && user != 'null') {
     dateMatch = { date: { $eq: date } }
   }
-  if (user != null && user != '') {
+  if (user != null && user != '' && user != 'null') {
     userMatch = { driverID: { $eq: user } }
   }
   let driver = await AssignDriver.aggregate([
@@ -149,6 +149,155 @@ const getallassigngroups = async (query) => {
     { $skip: 10 * page },
     { $limit: 10 }
   ]);
+  let total = await AssignDriver.aggregate([
+    { $sort: { date: -1 } },
+    { $match: { $and: [dateMatch, userMatch] } },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'driverID',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },
+    {
+      $unwind: '$b2busers',
+    },
+    {
+      $project: {
+        created: 1,
+        _id: 1,
+        date: 1,
+        time: 1,
+        groupID: 1,
+        driverName: "$b2busers.name",
+        route: 1,
+      }
+    },
+  ]);
+
+  return { value: driver, total: total.length };
+}
+
+const drivergroups = async (query) => {
+  let groupid = query.id
+
+  let driver = await AssignDriver.aggregate([
+    { $sort: { date: -1 } },
+    { $match: { $and: [{ _id: { $eq: groupid } }] } },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'driverID',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },
+    {
+      $unwind: '$b2busers',
+    },
+    {
+      $lookup: {
+        from: 'assigndrivehistories',
+        localField: '_id',
+        foreignField: 'assignGroupId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'wardadmingroups',
+              localField: 'groupID',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'b2busers',
+                    localField: 'deliveryExecutiveId',
+                    foreignField: '_id',
+                    as: 'b2busers',
+                  },
+                },
+                {
+                  $unwind: '$b2busers',
+                },
+                {
+                  $lookup: {
+                    from: 'managepickuplocations',
+                    localField: 'pickuplocation',
+                    foreignField: '_id',
+                    as: 'managepickuplocations',
+                  },
+                },
+                {
+                  $unwind: '$managepickuplocations',
+                },
+                {
+                  $lookup: {
+                    from: 'orderassigns',
+                    localField: '_id',
+                    foreignField: 'wardAdminGroupID',
+                    pipeline: [
+                      { $group: { _id: null, count: { $sum: 1 } } }
+                    ],
+                    as: 'orderassigns',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$orderassigns',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+                {
+                  $project: {
+                    groupId: 1,
+                    _id: 1,
+                    stationeryExName: "$b2busers.name",
+                    assignTime: 1,
+                    assignDate: 1,
+                    GroupBillId: 1,
+                    pickuplocation: 1,
+                    pickuplocation: "$managepickuplocations.locationName",
+                    orderCount: "$orderassigns.count"
+
+                  }
+                }
+              ],
+              as: 'wardadmingroups',
+            },
+          },
+          {
+            $unwind: '$wardadmingroups',
+          },
+          {
+            $project: {
+              _id: "$wardadmingroups._id",
+              stationeryExName: "$wardadmingroups.stationeryExName",
+              groupId: "$wardadmingroups.groupId",
+              assignTime: "$wardadmingroups.assignTime",
+              assignDate: "$wardadmingroups.assignDate",
+              GroupBillId: "$wardadmingroups.GroupBillId",
+              pickuplocation: "$wardadmingroups.pickuplocation",
+              GroupBillId: "$wardadmingroups.GroupBillId",
+              orderCount:"$wardadmingroups.orderCount"
+            }
+          }
+        ],
+        as: 'assigndrivehistories',
+      },
+    },
+    {
+      $project: {
+        created: 1,
+        _id: 1,
+        date: 1,
+        time: 1,
+        groupID: 1,
+        driverName: "$b2busers.name",
+        route: 1,
+        assigndrivehistories: "$assigndrivehistories"
+      }
+    },
+  ]);
 
   return driver;
 }
@@ -159,5 +308,6 @@ module.exports = {
   getVehicle_and_DE,
   getAll_Vehicle_Details,
   assigndriverVehile,
-  getallassigngroups
+  getallassigngroups,
+  drivergroups
 };
