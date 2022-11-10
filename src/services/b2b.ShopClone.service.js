@@ -3221,6 +3221,7 @@ const get_wardby_shops = async (query) => {
         mobile: 1,
         date: 1,
         displaycount: 1,
+        salesManStatus:1
       },
     },
   ]);
