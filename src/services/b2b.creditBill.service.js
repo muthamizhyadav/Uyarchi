@@ -3132,10 +3132,159 @@ const getbilldetails = async (query) => {
 
 }
 
+const afterCompletion_Of_Delivered = async (shop, date) => {
+  let match
+  if (shop != "null" && date == "null") {
+    match = [{ shopId: shop }]
+  } else if (date != 'null' && shop == "null") {
+    match = [{ date: date }]
+  } else if (date != 'null' && shop != "null") {
+    match = [{ date: date }, { shopId: shop }]
+  } else {
+    match = [{ active: true }]
+  }
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }, { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }],
+      },
+    },
+    {
+      $match: {
+        $and: match
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
+        as: 'paymentData',
+      },
+    },
+    { $unwind: '$paymentData' },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopDtaa',
+      },
+    },
+    { $unwind: '$shopDtaa' },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
 
+    { $unwind: '$productData' },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'creditbillsData',
+      }
+    },
+    { $unwind: '$creditbillsData' },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'creditbillsData.AssignedUserId',
+        foreignField: '_id',
+        as: 'usersdata',
+      }
+    },
+    {
+      $unwind: '$usersdata',
+    },
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'usersdata.userRole',
+        foreignField: '_id',
+        as: 'roledata',
+      }
+    },
+    {
+      $unwind: '$roledata'
+    },
+    {
+      $project: {
+        Schedulereason: 1,
+        Scheduledate: 1,
+        customerBillId: 1,
+        OrderId: 1,
+        date: 1,
+        statusOfBill: 1,
+        executeName: '$dataa.AssignedUserId',
+        shopNmae: '$shopDtaa.SName',
+        shopId: '$shopDtaa._id',
+        creditBillAssignedStatus: 1,
+        BillAmount: { $round: ['$productData.price', 0] },
+        totalHistory: {
+          $sum: '$creditData.historyDtaa.amountPayingWithDEorSM',
+        },
+        paidAmount: '$paymentData.price',
+        role: '$roledata.roleName',
+        pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+        empId: '$usersdata._id',
+        empName: '$usersdata.name',
+        condition1: {
+          $cond: {
+            if: { $ne: [{ $subtract: [{ $round: ['$productData.price', 0] }, '$paymentData.price'] }, 0] },
+            then: true,
+            else: false,
+          },
+        },
+      },
+    },
+  ])
+  return values
+}
 
 module.exports = {
   getShopWithBill,
+  afterCompletion_Of_Delivered,
   getWardExecutiveName,
   getsalesmanName,
   getShopHistory,

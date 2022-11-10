@@ -139,6 +139,11 @@ const getPaymenthistory = catchAsync(async (req, res) => {
   res.send(PaymentHistory)
 })
 
+const afterCompletion_Of_Delivered = catchAsync(async (req, res) => {
+  const data = await creditBillService.afterCompletion_Of_Delivered(req.params.shop, req.params.date)
+  res.send(data)
+})
+
 module.exports = {
 
   getShopWithBill,
@@ -168,4 +173,5 @@ module.exports = {
   groupCreditBill,
   getbilldetails,
   getPaymenthistory,
+  afterCompletion_Of_Delivered
 }

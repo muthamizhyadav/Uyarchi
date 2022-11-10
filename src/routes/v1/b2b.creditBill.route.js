@@ -33,6 +33,7 @@ router.route('/get/payment/history/:id/').get(creditBillController.getPaymenthis
 
 
 router.route('/billdetails/getorderdetails').get(authorization, creditBillController.getbilldetails);
+router.route('/after/completion/delivered/:shop/:date').get(creditBillController.afterCompletion_Of_Delivered)
 
 
 
