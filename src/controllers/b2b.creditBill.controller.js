@@ -154,6 +154,11 @@ const getPaidHistory_ByOrder = catchAsync(async (req, res) => {
   res.send(data)
 })
 
+const Approved_Mismatch_amount = catchAsync(async (req, res) => {
+  const data = await creditBillService.Approved_Mismatch_amount()
+  res.send(data)
+})
+
 module.exports = {
 
   getShopWithBill,
@@ -185,5 +190,6 @@ module.exports = {
   getPaymenthistory,
   afterCompletion_Of_Delivered,
   last_Paid_amt,
-  getPaidHistory_ByOrder
+  getPaidHistory_ByOrder,
+  Approved_Mismatch_amount
 }
