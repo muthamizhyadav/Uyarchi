@@ -1235,7 +1235,7 @@ const assignOnly_DE = async (query, status) => {
   }
   console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus,{ pickputype: { $eq: "DE" } }] } },
+    { $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: "DE" } }] } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -1372,7 +1372,7 @@ const assignOnly_DE = async (query, status) => {
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus,{ pickputype: { $eq: 'DE' } }] } },
+    { $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'DE' } }] } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -3338,7 +3338,7 @@ const deliveryExecutiveSorting = async () => {
   return values;
 }
 
-const getGroupOrders_driver = async (query,status) => {
+const getGroupOrders_driver = async (query, status) => {
   let page = query.page == null || query.page == '' ? 0 : query.page;
   console.log(page)
   let macthStatus = { active: true };
@@ -3359,7 +3359,7 @@ const getGroupOrders_driver = async (query,status) => {
   }
   console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus,{ pickputype: { $eq: "SP" } }] } },
+    { $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: "SP" } }] } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -3476,6 +3476,31 @@ const getGroupOrders_driver = async (query,status) => {
       },
     },
     {
+      $lookup: {
+        from: 'assigndrivehistories',
+        localField: '_id',
+        foreignField: 'groupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'assigndrives',
+              localField: 'assignGroupId',
+              foreignField: '_id',
+              pipeline: [
+                { $match: { status: { $ne: "received" } } }
+              ],
+              as: 'assigndrives',
+            },
+          },
+          {
+            $unwind: '$assigndrives',
+          },
+        ],
+        as: 'assigndrivehistories',
+      },
+    },
+
+    {
       $project: {
         shopOrderCloneId: '$wdfsaf._id',
         groupId: 1,
@@ -3490,14 +3515,18 @@ const getGroupOrders_driver = async (query,status) => {
         pettyStockAllocateStatus: 1,
         status: 1,
         groupOrders: '$groupOrders',
-        pickputype:1,
+        pickputype: 1,
+        assigndrivehistories: { $size: "$assigndrivehistories" }
       },
+    },
+    {
+      $match: { assigndrivehistories: { $eq: 0 } }
     },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus,{ pickputype: { $eq: 'SP' } }] } },
+    { $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'SP' } }] } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -3547,6 +3576,53 @@ const getGroupOrders_driver = async (query,status) => {
     {
       $unwind: '$UserName',
     },
+    {
+      $lookup: {
+        from: 'assigndrivehistories',
+        localField: '_id',
+        foreignField: 'groupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'assigndrives',
+              localField: 'assignGroupId',
+              foreignField: '_id',
+              pipeline: [
+                { $match: { status: { $ne: "received" } } }
+              ],
+              as: 'assigndrives',
+            },
+          },
+          {
+            $unwind: '$assigndrives',
+          },
+        ],
+        as: 'assigndrivehistories',
+      },
+    },
+    {
+      $project: {
+        shopOrderCloneId: '$wdfsaf._id',
+        groupId: 1,
+        totalOrders: { $size: '$dataDetails' },
+        assignDate: 1,
+        assignTime: 1,
+        manageDeliveryStatus: 1,
+        Pending: '$Pending.pending',
+        deliveryExecutiveId: 1,
+        deliveryExecutiveName: '$UserName.name',
+        pettyCashAllocateStatus: 1,
+        pettyStockAllocateStatus: 1,
+        status: 1,
+        groupOrders: '$groupOrders',
+        pickputype: 1,
+        assigndrivehistories: { $size: "$assigndrivehistories" }
+      },
+    },
+    {
+      $match: { assigndrivehistories: { $eq: 0 } }
+    },
+    
   ]);
   return { values: values, total: total.length };
 }
