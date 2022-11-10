@@ -1016,6 +1016,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         active: 1,
         mobile: 1,
         date: 1,
+        Pincode:1
       },
     },
     { $skip: 10 * page },
@@ -1663,6 +1664,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         purchaseQTy: 1,
         da_lot: 1,
         da_long: 1,
+        Pincode:1
       },
     },
     { $skip: 10 * page },
