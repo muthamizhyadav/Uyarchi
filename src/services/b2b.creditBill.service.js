@@ -3178,6 +3178,28 @@ const afterCompletion_Of_Delivered = async (shop, date, userId) => {
     { $unwind: '$paymentData' },
     {
       $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $sort: { date: -1 }
+          },
+          {
+            $limit: 1
+          },
+        ],
+        as: 'lastPaidamt',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$lastPaidamt'
+      }
+    },
+    {
+      $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
@@ -3282,6 +3304,7 @@ const afterCompletion_Of_Delivered = async (shop, date, userId) => {
         paidAmount: '$paymentData.price',
         // role: '$roledata.roleName',
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
+        lastPaidamt: '$lastPaidamt.paidAmt',
         // empId: '$usersdata._id',
         // empName: '$usersdata.name',
       },
