@@ -36,7 +36,7 @@ const userFineSchema = new mongoose.Schema({
     archive: {
         type: Boolean,
         default: false
-    }
+    },
     userId: {
         type: String,
     }
