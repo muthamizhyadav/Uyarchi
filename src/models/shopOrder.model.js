@@ -297,6 +297,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   Schedulereason: {
     type: String,
   },
+  creditApprovalStatus: {
+    type: String,
+    default: 'Pending',
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
