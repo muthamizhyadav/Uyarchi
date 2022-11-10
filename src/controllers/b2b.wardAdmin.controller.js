@@ -78,7 +78,8 @@ const wardloadExecutive = catchAsync(async (req, res) => {
   res.send(executive);
 });
 const wardloadExecutivebtgroup = catchAsync(async (req, res) => {
-  const executive = await wardAdminService.wardloadExecutivebtgroup(req.params.page);
+  console.log(req.query)
+  const executive = await wardAdminService.wardloadExecutivebtgroup(req.query);
   res.send(executive);
 });
 const wardloadExecutivepacked = catchAsync(async (req, res) => {

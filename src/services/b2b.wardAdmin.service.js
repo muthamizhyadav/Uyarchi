@@ -517,11 +517,14 @@ const wardloadExecutivepacked = async (status, date, page) => {
   return { data: data, total: total.length };
 };
 
-const wardloadExecutivebtgroup = async (page) => {
+const wardloadExecutivebtgroup = async (query) => {
+  let page = query.page;
+  let type = query.pickputype;
+  console.log(type)
   let data = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: 'Assigned' } }],
+        $and: [{ status: { $eq: 'Assigned' } }, { pickputype: { $eq: type } }],
       },
     },
     {
@@ -569,7 +572,7 @@ const wardloadExecutivebtgroup = async (page) => {
   let total = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: 'Assigned' } }],
+        $and: [{ status: { $eq: 'Assigned' } }, { pickputype: { $eq: type } }],
       },
     },
     {
@@ -1368,15 +1371,15 @@ const getAssigned_details = async (pickuptype) => {
         zone: 1,
         ward: 1,
         pickputype: 1,
-        vehicle_Owner_Name:"$vehicles.vehicle_Owner_Name",
-        vehicle_Name:"$vehicles.vehicle_Name",
-        vehicle_type:"$vehicles.vehicle_type",
-        vehicleNo:"$vehicles.vehicleNo",
-        tonne_Capacity:"$vehicles.tonne_Capacity",
-        pickuplocation:1,
-        zone:"$zones.zone",
-        ward:"$wards.ward",
-        locationName:"$managepickuplocations.locationName"
+        vehicle_Owner_Name: "$vehicles.vehicle_Owner_Name",
+        vehicle_Name: "$vehicles.vehicle_Name",
+        vehicle_type: "$vehicles.vehicle_type",
+        vehicleNo: "$vehicles.vehicleNo",
+        tonne_Capacity: "$vehicles.tonne_Capacity",
+        pickuplocation: 1,
+        zone: "$zones.zone",
+        ward: "$wards.ward",
+        locationName: "$managepickuplocations.locationName"
       },
     },
   ]);
