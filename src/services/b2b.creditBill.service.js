@@ -3183,6 +3183,9 @@ const afterCompletion_Of_Delivered = async (shop, date, userId) => {
         foreignField: 'orderId',
         pipeline: [
           {
+            $match: { paidAmt: { $ne: 0 } }
+          },
+          {
             $sort: { date: -1 }
           },
           {
@@ -3252,38 +3255,6 @@ const afterCompletion_Of_Delivered = async (shop, date, userId) => {
     },
 
     { $unwind: '$productData' },
-    // {
-    //   $lookup: {
-    //     from: 'creditbills',
-    //     localField: '_id',
-    //     foreignField: 'orderId',
-    //     pipeline: [{ $match: usermatch }],
-    //     as: 'creditbillsData',
-    //   }
-    // },
-    // { $unwind: '$creditbillsData' },
-    // {
-    //   $lookup: {
-    //     from: 'b2busers',
-    //     localField: 'creditbillsData.AssignedUserId',
-    //     foreignField: '_id',
-    //     as: 'usersdata',
-    //   }
-    // },
-    // {
-    //   $unwind: '$usersdata',
-    // },
-    // {
-    //   $lookup: {
-    //     from: 'roles',
-    //     localField: 'usersdata.userRole',
-    //     foreignField: '_id',
-    //     as: 'roledata',
-    //   }
-    // },
-    // {
-    //   $unwind: '$roledata'
-    // },
     {
       $project: {
         Schedulereason: 1,
