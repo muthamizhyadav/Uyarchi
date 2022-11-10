@@ -29,6 +29,9 @@ const userFineSchema = new mongoose.Schema({
     create: {
         type: Date
     },
+    comments: {
+        type: String
+    }, 
     active: {
         type: Boolean,
         default: true
