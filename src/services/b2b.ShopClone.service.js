@@ -1016,7 +1016,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         active: 1,
         mobile: 1,
         date: 1,
-        Pincode:1
+        Pincode: 1
       },
     },
     { $skip: 10 * page },
@@ -1664,7 +1664,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         purchaseQTy: 1,
         da_lot: 1,
         da_long: 1,
-        Pincode:1
+        Pincode: 1
       },
     },
     { $skip: 10 * page },
@@ -3131,6 +3131,11 @@ const get_wardby_shops = async (query) => {
   return shopss;
 }
 
+const update_pincode = async (query,body) => {
+  let shop = await Shop.findByIdAndUpdate({_id:query.id},{Pincode:body.pincode},{new:true})
+  return shop;
+}
+
 
 
 
@@ -3181,5 +3186,6 @@ module.exports = {
   data2,
   data3,
 
-  get_wardby_shops
+  get_wardby_shops,
+  update_pincode
 };

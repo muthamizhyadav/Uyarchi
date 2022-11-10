@@ -98,6 +98,8 @@ router.route('/search/shops/bySname/:key').get(b2bShopCloneController.searchShop
 
 router.route('/getshops/from/ward').get(b2bShopCloneController.get_wardby_shops);
 
+router.route("/addpincode/update/DAdata").put(b2bShopCloneController.update_pincode)
+
 
 
 module.exports = router;

@@ -126,11 +126,11 @@ const getBillDetails = catchAsync(async (req, res) => {
 });
 
 const getAssigned = catchAsync(async (req, res) => {
-  const details = await wardAdminGroupService.assignOnly(req.params.page, 'stock');
+  const details = await wardAdminGroupService.assignOnly(req.query, 'stock');
   res.send(details);
 });
 const cashgetAssigned = catchAsync(async (req, res) => {
-  const details = await wardAdminGroupService.assignOnly(req.params.page, 'cash');
+  const details = await wardAdminGroupService.assignOnly(req.query, 'cash');
   res.send(details);
 });
 const deliverygetAssigned = catchAsync(async (req, res) => {

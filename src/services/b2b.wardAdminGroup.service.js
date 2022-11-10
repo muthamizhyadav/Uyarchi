@@ -997,7 +997,12 @@ const getBillDetails = async (id) => {
   return values[0];
 };
 
-const assignOnly = async (page, status) => {
+const assignOnly = async (query, status) => {
+  let page = query.page==null || query.page ==''?0:query.page;
+  let type = query.pickuptype;
+
+  console.log(type)
+  console.log(page)
   let macthStatus = { active: true };
   let statusMatch = { status: 'Packed' };
   if (status == 'stock') {
@@ -1016,7 +1021,7 @@ const assignOnly = async (page, status) => {
   }
   console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus] } },
+    { $match: { $and: [statusMatch, macthStatus,{pickuptype:{$eq:type}}] } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -1153,7 +1158,7 @@ const assignOnly = async (page, status) => {
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus] } },
+    { $match: { $and: [statusMatch, macthStatus,{pickuptype:{$eq:type}}] } },
     {
       $lookup: {
         from: 'orderassigns',

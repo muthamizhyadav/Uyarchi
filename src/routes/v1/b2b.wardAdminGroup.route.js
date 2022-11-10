@@ -35,8 +35,8 @@ router.route('/getDeliveryExecutivestatus/:id').get(wardAdminGroupController.get
 router.route('/get/billDetails/:id').get(wardAdminGroupController.getBillDetails);
 
 //checked
-router.route('/get/assignedOnle/:page').get(wardAdminGroupController.getAssigned);
-router.route('/get/assignedOnle/cash/:page').get(wardAdminGroupController.cashgetAssigned);
+router.route('/get/assignedOnle').get(wardAdminGroupController.getAssigned);
+router.route('/get/assignedOnle/cash').get(wardAdminGroupController.cashgetAssigned);
 router.route('/get/assignedOnle/delivery/:page').get(wardAdminGroupController.deliverygetAssigned);
 
 router.route('/get/details/deliveryExecutive/:id/:page').get(wardAdminGroupController.getDeliveryOrderSeparate);
