@@ -44,14 +44,21 @@ const getAll_Vehicle_Details = catchAsync(async (req, res) => {
 });
 
 const assigndriverVehile = catchAsync(async (req, res) => {
-  const data = await VehicleService.assigndriverVehile(req.body);
+  const data = await VehicleService.assigndriverVehile(req.query);
   res.send(data);
 });
+
+const getallassigngroups = catchAsync(async (req, res) => {
+  const data = await VehicleService.getallassigngroups(req.query);
+  res.send(data);
+});
+
 
 module.exports = {
   createVehicle,
   getVehicle,
   getVehicle_and_DE,
   getAll_Vehicle_Details,
-  assigndriverVehile
+  assigndriverVehile,
+  getallassigngroups
 };

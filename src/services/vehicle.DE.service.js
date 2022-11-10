@@ -92,7 +92,7 @@ const assigndriverVehile = async (body) => {
   userId = 'D' + center + totalcount;
 
 
-  let bodydata = { ...body, ...{ created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HHmm'),groupID:userId } }
+  let bodydata = { ...body, ...{ created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HHmm'), groupID: userId } }
   let driver = await AssignDriver.create(bodydata);
   body.group.forEach(async (res) => {
     await AssignDrivechild.create({
@@ -109,10 +109,55 @@ const assigndriverVehile = async (body) => {
 
 }
 
+const getallassigngroups = async (query) => {
+  let page = query.page == null || query.page == '' ? 0 : query.page;
+  let date = query.date;
+  let user = query.driver;
+  let dateMatch = { active: true }
+  let userMatch = { active: true }
+  if (date != null && date != '') {
+    dateMatch = { date: { $eq: date } }
+  }
+  if (user != null && user != '') {
+    userMatch = { driverID: { $eq: user } }
+  }
+  let driver = await AssignDriver.aggregate([
+    { $sort: { date: -1 } },
+    { $match: { $and: [dateMatch, userMatch] } },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'driverID',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },
+    {
+      $unwind: '$b2busers',
+    },
+    {
+      $project: {
+        created: 1,
+        _id: 1,
+        date: 1,
+        time: 1,
+        groupID: 1,
+        driverName: "$b2busers.name",
+        route: 1,
+      }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 }
+  ]);
+
+  return driver;
+}
+
 module.exports = {
   createVehicle,
   getVehicle,
   getVehicle_and_DE,
   getAll_Vehicle_Details,
-  assigndriverVehile
+  assigndriverVehile,
+  getallassigngroups
 };
