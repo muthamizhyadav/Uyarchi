@@ -428,18 +428,37 @@ const get_stationery_user = async (id) => {
       }
     },
     {
-      $project:{
-      _id: 1,
-      phoneNumber:1,
-      name:1,
-      email:1,
-      wardadmingroups: { $size: "$wardadmingroups" }
+      $project: {
+        _id: 1,
+        phoneNumber: 1,
+        name: 1,
+        email: 1,
+        wardadmingroups: { $size: "$wardadmingroups" }
       }
     },
     { $match: { wardadmingroups: { $eq: 0 } } }
   ])
   return users;
 };
+
+const get_drivers_all = async (id) => {
+  let users = await Users.aggregate([
+    {
+      $match: { userRole: { $in: ['d7d33955-c66f-4a45-b859-a41122a84b24'] } }
+    },
+    {
+      $project: {
+        _id: 1,
+        phoneNumber: 1,
+        name: 1,
+        email: 1,
+      }
+    },
+
+  ])
+  return users;
+};
+
 module.exports = {
   createUser,
   UsersLogin,
@@ -465,5 +484,6 @@ module.exports = {
   gettargetedusers,
   gettargetedusers_credit,
   get_stationery_user,
-  get_stationery_user
+  get_stationery_user,
+  get_drivers_all
 };
