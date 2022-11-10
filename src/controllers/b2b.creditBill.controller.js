@@ -149,6 +149,11 @@ const last_Paid_amt = catchAsync(async (req, res) => {
   res.send(data)
 })
 
+const getPaidHistory_ByOrder = catchAsync(async (req, res) => {
+  const data = await creditBillService.getPaidHistory_ByOrder(req.params.id)
+  res.send(data)
+})
+
 module.exports = {
 
   getShopWithBill,
@@ -179,5 +184,6 @@ module.exports = {
   getbilldetails,
   getPaymenthistory,
   afterCompletion_Of_Delivered,
-  last_Paid_amt
+  last_Paid_amt,
+  getPaidHistory_ByOrder
 }

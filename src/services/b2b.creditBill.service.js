@@ -3399,10 +3399,112 @@ const getPaidHistory_ByOrder = async (id) => {
         from: 'orderpayments',
         localField: '_id',
         foreignField: 'orderId',
-        // pipeline: [{ $sort: { date: -1 } }, { $limit: 1 }],
+        pipeline: [{ $match: { paidAmt: { $ne: 0 } } },
+        {
+          $lookup: {
+            from: 'b2busers',
+            localField: 'uid',
+            foreignField: '_id',
+            as: 'users',
+          },
+        },
+        {
+          $unwind: '$users'
+        },
+        {
+          $lookup: {
+            from: 'roles',
+            localField: 'users.userRole',
+            foreignField: '_id',
+            as: 'roles',
+          },
+        },
+        {
+          $unwind: '$roles'
+        },
+        {
+          $project: {
+            _id: 1,
+            paidAmt: 1,
+            date: 1,
+            orderId: 1,
+            paymentMethod: 1,
+            usersName: '$users.name',
+            userRole: '$users.userRole',
+            role: '$roles.roleName',
+          }
+        }
+        ],
         as: 'paymentData',
       },
     },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
+        as: 'orderpayment',
+      },
+    },
+    { $unwind: '$orderpayment' },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+
+    { $unwind: '$productData' },
+    {
+      $project: {
+        _id: 1,
+        shopId: 1,
+        status: 1,
+        OrderId: 1,
+        date: 1,
+        BillAmount: { $round: ['$productData.price', 0] },
+        pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayment.price'] } },
+        paidAmount: '$orderpayment.price',
+        paymentData: '$paymentData',
+      }
+    }
   ])
   return values
 }
