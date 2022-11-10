@@ -782,7 +782,7 @@ const createSalesmanShop = async (body) => {
       });
     });
   }
-  return 'created';
+  return {message:'created'};
 };
 
 const getSalesman = async (id) => {

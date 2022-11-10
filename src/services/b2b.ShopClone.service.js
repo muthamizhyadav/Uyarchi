@@ -3126,8 +3126,125 @@ const get_wardby_shops = async (query) => {
   // console.log("hello")
   let shopss = await Shop.aggregate([
     {
-      $match: { $and: [{ Wardid: { $eq: wardId } }, { salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }] }
-    }
+      $match: {
+        $and: [{ Wardid: { $eq: wardId } },
+          //  { salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              ward: 1,
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+              area: 1,
+              locality: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          { $match: { status: { $ne: "Reassign" } } },
+          { $limit: 1 }
+        ],
+        as: 'salesmanshops',
+      },
+    },
+    {
+      $unwind: {
+        path: '$salesmanshops',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoptype',
+      },
+    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street: '$StreetData.street',
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: '$shoptype.shopList',
+        photoCapture: 1,
+        SName: 1,
+        address: 1,
+        Slat: 1,
+        Slong: 1,
+        status: 1,
+        created: 1,
+        SOwner: 1,
+        kyc_status: 1,
+        active: 1,
+        mobile: 1,
+        date: 1,
+        displaycount: 1,
+        salesManStatus: 1,
+        assignedUser: "$salesmanshops._id"
+      },
+    },
   ]);
 
   return shopss;
