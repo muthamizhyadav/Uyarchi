@@ -140,7 +140,12 @@ const getPaymenthistory = catchAsync(async (req, res) => {
 })
 
 const afterCompletion_Of_Delivered = catchAsync(async (req, res) => {
-  const data = await creditBillService.afterCompletion_Of_Delivered(req.params.shop, req.params.date)
+  const data = await creditBillService.afterCompletion_Of_Delivered(req.params.shop, req.params.date, req.params.userId)
+  res.send(data)
+})
+
+const last_Paid_amt = catchAsync(async (req, res) => {
+  const data = await creditBillService.last_Paid_amt(req.params.id)
   res.send(data)
 })
 
@@ -173,5 +178,6 @@ module.exports = {
   groupCreditBill,
   getbilldetails,
   getPaymenthistory,
-  afterCompletion_Of_Delivered
+  afterCompletion_Of_Delivered,
+  last_Paid_amt
 }
