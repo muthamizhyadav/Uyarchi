@@ -99,11 +99,16 @@ const vehicleRoutes = require('./vehicle.DE.route');
 const telecallerAssignroute = require('./telecallerAssign.route');
 const BillAdjRoute = require('./Bill.Adj.route');
 const DemoReg = require('./demoReg.route')
+const UserFineRoute = require('./user_Fine.route')
 
 const defaultRoutes = [
   {
     path: '/registerShop',
     route: registerShop,
+  },
+  {
+    path: '/userFine',
+    route: UserFineRoute,
   },
   {
     path: '/demo',
