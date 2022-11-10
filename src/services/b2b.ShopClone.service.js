@@ -3242,7 +3242,7 @@ const get_wardby_shops = async (query) => {
         date: 1,
         displaycount: 1,
         salesManStatus: 1,
-        assignedUser: "$salesmanshops._id"
+        assignedUser: "$salesmanshops.fromSalesManId"
       },
     },
   ]);
