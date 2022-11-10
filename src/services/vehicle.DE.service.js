@@ -278,7 +278,7 @@ const drivergroups = async (query) => {
               GroupBillId: "$wardadmingroups.GroupBillId",
               pickuplocation: "$wardadmingroups.pickuplocation",
               GroupBillId: "$wardadmingroups.GroupBillId",
-              orderCount:"$wardadmingroups.orderCount"
+              orderCount: "$wardadmingroups.orderCount"
             }
           }
         ],
@@ -299,7 +299,10 @@ const drivergroups = async (query) => {
     },
   ]);
 
-  return driver;
+  if (driver.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Odrer Not Found');
+  }
+  return driver[0];
 }
 
 module.exports = {
