@@ -53,4 +53,88 @@ const VehicleSchema = mongoose.Schema({
 
 const Vehicle = mongoose.model('Vehicle', VehicleSchema);
 
-module.exports = Vehicle;
+
+
+const assignDriveSchema = mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  vehicleID: {
+    type: String,
+  },
+  group: {
+    type: Array
+  },
+  driverID: {
+    type: String,
+  },
+  date: {
+    type: String,
+  },
+  route: {
+    type: String,
+  },
+  time: {
+    type: Number,
+  },
+  created: {
+    type: Date,
+  },
+  status: {
+    type: String,
+    default: "Pending"
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const AssignDriver = mongoose.model('assignDrive', assignDriveSchema);
+
+
+
+
+const assignDriveSchemachild = mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  groupID: {
+    type: String
+  },
+  assignGroupId: {
+    type: String,
+  },
+  time: {
+    type: Number,
+  },
+  created: {
+    type: Date,
+  },
+  date: {
+    type: String,
+  },
+  status: {
+    type: String,
+    default: "Pending"
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const AssignDrivechild = mongoose.model('assignDrivehistory', assignDriveSchemachild);
+
+
+module.exports = { Vehicle, AssignDriver, AssignDrivechild };

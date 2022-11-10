@@ -1,8 +1,9 @@
 const httpStatus = require('http-status');
-const Vehicle = require('../models/vehicle.DE.model');
+const { Vehicle, AssignDriver, AssignDrivechild } = require('../models/vehicle.DE.model');
 const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 const { Users } = require('../models/B2Busers.model');
+const { response } = require('express');
 
 // create New Vehicle for DeliveryExecutive
 const createVehicle = async (body) => {
@@ -65,9 +66,30 @@ const getAll_Vehicle_Details = async () => {
   return vehicles;
 };
 
+
+const assigndriverVehile = async (body) => {
+
+  let bodydata = { ...body, ...{ created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HHmm') } }
+  let driver = await AssignDriver.create(bodydata);
+  body.group.forEach(async (res) => {
+    await AssignDrivechild.create({
+      groupID: res,
+      assignGroupId: driver._id,
+      created: moment(),
+      date: moment().format('YYYY-MM-DD'),
+      time: moment().format('HHmm')
+    })
+  })
+
+
+  return driver;
+
+}
+
 module.exports = {
   createVehicle,
   getVehicle,
   getVehicle_and_DE,
   getAll_Vehicle_Details,
+  assigndriverVehile
 };
