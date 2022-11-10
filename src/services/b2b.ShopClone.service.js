@@ -3119,12 +3119,13 @@ const get_total_vendorShop = async (page) => {
 
 
 
-
+// { salesManStatus: { $eq: 'Assign' } },
+// { salesManStatus: { $eq: 'tempReassign' } },
 const get_wardby_shops = async (query) => {
   let wardId = query.ward;
   let shopss = await Shop.aggregate([
     {
-      $match: { Wardid: { $eq: wardId } }
+      $match: { Wardid: { $eq: wardId }, salesManStatus:{ $ne: 'Assign' }, salesManStatus:{ $ne: 'tempReassign' } }
     }
   ]);
 
