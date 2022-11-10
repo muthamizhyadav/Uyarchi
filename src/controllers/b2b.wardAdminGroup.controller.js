@@ -335,7 +335,7 @@ const getGroupDetailsForDE = catchAsync(async (req, res) => {
 });
 
 const getGroupOrders_driver = catchAsync(async (req, res) => {
-  const groupDetails = await wardAdminGroupService.getGroupOrders_driver(req.params.page);
+  const groupDetails = await wardAdminGroupService.getGroupOrders_driver(req.query, 'delivery');
   res.send(groupDetails)
 });
 module.exports = {
