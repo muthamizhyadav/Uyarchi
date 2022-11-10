@@ -33,7 +33,8 @@ router.route('/get/payment/history/:id/').get(creditBillController.getPaymenthis
 
 
 router.route('/billdetails/getorderdetails').get(authorization, creditBillController.getbilldetails);
-router.route('/after/completion/delivered/:shop/:date').get(creditBillController.afterCompletion_Of_Delivered)
+router.route('/after/completion/delivered/:shop/:date/:userId').get(creditBillController.afterCompletion_Of_Delivered)
+router.route('/last/paid/:id').get(creditBillController.last_Paid_amt)
 
 
 
