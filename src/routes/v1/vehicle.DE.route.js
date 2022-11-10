@@ -13,6 +13,7 @@ router.route('/:page').get(vehicleController.getVehicle);
 // fect deliveryExecutives && activeVehicles
 router.route('/De/vehicles').get(vehicleController.getVehicle_and_DE);
 router.route('/assign/driver/group').post(vehicleController.assigndriverVehile);
+router.route('/getall/assign/driver/group').get(vehicleController.getallassigngroups);
 
 // exports
 module.exports = router;
