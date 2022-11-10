@@ -10,8 +10,8 @@ const creditBill = require('../models/b2b.creditBill.model');
 const creditBillPaymentModel = require('../models/b2b.creditBillPayments.History.model');
 const { Roles } = require('../models');
 const { Users } = require('../models/B2Busers.model');
-
 const OrderPayment = require("../models/orderpayment.model")
+
 const getShopWithBill = async (page) => {
   let values = await ShopOrderClone.aggregate([
     {
@@ -3511,6 +3511,147 @@ const getPaidHistory_ByOrder = async (id) => {
   return values
 }
 
+const Approved_Mismatch_amount = async () => {
+  let values = await orderPayment.aggregate([
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        pipeline: [{ $match: { creditApprovalStatus: "Approved" } },
+        {
+          $lookup: {
+            from: 'productorderclones',
+            localField: '_id',
+            foreignField: 'orderId',
+            pipeline: [
+              {
+                $project: {
+                  Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                  GST_Number: 1,
+                },
+              },
+              {
+                $project: {
+                  sum: '$sum',
+                  percentage: {
+                    $divide: [
+                      {
+                        $multiply: ['$GST_Number', '$Amount'],
+                      },
+                      100,
+                    ],
+                  },
+                  value: '$Amount',
+                },
+              },
+              {
+                $project: {
+                  price: { $sum: ['$value', '$percentage'] },
+                  value: '$value',
+                  GST: '$percentage',
+                },
+              },
+              { $group: { _id: null, price: { $sum: '$price' } } },
+            ],
+            as: 'productData',
+          },
+        },
+
+        { $unwind: '$productData' },
+        {
+          $lookup: {
+            from: 'orderpayments',
+            localField: '_id',
+            foreignField: 'orderId',
+            pipeline: [
+              {
+                $group: { _id: null, price: { $sum: '$paidAmt' } },
+              },
+            ],
+            as: 'paymentData',
+          },
+        },
+        { $unwind: '$paymentData' },
+        {
+          $lookup: {
+            from: 'b2bshopclones',
+            localField: 'shopId',
+            foreignField: '_id',
+            as: 'shopDtaa',
+          },
+        },
+        { $unwind: '$shopDtaa' },
+        {
+          $lookup: {
+            from: 'userfines',
+            localField: '_id',
+            foreignField: 'orderId',
+            as: 'fine',
+          },
+        },
+        { $unwind: '$fine' },
+        {
+          $project: {
+            _id: 1,
+            shopId: 1,
+            status: 1,
+            OrderId: 1,
+            BillAmount: { $round: ['$productData.price', 0] },
+            shopName: '$shopDtaa.SName',
+            salesmanEnteredamt: '$fine.lastPaidamt',
+            customerSaidamt: '$fine.customerClaimedAmt',
+            disputeamt: '$fine.Difference_Amt',
+            creditApprovalStatus: 1,
+          }
+        }
+        ],
+        as: 'shoporders',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$shoporders'
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'uid',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users'
+    },
+    {
+      $project: {
+        _id: 1,
+        paidAmt: 1,
+        // shoporders: 1,
+        date: 1,
+        OrderId: { $ifNull: ['$shoporders.OrderId', "null"] },
+        users: '$users.name',
+        OrderId: '$shoporders.OrderId',
+        disputeamt: '$shoporders.disputeamt',
+        customerSaidamt: '$shoporders.customerSaidamt',
+        salesmanEnteredamt: '$shoporders.salesmanEnteredamt',
+        creditApprovalStatus: '$shoporders.creditApprovalStatus',
+        orderedamt:'$shoporders.BillAmount',
+        shopName:'$shoporders.shopName'
+      }
+    },
+    {
+      $match: {
+        creditApprovalStatus: "Approved"
+      }
+    }
+  ])
+  return values
+}
+
 module.exports = {
   getShopWithBill,
   afterCompletion_Of_Delivered,
@@ -3540,5 +3681,6 @@ module.exports = {
   groupCreditBill,
   getbilldetails,
   last_Paid_amt,
-  getPaidHistory_ByOrder
+  getPaidHistory_ByOrder,
+  Approved_Mismatch_amount
 };
