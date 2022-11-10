@@ -2931,8 +2931,8 @@ const GetShopsByShopType = async (id, page) => {
   let totalcounts5 = await Shop.find({ SType: '602e637e-11e8-4901-b80f-db8a467afda2' }).count();
   let totalcounts6 = await Shop.find({ SType: '07299efb-1aa4-40e6-ad5f-a03ffecdc0a5' }).count();
   let totalcount = totalcounts + totalcounts1 + totalcounts2 + totalcounts3 + totalcounts4 + totalcounts5 + totalcounts6;
-
-  return { shops: shops, total: total.length, totalcount: totalcount };
+  let shoptype = await ShopList.findById(id)
+  return { shops: shops, total: total.length, totalcount: totalcount, shoptype: shoptype };
 };
 
 const GetShopsReviewsByShopType = async (id, page) => {
@@ -3131,8 +3131,8 @@ const get_wardby_shops = async (query) => {
   return shopss;
 }
 
-const update_pincode = async (query,body) => {
-  let shop = await Shop.findByIdAndUpdate({_id:query.id},{Pincode:body.pincode},{new:true})
+const update_pincode = async (query, body) => {
+  let shop = await Shop.findByIdAndUpdate({ _id: query.id }, { Pincode: body.pincode }, { new: true })
   return shop;
 }
 
