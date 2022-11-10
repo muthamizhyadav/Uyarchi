@@ -84,7 +84,6 @@ router.route('/getVendorShops/uyar-dial/:key').get(b2bShopCloneController.getVen
 router
   .route('/getNotAssignReassignSalesman/data/:zone/:id/:street/:page/:limit/:uid/:date')
   .get(b2bShopCloneController.getNotAssignSalesManData);
-
 router.route('/getShops/By/type/:id/:page').get(b2bShopCloneController.GetShopsByShopType);
 router.route('/getShops/By/type/reviews/:id/:page').get(b2bShopCloneController.GetShopsReviewsByShopType);
 router.route('/getShop/Review/ByShop/:id').get(b2bShopCloneController.getShopReviewByShopid);
@@ -94,12 +93,7 @@ router.route('/data3/data').put(b2bShopCloneController.data3);
 router.route('/order/id').get(b2bShopCloneController.insertOrder);
 router.route('/vendor/shop/:page').get(b2bShopCloneController.get_total_vendorShop);
 router.route('/search/shops/bySname/:key').get(b2bShopCloneController.searchShops_By_Name);
-
-
 router.route('/getshops/from/ward').get(b2bShopCloneController.get_wardby_shops);
-
 router.route("/addpincode/update/DAdata").put(b2bShopCloneController.update_pincode)
-
-
 
 module.exports = router;
