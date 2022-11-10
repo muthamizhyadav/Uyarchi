@@ -1235,7 +1235,7 @@ const assignOnly_DE = async (query, status) => {
   }
   console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus] } },
+    { $match: { $and: [statusMatch, macthStatus,{ pickputype: { $eq: "DE" } }] } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -1372,7 +1372,7 @@ const assignOnly_DE = async (query, status) => {
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus] } },
+    { $match: { $and: [statusMatch, macthStatus,{ pickputype: { $eq: 'DE' } }] } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -3338,27 +3338,217 @@ const deliveryExecutiveSorting = async () => {
   return values;
 }
 
-const getGroupOrders_driver = async () => {
+const getGroupOrders_driver = async (query,status) => {
+  let page = query.page == null || query.page == '' ? 0 : query.page;
+  console.log(page)
+  let macthStatus = { active: true };
+  let statusMatch = { status: 'Packed' };
+  if (status == 'stock') {
+    macthStatus = { pettyStockAllocateStatus: 'Pending' };
+  }
+  if (status == 'cash') {
+    macthStatus = { pettyCashAllocateStatus: 'Pending' };
+  }
+  if (status == 'delivery') {
+    macthStatus = {
+      // pettyCashAllocateStatus: { $ne: 'Pending' },
+      // pettyStockAllocateStatus: { $ne: 'Pending' },
+      manageDeliveryStatus: { $ne: 'Delivery Completed' },
+    };
+    statusMatch = { status: { $in: ['Assigned', 'Packed'] } };
+  }
+  console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
-    { $match: { $and: [{pickputype:{$eq:"SP"}}] } },
+    { $match: { $and: [statusMatch, macthStatus,{ pickputype: { $eq: "SP" } }] } },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ customerDeliveryStatus: { $eq: 'Pending' } }],
+                  },
+                },
+                {
+                  $group: {
+                    _id: null,
+                  },
+                },
+              ],
+              as: 'shopdata',
+            },
+          },
+          { $unwind: '$shopdata' },
+          {
+            $project: {
+              pending: { $eq: ['$shopdata._id', null] },
+              shopdata: '$shopdata.deliveryExecutiveId',
+            },
+          },
+        ],
+        as: 'dataDetails',
+      },
+    },
+    { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
     {
       $lookup: {
         from: 'b2busers',
         localField: 'deliveryExecutiveId',
         foreignField: '_id',
-        as: 'b2busersData',
+        as: 'UserName',
       },
     },
     {
-      $unwind: '$b2busersData',
+      $unwind: '$UserName',
     },
     {
-      $project:{
-        _id:1,
-      }
-    }
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'b2bshopclones',
+                    localField: 'shopId',
+                    foreignField: '_id',
+                    as: 'b2bshopclones',
+                  },
+                },
+                {
+                  $unwind: '$b2bshopclones',
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    SName: '$b2bshopclones.SName',
+                    mobile: '$b2bshopclones.mobile',
+                    status: 1,
+                    productStatus: 1,
+                    customerDeliveryStatus: 1,
+                    delivery_type: 1,
+                    time_of_delivery: 1,
+                    paidamount: 1,
+                    OrderId: 1,
+                    date: 1,
+                    created: 1,
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+          {
+            $project: {
+              _id: '$shoporderclones._id',
+              SName: '$shoporderclones.SName',
+              mobile: '$shoporderclones.mobile',
+              status: '$shoporderclones.status',
+              productStatus: '$shoporderclones.productStatus',
+              customerDeliveryStatus: '$shoporderclones.customerDeliveryStatus',
+              delivery_type: '$shoporderclones.delivery_type',
+              time_of_delivery: '$shoporderclones.time_of_delivery',
+              paidamount: '$shoporderclones.paidamount',
+              OrderId: '$shoporderclones.OrderId',
+              date: '$shoporderclones.date',
+              created: '$shoporderclones.created',
+            },
+          },
+        ],
+        as: 'groupOrders',
+      },
+    },
+    {
+      $project: {
+        shopOrderCloneId: '$wdfsaf._id',
+        groupId: 1,
+        totalOrders: { $size: '$dataDetails' },
+        assignDate: 1,
+        assignTime: 1,
+        manageDeliveryStatus: 1,
+        Pending: '$Pending.pending',
+        deliveryExecutiveId: 1,
+        deliveryExecutiveName: '$UserName.name',
+        pettyCashAllocateStatus: 1,
+        pettyStockAllocateStatus: 1,
+        status: 1,
+        groupOrders: '$groupOrders',
+        pickputype:1,
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
-  return values;
+  let total = await wardAdminGroup.aggregate([
+    { $match: { $and: [statusMatch, macthStatus,{ pickputype: { $eq: 'SP' } }] } },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ customerDeliveryStatus: { $eq: 'Pending' } }],
+                  },
+                },
+                {
+                  $group: {
+                    _id: null,
+                  },
+                },
+              ],
+              as: 'shopdata',
+            },
+          },
+          { $unwind: '$shopdata' },
+          {
+            $project: {
+              pending: { $eq: ['$shopdata._id', null] },
+              shopdata: '$shopdata.deliveryExecutiveId',
+            },
+          },
+        ],
+        as: 'dataDetails',
+      },
+    },
+    { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'UserName',
+      },
+    },
+    {
+      $unwind: '$UserName',
+    },
+  ]);
+  return { values: values, total: total.length };
 }
 
 
