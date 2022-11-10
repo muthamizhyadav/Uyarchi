@@ -93,6 +93,9 @@ const assignDriveSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  groupID: {
+    type: String,
+  }
 });
 
 const AssignDriver = mongoose.model('assignDrive', assignDriveSchema);

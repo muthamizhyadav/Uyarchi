@@ -68,8 +68,31 @@ const getAll_Vehicle_Details = async () => {
 
 
 const assigndriverVehile = async (body) => {
+  let serverdates = moment().format('YYYY-MM-DD');
+  const group = await AssignDriver.find({ date: serverdates });
+  console.log(group);
 
-  let bodydata = { ...body, ...{ created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HHmm') } }
+  let center = '';
+
+  if (group.length < 9) {
+    center = '0000';
+  }
+  if (group.length < 99 && group.length >= 9) {
+    center = '000';
+  }
+  if (group.length < 999 && group.length >= 99) {
+    center = '00';
+  }
+  if (group.length < 9999 && group.length >= 999) {
+    center = '0';
+  }
+  let userId = '';
+  let totalcount = group.length + 1;
+  console.log(totalcount);
+  userId = 'D' + center + totalcount;
+
+
+  let bodydata = { ...body, ...{ created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HHmm'),groupID:userId } }
   let driver = await AssignDriver.create(bodydata);
   body.group.forEach(async (res) => {
     await AssignDrivechild.create({
