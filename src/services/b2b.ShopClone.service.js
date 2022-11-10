@@ -3126,9 +3126,11 @@ const get_wardby_shops = async (query) => {
   // console.log("hello")
   let shopss = await Shop.aggregate([
     {
-      $match: { $and: [{ Wardid: { $eq: wardId } },
-        //  { salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }
-        ] }
+      $match: {
+        $and: [{ Wardid: { $eq: wardId } },
+          //  { salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }
+        ]
+      }
     },
     {
       $lookup: {
@@ -3186,7 +3188,25 @@ const get_wardby_shops = async (query) => {
     {
       $unwind: '$StreetData',
     },
-    // shoplists
+
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          { $match: { status: { $ne: "Reassign" } } },
+          { $limit: 1 }
+        ],
+        as: 'salesmanshops',
+      },
+    },
+    {
+      $unwind: {
+        path: '$salesmanshops',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $lookup: {
         from: 'shoplists',
@@ -3221,7 +3241,8 @@ const get_wardby_shops = async (query) => {
         mobile: 1,
         date: 1,
         displaycount: 1,
-        salesManStatus:1
+        salesManStatus: 1,
+        assignedUser: "$salesmanshops._id"
       },
     },
   ]);
