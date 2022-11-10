@@ -3134,14 +3134,16 @@ const getbilldetails = async (query) => {
 
 const afterCompletion_Of_Delivered = async (shop, date) => {
   let match
-  if (shop != "null" && date == "null") {
-    match = [{ shopId: shop }]
-  } else if (date != 'null' && shop == "null") {
+  if (date != "null") {
     match = [{ date: date }]
-  } else if (date != 'null' && shop != "null") {
-    match = [{ date: date }, { shopId: shop }]
   } else {
     match = [{ active: true }]
+  }
+  let keys
+  if (shop != 'null') {
+    keys = [{ SName: { $regex: shop, $options: 'i' } }];
+  } else {
+    keys = [{ active: { $eq: true } }];
   }
   let values = await ShopOrderClone.aggregate([
     {
@@ -3173,6 +3175,11 @@ const afterCompletion_Of_Delivered = async (shop, date) => {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
+        pipeline: [{
+          $match: {
+            $or: keys
+          },
+        }],
         as: 'shopDtaa',
       },
     },
@@ -3264,6 +3271,7 @@ const afterCompletion_Of_Delivered = async (shop, date) => {
         totalHistory: {
           $sum: '$creditData.historyDtaa.amountPayingWithDEorSM',
         },
+        creditdate: '$creditbillsData.date',
         paidAmount: '$paymentData.price',
         role: '$roledata.roleName',
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
