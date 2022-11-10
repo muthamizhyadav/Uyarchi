@@ -998,8 +998,8 @@ const getBillDetails = async (id) => {
 };
 
 const assignOnly = async (query, status) => {
-  let page = query.page==null || query.page ==''?0:query.page;
-  let type = query.pickuptype;
+  let page = query.page == null || query.page == '' ? 0 : query.page;
+  let type = query.pickputype;
 
   console.log(type)
   console.log(page)
@@ -1021,7 +1021,7 @@ const assignOnly = async (query, status) => {
   }
   console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus,{pickuptype:{$eq:type}}] } },
+    { $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: type } }] } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -1158,7 +1158,7 @@ const assignOnly = async (query, status) => {
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus,{pickuptype:{$eq:type}}] } },
+    { $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: type } }] } },
     {
       $lookup: {
         from: 'orderassigns',
@@ -3124,7 +3124,23 @@ const deliveryExecutiveSorting = async () => {
   return values;
 }
 
-
+const getGroupOrders_driver = async () => {
+  let values = await wardAdminGroup.aggregate([
+    { $match: { $and: [{pickputype:{$eq:"SP"}}] } },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+  ]);
+  return values;
+}
 
 
 module.exports = {
@@ -3189,5 +3205,6 @@ module.exports = {
   deliveryExecutiveSorting,
   getGroupDetailsForDE,
   creditupdateDeliveryCompleted,
-  scheduleshopdate
+  scheduleshopdate,
+  getGroupOrders_driver
 };

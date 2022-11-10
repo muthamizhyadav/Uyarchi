@@ -126,6 +126,7 @@ const getBillDetails = catchAsync(async (req, res) => {
 });
 
 const getAssigned = catchAsync(async (req, res) => {
+  console.log("stock")
   const details = await wardAdminGroupService.assignOnly(req.query, 'stock');
   res.send(details);
 });
@@ -332,6 +333,11 @@ const getGroupDetailsForDE = catchAsync(async (req, res) => {
   const groupDetails = await wardAdminGroupService.getGroupDetailsForDE(req.params.page);
   res.send(groupDetails)
 });
+
+const getGroupOrders_driver = catchAsync(async (req, res) => {
+  const groupDetails = await wardAdminGroupService.getGroupOrders_driver(req.params.page);
+  res.send(groupDetails)
+});
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -419,5 +425,6 @@ module.exports = {
   deliveryExecutiveSorting,
   getGroupDetailsForDE,
   creditupdateDeliveryCompleted,
-  scheduleshopdate
+  scheduleshopdate,
+  getGroupOrders_driver
 };

@@ -126,4 +126,8 @@ router.route('/get/orderData/ByPassing/GroupId/:id').get(wardAdminGroupControlle
 
 router.route('/get/detatils/dele/name/forSorting').get(wardAdminGroupController.deliveryExecutiveSorting);
 router.route('/get/AllGroup/details/:page').get(wardAdminGroupController.getGroupDetailsForDE);
+
+
+router.route('/assign/getdriver/assign/grouporders').get(wardAdminGroupController.getGroupOrders_driver);
+
 module.exports = router;
