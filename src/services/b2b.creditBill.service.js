@@ -3261,7 +3261,7 @@ const afterCompletion_Of_Delivered = async (shop, date) => {
         Scheduledate: 1,
         customerBillId: 1,
         OrderId: 1,
-        // date: 1,
+        date: 1,
         statusOfBill: 1,
         executeName: '$dataa.AssignedUserId',
         shopNmae: '$shopDtaa.SName',
@@ -3271,7 +3271,7 @@ const afterCompletion_Of_Delivered = async (shop, date) => {
         totalHistory: {
           $sum: '$creditData.historyDtaa.amountPayingWithDEorSM',
         },
-        date: '$creditbillsData.date',
+        creditdate: '$creditbillsData.date',
         paidAmount: '$paymentData.price',
         role: '$roledata.roleName',
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
