@@ -31,6 +31,7 @@ router.route('/getrolebyuser/userid').get(authorization, b2bUsersController.getr
 router.route('/gettargetedusers/userid').get(authorization, b2bUsersController.gettargetedusers);
 router.route('/getuser/filter/roles').get(authorization, b2bUsersController.gettargetedusers_credit);
 router.route('/stationeryuser/getall').get(authorization, b2bUsersController.get_stationery_user);
+router.route('/getdrivers/getall').get(authorization, b2bUsersController.get_drivers_all);
 
 
 

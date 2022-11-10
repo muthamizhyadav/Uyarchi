@@ -150,8 +150,13 @@ const gettargetedusers_credit = catchAsync(async (req, res) => {
   res.send(users);
 });
 
-const get_stationery_user= catchAsync(async (req, res) => {
+const get_stationery_user = catchAsync(async (req, res) => {
   const users = await b2bUsersService.get_stationery_user();
+  res.send(users);
+});
+
+const get_drivers_all = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.get_drivers_all();
   res.send(users);
 });
 module.exports = {
@@ -179,5 +184,6 @@ module.exports = {
   getrolebyuser_user,
   gettargetedusers,
   gettargetedusers_credit,
-  get_stationery_user
+  get_stationery_user,
+  get_drivers_all
 };
