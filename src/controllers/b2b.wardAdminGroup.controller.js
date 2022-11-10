@@ -135,7 +135,7 @@ const cashgetAssigned = catchAsync(async (req, res) => {
   res.send(details);
 });
 const deliverygetAssigned = catchAsync(async (req, res) => {
-  const details = await wardAdminGroupService.assignOnly(req.params.page, 'delivery');
+  const details = await wardAdminGroupService.assignOnly_DE(req.query, 'delivery');
   res.send(details);
 });
 
