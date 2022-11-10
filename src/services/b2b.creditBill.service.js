@@ -3191,6 +3191,17 @@ const afterCompletion_Of_Delivered = async (shop, date, userId) => {
           {
             $limit: 1
           },
+          {
+            $lookup: {
+              from: 'b2busers',
+              localField: 'uid',
+              foreignField: '_id',
+              as: 'users',
+            },
+          },
+          {
+            $unwind: '$users'
+          }
         ],
         as: 'lastPaidamt',
       },
@@ -3277,7 +3288,8 @@ const afterCompletion_Of_Delivered = async (shop, date, userId) => {
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
         lastPaidamt: '$lastPaidamt.paidAmt',
         // empId: '$usersdata._id',
-        // empName: '$usersdata.name',
+        empId: '$lastPaidamt.uid',
+        empName: '$lastPaidamt.users.name',
       },
     },
   ])
@@ -3377,6 +3389,24 @@ const last_Paid_amt = async (id) => {
   return values
 }
 
+const getPaidHistory_ByOrder = async (id) => {
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: { _id: id }
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        // pipeline: [{ $sort: { date: -1 } }, { $limit: 1 }],
+        as: 'paymentData',
+      },
+    },
+  ])
+  return values
+}
+
 module.exports = {
   getShopWithBill,
   afterCompletion_Of_Delivered,
@@ -3406,4 +3436,5 @@ module.exports = {
   groupCreditBill,
   getbilldetails,
   last_Paid_amt,
+  getPaidHistory_ByOrder
 };
