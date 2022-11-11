@@ -3945,7 +3945,7 @@ const get_stock_roport_selfpickup = async (query) => {
       $project: {
         finalQuantity: 1,
         finalPricePerKg: 1,
-        totalQuantity: { $sum: [{ $multiply: ["$finalQuantity", '$packKg'] }, "$pettystock"] },
+        totalQuantity: { $sum: [{ $multiply: ["$finalQuantity", '$packKg'] }] },
         pettystockmodels: "$pettystockmodels",
         pettystock: 1,
         products: "$products.productTitle",
@@ -3966,7 +3966,7 @@ const get_stock_roport_selfpickup = async (query) => {
       $project: {
         _id: 1,
         pettystock: { $divide: ["$pettystock", "$productCount"] },
-        totalQuantity: 1,
+        totalQuantity: { $sum: ["$totalQuantity", { $divide: ["$pettystock", "$productCount"] }] },
         finalQuantity: 1,
         productTitle: "$_id.productTitle",
         productid: "$_id.productid",
