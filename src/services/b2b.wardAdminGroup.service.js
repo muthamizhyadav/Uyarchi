@@ -3963,7 +3963,7 @@ const get_stock_roport_selfpickup = async (query) => {
     {
       $project: {
         _id: 1,
-        _pettystock: 1,
+        pettystock: 1,
         totalQuantity: 1,
         finalQuantity: 1,
         productTitle: "$_id.productTitle",
