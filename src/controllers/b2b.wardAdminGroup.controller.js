@@ -138,6 +138,10 @@ const deliverygetAssigned = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.assignOnly_DE(req.query, 'delivery');
   res.send(details);
 });
+const delivery_selfpickup = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.assignOnly_SP(req.query, 'delivery');
+  res.send(details);
+});
 
 const getDeliveryOrderSeparate = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.getDeliveryOrderSeparate(req.params.id, req.params.page);
@@ -426,5 +430,6 @@ module.exports = {
   getGroupDetailsForDE,
   creditupdateDeliveryCompleted,
   scheduleshopdate,
-  getGroupOrders_driver
+  getGroupOrders_driver,
+  delivery_selfpickup
 };
