@@ -2843,19 +2843,11 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
     },
     {
       $lookup: {
-        from: 'orderpayments',
+        from: 'creditbills',
         localField: '_id',
-        foreignField: 'creditID',
+        foreignField: 'creditbillId',
         pipeline: [
-          {
-            $match: { $and: [{ paidAmt: { $ne: 0 } }] }
-          },
-          {
-            $group: {
-              _id: { orderId: "$orderId" },
-              count: { $sum: 1 }
-            }
-          }
+          { $match: { $and: [{ status: { $eq: 'paid' } }] } }
         ],
         as: 'creditID',
       },
