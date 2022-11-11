@@ -3862,14 +3862,14 @@ const get_stock_roport_selfpickup = async (query) => {
         FinishingStatus: 1,
         deliveryExecutiveId: 1,
         pickputype: 1,
-        groupId:1,
-        assignTime:1,
-        assignDate:1,
-        GroupBillId:1,
-        GroupBillDate:1,
-        GroupBillTime:1,
-        route:1,
-        pettyCash:1
+        groupId: 1,
+        assignTime: 1,
+        assignDate: 1,
+        GroupBillId: 1,
+        GroupBillDate: 1,
+        GroupBillTime: 1,
+        route: 1,
+        pettyCash: 1
       }
     }
   ]);
@@ -3909,9 +3909,9 @@ const get_stock_roport_selfpickup = async (query) => {
         foreignField: 'productId',
         pipeline: [
           { $match: { $and: [{ wardAdminId: { $eq: id } }] } },
-          {
-            $group: { _id: null, qty: { $sum: "$QTY" } }
-          }
+          // {
+          //   $group: { _id: null, qty: { $sum: "$pettyStock" } }
+          // }
         ],
         as: 'pettystockmodels',
       },
@@ -3924,7 +3924,7 @@ const get_stock_roport_selfpickup = async (query) => {
     },
     {
       $addFields: {
-        pettystock: { $ifNull: ['$pettystockmodels.qty', 0] },
+        pettystock: { $ifNull: ['$pettystockmodels.pettyStock', 0] },
       },
     },
     {
@@ -3958,12 +3958,14 @@ const get_stock_roport_selfpickup = async (query) => {
         pettystock: { $sum: "$pettystock" },
         totalQuantity: { $sum: "$totalQuantity" },
         finalQuantity: { $sum: "$finalQuantity" },
+        productCount: { $sum: 1 }
+
       }
     },
     {
       $project: {
         _id: 1,
-        pettystock: 1,
+        pettystock: { $divide: ["$pettystock", "$productCount"] },
         totalQuantity: 1,
         finalQuantity: 1,
         productTitle: "$_id.productTitle",
