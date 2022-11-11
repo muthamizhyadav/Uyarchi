@@ -319,7 +319,7 @@ const getShopHistory = async (userId, id) => {
         orderpaymentsData_value: "$orderpaymentsData_value",
         Schedulereason: 1,
         reasonScheduleOrDate: 1,
-        status:1
+        status: 1
 
       }
     },
@@ -2859,11 +2859,110 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
         localField: '_id',
         foreignField: 'creditbillId',
         pipeline: [
-          { $match: { $and: [{ status: { $eq: 'reschedule' } }] } }
+          { $match: { $and: [{ status: { $eq: 'reschedule' } }, { Schedulereason: { $ne: 'InpersonRefuse' } }] } }
         ],
         as: 'creditbillsreschedule',
       },
     },
+
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [
+          { $match: { $and: [{ Schedulereason: { $eq: 'InpersonRefuse' } }] } }
+        ],
+        as: 'InpersonRefuse',
+      },
+    },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              price: { $round: "$productData.price" },
+              orderpayments: "$orderpayments.price",
+              pendingAmount: { $subtract: [{ $round: "$productData.price" }, "$orderpayments.price"] }
+            }
+          },
+          {
+            $match: {
+              pendingAmount: { $ne: 0 }
+            }
+          }
+        ],
+        as: 'noncollected',
+      },
+    },
+
     {
       $project: {
         executiveName: "$b2busersData.name",
@@ -2880,8 +2979,10 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
         creditbills_type_cash: "$creditbills_type_cash.price",
         collectedbillCount: { $size: "$creditID" },
         rescheduleCount: { $size: "$creditbillsreschedule" },
+        InpersonRefuse: { $size: "$InpersonRefuse" },
         pendingbillCount: "$creditBillDatapending.billCount",
-        noncollectedbillCount: { $subtract: ['$creditBillData.billCount', { $size: "$creditID" }] }
+        noncollectedbillCount: { $subtract: ['$creditBillData.billCount', { $size: "$creditID" }] },
+        pendingBillsCount: { $size: "$noncollected" },
       }
     },
 

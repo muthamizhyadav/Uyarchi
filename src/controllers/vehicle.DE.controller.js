@@ -44,7 +44,7 @@ const getAll_Vehicle_Details = catchAsync(async (req, res) => {
 });
 
 const assigndriverVehile = catchAsync(async (req, res) => {
-  const data = await VehicleService.assigndriverVehile(req.query);
+  const data = await VehicleService.assigndriverVehile(req.body);
   res.send(data);
 });
 
