@@ -156,7 +156,8 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
         path: '$productData',
         preserveNullAndEmptyArrays: true,
       },
-    }, {
+    },
+    {
       $lookup: {
         from: 'orderpayments',
         localField: '_id',
@@ -3622,7 +3623,7 @@ const getGroupOrders_driver = async (query, status) => {
     {
       $match: { assigndrivehistories: { $eq: 0 } }
     },
-    
+
   ]);
   return { values: values, total: total.length };
 }
@@ -3843,6 +3844,142 @@ const assignOnly_SP = async (query, status) => {
   return { values: values, total: total.length };
 };
 
+
+
+const get_stock_roport_selfpickup = async (query) => {
+
+  let id = query.id;
+  console.log(id)
+
+  let values = await wardAdminGroup.aggregate([
+    { $match: { $and: [{ _id: { $eq: id } }, { pickputype: { $eq: "SP" } }] } },
+    {
+      $project: {
+        _id: 1,
+        pettyCashAllocateStatus: 1,
+        pettyStockAllocateStatus: 1,
+        AllocateStatus: 1,
+        FinishingStatus: 1,
+        deliveryExecutiveId: 1,
+        pickputype: 1,
+        groupId:1,
+        assignTime:1,
+        assignDate:1,
+        GroupBillId:1,
+        GroupBillDate:1,
+        GroupBillTime:1,
+        route:1,
+        pettyCash:1
+      }
+    }
+  ]);
+  if (values.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  let products = await ProductorderClone.aggregate([
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'orderassigns',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                { $match: { $and: [{ wardAdminGroupID: { $eq: id } }] } }
+              ],
+              as: 'orderassigns',
+            },
+          },
+          { $unwind: "$orderassigns" }
+        ],
+        as: 'shoporderclones',
+      },
+    },
+    {
+      $unwind: "$shoporderclones"
+    },
+    {
+      $lookup: {
+        from: 'pettystockmodels',
+        localField: 'productid',
+        foreignField: 'productId',
+        pipeline: [
+          { $match: { $and: [{ wardAdminId: { $eq: id } }] } },
+          {
+            $group: { _id: null, qty: { $sum: "$QTY" } }
+          }
+        ],
+        as: 'pettystockmodels',
+      },
+    },
+    {
+      $unwind: {
+        path: '$pettystockmodels',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        pettystock: { $ifNull: ['$pettystockmodels.qty', 0] },
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'products',
+      },
+    },
+    {
+      $unwind: {
+        path: '$products',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        finalQuantity: 1,
+        finalPricePerKg: 1,
+        totalQuantity: { $sum: [{ $multiply: ["$finalQuantity", '$packKg'] }, "$pettystock"] },
+        pettystockmodels: "$pettystockmodels",
+        pettystock: 1,
+        products: "$products.productTitle",
+        productid: 1,
+      }
+    },
+    {
+      $group: {
+        _id: { productTitle: "$products", productid: "$productid" },
+        pettystock: { $sum: "$pettystock" },
+        totalQuantity: { $sum: "$totalQuantity" },
+        finalQuantity: { $sum: "$finalQuantity" },
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        _pettystock: 1,
+        totalQuantity: 1,
+        finalQuantity: 1,
+        productTitle: "$_id.productTitle",
+        productid: "$_id.productid",
+      }
+    }
+  ]);
+
+  return {
+    groupDetails: values[0],
+    stock: products,
+
+  }
+
+}
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -3908,5 +4045,6 @@ module.exports = {
   scheduleshopdate,
   getGroupOrders_driver,
   assignOnly_DE,
-  assignOnly_SP
+  assignOnly_SP,
+  get_stock_roport_selfpickup
 };

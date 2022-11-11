@@ -342,6 +342,11 @@ const getGroupOrders_driver = catchAsync(async (req, res) => {
   const groupDetails = await wardAdminGroupService.getGroupOrders_driver(req.query, 'delivery');
   res.send(groupDetails)
 });
+
+const get_stock_roport_selfpickup = catchAsync(async (req, res) => {
+  const groupDetails = await wardAdminGroupService.get_stock_roport_selfpickup(req.query);
+  res.send(groupDetails)
+});
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -431,5 +436,6 @@ module.exports = {
   creditupdateDeliveryCompleted,
   scheduleshopdate,
   getGroupOrders_driver,
-  delivery_selfpickup
+  delivery_selfpickup,
+  get_stock_roport_selfpickup
 };
