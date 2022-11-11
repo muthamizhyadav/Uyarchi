@@ -65,7 +65,7 @@ const creditBillSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        status: "Pending"
+        default: "Pending"
     },
 
 });
