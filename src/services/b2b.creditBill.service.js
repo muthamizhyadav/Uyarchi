@@ -318,7 +318,8 @@ const getShopHistory = async (userId, id) => {
         paidAmount: "$orderpaymentsData.price",
         orderpaymentsData_value: "$orderpaymentsData_value",
         Schedulereason: 1,
-        reasonScheduleOrDate: 1
+        reasonScheduleOrDate: 1,
+        status:1
 
       }
     },
