@@ -2847,6 +2847,9 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
         foreignField: 'creditID',
         pipeline: [
           {
+            $match: { $and: [{ paidAmt: { $ne: 0 } }] }
+          },
+          {
             $group: {
               _id: { orderId: "$orderId" },
               count: { $sum: 1 }
@@ -2857,6 +2860,17 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
       },
     },
 
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [
+          { $match: { $and: [{ status: { $eq: 'reschedule' } }] } }
+        ],
+        as: 'creditbillsreschedule',
+      },
+    },
     {
       $project: {
         executiveName: "$b2busersData.name",
@@ -2872,6 +2886,7 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
         creditbills_type_upi: "$creditbills_type.price",
         creditbills_type_cash: "$creditbills_type_cash.price",
         collectedbillCount: { $size: "$creditID" },
+        rescheduleCount: { $size: "$creditbillsreschedule" },
         pendingbillCount: "$creditBillDatapending.billCount",
         noncollectedbillCount: { $subtract: ['$creditBillData.billCount', { $size: "$creditID" }] }
       }
@@ -3639,8 +3654,8 @@ const Approved_Mismatch_amount = async () => {
         customerSaidamt: '$shoporders.customerSaidamt',
         salesmanEnteredamt: '$shoporders.salesmanEnteredamt',
         creditApprovalStatus: '$shoporders.creditApprovalStatus',
-        orderedamt:'$shoporders.BillAmount',
-        shopName:'$shoporders.shopName'
+        orderedamt: '$shoporders.BillAmount',
+        shopName: '$shoporders.shopName'
       }
     },
     {

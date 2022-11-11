@@ -63,6 +63,10 @@ const creditBillSchema = mongoose.Schema({
     Schedulereason: {
         type: String,
     },
+    status: {
+        type: String,
+        status: "Pending"
+    },
 
 });
 

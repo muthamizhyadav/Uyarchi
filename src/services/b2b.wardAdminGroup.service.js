@@ -233,8 +233,9 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
       creditID: updateBody.groupID,
       Schedulereason: updateBody.Schedulereason
     });
-    await creditBill.findByIdAndUpdate({ _id: id }, { reasonScheduleOrDate: updateBody.reasonScheduleOrDate, Schedulereason: updateBody.Schedulereason }, { new: true });
+    await creditBill.findByIdAndUpdate({ _id: id }, { reasonScheduleOrDate: updateBody.reasonScheduleOrDate, Schedulereason: updateBody.Schedulereason, status: "reschedule" }, { new: true });
   }
+  await creditBill.findByIdAndUpdate({ _id: id }, { status: "paid" }, { new: true });
   return deliveryStatus;
 };
 
