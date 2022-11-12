@@ -1665,6 +1665,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         purchaseQTy: 1,
         da_lot: 1,
         da_long: 1,
+        da_landmark: 1,
         Pincode: 1
       },
     },
@@ -3272,7 +3273,7 @@ const get_wardby_shops = async (query) => {
 }
 
 const update_pincode = async (query, body) => {
-  let shop = await Shop.findByIdAndUpdate({ _id: query.id }, { Pincode: body.pincode }, { new: true })
+  let shop = await Shop.findByIdAndUpdate({ _id: query.id }, { Pincode: body.pincode, da_landmark: body.da_landmark }, { new: true })
   return shop;
 }
 

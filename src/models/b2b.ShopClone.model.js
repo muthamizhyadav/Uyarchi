@@ -168,6 +168,9 @@ const shopSchema = mongoose.Schema({
   DA_TIME: {
     type: Number,
   },
+  da_landmark:{
+    type: String,
+  },
   salesmanOrderStatus: {
     type: String,
   },
