@@ -3652,6 +3652,9 @@ const getPaidHistory_ByOrder = async (id) => {
 const Approved_Mismatch_amount = async () => {
   let values = await orderPayment.aggregate([
     {
+      $match: { creditApprovalStatus: "Approved" }
+    },
+    {
       $lookup: {
         from: 'shoporderclones',
         localField: 'orderId',
@@ -3780,11 +3783,6 @@ const Approved_Mismatch_amount = async () => {
         shopName: '$shoporders.shopName'
       }
     },
-    {
-      $match: {
-        creditApprovalStatus: "Approved"
-      }
-    }
   ])
   return values
 }

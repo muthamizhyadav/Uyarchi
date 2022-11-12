@@ -31,7 +31,7 @@ const userFineSchema = new mongoose.Schema({
     },
     comments: {
         type: String
-    }, 
+    },
     active: {
         type: Boolean,
         default: true
@@ -42,7 +42,10 @@ const userFineSchema = new mongoose.Schema({
     },
     userId: {
         type: String,
-    }
+    },
+    orderpaymentId: {
+        type: String,
+    },
 })
 
 
