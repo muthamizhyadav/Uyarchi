@@ -3291,7 +3291,7 @@ const afterCompletion_Of_Delivered = async (shop, date, userId) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ creditBillAssignedStatus: 'Assigned' }, { status: "Delivered" }, { statusOfBill: "Pending" }],
+        $and: [{ status: "Delivered" }],
       },
     },
     {
@@ -3439,7 +3439,7 @@ const last_Paid_amt = async (id) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ _id: id }, { status: { $eq: 'Delivered' } }, { creditBillAssignedStatus: { $eq: 'Pending' } }],
+        $and: [{ _id: id }, { status: { $eq: 'Delivered' } }],
       },
     },
     {
