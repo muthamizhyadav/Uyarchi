@@ -3160,6 +3160,17 @@ const getbilldetails = async (query) => {
       },
     },
     {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        as: 'shoporders',
+      }
+    },
+    {
+      $unwind: '$shoporders'
+    },
+    {
       $project: {
         _id: 1,
         paidAmt: 1,
@@ -3177,7 +3188,8 @@ const getbilldetails = async (query) => {
         reasonScheduleOrDate: "$creditbillgroups.reasonScheduleOrDate",
         assignedUserName: "$b2busersid.name",
         assignedUserid: "$b2busersid._id",
-        // b2busersid:"$b2busersid"
+        orderId: 1,
+        creditApprovalStatus: 1,
       }
     },
     { $limit: 20 }

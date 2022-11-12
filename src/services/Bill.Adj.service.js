@@ -14,7 +14,7 @@ const createBill_Adjustment = async (body) => {
   if (getAdjustBillByShop) {
     let oldAdjAmt = getAdjustBillByShop.un_Billed_amt;
     let newAdjAmt = un_Billed_amt;
-    let totalAdjAmt = oldAdjAmt + newAdjAmt;
+    let totalAdjAmt = parseInt(oldAdjAmt) + parseInt(newAdjAmt);
     await BillAdjustment.findByIdAndUpdate(
       { _id: getAdjustBillByShop._id },
       { un_Billed_amt: totalAdjAmt, payment_method: payment_method },
