@@ -3783,11 +3783,6 @@ const Approved_Mismatch_amount = async () => {
         shopName: '$shoporders.shopName'
       }
     },
-    {
-      $match: {
-        creditApprovalStatus: "Approved"
-      }
-    }
   ])
   return values
 }
