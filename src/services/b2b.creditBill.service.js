@@ -3189,7 +3189,7 @@ const getbilldetails = async (query) => {
         assignedUserName: "$b2busersid.name",
         assignedUserid: "$b2busersid._id",
         orderId: 1,
-        creditApprovalStatus: '$shoporders.creditApprovalStatus',
+        creditApprovalStatus: 1,
       }
     },
     { $limit: 20 }
