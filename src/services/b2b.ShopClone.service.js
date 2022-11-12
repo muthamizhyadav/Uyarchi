@@ -9,6 +9,7 @@ const RegisterOtp = require('../config/registerOtp');
 const moment = require('moment');
 const { verfiy } = require('../config/registerOTP.Verify');
 const { ShopList } = require('../models/product.model');
+const Ward = require("../models/ward.model")
 // Shop Clone Serive
 
 const createShopClone = async (shopBody) => {
@@ -3215,9 +3216,12 @@ const get_wardby_shops = async (query) => {
         as: 'shoptype',
       },
     },
-    // {
-    //   $unwind: '$shoptype',
-    // },
+    {
+      $unwind: {
+        path: '$b2bshopclones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
         // _id:1,
@@ -3242,12 +3246,29 @@ const get_wardby_shops = async (query) => {
         date: 1,
         displaycount: 1,
         salesManStatus: 1,
-        assignedUser: "$salesmanshops.fromSalesManId"
+        assignedUser: "$salesmanshops.fromSalesManId",
+        b2bshopclones: "$b2bshopclones"
+
       },
     },
   ]);
 
-  return shopss;
+  let assign = await Shop.aggregate([
+    { $match: { $and: [{ Wardid: { $eq: wardId } }, { $or: [{ salesManStatus: { $eq: "tempReassign" } }, { salesManStatus: { $eq: 'Assign' } }] }] } },
+    { $group: { _id: null, count: { $sum: 1 } } }
+  ])
+  let data_approved = await Shop.aggregate([
+    { $match: { $and: [{ Wardid: { $eq: wardId } }, { status: { $eq: "data_approved" } }] } },
+    { $group: { _id: null, count: { $sum: 1 } } }
+  ])
+  // console.log(assign)
+  // console.log(data_approved)
+  assign = assign.length == 0 ? 0 : assign[0].count;
+  data_approved = data_approved.length == 0 ? 0 : data_approved[0].count;
+  // console.log(assign)
+  // console.log(data_approved)
+
+  return { shopss: shopss, data_approved: data_approved, assign: assign };
 }
 
 const update_pincode = async (query, body) => {
