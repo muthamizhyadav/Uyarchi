@@ -3,7 +3,7 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const wardAdminGroupService = require('../services/b2b.wardAdminGroup.service');
 const { ProductorderClone } = require('../models/shopOrder.model');
-const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
+const {wardAdminGroup} = require('../models/b2b.wardAdminGroup.model');
 const pettyStockModel = require('../models/b2b.pettyStock.model');
 
 const createGroupOrder = catchAsync(async (req, res) => {

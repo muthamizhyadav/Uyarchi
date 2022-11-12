@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone } = require('../models/shopOrder.model');
+const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone, MismatchStock } = require('../models/shopOrder.model');
 const ProductPacktype = require('../models/productPacktype.model');
 const { Product } = require('../models/product.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
@@ -10,6 +10,7 @@ const moment = require('moment');
 const { Users } = require('../models/B2Busers.model');
 const CallHistory = require('../models/b2b.callHistory.model');
 const BillAdj = require('../models/Bill.Adj.model');
+const { wardAdminGroup, wardAdminGroupModel_ORDERS } = require('../models/b2b.wardAdminGroup.model');
 
 const createshopOrder = async (shopOrderBody, userid) => {
   let { product, date, time, shopId, time_of_delivery } = shopOrderBody;
@@ -773,7 +774,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         total: 1,
         gsttotal: 1,
         subtotal: { $round: '$productorderclones.price' },
-        productorderclones:"$productorderclones",
+        productorderclones: "$productorderclones",
         SGST: 1,
         CGST: 1,
         OrderId: 1,
@@ -3010,6 +3011,161 @@ const vieworderbill_byshop = async (id) => {
   return { value: value, shop: shop };
 };
 
+const mismachstockscreate = async (body) => {
+  let groupId = body.groupId;
+  let stocks = body.stocks;
+  let stockstatus = body.stockstatus;
+  let cashstatus = body.cashstatus;
+  let cash = body.cash;
+  if (cashstatus == 'change') {
+    let order = await wardAdminGroup.findById(groupId);
+    if (order.pettyCash != 0 && order.pettyCash != "" || order.pettyCash != null) {
+      let pettyCash = order.pettyCash - cash;
+      if (pettyCash > 0) {
+        await wardAdminGroup.findByIdAndUpdate({ _id: groupId }, { mismatchAmount: pettyCash, cashmismatch: cashstatus }, { new: true });
+        await MismatchStock.create({
+          groupId: groupId,
+          type: "cash",
+          mismatchAmount: pettyCash,
+          receivedAmount: cash,
+          date: moment().format('YYYY-MM-DD'),
+          time: moment().format('HHmm'),
+          created: moment(),
+          status: "Pending"
+        });
+      }
+    }
+  }
+  if (stockstatus == 'change') {
+    let products = await ProductorderClone.aggregate([
+      {
+        $lookup: {
+          from: 'shoporderclones',
+          localField: 'orderId',
+          foreignField: '_id',
+          pipeline: [
+            {
+              $lookup: {
+                from: 'orderassigns',
+                localField: '_id',
+                foreignField: 'orderId',
+                pipeline: [
+                  { $match: { $and: [{ wardAdminGroupID: { $eq: groupId } }] } }
+                ],
+                as: 'orderassigns',
+              },
+            },
+            { $unwind: "$orderassigns" }
+          ],
+          as: 'shoporderclones',
+        },
+      },
+      {
+        $unwind: "$shoporderclones"
+      },
+      {
+        $lookup: {
+          from: 'pettystockmodels',
+          localField: 'productid',
+          foreignField: 'productId',
+          pipeline: [
+            { $match: { $and: [{ wardAdminId: { $eq: groupId } }] } },
+          ],
+          as: 'pettystockmodels',
+        },
+      },
+      {
+        $unwind: {
+          path: '$pettystockmodels',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          pettystock: { $ifNull: ['$pettystockmodels.pettyStock', 0] },
+        },
+      },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'productid',
+          foreignField: '_id',
+          as: 'products',
+        },
+      },
+      {
+        $unwind: {
+          path: '$products',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          finalQuantity: 1,
+          finalPricePerKg: 1,
+          totalQuantity: { $sum: [{ $multiply: ["$finalQuantity", '$packKg'] }] },
+          pettystockmodels: "$pettystockmodels",
+          pettystock: 1,
+          products: "$products.productTitle",
+          productid: 1,
+        }
+      },
+      {
+        $group: {
+          _id: { productTitle: "$products", productid: "$productid" },
+          pettystock: { $sum: "$pettystock" },
+          totalQuantity: { $sum: "$totalQuantity" },
+          finalQuantity: { $sum: "$finalQuantity" },
+          productCount: { $sum: 1 }
+
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          pettystock: { $divide: ["$pettystock", "$productCount"] },
+          totalQuantity: { $sum: ["$totalQuantity", { $divide: ["$pettystock", "$productCount"] }] },
+          finalQuantity: 1,
+          productTitle: "$_id.productTitle",
+          productid: "$_id.productid",
+        }
+      }
+    ]);
+
+
+    if (products.length == 0) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'ShopOrderClone Not Found');
+    }
+    stocks.forEach(async (e) => {
+      if (products.findIndex((a) => a.productid == e.productId) != -1) {
+        let totalQTY = products[products.findIndex((a) => a.productid == e.productId)].totalQuantity;
+        let mismatch = totalQTY - e.qunatity;
+        if (mismatch > 0) {
+          await MismatchStock.create({
+            productId: e.productId,
+            groupId: groupId,
+            type: "stock",
+            mismatchQty: mismatch,
+            receivedQty: e.qunatity,
+            date: moment().format('YYYY-MM-DD'),
+            time: moment().format('HHmm'),
+            created: moment(),
+            status: "Pending"
+          });
+        }
+      }
+
+    });
+  }
+  await wardAdminGroup.findByIdAndUpdate({ _id: groupId }, { stockmismatch: stockstatus, manageDeliveryStatus: 'Order Picked' }, { new: true });
+  let assign = await wardAdminGroupModel_ORDERS.find({ wardAdminGroupID: groupId });
+  assign.forEach(async (e) => {
+    await ShopOrderClone.findByIdAndUpdate({ _id: e.orderId }, { status: 'Order Picked' }, { new: true });
+  });
+  return { message: "success" };
+
+}
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -3059,4 +3215,5 @@ module.exports = {
   getBills_ByShop,
   getBills_DetailsByshop,
   vieworderbill_byshop,
+  mismachstockscreate
 };

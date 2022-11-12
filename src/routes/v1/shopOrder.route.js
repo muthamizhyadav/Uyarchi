@@ -60,5 +60,6 @@ router.route('/lapsed/ordercount/Undelivered').get(shopOrderController.lapsedord
 router.route('/getBills/byshop/:shopId').get(shopOrderController.getBills_ByShop);
 router.route('/getBills/details/byshop/:shopId/:page').get(shopOrderController.getBills_DetailsByshop);
 router.route('/vieworderbill/byshop/:shopId').get(authorization, shopOrderController.vieworderbill_byshop);
+router.route('/mismatchstock/bygroup').post(shopOrderController.mismachstockscreate);
 
 module.exports = router;
