@@ -2989,7 +2989,7 @@ const vieworderbill_byshop = async (id) => {
       $project: {
         _id: 1,
         orderpayments: '$orderpayments.price',
-        productData: '$productData.price',
+        productData: { $round:'$productData.price'},
         pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
         OrderId: 1,
         created: 1,
