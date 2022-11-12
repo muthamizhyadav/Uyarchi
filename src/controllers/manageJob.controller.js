@@ -8,7 +8,22 @@ const manageJobService = require('../services/manageJob.service')
 
 const createUserId = catchAsync(async (req, res) => {
     const user = await manageJobService.createUser(req.body);
-    res.send(user);
+
+    if (req.files) {
+        let path = '';
+        path = 'images/jobresume/';
+        if (req.files.resume != null) {
+            user.resume =
+            path +
+            req.files.resume.map((e) => {
+              return e.filename;
+            });
+        }
+        
+        await user.save();
+        res.status(httpStatus.CREATED).send(user);
+      }
+    // res.send(user);
   });
 
   const getdata = catchAsync(async (req,res)=>{

@@ -18,16 +18,16 @@ const upload = multer({
   storage: storage,
   fileFilter: function (req, file, callback) {
     if (
-      file.mimetype == 'image/png' ||
-      file.mimetype == 'image/jpg' ||
-      file.mimetype == 'image/jpeg' ||
-      file.mimetype == 'image/webp'
-    ) {
+      file.mimetype === 'application/pdf' ||
+      file.mimetype === 'application/msword' ||
+      file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    
+    ) 
+    { // check file type to be pdf, doc, or docx
       callback(null, true);
-    } else {
-      console.log('Only png And Jpg file supported!');
-      callback(null, false);
-    }
+              } else {
+                callback(null, false); // else fails
+              }
   },
   limits: {
     fileSize: 5024 * 5024 * 5,
