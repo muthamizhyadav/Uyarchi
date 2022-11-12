@@ -3292,10 +3292,10 @@ const afterCompletion_Of_Delivered = async (shop, date, userId) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $match: { paidAmt: { $ne: 0 } }
+            $sort: { time: -1 }
           },
           {
-            $sort: { date: -1 }
+            $match: { paidAmt: { $ne: 0 } }
           },
           {
             $limit: 1
@@ -3400,6 +3400,7 @@ const afterCompletion_Of_Delivered = async (shop, date, userId) => {
         // empId: '$usersdata._id',
         empId: '$lastPaidamt.uid',
         empName: '$lastPaidamt.users.name',
+        ordepaymentId: '$lastPaidamt._id'
       },
     },
   ])
@@ -3739,7 +3740,6 @@ const Approved_Mismatch_amount = async () => {
       $project: {
         _id: 1,
         paidAmt: 1,
-        // shoporders: 1,
         date: 1,
         OrderId: { $ifNull: ['$shoporders.OrderId', "null"] },
         users: '$users.name',
