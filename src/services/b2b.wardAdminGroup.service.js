@@ -215,7 +215,7 @@ const creditupdateDeliveryCompleted = async (id, updateBody, userId) => {
       creditID: updateBody.groupID,
       Schedulereason: updateBody.Schedulereason
     });
-  await creditBill.findByIdAndUpdate({ _id: id }, { status: "paid" }, { new: true });
+    await creditBill.findByIdAndUpdate({ _id: id }, { status: "paid" }, { new: true });
   }
   else {
     await orderPayment.create({

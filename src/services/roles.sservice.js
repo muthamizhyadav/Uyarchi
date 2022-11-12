@@ -440,7 +440,7 @@ const getsalesman = async () => {
         from: 'salesmanshops',
         localField: 'b2busersData._id',
         foreignField: 'fromSalesManId',
-       pipeline:[ {
+        pipeline: [{
           $match: {
             $or: [
               {
@@ -451,7 +451,7 @@ const getsalesman = async () => {
             ],
           },
         },
-      ],
+        ],
         as: 'salesmanshops',
       },
     },
@@ -460,7 +460,7 @@ const getsalesman = async () => {
         from: 'salesmanshops',
         localField: 'b2busersData._id',
         foreignField: 'salesManId',
-       pipeline:[ {
+        pipeline: [{
           $match: {
             $or: [
               {
@@ -471,8 +471,16 @@ const getsalesman = async () => {
             ],
           },
         },
-      ],
+        ],
         as: 'salesmanshopsdata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'b2busersData._id',
+        foreignField: 'DA_USER',
+        as: 'b2bshopclones',
       },
     },
     {
@@ -480,9 +488,10 @@ const getsalesman = async () => {
         name: '$b2busersData.name',
         b2buserId: '$b2busersData._id',
         roleName: 1,
-        assigncount:{$size:"$salesmanshops"},
-        tempcount:{$size:"$salesmanshopsdata"},
-        count:{ $add:[{$size:"$salesmanshops"},{$size:"$salesmanshopsdata"}] },
+        assigncount: { $size: "$salesmanshops" },
+        tempcount: { $size: "$salesmanshopsdata" },
+        DA_count: { $size: "$b2bshopclones" },
+        count: { $add: [{ $size: "$salesmanshops" }, { $size: "$salesmanshopsdata" }] },
         _id: 1,
       },
     },
@@ -496,7 +505,7 @@ const gettelecaller = async () => {
   let data = await Roles.aggregate([
     {
       $match: {
-        $and: [{ roleName: { $eq:"Ward CCE(WCCE)"} }],
+        $and: [{ roleName: { $eq: "Ward CCE(WCCE)" } }],
       },
     },
     {
@@ -515,7 +524,7 @@ const gettelecaller = async () => {
         from: 'telecallershops',
         localField: 'b2busersData._id',
         foreignField: 'fromtelecallerteamId',
-       pipeline:[ {
+        pipeline: [{
           $match: {
             $or: [
               {
@@ -526,7 +535,7 @@ const gettelecaller = async () => {
             ],
           },
         },
-      ],
+        ],
         as: 'salesmanshops',
       },
     },
@@ -535,7 +544,7 @@ const gettelecaller = async () => {
         from: 'telecallershops',
         localField: 'b2busersData._id',
         foreignField: 'telecallerteamId',
-       pipeline:[ {
+        pipeline: [{
           $match: {
             $or: [
               {
@@ -546,7 +555,7 @@ const gettelecaller = async () => {
             ],
           },
         },
-      ],
+        ],
         as: 'salesmanshopsdata',
       },
     },
@@ -555,9 +564,9 @@ const gettelecaller = async () => {
         name: '$b2busersData.name',
         b2buserId: '$b2busersData._id',
         roleName: 1,
-        assigncount:{$size:"$salesmanshops"},
-        tempcount:{$size:"$salesmanshopsdata"},
-        count:{ $add:[{$size:"$salesmanshops"},{$size:"$salesmanshopsdata"}] },
+        assigncount: { $size: "$salesmanshops" },
+        tempcount: { $size: "$salesmanshopsdata" },
+        count: { $add: [{ $size: "$salesmanshops" }, { $size: "$salesmanshopsdata" }] },
         _id: 1,
       },
     },
@@ -571,7 +580,7 @@ const getsalesmanOrder = async () => {
   let data = await Roles.aggregate([
     {
       $match: {
-        $and: [{ roleName: { $eq: 'Ward Field Sales Executive(WFSE)'} }],
+        $and: [{ roleName: { $eq: 'Ward Field Sales Executive(WFSE)' } }],
       },
     },
     {
@@ -590,7 +599,7 @@ const getsalesmanOrder = async () => {
         from: 'salesmanordershops',
         localField: 'b2busersData._id',
         foreignField: 'fromsalesmanOrderteamId',
-       pipeline:[ {
+        pipeline: [{
           $match: {
             $or: [
               {
@@ -601,7 +610,7 @@ const getsalesmanOrder = async () => {
             ],
           },
         },
-      ],
+        ],
         as: 'salesmanshops',
       },
     },
@@ -610,7 +619,7 @@ const getsalesmanOrder = async () => {
         from: 'salesmanordershops',
         localField: 'b2busersData._id',
         foreignField: 'salesmanOrderteamId',
-       pipeline:[ {
+        pipeline: [{
           $match: {
             $or: [
               {
@@ -621,7 +630,7 @@ const getsalesmanOrder = async () => {
             ],
           },
         },
-      ],
+        ],
         as: 'salesmanshopsdata',
       },
     },
@@ -630,9 +639,9 @@ const getsalesmanOrder = async () => {
         name: '$b2busersData.name',
         b2buserId: '$b2busersData._id',
         roleName: 1,
-        assigncount:{$size:"$salesmanshops"},
-        tempcount:{$size:"$salesmanshopsdata"},
-        count:{ $add:[{$size:"$salesmanshops"},{$size:"$salesmanshopsdata"}] },
+        assigncount: { $size: "$salesmanshops" },
+        tempcount: { $size: "$salesmanshopsdata" },
+        count: { $add: [{ $size: "$salesmanshops" }, { $size: "$salesmanshopsdata" }] },
         _id: 1,
       },
     },
