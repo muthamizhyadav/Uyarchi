@@ -3067,15 +3067,15 @@ const getbilldetails = async (query) => {
         customerBillId: 1,
         OrderId: 1,
         date: 1,
-        created: 1
+        created: 1,
+
       }
     }
   ])
-
-  // console.log(order)
+  if (order.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
   let totalamount = order.length != 0 ? order[0].price : 0;
-  // console.log(totalamount)
-
   let orderspayments = await OrderPayment.aggregate([
     {
       $match: {
@@ -3146,6 +3146,20 @@ const getbilldetails = async (query) => {
       },
     },
     {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'uid',
+        foreignField: '_id',
+        as: 'b2busersid',
+      }
+    },
+    {
+      $unwind: {
+        path: '$b2busersid',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 1,
         paidAmt: 1,
@@ -3161,7 +3175,9 @@ const getbilldetails = async (query) => {
         assignedTime: "$creditbillgroups.assignedTime",
         Schedulereason: "$creditbillgroups.Schedulereason",
         reasonScheduleOrDate: "$creditbillgroups.reasonScheduleOrDate",
-        assignedUserName: "$creditbillgroups.assignedUserName",
+        assignedUserName: "$b2busersid.name",
+        assignedUserid: "$b2busersid._id",
+        // b2busersid:"$b2busersid"
       }
     },
     { $limit: 20 }
@@ -3237,7 +3253,7 @@ const getbilldetails = async (query) => {
       },
     },
   ])
-  return { value: orderspayments, orderDetails: order, total: total.length };
+  return { value: orderspayments, orderDetails: order[0], total: total.length };
 
 }
 
