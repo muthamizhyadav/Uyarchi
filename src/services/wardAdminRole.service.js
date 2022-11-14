@@ -782,7 +782,7 @@ const createSalesmanShop = async (body) => {
       });
     });
   }
-  return {message:'created'};
+  return { message: 'created' };
 };
 
 const getSalesman = async (id) => {
@@ -2473,8 +2473,10 @@ const getall_targets = async (query) => {
   return { values: value, total: total.length };
 }
 
-
-
+const getusertarget = async (userID) => {
+  let value = await Tartgetvalue.findOne({ b2buser: userID, date: moment().format('YYYY-MM-DD') })
+  return { targetKg: value == null ? 0 : value.targetKg, targetvalue: value == null ? 0 : value.targetvalue };
+}
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -2532,5 +2534,6 @@ module.exports = {
   // 08-11-2022
   createtartget,
   get_user_target,
-  getall_targets
+  getall_targets,
+  getusertarget
 };
