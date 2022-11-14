@@ -2285,6 +2285,9 @@ const getCreditBillMaster = async (query) => {
               foreignField: 'orderId',
               pipeline: [
                 {
+                  $sort: { created: -1 }
+                },
+                {
                   $group: {
                     _id: null,
                     amount: {
