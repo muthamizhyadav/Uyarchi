@@ -161,7 +161,7 @@ const createtelecallerAssignReassign = async (body) => {
       },
       {
         $project: {
-          telecallername: '$b2busersData.name',
+          salesmanname:'$b2busersData.name',
           telecallerteamId: 1,
           status: 1,
           telecallerHeadId: 1,

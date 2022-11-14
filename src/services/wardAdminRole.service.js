@@ -18,7 +18,7 @@ const Ward = require('../models/ward.model');
 const moment = require('moment');
 const { findByIdAndUpdate } = require('../models/b2b.pettyStock.model');
 const { ValidationRequestList } = require('twilio/lib/rest/api/v2010/account/validationRequest');
-
+const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone, MismatchStock } = require('../models/shopOrder.model');
 
 
 const createwardAdminRole = async (body) => {
@@ -2474,8 +2474,101 @@ const getall_targets = async (query) => {
 }
 
 const getusertarget = async (userID) => {
-  let value = await Tartgetvalue.findOne({ b2buser: userID, date: moment().format('YYYY-MM-DD') })
-  return { targetKg: value == null ? 0 : value.targetKg, targetvalue: value == null ? 0 : value.targetvalue };
+  let value = await Tartgetvalue.findOne({ b2buser: userID, date: moment().format('YYYY-MM-DD') });
+  let date = moment().format("YYYY-MM-DD")
+  let achivedTarget = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ Uid: { $eq: userID } }, { date: { $eq: date } }]
+      }
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $match: { $and: [{ unit: { $eq: "KG" } }] } },
+          {
+            $group: {
+              _id: null,
+              quantity: {
+                $sum: {
+                  $multiply: ['$finalQuantity', '$packKg'],
+                },
+              }
+            }
+          }
+        ],
+        as: 'productorderclones',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productorderclones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        kgs: { $ifNull: ['$productorderclones.quantity', 0] },
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $match: { $and: [{ unit: { $ne: "KG" } }] } },
+          {
+            $group: {
+              _id: null,
+              quantity: {
+                $sum: "$finalQuantity"
+              }
+            }
+          }
+        ],
+        as: 'productorderclones_notkg',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productorderclones_notkg',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        notkgs: { $ifNull: ['$productorderclones_notkg.quantity', 0] },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        totalquantity: { $sum: ["$kgs", "$notkgs"] },
+        subtotal: 1,
+        date: 1
+      }
+    },
+    {
+      $group: {
+        _id: 1,
+        totalquantity: { $sum: "$totalquantity" },
+        ordervalues: { $sum: "$subtotal" },
+      }
+    }
+  ])
+  // return achivedTarget;
+  let achivedTarget_obj = {
+    orderedKGS: achivedTarget.length == 0 ? 0 : achivedTarget[0].totalquantity,
+    ordervalues: achivedTarget.length == 0 ? 0 : achivedTarget[0].ordervalues,
+  }
+
+  return {
+    ...achivedTarget_obj, ...{ targetKg: value == null ? 0 : value.targetKg, targetvalue: value == null ? 0 : value.targetvalue }
+  };
 }
 module.exports = {
   createwardAdminRole,
