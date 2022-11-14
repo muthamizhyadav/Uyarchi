@@ -268,6 +268,10 @@ const getall_targets = catchAsync(async (req, res) => {
   res.send(data);
 })
 
+const getusertarget = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.getusertarget(req.userId);
+  res.send(data);
+})
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -321,5 +325,6 @@ module.exports = {
 
   createtartget,
   get_user_target,
-  getall_targets
+  getall_targets,
+  getusertarget
 };

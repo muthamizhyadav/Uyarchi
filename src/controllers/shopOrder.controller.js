@@ -315,6 +315,11 @@ const vieworderbill_byshop = catchAsync(async (req, res) => {
   const data = await shopOrderService.vieworderbill_byshop(req.params.shopId);
   res.send(data);
 });
+
+const mismachstockscreate = catchAsync(async (req, res) => {
+  const data = await shopOrderService.mismachstockscreate(req.body);
+  res.send(data);
+});
 module.exports = {
   vieworderbill_byshop,
   createshopOrder,
@@ -361,4 +366,5 @@ module.exports = {
   lapsedordercountUndelivered,
   getBills_ByShop,
   getBills_DetailsByshop,
+  mismachstockscreate
 };

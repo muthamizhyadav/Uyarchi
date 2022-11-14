@@ -220,13 +220,20 @@ const getAllManagepickupLocation = async (userId, date, todate) => {
         userName: '$userData.name',
       },
     },
+    
   ]);
   return values;
 };
 
+
+const getallPickuplocation = async () => {
+  let values = await PickupLocation.find();
+  return values;
+}
 module.exports = {
   createManagePickupLocation,
   getAllManagepickup,
   getManagePickupById,
   getAllManagepickupLocation,
+  getallPickuplocation
 };

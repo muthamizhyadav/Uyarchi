@@ -297,6 +297,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   Schedulereason: {
     type: String,
   },
+  creditApprovalStatus: {
+    type: String,
+    default: 'Pending',
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
@@ -455,4 +459,61 @@ productorderCloneSchema.plugin(toJSON);
 productorderCloneSchema.plugin(paginate);
 const ProductorderClone = mongoose.model('ProductOrderClone', productorderCloneSchema);
 
-module.exports = { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone };
+
+
+
+
+
+const mismatchStock = new mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  productId: {
+    type: String,
+  },
+  groupId: {
+    type: String,
+  },
+  type: {
+    type: String,
+  },
+  mismatchQty: {
+    type: Number,
+  },
+  receivedQty: {
+    type: Number,
+  },
+  mismatchAmount: {
+    type: Number,
+  },
+  receivedAmount: {
+    type: Number,
+  },
+  date: {
+    type: String,
+  },
+  time: {
+    type: String,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+  created: {
+    type: Date,
+  },
+  status: {
+    type: String,
+  },
+});
+
+mismatchStock.plugin(toJSON);
+mismatchStock.plugin(paginate);
+const MismatchStock = mongoose.model('mismatchstocks', mismatchStock);
+
+module.exports = { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone, MismatchStock };

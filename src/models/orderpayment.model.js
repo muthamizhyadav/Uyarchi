@@ -67,7 +67,10 @@ const OrderPaymentSchema = new mongoose.Schema({
   Schedulereason: {
     type: String,
   },
-
+  creditApprovalStatus: {
+    type: String,
+    default: "Pending"
+  }
 });
 
 const OrderPayment = new mongoose.model('orderPayment', OrderPaymentSchema);

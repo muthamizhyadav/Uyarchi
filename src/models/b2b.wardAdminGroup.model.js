@@ -91,7 +91,7 @@ const wardAdminGroupSchema = new mongoose.Schema({
   wastageImageUpload: {
     type: String,
   },
-  mismatch: {
+  mismatchAmount: {
     type: Number,
   },
   DeliverAsPerSystem: {
@@ -130,6 +130,24 @@ const wardAdminGroupSchema = new mongoose.Schema({
   FinishingStatus: {
     type: String,
     default: "Pending"
+  },
+  zone: {
+    type: String,
+  },
+  ward: {
+    type: String,
+  },
+  pickuplocation: {
+    type: String,
+  },
+  pickputype: {
+    type: String,
+  },
+  stockmismatch: {
+    type: String,
+  },
+  cashmismatch: {
+    type: String,
   }
 });
 

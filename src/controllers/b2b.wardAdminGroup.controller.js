@@ -3,7 +3,7 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const wardAdminGroupService = require('../services/b2b.wardAdminGroup.service');
 const { ProductorderClone } = require('../models/shopOrder.model');
-const wardAdminGroup = require('../models/b2b.wardAdminGroup.model');
+const {wardAdminGroup} = require('../models/b2b.wardAdminGroup.model');
 const pettyStockModel = require('../models/b2b.pettyStock.model');
 
 const createGroupOrder = catchAsync(async (req, res) => {
@@ -126,15 +126,20 @@ const getBillDetails = catchAsync(async (req, res) => {
 });
 
 const getAssigned = catchAsync(async (req, res) => {
-  const details = await wardAdminGroupService.assignOnly(req.params.page, 'stock');
+  console.log("stock")
+  const details = await wardAdminGroupService.assignOnly(req.query, 'stock');
   res.send(details);
 });
 const cashgetAssigned = catchAsync(async (req, res) => {
-  const details = await wardAdminGroupService.assignOnly(req.params.page, 'cash');
+  const details = await wardAdminGroupService.assignOnly(req.query, 'cash');
   res.send(details);
 });
 const deliverygetAssigned = catchAsync(async (req, res) => {
-  const details = await wardAdminGroupService.assignOnly(req.params.page, 'delivery');
+  const details = await wardAdminGroupService.assignOnly_DE(req.query, 'delivery');
+  res.send(details);
+});
+const delivery_selfpickup = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.assignOnly_SP(req.query, 'delivery');
   res.send(details);
 });
 
@@ -332,6 +337,16 @@ const getGroupDetailsForDE = catchAsync(async (req, res) => {
   const groupDetails = await wardAdminGroupService.getGroupDetailsForDE(req.params.page);
   res.send(groupDetails)
 });
+
+const getGroupOrders_driver = catchAsync(async (req, res) => {
+  const groupDetails = await wardAdminGroupService.getGroupOrders_driver(req.query, 'delivery');
+  res.send(groupDetails)
+});
+
+const get_stock_roport_selfpickup = catchAsync(async (req, res) => {
+  const groupDetails = await wardAdminGroupService.get_stock_roport_selfpickup(req.query);
+  res.send(groupDetails)
+});
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -419,5 +434,8 @@ module.exports = {
   deliveryExecutiveSorting,
   getGroupDetailsForDE,
   creditupdateDeliveryCompleted,
-  scheduleshopdate
+  scheduleshopdate,
+  getGroupOrders_driver,
+  delivery_selfpickup,
+  get_stock_roport_selfpickup
 };

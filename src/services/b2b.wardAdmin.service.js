@@ -517,11 +517,14 @@ const wardloadExecutivepacked = async (status, date, page) => {
   return { data: data, total: total.length };
 };
 
-const wardloadExecutivebtgroup = async (page) => {
+const wardloadExecutivebtgroup = async (query) => {
+  let page = query.page;
+  let type = query.pickputype;
+  console.log(type)
   let data = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: 'Assigned' } }],
+        $and: [{ status: { $eq: 'Assigned' } }, { pickputype: { $eq: type } }],
       },
     },
     {
@@ -569,7 +572,7 @@ const wardloadExecutivebtgroup = async (page) => {
   let total = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: 'Assigned' } }],
+        $and: [{ status: { $eq: 'Assigned' } }, { pickputype: { $eq: type } }],
       },
     },
     {
@@ -896,7 +899,7 @@ const wardloadExecutivePacked = async (range, page, type) => {
   let lapsed = timeslot[hover].start;
   let beforelapsed = timeslot[before].start;
 
-  console.log(lapsed);
+  console.log(type);
   console.log(beforelapsed);
 
   rangematch = { time_of_delivery: { $eq: range } };
@@ -1203,11 +1206,11 @@ const wardDeliveryExecutive = async () => {
   return value;
 };
 
-const getAssigned_details = async () => {
+const getAssigned_details = async (pickuptype) => {
   const currentDate = moment().format('YYYY-MM-DD');
   let values = await wardAdminGroup.aggregate([
     {
-      $match: { assignDate: currentDate, status: 'Assigned' },
+      $match: { assignDate: currentDate, status: 'Assigned', pickputype: pickuptype },
     },
     {
       $lookup: {
@@ -1291,6 +1294,67 @@ const getAssigned_details = async () => {
       },
     },
     {
+      $lookup: {
+        from: 'vehicles',
+        localField: 'vehicleId',
+        foreignField: '_id',
+
+        as: 'vehicles',
+      },
+    },
+    {
+      $unwind: {
+        path: '$vehicles',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'ward',
+        foreignField: '_id',
+
+        as: 'wards',
+      },
+    },
+    {
+      $unwind: {
+        path: '$wards',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'zones',
+        localField: 'zone',
+        foreignField: '_id',
+
+        as: 'zones',
+      },
+    },
+    {
+      $unwind: {
+        path: '$zones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'managepickuplocations',
+        localField: 'pickuplocation',
+        foreignField: '_id',
+
+        as: 'managepickuplocations',
+      },
+    },
+    {
+      $unwind: {
+        path: '$managepickuplocations',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 1,
         status: 1,
@@ -1304,6 +1368,18 @@ const getAssigned_details = async () => {
         route: 1,
         deliveryCompletedCount: { $size: '$wardadmingroups' },
         totaldeliveryCompletedCount: { $size: '$totalwardadmingroups' },
+        zone: 1,
+        ward: 1,
+        pickputype: 1,
+        vehicle_Owner_Name: "$vehicles.vehicle_Owner_Name",
+        vehicle_Name: "$vehicles.vehicle_Name",
+        vehicle_type: "$vehicles.vehicle_type",
+        vehicleNo: "$vehicles.vehicleNo",
+        tonne_Capacity: "$vehicles.tonne_Capacity",
+        pickuplocation: 1,
+        zone: "$zones.zone",
+        ward: "$wards.ward",
+        locationName: "$managepickuplocations.locationName"
       },
     },
   ]);

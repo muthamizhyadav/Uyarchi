@@ -35,9 +35,10 @@ router.route('/getDeliveryExecutivestatus/:id').get(wardAdminGroupController.get
 router.route('/get/billDetails/:id').get(wardAdminGroupController.getBillDetails);
 
 //checked
-router.route('/get/assignedOnle/:page').get(wardAdminGroupController.getAssigned);
-router.route('/get/assignedOnle/cash/:page').get(wardAdminGroupController.cashgetAssigned);
-router.route('/get/assignedOnle/delivery/:page').get(wardAdminGroupController.deliverygetAssigned);
+router.route('/get/assignedOnle').get(wardAdminGroupController.getAssigned);
+router.route('/get/assignedOnle/cash').get(wardAdminGroupController.cashgetAssigned);
+router.route('/get/assignedOnle/delivery').get(wardAdminGroupController.deliverygetAssigned);
+router.route('/stationery/getself/pickup/delivery').get(wardAdminGroupController.delivery_selfpickup);
 
 router.route('/get/details/deliveryExecutive/:id/:page').get(wardAdminGroupController.getDeliveryOrderSeparate);
 
@@ -126,4 +127,11 @@ router.route('/get/orderData/ByPassing/GroupId/:id').get(wardAdminGroupControlle
 
 router.route('/get/detatils/dele/name/forSorting').get(wardAdminGroupController.deliveryExecutiveSorting);
 router.route('/get/AllGroup/details/:page').get(wardAdminGroupController.getGroupDetailsForDE);
+
+
+router.route('/getdriver/assign/grouporders').get(wardAdminGroupController.getGroupOrders_driver);
+router.route('/getstockreport/selfpickup').get(wardAdminGroupController.get_stock_roport_selfpickup);
+
+
+
 module.exports = router;

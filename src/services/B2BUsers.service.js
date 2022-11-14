@@ -410,6 +410,55 @@ const gettargetedusers_credit = async (id) => {
   let users = await Users.find({ userRole: { $in: ['36151bdd-a8ce-4f80-987e-1f454cd0993f', 'fb0dd028-c608-4caa-a7a9-b700389a098d'] } });
   return users;
 };
+
+const get_stationery_user = async (id) => {
+  let users = await Users.aggregate([
+    {
+      $match: { userRole: { $in: ['ea1d0203-56fa-44f7-a1fb-73d3d5c3eac5'] } }
+    },
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: '_id',
+        foreignField: 'deliveryExecutiveId',
+        pipeline: [
+          { $match: { manageDeliveryStatus: { $ne: "Delivery Completed" } } }
+        ],
+        as: 'wardadmingroups',
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        phoneNumber: 1,
+        name: 1,
+        email: 1,
+        wardadmingroups: { $size: "$wardadmingroups" }
+      }
+    },
+    { $match: { wardadmingroups: { $eq: 0 } } }
+  ])
+  return users;
+};
+
+const get_drivers_all = async (id) => {
+  let users = await Users.aggregate([
+    {
+      $match: { userRole: { $in: ['d7d33955-c66f-4a45-b859-a41122a84b24'] } }
+    },
+    {
+      $project: {
+        _id: 1,
+        phoneNumber: 1,
+        name: 1,
+        email: 1,
+      }
+    },
+
+  ])
+  return users;
+};
+
 module.exports = {
   createUser,
   UsersLogin,
@@ -433,5 +482,8 @@ module.exports = {
   shopverification,
   getrolebyuser_user,
   gettargetedusers,
-  gettargetedusers_credit
+  gettargetedusers_credit,
+  get_stationery_user,
+  get_stationery_user,
+  get_drivers_all
 };

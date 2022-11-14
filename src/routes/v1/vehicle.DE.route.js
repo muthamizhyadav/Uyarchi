@@ -12,6 +12,9 @@ router.route('/:page').get(vehicleController.getVehicle);
 
 // fect deliveryExecutives && activeVehicles
 router.route('/De/vehicles').get(vehicleController.getVehicle_and_DE);
+router.route('/assign/driver/group').post(vehicleController.assigndriverVehile);
+router.route('/getall/assign/driver/group').get(vehicleController.getallassigngroups);
+router.route('/drivergroups/byid').get(vehicleController.drivergroups);
 
 // exports
 module.exports = router;

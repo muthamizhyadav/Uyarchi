@@ -124,8 +124,8 @@ const getCreditBillMaster = catchAsync(async (req, res) => {
   res.send(creditBillMaster);
 })
 
-const groupCreditBill = catchAsync(async(req,res) =>{
-  const getGroupDetails = await creditBillService.groupCreditBill(req.params.AssignedUserId,req.params.date,req.params.page);
+const groupCreditBill = catchAsync(async (req, res) => {
+  const getGroupDetails = await creditBillService.groupCreditBill(req.params.AssignedUserId, req.params.date, req.params.page);
   res.send(getGroupDetails);
 });
 
@@ -134,11 +134,30 @@ const getbilldetails = catchAsync(async (req, res) => {
   res.send(getGroupDetails);
 });
 
-const getPaymenthistory = catchAsync(async(req,res) =>{
+const getPaymenthistory = catchAsync(async (req, res) => {
   const PaymentHistory = await creditBillService.getPaymenthistory(req.params.id);
   res.send(PaymentHistory)
 })
 
+const afterCompletion_Of_Delivered = catchAsync(async (req, res) => {
+  const data = await creditBillService.afterCompletion_Of_Delivered(req.params.shop, req.params.date, req.params.userId)
+  res.send(data)
+})
+
+const last_Paid_amt = catchAsync(async (req, res) => {
+  const data = await creditBillService.last_Paid_amt(req.params.id)
+  res.send(data)
+})
+
+const getPaidHistory_ByOrder = catchAsync(async (req, res) => {
+  const data = await creditBillService.getPaidHistory_ByOrder(req.params.id)
+  res.send(data)
+})
+
+const Approved_Mismatch_amount = catchAsync(async (req, res) => {
+  const data = await creditBillService.Approved_Mismatch_amount()
+  res.send(data)
+})
 
 module.exports = {
 
@@ -169,4 +188,8 @@ module.exports = {
   groupCreditBill,
   getbilldetails,
   getPaymenthistory,
+  afterCompletion_Of_Delivered,
+  last_Paid_amt,
+  getPaidHistory_ByOrder,
+  Approved_Mismatch_amount
 }

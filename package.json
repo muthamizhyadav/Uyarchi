@@ -83,6 +83,7 @@
     "pm2": "^5.1.0",
     "random-key": "^0.3.2",
     "rawurlencode": "^1.0.2",
+    "razorpay": "^2.8.3",
     "serverless-http": "^3.0.1",
     "socket.io": "^4.5.1",
     "swagger-jsdoc": "^6.0.8",

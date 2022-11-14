@@ -449,7 +449,15 @@ const searchShops_By_Name = catchAsync(async (req, res) => {
   const data = await b2bCloneService.searchShops_By_Name(req.params.key);
   res.send(data);
 });
+const get_wardby_shops = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.get_wardby_shops(req.query);
+  res.send(data);
+});
 
+const update_pincode = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.update_pincode(req.query,req.body);
+  res.send(data);
+});
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -496,4 +504,8 @@ module.exports = {
   searchShops_By_Name,
   data2,
   data3,
+
+
+  get_wardby_shops,
+  update_pincode
 };

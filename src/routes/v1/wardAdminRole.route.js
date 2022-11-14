@@ -58,6 +58,6 @@ router.route('/assignShopsOnlydatewise/data/:id/:wardid/:page').get(wardAdminRol
 router.route('/createtarget/byuser').post(authorization, wardAdminRoleController.createtartget);
 router.route('/getuserTartget/byuser').get(authorization, wardAdminRoleController.get_user_target);
 router.route('/getall/targets/byuser').get(authorization, wardAdminRoleController.getall_targets);
-
+router.route('/getuser/target/byusers').get(authorization, wardAdminRoleController.getusertarget);
 
 module.exports = router;
