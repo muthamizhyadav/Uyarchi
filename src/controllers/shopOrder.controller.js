@@ -320,6 +320,12 @@ const mismachstockscreate = catchAsync(async (req, res) => {
   const data = await shopOrderService.mismachstockscreate(req.body);
   res.send(data);
 });
+
+const WA_Order_status = catchAsync(async (req, res) => {
+  const data = await shopOrderService.WA_Order_status(req.params.page)
+  res.send(data)
+})
+
 module.exports = {
   vieworderbill_byshop,
   createshopOrder,
@@ -366,5 +372,6 @@ module.exports = {
   lapsedordercountUndelivered,
   getBills_ByShop,
   getBills_DetailsByshop,
-  mismachstockscreate
+  mismachstockscreate,
+  WA_Order_status,
 };

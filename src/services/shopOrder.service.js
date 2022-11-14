@@ -2989,7 +2989,7 @@ const vieworderbill_byshop = async (id) => {
       $project: {
         _id: 1,
         orderpayments: '$orderpayments.price',
-        productData: { $round:'$productData.price'},
+        productData: { $round: '$productData.price' },
         pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
         OrderId: 1,
         created: 1,
@@ -3166,6 +3166,338 @@ const mismachstockscreate = async (body) => {
 
 }
 
+// ward Admin Order management flow
+
+const WA_Order_status = async (page) => {
+  let values = await ShopOrderClone.aggregate([
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shops',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [{
+          $lookup: {
+            from: 'wardadmingroups',
+            localField: 'wardAdminGroupID',
+            foreignField: '_id',
+            as: 'wagroup',
+          },
+        },
+        {
+          $unwind: '$wagroup'
+        },
+        {
+          $project: {
+            _id: 1,
+            vehicleId: '$wagroup.vehicleId',
+            pickputype: '$wagroup.pickputype',
+            pickuplocation: '$wagroup.pickuplocation',
+            route: '$wagroup.route',
+            groupId: '$wagroup.groupId',
+            assignDate: '$wagroup.assignDate',
+          }
+        }
+        ],
+        as: 'orderassign',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderassign',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'roles',
+              localField: 'userRole',
+              foreignField: '_id',
+              as: 'roles',
+            },
+          },
+          {
+            $unwind: '$roles'
+          },
+          {
+            $project:
+            {
+              _id: 1,
+              name: 1,
+              bookedBy: '$roles.roleName'
+            },
+          }
+        ],
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users'
+    },
+    {
+      $project: {
+        _id: 1,
+        status: 1,
+        paidAmt: { $ifNull: ['$orderpayments.price', 0] },
+        totalPendingAmount: {
+          $round: [{ $subtract: ['$productData.price', { $ifNull: ['$orderpayments.price', 0] }] }],
+        },
+        orderedAmt: { $round: ['$productData.price', 0] },
+        shopsName: '$shops.SName',
+        // orderassign: '$orderassign',
+        wagroup: '$wagroup',
+        Payment: 1,
+        paymentMethod: 1,
+        route: { $ifNull: ['$orderassign.route', "order Not Assigned"] },
+        vehicleId: '$orderassign.vehicleId',
+        groupId: '$orderassign.groupId',
+        pickuplocation: '$orderassign.pickuplocation',
+        pickputype: '$orderassign.pickputype',
+        assignDate: '$orderassign.assignDate',
+        BookedBy: '$users.bookedBy',
+      }
+    },
+    {
+      $skip: 10 * page
+    },
+    {
+      $limit: 10
+    }
+  ])
+  let total = await ShopOrderClone.aggregate([
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shops',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [{
+          $lookup: {
+            from: 'wardadmingroups',
+            localField: 'wardAdminGroupID',
+            foreignField: '_id',
+            as: 'wagroup',
+          },
+        },
+        {
+          $unwind: '$wagroup'
+        },
+        {
+          $project: {
+            _id: 1,
+            vehicleId: '$wagroup.vehicleId',
+            pickputype: '$wagroup.pickputype',
+            pickuplocation: '$wagroup.pickuplocation',
+            route: '$wagroup.route',
+            groupId: '$wagroup.groupId',
+            assignDate: '$wagroup.assignDate',
+          }
+        }
+        ],
+        as: 'orderassign',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderassign',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'roles',
+              localField: 'userRole',
+              foreignField: '_id',
+              as: 'roles',
+            },
+          },
+          {
+            $unwind: '$roles'
+          },
+          {
+            $project:
+            {
+              _id: 1,
+              name: 1,
+              bookedBy: '$roles.roleName'
+            },
+          }
+        ],
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users'
+    },
+  ])
+  return { values: values, total: total.length }
+
+}
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -3215,5 +3547,6 @@ module.exports = {
   getBills_ByShop,
   getBills_DetailsByshop,
   vieworderbill_byshop,
-  mismachstockscreate
+  mismachstockscreate,
+  WA_Order_status
 };
