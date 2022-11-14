@@ -3337,6 +3337,9 @@ const WA_Order_status = async (page) => {
         pickputype: '$orderassign.pickputype',
         assignDate: '$orderassign.assignDate',
         BookedBy: '$users.bookedBy',
+        shopDetails: '$shops',
+        details_of_TC_SM: '$users',
+        date: 1,
       }
     },
     {
