@@ -3340,6 +3340,7 @@ const WA_Order_status = async (page) => {
         shopDetails: '$shops',
         details_of_TC_SM: '$users',
         date: 1,
+        OrderId: 1,
       }
     },
     {
