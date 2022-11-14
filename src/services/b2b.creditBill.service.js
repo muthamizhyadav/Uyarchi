@@ -675,7 +675,26 @@ const getNotAssignData = async (page) => {
     // { $unwind: '$creditbillsData'},
 
 
-
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $sort: { created: -1 }
+          },
+          { $limit: 1 }
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
 
     {
       $project: {
@@ -693,7 +712,8 @@ const getNotAssignData = async (page) => {
         totalHistory: {
           $sum: '$creditData.historyDtaa.amountPayingWithDEorSM',
         },
-
+        lastPaidAmount: "$orderpayments.paidAmt",
+        lastPaidDate: "$orderpayments.created",
         paidAmount: '$paymentData.price',
 
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
@@ -2236,6 +2256,9 @@ const getCreditBillMaster = async (query) => {
         localField: '_id',
         foreignField: 'orderId',
         pipeline: [
+          {
+            $sort: { created: -1 }
+          },
           { $limit: 1 }
         ],
         as: 'orderpayments',
