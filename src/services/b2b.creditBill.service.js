@@ -2382,6 +2382,7 @@ const getCreditBillMaster = async (query) => {
         delivered_date: 1,
         TotalAmount: { $round: "$productData.price" },
         lastPaidAmount: "$orderpayments.paidAmt",
+        lastPaidDate: "$orderpayments.created",
         paidAMount: {
           $sum: ['$orderpaymentsall.amount', '$reorderamount'],
         },
