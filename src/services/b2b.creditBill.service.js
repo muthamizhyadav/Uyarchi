@@ -3663,93 +3663,110 @@ const Approved_Mismatch_amount = async () => {
         from: 'shoporderclones',
         localField: 'orderId',
         foreignField: '_id',
-        pipeline: [{ $match: { creditApprovalStatus: "Approved" } },
-        {
-          $lookup: {
-            from: 'productorderclones',
-            localField: '_id',
-            foreignField: 'orderId',
-            pipeline: [
-              {
-                $project: {
-                  Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
-                  GST_Number: 1,
-                },
-              },
-              {
-                $project: {
-                  sum: '$sum',
-                  percentage: {
-                    $divide: [
-                      {
-                        $multiply: ['$GST_Number', '$Amount'],
-                      },
-                      100,
-                    ],
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
                   },
-                  value: '$Amount',
                 },
-              },
-              {
-                $project: {
-                  price: { $sum: ['$value', '$percentage'] },
-                  value: '$value',
-                  GST: '$percentage',
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
                 },
-              },
-              { $group: { _id: null, price: { $sum: '$price' } } },
-            ],
-            as: 'productData',
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
           },
-        },
 
-        { $unwind: '$productData' },
-        {
-          $lookup: {
-            from: 'orderpayments',
-            localField: '_id',
-            foreignField: 'orderId',
-            pipeline: [
-              {
-                $group: { _id: null, price: { $sum: '$paidAmt' } },
-              },
-            ],
-            as: 'paymentData',
+          { $unwind: '$productData' },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'paymentData',
+            },
           },
-        },
-        { $unwind: '$paymentData' },
-        {
-          $lookup: {
-            from: 'b2bshopclones',
-            localField: 'shopId',
-            foreignField: '_id',
-            as: 'shopDtaa',
+          // { $unwind: '$paymentData' },
+          {
+            $unwind: {
+              preserveNullAndEmptyArrays: true,
+              path: '$paymentData'
+            }
           },
-        },
-        { $unwind: '$shopDtaa' },
-        {
-          $lookup: {
-            from: 'userfines',
-            localField: '_id',
-            foreignField: 'orderId',
-            as: 'fine',
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'shopId',
+              foreignField: '_id',
+              as: 'shopDtaa',
+            },
           },
-        },
-        { $unwind: '$fine' },
-        {
-          $project: {
-            _id: 1,
-            shopId: 1,
-            status: 1,
-            OrderId: 1,
-            BillAmount: { $round: ['$productData.price', 0] },
-            shopName: '$shopDtaa.SName',
-            salesmanEnteredamt: '$fine.lastPaidamt',
-            customerSaidamt: '$fine.customerClaimedAmt',
-            disputeamt: '$fine.Difference_Amt',
-            creditApprovalStatus: 1,
+          // { $unwind: '$shopDtaa' },
+          {
+            $unwind: {
+              preserveNullAndEmptyArrays: true,
+              path: '$shopDtaa'
+            }
+          },
+          // {
+          //   $lookup: {
+          //     from: 'userfines',
+          //     localField: '_id',
+          //     foreignField: 'orderpaymentId',
+          //     as: 'fine',
+          //   },
+          // },
+          // {
+          //   $unwind: {
+          //     preserveNullAndEmptyArrays: true,
+          //     path: '$fine'
+          //   }
+          // },
+          {
+            $project: {
+              _id: 1,
+              shopId: 1,
+              status: 1,
+              OrderId: 1,
+              BillAmount: { $round: ['$productData.price', 0] },
+              shopName: '$shopDtaa.SName',
+              // salesmanEnteredamt: '$fine.lastPaidamt',
+              // customerSaidamt: '$fine.customerClaimedAmt',
+              // disputeamt: '$fine.Difference_Amt',
+              creditApprovalStatus: 1,
+            }
           }
-        }
         ],
         as: 'shoporders',
       },
@@ -3772,6 +3789,20 @@ const Approved_Mismatch_amount = async () => {
       $unwind: '$users'
     },
     {
+      $lookup: {
+        from: 'userfines',
+        localField: '_id',
+        foreignField: 'orderpaymentId',
+        as: 'fine',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$fine'
+      }
+    },
+    {
       $project: {
         _id: 1,
         paidAmt: 1,
@@ -3784,7 +3815,10 @@ const Approved_Mismatch_amount = async () => {
         salesmanEnteredamt: '$shoporders.salesmanEnteredamt',
         creditApprovalStatus: '$shoporders.creditApprovalStatus',
         orderedamt: '$shoporders.BillAmount',
-        shopName: '$shoporders.shopName'
+        shopName: '$shoporders.shopName',
+        customerClaimedAmt: '$fine.customerClaimedAmt',
+        lastPaidamt: '$fine.lastPaidamt',
+        Difference_Amt: '$fine.Difference_Amt',
       }
     },
   ])

@@ -10,9 +10,11 @@ const moment = require('moment');
 // create UserFine
 
 const createUserFine = async (body) => {
+    let { lastPaidamt, Difference_Amt, customerClaimedAmt } = body
+    let diffamt = parseInt(lastPaidamt) - parseInt(customerClaimedAmt)
     let values = {
         ...body, ...{
-            created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HH:mm:ss')
+            created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HH:mm:ss'), lastPaidamt: lastPaidamt, Difference_Amt: diffamt
         }
     }
     let orderId = body.orderId
