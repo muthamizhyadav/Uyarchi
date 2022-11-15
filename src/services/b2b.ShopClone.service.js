@@ -9,7 +9,7 @@ const RegisterOtp = require('../config/registerOtp');
 const moment = require('moment');
 const { verfiy } = require('../config/registerOTP.Verify');
 const { ShopList } = require('../models/product.model');
-const Ward = require("../models/ward.model")
+const Ward = require('../models/ward.model');
 // Shop Clone Serive
 
 const createShopClone = async (shopBody) => {
@@ -1017,7 +1017,7 @@ const getshopWardStreetNamesWithAggregation = async (page) => {
         active: 1,
         mobile: 1,
         date: 1,
-        Pincode: 1
+        Pincode: 1,
       },
     },
     { $skip: 10 * page },
@@ -1666,7 +1666,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         da_lot: 1,
         da_long: 1,
         da_landmark: 1,
-        Pincode: 1
+        Pincode: 1,
       },
     },
     { $skip: 10 * page },
@@ -1761,8 +1761,55 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
 };
 
 const getShopById = async (id) => {
-  const shop = await Shop.findById(id);
-  return shop;
+  const shop = await Shop.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoptype',
+      },
+    },
+    { $unwind: '$shoptype' },
+    {
+      $project: {
+        _id: 1,
+        photoCapture: 1,
+        status: 1,
+        kyc_status: 1,
+        callingStatus: 1,
+        callingStatusSort: 1,
+        active: 1,
+        archive: 1,
+        Wardid: 1,
+        type: 1,
+        SName: 1,
+        SType: 1,
+        SOwner: 1,
+        mobile: 1,
+        Slat: 1,
+        Strid: 1,
+        Slong: 1,
+        address: 1,
+        created: 1,
+        date: 1,
+        time: 1,
+        filterDate: 1,
+        Uid: 1,
+        sortdate: 1,
+        historydate: 1,
+        displaycount: 1,
+        callingUserId: 1,
+        sorttime: 1,
+        lapsedOrder: 1,
+        shoptype: '$shoptype.shopList',
+      },
+    },
+  ]);
+  return shop[0];
 };
 
 const updateShopById = async (id, updateBody) => {
@@ -2423,19 +2470,19 @@ const getnotAssignSalesmanData = async (zone, id, street, page, limit, uid, date
   } else {
     zoneMatch = [{ active: { $eq: true } }];
   }
-  console.log(zoneMatch)
+  console.log(zoneMatch);
   if (id != 'null') {
     wardMatch = [{ _id: { $eq: id } }];
   } else {
     wardMatch = [{ active: { $eq: true } }];
   }
-  console.log(wardMatch)
+  console.log(wardMatch);
   if (street != 'null') {
     streetMatch = [{ _id: { $eq: street } }];
   } else {
     streetMatch = [{ active: { $eq: true } }];
   }
-  console.log(streetMatch)
+  console.log(streetMatch);
 
   if (uid != 'null' && date == 'null') {
     match = [{ Uid: { $eq: uid } }];
@@ -2449,10 +2496,10 @@ const getnotAssignSalesmanData = async (zone, id, street, page, limit, uid, date
 
   // if (id != 'null' && uid != 'null' && date == 'null' && street == 'null') {
   //   match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }];
-  // } 
+  // }
   // else if ( id != 'null' && uid == 'null' && date == 'null' && street != 'null') {
   //   match = [{ Wardid: { $eq: id } }, { Strid: { $eq: street } }];
-  // } 
+  // }
   // else if ( id != 'null' && uid != 'null' && date == 'null' && street != 'null') {
   //   match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { Strid: { $eq: street } }];
   // }
@@ -2464,13 +2511,13 @@ const getnotAssignSalesmanData = async (zone, id, street, page, limit, uid, date
   // }
   //  else if (id != 'null' && uid == 'null' && date != 'null' && street != 'null') {
   //   match = [{ Wardid: { $eq: id } }, { date: { $eq: date } }, { Strid: { $eq: street } }];
-  // } 
+  // }
   // else if ( id != 'null' && uid != 'null' && date != 'null' && street != 'null') {
   //   match = [{ Wardid: { $eq: id } }, { Uid: { $eq: uid } }, { date: { $eq: date } }, { Strid: { $eq: street } }];
   // }
   // else if(id =='null' && uid != 'null' && date == 'null' && street == 'null'){
   //   match = [{ Uid: { $eq: uid } }];
-  // } 
+  // }
   //  else {
   //   match = [{ Wardid: { $eq: id } }];
   // }
@@ -2933,7 +2980,7 @@ const GetShopsByShopType = async (id, page) => {
   let totalcounts5 = await Shop.find({ SType: '602e637e-11e8-4901-b80f-db8a467afda2' }).count();
   let totalcounts6 = await Shop.find({ SType: '07299efb-1aa4-40e6-ad5f-a03ffecdc0a5' }).count();
   let totalcount = totalcounts + totalcounts1 + totalcounts2 + totalcounts3 + totalcounts4 + totalcounts5 + totalcounts6;
-  let shoptype = await ShopList.findById(id)
+  let shoptype = await ShopList.findById(id);
   return { shops: shops, total: total.length, totalcount: totalcount, shoptype: shoptype };
 };
 
@@ -3119,8 +3166,6 @@ const get_total_vendorShop = async (page) => {
   return { values: values, total: total.length };
 };
 
-
-
 // { salesManStatus: { $eq: 'Assign' } },
 // { salesManStatus: { $eq: 'tempReassign' } },
 const get_wardby_shops = async (query) => {
@@ -3129,10 +3174,11 @@ const get_wardby_shops = async (query) => {
   let shopss = await Shop.aggregate([
     {
       $match: {
-        $and: [{ Wardid: { $eq: wardId } },
+        $and: [
+          { Wardid: { $eq: wardId } },
           //  { salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }
-        ]
-      }
+        ],
+      },
     },
     {
       $lookup: {
@@ -3196,10 +3242,7 @@ const get_wardby_shops = async (query) => {
         from: 'salesmanshops',
         localField: '_id',
         foreignField: 'shopId',
-        pipeline: [
-          { $match: { status: { $ne: "Reassign" } } },
-          { $limit: 1 }
-        ],
+        pipeline: [{ $match: { status: { $ne: 'Reassign' } } }, { $limit: 1 }],
         as: 'salesmanshops',
       },
     },
@@ -3247,21 +3290,27 @@ const get_wardby_shops = async (query) => {
         date: 1,
         displaycount: 1,
         salesManStatus: 1,
-        assignedUser: "$salesmanshops.fromSalesManId",
-        b2bshopclones: "$b2bshopclones"
-
+        assignedUser: '$salesmanshops.fromSalesManId',
+        b2bshopclones: '$b2bshopclones',
       },
     },
   ]);
 
   let assign = await Shop.aggregate([
-    { $match: { $and: [{ Wardid: { $eq: wardId } }, { $or: [{ salesManStatus: { $eq: "tempReassign" } }, { salesManStatus: { $eq: 'Assign' } }] }] } },
-    { $group: { _id: null, count: { $sum: 1 } } }
-  ])
+    {
+      $match: {
+        $and: [
+          { Wardid: { $eq: wardId } },
+          { $or: [{ salesManStatus: { $eq: 'tempReassign' } }, { salesManStatus: { $eq: 'Assign' } }] },
+        ],
+      },
+    },
+    { $group: { _id: null, count: { $sum: 1 } } },
+  ]);
   let data_approved = await Shop.aggregate([
-    { $match: { $and: [{ Wardid: { $eq: wardId } }, { status: { $eq: "data_approved" } }] } },
-    { $group: { _id: null, count: { $sum: 1 } } }
-  ])
+    { $match: { $and: [{ Wardid: { $eq: wardId } }, { status: { $eq: 'data_approved' } }] } },
+    { $group: { _id: null, count: { $sum: 1 } } },
+  ]);
   // console.log(assign)
   // console.log(data_approved)
   assign = assign.length == 0 ? 0 : assign[0].count;
@@ -3270,16 +3319,16 @@ const get_wardby_shops = async (query) => {
   // console.log(data_approved)
 
   return { shopss: shopss, data_approved: data_approved, assign: assign };
-}
+};
 
 const update_pincode = async (query, body) => {
-  let shop = await Shop.findByIdAndUpdate({ _id: query.id }, { Pincode: body.pincode, da_landmark: body.da_landmark }, { new: true })
+  let shop = await Shop.findByIdAndUpdate(
+    { _id: query.id },
+    { Pincode: body.pincode, da_landmark: body.da_landmark },
+    { new: true }
+  );
   return shop;
-}
-
-
-
-
+};
 
 module.exports = {
   createShopClone,
@@ -3328,5 +3377,5 @@ module.exports = {
   data3,
 
   get_wardby_shops,
-  update_pincode
+  update_pincode,
 };
