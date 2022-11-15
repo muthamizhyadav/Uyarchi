@@ -91,6 +91,11 @@ const getgetGroupAndBill = catchAsync(async (req, res) => {
   res.send(name);
 })
 
+const getgroupbilldetails = catchAsync(async (req, res) => {
+  const name = await creditBillService.getgroupbilldetails(req.params.id);
+  res.send(name);
+})
+
 const GroupDetails = catchAsync(async (req, res) => {
   const name = await creditBillService.getGroupAndBill(req.params.id);
   res.send(name);
@@ -191,5 +196,6 @@ module.exports = {
   afterCompletion_Of_Delivered,
   last_Paid_amt,
   getPaidHistory_ByOrder,
-  Approved_Mismatch_amount
+  Approved_Mismatch_amount,
+  getgroupbilldetails
 }
