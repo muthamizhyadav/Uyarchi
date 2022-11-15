@@ -3960,8 +3960,14 @@ const manage_Orders_ByGroup = async (id) => {
         as: 'shoporders',
       },
     },
+    // {
+    //   $unwind: '$shoporders',
+    // },
     {
-      $unwind: '$shoporders',
+      $unwind: {
+        path: '$shoporders',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $lookup: {
@@ -3992,6 +3998,7 @@ const manage_Orders_ByGroup = async (id) => {
         shopdetails: '$shoporders.shops',
         deliveryexecuteName: '$shoporders.deliverExecutive.name',
         shopordersId: '$shoporders._id',
+        orderedDate: '$shoporders.date',
       },
     },
   ]);
