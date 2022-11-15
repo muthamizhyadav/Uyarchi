@@ -595,7 +595,26 @@ const wardloadExecutivebtgroup = async (query) => {
       },
     },
   ]);
-  return { data: data, total: total.length };
+
+
+
+  let De_mode = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ status: { $eq: 'Assigned' } }, { pickputype: { $eq: "DE" } }],
+      },
+    },
+  ]);
+
+  let Sp_mode = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ status: { $eq: 'Assigned' } }, { pickputype: { $eq: "SP" } }],
+      },
+    },
+  ]);
+  let delivery = { DE: De_mode.length, SP: Sp_mode.length }
+  return { data: data, total: total.length, delivery: delivery };
 };
 const wardloadExecutive = async (id) => {
   let data = await wardAdminGroupModel_ORDERS.aggregate([
