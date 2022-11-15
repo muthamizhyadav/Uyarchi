@@ -1154,7 +1154,45 @@ const wardloadExecutivePacked = async (range, page, type) => {
     // { $unwind: '$productOrderCloneData' },
   ]);
   let result = await gettimeslatcountassign(range, type);
-  return { data: data, total: total.length, total_count: result };
+
+  let De_mode = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: ['Approved', 'Modified'],
+            },
+          },
+          dateMatch,
+          {
+            devevery_mode: { $eq: 'DE' }
+          }
+        ],
+      },
+    },
+  ]);
+  let Sp_mode = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: ['Approved', 'Modified'],
+            },
+          },
+          dateMatch,
+          {
+            devevery_mode: { $eq: "SP" }
+          }
+        ],
+      },
+    },
+  ]);
+
+  let delevery_type = { DE: De_mode.length, SP: Sp_mode.length }
+
+  return { data: data, total: total.length, total_count: result, delivery: delevery_type };
 };
 
 const wardDeliveryExecutive = async () => {
