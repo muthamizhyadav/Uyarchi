@@ -1238,7 +1238,7 @@ const assignOnly = async (query, status) => {
 
 const assignOnly_DE = async (query, status) => {
   let page = query.page == null || query.page == '' ? 0 : query.page;
-  console.log(page)
+  // console.log(page)
   let macthStatus = { active: true };
   let statusMatch = { status: 'Packed' };
   if (status == 'stock') {
@@ -1388,6 +1388,7 @@ const assignOnly_DE = async (query, status) => {
         pettyStockAllocateStatus: 1,
         status: 1,
         groupOrders: '$groupOrders',
+        pickputype: 1
       },
     },
     { $skip: 10 * page },
@@ -3805,6 +3806,8 @@ const assignOnly_SP = async (query, status) => {
         pettyStockAllocateStatus: 1,
         status: 1,
         groupOrders: '$groupOrders',
+        pickputype: 1
+
       },
     },
     { $skip: 10 * page },
