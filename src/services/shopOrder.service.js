@@ -3244,29 +3244,30 @@ const WA_Order_status = async (page) => {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
-        pipeline: [{
-          $lookup: {
-            from: 'shoplists',
-            localField: 'SType',
-            foreignField: '_id',
-            as: "shoptype",
-          }
-        },
-        { $unwind: "$shoptype" },
-        {
-          $project: {
-            _id: 1,
-            SName: 1,
-            SOwner: 1,
-            mobile: 1,
-            Slat: 1,
-            Strid: 1,
-            Slong: 1,
-            address: 1,
-            created: 1,
-            shoptype: '$shoptype.shopList',
-          }
-        }
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoplists',
+              localField: 'SType',
+              foreignField: '_id',
+              as: 'shoptype',
+            },
+          },
+          { $unwind: '$shoptype' },
+          {
+            $project: {
+              _id: 1,
+              SName: 1,
+              SOwner: 1,
+              mobile: 1,
+              Slat: 1,
+              Strid: 1,
+              Slong: 1,
+              address: 1,
+              created: 1,
+              shoptype: '$shoptype.shopList',
+            },
+          },
         ],
         as: 'shops',
       },
@@ -3591,11 +3592,11 @@ const OGorders_MDorders = async (id) => {
               from: 'products',
               localField: 'productid',
               foreignField: '_id',
-              as: "product",
-            }
+              as: 'product',
+            },
           },
           {
-            $unwind: '$product'
+            $unwind: '$product',
           },
           {
             $project: {
@@ -3604,11 +3605,41 @@ const OGorders_MDorders = async (id) => {
               priceperkg: 1,
               amount: { $multiply: ['$quantity', '$priceperkg'] },
               productName: '$product.productTitle',
-            }
-          }
+            },
+          },
         ],
-        as: "productByOrder",
-      }
+        as: 'productByOrder',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'product',
+            },
+          },
+          {
+            $unwind: '$product',
+          },
+          {
+            $project: {
+              _id: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              Modifiedamount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              productName: '$product.productTitle',
+            },
+          },
+        ],
+        as: 'modified',
+      },
     },
     {
       $lookup: {
@@ -3640,20 +3671,21 @@ const OGorders_MDorders = async (id) => {
               from: 'wardadmingroups',
               localField: 'wardAdminGroupID',
               foreignField: '_id',
-              pipeline: [{
-                $lookup: {
-                  from: 'vehicles',
-                  localField: 'vehicleId',
-                  foreignField: '_id',
-                  as: "vehicle",
-                }
-              },
-              {
-                $unwind: {
-                  path: '$vehicle',
-                  preserveNullAndEmptyArrays: true,
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'vehicles',
+                    localField: 'vehicleId',
+                    foreignField: '_id',
+                    as: 'vehicle',
+                  },
                 },
-              },
+                {
+                  $unwind: {
+                    path: '$vehicle',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
               ],
               as: 'wagroup',
             },
@@ -3672,7 +3704,6 @@ const OGorders_MDorders = async (id) => {
               assignDate: '$wagroup.assignDate',
               wardadmingroupId: '$wagroup._id',
               vehicleName: '$wagroup.vehicle.vehicle_Name',
-
             },
           },
         ],
@@ -3718,12 +3749,86 @@ const OGorders_MDorders = async (id) => {
         route: '$orderassign.route',
         vehicleName: '$orderassign.vehicleName',
         productByOrder: '$productByOrder',
+        modified: '$modified',
         modifiedStatus: 1,
-
-      }
-    }
+      },
+    },
   ]);
   return values[0];
+};
+
+const details_Of_Payment_by_Id = async (id) => {
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        _id: id,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+  ]);
+  return values;
 };
 
 module.exports = {
@@ -3778,4 +3883,5 @@ module.exports = {
   mismachstockscreate,
   WA_Order_status,
   OGorders_MDorders,
+  details_Of_Payment_by_Id,
 };
