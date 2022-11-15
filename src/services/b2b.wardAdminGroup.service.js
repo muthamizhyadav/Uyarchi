@@ -263,7 +263,7 @@ const scheduleshopdate = async (id, updateBody, userId) => {
   return deliveryStatus;
 };
 
-const updateOrderStatus = async (id, updateBody,userId) => {
+const updateOrderStatus = async (id, updateBody, userId) => {
   let currentDate = moment().format('YYYY-MM-DD');
   let currenttime = moment().format('HHmmss');
   let body = {
@@ -297,7 +297,7 @@ const updateOrderStatus = async (id, updateBody,userId) => {
     paymentstutes: updateBody.paymentstutes,
     creditBillStatus: updateBody.creditBillStatus,
     reasonScheduleOrDate: updateBody.reasonScheduleOrDate,
-    uid:userId
+    uid: userId
   });
   return deliveryStatus;
 };
@@ -1003,7 +1003,6 @@ const getBillDetails = async (id) => {
 const assignOnly = async (query, status) => {
   let page = query.page == null || query.page == '' ? 0 : query.page;
   let type = query.pickputype;
-
   console.log(type)
   console.log(page)
   let macthStatus = { active: true };
@@ -1212,7 +1211,27 @@ const assignOnly = async (query, status) => {
       $unwind: '$UserName',
     },
   ]);
-  return { values: values, total: total.length };
+
+
+  let De_mode = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [statusMatch, macthStatus, { pickputype: { $eq: "DE" } }],
+      },
+    },
+  ]);
+
+  let Sp_mode = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [statusMatch, macthStatus, { pickputype: { $eq: "SP" } }],
+      },
+    },
+  ]);
+  let delivery = { DE: De_mode.length, SP: Sp_mode.length }
+
+
+  return { values: values, total: total.length, delivery: delivery };
 };
 
 
