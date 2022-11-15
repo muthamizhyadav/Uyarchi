@@ -322,14 +322,19 @@ const mismachstockscreate = catchAsync(async (req, res) => {
 });
 
 const WA_Order_status = catchAsync(async (req, res) => {
-  const data = await shopOrderService.WA_Order_status(req.params.page)
-  res.send(data)
-})
+  const data = await shopOrderService.WA_Order_status(req.params.page);
+  res.send(data);
+});
 
 const OGorders_MDorders = catchAsync(async (req, res) => {
-  const data = await shopOrderService.OGorders_MDorders(req.params.id)
-  res.send(data)
-})
+  const data = await shopOrderService.OGorders_MDorders(req.params.id);
+  res.send(data);
+});
+
+const details_Of_Payment_by_Id = catchAsync(async (req, res) => {
+  const data = await shopOrderService.details_Of_Payment_by_Id(req.params.id);
+  res.send(data);
+});
 
 module.exports = {
   vieworderbill_byshop,
@@ -379,5 +384,6 @@ module.exports = {
   getBills_DetailsByshop,
   mismachstockscreate,
   WA_Order_status,
-  OGorders_MDorders
+  OGorders_MDorders,
+  details_Of_Payment_by_Id,
 };
