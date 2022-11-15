@@ -191,6 +191,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     type: String,
     default: 'Pending',
   },
+  modifiedStatus: {
+    type: String,
+    default: "Pending"
+  },
   AssignedStatus: {
     type: String,
     default: 'Pending',

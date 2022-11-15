@@ -61,5 +61,7 @@ router.route('/getBills/byshop/:shopId').get(shopOrderController.getBills_ByShop
 router.route('/getBills/details/byshop/:shopId/:page').get(shopOrderController.getBills_DetailsByshop);
 router.route('/vieworderbill/byshop/:shopId').get(authorization, shopOrderController.vieworderbill_byshop);
 router.route('/mismatchstock/bygroup').post(shopOrderController.mismachstockscreate);
+router.route('/ward/Admin/order/tracking/:page').get(shopOrderController.WA_Order_status);
+router.route('/ward/Admin/order/particular/order/:id').get(shopOrderController.OGorders_MDorders);
 
 module.exports = router;

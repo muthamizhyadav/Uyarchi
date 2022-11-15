@@ -420,12 +420,12 @@ const updateProduct = async (id, updateBody) => {
       }
       await ProductorderClone.findByIdAndUpdate(
         { _id: e._id },
-        { finalQuantity: updateQty, status: 'Modified' },
+        { finalQuantity: updateQty, status: 'Modified', modifiedStatus: "Modified" },
         { new: true }
       );
     }
   });
-  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Modified' }, { new: true });
+  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Modified', modifiedStatus: "Modified" }, { new: true });
   return product;
 };
 

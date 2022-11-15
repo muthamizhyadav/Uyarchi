@@ -1,5 +1,11 @@
 const httpStatus = require('http-status');
-const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone, MismatchStock } = require('../models/shopOrder.model');
+const {
+  ShopOrder,
+  ProductorderSchema,
+  ShopOrderClone,
+  ProductorderClone,
+  MismatchStock,
+} = require('../models/shopOrder.model');
 const ProductPacktype = require('../models/productPacktype.model');
 const { Product } = require('../models/product.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
@@ -774,7 +780,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         total: 1,
         gsttotal: 1,
         subtotal: { $round: '$productorderclones.price' },
-        productorderclones: "$productorderclones",
+        productorderclones: '$productorderclones',
         SGST: 1,
         CGST: 1,
         OrderId: 1,
@@ -2782,11 +2788,11 @@ const getBills_DetailsByshop = async (shopId, page) => {
       },
     },
     {
-      $skip: 10 * page
+      $skip: 10 * page,
     },
     {
-      $limit: 10
-    }
+      $limit: 10,
+    },
   ]);
   let total = await ShopOrderClone.aggregate([
     {
@@ -2888,7 +2894,7 @@ const getBills_DetailsByshop = async (shopId, page) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-  ])
+  ]);
   let shops = await BillAdj.findOne({ shopId: shopId });
   return { values: values, shops: shops, total: total.length };
 };
@@ -2989,7 +2995,7 @@ const vieworderbill_byshop = async (id) => {
       $project: {
         _id: 1,
         orderpayments: '$orderpayments.price',
-        productData: { $round:'$productData.price'},
+        productData: { $round: '$productData.price' },
         pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
         OrderId: 1,
         created: 1,
@@ -3019,19 +3025,23 @@ const mismachstockscreate = async (body) => {
   let cash = body.cash;
   if (cashstatus == 'change') {
     let order = await wardAdminGroup.findById(groupId);
-    if (order.pettyCash != 0 && order.pettyCash != "" || order.pettyCash != null) {
+    if ((order.pettyCash != 0 && order.pettyCash != '') || order.pettyCash != null) {
       let pettyCash = order.pettyCash - cash;
       if (pettyCash > 0) {
-        await wardAdminGroup.findByIdAndUpdate({ _id: groupId }, { mismatchAmount: pettyCash, cashmismatch: cashstatus }, { new: true });
+        await wardAdminGroup.findByIdAndUpdate(
+          { _id: groupId },
+          { mismatchAmount: pettyCash, cashmismatch: cashstatus },
+          { new: true }
+        );
         await MismatchStock.create({
           groupId: groupId,
-          type: "cash",
+          type: 'cash',
           mismatchAmount: pettyCash,
           receivedAmount: cash,
           date: moment().format('YYYY-MM-DD'),
           time: moment().format('HHmm'),
           created: moment(),
-          status: "Pending"
+          status: 'Pending',
         });
       }
     }
@@ -3049,28 +3059,24 @@ const mismachstockscreate = async (body) => {
                 from: 'orderassigns',
                 localField: '_id',
                 foreignField: 'orderId',
-                pipeline: [
-                  { $match: { $and: [{ wardAdminGroupID: { $eq: groupId } }] } }
-                ],
+                pipeline: [{ $match: { $and: [{ wardAdminGroupID: { $eq: groupId } }] } }],
                 as: 'orderassigns',
               },
             },
-            { $unwind: "$orderassigns" }
+            { $unwind: '$orderassigns' },
           ],
           as: 'shoporderclones',
         },
       },
       {
-        $unwind: "$shoporderclones"
+        $unwind: '$shoporderclones',
       },
       {
         $lookup: {
           from: 'pettystockmodels',
           localField: 'productid',
           foreignField: 'productId',
-          pipeline: [
-            { $match: { $and: [{ wardAdminId: { $eq: groupId } }] } },
-          ],
+          pipeline: [{ $match: { $and: [{ wardAdminId: { $eq: groupId } }] } }],
           as: 'pettystockmodels',
         },
       },
@@ -3103,35 +3109,33 @@ const mismachstockscreate = async (body) => {
         $project: {
           finalQuantity: 1,
           finalPricePerKg: 1,
-          totalQuantity: { $sum: [{ $multiply: ["$finalQuantity", '$packKg'] }] },
-          pettystockmodels: "$pettystockmodels",
+          totalQuantity: { $sum: [{ $multiply: ['$finalQuantity', '$packKg'] }] },
+          pettystockmodels: '$pettystockmodels',
           pettystock: 1,
-          products: "$products.productTitle",
+          products: '$products.productTitle',
           productid: 1,
-        }
+        },
       },
       {
         $group: {
-          _id: { productTitle: "$products", productid: "$productid" },
-          pettystock: { $sum: "$pettystock" },
-          totalQuantity: { $sum: "$totalQuantity" },
-          finalQuantity: { $sum: "$finalQuantity" },
-          productCount: { $sum: 1 }
-
-        }
+          _id: { productTitle: '$products', productid: '$productid' },
+          pettystock: { $sum: '$pettystock' },
+          totalQuantity: { $sum: '$totalQuantity' },
+          finalQuantity: { $sum: '$finalQuantity' },
+          productCount: { $sum: 1 },
+        },
       },
       {
         $project: {
           _id: 1,
-          pettystock: { $divide: ["$pettystock", "$productCount"] },
-          totalQuantity: { $sum: ["$totalQuantity", { $divide: ["$pettystock", "$productCount"] }] },
+          pettystock: { $divide: ['$pettystock', '$productCount'] },
+          totalQuantity: { $sum: ['$totalQuantity', { $divide: ['$pettystock', '$productCount'] }] },
           finalQuantity: 1,
-          productTitle: "$_id.productTitle",
-          productid: "$_id.productid",
-        }
-      }
+          productTitle: '$_id.productTitle',
+          productid: '$_id.productid',
+        },
+      },
     ]);
-
 
     if (products.length == 0) {
       throw new ApiError(httpStatus.NOT_FOUND, 'ShopOrderClone Not Found');
@@ -3144,27 +3148,471 @@ const mismachstockscreate = async (body) => {
           await MismatchStock.create({
             productId: e.productId,
             groupId: groupId,
-            type: "stock",
+            type: 'stock',
             mismatchQty: mismatch,
             receivedQty: e.qunatity,
             date: moment().format('YYYY-MM-DD'),
             time: moment().format('HHmm'),
             created: moment(),
-            status: "Pending"
+            status: 'Pending',
           });
         }
       }
-
     });
   }
-  await wardAdminGroup.findByIdAndUpdate({ _id: groupId }, { stockmismatch: stockstatus, manageDeliveryStatus: 'Order Picked' }, { new: true });
+  await wardAdminGroup.findByIdAndUpdate(
+    { _id: groupId },
+    { stockmismatch: stockstatus, manageDeliveryStatus: 'Order Picked' },
+    { new: true }
+  );
   let assign = await wardAdminGroupModel_ORDERS.find({ wardAdminGroupID: groupId });
   assign.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e.orderId }, { status: 'Order Picked' }, { new: true });
   });
-  return { message: "success" };
+  return { message: 'success' };
+};
 
-}
+// ward Admin Order management flow
+
+const WA_Order_status = async (page) => {
+  let values = await ShopOrderClone.aggregate([
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [{
+          $lookup: {
+            from: 'shoplists',
+            localField: 'SType',
+            foreignField: '_id',
+            as: "shoptype",
+          }
+        },
+        { $unwind: "$shoptype" },
+        {
+          $project: {
+            _id: 1,
+            SName: 1,
+            SOwner: 1,
+            mobile: 1,
+            Slat: 1,
+            Strid: 1,
+            Slong: 1,
+            address: 1,
+            created: 1,
+            shoptype: '$shoptype.shopList'
+          }
+        }
+        ],
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shops',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'wardadmingroups',
+              localField: 'wardAdminGroupID',
+              foreignField: '_id',
+              as: 'wagroup',
+            },
+          },
+          {
+            $unwind: '$wagroup',
+          },
+          {
+            $project: {
+              _id: 1,
+              vehicleId: '$wagroup.vehicleId',
+              pickputype: '$wagroup.pickputype',
+              pickuplocation: '$wagroup.pickuplocation',
+              route: '$wagroup.route',
+              groupId: '$wagroup.groupId',
+              assignDate: '$wagroup.assignDate',
+            },
+          },
+        ],
+        as: 'orderassign',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderassign',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'roles',
+              localField: 'userRole',
+              foreignField: '_id',
+              as: 'roles',
+            },
+          },
+          {
+            $unwind: '$roles',
+          },
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              bookedBy: '$roles.roleName',
+            },
+          },
+        ],
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users',
+    },
+    {
+      $project: {
+        _id: 1,
+        status: 1,
+        paidAmt: { $ifNull: ['$orderpayments.price', 0] },
+        totalPendingAmount: {
+          $round: [{ $subtract: ['$productData.price', { $ifNull: ['$orderpayments.price', 0] }] }],
+        },
+        orderedAmt: { $round: ['$productData.price', 0] },
+        shopsName: '$shops.SName',
+        // orderassign: '$orderassign',
+        wagroup: '$wagroup',
+        Payment: 1,
+        paymentMethod: 1,
+        route: { $ifNull: ['$orderassign.route', 'order Not Assigned'] },
+        vehicleId: '$orderassign.vehicleId',
+        groupId: '$orderassign.groupId',
+        pickuplocation: '$orderassign.pickuplocation',
+        pickputype: '$orderassign.pickputype',
+        assignDate: '$orderassign.assignDate',
+        BookedBy: '$users.bookedBy',
+        shopDetails: '$shops',
+        details_of_TC_SM: '$users',
+        date: 1,
+        OrderId: 1,
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await ShopOrderClone.aggregate([
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shops',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'wardadmingroups',
+              localField: 'wardAdminGroupID',
+              foreignField: '_id',
+              as: 'wagroup',
+            },
+          },
+          {
+            $unwind: '$wagroup',
+          },
+          {
+            $project: {
+              _id: 1,
+              vehicleId: '$wagroup.vehicleId',
+              pickputype: '$wagroup.pickputype',
+              pickuplocation: '$wagroup.pickuplocation',
+              route: '$wagroup.route',
+              groupId: '$wagroup.groupId',
+              assignDate: '$wagroup.assignDate',
+            },
+          },
+        ],
+        as: 'orderassign',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderassign',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'roles',
+              localField: 'userRole',
+              foreignField: '_id',
+              as: 'roles',
+            },
+          },
+          {
+            $unwind: '$roles',
+          },
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              bookedBy: '$roles.roleName',
+            },
+          },
+        ],
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users',
+    },
+  ]);
+  return { values: values, total: total.length };
+};
+
+const OGorders_MDorders = async (id) => {
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: "product",
+            }
+          },
+          {
+            $unwind: '$product'
+          },
+          {
+            $project: {
+              _id: 1,
+              quantity: 1,
+              priceperkg: 1,
+              amount: { $multiply: ['$quantity', '$priceperkg'] },
+              productName: '$product.productTitle',
+            }
+          }
+        ],
+        as: "productByOrder",
+      }
+    }
+  ]);
+  return values;
+};
 
 module.exports = {
   // product
@@ -3215,5 +3663,7 @@ module.exports = {
   getBills_ByShop,
   getBills_DetailsByshop,
   vieworderbill_byshop,
-  mismachstockscreate
+  mismachstockscreate,
+  WA_Order_status,
+  OGorders_MDorders,
 };
