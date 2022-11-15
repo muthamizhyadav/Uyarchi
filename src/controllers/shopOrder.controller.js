@@ -326,6 +326,11 @@ const WA_Order_status = catchAsync(async (req, res) => {
   res.send(data)
 })
 
+const OGorders_MDorders = catchAsync(async (req, res) => {
+  const data = await shopOrderService.OGorders_MDorders(req.params.id)
+  res.send(data)
+})
+
 module.exports = {
   vieworderbill_byshop,
   createshopOrder,
@@ -374,4 +379,5 @@ module.exports = {
   getBills_DetailsByshop,
   mismachstockscreate,
   WA_Order_status,
+  OGorders_MDorders
 };
