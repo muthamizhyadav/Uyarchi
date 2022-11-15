@@ -67,7 +67,7 @@ const updatePettyCashReturnStatus = catchAsync(async (req, res) => {
 });
 
 const updateDeliveryCompleted = catchAsync(async (req, res) => {
-  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, req.body);
+  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, req.body,req.userId);
   res.send(deliveryCompleted);
 });
 const creditupdateDeliveryCompleted = catchAsync(async (req, res) => {

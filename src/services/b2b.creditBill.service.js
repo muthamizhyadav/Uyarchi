@@ -3174,6 +3174,29 @@ const getbilldetails = async (query) => {
         from: 'b2busers',
         localField: 'uid',
         foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'roles',
+              localField: 'userRole',
+              foreignField: '_id',
+              as: 'roles',
+            }
+          },
+          {
+            $unwind: {
+              path: '$roles',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              rolename: "$roles.roleName",
+              name: 1,
+              _id: 1
+            }
+          }
+        ],
         as: 'b2busersid',
       }
     },
@@ -3212,6 +3235,7 @@ const getbilldetails = async (query) => {
         reasonScheduleOrDate: "$creditbillgroups.reasonScheduleOrDate",
         assignedUserName: "$b2busersid.name",
         assignedUserid: "$b2busersid._id",
+        rolename: "$b2busersid.rolename",
         orderId: 1,
         creditApprovalStatus: 1,
       }

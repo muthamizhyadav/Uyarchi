@@ -18,7 +18,7 @@ router.route('/update/pickedPettycash/collected/:id').put(wardAdminGroupControll
 
 router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
 
-router.route('/update/delivered/:id').put(wardAdminGroupController.updateDeliveryCompleted);
+router.route('/update/delivered/:id').put(authorization,wardAdminGroupController.updateDeliveryCompleted);
 router.route('/credit/update/delivered/:id').put(authorization, wardAdminGroupController.creditupdateDeliveryCompleted);
 router.route('/scheduleshop/assign/:id').put(authorization, wardAdminGroupController.scheduleshopdate);
 
