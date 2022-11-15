@@ -3822,6 +3822,7 @@ const manage_group_orders = async () => {
         assignDate: 1,
         assignTime: 1,
         GroupBillId: 1,
+        deliveryexecuteName: '$De.name',
       },
     },
   ]);
