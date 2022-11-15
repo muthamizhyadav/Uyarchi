@@ -1991,6 +1991,157 @@ const getDetailsByPassGroupId = async (id) => {
   return { values: values, total: total.length, totalTrue: totalTrue.length, };
 };
 
+
+
+const getgroupbilldetails = async (id) => {
+
+  let values = await ShopOrderClone.aggregate([
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $match: { $and: [{ creditbillId: { $eq: id } }] }
+          },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ type: { $eq: "creditBill" } }, { creditID: { $eq: id } }],
+                  },
+                },
+              ],
+
+              as: 'paymentDatadata',
+            },
+          },
+          {
+            $unwind: {
+              path: '$paymentDatadata',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              creditbillId: 1,
+              shopId: 1,
+              paidAmt: "$paymentDatadata.paidAmt",
+              reasonScheduleOrDate: "$paymentDatadata.reasonScheduleOrDate",
+              Schedulereason: "$paymentDatadata.Schedulereason",
+            }
+          }
+        ],
+        as: 'billData',
+      },
+    },
+    { $unwind: '$billData' },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $round: { $sum: ['$value', '$percentage'] } },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    { $unwind: '$productData' },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclones',
+      },
+    },
+
+    { $unwind: '$b2bshopclones' },
+    {
+      $project: {
+        _id: 1,
+        customerBillId: 1,
+        OrderId: 1,
+        date: 1,
+        // billData: "$billData",
+        reason: 1,
+        delivered_date: 1,
+        created: 1,
+        orderAmount: "$productData.price",
+        collectedAmount: "$billData.paidAmt",
+        reasonScheduleOrDate: "$billData.reasonScheduleOrDate",
+        Schedulereason: "$billData.Schedulereason",
+        SName: "$b2bshopclones.SName",
+      }
+    }
+
+  ]);
+
+  let groupdetails = await creditBillGroup.aggregate([
+    { $match: { $and: [{ _id: { $eq: id } }] } },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'AssignedUserId',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },
+    { $unwind: '$b2busers' },
+    {
+      $project: {
+        _id: 1,
+        groupId: 1,
+        assignedDate: 1,
+        assignedTime: 1,
+        receiveStatus: 1,
+        assignedUserName: "$b2busers.name"
+      }
+    }
+  ])
+  if (groupdetails.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, ' srfegfNot Found');
+
+  }
+
+
+  return { groupdetails: groupdetails[0], orderDetails: values };
+};
+
 const submitDispute = async (id, updatebody) => {
   // console.log(id, updatebody);
   let product = await creditBillGroup.findById(id);
@@ -3899,5 +4050,6 @@ module.exports = {
   getbilldetails,
   last_Paid_amt,
   getPaidHistory_ByOrder,
-  Approved_Mismatch_amount
+  Approved_Mismatch_amount,
+  getgroupbilldetails
 };
