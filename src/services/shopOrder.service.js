@@ -3749,12 +3749,49 @@ const OGorders_MDorders = async (id) => {
         route: '$orderassign.route',
         vehicleName: '$orderassign.vehicleName',
         productByOrder: '$productByOrder',
-        modified: '$modified',
         modifiedStatus: 1,
       },
     },
   ]);
-  return values[0];
+  let modified = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        _id: id,
+        modifiedStatus: 'Modified',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'product',
+            },
+          },
+          {
+            $unwind: '$product',
+          },
+          {
+            $project: {
+              _id: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              Modifiedamount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              productName: '$product.productTitle',
+            },
+          },
+        ],
+        as: 'modified',
+      },
+    },
+  ]);
+  return { values: values[0], modified: modified[0].modified };
 };
 
 const details_Of_Payment_by_Id = async (id) => {
@@ -3825,6 +3862,41 @@ const details_Of_Payment_by_Id = async (id) => {
       $unwind: {
         path: '$productData',
         preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $match: { type: 'advanced' } },
+          {
+            $sort: { date: -1, time: -1 },
+          },
+          { $limit: 1 },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        delivery_type: 1,
+        Payment: 1,
+        devevery_mode: 1,
+        time_of_delivery: 1,
+        OrderId: 1,
+        paymentMethod: 1,
+        initialPaymentMode: '$orderpayments.payment',
+        initialPaymenttype: '$orderpayments.paymentMethod',
+        type: '$orderpayments.type',
       },
     },
   ]);
