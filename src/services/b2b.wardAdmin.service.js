@@ -3944,6 +3944,17 @@ const manage_Orders_ByGroup = async (id) => {
           {
             $unwind: '$shops',
           },
+          {
+            $lookup: {
+              from: 'b2busers',
+              localField: 'Uid',
+              foreignField: '_id',
+              as: 'deliverExecutive',
+            },
+          },
+          {
+            $unwind: '$deliverExecutive',
+          },
         ],
         as: 'shoporders',
       },
@@ -3978,6 +3989,7 @@ const manage_Orders_ByGroup = async (id) => {
         route: '$wagroup.route',
         shopName: '$shoporders.shops.SName',
         shopdetails: '$shoporders.shops',
+        deliveryexecuteName: '$shoporders.deliverExecutive.name',
         shopordersId: '$shoporders._id',
       },
     },
