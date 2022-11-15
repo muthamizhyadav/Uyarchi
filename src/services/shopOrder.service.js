@@ -3791,7 +3791,7 @@ const OGorders_MDorders = async (id) => {
       },
     },
   ]);
-  return { values: values[0], modified: modified[0].modified };
+  return { values: values[0], modified: modified.length > 0 ? modified[0] : modified };
 };
 
 const details_Of_Payment_by_Id = async (id) => {
@@ -3876,12 +3876,12 @@ const details_Of_Payment_by_Id = async (id) => {
           },
           { $limit: 1 },
         ],
-        as: 'orderpayments',
+        as: 'orderpayment',
       },
     },
     {
       $unwind: {
-        path: '$orderpayments',
+        path: '$orderpayment',
         preserveNullAndEmptyArrays: true,
       },
     },
@@ -3894,9 +3894,12 @@ const details_Of_Payment_by_Id = async (id) => {
         time_of_delivery: 1,
         OrderId: 1,
         paymentMethod: 1,
-        initialPaymentMode: '$orderpayments.payment',
-        initialPaymenttype: '$orderpayments.paymentMethod',
-        type: '$orderpayments.type',
+        initialPaymentMode: '$orderpayment.payment',
+        initialPaymenttype: '$orderpayment.paymentMethod',
+        type: '$orderpayment.type',
+        pendingAmt: { $subtract: [{ $round: ['$productData.price', 0] }, '$orderpayments.price'] },
+        orderedAmt: { $round: ['$productData.price', 0] },
+        paidAmt: '$orderpayments.price',
       },
     },
   ]);
