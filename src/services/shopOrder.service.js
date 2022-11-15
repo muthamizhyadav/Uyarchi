@@ -3244,6 +3244,30 @@ const WA_Order_status = async (page) => {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
+        pipeline: [{
+          $lookup: {
+            from: 'shoplists',
+            localField: 'SType',
+            foreignField: '_id',
+            as: "shoptype",
+          }
+        },
+        { $unwind: "$shoptype" },
+        {
+          $project: {
+            _id: 1,
+            SName: 1,
+            SOwner: 1,
+            mobile: 1,
+            Slat: 1,
+            Strid: 1,
+            Slong: 1,
+            address: 1,
+            created: 1,
+            shoptype: '$shoptype.shopList'
+          }
+        }
+        ],
         as: 'shops',
       },
     },
@@ -3556,6 +3580,36 @@ const OGorders_MDorders = async (id) => {
         preserveNullAndEmptyArrays: true,
       },
     },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: "product",
+            }
+          },
+          {
+            $unwind: '$product'
+          },
+          {
+            $project: {
+              _id: 1,
+              quantity: 1,
+              priceperkg: 1,
+              amount: { $multiply: ['$quantity', '$priceperkg'] },
+              productName: '$product.productTitle',
+            }
+          }
+        ],
+        as: "productByOrder",
+      }
+    }
   ]);
   return values;
 };
