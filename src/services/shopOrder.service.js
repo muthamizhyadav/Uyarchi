@@ -3264,7 +3264,7 @@ const WA_Order_status = async (page) => {
             Slong: 1,
             address: 1,
             created: 1,
-            shoptype: '$shoptype.shopList'
+            shoptype: '$shoptype.shopList',
           }
         }
         ],
@@ -3609,9 +3609,121 @@ const OGorders_MDorders = async (id) => {
         ],
         as: "productByOrder",
       }
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'wardadmingroups',
+              localField: 'wardAdminGroupID',
+              foreignField: '_id',
+              pipeline: [{
+                $lookup: {
+                  from: 'vehicles',
+                  localField: 'vehicleId',
+                  foreignField: '_id',
+                  as: "vehicle",
+                }
+              },
+              {
+                $unwind: {
+                  path: '$vehicle',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              ],
+              as: 'wagroup',
+            },
+          },
+          {
+            $unwind: '$wagroup',
+          },
+          {
+            $project: {
+              _id: 1,
+              vehicleId: '$wagroup.vehicleId',
+              pickputype: '$wagroup.pickputype',
+              pickuplocation: '$wagroup.pickuplocation',
+              route: '$wagroup.route',
+              groupId: '$wagroup.groupId',
+              assignDate: '$wagroup.assignDate',
+              wardadmingroupId: '$wagroup._id',
+              vehicleName: '$wagroup.vehicle.vehicle_Name',
+
+            },
+          },
+        ],
+        as: 'orderassign',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderassign',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users',
+    },
+    {
+      $project: {
+        _id: 1,
+        shopId: 1,
+        status: 1,
+        delivery_type: 1,
+        Payment: 1,
+        devevery_mode: 1,
+        time_of_delivery: 1,
+        paymentMethod: 1,
+        OrderId: 1,
+        customerBillId: 1,
+        date: 1,
+        time: 1,
+        lapsedOrder: 1,
+        DE_Name: '$users.name',
+        orderedAmt: { $round: ['$productData.price', 0] },
+        pendingAmt: { $subtract: [{ $round: ['$productData.price', 0] }, '$orderpayments.price'] },
+        paidAmt: '$orderpayments.price',
+        route: '$orderassign.route',
+        vehicleName: '$orderassign.vehicleName',
+        productByOrder: '$productByOrder',
+        modifiedStatus: 1,
+
+      }
     }
   ]);
-  return values;
+  return values[0];
 };
 
 module.exports = {
