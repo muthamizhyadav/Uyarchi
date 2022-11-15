@@ -78,7 +78,7 @@ const wardloadExecutive = catchAsync(async (req, res) => {
   res.send(executive);
 });
 const wardloadExecutivebtgroup = catchAsync(async (req, res) => {
-  console.log(req.query)
+  console.log(req.query);
   const executive = await wardAdminService.wardloadExecutivebtgroup(req.query);
   res.send(executive);
 });
@@ -105,7 +105,7 @@ const updateBilled = catchAsync(async (req, res) => {
 // AFTER PACKED BY WARD LOADING EXECUTE
 
 const wardloadExecutivePacked = catchAsync(async (req, res) => {
-  const packedOnly = await wardAdminService.wardloadExecutivePacked(req.query.range, req.query.page,req.query.type);
+  const packedOnly = await wardAdminService.wardloadExecutivePacked(req.query.range, req.query.page, req.query.type);
   res.send(packedOnly);
 });
 
@@ -233,6 +233,11 @@ const getshopDetails = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const manage_group_orders = catchAsync(async (req, res) => {
+  const data = await wardAdminService.manage_group_orders();
+  res.send(data);
+});
+
 module.exports = {
   getDetails,
   getproductDetails,
@@ -269,6 +274,6 @@ module.exports = {
   mismatchGroup,
   Mismatch_Stock_Reconcilation,
   Mismatch_Stock_Reconcilation1,
-
+  manage_group_orders,
   getshopDetails,
 };

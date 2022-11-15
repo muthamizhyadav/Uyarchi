@@ -420,12 +420,16 @@ const updateProduct = async (id, updateBody) => {
       }
       await ProductorderClone.findByIdAndUpdate(
         { _id: e._id },
-        { finalQuantity: updateQty, status: 'Modified', modifiedStatus: "Modified" },
+        { finalQuantity: updateQty, status: 'Modified', modifiedStatus: 'Modified' },
         { new: true }
       );
     }
   });
-  product = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Modified', modifiedStatus: "Modified" }, { new: true });
+  product = await ShopOrderClone.findByIdAndUpdate(
+    { _id: id },
+    { status: 'Modified', modifiedStatus: 'Modified' },
+    { new: true }
+  );
   return product;
 };
 
@@ -520,7 +524,7 @@ const wardloadExecutivepacked = async (status, date, page) => {
 const wardloadExecutivebtgroup = async (query) => {
   let page = query.page;
   let type = query.pickputype;
-  console.log(type)
+  console.log(type);
   let data = await wardAdminGroup.aggregate([
     {
       $match: {
@@ -920,8 +924,8 @@ const wardloadExecutivePacked = async (range, page, type) => {
           rangematch,
           dateMatch,
           {
-            devevery_mode: { $eq: type }
-          }
+            devevery_mode: { $eq: type },
+          },
         ],
       },
     },
@@ -1061,8 +1065,8 @@ const wardloadExecutivePacked = async (range, page, type) => {
           rangematch,
           dateMatch,
           {
-            devevery_mode: { $eq: type }
-          }
+            devevery_mode: { $eq: type },
+          },
         ],
       },
     },
@@ -1371,15 +1375,15 @@ const getAssigned_details = async (pickuptype) => {
         zone: 1,
         ward: 1,
         pickputype: 1,
-        vehicle_Owner_Name: "$vehicles.vehicle_Owner_Name",
-        vehicle_Name: "$vehicles.vehicle_Name",
-        vehicle_type: "$vehicles.vehicle_type",
-        vehicleNo: "$vehicles.vehicleNo",
-        tonne_Capacity: "$vehicles.tonne_Capacity",
+        vehicle_Owner_Name: '$vehicles.vehicle_Owner_Name',
+        vehicle_Name: '$vehicles.vehicle_Name',
+        vehicle_type: '$vehicles.vehicle_type',
+        vehicleNo: '$vehicles.vehicleNo',
+        tonne_Capacity: '$vehicles.tonne_Capacity',
         pickuplocation: 1,
-        zone: "$zones.zone",
-        ward: "$wards.ward",
-        locationName: "$managepickuplocations.locationName"
+        zone: '$zones.zone',
+        ward: '$wards.ward',
+        locationName: '$managepickuplocations.locationName',
       },
     },
   ]);
@@ -2450,8 +2454,8 @@ const gettimeslatcountassign = async (type, devevery_mode) => {
           },
           dateMatch,
           {
-            devevery_mode: { $eq: devevery_mode }
-          }
+            devevery_mode: { $eq: devevery_mode },
+          },
         ],
       },
     },
@@ -2468,8 +2472,8 @@ const gettimeslatcountassign = async (type, devevery_mode) => {
           { time_of_delivery: { $eq: '5-6' } },
           dateMatch,
           {
-            devevery_mode: { $eq: devevery_mode }
-          }
+            devevery_mode: { $eq: devevery_mode },
+          },
         ],
       },
     },
@@ -2486,8 +2490,8 @@ const gettimeslatcountassign = async (type, devevery_mode) => {
           { time_of_delivery: { $eq: '6-7' } },
           dateMatch,
           {
-            devevery_mode: { $eq: devevery_mode }
-          }
+            devevery_mode: { $eq: devevery_mode },
+          },
         ],
       },
     },
@@ -2504,8 +2508,8 @@ const gettimeslatcountassign = async (type, devevery_mode) => {
           { time_of_delivery: { $eq: '7-8' } },
           dateMatch,
           {
-            devevery_mode: { $eq: devevery_mode }
-          }
+            devevery_mode: { $eq: devevery_mode },
+          },
         ],
       },
     },
@@ -2522,8 +2526,8 @@ const gettimeslatcountassign = async (type, devevery_mode) => {
           { time_of_delivery: { $eq: '8-9' } },
           dateMatch,
           {
-            devevery_mode: { $eq: devevery_mode }
-          }
+            devevery_mode: { $eq: devevery_mode },
+          },
         ],
       },
     },
@@ -2540,8 +2544,8 @@ const gettimeslatcountassign = async (type, devevery_mode) => {
           { time_of_delivery: { $eq: '9-10' } },
           dateMatch,
           {
-            devevery_mode: { $eq: devevery_mode }
-          }
+            devevery_mode: { $eq: devevery_mode },
+          },
         ],
       },
     },
@@ -2558,8 +2562,8 @@ const gettimeslatcountassign = async (type, devevery_mode) => {
           { time_of_delivery: { $eq: '10-11' } },
           dateMatch,
           {
-            devevery_mode: { $eq: devevery_mode }
-          }
+            devevery_mode: { $eq: devevery_mode },
+          },
         ],
       },
     },
@@ -3728,6 +3732,47 @@ const getshopDetails = async (id) => {
   ]);
   return values;
 };
+
+const manage_group_orders = async () => {
+  let values = await wardAdminGroup.aggregate([
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        as: 'orderAssign',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'De',
+      },
+    },
+    {
+      $unwind: '$De',
+    },
+    {
+      $project: {
+        _id: 1,
+        status: 1,
+        manageDeliveryStatus: 1,
+        pettyCashAllocateStatus: 1,
+        pettyStockAllocateStatus: 1,
+        AllocateStatus: 1,
+        totalOrders: 1,
+        groupId: 1,
+        assignDate: 1,
+        assignTime: 1,
+        GroupBillId: 1,
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   getdetails,
   getproductdetails,
@@ -3762,6 +3807,6 @@ module.exports = {
   mismatchGroup,
   Mismatch_Stock_Reconcilation,
   Mismatch_Stock_Reconcilation1,
-
+  manage_group_orders,
   getshopDetails,
 };
