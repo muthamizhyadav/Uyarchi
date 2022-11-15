@@ -600,12 +600,10 @@ const wardloadExecutivebtgroup = async (query) => {
     },
   ]);
 
-
-
   let De_mode = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: 'Assigned' } }, { pickputype: { $eq: "DE" } }],
+        $and: [{ status: { $eq: 'Assigned' } }, { pickputype: { $eq: 'DE' } }],
       },
     },
   ]);
@@ -613,11 +611,11 @@ const wardloadExecutivebtgroup = async (query) => {
   let Sp_mode = await wardAdminGroup.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: 'Assigned' } }, { pickputype: { $eq: "SP" } }],
+        $and: [{ status: { $eq: 'Assigned' } }, { pickputype: { $eq: 'SP' } }],
       },
     },
   ]);
-  let delivery = { DE: De_mode.length, SP: Sp_mode.length }
+  let delivery = { DE: De_mode.length, SP: Sp_mode.length };
   return { data: data, total: total.length, delivery: delivery };
 };
 const wardloadExecutive = async (id) => {
@@ -1189,8 +1187,8 @@ const wardloadExecutivePacked = async (range, page, type) => {
           },
           dateMatch,
           {
-            devevery_mode: { $eq: 'DE' }
-          }
+            devevery_mode: { $eq: 'DE' },
+          },
         ],
       },
     },
@@ -1206,14 +1204,14 @@ const wardloadExecutivePacked = async (range, page, type) => {
           },
           dateMatch,
           {
-            devevery_mode: { $eq: "SP" }
-          }
+            devevery_mode: { $eq: 'SP' },
+          },
         ],
       },
     },
   ]);
 
-  let delevery_type = { DE: De_mode.length, SP: Sp_mode.length }
+  let delevery_type = { DE: De_mode.length, SP: Sp_mode.length };
 
   return { data: data, total: total.length, total_count: result, delivery: delevery_type };
 };
@@ -3830,6 +3828,163 @@ const manage_group_orders = async () => {
   return values;
 };
 
+const manage_Orders_ByGroup = async (id) => {
+  let values = await wardAdminGroupModel_ORDERS.aggregate([
+    {
+      $match: { wardAdminGroupID: id },
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'b2busers',
+              localField: 'Uid',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'roles',
+                    localField: 'userRole',
+                    foreignField: '_id',
+                    as: 'roles',
+                  },
+                },
+                {
+                  $unwind: '$roles',
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    name: 1,
+                    bookedBy: '$roles.roleName',
+                  },
+                },
+              ],
+              as: 'users',
+            },
+          },
+          {
+            $unwind: '$users',
+          },
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'shopId',
+              foreignField: '_id',
+              as: 'shops',
+            },
+          },
+          {
+            $unwind: '$shops',
+          },
+        ],
+        as: 'shoporders',
+      },
+    },
+    {
+      $unwind: '$shoporders',
+    },
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: 'wardAdminGroupID',
+        foreignField: '_id',
+        as: 'wagroup',
+      },
+    },
+    {
+      $unwind: '$wagroup',
+    },
+    {
+      $project: {
+        _id: 1,
+        shopId: '$shoporders.shopId',
+        status: '$shoporders.status',
+        Payment: '$shoporders.Payment',
+        paymentMethod: '$shoporders.paymentMethod',
+        OrderId: '$shoporders.OrderId',
+        customerBillId: '$shoporders.customerBillId',
+        Uid: '$shoporders.uid',
+        orderedAmt: { $round: ['$shoporders.productData.price', 0] },
+        pendingAmt: { $subtract: [{ $round: ['$shoporders.productData.price', 0] }, '$shoporders.orderpayments.price'] },
+        bookedBy: '$shoporders.users.bookedBy',
+        route: '$wagroup.route',
+        shopName: '$shoporders.shops.SName',
+        shopdetails: '$shoporders.shops',
+        shopordersId: '$shoporders._id',
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   getdetails,
   getproductdetails,
@@ -3866,4 +4021,5 @@ module.exports = {
   Mismatch_Stock_Reconcilation1,
   manage_group_orders,
   getshopDetails,
+  manage_Orders_ByGroup,
 };

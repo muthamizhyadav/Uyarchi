@@ -238,6 +238,11 @@ const manage_group_orders = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const manage_Orders_ByGroup = catchAsync(async (req, res) => {
+  const data = await wardAdminService.manage_Orders_ByGroup(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   getDetails,
   getproductDetails,
@@ -276,4 +281,5 @@ module.exports = {
   Mismatch_Stock_Reconcilation1,
   manage_group_orders,
   getshopDetails,
+  manage_Orders_ByGroup,
 };
