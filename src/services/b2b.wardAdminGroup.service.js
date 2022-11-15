@@ -263,7 +263,7 @@ const scheduleshopdate = async (id, updateBody, userId) => {
   return deliveryStatus;
 };
 
-const updateOrderStatus = async (id, updateBody) => {
+const updateOrderStatus = async (id, updateBody,userId) => {
   let currentDate = moment().format('YYYY-MM-DD');
   let currenttime = moment().format('HHmmss');
   let body = {
@@ -297,6 +297,7 @@ const updateOrderStatus = async (id, updateBody) => {
     paymentstutes: updateBody.paymentstutes,
     creditBillStatus: updateBody.creditBillStatus,
     reasonScheduleOrDate: updateBody.reasonScheduleOrDate,
+    uid:userId
   });
   return deliveryStatus;
 };
