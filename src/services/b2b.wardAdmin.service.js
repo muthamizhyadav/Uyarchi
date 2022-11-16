@@ -3939,6 +3939,19 @@ const manage_Orders_ByGroup = async (id) => {
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'shoplists',
+                    localField: 'SType',
+                    foreignField: '_id',
+                    as: 'shoptype',
+                  },
+                },
+                {
+                  $unwind: '$shoptype',
+                },
+              ],
               as: 'shops',
             },
           },
@@ -3996,9 +4009,205 @@ const manage_Orders_ByGroup = async (id) => {
         route: '$wagroup.route',
         shopName: '$shoporders.shops.SName',
         shopdetails: '$shoporders.shops',
+        shoptype: '$shoporders.shops.shoptype.shopList',
         deliveryexecuteName: '$shoporders.deliverExecutive.name',
         shopordersId: '$shoporders._id',
         orderedDate: '$shoporders.date',
+        delivered_date: '$shoporders.delivered_date',
+      },
+    },
+  ]);
+  return values;
+};
+
+const trackOrdersByGroupOrder = async (id) => {
+  let values = await wardAdminGroupModel_ORDERS.aggregate([
+    {
+      $match: { wardAdminGroupID: id },
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'b2busers',
+              localField: 'Uid',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'roles',
+                    localField: 'userRole',
+                    foreignField: '_id',
+                    as: 'roles',
+                  },
+                },
+                {
+                  $unwind: '$roles',
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    name: 1,
+                    bookedBy: '$roles.roleName',
+                  },
+                },
+              ],
+              as: 'users',
+            },
+          },
+          {
+            $unwind: '$users',
+          },
+          {
+            $lookup: {
+              from: 'b2busers',
+              localField: 'Uid',
+              foreignField: '_id',
+              as: 'deliverExecutive',
+            },
+          },
+          {
+            $unwind: '$deliverExecutive',
+          },
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'products',
+                    localField: 'productid',
+                    foreignField: '_id',
+                    as: 'product',
+                  },
+                },
+                {
+                  $unwind: '$product',
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    finalQuantity: 1,
+                    finalPricePerKg: 1,
+                    Modifiedamount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    productName: '$product.productTitle',
+                  },
+                },
+              ],
+              as: 'original',
+            },
+          },
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $match: { modifiedStatus: 'Modified' },
+                },
+                {
+                  $lookup: {
+                    from: 'products',
+                    localField: 'productid',
+                    foreignField: '_id',
+                    as: 'product',
+                  },
+                },
+                {
+                  $unwind: '$product',
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    finalQuantity: 1,
+                    finalPricePerKg: 1,
+                    Modifiedamount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    productName: '$product.productTitle',
+                  },
+                },
+              ],
+              as: 'modified',
+            },
+          },
+        ],
+
+        as: 'shoporders',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shoporders',
+        preserveNullAndEmptyArrays: true,
       },
     },
   ]);
@@ -4042,4 +4251,5 @@ module.exports = {
   manage_group_orders,
   getshopDetails,
   manage_Orders_ByGroup,
+  trackOrdersByGroupOrder,
 };

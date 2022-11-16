@@ -243,6 +243,11 @@ const manage_Orders_ByGroup = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const trackOrdersByGroupOrder = catchAsync(async (req, res) => {
+  const data = await wardAdminService.trackOrdersByGroupOrder(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   getDetails,
   getproductDetails,
@@ -282,4 +287,5 @@ module.exports = {
   manage_group_orders,
   getshopDetails,
   manage_Orders_ByGroup,
+  trackOrdersByGroupOrder,
 };

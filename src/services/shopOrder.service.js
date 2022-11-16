@@ -3728,6 +3728,17 @@ const OGorders_MDorders = async (id) => {
       $unwind: '$users',
     },
     {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'deliveryExecutive',
+      },
+    },
+    {
+      $unwind: '$deliveryExecutive',
+    },
+    {
       $project: {
         _id: 1,
         shopId: 1,
@@ -3739,6 +3750,7 @@ const OGorders_MDorders = async (id) => {
         paymentMethod: 1,
         OrderId: 1,
         customerBillId: 1,
+        deliveryExecutiveId: 1,
         date: 1,
         time: 1,
         lapsedOrder: 1,
@@ -3750,6 +3762,8 @@ const OGorders_MDorders = async (id) => {
         vehicleName: '$orderassign.vehicleName',
         productByOrder: '$productByOrder',
         modifiedStatus: 1,
+        deliveryExecutive: '$deliveryExecutive.name',
+        groupId: '$orderassign.groupId',
       },
     },
   ]);
