@@ -36,6 +36,11 @@ const getUnBilledAmount_With_Shops = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const Unbilled_history = catchAsync(async (req, res) => {
+  const data = await BillAdjService.Unbilled_history(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   createBillAdj,
   getBillAdjustmentById,
@@ -43,4 +48,5 @@ module.exports = {
   adjustment_bill,
   adjustment_bill_pay,
   getUnBilledAmount_With_Shops,
+  Unbilled_history,
 };

@@ -772,6 +772,15 @@ const getUnBilledAmount_With_Shops = async () => {
   return values;
 };
 
+const Unbilled_history = async (id) => {
+  let values = await AdjbillHistories.aggregate([
+    {
+      $match: { AdjBill_Id: id },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createBill_Adjustment,
   getBillAdjustment_ById,
@@ -779,4 +788,5 @@ module.exports = {
   adjustment_bill,
   adjustment_bill_pay,
   getUnBilledAmount_With_Shops,
+  Unbilled_history,
 };
