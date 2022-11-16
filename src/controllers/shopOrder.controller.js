@@ -336,6 +336,12 @@ const details_Of_Payment_by_Id = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getPaymenthistory = catchAsync(async (req, res) => {
+  const data = await shopOrderService.getPaymenthistory(req.params.id);
+  console.log('triggered');
+  res.send(data);
+});
+
 module.exports = {
   vieworderbill_byshop,
   createshopOrder,
@@ -386,4 +392,5 @@ module.exports = {
   WA_Order_status,
   OGorders_MDorders,
   details_Of_Payment_by_Id,
+  getPaymenthistory,
 };

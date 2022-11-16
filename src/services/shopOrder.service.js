@@ -3920,6 +3920,17 @@ const details_Of_Payment_by_Id = async (id) => {
   return values;
 };
 
+const getPaymenthistory = async (id) => {
+  let values = await OrderPayment.aggregate([
+    {
+      $match: {
+        orderId: id,
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -3973,4 +3984,5 @@ module.exports = {
   WA_Order_status,
   OGorders_MDorders,
   details_Of_Payment_by_Id,
+  getPaymenthistory,
 };
