@@ -1309,6 +1309,8 @@ const deleteMainWherehouseLoadingExecuteById = async (mwLoadingId) => {
 };
 
 const productaggregateById = async (page) => {
+  console.log(moment().format("DD-MM-YYYY"))
+  console.log(moment().format("hh:mm a"))
   const product = await Product.aggregate([
     {
       $lookup: {
