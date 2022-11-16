@@ -3703,7 +3703,7 @@ const OGorders_MDorders = async (id) => {
               groupId: '$wagroup.groupId',
               assignDate: '$wagroup.assignDate',
               wardadmingroupId: '$wagroup._id',
-              vehicleName: '$wagroup.vehicle.vehicle_Name',
+              vehicleName: '$wagroup.vehicle.vehicleNo',
             },
           },
         ],
@@ -3728,6 +3728,17 @@ const OGorders_MDorders = async (id) => {
       $unwind: '$users',
     },
     {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'deliveryExecutive',
+      },
+    },
+    {
+      $unwind: '$deliveryExecutive',
+    },
+    {
       $project: {
         _id: 1,
         shopId: 1,
@@ -3739,6 +3750,7 @@ const OGorders_MDorders = async (id) => {
         paymentMethod: 1,
         OrderId: 1,
         customerBillId: 1,
+        deliveryExecutiveId: 1,
         date: 1,
         time: 1,
         lapsedOrder: 1,
@@ -3750,6 +3762,9 @@ const OGorders_MDorders = async (id) => {
         vehicleName: '$orderassign.vehicleName',
         productByOrder: '$productByOrder',
         modifiedStatus: 1,
+        deliveryExecutive: '$deliveryExecutive.name',
+        groupId: '$orderassign.groupId',
+        // orderassign: '$orderassign',
       },
     },
   ]);
@@ -3906,6 +3921,17 @@ const details_Of_Payment_by_Id = async (id) => {
   return values;
 };
 
+const getPaymenthistory = async (id) => {
+  let values = await OrderPayment.aggregate([
+    {
+      $match: {
+        orderId: id,
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -3959,4 +3985,5 @@ module.exports = {
   WA_Order_status,
   OGorders_MDorders,
   details_Of_Payment_by_Id,
+  getPaymenthistory,
 };

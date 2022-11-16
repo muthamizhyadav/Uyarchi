@@ -716,12 +716,69 @@ const adjustment_bill_pay = async (id, userId, body) => {
         }
       }
     }
-  })
-  console.log(totalAmount)
-  billadj = await BillAdjustment.findByIdAndUpdate({ _id: billadj._id }, { un_Billed_amt: billadj.un_Billed_amt - body.amount }, { new: true });
+  });
+  console.log(totalAmount);
+  billadj = await BillAdjustment.findByIdAndUpdate(
+    { _id: billadj._id },
+    { un_Billed_amt: billadj.un_Billed_amt - body.amount },
+    { new: true }
+  );
   // let billadjss = await BillAdjustment.findOne({ shopId: id });
 
   return billadj;
+};
+
+const getUnBilledAmount_With_Shops = async () => {
+  let values = await BillAdjustment.aggregate([
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopdata',
+      },
+    },
+    {
+      $unwind: '$shopdata',
+    },
+    {
+      $lookup: {
+        from: 'adjbillhistories',
+        localField: '_id',
+        foreignField: 'AdjBill_Id',
+        pipeline: [{ $group: { _id: null, totalamt: { $sum: '$un_Billed_amt' } } }],
+        as: 'unbilledHistory',
+      },
+    },
+    {
+      $unwind: {
+        path: '$unbilledHistory',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        un_Billed_amt: 1,
+        payment_method: 1,
+        date: 1,
+        time: 1,
+        shopName: '$shopdata.SName',
+        shopId: 1,
+        totalUnBilled_Amt: '$unbilledHistory.totalamt',
+      },
+    },
+  ]);
+  return values;
+};
+
+const Unbilled_history = async (id) => {
+  let values = await AdjbillHistories.aggregate([
+    {
+      $match: { AdjBill_Id: id },
+    },
+  ]);
+  return values;
 };
 
 module.exports = {
@@ -730,4 +787,6 @@ module.exports = {
   getCustomer_bills,
   adjustment_bill,
   adjustment_bill_pay,
+  getUnBilledAmount_With_Shops,
+  Unbilled_history,
 };
