@@ -27,7 +27,12 @@ const adjustment_bill = catchAsync(async (req, res) => {
   res.send(data);
 });
 const adjustment_bill_pay = catchAsync(async (req, res) => {
-  const data = await BillAdjService.adjustment_bill_pay(req.params.id, req.userId,req.body);
+  const data = await BillAdjService.adjustment_bill_pay(req.params.id, req.userId, req.body);
+  res.send(data);
+});
+
+const getUnBilledAmount_With_Shops = catchAsync(async (req, res) => {
+  const data = await BillAdjService.getUnBilledAmount_With_Shops();
   res.send(data);
 });
 
@@ -36,5 +41,6 @@ module.exports = {
   getBillAdjustmentById,
   getCustomer_bills,
   adjustment_bill,
-  adjustment_bill_pay
+  adjustment_bill_pay,
+  getUnBilledAmount_With_Shops,
 };

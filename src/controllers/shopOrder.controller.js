@@ -338,7 +338,6 @@ const details_Of_Payment_by_Id = catchAsync(async (req, res) => {
 
 const getPaymenthistory = catchAsync(async (req, res) => {
   const data = await shopOrderService.getPaymenthistory(req.params.id);
-  console.log('triggered');
   res.send(data);
 });
 
