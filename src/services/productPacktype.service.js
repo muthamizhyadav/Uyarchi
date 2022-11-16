@@ -185,8 +185,9 @@ const getALLproductpackTypeById = async (page) => {
 const get_product_withpacktype = async (search, page, query) => {
   let date = moment().format('yyyy-MM-DD');
   let key = { active: { $eq: true } };
-  if (query.page != null && query.page != '') {
-    page = query.page;
+  let limit=10;
+  if (query.limit != null && query.limit != '') {
+    limit = parseInt(query.limit);
   }
   if (search != 'null') {
     key = { productTitle: { $regex: search, $options: 'i' } };
@@ -317,10 +318,10 @@ const get_product_withpacktype = async (search, page, query) => {
       },
     },
     {
-      $skip: 10 * page,
+      $skip: limit * page,
     },
     {
-      $limit: 10,
+      $limit: limit,
     },
   ]);
   let total = await Product.aggregate([
