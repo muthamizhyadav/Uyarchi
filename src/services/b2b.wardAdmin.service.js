@@ -4014,6 +4014,8 @@ const manage_Orders_ByGroup = async (id) => {
         shopordersId: '$shoporders._id',
         orderedDate: '$shoporders.date',
         delivered_date: '$shoporders.delivered_date',
+        groupId: '$wagroup.groupId',
+        GroupBillId: '$wagroup.GroupBillId',
       },
     },
   ]);
