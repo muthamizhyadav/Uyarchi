@@ -132,6 +132,8 @@ router.route('/get/AllGroup/details/:page').get(wardAdminGroupController.getGrou
 router.route('/getdriver/assign/grouporders').get(wardAdminGroupController.getGroupOrders_driver);
 router.route('/getstockreport/selfpickup').get(wardAdminGroupController.get_stock_roport_selfpickup);
 
+router.route('/createArrayPettyCash/:id').put(wardAdminGroupController.createArrayPettyCash)
+
 
 
 module.exports = router;

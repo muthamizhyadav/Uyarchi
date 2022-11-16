@@ -148,6 +148,11 @@ const wardAdminGroupSchema = new mongoose.Schema({
   },
   cashmismatch: {
     type: String,
+  },
+  pettyCashDetails: {
+    type: Array,
+    default: [],
+
   }
 });
 

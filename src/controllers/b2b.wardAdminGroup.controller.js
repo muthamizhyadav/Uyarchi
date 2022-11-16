@@ -349,6 +349,12 @@ const get_stock_roport_selfpickup = catchAsync(async (req, res) => {
   const groupDetails = await wardAdminGroupService.get_stock_roport_selfpickup(req.query);
   res.send(groupDetails)
 });
+
+const  createArrayPettyCash = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.createArrayPettyCash(req.params.id,req.body);
+  res.send(details);
+});
+
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -439,5 +445,6 @@ module.exports = {
   scheduleshopdate,
   getGroupOrders_driver,
   delivery_selfpickup,
-  get_stock_roport_selfpickup
+  get_stock_roport_selfpickup,
+  createArrayPettyCash
 };

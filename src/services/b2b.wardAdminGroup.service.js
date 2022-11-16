@@ -4006,6 +4006,19 @@ const get_stock_roport_selfpickup = async (query) => {
 
 }
 
+
+const createArrayPettyCash = async (id,body) => {
+  let values = wardAdminGroup.findById(id);
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, ' srfegfNot Found');
+  }
+  await wardAdminGroup.findByIdAndUpdate({_id: id},body, { new: true });
+  // body.pettyCashDetails.forEach(async (e) => {
+  //   await wardAdminGroup.findByIdAndUpdate({_id: e.pettyCashDetails}, { new: true });
+  // })
+  return values;
+};
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -4072,5 +4085,6 @@ module.exports = {
   getGroupOrders_driver,
   assignOnly_DE,
   assignOnly_SP,
-  get_stock_roport_selfpickup
+  get_stock_roport_selfpickup,
+  createArrayPettyCash
 };
