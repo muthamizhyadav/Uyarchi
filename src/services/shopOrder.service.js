@@ -3703,7 +3703,7 @@ const OGorders_MDorders = async (id) => {
               groupId: '$wagroup.groupId',
               assignDate: '$wagroup.assignDate',
               wardadmingroupId: '$wagroup._id',
-              vehicleName: '$wagroup.vehicle.vehicle_Name',
+              vehicleName: '$wagroup.vehicle.vehicleNo',
             },
           },
         ],
@@ -3764,6 +3764,7 @@ const OGorders_MDorders = async (id) => {
         modifiedStatus: 1,
         deliveryExecutive: '$deliveryExecutive.name',
         groupId: '$orderassign.groupId',
+        // orderassign: '$orderassign',
       },
     },
   ]);
