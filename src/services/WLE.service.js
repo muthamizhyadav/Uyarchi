@@ -21,6 +21,10 @@ const setPackedStatus_By_LoadingExecutice = async (body) => {
     if (wardgroup.length == 0) {
       await wardAdminGroup.findByIdAndUpdate({ _id: orderassign.wardAdminGroupID }, { status: 'Packed' }, { new: true });
     }
+
+    let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: e }, { new: true });
+    statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Packed' });
+    statusActionArray.save();
   });
   return { message: 'Packed Status Updated By Ward Loading Executive' };
 };
