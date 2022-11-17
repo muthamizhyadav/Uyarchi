@@ -405,29 +405,41 @@ const getTelecallerAssignedShops = async (id) => {
   return { data: data, telecallerName: name.name, count:total.length, lastdata};
 };
 
-const getnotAssignShops = async (zone, id, street, page, limit, uid, date) => {
+const getnotAssignShops = async (zone, id, street, page, limit, uid, date, dastatus, pincode ) => {
   let match;
   let zoneMatch;
   let wardMatch;
   let streetMatch;
+  let dastatusMatch;
+  let pincodeMatch;
+  if(dastatus != 'null'){
+    dastatusMatch = [{ daStatus: { $eq: dastatus } }];
+  }else{
+    dastatusMatch = [{ active: { $eq: true } }];
+  }
+  if(pincode != 'null'){
+    pincodeMatch = [{Pincode: { $eq: pincode } }];
+  }else{
+    pincodeMatch = [{ active: { $eq: true } }];
+  }
   if(zone != 'null'){
      zoneMatch = [{ _id: { $eq: zone } }];
   }else{
     zoneMatch = [{ active: { $eq: true } }];
   }
-  console.log(zoneMatch)
+  // console.log(zoneMatch)
   if(id != 'null'){
     wardMatch = [{ _id: { $eq: id } }];
  }else{
   wardMatch = [{ active: { $eq: true } }];
  }
- console.log(wardMatch)
+//  console.log(wardMatch)
  if(street != 'null'){
   streetMatch = [{ _id: { $eq: street } }];
  }else{
   streetMatch = [{ active: { $eq: true } }];
 }
-console.log(streetMatch)
+// console.log(streetMatch)
 
 if(uid != 'null' &&  date == 'null'){
   match = [{ Uid: { $eq: uid } }];
@@ -454,6 +466,16 @@ if(uid != 'null' &&  date == 'null'){
     {
       $match: {
         $and: match,
+      },
+    },
+    {
+      $match: {
+        $and: dastatusMatch,
+      },
+    },
+    {
+      $match: {
+        $and: pincodeMatch,
       },
     },
     // {
@@ -574,6 +596,16 @@ if(uid != 'null' &&  date == 'null'){
         $and: match,
       },
     },
+    {
+      $match: {
+        $and: dastatusMatch,
+      },
+    },
+    {
+      $match: {
+        $and: pincodeMatch,
+      },
+    },
     // {
     //   $match: {
     //     $or: [
@@ -672,6 +704,16 @@ if(uid != 'null' &&  date == 'null'){
     {
       $match: {
         $and: match,
+      },
+    },
+    {
+      $match: {
+        $and: dastatusMatch,
+      },
+    },
+    {
+      $match: {
+        $and: pincodeMatch,
       },
     },
     // {
@@ -1959,29 +2001,42 @@ const getsalesmanOrderAssignedShops = async (id) => {
   return { data: data, salesmanName: name.name, count:total.length, lastdata};
 };
 
-const getnotAssignsalesmanOrderShops = async (zone,id, street, page, limit, uid, date) => {
+const getnotAssignsalesmanOrderShops = async (zone,id, street, page, limit, uid, date, dastatus, pincode) => {
   let match;
   let zoneMatch;
   let wardMatch;
   let streetMatch;
+  let dastatusMatch;
+  let pincodeMatch;
+  if(dastatus != 'null'){
+    dastatusMatch = [{ daStatus: { $eq: dastatus } }];
+  }else{
+    dastatusMatch = [{ active: { $eq: true } }];
+  }
+  if(pincode != 'null'){
+    pincodeMatch = [{Pincode: { $eq: pincode } }];
+  }else{
+    pincodeMatch = [{ active: { $eq: true } }];
+  }
+
   if(zone != 'null'){
      zoneMatch = [{ _id: { $eq: zone } }];
   }else{
     zoneMatch = [{ active: { $eq: true } }];
   }
-  console.log(zoneMatch)
+  // console.log(zoneMatch)
   if(id != 'null'){
     wardMatch = [{ _id: { $eq: id } }];
  }else{
   wardMatch = [{ active: { $eq: true } }];
  }
- console.log(wardMatch)
+//  console.log(wardMatch)
  if(street != 'null'){
   streetMatch = [{ _id: { $eq: street } }];
  }else{
   streetMatch = [{ active: { $eq: true } }];
 }
-console.log(streetMatch)
+// console.log(streetMatch)
 
 if(uid != 'null' &&  date == 'null'){
   match = [{ Uid: { $eq: uid } }];
@@ -2007,6 +2062,16 @@ if(uid != 'null' &&  date == 'null'){
     {
       $match: {
         $and: match,
+      },
+    },
+    {
+      $match: {
+        $and: dastatusMatch,
+      },
+    },
+    {
+      $match: {
+        $and: pincodeMatch,
       },
     },
     // {
@@ -2112,6 +2177,7 @@ if(uid != 'null' &&  date == 'null'){
         locality: '$streets.locality',
         _id: 1,
         displaycount: 1,
+        Pincode:1,
       },
     },
     {
@@ -2125,6 +2191,16 @@ if(uid != 'null' &&  date == 'null'){
     {
       $match: {
         $and: match,
+      },
+    },
+    {
+      $match: {
+        $and: dastatusMatch,
+      },
+    },
+    {
+      $match: {
+        $and: pincodeMatch,
       },
     },
     // {
@@ -2225,6 +2301,16 @@ if(uid != 'null' &&  date == 'null'){
     {
       $match: {
         $and: match,
+      },
+    },
+    {
+      $match: {
+        $and: dastatusMatch,
+      },
+    },
+    {
+      $match: {
+        $and: pincodeMatch,
       },
     },
     // {
