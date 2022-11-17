@@ -12,7 +12,9 @@ const { Product } = require('../models/product.model');
 const orderPayment = require('../models/orderpayment.model');
 const creditBillGroup = require('../models/b2b.creditBillGroup.model');
 const creditBill = require('../models/b2b.creditBill.model');
-const createGroup = async (body) => {
+
+
+const createGroup = async (body,userId) => {
   let serverdates = moment().format('YYYY-MM-DD');
   console.log(typeof serverdates);
   let servertime = moment().format('hh:mm a');
@@ -35,10 +37,10 @@ const createGroup = async (body) => {
   if (group.length < 9999 && group.length >= 999) {
     center = '0';
   }
-  let userId = '';
+  let user = '';
   let totalcount = group.length + 1;
   console.log(totalcount);
-  userId = 'G' + center + totalcount;
+  user = 'G' + center + totalcount;
   let centerdata = '';
   if (Buy.length < 9) {
     centerdata = '0000';
@@ -60,7 +62,7 @@ const createGroup = async (body) => {
   let values = {
     ...body,
     ...{
-      groupId: userId,
+      groupId: user,
       assignDate: serverdates,
       assignTime: servertime,
       pettyStockAllocateStatusNumber: num,
@@ -81,6 +83,7 @@ const createGroup = async (body) => {
         completeStatus: 'Assigned',
         deliveryExecutiveId: body.deliveryExecutiveId,
         WA_assigned_Time: moment(),
+        AssignedCreated: moment(),
       },
       { new: true }
     );
@@ -93,6 +96,11 @@ const createGroup = async (body) => {
       AssignedstatusPerDay: 1,
     });
   });
+
+
+  let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { new: true });
+  statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Assigned' });
+  statusActionArray.save();
 
   return wardAdminGroupcreate;
 };
@@ -2611,7 +2619,7 @@ const submitCashGivenByWDE = async (id, updateBody) => {
   return deliveryStatus;
 };
 
-const createAddOrdINGrp = async (id, body) => {
+const createAddOrdINGrp = async (id, body,userId) => {
   let datas = await wardAdminGroup.findById(id);
   if (!datas) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
@@ -2635,6 +2643,7 @@ const createAddOrdINGrp = async (id, body) => {
           completeStatus: 'Assigned',
           deliveryExecutiveId: body.deliveryExecutiveId,
           WA_assigned_Time: moment(),
+          AssignedCreated: moment(),
         },
         { new: true }
       );
@@ -2647,6 +2656,9 @@ const createAddOrdINGrp = async (id, body) => {
         AssignedstatusPerDay: 2,
       });
     }
+    let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { new: true });
+    statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Assigned' });
+    statusActionArray.save();
   });
 
   return 'works';

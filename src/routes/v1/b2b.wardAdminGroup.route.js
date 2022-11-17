@@ -4,7 +4,7 @@ const returnStockWastage = require('../../middlewares/returnStockWastage');
 const router = express.Router();
 const authorization = require('../../controllers/tokenVerify.controller');
 
-router.route('/craeteGroupId').post(wardAdminGroupController.createGroupOrder);
+router.route('/craeteGroupId').post(authorization,wardAdminGroupController.createGroupOrder);
 
 router.route('/update/orderpicked/:deliveryExecutiveId').put(wardAdminGroupController.updateOrderPickedStatus);
 
@@ -110,7 +110,7 @@ router.route('/get/shop/details/:id').get(wardAdminGroupController.getShopDetail
 
 router.route('/submit/pettyCash/AsGivenByWDE/:id').put(wardAdminGroupController.submitCashGivenByWDE);
 
-router.route('/update/groupDetails/:id').put(wardAdminGroupController.createAddOrdINGrp);
+router.route('/update/groupDetails/:id').put(authorization,wardAdminGroupController.createAddOrdINGrp);
 // router.route('/craete/billNo/:id').post(wardAdminGroupController.createBillNo);
 
 // DELIVERY EXECUTIVE
