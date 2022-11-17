@@ -470,6 +470,11 @@ if(uid != 'null' &&  date == 'null'){
     },
     {
       $match: {
+        $and: [{ status: { $eq: "data_approved" } }],
+      },
+    },
+    {
+      $match: {
         $and: dastatusMatch,
       },
     },
@@ -598,6 +603,11 @@ if(uid != 'null' &&  date == 'null'){
     },
     {
       $match: {
+        $and: [{ status: { $eq: "data_approved" } }],
+      },
+    },
+    {
+      $match: {
         $and: dastatusMatch,
       },
     },
@@ -704,6 +714,11 @@ if(uid != 'null' &&  date == 'null'){
     {
       $match: {
         $and: match,
+      },
+    },
+    {
+      $match: {
+        $and: [{ status: { $eq: "data_approved" } }],
       },
     },
     {
@@ -2066,6 +2081,11 @@ if(uid != 'null' &&  date == 'null'){
     },
     {
       $match: {
+        $and: [{ status: { $eq: "data_approved" } }],
+      },
+    },
+    {
+      $match: {
         $and: dastatusMatch,
       },
     },
@@ -2195,6 +2215,11 @@ if(uid != 'null' &&  date == 'null'){
     },
     {
       $match: {
+        $and: [{ status: { $eq: "data_approved" } }],
+      },
+    },
+    {
+      $match: {
         $and: dastatusMatch,
       },
     },
@@ -2301,6 +2326,11 @@ if(uid != 'null' &&  date == 'null'){
     {
       $match: {
         $and: match,
+      },
+    },
+    {
+      $match: {
+        $and: [{ status: { $eq: "data_approved" } }],
       },
     },
     {
