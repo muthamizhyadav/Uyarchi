@@ -110,7 +110,7 @@ const updateAcknowledgeSingle = async (id, updateBody, userId) => {
   return product;
 };
 
-const updateApprovedMultiSelect = async (body) => {
+const updateApprovedMultiSelect = async (body,userId) => {
   body.arr.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Approved', statusUpdate: moment(),approveCreated:  moment() }, { new: true });
   });
@@ -471,7 +471,7 @@ const updateProduct = async (id, updateBody,userId) => {
 
 //  UPDATE STATUS REJECTION
 
-const updateRejected = async (body) => {
+const updateRejected = async (body,userId) => {
   body.arr.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Acknowledged', statusUpdate: moment(), AcknowledgeCreated: moment()}, { new: true });
 
