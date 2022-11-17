@@ -45,5 +45,6 @@ router.route('/history_Assign_Reaasign_datasalesman/:id').get(telecallerAssignCo
 router.route('/assignShopsSalesmanOrder/:id/:page').get(telecallerAssignController.assignShopsSalesmanOrder);
 router.route('/assignShopssalesmandatewise/:id/:wardid/:page').get(telecallerAssignController.assignShopssalesmandatewise);
 router.route('/assignShopssalesmanOnlydatewise/:id/:wardid/:page').get(telecallerAssignController.assignShopssalesmanOnlydatewise);
-
+//pincode
+router.route('/pincode').get(telecallerAssignController.pincode);
 module.exports = router;
