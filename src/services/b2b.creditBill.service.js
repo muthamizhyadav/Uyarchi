@@ -2264,11 +2264,13 @@ const getCreditBillMaster = async (query) => {
   let search = query.search;
   let date = query.date;
   let user = query.user;
+  let singledate = query.singledate;
   let zoneMatch = { active: true };
   let wardMatch = { active: true };
   let searchMatch = { active: true };
   let dateMatch = { active: true };
   let userMatch = { active: true };
+  let dateM = { active: true };
   startdate = null;
   enddata = null;
   if (zone != null && zone != '') {
@@ -2293,6 +2295,9 @@ const getCreditBillMaster = async (query) => {
   if (user != null && user != '') {
     userMatch = { AssignedUserId: { $eq: user } };
   }
+  if (singledate != null && singledate != '') {
+    dateM = { $and: [{ Scheduledate: { $eq: singledate } }] };
+  }
   // console.log(zone);
   // console.log(ward);
   // console.log(search);
@@ -2303,7 +2308,7 @@ const getCreditBillMaster = async (query) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { status: { $eq: 'Delivered' } }],
+        $and: [dateMatch, dateM, { status: { $eq: 'Delivered' } }],
       },
     },
     {
