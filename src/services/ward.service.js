@@ -207,6 +207,52 @@ const getAllward = async () => {
 const wardParticularZoneData  = async (id) => {
     const data = await Ward.aggregate([
       { $match: { zoneId: id } },
+      {
+        $lookup: {
+          from: 'b2bshopclones',
+          localField: '_id',
+          foreignField: 'Wardid',
+          pipeline:[
+            {
+              $match: {
+                $or: [
+                  {
+                    $and: [
+                      { salesManStatus: { $ne: 'Assign' } },
+                      { salesManStatus: { $ne: 'tempReassign' } },
+                      { salesManStatus: { $eq: 'Reassign' } },
+                    ],
+                  },
+                  {
+                    $and: [
+                      { salesManStatus: { $ne: 'Assign' } },
+                      { salesManStatus: { $ne: 'tempReassign' } },
+                      { salesManStatus: { $eq: null } },
+                    ],
+                  },
+                ],
+              },
+            },
+          //      {
+          //   $group: {
+          //     _id: null,
+          //     unAssignCount: { $sum: 1 },
+          //   },
+          // },
+          ],
+          as: 'b2bshopclones',
+        },
+      },
+      // {
+      //   $unwind:"$b2bshopclones"
+      // },
+      {
+        $project:{
+          ward:1,
+          count:{ $size: '$b2bshopclones' },
+          // count:"$b2bshopclones.unAssignCount"
+        }
+      }
     ])
     return data;
 }
