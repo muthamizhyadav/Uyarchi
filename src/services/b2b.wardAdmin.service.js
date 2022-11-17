@@ -113,11 +113,13 @@ const updateAcknowledgeSingle = async (id, updateBody, userId) => {
 const updateApprovedMultiSelect = async (body,userId) => {
   body.arr.forEach(async (e) => {
     await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Approved', statusUpdate: moment(),approveCreated:  moment() }, { new: true });
-  });
 
-  let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: e }, { new: true });
+    let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: e }, { new: true });
     statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Approved' });
     statusActionArray.save();
+  });
+
+
 
   return 'status updated successfully';
 };
