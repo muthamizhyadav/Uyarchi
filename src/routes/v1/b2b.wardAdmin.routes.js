@@ -15,7 +15,7 @@ router.route('/getDetails/:type/:time/:status/:limit/:page').get(wardAdminContro
 // router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 // checked modified
 // checked
-router.route('/updateAcknowledge').put(wardAdminController.updateAcknowledge);
+router.route('/updateAcknowledge').put(authorization,wardAdminController.updateAcknowledge);
 // checked
 router.route('/updateApproved').put(authorization,wardAdminController.updateApproval);
 
