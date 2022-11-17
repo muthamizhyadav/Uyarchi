@@ -12,11 +12,11 @@ router.route('/update/pickedPettyStock/:id').put(wardAdminGroupController.update
 
 router.route('/update/pickedPettyCash/:id').put(wardAdminGroupController.updatePickedPettyCash);
 // new Api
-router.route('/update/pickedPettystock/collected/:id').put(wardAdminGroupController.updatePickedPettystockcollected);
+router.route('/update/pickedPettystock/collected/:id').put(authorization,wardAdminGroupController.updatePickedPettystockcollected);
 // new Api
-router.route('/update/pickedPettycash/collected/:id').put(wardAdminGroupController.updateManageStatuscashcollect);
+router.route('/update/pickedPettycash/collected/:id').put(authorization,wardAdminGroupController.updateManageStatuscashcollect);
 
-router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
+router.route('/update/deliveryStarted/:id').put(authorization,wardAdminGroupController.updateDeliveryStarted);
 
 router.route('/update/delivered/:id').put(authorization,wardAdminGroupController.updateDeliveryCompleted);
 router.route('/credit/update/delivered/:id').put(authorization, wardAdminGroupController.creditupdateDeliveryCompleted);
@@ -65,7 +65,7 @@ router.route('/Update/orderCompleted/:id').put(wardAdminGroupController.orderCom
 
 // router.route('/update/Deliverystart/:id').put(wardAdminGroupController.Deliverystart);
 
-router.route('/update/deliveryCompleted/:id').put(wardAdminGroupController.deliveryCompleted);
+router.route('/update/deliveryCompleted/:id').put(authorization,wardAdminGroupController.deliveryCompleted);
 
 router.route('/get/getPettyStockDetails/:id/:page').get(wardAdminGroupController.getPettyStockDetails);
 

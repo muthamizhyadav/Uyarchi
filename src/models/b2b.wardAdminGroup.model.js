@@ -171,6 +171,32 @@ const wardAdminGroupSchema = new mongoose.Schema({
   },
   CashUid: {
     type: String
+  },
+  CashPickedCreated:{
+    type: Date
+  },
+  CashPickedUserId: {
+    type: String
+  },
+  StockPickedCreated:{
+    type: Date
+  },
+  StockPickedUserId: {
+    type: String
+  },
+  DeliveryStartCreate: {
+    type: Date
+
+  },
+  DeliveryStartUserId: {
+    type: String
+
+  },
+  deliveryCompleteCreate: {
+    type: Date
+  },
+  deliveryCompleteUserId: {
+    type: String
   }
 });
 

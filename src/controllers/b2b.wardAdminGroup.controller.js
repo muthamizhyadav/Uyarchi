@@ -27,7 +27,7 @@ const updatePickedPettyStock = catchAsync(async (req, res) => {
 });
 
 const updateManageStatuscashcollect = catchAsync(async (req, res) => {
-  const pickedPettyStock = await wardAdminGroupService.updateManageStatuscashcollect(req.params.id, req.body);
+  const pickedPettyStock = await wardAdminGroupService.updateManageStatuscashcollect(req.params.id, req.body,req.userId);
   res.send(pickedPettyStock);
 });
 
@@ -37,7 +37,7 @@ const updatePickedPettyCash = catchAsync(async (req, res) => {
 });
 
 const updatePickedPettystockcollected = catchAsync(async (req, res) => {
-  const pickedPettyCash = await wardAdminGroupService.updateManageStatuscollected(req.params.id, req.body);
+  const pickedPettyCash = await wardAdminGroupService.updateManageStatuscollected(req.params.id, req.body,req.userId);
   res.send(pickedPettyCash);
 });
 
@@ -55,7 +55,7 @@ const updateAllocate = catchAsync(async (req, res) => {
 });
 
 const updateDeliveryStarted = catchAsync(async (req, res) => {
-  const deleiveryStarted = await wardAdminGroupService.delevery_start(req.params.id, req.body);
+  const deleiveryStarted = await wardAdminGroupService.delevery_start(req.params.id, req.body,req.userId);
   res.send(deleiveryStarted);
 });
 
@@ -197,7 +197,7 @@ const Deliverystart = catchAsync(async (req, res) => {
 });
 
 const deliveryCompleted = catchAsync(async (req, res) => {
-  const completed = await wardAdminGroupService.pettyStockSubmit(req.params.id, req.body);
+  const completed = await wardAdminGroupService.pettyStockSubmit(req.params.id, req.body,req.userId);
   res.send(completed);
 });
 

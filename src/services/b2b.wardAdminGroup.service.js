@@ -378,7 +378,7 @@ const updateordercomplete = async (id, updateBody) => {
   });
   return Manage;
 };
-const delevery_start = async (id, updateBody) => {
+const delevery_start = async (id, updateBody,userId) => {
   let Manage = await getById(id);
   if (!Manage) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
@@ -386,7 +386,7 @@ const delevery_start = async (id, updateBody) => {
   Manage = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
     {
-      manageDeliveryStatus: 'Delivery start',
+      manageDeliveryStatus: 'Delivery start',DeliveryStartCreate: moment(),DeliveryStartUserId: userId
     },
     { new: true }
   );
@@ -397,7 +397,7 @@ const delevery_start = async (id, updateBody) => {
   return Manage;
 };
 
-const updateManageStatuscashcollect = async (id, updateBody) => {
+const updateManageStatuscashcollect = async (id, updateBody,userId) => {
   let Manage = await getById(id);
   if (!Manage) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
@@ -405,7 +405,7 @@ const updateManageStatuscashcollect = async (id, updateBody) => {
   Manage = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
     {
-      manageDeliveryStatus: 'petty cash picked',
+      manageDeliveryStatus: 'petty cash picked', pettyCashPickedCreated: moment(),CashPickedUserId: userId
     },
     { new: true }
   );
@@ -429,7 +429,7 @@ const updatemismatchStockStatus = async (id, updateBody) => {
   return data;
 };
 
-const updateManageStatuscollected = async (id, updateBody) => {
+const updateManageStatuscollected = async (id, updateBody,userId) => {
   let Manage = await getById(id);
   if (!Manage) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
@@ -437,7 +437,7 @@ const updateManageStatuscollected = async (id, updateBody) => {
   Manage = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
     {
-      manageDeliveryStatus: 'petty stock picked',
+      manageDeliveryStatus: 'petty stock picked',StockPickedCreated: moment(),StockPickedUserId: userId
     },
     { new: true }
   );
@@ -735,14 +735,14 @@ const returnStock = async (id) => {
   return values;
 };
 
-const pettyStockSubmit = async (id, updateBody) => {
+const pettyStockSubmit = async (id, updateBody,userId) => {
   let deliveryStatus = await wardAdminGroup.findById(id);
   if (!deliveryStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Group not found');
   }
   deliveryStatus = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
-    { manageDeliveryStatus: 'Delivery Completed' },
+    { manageDeliveryStatus: 'Delivery Completed' , deliveryCompleteCreate: moment() , deliveryCompleteUserId: userId },
     { new: true }
   );
 
