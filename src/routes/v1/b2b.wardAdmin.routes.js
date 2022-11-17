@@ -1,13 +1,14 @@
 const express = require('express');
 const wardAdminController = require('../../controllers/b2b.wardAdmin.controller');
 const router = express.Router();
+const authorization = require('../../controllers/tokenVerify.controller');
 router.route('/create/data').post(wardAdminController.createdata);
 // checked
 router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusMatchingAppOrModi);
 
 router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 // checked modified
-router.route('/updateProductById/:orderId').put(wardAdminController.updateProduct);
+router.route('/updateProductById/:orderId').put(authorization,wardAdminController.updateProduct);
 
 // router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusMatchingAppOrModi);
 router.route('/getDetails/:type/:time/:status/:limit/:page').get(wardAdminController.statusMatchingAppOrModi);
@@ -23,13 +24,13 @@ router.route('/updatePacked').put(wardAdminController.updatePackedStatus);
 // checked
 router.route('/updateRejected').put(wardAdminController.updateRejectionStatus);
 // Checked;
-router.route('/updateApproved/:id').put(wardAdminController.updateApproved);
+router.route('/updateApproved/:id').put(authorization,wardAdminController.updateApproved);
 
 // checked not Use
 router.route('/updateModified/:id').put(wardAdminController.updateModified);
 
 // checked Modified
-router.route('/updateRejected/:id').put(wardAdminController.updateRejected);
+router.route('/updateRejected/:id').put(authorization,wardAdminController.updateRejected);
 
 router.route('/wardloadingExecutive/updatePacked/:id').put(wardAdminController.updatePacked);
 
@@ -53,7 +54,7 @@ router.route('/delivery/Executive/Name/:id').put(wardAdminController.deliveryexe
 
 router.route('/Array/craeteArrayData').post(wardAdminController.createArrayData);
 // checked
-router.route('/update/acknowleded/status/single/:id').put(wardAdminController.updateAcknowledgeSingle);
+router.route('/update/acknowleded/status/single/:id').put(authorization,wardAdminController.updateAcknowledgeSingle);
 
 router.route('/get/status/Count').get(wardAdminController.countStatus);
 // checked Modified

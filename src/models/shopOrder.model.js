@@ -305,6 +305,25 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     type: String,
     default: 'Pending',
   },
+  AssignedCreated: {
+    type: Date
+  },
+  statusActionArray: {
+    type: Array,
+    default: [],
+  },
+  AcknowledgeCreated: {
+    type: Date
+  },
+  rejectCreated: {
+    type: Date
+  },
+  approveCreated:{
+    type: Date
+  },
+  modifiedCreated: {
+    type: Date
+  }
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);

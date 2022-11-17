@@ -29,7 +29,7 @@ const getproductDetails = catchAsync(async (req, res) => {
 // })
 
 const updateProduct = catchAsync(async (req, res) => {
-  const product = await wardAdminService.updateProduct(req.params.orderId, req.body);
+  const product = await wardAdminService.updateProduct(req.params.orderId, req.body,req.userId);
   res.send(product);
 });
 
@@ -58,7 +58,7 @@ const updatePackedStatus = catchAsync(async (req, res) => {
 });
 
 const updateApproved = catchAsync(async (req, res) => {
-  const approved = await wardAdminService.updateStatusApprovedOrModified(req.params.id, req.body);
+  const approved = await wardAdminService.updateStatusApprovedOrModified(req.params.id, req.body,req.userId);
   res.status(200).send(approved);
 });
 
@@ -68,7 +68,7 @@ const updateModified = catchAsync(async (req, res) => {
 });
 
 const updateRejected = catchAsync(async (req, res) => {
-  const rejected = await wardAdminService.updateStatusrejectOrModified(req.params.id, req.body);
+  const rejected = await wardAdminService.updateStatusrejectOrModified(req.params.id, req.body,req.userId);
   res.status(200).send(rejected);
 });
 
@@ -115,7 +115,7 @@ const wardDeliveryExecutive = catchAsync(async (req, res) => {
 });
 
 const updateAcknowledgeSingle = catchAsync(async (req, res) => {
-  const Acknowledged = await wardAdminService.updateAcknowledgeSingle(req.params.id, req.body);
+  const Acknowledged = await wardAdminService.updateAcknowledgeSingle(req.params.id, req.body,req.userId);
   res.send(Acknowledged);
 });
 

@@ -7,7 +7,7 @@ const {wardAdminGroup} = require('../models/b2b.wardAdminGroup.model');
 const pettyStockModel = require('../models/b2b.pettyStock.model');
 
 const createGroupOrder = catchAsync(async (req, res) => {
-  const shopOrderClone = await wardAdminGroupService.createGroup(req.body);
+  const shopOrderClone = await wardAdminGroupService.createGroup(req.body,req.userId);
   res.send(shopOrderClone);
 });
 
@@ -294,7 +294,7 @@ const submitCashGivenByWDE = catchAsync(async (req, res) => {
 });
 
 const createAddOrdINGrp = catchAsync(async (req, res) => {
-  const cashAsGivenByWDE = await wardAdminGroupService.createAddOrdINGrp(req.params.id, req.body);
+  const cashAsGivenByWDE = await wardAdminGroupService.createAddOrdINGrp(req.params.id, req.body,req.userId);
   res.send(cashAsGivenByWDE);
 });
 
