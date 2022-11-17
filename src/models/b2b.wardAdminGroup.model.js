@@ -153,6 +153,21 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: Array,
     default: [],
 
+  },
+  PettyStockCreate: {
+    type: Date
+  },
+  PettyCashCreate: {
+    type: Date
+  },
+  pettyStockUnAllocateCreated: {
+    type: Date,
+  },
+  pettyCashNotAllocateCreate: {
+    type: Date
+  },
+  Uid: {
+    type: String
   }
 });
 

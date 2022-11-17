@@ -42,11 +42,11 @@ const updatePickedPettystockcollected = catchAsync(async (req, res) => {
 });
 
 const updateDontAllocate = catchAsync(async (req, res) => {
-  const notAloocate = await wardAdminGroupService.updateManageStatus(req.params.id, req.body);
+  const notAloocate = await wardAdminGroupService.updateManageStatus(req.params.id, req.body,req.userId);
   res.send(notAloocate);
 });
 const updateDontAllocatecash = catchAsync(async (req, res) => {
-  const notAloocate = await wardAdminGroupService.updateManageStatuscash(req.params.id, req.body);
+  const notAloocate = await wardAdminGroupService.updateManageStatuscash(req.params.id, req.body,req.userId);
   res.send(notAloocate);
 });
 const updateAllocate = catchAsync(async (req, res) => {
@@ -182,7 +182,7 @@ const getReturnWDEtoWLE = catchAsync(async (req, res) => {
 // });
 
 const pettyCashSubmit = catchAsync(async (req, res) => {
-  const pettystock = await wardAdminGroupService.pettyCashSubmit(req.params.id, req.body);
+  const pettystock = await wardAdminGroupService.pettyCashSubmit(req.params.id, req.body,req.userId);
   res.send(pettystock);
 });
 
@@ -241,7 +241,7 @@ const getAllGroup = catchAsync(async (req, res) => {
 });
 
 const pettyStockCreate = catchAsync(async (req, res) => {
-  const shopOrder = await wardAdminGroupService.pettyStockCreate(req.params.id, req.body);
+  const shopOrder = await wardAdminGroupService.pettyStockCreate(req.params.id, req.body,req.userId);
   res.send(shopOrder);
 });
 
