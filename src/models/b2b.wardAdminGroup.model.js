@@ -166,7 +166,10 @@ const wardAdminGroupSchema = new mongoose.Schema({
   pettyCashNotAllocateCreate: {
     type: Date
   },
-  Uid: {
+  StockUid: {
+    type: String
+  },
+  CashUid: {
     type: String
   }
 });
