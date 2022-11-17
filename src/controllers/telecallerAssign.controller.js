@@ -47,7 +47,9 @@ const getnotAssignShops = catchAsync(async (req, res) => {
     req.params.page,
     req.params.limit,
     req.params.uid,
-    req.params.date
+    req.params.date,
+    req.params.dastatus,
+    req.params.pincode,
   );
   res.send(data);
 });
@@ -132,7 +134,9 @@ const getnotAssignsalesmanOrderShops = catchAsync(async (req, res) => {
     req.params.page,
     req.params.limit,
     req.params.uid,
-    req.params.date
+    req.params.date,
+    req.params.dastatus,
+    req.params.pincode,
   );
   res.send(data);
 });

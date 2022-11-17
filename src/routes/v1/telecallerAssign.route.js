@@ -12,7 +12,7 @@ router.route('/gettelecallerheadTelecallerdata/:id').get(telecallerAssignControl
 router.route('/createTelecallerShop').post(telecallerAssignController.createTelecallerShop);
 router.route('/getAllTelecaller').get(telecallerAssignController.getAllTelecaller);
 router.route('/getTelecallerAssignedShops/:id').get(telecallerAssignController.getTelecallerAssignedShops);
-router.route('/getnotAssignShops/:zone/:id/:street/:page/:limit/:uid/:date').get(telecallerAssignController.getnotAssignShops);
+router.route('/getnotAssignShops/:zone/:id/:street/:page/:limit/:uid/:date/:dastatus/:pincode').get(telecallerAssignController.getnotAssignShops);
 router.route('/getUsersWith_skiped/:id').get(telecallerAssignController.getUsersWith_skiped);
 router.route('/Return_Assign_To_telecaller/:id').put(telecallerAssignController.Return_Assign_To_telecaller);
 router.route('/createtemperaryAssigndata').post(telecallerAssignController.createtemperaryAssigndata);
@@ -34,7 +34,7 @@ router.route('/getsalemanOrderSalesman/:id').get(telecallerAssignController.gets
 router.route('/createsalesmanOrderShop').post(telecallerAssignController.createsalesmanOrderShop);
 router.route('/getAllSalesman').get(telecallerAssignController.getAllSalesman);
 router.route('/getsalesmanOrderAssignedShops/:id').get(telecallerAssignController.getsalesmanOrderAssignedShops);
-router.route('/getnotAssignsalesmanOrderShops/:zone/:id/:street/:page/:limit/:uid/:date').get(telecallerAssignController.getnotAssignsalesmanOrderShops);
+router.route('/getnotAssignsalesmanOrderShops/:zone/:id/:street/:page/:limit/:uid/:date/:dastatus/:pincode').get(telecallerAssignController.getnotAssignsalesmanOrderShops);
 router.route('/getUserssalesmanWith_skiped/:id').get(telecallerAssignController.getUserssalesmanWith_skiped);
 router.route('/Return_Assign_To_salesmanOrder/:id').put(telecallerAssignController.Return_Assign_To_salesmanOrder);
 router.route('/createsalesmantemperaryAssigndata').post(telecallerAssignController.createsalesmantemperaryAssigndata);
