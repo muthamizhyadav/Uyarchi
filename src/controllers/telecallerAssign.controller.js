@@ -185,6 +185,11 @@ const history_Assign_Reaasign_datasalesman = catchAsync(async (req, res) => {
   const data = await telecallerService.history_Assign_Reaasign_datasalesman(req.params.id);
   res.send(data);
 });
+
+const pincode = catchAsync(async (req, res) => {
+  const data = await telecallerService.pincode();
+  res.send(data);
+});
 module.exports = {
   createtelecallerAssignReassign,
   getAllTelecallerHead,
@@ -218,4 +223,5 @@ module.exports = {
   assignShopssalesmanOnlydatewise,
   history_Assign_Reaasign_datatelecaller,
   history_Assign_Reaasign_datasalesman,
+  pincode,
 };
