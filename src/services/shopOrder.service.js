@@ -3614,6 +3614,36 @@ const OGorders_MDorders = async (id) => {
     },
     {
       $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'product',
+            },
+          },
+          {
+            $unwind: '$product',
+          },
+          {
+            $project: {
+              _id: 1,
+              quantity: 1,
+              priceperkg: 1,
+              productName: '$product.productTitle',
+              amount: { $multiply: ['$quantity', '$priceperkg'] },
+            },
+          },
+        ],
+        as: 'productsByorders',
+      },
+    },
+    {
+      $lookup: {
         from: 'orderpayments',
         localField: '_id',
         foreignField: 'orderId',
@@ -3737,6 +3767,8 @@ const OGorders_MDorders = async (id) => {
         modifiedStatus: 1,
         deliveryExecutive: { $ifNull: ['$deliveryExecutive.name', 'Rejected'] },
         groupId: { $ifNull: ['$orderassign.groupId', 'Rejected'] },
+        productByOrder: '$productsByorders',
+        created: 1,
       },
     },
   ]);
