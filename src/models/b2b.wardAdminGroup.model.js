@@ -197,6 +197,12 @@ const wardAdminGroupSchema = new mongoose.Schema({
   },
   deliveryCompleteUserId: {
     type: String
+  },
+  orderPickedCreate :{
+    type: Date
+  },
+  orderPickedUserId: {
+    type: String
   }
 });
 

@@ -96,7 +96,7 @@ const updateManageStatus = catchAsync(async (req, res) => {
 });
 
 const updateManagecompleted = catchAsync(async (req, res) => {
-  const data = await wardAdminGroupService.updateordercomplete(req.params.id, req.body);
+  const data = await wardAdminGroupService.updateordercomplete(req.params.id, req.body,req.userId);
   res.send(data);
 });
 

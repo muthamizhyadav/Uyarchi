@@ -360,7 +360,7 @@ const updateManageStatus = async (id, updateBody,userId) => {
   );
   return Manage;
 };
-const updateordercomplete = async (id, updateBody) => {
+const updateordercomplete = async (id, updateBody,userId) => {
   let Manage = await getById(id);
   if (!Manage) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
@@ -368,7 +368,7 @@ const updateordercomplete = async (id, updateBody) => {
   Manage = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
     {
-      manageDeliveryStatus: 'Order Picked',
+      manageDeliveryStatus: 'Order Picked', orderPickedCreate : moment(),orderPickedUserId: userId
     },
     { new: true }
   );
