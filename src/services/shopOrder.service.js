@@ -3778,7 +3778,7 @@ const OGorders_MDorders = async (id) => {
       },
     },
   ]);
-  return { values: values, modified: modified.length > 0 ? modified[0] : modified };
+  return { values: values[0], modified: modified.length > 0 ? modified[0] : modified };
 };
 
 const details_Of_Payment_by_Id = async (id) => {
