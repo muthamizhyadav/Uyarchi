@@ -10,7 +10,7 @@ const creditBill = require('../models/b2b.creditBill.model');
 const creditBillPaymentModel = require('../models/b2b.creditBillPayments.History.model');
 const { Roles } = require('../models');
 const { Users } = require('../models/B2Busers.model');
-const OrderPayment = require("../models/orderpayment.model")
+const OrderPayment = require('../models/orderpayment.model');
 
 const getShopWithBill = async (page) => {
   let values = await ShopOrderClone.aggregate([
@@ -214,8 +214,8 @@ const getsalesmanName = async () => {
 };
 
 const getShopHistory = async (userId, id) => {
-  console.log(id)
-  console.log(userId)
+  console.log(id);
+  console.log(userId);
   // { AssignedUserId: { $eq: userId } },
   let values = await creditBill.aggregate([
     {
@@ -262,7 +262,7 @@ const getShopHistory = async (userId, id) => {
       },
     },
     {
-      $unwind: "$productorderclones"
+      $unwind: '$productorderclones',
     },
     {
       $lookup: {
@@ -271,38 +271,38 @@ const getShopHistory = async (userId, id) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $group: { _id: null, price: { $sum: '$paidAmt' } }
-          }
+            $group: { _id: null, price: { $sum: '$paidAmt' } },
+          },
         ],
-        as: 'orderpaymentsData'
-      }
+        as: 'orderpaymentsData',
+      },
     },
-    { $unwind: "$orderpaymentsData" },
+    { $unwind: '$orderpaymentsData' },
     {
       $lookup: {
         from: 'shoporderclones',
         localField: 'orderId',
         foreignField: '_id',
-        as: 'shoporderclones'
-      }
+        as: 'shoporderclones',
+      },
     },
-    { $unwind: "$shoporderclones" },
+    { $unwind: '$shoporderclones' },
     {
       $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
-        as: 'b2bshopclones'
-      }
+        as: 'b2bshopclones',
+      },
     },
-    { $unwind: "$b2bshopclones" },
+    { $unwind: '$b2bshopclones' },
     {
       $lookup: {
         from: 'orderpayments',
         localField: 'orderId',
         foreignField: 'orderId',
-        as: 'orderpaymentsData_value'
-      }
+        as: 'orderpaymentsData_value',
+      },
     },
     {
       $project: {
@@ -310,21 +310,20 @@ const getShopHistory = async (userId, id) => {
         orderId: 1,
         shopId: 1,
         date: 1,
-        SName: "$b2bshopclones.SName",
-        OrderId: "$shoporderclones.OrderId",
-        customerBillId: "$shoporderclones.customerBillId",
-        created: "$shoporderclones.created",
-        TotalAmount: { $round: ["$productorderclones.price", 0] },
-        paidAmount: "$orderpaymentsData.price",
-        orderpaymentsData_value: "$orderpaymentsData_value",
+        SName: '$b2bshopclones.SName',
+        OrderId: '$shoporderclones.OrderId',
+        customerBillId: '$shoporderclones.customerBillId',
+        created: '$shoporderclones.created',
+        TotalAmount: { $round: ['$productorderclones.price', 0] },
+        paidAmount: '$orderpaymentsData.price',
+        orderpaymentsData_value: '$orderpaymentsData_value',
         Schedulereason: 1,
         reasonScheduleOrDate: 1,
-        status: 1
-
-      }
+        status: 1,
+      },
     },
   ]);
-  let group = await creditBillGroup.findById(id)
+  let group = await creditBillGroup.findById(id);
 
   return { value: values, groupstatus: group.receiveStatus };
 };
@@ -337,7 +336,6 @@ const updateAssignedStatusPerBill = async (id) => {
   Status = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { creditBillAssignedStatus: 'Assigned' }, { new: true });
   return Status;
 };
-
 
 const createGroup = async (body) => {
   let serverdates = moment().format('YYYY-MM-DD');
@@ -380,7 +378,7 @@ const createGroup = async (body) => {
   body.Orderdatas.forEach(async (e) => {
     let orderId = e._id;
     let shopId = e.shopId;
-    await ShopOrderClone.findByIdAndUpdate({ _id: orderId }, { creditBillAssignedStatus: "Assigned" });
+    await ShopOrderClone.findByIdAndUpdate({ _id: orderId }, { creditBillAssignedStatus: 'Assigned' });
     await creditBill.create({
       AssignedUserId: body.AssignedUserId,
       orderId: orderId,
@@ -598,7 +596,11 @@ const getNotAssignData = async (page) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }, { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }],
+        $and: [
+          { creditBillAssignedStatus: { $ne: 'Assigned' } },
+          { status: { $eq: 'Delivered' } },
+          { statusOfBill: { $eq: 'Pending' } },
+        ],
       },
     },
     {
@@ -674,7 +676,6 @@ const getNotAssignData = async (page) => {
     // },
     // { $unwind: '$creditbillsData'},
 
-
     {
       $lookup: {
         from: 'orderpayments',
@@ -682,9 +683,9 @@ const getNotAssignData = async (page) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $sort: { created: -1 }
+            $sort: { created: -1 },
           },
-          { $limit: 1 }
+          { $limit: 1 },
         ],
         as: 'orderpayments',
       },
@@ -712,8 +713,8 @@ const getNotAssignData = async (page) => {
         totalHistory: {
           $sum: '$creditData.historyDtaa.amountPayingWithDEorSM',
         },
-        lastPaidAmount: "$orderpayments.paidAmt",
-        lastPaidDate: "$orderpayments.created",
+        lastPaidAmount: '$orderpayments.paidAmt',
+        lastPaidDate: '$orderpayments.created',
         paidAmount: '$paymentData.price',
 
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
@@ -740,7 +741,11 @@ const getNotAssignData = async (page) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ creditBillAssignedStatus: { $ne: 'Assigned' } }, { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }],
+        $and: [
+          { creditBillAssignedStatus: { $ne: 'Assigned' } },
+          { status: { $eq: 'Delivered' } },
+          { statusOfBill: { $eq: 'Pending' } },
+        ],
       },
     },
     {
@@ -815,9 +820,6 @@ const getNotAssignData = async (page) => {
     //   }
     // },
     // { $unwind: '$creditbillsData'},
-
-
-
 
     {
       $project: {
@@ -964,8 +966,7 @@ const getShopPendingByPassingShopId = async (id) => {
         paidAmount: '$paymentData.price',
 
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
-        amountPayingByPayAndAct: "$datasss.amountPayingWithDEorSM",
-
+        amountPayingByPayAndAct: '$datasss.amountPayingWithDEorSM',
 
         condition1: {
           $cond: {
@@ -991,8 +992,7 @@ const getShopPendingByPassingShopId = async (id) => {
 
         pendingAmount: 1,
         amountPayingByPayAndAct: 1,
-        BalancePendingAmount: { $subtract: ["$BillAmount", "$amountPayingByPayAndAct"] },
-
+        BalancePendingAmount: { $subtract: ['$BillAmount', '$amountPayingByPayAndAct'] },
 
         condition1: {
           $cond: {
@@ -1003,7 +1003,6 @@ const getShopPendingByPassingShopId = async (id) => {
         },
       },
     },
-
   ]);
   return values;
 };
@@ -1255,7 +1254,7 @@ const getGroupAndBill = async (AssignedUserId) => {
   let data = await creditBillGroup.aggregate([
     {
       $match: {
-        $and: [{ AssignedUserId: { $eq: AssignedUserId } }, { receiveStatus: { $ne: "received" } }],
+        $and: [{ AssignedUserId: { $eq: AssignedUserId } }, { receiveStatus: { $ne: 'received' } }],
       },
     },
     {
@@ -1301,7 +1300,6 @@ const getGroupAndBill = async (AssignedUserId) => {
               ],
               as: 'productData',
             },
-
           },
           {
             $unwind: {
@@ -1330,19 +1328,19 @@ const getGroupAndBill = async (AssignedUserId) => {
           },
           {
             $project: {
-              price: "$productData.price",
-              orderpayments: "$orderpayments",
-              orderpaymentsnow: "$orderpaymentsnow"
-            }
+              price: '$productData.price',
+              orderpayments: '$orderpayments',
+              orderpaymentsnow: '$orderpaymentsnow',
+            },
           },
           {
             $group: {
               _id: null,
-              totalAmount: { $sum: "$price" },
+              totalAmount: { $sum: '$price' },
               billCount: { $sum: 1 },
-              totalpaidAmount: { $sum: "$orderpayments.price" }
-            }
-          }
+              totalpaidAmount: { $sum: '$orderpayments.price' },
+            },
+          },
         ],
         as: 'creditBillData',
       },
@@ -1379,17 +1377,17 @@ const getGroupAndBill = async (AssignedUserId) => {
         foreignField: 'creditID',
         pipeline: [
           {
-            $match: { paymentMethod: "UPI" }
+            $match: { paymentMethod: 'UPI' },
           },
           {
-            $group: { _id: { paymentMethod: "$paymentMethod" }, price: { $sum: '$paidAmt' } },
+            $group: { _id: { paymentMethod: '$paymentMethod' }, price: { $sum: '$paidAmt' } },
           },
           {
             $project: {
-              paymentMethod: "$_id.paymentMethod",
-              price: 1
-            }
-          }
+              paymentMethod: '$_id.paymentMethod',
+              price: 1,
+            },
+          },
         ],
         as: 'creditbills_type',
       },
@@ -1407,17 +1405,17 @@ const getGroupAndBill = async (AssignedUserId) => {
         foreignField: 'creditID',
         pipeline: [
           {
-            $match: { paymentMethod: "By Cash" }
+            $match: { paymentMethod: 'By Cash' },
           },
           {
-            $group: { _id: { paymentMethod: "$paymentMethod" }, price: { $sum: '$paidAmt' } },
+            $group: { _id: { paymentMethod: '$paymentMethod' }, price: { $sum: '$paidAmt' } },
           },
           {
             $project: {
-              paymentMethod: "$_id.paymentMethod",
-              price: 1
-            }
-          }
+              paymentMethod: '$_id.paymentMethod',
+              price: 1,
+            },
+          },
         ],
         as: 'creditbills_type_cash',
       },
@@ -1436,10 +1434,10 @@ const getGroupAndBill = async (AssignedUserId) => {
         pipeline: [
           {
             $group: {
-              _id: { orderId: "$orderId" },
-              count: { $sum: 1 }
-            }
-          }
+              _id: { orderId: '$orderId' },
+              count: { $sum: 1 },
+            },
+          },
         ],
         as: 'creditID',
       },
@@ -1487,7 +1485,6 @@ const getGroupAndBill = async (AssignedUserId) => {
               ],
               as: 'productData',
             },
-
           },
           {
             $unwind: {
@@ -1516,23 +1513,23 @@ const getGroupAndBill = async (AssignedUserId) => {
           },
           {
             $project: {
-              price: "$productData.price",
-              orderpayments: "$orderpayments",
-              orderpaymentsnow: "$orderpaymentsnow",
-              pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } }
-            }
+              price: '$productData.price',
+              orderpayments: '$orderpayments',
+              orderpaymentsnow: '$orderpaymentsnow',
+              pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
+            },
           },
           {
             $match: {
-              pendingAmount: { $ne: 0 }
-            }
+              pendingAmount: { $ne: 0 },
+            },
           },
           {
             $group: {
               _id: null,
               billCount: { $sum: 1 },
-            }
-          }
+            },
+          },
         ],
         as: 'creditBillDatapending',
       },
@@ -1550,24 +1547,22 @@ const getGroupAndBill = async (AssignedUserId) => {
         assignedDate: 1,
         assignedTime: 1,
         receiveStatus: 1,
-        totalAmount: "$creditBillData.totalAmount",
-        billCount: "$creditBillData.billCount",
-        totalpaidAmount: "$creditBillData.totalpaidAmount",
-        collectedAmount: "$orderpaymentsnow.price",
-        creditbills_type_upi: "$creditbills_type.price",
-        creditbills_type_cash: "$creditbills_type_cash.price",
-        collectedbillCount: { $size: "$creditID" },
-        pendingbillCount: "$creditBillDatapending.billCount",
-        noncollectedbillCount: { $subtract: ['$creditBillData.billCount', { $size: "$creditID" }] }
-      }
-    }
-
+        totalAmount: '$creditBillData.totalAmount',
+        billCount: '$creditBillData.billCount',
+        totalpaidAmount: '$creditBillData.totalpaidAmount',
+        collectedAmount: '$orderpaymentsnow.price',
+        creditbills_type_upi: '$creditbills_type.price',
+        creditbills_type_cash: '$creditbills_type_cash.price',
+        collectedbillCount: { $size: '$creditID' },
+        pendingbillCount: '$creditBillDatapending.billCount',
+        noncollectedbillCount: { $subtract: ['$creditBillData.billCount', { $size: '$creditID' }] },
+      },
+    },
   ]);
   return data;
 };
 
 const getDetailsByPassGroupId = async (id) => {
-
   let values = await ShopOrderClone.aggregate([
     {
       $lookup: {
@@ -1627,11 +1622,9 @@ const getDetailsByPassGroupId = async (id) => {
         foreignField: 'orderId',
         pipeline: [
           {
-
             $match: {
-              $and: [{ creditBillStatus: { $eq: "creditBill" } }],
+              $and: [{ creditBillStatus: { $eq: 'creditBill' } }],
             },
-
           },
         ],
 
@@ -1687,12 +1680,12 @@ const getDetailsByPassGroupId = async (id) => {
         pipeline: [
           {
             $sort: {
-              created: -1
-            }
+              created: -1,
+            },
           },
           {
             $limit: 1,
-          }
+          },
         ],
         as: 'creditBillData_last',
       },
@@ -1705,20 +1698,19 @@ const getDetailsByPassGroupId = async (id) => {
     },
     {
       $project: {
-
         customerBillId: 1,
         customerBilldate: 1,
         customerBilltime: 1,
-        lastPaymentMode: "$paymentDatadata.payment",
-        lastPaymentType: "$paymentDatadata.paymentMethod",
+        lastPaymentMode: '$paymentDatadata.payment',
+        lastPaymentType: '$paymentDatadata.paymentMethod',
         shopNmae: '$Orderdatas.shopNmae',
         BalanceAmount: '$Orderdatas.pendingAmount',
         shopNmae: '$shopNameData.SName',
         BillAmount: { $round: ['$productData.price', 0] },
         paidAmount: '$paymentData.price',
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
-        paymentMethod: "$creditBillData_last.paymentMethod",
-        payment_type: "$creditBillData_last.payment",
+        paymentMethod: '$creditBillData_last.paymentMethod',
+        payment_type: '$creditBillData_last.payment',
         condition1: {
           $cond: {
             if: { $ne: [{ $round: { $subtract: ['$productData.price', '$paymentData.price'] } }, 0] },
@@ -1727,11 +1719,7 @@ const getDetailsByPassGroupId = async (id) => {
           },
         },
       },
-
     },
-
-
-
   ]);
   let total = await ShopOrderClone.aggregate([
     {
@@ -1792,11 +1780,9 @@ const getDetailsByPassGroupId = async (id) => {
         foreignField: 'orderId',
         pipeline: [
           {
-
             $match: {
-              $and: [{ creditBillStatus: { $eq: "creditBill" } }],
+              $and: [{ creditBillStatus: { $eq: 'creditBill' } }],
             },
-
           },
         ],
 
@@ -1844,9 +1830,7 @@ const getDetailsByPassGroupId = async (id) => {
     },
 
     { $unwind: '$productData' },
-
   ]);
-
 
   let totalTrue = await ShopOrderClone.aggregate([
     {
@@ -1907,11 +1891,9 @@ const getDetailsByPassGroupId = async (id) => {
         foreignField: 'orderId',
         pipeline: [
           {
-
             $match: {
-              $and: [{ creditBillStatus: { $eq: "creditBill" } }],
+              $and: [{ creditBillStatus: { $eq: 'creditBill' } }],
             },
-
           },
         ],
 
@@ -1962,12 +1944,11 @@ const getDetailsByPassGroupId = async (id) => {
 
     {
       $project: {
-
         customerBillId: 1,
         customerBilldate: 1,
         customerBilltime: 1,
-        lastPaymentMode: "$paymentDatadata.payment",
-        lastPaymentType: "$paymentDatadata.paymentMethod",
+        lastPaymentMode: '$paymentDatadata.payment',
+        lastPaymentType: '$paymentDatadata.paymentMethod',
         shopNmae: '$Orderdatas.shopNmae',
         BalanceAmount: '$Orderdatas.pendingAmount',
         shopNmae: '$shopNameData.SName',
@@ -1982,19 +1963,12 @@ const getDetailsByPassGroupId = async (id) => {
           },
         },
       },
-
     },
-
-
-
   ]);
-  return { values: values, total: total.length, totalTrue: totalTrue.length, };
+  return { values: values, total: total.length, totalTrue: totalTrue.length };
 };
 
-
-
 const getgroupbilldetails = async (id) => {
-
   let values = await ShopOrderClone.aggregate([
     {
       $lookup: {
@@ -2003,7 +1977,7 @@ const getgroupbilldetails = async (id) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $match: { $and: [{ creditbillId: { $eq: id } }] }
+            $match: { $and: [{ creditbillId: { $eq: id } }] },
           },
           {
             $lookup: {
@@ -2013,7 +1987,7 @@ const getgroupbilldetails = async (id) => {
               pipeline: [
                 {
                   $match: {
-                    $and: [{ type: { $eq: "creditBill" } }, { creditID: { $eq: id } }],
+                    $and: [{ type: { $eq: 'creditBill' } }, { creditID: { $eq: id } }],
                   },
                 },
               ],
@@ -2032,11 +2006,11 @@ const getgroupbilldetails = async (id) => {
               _id: 1,
               creditbillId: 1,
               shopId: 1,
-              paidAmt: "$paymentDatadata.paidAmt",
-              reasonScheduleOrDate: "$paymentDatadata.reasonScheduleOrDate",
-              Schedulereason: "$paymentDatadata.Schedulereason",
-            }
-          }
+              paidAmt: '$paymentDatadata.paidAmt',
+              reasonScheduleOrDate: '$paymentDatadata.reasonScheduleOrDate',
+              Schedulereason: '$paymentDatadata.Schedulereason',
+            },
+          },
         ],
         as: 'billData',
       },
@@ -2101,14 +2075,13 @@ const getgroupbilldetails = async (id) => {
         reason: 1,
         delivered_date: 1,
         created: 1,
-        orderAmount: "$productData.price",
-        collectedAmount: "$billData.paidAmt",
-        reasonScheduleOrDate: "$billData.reasonScheduleOrDate",
-        Schedulereason: "$billData.Schedulereason",
-        SName: "$b2bshopclones.SName",
-      }
-    }
-
+        orderAmount: '$productData.price',
+        collectedAmount: '$billData.paidAmt',
+        reasonScheduleOrDate: '$billData.reasonScheduleOrDate',
+        Schedulereason: '$billData.Schedulereason',
+        SName: '$b2bshopclones.SName',
+      },
+    },
   ]);
 
   let groupdetails = await creditBillGroup.aggregate([
@@ -2129,15 +2102,13 @@ const getgroupbilldetails = async (id) => {
         assignedDate: 1,
         assignedTime: 1,
         receiveStatus: 1,
-        assignedUserName: "$b2busers.name"
-      }
-    }
-  ])
+        assignedUserName: '$b2busers.name',
+      },
+    },
+  ]);
   if (groupdetails.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, ' srfegfNot Found');
-
   }
-
 
   return { groupdetails: groupdetails[0], orderDetails: values };
 };
@@ -2148,12 +2119,16 @@ const submitDispute = async (id, updatebody) => {
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, ' srfegfNot Found');
   }
-  product = await creditBillGroup.findByIdAndUpdate({ _id: id }, { ...updatebody, ...{ finishDate: moment(), receiveStatus: "received" } }, { new: true });
+  product = await creditBillGroup.findByIdAndUpdate(
+    { _id: id },
+    { ...updatebody, ...{ finishDate: moment(), receiveStatus: 'received' } },
+    { new: true }
+  );
   console.log(product);
   let creditBill_array = await creditBill.find({ creditbillId: id });
   creditBill_array.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e.orderId }, { creditBillAssignedStatus: "Pending" }, { new: true });
-  })
+    await ShopOrderClone.findByIdAndUpdate({ _id: e.orderId }, { creditBillAssignedStatus: 'Pending' }, { new: true });
+  });
   return product;
 };
 
@@ -2161,9 +2136,8 @@ const getPaymentTypeCount = async (id) => {
   let values = await orderPayment.aggregate([
     {
       $match: {
-        $and: [{ creditBillStatus: { $eq: "creditBill" } }],
-
-      }
+        $and: [{ creditBillStatus: { $eq: 'creditBill' } }],
+      },
     },
     {
       $lookup: {
@@ -2194,10 +2168,9 @@ const getPaymentTypeCount = async (id) => {
       $project: {
         paymentMethod: 1,
         paidAmt: 1,
-        billNo: "$billData.bill"
-      }
+        billNo: '$billData.bill',
+      },
     },
-
 
     { $group: { _id: '$paymentMethod', TotalAmount: { $sum: '$paidAmt' } } },
   ]);
@@ -2209,8 +2182,8 @@ const getdeliveryExcutive = async (userId, page) => {
     {
       $match: {
         AssignedUserId: { $eq: userId },
-        receiveStatus: { $ne: "received" },
-      }
+        receiveStatus: { $ne: 'received' },
+      },
     },
     {
       $lookup: {
@@ -2221,9 +2194,9 @@ const getdeliveryExcutive = async (userId, page) => {
           {
             $group: {
               _id: null,
-              count: { $sum: 1 }
-            }
-          }
+              count: { $sum: 1 },
+            },
+          },
         ],
         as: 'creditbills',
       },
@@ -2237,15 +2210,15 @@ const getdeliveryExcutive = async (userId, page) => {
         groupId: 1,
         assignedDate: 1,
         assignedTime: 1,
-        creditbillcount: "$creditbill.count"
-      }
-    }
+        creditbillcount: '$creditbill.count',
+      },
+    },
   ]);
   let total = await creditBillGroup.aggregate([
     {
       $match: {
-        AssignedUserId: { $eq: userId }
-      }
+        AssignedUserId: { $eq: userId },
+      },
     },
     {
       $lookup: {
@@ -2256,9 +2229,9 @@ const getdeliveryExcutive = async (userId, page) => {
           {
             $group: {
               _id: null,
-              count: { $sum: 1 }
-            }
-          }
+              count: { $sum: 1 },
+            },
+          },
         ],
         as: 'creditbills',
       },
@@ -2266,55 +2239,59 @@ const getdeliveryExcutive = async (userId, page) => {
     { $unwind: '$creditbills' },
   ]);
   return { value: group, total: total.length };
-}
+};
 const submitfinish = async (userId, id) => {
   let group = await creditBillGroup.findOne({ _id: id, AssignedUserId: userId });
   if (!group) {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
-  group = await creditBillGroup.findByIdAndUpdate({ _id: id, AssignedUserId: userId }, { receiveStatus: "finish" }, { new: true });
+  group = await creditBillGroup.findByIdAndUpdate(
+    { _id: id, AssignedUserId: userId },
+    { receiveStatus: 'finish' },
+    { new: true }
+  );
 
   return group;
-}
+};
 
 const getCreditBillMaster = async (query) => {
   let page = query.page == null ? 0 : parseInt(query.page);
   if (page == null || page < 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Ivalid Page Count');
   }
-  let zone = query.zone
-  let ward = query.ward
-  let search = query.search
+  let zone = query.zone;
+  let ward = query.ward;
+  let search = query.search;
   let date = query.date;
   let user = query.user;
-  let zoneMatch = { active: true }
-  let wardMatch = { active: true }
-  let searchMatch = { active: true }
+  let zoneMatch = { active: true };
+  let wardMatch = { active: true };
+  let searchMatch = { active: true };
   let dateMatch = { active: true };
   let userMatch = { active: true };
   startdate = null;
   enddata = null;
   if (zone != null && zone != '') {
-    zoneMatch = { zoneId: { $eq: zone } }
+    zoneMatch = { zoneId: { $eq: zone } };
   }
   if (ward != null && ward != '') {
-    wardMatch = { Wardid: { $eq: ward } }
+    wardMatch = { Wardid: { $eq: ward } };
   }
   if (search != null && search != '') {
     searchMatch = {
       $or: [{ SName: { $regex: search, $options: 'i' } }, { mobile: { $regex: search, $options: 'i' } }],
-    }
+    };
   }
   if (date != null && date != '') {
-    date = date.split(",")
-    startdate = date[0]
-    enddata = date[1]
+    date = date.split(',');
+    startdate = date[0];
+    enddata = date[1];
     // console.log(startdate)
     // console.log(enddata)
-    dateMatch = { $and: [{ Scheduledate: { $gte: startdate } }, { Scheduledate: { $lte: enddata } }] }
+    dateMatch = { $and: [{ Scheduledate: { $gte: startdate } }, { Scheduledate: { $lte: enddata } }] };
   }
   if (user != null && user != '') {
-    userMatch = { AssignedUserId: { $eq: user } }
+    userMatch = { AssignedUserId: { $eq: user } };
   }
   // console.log(zone);
   // console.log(ward);
@@ -2326,8 +2303,8 @@ const getCreditBillMaster = async (query) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { status: { $eq: 'Delivered' } },]
-      }
+        $and: [dateMatch, { status: { $eq: 'Delivered' } }],
+      },
     },
     {
       $lookup: {
@@ -2337,8 +2314,8 @@ const getCreditBillMaster = async (query) => {
         pipeline: [
           {
             $match: {
-              $and: [wardMatch, searchMatch]
-            }
+              $and: [wardMatch, searchMatch],
+            },
           },
           {
             $lookup: {
@@ -2348,8 +2325,8 @@ const getCreditBillMaster = async (query) => {
               pipeline: [
                 {
                   $match: {
-                    $and: [zoneMatch,]
-                  }
+                    $and: [zoneMatch],
+                  },
                 },
               ],
               as: 'wards',
@@ -2408,9 +2385,9 @@ const getCreditBillMaster = async (query) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $sort: { created: -1 }
+            $sort: { created: -1 },
           },
-          { $limit: 1 }
+          { $limit: 1 },
         ],
         as: 'orderpayments',
       },
@@ -2521,21 +2498,19 @@ const getCreditBillMaster = async (query) => {
               from: 'creditbillgroups',
               localField: 'creditbillId',
               foreignField: '_id',
-              pipeline: [
-                { $match: { receiveStatus: { $ne: "received" } } }
-              ],
+              pipeline: [{ $match: { receiveStatus: { $ne: 'received' } } }],
               as: 'creditbillgroups',
             },
           },
           {
-            $unwind: "$creditbillgroups"
+            $unwind: '$creditbillgroups',
           },
           {
             $project: {
-              assignedUserName: "$b2busers.name",
-              AssignedUserId: 1
-            }
-          }
+              assignedUserName: '$b2busers.name',
+              AssignedUserId: 1,
+            },
+          },
         ],
         as: 'creditbills',
       },
@@ -2552,31 +2527,30 @@ const getCreditBillMaster = async (query) => {
         OrderId: 1,
         created: 1,
         _id: 1,
-        SName: "$b2bshopclones.SName",
+        SName: '$b2bshopclones.SName',
         delivered_date: 1,
-        TotalAmount: { $round: "$productData.price" },
-        lastPaidAmount: "$orderpayments.paidAmt",
-        lastPaidDate: "$orderpayments.created",
+        TotalAmount: { $round: '$productData.price' },
+        lastPaidAmount: '$orderpayments.paidAmt',
+        lastPaidDate: '$orderpayments.created',
         paidAMount: {
           $sum: ['$orderpaymentsall.amount', '$reorderamount'],
         },
         pendingAmount: {
-          $subtract: [{ $round: "$productData.price" }, { $sum: ['$orderpaymentsall.amount', '$reorderamount'], }]
+          $subtract: [{ $round: '$productData.price' }, { $sum: ['$orderpaymentsall.amount', '$reorderamount'] }],
         },
         Schedulereason: 1,
         creditBillAssignedStatus: 1,
-        creditbills: "$creditbills",
-        assignedUserName: "$creditbills.assignedUserName",
-        AssignedUserId: "$creditbills.AssignedUserId",
+        creditbills: '$creditbills',
+        assignedUserName: '$creditbills.assignedUserName',
+        AssignedUserId: '$creditbills.AssignedUserId',
         active: 1,
-        Scheduledate: 1
-
-      }
+        Scheduledate: 1,
+      },
     },
     {
       $match: {
-        $and: [userMatch]
-      }
+        $and: [userMatch],
+      },
     },
 
     { $skip: 10 * page },
@@ -2585,8 +2559,8 @@ const getCreditBillMaster = async (query) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { status: { $eq: 'Delivered' } },]
-      }
+        $and: [dateMatch, { status: { $eq: 'Delivered' } }],
+      },
     },
     {
       $lookup: {
@@ -2596,8 +2570,8 @@ const getCreditBillMaster = async (query) => {
         pipeline: [
           {
             $match: {
-              $and: [wardMatch, searchMatch]
-            }
+              $and: [wardMatch, searchMatch],
+            },
           },
           {
             $lookup: {
@@ -2607,8 +2581,8 @@ const getCreditBillMaster = async (query) => {
               pipeline: [
                 {
                   $match: {
-                    $and: [zoneMatch,]
-                  }
+                    $and: [zoneMatch],
+                  },
                 },
               ],
               as: 'wards',
@@ -2665,9 +2639,7 @@ const getCreditBillMaster = async (query) => {
         from: 'orderpayments',
         localField: '_id',
         foreignField: 'orderId',
-        pipeline: [
-          { $limit: 1 }
-        ],
+        pipeline: [{ $limit: 1 }],
         as: 'orderpayments',
       },
     },
@@ -2777,21 +2749,19 @@ const getCreditBillMaster = async (query) => {
               from: 'creditbillgroups',
               localField: 'creditbillId',
               foreignField: '_id',
-              pipeline: [
-                { $match: { receiveStatus: { $ne: "received" } } }
-              ],
+              pipeline: [{ $match: { receiveStatus: { $ne: 'received' } } }],
               as: 'creditbillgroups',
             },
           },
           {
-            $unwind: "$creditbillgroups"
+            $unwind: '$creditbillgroups',
           },
           {
             $project: {
-              assignedUserName: "$b2busers.name",
-              AssignedUserId: 1
-            }
-          }
+              assignedUserName: '$b2busers.name',
+              AssignedUserId: 1,
+            },
+          },
         ],
         as: 'creditbills',
       },
@@ -2808,35 +2778,39 @@ const getCreditBillMaster = async (query) => {
         OrderId: 1,
         created: 1,
         _id: 1,
-        SName: "$b2bshopclones.SName",
+        SName: '$b2bshopclones.SName',
         delivered_date: 1,
-        TotalAmount: { $round: "$productData.price" },
-        lastPaidAmount: "$orderpayments.paidAmt",
+        TotalAmount: { $round: '$productData.price' },
+        lastPaidAmount: '$orderpayments.paidAmt',
         paidAMount: {
           $sum: ['$orderpaymentsall.amount', '$reorderamount'],
         },
         pendingAmount: {
-          $subtract: [{ $round: "$productData.price" }, { $sum: ['$orderpaymentsall.amount', '$reorderamount'], }]
+          $subtract: [{ $round: '$productData.price' }, { $sum: ['$orderpaymentsall.amount', '$reorderamount'] }],
         },
         Schedulereason: 1,
         creditBillAssignedStatus: 1,
-        creditbills: "$creditbills",
-        assignedUserName: "$creditbills.assignedUserName",
-        AssignedUserId: "$creditbills.AssignedUserId",
+        creditbills: '$creditbills',
+        assignedUserName: '$creditbills.assignedUserName',
+        AssignedUserId: '$creditbills.AssignedUserId',
         active: 1,
-        Scheduledate: 1
-      }
+        Scheduledate: 1,
+      },
     },
     {
       $match: {
-        $and: [userMatch]
-      }
+        $and: [userMatch],
+      },
     },
   ]);
-  return { values: values, total: total.length };
-}
+  const today = moment().format('YYYY-MM-DD');
+  const yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
+  console.log(yersterday);
+  let todaycount = await creditBill.find({ date: today }).count();
+  let yersterdayCount = await creditBill.find({ date: yersterday }).count();
 
-
+  return { values: values, total: total.length, todaycount: todaycount, yersterdayCount: yersterdayCount };
+};
 
 const groupCreditBill = async (AssignedUserId, date, page) => {
   let match;
@@ -2862,9 +2836,9 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
         localField: 'AssignedUserId',
         foreignField: '_id',
         as: 'b2busersData',
-      }
+      },
     },
-    { $unwind: "$b2busersData" },
+    { $unwind: '$b2busersData' },
     {
       $lookup: {
         from: 'creditbills',
@@ -2908,7 +2882,6 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
               ],
               as: 'productData',
             },
-
           },
           {
             $unwind: {
@@ -2937,19 +2910,19 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
           },
           {
             $project: {
-              price: "$productData.price",
-              orderpayments: "$orderpayments",
-              orderpaymentsnow: "$orderpaymentsnow"
-            }
+              price: '$productData.price',
+              orderpayments: '$orderpayments',
+              orderpaymentsnow: '$orderpaymentsnow',
+            },
           },
           {
             $group: {
               _id: null,
-              totalAmount: { $sum: "$price" },
+              totalAmount: { $sum: '$price' },
               billCount: { $sum: 1 },
-              totalpaidAmount: { $sum: "$orderpayments.price" }
-            }
-          }
+              totalpaidAmount: { $sum: '$orderpayments.price' },
+            },
+          },
         ],
         as: 'creditBillData',
       },
@@ -2967,17 +2940,17 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
         foreignField: 'creditID',
         pipeline: [
           {
-            $match: { paymentMethod: "UPI" }
+            $match: { paymentMethod: 'UPI' },
           },
           {
-            $group: { _id: { paymentMethod: "$paymentMethod" }, price: { $sum: '$paidAmt' } },
+            $group: { _id: { paymentMethod: '$paymentMethod' }, price: { $sum: '$paidAmt' } },
           },
           {
             $project: {
-              paymentMethod: "$_id.paymentMethod",
-              price: 1
-            }
-          }
+              paymentMethod: '$_id.paymentMethod',
+              price: 1,
+            },
+          },
         ],
         as: 'creditbills_type',
       },
@@ -2995,17 +2968,17 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
         foreignField: 'creditID',
         pipeline: [
           {
-            $match: { paymentMethod: "By Cash" }
+            $match: { paymentMethod: 'By Cash' },
           },
           {
-            $group: { _id: { paymentMethod: "$paymentMethod" }, price: { $sum: '$paidAmt' } },
+            $group: { _id: { paymentMethod: '$paymentMethod' }, price: { $sum: '$paidAmt' } },
           },
           {
             $project: {
-              paymentMethod: "$_id.paymentMethod",
-              price: 1
-            }
-          }
+              paymentMethod: '$_id.paymentMethod',
+              price: 1,
+            },
+          },
         ],
         as: 'creditbills_type_cash',
       },
@@ -3021,9 +2994,7 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
         from: 'creditbills',
         localField: '_id',
         foreignField: 'creditbillId',
-        pipeline: [
-          { $match: { $and: [{ status: { $eq: 'paid' } }] } }
-        ],
+        pipeline: [{ $match: { $and: [{ status: { $eq: 'paid' } }] } }],
         as: 'creditID',
       },
     },
@@ -3033,9 +3004,7 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
         from: 'creditbills',
         localField: '_id',
         foreignField: 'creditbillId',
-        pipeline: [
-          { $match: { $and: [{ status: { $eq: 'reschedule' } }, { Schedulereason: { $ne: 'InpersonRefuse' } }] } }
-        ],
+        pipeline: [{ $match: { $and: [{ status: { $eq: 'reschedule' } }, { Schedulereason: { $ne: 'InpersonRefuse' } }] } }],
         as: 'creditbillsreschedule',
       },
     },
@@ -3045,9 +3014,7 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
         from: 'creditbills',
         localField: '_id',
         foreignField: 'creditbillId',
-        pipeline: [
-          { $match: { $and: [{ Schedulereason: { $eq: 'InpersonRefuse' } }] } }
-        ],
+        pipeline: [{ $match: { $and: [{ Schedulereason: { $eq: 'InpersonRefuse' } }] } }],
         as: 'InpersonRefuse',
       },
     },
@@ -3094,7 +3061,6 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
               ],
               as: 'productData',
             },
-
           },
           {
             $unwind: {
@@ -3123,16 +3089,16 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
           },
           {
             $project: {
-              price: { $round: "$productData.price" },
-              orderpayments: "$orderpayments.price",
-              pendingAmount: { $subtract: [{ $round: "$productData.price" }, "$orderpayments.price"] }
-            }
+              price: { $round: '$productData.price' },
+              orderpayments: '$orderpayments.price',
+              pendingAmount: { $subtract: [{ $round: '$productData.price' }, '$orderpayments.price'] },
+            },
           },
           {
             $match: {
-              pendingAmount: { $ne: 0 }
-            }
-          }
+              pendingAmount: { $ne: 0 },
+            },
+          },
         ],
         as: 'noncollected',
       },
@@ -3140,30 +3106,29 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
 
     {
       $project: {
-        executiveName: "$b2busersData.name",
+        executiveName: '$b2busersData.name',
         groupId: 1,
         assignedTime: 1,
         assignedDate: 1,
         disputeAmount: 1,
-        count: { $size: "$Orderdatas" },
+        count: { $size: '$Orderdatas' },
         receiveStatus: 1,
-        billCount: "$creditBillData.billCount",
+        billCount: '$creditBillData.billCount',
         // totalpaidAmount: "$creditBillData.totalpaidAmount",
-        collectedAmount: "$orderpaymentsnow.price",
-        creditbills_type_upi: "$creditbills_type.price",
-        creditbills_type_cash: "$creditbills_type_cash.price",
-        collectedbillCount: { $size: "$creditID" },
-        rescheduleCount: { $size: "$creditbillsreschedule" },
-        InpersonRefuse: { $size: "$InpersonRefuse" },
-        pendingbillCount: "$creditBillDatapending.billCount",
-        noncollectedbillCount: { $subtract: ['$creditBillData.billCount', { $size: "$creditID" }] },
-        pendingBillsCount: { $size: "$noncollected" },
-      }
+        collectedAmount: '$orderpaymentsnow.price',
+        creditbills_type_upi: '$creditbills_type.price',
+        creditbills_type_cash: '$creditbills_type_cash.price',
+        collectedbillCount: { $size: '$creditID' },
+        rescheduleCount: { $size: '$creditbillsreschedule' },
+        InpersonRefuse: { $size: '$InpersonRefuse' },
+        pendingbillCount: '$creditBillDatapending.billCount',
+        noncollectedbillCount: { $subtract: ['$creditBillData.billCount', { $size: '$creditID' }] },
+        pendingBillsCount: { $size: '$noncollected' },
+      },
     },
 
     { $skip: 10 * page },
     { $limit: 10 },
-
   ]);
   let total = await creditBillGroup.aggregate([
     {
@@ -3177,16 +3142,13 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
         localField: 'AssignedUserId',
         foreignField: '_id',
         as: 'b2busersData',
-      }
+      },
     },
-    { $unwind: "$b2busersData" },
+    { $unwind: '$b2busersData' },
   ]);
 
   return { values: values, total: total.length };
-
-}
-
-
+};
 
 const getbilldetails = async (query) => {
   // console.log(query.id)
@@ -3194,8 +3156,8 @@ const getbilldetails = async (query) => {
   let order = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }]
-      }
+        $and: [{ _id: { $eq: id } }],
+      },
     },
     {
       $lookup: {
@@ -3238,15 +3200,14 @@ const getbilldetails = async (query) => {
     { $unwind: '$productData' },
     {
       $project: {
-        price: { $round: "$productData.price" },
+        price: { $round: '$productData.price' },
         customerBillId: 1,
         OrderId: 1,
         date: 1,
         created: 1,
-
-      }
-    }
-  ])
+      },
+    },
+  ]);
   if (order.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
@@ -3254,8 +3215,8 @@ const getbilldetails = async (query) => {
   let orderspayments = await OrderPayment.aggregate([
     {
       $match: {
-        $and: [{ orderId: { $eq: id } }]
-      }
+        $and: [{ orderId: { $eq: id } }],
+      },
     },
     {
       $lookup: {
@@ -3271,12 +3232,12 @@ const getbilldetails = async (query) => {
               pipeline: [
                 {
                   $match: {
-                    $and: [{ orderId: { $eq: id } }]
-                  }
+                    $and: [{ orderId: { $eq: id } }],
+                  },
                 },
               ],
               as: 'creditbills',
-            }
+            },
           },
           {
             $unwind: {
@@ -3290,7 +3251,7 @@ const getbilldetails = async (query) => {
               localField: 'AssignedUserId',
               foreignField: '_id',
               as: 'b2busers',
-            }
+            },
           },
           {
             $unwind: {
@@ -3300,19 +3261,19 @@ const getbilldetails = async (query) => {
           },
           {
             $project: {
-              Schedulereason: "$creditbills.Schedulereason",
-              reasonScheduleOrDate: "$creditbills.reasonScheduleOrDate",
+              Schedulereason: '$creditbills.Schedulereason',
+              reasonScheduleOrDate: '$creditbills.reasonScheduleOrDate',
               assignedDate: 1,
               assignedTime: 1,
               groupId: 1,
               _id: 1,
               receiveStatus: 1,
-              assignedUserName: "$b2busers.name"
-            }
-          }
+              assignedUserName: '$b2busers.name',
+            },
+          },
         ],
         as: 'creditbillgroups',
-      }
+      },
     },
     {
       $unwind: {
@@ -3332,7 +3293,7 @@ const getbilldetails = async (query) => {
               localField: 'userRole',
               foreignField: '_id',
               as: 'roles',
-            }
+            },
           },
           {
             $unwind: {
@@ -3342,14 +3303,14 @@ const getbilldetails = async (query) => {
           },
           {
             $project: {
-              rolename: "$roles.roleName",
+              rolename: '$roles.roleName',
               name: 1,
-              _id: 1
-            }
-          }
+              _id: 1,
+            },
+          },
         ],
         as: 'b2busersid',
-      }
+      },
     },
     {
       $unwind: {
@@ -3363,10 +3324,10 @@ const getbilldetails = async (query) => {
         localField: 'orderId',
         foreignField: '_id',
         as: 'shoporders',
-      }
+      },
     },
     {
-      $unwind: '$shoporders'
+      $unwind: '$shoporders',
     },
     {
       $project: {
@@ -3378,27 +3339,27 @@ const getbilldetails = async (query) => {
         paymentMethod: 1,
         paymentstutes: 1,
         type: 1,
-        groupId: "$creditbillgroups.groupId",
-        receiveStatus: "$creditbillgroups.receiveStatus",
-        assignedDate: "$creditbillgroups.assignedDate",
-        assignedTime: "$creditbillgroups.assignedTime",
-        Schedulereason: "$creditbillgroups.Schedulereason",
-        reasonScheduleOrDate: "$creditbillgroups.reasonScheduleOrDate",
-        assignedUserName: "$b2busersid.name",
-        assignedUserid: "$b2busersid._id",
-        rolename: "$b2busersid.rolename",
+        groupId: '$creditbillgroups.groupId',
+        receiveStatus: '$creditbillgroups.receiveStatus',
+        assignedDate: '$creditbillgroups.assignedDate',
+        assignedTime: '$creditbillgroups.assignedTime',
+        Schedulereason: '$creditbillgroups.Schedulereason',
+        reasonScheduleOrDate: '$creditbillgroups.reasonScheduleOrDate',
+        assignedUserName: '$b2busersid.name',
+        assignedUserid: '$b2busersid._id',
+        rolename: '$b2busersid.rolename',
         orderId: 1,
         creditApprovalStatus: 1,
-      }
+      },
     },
-    { $limit: 20 }
-  ])
+    { $limit: 20 },
+  ]);
 
   let total = await OrderPayment.aggregate([
     {
       $match: {
-        $and: [{ orderId: { $eq: id } }]
-      }
+        $and: [{ orderId: { $eq: id } }],
+      },
     },
     {
       $lookup: {
@@ -3414,12 +3375,12 @@ const getbilldetails = async (query) => {
               pipeline: [
                 {
                   $match: {
-                    $and: [{ orderId: { $eq: id } }]
-                  }
+                    $and: [{ orderId: { $eq: id } }],
+                  },
                 },
               ],
               as: 'creditbills',
-            }
+            },
           },
           {
             $unwind: {
@@ -3433,7 +3394,7 @@ const getbilldetails = async (query) => {
               localField: 'AssignedUserId',
               foreignField: '_id',
               as: 'b2busers',
-            }
+            },
           },
           {
             $unwind: {
@@ -3443,19 +3404,19 @@ const getbilldetails = async (query) => {
           },
           {
             $project: {
-              Schedulereason: "$creditbills.Schedulereason",
-              reasonScheduleOrDate: "$creditbills.reasonScheduleOrDate",
+              Schedulereason: '$creditbills.Schedulereason',
+              reasonScheduleOrDate: '$creditbills.reasonScheduleOrDate',
               assignedDate: 1,
               assignedTime: 1,
               groupId: 1,
               _id: 1,
               receiveStatus: 1,
-              assignedUserName: "$b2busers.name"
-            }
-          }
+              assignedUserName: '$b2busers.name',
+            },
+          },
         ],
         as: 'creditbillgroups',
-      }
+      },
     },
     {
       $unwind: {
@@ -3463,39 +3424,38 @@ const getbilldetails = async (query) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-  ])
+  ]);
   return { value: orderspayments, orderDetails: order[0], total: total.length };
-
-}
+};
 
 const afterCompletion_Of_Delivered = async (shop, date, userId) => {
-  let match
-  if (date != "null") {
-    match = [{ date: date }]
+  let match;
+  if (date != 'null') {
+    match = [{ date: date }];
   } else {
-    match = [{ active: true }]
+    match = [{ active: true }];
   }
-  let keys
+  let keys;
   if (shop != 'null') {
     keys = [{ SName: { $regex: shop, $options: 'i' } }];
   } else {
     keys = [{ active: { $eq: true } }];
   }
-  let usermatch
-  if (userId == "null") {
-    usermatch = { active: true }
+  let usermatch;
+  if (userId == 'null') {
+    usermatch = { active: true };
   } else {
-    usermatch = { AssignedUserId: userId }
+    usermatch = { AssignedUserId: userId };
   }
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ status: "Delivered" }],
+        $and: [{ status: 'Delivered' }],
       },
     },
     {
       $match: {
-        $and: match
+        $and: match,
       },
     },
     {
@@ -3519,13 +3479,13 @@ const afterCompletion_Of_Delivered = async (shop, date, userId) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $sort: { time: -1 }
+            $sort: { time: -1 },
           },
           {
-            $match: { paidAmt: { $ne: 0 } }
+            $match: { paidAmt: { $ne: 0 } },
           },
           {
-            $limit: 1
+            $limit: 1,
           },
           {
             $lookup: {
@@ -3536,8 +3496,8 @@ const afterCompletion_Of_Delivered = async (shop, date, userId) => {
             },
           },
           {
-            $unwind: '$users'
-          }
+            $unwind: '$users',
+          },
         ],
         as: 'lastPaidamt',
       },
@@ -3545,19 +3505,21 @@ const afterCompletion_Of_Delivered = async (shop, date, userId) => {
     {
       $unwind: {
         preserveNullAndEmptyArrays: true,
-        path: '$lastPaidamt'
-      }
+        path: '$lastPaidamt',
+      },
     },
     {
       $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
-        pipeline: [{
-          $match: {
-            $or: keys
+        pipeline: [
+          {
+            $match: {
+              $or: keys,
+            },
           },
-        }],
+        ],
         as: 'shopDtaa',
       },
     },
@@ -3627,12 +3589,12 @@ const afterCompletion_Of_Delivered = async (shop, date, userId) => {
         // empId: '$usersdata._id',
         empId: '$lastPaidamt.uid',
         empName: '$lastPaidamt.users.name',
-        ordepaymentId: '$lastPaidamt._id'
+        ordepaymentId: '$lastPaidamt._id',
       },
     },
-  ])
-  return values
-}
+  ]);
+  return values;
+};
 
 const last_Paid_amt = async (id) => {
   let values = await ShopOrderClone.aggregate([
@@ -3723,55 +3685,56 @@ const last_Paid_amt = async (id) => {
     //     $and: [{ condition1: { $eq: true } }],
     //   },
     // },
-  ])
-  return values
-}
+  ]);
+  return values;
+};
 
 const getPaidHistory_ByOrder = async (id) => {
   let values = await ShopOrderClone.aggregate([
     {
-      $match: { _id: id }
+      $match: { _id: id },
     },
     {
       $lookup: {
         from: 'orderpayments',
         localField: '_id',
         foreignField: 'orderId',
-        pipeline: [{ $match: { paidAmt: { $ne: 0 } } },
-        {
-          $lookup: {
-            from: 'b2busers',
-            localField: 'uid',
-            foreignField: '_id',
-            as: 'users',
+        pipeline: [
+          { $match: { paidAmt: { $ne: 0 } } },
+          {
+            $lookup: {
+              from: 'b2busers',
+              localField: 'uid',
+              foreignField: '_id',
+              as: 'users',
+            },
           },
-        },
-        {
-          $unwind: '$users'
-        },
-        {
-          $lookup: {
-            from: 'roles',
-            localField: 'users.userRole',
-            foreignField: '_id',
-            as: 'roles',
+          {
+            $unwind: '$users',
           },
-        },
-        {
-          $unwind: '$roles'
-        },
-        {
-          $project: {
-            _id: 1,
-            paidAmt: 1,
-            date: 1,
-            orderId: 1,
-            paymentMethod: 1,
-            usersName: '$users.name',
-            userRole: '$users.userRole',
-            role: '$roles.roleName',
-          }
-        }
+          {
+            $lookup: {
+              from: 'roles',
+              localField: 'users.userRole',
+              foreignField: '_id',
+              as: 'roles',
+            },
+          },
+          {
+            $unwind: '$roles',
+          },
+          {
+            $project: {
+              _id: 1,
+              paidAmt: 1,
+              date: 1,
+              orderId: 1,
+              paymentMethod: 1,
+              usersName: '$users.name',
+              userRole: '$users.userRole',
+              role: '$roles.roleName',
+            },
+          },
         ],
         as: 'paymentData',
       },
@@ -3842,16 +3805,16 @@ const getPaidHistory_ByOrder = async (id) => {
         pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayment.price'] } },
         paidAmount: '$orderpayment.price',
         paymentData: '$paymentData',
-      }
-    }
-  ])
-  return values
-}
+      },
+    },
+  ]);
+  return values;
+};
 
 const Approved_Mismatch_amount = async () => {
   let values = await orderPayment.aggregate([
     {
-      $match: { creditApprovalStatus: "Approved" }
+      $match: { creditApprovalStatus: 'Approved' },
     },
     {
       $lookup: {
@@ -3916,8 +3879,8 @@ const Approved_Mismatch_amount = async () => {
           {
             $unwind: {
               preserveNullAndEmptyArrays: true,
-              path: '$paymentData'
-            }
+              path: '$paymentData',
+            },
           },
           {
             $lookup: {
@@ -3931,8 +3894,8 @@ const Approved_Mismatch_amount = async () => {
           {
             $unwind: {
               preserveNullAndEmptyArrays: true,
-              path: '$shopDtaa'
-            }
+              path: '$shopDtaa',
+            },
           },
           // {
           //   $lookup: {
@@ -3960,8 +3923,8 @@ const Approved_Mismatch_amount = async () => {
               // customerSaidamt: '$fine.customerClaimedAmt',
               // disputeamt: '$fine.Difference_Amt',
               creditApprovalStatus: 1,
-            }
-          }
+            },
+          },
         ],
         as: 'shoporders',
       },
@@ -3969,8 +3932,8 @@ const Approved_Mismatch_amount = async () => {
     {
       $unwind: {
         preserveNullAndEmptyArrays: true,
-        path: '$shoporders'
-      }
+        path: '$shoporders',
+      },
     },
     {
       $lookup: {
@@ -3981,7 +3944,7 @@ const Approved_Mismatch_amount = async () => {
       },
     },
     {
-      $unwind: '$users'
+      $unwind: '$users',
     },
     {
       $lookup: {
@@ -3994,15 +3957,15 @@ const Approved_Mismatch_amount = async () => {
     {
       $unwind: {
         preserveNullAndEmptyArrays: true,
-        path: '$fine'
-      }
+        path: '$fine',
+      },
     },
     {
       $project: {
         _id: 1,
         paidAmt: 1,
         date: 1,
-        OrderId: { $ifNull: ['$shoporders.OrderId', "null"] },
+        OrderId: { $ifNull: ['$shoporders.OrderId', 'null'] },
         users: '$users.name',
         OrderId: '$shoporders.OrderId',
         disputeamt: '$shoporders.disputeamt',
@@ -4014,11 +3977,11 @@ const Approved_Mismatch_amount = async () => {
         customerClaimedAmt: '$fine.customerClaimedAmt',
         lastPaidamt: '$fine.lastPaidamt',
         Difference_Amt: '$fine.Difference_Amt',
-      }
+      },
     },
-  ])
-  return values
-}
+  ]);
+  return values;
+};
 
 module.exports = {
   getShopWithBill,
@@ -4051,5 +4014,5 @@ module.exports = {
   last_Paid_amt,
   getPaidHistory_ByOrder,
   Approved_Mismatch_amount,
-  getgroupbilldetails
+  getgroupbilldetails,
 };
