@@ -17,12 +17,12 @@ router.route('/getDetails/:type/:time/:status/:limit/:page').get(wardAdminContro
 // checked
 router.route('/updateAcknowledge').put(wardAdminController.updateAcknowledge);
 // checked
-router.route('/updateApproved').put(wardAdminController.updateApproval);
+router.route('/updateApproved').put(authorization,wardAdminController.updateApproval);
 
-router.route('/updatePacked').put(wardAdminController.updatePackedStatus);
+router.route('/updatePacked').put(authorization,wardAdminController.updatePackedStatus);
 
 // checked
-router.route('/updateRejected').put(wardAdminController.updateRejectionStatus);
+router.route('/updateRejected').put(authorization,wardAdminController.updateRejectionStatus);
 // Checked;
 router.route('/updateApproved/:id').put(authorization,wardAdminController.updateApproved);
 
@@ -32,7 +32,7 @@ router.route('/updateModified/:id').put(wardAdminController.updateModified);
 // checked Modified
 router.route('/updateRejected/:id').put(authorization,wardAdminController.updateRejected);
 
-router.route('/wardloadingExecutive/updatePacked/:id').put(wardAdminController.updatePacked);
+router.route('/wardloadingExecutive/updatePacked/:id').put(authorization,wardAdminController.updatePacked);
 
 router.route('/wardloadingExecutive/updateAssign/:id').put(wardAdminController.updateAssigned);
 

@@ -105,28 +105,44 @@ const updateAcknowledgeSingle = async (id, updateBody, userId) => {
     { new: true }
   );
   let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { new: true });
-  statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Acknowledge' });
+  statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Acknowledged' });
   statusActionArray.save();
   return product;
 };
 
 const updateApprovedMultiSelect = async (body) => {
   body.arr.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Approved', statusUpdate: moment() }, { new: true });
+    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Approved', statusUpdate: moment(),approveCreated:  moment() }, { new: true });
   });
+
+  let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: e }, { new: true });
+    statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Approved' });
+    statusActionArray.save();
 
   return 'status updated successfully';
 };
-const updateRejectMultiSelect = async (body) => {
+const updateRejectMultiSelect = async (body,userId) => {
   body.arr.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Rejected', statusUpdate: moment() }, { new: true });
+    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Rejected', statusUpdate: moment() ,rejectCreated: moment()}, { new: true });
+
+
+    let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: e }, { new: true });
+    statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Rejected' });
+    statusActionArray.save();
   });
+
+
+
   return 'status updated successfully';
 };
 
-const updatePackedMultiSelect = async (body) => {
+const updatePackedMultiSelect = async (body,userId) => {
   body.arr.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Packed', statusUpdate: moment() }, { new: true });
+    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Packed', statusUpdate: moment(),PackedCreated:moment() }, { new: true });
+
+    let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: e }, { new: true });
+    statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Packed' });
+    statusActionArray.save();
   });
   return 'status updated successfully';
 };
@@ -171,19 +187,19 @@ const updateStatusrejectOrModified = async (id, updateBody, userId) => {
 
   // let data = [];
   let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { new: true });
-  statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'rejected' });
+  statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Rejected' });
   statusActionArray.save();
   return product;
 };
 
-const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
+const updateStatusForAssugnedAndPacked = async (id, updateBody,userId) => {
   let statusUpdate = await ShopOrderClone.findById(id);
   if (!statusUpdate) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
   statusUpdate = await ShopOrderClone.findByIdAndUpdate(
     { _id: id },
-    { status: 'Packed', statusUpdate: moment(), completeStatus: 'Packed' },
+    { status: 'Packed', statusUpdate: moment(), completeStatus: 'Packed',PackedCreated: moment() },
     { new: true }
   );
   let orderassign = await wardAdminGroupModel_ORDERS.findOne({ orderId: id });
@@ -195,6 +211,10 @@ const updateStatusForAssugnedAndPacked = async (id, updateBody) => {
   if (wardgroup.length == 0) {
     await wardAdminGroup.findByIdAndUpdate({ _id: orderassign.wardAdminGroupID }, { status: 'Packed' }, { new: true });
   }
+
+  let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { new: true });
+  statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Packed' });
+  statusActionArray.save();
   return statusUpdate;
 };
 
@@ -453,7 +473,11 @@ const updateProduct = async (id, updateBody,userId) => {
 
 const updateRejected = async (body) => {
   body.arr.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Acknowledged', statusUpdate: moment() }, { new: true });
+    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Acknowledged', statusUpdate: moment(), AcknowledgeCreated: moment()}, { new: true });
+
+    let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: e }, { new: true });
+    statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Acknowledged' });
+    statusActionArray.save();
   });
 
   return 'status updated successfully';
