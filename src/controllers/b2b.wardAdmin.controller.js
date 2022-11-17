@@ -39,21 +39,21 @@ const deliveryexecutive = catchAsync(async (req, res) => {
 });
 
 const updateAcknowledge = catchAsync(async (req, res) => {
-  const acknowledgement = await wardAdminService.updateRejected(req.body);
+  const acknowledgement = await wardAdminService.updateRejected(req.body,req.userId);
   res.send(acknowledgement);
 });
 const updateApproval = catchAsync(async (req, res) => {
-  const approval = await wardAdminService.updateApprovedMultiSelect(req.body);
+  const approval = await wardAdminService.updateApprovedMultiSelect(req.body,req.userId);
   res.send(approval);
 });
 
 const updateRejectionStatus = catchAsync(async (req, res) => {
-  const rejected = await wardAdminService.updateRejectMultiSelect(req.body);
+  const rejected = await wardAdminService.updateRejectMultiSelect(req.body,req.userId);
   res.send(rejected);
 });
 
 const updatePackedStatus = catchAsync(async (req, res) => {
-  const rejected = await wardAdminService.updatePackedMultiSelect(req.body);
+  const rejected = await wardAdminService.updatePackedMultiSelect(req.body,req.userId);
   res.send(rejected);
 });
 
@@ -88,7 +88,7 @@ const wardloadExecutivepacked = catchAsync(async (req, res) => {
 });
 
 const updatePacked = catchAsync(async (req, res) => {
-  const packed = await wardAdminService.updateStatusForAssugnedAndPacked(req.params.id, req.body);
+  const packed = await wardAdminService.updateStatusForAssugnedAndPacked(req.params.id, req.body,req.userId);
   res.send(packed);
 });
 

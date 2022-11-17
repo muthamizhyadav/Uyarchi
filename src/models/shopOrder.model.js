@@ -323,7 +323,11 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   modifiedCreated: {
     type: Date
+  },
+  PackedCreated: {
+    type: Date
   }
+
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);

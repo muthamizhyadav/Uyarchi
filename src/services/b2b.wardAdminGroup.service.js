@@ -95,12 +95,14 @@ const createGroup = async (body,userId) => {
       created: moment(),
       AssignedstatusPerDay: 1,
     });
+
+    let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { new: true });
+    statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Assigned' });
+    statusActionArray.save();
   });
 
 
-  let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { new: true });
-  statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Assigned' });
-  statusActionArray.save();
+
 
   return wardAdminGroupcreate;
 };
