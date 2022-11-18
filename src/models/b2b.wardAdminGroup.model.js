@@ -42,7 +42,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
   deliveryExecutiveId: {
     type: String,
   },
-
+  returnStockimages: {
+    type: Array,
+  },
   totalOrders: {
     type: Number,
   },
