@@ -22,7 +22,7 @@ const add_to_cart = async (shopId, body) => {
     }
     else {
         console.log(cart)
-        cart = await AddToCart.findByIdAndUpdate({ _id: cart._id }, { cart: body.cart }, { new: true })
+        cart = await AddToCart.findByIdAndUpdate({ _id: cart._id }, { cart: body.cart, delivery_type: body.delivery_type }, { new: true })
     }
 
     return cart;
@@ -97,19 +97,21 @@ const getcartProduct = async (shopId) => {
 
 const confirmOrder_razerpay = async (shopId, body) => {
     // const
+    let orders;
     if (body.PaymentDatails != null) {
         let payment = await paymentgatway.verifyRazorpay_Amount(body.PaymentDatails);
         let collectedAmount = payment.amount / 100
         let collectedstatus = payment.status;
         if (collectedstatus == 'captured' && collectedAmount == body.OdrerDetails.Amount) {
             let cart = await AddToCart.findOne({ shopId: shopId, date: moment().format("YYYY-MM-DD"), status: "Pending" });
-            let orders = await add_shopOrderclone(shopId, body);
+            let orders = await add_shopOrderclone(shopId, body, cart);
             let paymantss = await add_odrerPayment(shopId, body, orders, payment);
             body.OdrerDetails.Product.forEach(async (e) => {
                 await add_productOrderClone(shopId, e, orders)
             });
             cart.status = "ordered";
             cart.save();
+            return orders
 
         }
 
@@ -118,9 +120,9 @@ const confirmOrder_razerpay = async (shopId, body) => {
     // console.log(cart)
     // console.log();
     // console.log(body)
-    return { true: true }
+    // return orders
 };
-const add_shopOrderclone = async (shopId, body) => {
+const add_shopOrderclone = async (shopId, body, cart) => {
     let orderDetails = body.OdrerDetails
     let currentDate = moment().format('YYYY-MM-DD');
     let currenttime = moment().format('HHmmss');
@@ -156,7 +158,7 @@ const add_shopOrderclone = async (shopId, body) => {
         reorder_status: false,
         devevery_mode: orderDetails.delivery_mode,
         status: "ordered",
-        delivery_type: orderDetails.delivery_type,
+        delivery_type: cart.delivery_type,
         Payment: orderDetails.paymant_method,
         time_of_delivery: orderDetails.time_of_delivery,
         product: orderDetails.Product,
@@ -168,6 +170,8 @@ const add_shopOrderclone = async (shopId, body) => {
 
 const add_productOrderClone = async (shopId, e, orders) => {
     let gst = await Product.findById(e.productId);
+    let currentDate = moment().format('YYYY-MM-DD');
+    let currenttime = moment().format('HHmmss');
     return await ProductorderClone.create({
         orderId: orders._id,
         productid: e.productId,
@@ -203,7 +207,7 @@ const add_odrerPayment = async (shopId, body, orders, payment) => {
         type: 'customer',
         pay_type: body.pay_type,
         payment: body.Payment,
-        paymentMethod: Payment_type,
+        paymentMethod: "Gateway",
         reorder_status: false,
         onlinepaymentId: payment.id,
         onlineorderId: payment.order_id,
@@ -211,9 +215,20 @@ const add_odrerPayment = async (shopId, body, orders, payment) => {
         paymentGatway: "razorpay"
     });
 }
+
+const getshoporder_byID = async (shopId, query) => {
+    let odrerId = query.id;
+    let shopOrder = await ShopOrderClone.findOne({ shopId: shopId, _id: odrerId });
+    console.log(shopOrder)
+    if (!shopOrder) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Odrer Not Found');
+    }
+    return { orderId: shopOrder.OrderId };
+}
 module.exports = {
     verifycheckout,
     add_to_cart,
     getcartProduct,
-    confirmOrder_razerpay
+    confirmOrder_razerpay,
+    getshoporder_byID
 }
