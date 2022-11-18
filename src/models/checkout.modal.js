@@ -26,6 +26,9 @@ const addtocart = mongoose.Schema({
         type: Boolean,
         default: true,
     },
+    delivery_type:{
+        type: String, 
+    },
     archive: {
         type: Boolean,
         default: false,

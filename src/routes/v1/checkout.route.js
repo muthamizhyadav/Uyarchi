@@ -8,6 +8,7 @@ router.route('/getcartproduct/customer').get(shopverify, checkOut.getcartProduct
 router.route('/addtocart/product').post(shopverify, checkOut.add_to_cart);
 
 router.route("/razorpay/success/confirmorder").post(shopverify,checkOut.confirmOrder_razerpay)
+router.route("/getorder/orderid").get(shopverify,checkOut.getshoporder_byID)
 
 
 module.exports = router;
