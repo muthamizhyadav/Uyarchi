@@ -12,11 +12,11 @@ router.route('/update/pickedPettyStock/:id').put(wardAdminGroupController.update
 
 router.route('/update/pickedPettyCash/:id').put(wardAdminGroupController.updatePickedPettyCash);
 // new Api
-router.route('/update/pickedPettystock/collected/:id').put(wardAdminGroupController.updatePickedPettystockcollected);
+router.route('/update/pickedPettystock/collected/:id').put(authorization,wardAdminGroupController.updatePickedPettystockcollected);
 // new Api
-router.route('/update/pickedPettycash/collected/:id').put(wardAdminGroupController.updateManageStatuscashcollect);
+router.route('/update/pickedPettycash/collected/:id').put(authorization,wardAdminGroupController.updateManageStatuscashcollect);
 
-router.route('/update/deliveryStarted/:id').put(wardAdminGroupController.updateDeliveryStarted);
+router.route('/update/deliveryStarted/:id').put(authorization,wardAdminGroupController.updateDeliveryStarted);
 
 router.route('/update/delivered/:id').put(authorization,wardAdminGroupController.updateDeliveryCompleted);
 router.route('/credit/update/delivered/:id').put(authorization, wardAdminGroupController.creditupdateDeliveryCompleted);
@@ -45,7 +45,7 @@ router.route('/get/details/deliveryExecutive/:id/:page').get(wardAdminGroupContr
 router.route('/statusChange/:id').put(wardAdminGroupController.updateManageStatus);
 
 //  new API
-router.route('/statusChange/completed/:id').put(wardAdminGroupController.updateManagecompleted);
+router.route('/statusChange/completed/:id').put(authorization,wardAdminGroupController.updateManagecompleted);
 
 router.route('/groupIdClick/:id').get(wardAdminGroupController.groupIdClick);
 
@@ -59,13 +59,13 @@ router.route('/get/returnWDEtoWLE/:id/:page').get(wardAdminGroupController.getRe
 
 // router.route('/submit/pettyStockSubmit').post(wardAdminGroupController.pettyStockSubmit);
 // checked
-router.route('/submit/pettyCashSubmit/:id').put(wardAdminGroupController.pettyCashSubmit);
+router.route('/submit/pettyCashSubmit/:id').put(authorization,wardAdminGroupController.pettyCashSubmit);
 
 router.route('/Update/orderCompleted/:id').put(wardAdminGroupController.orderCompleted);
 
 // router.route('/update/Deliverystart/:id').put(wardAdminGroupController.Deliverystart);
 
-router.route('/update/deliveryCompleted/:id').put(wardAdminGroupController.deliveryCompleted);
+router.route('/update/deliveryCompleted/:id').put(authorization,wardAdminGroupController.deliveryCompleted);
 
 router.route('/get/getPettyStockDetails/:id/:page').get(wardAdminGroupController.getPettyStockDetails);
 
@@ -80,8 +80,8 @@ router
 router.route('/update/status/allocateStatus/:id').put(wardAdminGroupController.updateAllocate);
 
 // checked
-router.route('/update/status/notAloocate/:id').put(wardAdminGroupController.updateDontAllocate);
-router.route('/cash/update/status/notAloocate/:id').put(wardAdminGroupController.updateDontAllocatecash);
+router.route('/update/status/notAloocate/:id').put(authorization,wardAdminGroupController.updateDontAllocate);
+router.route('/cash/update/status/notAloocate/:id').put(authorization,wardAdminGroupController.updateDontAllocatecash);
 
 router.route('/get/getPettyCashDetails/:id/:page').get(wardAdminGroupController.getPettyCashDetails);
 
@@ -90,7 +90,7 @@ router.route('/get/AllGroup/details/:id/:date/:FinishingStatus/:page').get(wardA
 router.route('/update/pettycash/return/:id').put(wardAdminGroupController.updatePettyCashReturnStatus);
 
 // checked Modified
-router.route('/create/pettyStock/create/:id').put(wardAdminGroupController.pettyStockCreate);
+router.route('/create/pettyStock/create/:id').put(authorization,wardAdminGroupController.pettyStockCreate);
 
 router.route('/get/cashDetails/fromDB/:id').get(wardAdminGroupController.getcashAmountViewFromDB);
 router.route('/submitPEttyCashGivenByWDE/submit/:id').put(wardAdminGroupController.submitPEttyCashGivenByWDE);

@@ -104,8 +104,8 @@ const updateAcknowledgeSingle = async (id, updateBody, userId) => {
     { status: 'Acknowledged', statusUpdate: moment(), AcknowledgeCreated: moment() },
     { new: true }
   );
-  let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { new: true });
-  statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Acknowledged' });
+  let statusActionArray = await ShopOrderClone.findOne({ _id: id }, { new: true });
+  await statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Acknowledged' });
   statusActionArray.save();
   return product;
 };

@@ -28,6 +28,9 @@ const ReturnStockSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  returnstockdate: {
+    type: Date,
+  },
   undelivered_As_Per_System: {
     type: Number,
     default: 0,
@@ -40,7 +43,6 @@ const ReturnStockSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-
   misMatch: {
     type: Number,
   },
@@ -52,6 +54,9 @@ const ReturnStockSchema = new mongoose.Schema({
   },
   time: {
     type: Number,
+  },
+  stocks: {
+    type: Array,
   },
   active: {
     type: Boolean,
