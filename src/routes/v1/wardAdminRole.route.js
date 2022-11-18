@@ -27,7 +27,9 @@ router.route('/getAssign/dataBy/salesMan/:page').get(wardAdminRoleController.get
 router.route('/getAssign/dataBy/salesMan/Id/:id').get(wardAdminRoleController.get_Assign_data_By_SalesManId);
 router.route('/getData/without/given/:id').get(wardAdminRoleController.getUsersWith_skiped);
 router.route('/Return_Assign_To_SalesMan/:id').get(wardAdminRoleController.Return_Assign_To_SalesMan);
-router.route('/history_Assign_Reaasign_data/:id/:date/:idSearch/:tempid').get(wardAdminRoleController.history_Assign_Reaasign_data);
+router
+  .route('/history_Assign_Reaasign_data/:id/:date/:idSearch/:tempid')
+  .get(wardAdminRoleController.history_Assign_Reaasign_data);
 router.route('/getAllSalesmanShops/data').get(wardAdminRoleController.getAllSalesmanShops);
 router.route('/getAllSalesmanShopsData/data/:id').get(wardAdminRoleController.getAllSalesmanShopsData);
 router.route('/getDataAll/data').get(wardAdminRoleController.getDataAll);
@@ -41,7 +43,9 @@ router.route('/asmSalesman/data/:id').get(wardAdminRoleController.asmSalesman);
 router.route('/telecallerHead/data/data1').get(wardAdminRoleController.telecallerHead);
 router.route('/wardwcce/All').get(wardAdminRoleController.wardwcce);
 router.route('/getAlldataAsm/data/:id').get(wardAdminRoleController.getAlldataASm);
-router.route('/getAllDatasalesmanDataAndAssign/data/:id/:date/:page').get(wardAdminRoleController.getAllDatasalesmanDataAndAssign);
+router
+  .route('/getAllDatasalesmanDataAndAssign/data/:id/:date/:page')
+  .get(wardAdminRoleController.getAllDatasalesmanDataAndAssign);
 router.route('/getAlldataSalesmanandtele_wcce/:id').get(wardAdminRoleController.getAlldataSalesmanandtele_wcce);
 router.route('/telecallernames/data').get(wardAdminRoleController.telecallernames);
 router.route('/WardAdminRoleHistorydata/:id/:date').get(wardAdminRoleController.WardAdminRoleHistorydata);
@@ -50,14 +54,14 @@ router.route('/assignShopsSalesman/data/:id/:page').get(wardAdminRoleController.
 router.route('/assignShopsSalesmandatewise/data/:id/:wardid/:page').get(wardAdminRoleController.assignShopsSalesmandatewise);
 router.route('/assignShopsOnlydatewise/data/:id/:wardid/:page').get(wardAdminRoleController.assignShopsOnlydatewise);
 
-
-
-
 //  08-11-2022
 
 router.route('/createtarget/byuser').post(authorization, wardAdminRoleController.createtartget);
 router.route('/getuserTartget/byuser').get(authorization, wardAdminRoleController.get_user_target);
 router.route('/getall/targets/byuser').get(authorization, wardAdminRoleController.getall_targets);
 router.route('/getuser/target/byusers').get(authorization, wardAdminRoleController.getusertarget);
+
+// map view
+router.route('/get/Assign/shops/BySalesman').get(authorization, wardAdminRoleController.getAssign_bySalesman);
 
 module.exports = router;
