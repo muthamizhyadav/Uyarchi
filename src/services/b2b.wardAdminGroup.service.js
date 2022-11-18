@@ -1315,6 +1315,7 @@ const assignOnly_DE = async (query, status) => {
       // pettyCashAllocateStatus: { $ne: 'Pending' },
       // pettyStockAllocateStatus: { $ne: 'Pending' },
       FinishingStatus: { $ne: 'Finished' },
+      manageDeliveryStatus: { $ne: 'cashReturned' },
     };
     statusMatch = { status: { $in: ['Assigned', 'Packed'] } };
   }
