@@ -2296,7 +2296,7 @@ const getCreditBillMaster = async (query) => {
     userMatch = { AssignedUserId: { $eq: user } };
   }
   if (singledate != null && singledate != '') {
-    dateM = { $and: [{ Scheduledate: { $eq: singledate } }] };
+    dateM = { creationDate: { $eq: singledate } };
   }
   // console.log(zone);
   // console.log(ward);
@@ -2308,8 +2308,12 @@ const getCreditBillMaster = async (query) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, dateM, { status: { $eq: 'Delivered' } }],
+        $and: [dateMatch, { status: { $eq: 'Delivered' } }],
       },
+    },
+    { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
+    {
+      $match: dateM,
     },
     {
       $lookup: {
@@ -2550,6 +2554,7 @@ const getCreditBillMaster = async (query) => {
         AssignedUserId: '$creditbills.AssignedUserId',
         active: 1,
         Scheduledate: 1,
+        creationDate: 1,
       },
     },
     {
@@ -2811,10 +2816,36 @@ const getCreditBillMaster = async (query) => {
   const today = moment().format('YYYY-MM-DD');
   const yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   console.log(yersterday);
-  let todaycount = await creditBill.find({ date: today }).count();
-  let yersterdayCount = await creditBill.find({ date: yersterday }).count();
-
-  return { values: values, total: total.length, todaycount: todaycount, yersterdayCount: yersterdayCount };
+  let todaycount = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ status: { $eq: 'Delivered' } }],
+      },
+    },
+    { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
+    {
+      $match: { creationDate: today },
+    },
+  ]);
+  let yersterdayCount = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [{ status: { $eq: 'Delivered' } }],
+      },
+    },
+    { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
+    {
+      $match: { creationDate: yersterday },
+    },
+  ]);
+  let assignedCount = await ShopOrderClone.find({ creditBillAssignedStatus: { $eq: 'Assigned' } }).count();
+  return {
+    values: values,
+    total: total.length,
+    todaycount: todaycount.length,
+    yersterdayCount: yersterdayCount.length,
+    assignedCount: assignedCount,
+  };
 };
 
 const groupCreditBill = async (AssignedUserId, date, page) => {
