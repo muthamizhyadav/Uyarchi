@@ -101,8 +101,13 @@ const BillAdjRoute = require('./Bill.Adj.route');
 const DemoReg = require('./demoReg.route')
 const UserFineRoute = require('./user_Fine.route');
 const manageJob = require('./manageJob.route');
-const paymentgatway=require("./paymentgatway.route");
+const paymentgatway = require("./paymentgatway.route");
+const checkot = require("./checkout.route")
 const defaultRoutes = [
+  {
+    path: '/checkout',
+    route: checkot,
+  },
   {
     path: '/paymentgatway',
     route: paymentgatway,

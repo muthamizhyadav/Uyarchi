@@ -326,6 +326,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   PackedCreated: {
     type: Date
+  },
+  orderType:{
+    type: String,
+    default: 'Salesman',
   }
 
 });
