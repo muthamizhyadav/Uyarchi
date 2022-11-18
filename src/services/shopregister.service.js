@@ -1013,6 +1013,195 @@ const get_myissues = async (shopId) => {
 };
 
 
+const getmyorder_byId = async (shopId, query) => {
+  const value = await ShopOrderClone.aggregate([
+    { $match: { $and: [{ shopId: { $eq: shopId } }, { _id: { $eq: query.id } }] } },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              productpacktypeId: 1,
+              packKg: 1,
+              unit: 1,
+              date: 1,
+              time: 1,
+              customerId: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              created: 1,
+              productTitle: '$products.productTitle',
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    { $unwind: '$productData' },
+
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: '$paidAmt',
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'RE_order_Id',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: '$paidAmt',
+                    },
+                  },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              amount: '$orderpayments.amount',
+            },
+          },
+        ],
+        as: 'shoporderclones',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shoporderclones',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        reorderamount: { $ifNull: ['$shoporderclones.amount', 0] },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        product: "$productOrderdata",
+        status: 1,
+        time_of_delivery: 1,
+        Payment: 1,
+        delivery_type: 1,
+        devevery_mode: 1,
+        created: 1,
+        OrderId: 1,
+        customerBillId: 1,
+        subtotal: { $round: "$productData.price" },
+        paidamount: {
+          $sum: ['$orderpayments.amount', '$reorderamount'],
+        },
+        pendingAmount: {
+          $subtract: [{ $round: "$productData.price" }, {
+            $sum: ['$orderpayments.amount', '$reorderamount'],
+          }]
+        }
+      }
+    }
+  ])
+  return value;
+};
+
 module.exports = {
   register_shop,
   verify_otp,
@@ -1029,5 +1218,6 @@ module.exports = {
   get_raiseorder_issue,
   get_raiseproduct,
   get_myissues,
-  get_my_issue_byorder
+  get_my_issue_byorder,
+  getmyorder_byId
 };

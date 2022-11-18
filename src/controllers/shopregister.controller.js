@@ -82,6 +82,11 @@ const get_myissues = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(shop);
 });
 
+const getmyorder_byId = catchAsync(async (req, res) => {
+  const shop = await registerShop.getmyorder_byId(req.shopId, req.query);
+  res.status(httpStatus.CREATED).send(shop);
+});
+
 
 
 module.exports = {
@@ -100,5 +105,6 @@ module.exports = {
   get_raiseorder_issue,
   get_raiseproduct,
   get_myissues,
-  get_my_issue_byorder
+  get_my_issue_byorder,
+  getmyorder_byId
 };
