@@ -37,7 +37,7 @@ const get_myDetails = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(shop);
 });
 const get_myorder = catchAsync(async (req, res) => {
-  const shop = await registerShop.get_myorder(req);
+  const shop = await registerShop.get_myorder(req, req.query);
   res.status(httpStatus.CREATED).send(shop);
 });
 const get_mypayments = catchAsync(async (req, res) => {
