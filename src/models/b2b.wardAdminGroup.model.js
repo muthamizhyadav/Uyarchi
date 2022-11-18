@@ -29,6 +29,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  returnstockdate: {
+    type: Date,
+  },
   vehicleId: {
     type: String,
   },
@@ -62,7 +65,10 @@ const wardAdminGroupSchema = new mongoose.Schema({
   pettyStockAllocateStatusNumber: {
     type: Number,
   },
-
+  returnStockstatus: {
+    type: String,
+    default: 'Pending',
+  },
   AllocateStatus: {
     type: String,
     default: 'Assigned',
@@ -129,7 +135,7 @@ const wardAdminGroupSchema = new mongoose.Schema({
   },
   FinishingStatus: {
     type: String,
-    default: "Pending"
+    default: 'Pending',
   },
   zone: {
     type: String,
@@ -152,58 +158,55 @@ const wardAdminGroupSchema = new mongoose.Schema({
   pettyCashDetails: {
     type: Array,
     default: [],
-
   },
   PettyStockCreate: {
-    type: Date
+    type: Date,
   },
   PettyCashCreate: {
-    type: Date
+    type: Date,
   },
   pettyStockUnAllocateCreated: {
     type: Date,
   },
   pettyCashNotAllocateCreate: {
-    type: Date
+    type: Date,
   },
   StockUid: {
-    type: String
+    type: String,
   },
   CashUid: {
-    type: String
+    type: String,
   },
-  CashPickedCreated:{
-    type: Date
+  CashPickedCreated: {
+    type: Date,
   },
   CashPickedUserId: {
-    type: String
+    type: String,
   },
-  StockPickedCreated:{
-    type: Date
+  StockPickedCreated: {
+    type: Date,
   },
   StockPickedUserId: {
-    type: String
+    type: String,
   },
   DeliveryStartCreate: {
-    type: Date
-
+    type: Date,
   },
   DeliveryStartUserId: {
-    type: String
-
+    type: String,
   },
   deliveryCompleteCreate: {
-    type: Date
+    type: Date,
   },
   deliveryCompleteUserId: {
-    type: String
+    type: String,
   },
-  orderPickedCreate :{
-    type: Date
+  orderPickedCreate: {
+    type: Date,
   },
   orderPickedUserId: {
-    type: String
-  }
+    type: String,
+  },
 });
 
 const wardAdminGroup = mongoose.model('wardAdminGroup', wardAdminGroupSchema);
