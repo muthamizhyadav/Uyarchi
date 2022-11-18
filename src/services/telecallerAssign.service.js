@@ -3227,14 +3227,22 @@ const history_Assign_Reaasign_datasalesman = async (id) => {
 
 const pincode = async () => {
   return await Shop.aggregate([
+    // {
+    //   $sort:{pincode:{$ne:null}}
+    // },
     {
       $match: {
-        $and: [{ status: { $eq: "data_approved" } }],
+        $and: [{ status: { $eq: "data_approved" } },{Pincode:{$ne:null}}],
+      },
+    },
+    {
+      $group: {
+        _id: { Pincode: '$Pincode'},
       },
     },
     {
       $project:{
-        Pincode:1,
+        Pincode:"$_id.Pincode",
       }
     }
   ]);
