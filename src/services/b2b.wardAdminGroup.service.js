@@ -1315,9 +1315,8 @@ const assignOnly_DE = async (query, status) => {
       // pettyCashAllocateStatus: { $ne: 'Pending' },
       // pettyStockAllocateStatus: { $ne: 'Pending' },
       FinishingStatus: { $ne: 'Finished' },
-      manageDeliveryStatus: { $ne: 'cashReturned' },
     };
-    statusMatch = { status: { $in: ['Assigned', 'Packed'] } };
+    statusMatch = { status: { $in: ['Assigned', 'Packed','returnedStock'] } };
   }
   console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
