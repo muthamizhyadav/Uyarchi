@@ -90,6 +90,7 @@ const get_myDetails = async (req) => {
 const get_myorder = async (req, query) => {
   let page = query.page == '' || query.page == null ? 0 : query.page;
   const odrers = await ShopOrderClone.aggregate([
+    { $sort: { created: -1 } },
     { $match: { shopId: req.shopId } },
     {
       $lookup: {
