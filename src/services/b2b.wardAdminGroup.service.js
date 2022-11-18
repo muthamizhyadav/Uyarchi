@@ -1280,7 +1280,7 @@ const assignOnly_DE = async (query, status) => {
     macthStatus = {
       // pettyCashAllocateStatus: { $ne: 'Pending' },
       // pettyStockAllocateStatus: { $ne: 'Pending' },
-      manageDeliveryStatus: { $ne: 'Delivery Completed' },
+      FinishingStatus: { $ne: 'Finished' },
     };
     statusMatch = { status: { $in: ['Assigned', 'Packed'] } };
   }
@@ -1418,6 +1418,7 @@ const assignOnly_DE = async (query, status) => {
         status: 1,
         groupOrders: '$groupOrders',
         pickputype: 1,
+        FinishingStatus: 1,
       },
     },
     { $skip: 10 * page },
