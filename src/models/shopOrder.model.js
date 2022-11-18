@@ -231,9 +231,6 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   statusUpdate: {
     type: Date,
   },
-  returnedCash: {
-    type: Date,
-  },
   customerBillId: {
     type: String,
   },
@@ -327,6 +324,13 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     type: Date,
   },
   PackedCreated: {
+    type: Date,
+  },
+  orderType: {
+    type: String,
+    default: 'Salesman',
+  },
+  returnedCash: {
     type: Date,
   },
 });
