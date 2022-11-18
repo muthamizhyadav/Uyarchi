@@ -56,6 +56,7 @@ router.route('/totalCount/counts').get(authorization, b2bShopCloneController.get
 router.route('/getMarket/shop/:marketId/:page').get(b2bShopCloneController.getMarkeShop);
 
 //
+router.route("/gomapView/viewfirst/:id").put(b2bShopCloneController.gomap_view_now)
 
 router.route('/sales/registerUser').post(b2bShopCloneController.registerUser);
 // router.route('/sales/forgot-password').post(b2bShopCloneController.forgotPassword);

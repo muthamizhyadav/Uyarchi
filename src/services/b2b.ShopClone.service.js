@@ -3332,6 +3332,15 @@ const update_pincode = async (query, body) => {
   return shop;
 };
 
+
+const gomap_view_now = async (id) => {
+  let shop = await Shop.findByIdAndUpdate(
+    { _id: id },
+    { gomap: moment() },
+    { new: true }
+  );
+  return shop;
+};
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -3377,7 +3386,7 @@ module.exports = {
   searchShops_By_Name,
   data2,
   data3,
-
   get_wardby_shops,
   update_pincode,
+  gomap_view_now
 };
