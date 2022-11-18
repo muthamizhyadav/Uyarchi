@@ -2574,6 +2574,10 @@ const getCreditBillMaster = async (query) => {
         $and: [dateMatch, { status: { $eq: 'Delivered' } }],
       },
     },
+    { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
+    {
+      $match: dateM,
+    },
     {
       $lookup: {
         from: 'b2bshopclones',
