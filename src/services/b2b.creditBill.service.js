@@ -2562,6 +2562,9 @@ const getCreditBillMaster = async (query) => {
         $and: [userMatch],
       },
     },
+    {
+      $match: { pendingAmount: { $gt: 0 } },
+    },
 
     { $skip: 10 * page },
     { $limit: 10 },
@@ -2812,6 +2815,9 @@ const getCreditBillMaster = async (query) => {
         $and: [userMatch],
       },
     },
+    {
+      $match: { pendingAmount: { $gt: 0 } },
+    },
   ]);
   const today = moment().format('YYYY-MM-DD');
   const yersterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
@@ -2838,28 +2844,26 @@ const getCreditBillMaster = async (query) => {
       $match: { creationDate: yersterday },
     },
   ]);
-  let assignedCount = await ShopOrderClone.find({ creditBillAssignedStatus: { $eq: 'Assigned' } }).count();
   let assign = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [ { status: { $eq: 'Delivered' } }],
+        $and: [{ status: { $eq: 'Delivered' } }],
       },
     },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
- 
+
     {
       $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
         pipeline: [
-   
           {
             $lookup: {
               from: 'wards',
               localField: 'Wardid',
               foreignField: '_id',
-            
+
               as: 'wards',
             },
           },
