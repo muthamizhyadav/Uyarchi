@@ -580,6 +580,36 @@ const returnStock = async (id) => {
               groupId: id,
             },
           },
+          {
+            $lookup: {
+              from: 'wardadmingroups',
+              localField: 'groupId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'vehicles',
+                    localField: 'vehicleId',
+                    foreignField: '_id',
+                    as: 'vehicles',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$vehicles',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              ],
+              as: 'group',
+            },
+          },
+          {
+            $unwind: {
+              path: '$group',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
         ],
         as: 'totalpetty',
       },
@@ -746,6 +776,10 @@ const returnStock = async (id) => {
         UndeliveryQuantity: '$productorderclonesData.UnQty',
         totalSum: { $add: ['$productorderclones.Qty', '$productorderclonesData.UnQty'] },
         productorderclonesData: { $eq: ['$productorderclonesData._id', null] },
+        vehicleName: '$totalpetty.group.vehicles.vehicle_type',
+        vehicleNumber: '$totalpetty.group.vehicles.vehicleNo',
+        route: '$totalpetty.group.route',
+        GroupBillId: '$totalpetty.group.GroupBillId',
       },
     },
     {
