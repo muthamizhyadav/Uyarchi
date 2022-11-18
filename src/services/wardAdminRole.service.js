@@ -2623,6 +2623,7 @@ const getAssign_bySalesman = async (id) => {
         shopLong: '$shopData.Slong',
         shopAddress: '$shopData.address',
         salesmanName: '$users.name',
+        shopStatus: '$shopData.status',
       },
     },
   ]);
