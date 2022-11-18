@@ -2670,7 +2670,37 @@ const getAssign_bySalesman = async (id) => {
       $unwind: '$shopData',
     },
   ]);
-  return { values: values, dataApproved: dataApproved.length, dataNotApproved: dataNotApproved.length };
+
+  let todaydate = moment().format('YYYY-MM-DD');
+
+  let TodayApproved = await SalesManShop.aggregate([
+    {
+      $match: {
+        $or: [
+          { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+          { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [{ $match: { $and: [{ status: { $eq: 'data_approved' } }, { DA_DATE: { $eq: todaydate } }] } }],
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+  ]);
+  return {
+    values: values,
+    dataApproved: dataApproved.length,
+    dataNotApproved: dataNotApproved.length,
+    TodayApproved: TodayApproved.length,
+  };
 };
 
 module.exports = {
