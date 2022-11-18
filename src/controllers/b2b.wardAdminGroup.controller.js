@@ -374,6 +374,12 @@ const returnedCash = catchAsync(async (req, res) => {
   res.send(group);
 });
 
+const returnedStock = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const group = await wardAdminGroupService.returnedStock(req.params.id, userId);
+  res.send(group);
+});
+
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -468,4 +474,5 @@ module.exports = {
   createArrayPettyCash,
   storeReturn_images_toGroup,
   returnedCash,
+  returnedStock,
 };

@@ -4088,6 +4088,22 @@ const returnedCash = async (id, userid) => {
   return value;
 };
 
+const returnedStock = async (id, userid) => {
+  let value = await wardAdminGroup.findById(id);
+  value = await wardAdminGroup.findByIdAndUpdate(
+    { _id: id },
+    { manageDeliveryStatus: 'StockReturned', cashReturned: moment(), StockReturnedDE: userid },
+    { new: true }
+  );
+  // value.Orderdatas.forEach(async (e) => {
+  //   let shoporder = await ShopOrderClone.findOne({ _id: e._id });
+  //   await ShopOrderClone.findByIdAndUpdate({ _id: e._id }, { status: 'cashReturned', returnedCash: moment() }, { new: true });
+  //   shoporder.statusActionArray.push({ userid: userid, date: moment().toString(), status: 'cashReturned' });
+  //   shoporder.save();
+  // });
+  return value;
+};
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -4158,4 +4174,5 @@ module.exports = {
   createArrayPettyCash,
   storeReturn_images_toGroup,
   returnedCash,
+  returnedStock,
 };

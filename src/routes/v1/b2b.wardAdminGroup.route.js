@@ -144,4 +144,5 @@ router
   .route('/return/stock/images/:id')
   .put(returnImage.array('returnStockimages'), wardAdminGroupController.storeReturn_images_toGroup);
 router.route('/return/cash/:id').get(authorization, wardAdminGroupController.returnedCash);
+router.route('/return/stock/De/:id').get(authorization, wardAdminGroupController.returnedStock);
 module.exports = router;

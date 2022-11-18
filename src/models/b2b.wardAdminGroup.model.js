@@ -215,6 +215,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
   cashReturnedDE: {
     type: String,
   },
+  StockReturnedDE: {
+    type: String,
+  },
 });
 
 const wardAdminGroup = mongoose.model('wardAdminGroup', wardAdminGroupSchema);
