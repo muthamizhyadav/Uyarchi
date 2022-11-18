@@ -75,6 +75,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: String,
     default: 'Assigned',
   },
+  cashReturned: {
+    type: Date,
+  },
   // NotAllocateStatus: {
   //   type: String,
   //   default: "Pending",
@@ -207,6 +210,12 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: Date,
   },
   orderPickedUserId: {
+    type: String,
+  },
+  cashReturnedDE: {
+    type: String,
+  },
+  StockReturnedDE: {
     type: String,
   },
 });

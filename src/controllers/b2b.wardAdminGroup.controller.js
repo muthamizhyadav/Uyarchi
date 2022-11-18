@@ -368,6 +368,18 @@ const storeReturn_images_toGroup = catchAsync(async (req, res) => {
   res.send(group);
 });
 
+const returnedCash = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const group = await wardAdminGroupService.returnedCash(req.params.id, userId);
+  res.send(group);
+});
+
+const returnedStock = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const group = await wardAdminGroupService.returnedStock(req.params.id, userId);
+  res.send(group);
+});
+
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -461,4 +473,6 @@ module.exports = {
   get_stock_roport_selfpickup,
   createArrayPettyCash,
   storeReturn_images_toGroup,
+  returnedCash,
+  returnedStock,
 };
