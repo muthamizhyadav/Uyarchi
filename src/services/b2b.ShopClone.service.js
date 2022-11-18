@@ -166,6 +166,9 @@ const getshop_myshops_asm = async (page, userId) => {
   console.log(userId);
   let values = await Shop.aggregate([
     {
+      $sort: { status: 1, gomap: -1 }
+    },
+    {
       $match: {
         $or: [
           { salesManStatus: { $eq: 'Assign' } },
@@ -586,7 +589,7 @@ const getshop_myshops = async (page, userId) => {
   console.log(userId);
   let values = await Shop.aggregate([
     {
-      $sort: { status: 1 }
+      $sort: { status: 1, gomap: -1 }
     },
     {
       $match: {
