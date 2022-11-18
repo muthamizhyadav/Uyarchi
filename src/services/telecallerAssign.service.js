@@ -418,10 +418,11 @@ const getnotAssignShops = async (zone, id, street, page, limit, uid, date, dasta
     dastatusMatch = [{ active: { $eq: true } }];
   }
   if(pincode != 'null'){
-    pincodeMatch = [{Pincode: { $eq: pincode } }];
+    pincodeMatch = [{Pincode: { $eq: parseInt(pincode) } }];
   }else{
     pincodeMatch = [{ active: { $eq: true } }];
   }
+  // console.log(pincodeMatch)
   if(zone != 'null'){
      zoneMatch = [{ _id: { $eq: zone } }];
   }else{
@@ -465,6 +466,11 @@ if(uid != 'null' &&  date == 'null'){
   let data = await Shop.aggregate([
     {
       $match: {
+        $and: pincodeMatch,
+      },
+    },
+    {
+      $match: {
         $and: match,
       },
     },
@@ -476,11 +482,6 @@ if(uid != 'null' &&  date == 'null'){
     {
       $match: {
         $and: dastatusMatch,
-      },
-    },
-    {
-      $match: {
-        $and: pincodeMatch,
       },
     },
     // {
@@ -586,6 +587,7 @@ if(uid != 'null' &&  date == 'null'){
         locality: '$streets.locality',
         _id: 1,
         displaycount: 1,
+        Pincode:1,
       },
     },
     {
