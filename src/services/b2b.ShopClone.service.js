@@ -586,6 +586,9 @@ const getshop_myshops = async (page, userId) => {
   console.log(userId);
   let values = await Shop.aggregate([
     {
+      $sort: { status: 1 }
+    },
+    {
       $match: {
         $or: [
           { salesManStatus: { $eq: 'Assign' } },
