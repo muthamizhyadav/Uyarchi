@@ -3581,36 +3581,7 @@ const OGorders_MDorders = async (id) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'orderId',
-        pipeline: [
-          {
-            $lookup: {
-              from: 'products',
-              localField: 'productid',
-              foreignField: '_id',
-              as: 'product',
-            },
-          },
-          {
-            $unwind: '$product',
-          },
-          {
-            $project: {
-              _id: 1,
-              quantity: 1,
-              priceperkg: 1,
-              amount: { $multiply: ['$quantity', '$priceperkg'] },
-              productName: '$product.productTitle',
-            },
-          },
-        ],
-        as: 'productByOrder',
-      },
-    },
+
     {
       $lookup: {
         from: 'productorderclones',
@@ -3639,6 +3610,36 @@ const OGorders_MDorders = async (id) => {
           },
         ],
         as: 'modified',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'product',
+            },
+          },
+          {
+            $unwind: '$product',
+          },
+          {
+            $project: {
+              _id: 1,
+              quantity: 1,
+              priceperkg: 1,
+              productName: '$product.productTitle',
+              amount: { $multiply: ['$quantity', '$priceperkg'] },
+            },
+          },
+        ],
+        as: 'productsByorders',
       },
     },
     {
@@ -3736,7 +3737,10 @@ const OGorders_MDorders = async (id) => {
       },
     },
     {
-      $unwind: '$deliveryExecutive',
+      $unwind: {
+        path: '$deliveryExecutive',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $project: {
@@ -3750,7 +3754,6 @@ const OGorders_MDorders = async (id) => {
         paymentMethod: 1,
         OrderId: 1,
         customerBillId: 1,
-        deliveryExecutiveId: 1,
         date: 1,
         time: 1,
         lapsedOrder: 1,
@@ -3758,13 +3761,14 @@ const OGorders_MDorders = async (id) => {
         orderedAmt: { $round: ['$productData.price', 0] },
         pendingAmt: { $subtract: [{ $round: ['$productData.price', 0] }, '$orderpayments.price'] },
         paidAmt: '$orderpayments.price',
-        route: '$orderassign.route',
-        vehicleName: '$orderassign.vehicleName',
+        route: { $ifNull: ['$orderassign.route', 'Rejected'] },
+        vehicleName: { $ifNull: ['$orderassign.vehicleName', 'Rejected'] },
         productByOrder: '$productByOrder',
         modifiedStatus: 1,
-        deliveryExecutive: '$deliveryExecutive.name',
-        groupId: '$orderassign.groupId',
-        // orderassign: '$orderassign',
+        deliveryExecutive: { $ifNull: ['$deliveryExecutive.name', 'Rejected'] },
+        groupId: { $ifNull: ['$orderassign.groupId', 'Rejected'] },
+        productByOrder: '$productsByorders',
+        created: 1,
       },
     },
   ]);

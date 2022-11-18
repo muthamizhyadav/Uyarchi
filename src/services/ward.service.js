@@ -204,7 +204,13 @@ const getAllward = async () => {
   return await Ward.find();
 };
 
-const wardParticularZoneData  = async (id) => {
+const wardParticularZoneData  = async (id, Uid) => {
+  let user;
+  if(Uid != 'null'){
+    user = [{Uid:{$eq:Uid}}]
+  }else{
+    user = [{_id:{$ne:null}}]
+  }
     const data = await Ward.aggregate([
       { $match: { zoneId: id } },
       {
@@ -233,6 +239,11 @@ const wardParticularZoneData  = async (id) => {
                 ],
               },
             },
+            {
+            $match: {
+              $and:user
+            },
+          }
           //      {
           //   $group: {
           //     _id: null,

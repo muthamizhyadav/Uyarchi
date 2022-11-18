@@ -73,7 +73,7 @@ const getAll = catchAsync(async (req, res) => {
 });
 
 const wardParticularZoneData = catchAsync(async (req, res) => {
-  const ward = await wardService.wardParticularZoneData(req.params.id);
+  const ward = await wardService.wardParticularZoneData(req.params.id, req.params.Uid);
   res.send(ward);
 });
 
