@@ -22,6 +22,7 @@ const create_ReturnStock = async (body, userid) => {
   let findGroup = await wardAdminGroup.findOne({ _id: groupId });
   await findGroup.Orderdatas.forEach(async (e) => {
     let shoporder = await ShopOrderClone.findOne({ _id: e._id });
+    await ShopOrderClone.findByIdAndUpdate({ _id: e._id }, { status: 'returned' }, { new: true });
     shoporder.statusActionArray.push({ userid: userid, date: moment().toString(), status: 'returned' });
     shoporder.save();
   });
