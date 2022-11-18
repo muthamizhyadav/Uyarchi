@@ -75,6 +75,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: String,
     default: 'Assigned',
   },
+  cashReturned: {
+    type: Date,
+  },
   // NotAllocateStatus: {
   //   type: String,
   //   default: "Pending",

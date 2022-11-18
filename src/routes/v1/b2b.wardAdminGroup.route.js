@@ -143,5 +143,5 @@ router.route('/createArrayPettyCash/:id').put(wardAdminGroupController.createArr
 router
   .route('/return/stock/images/:id')
   .put(returnImage.array('returnStockimages'), wardAdminGroupController.storeReturn_images_toGroup);
-
+router.route('/return/cash/:id').get(authorization, wardAdminGroupController.returnedCash);
 module.exports = router;
