@@ -369,6 +369,8 @@ const getshop_myshops_asm = async (page, userId) => {
         mobile: 1,
         date: 1,
         salesmanshops: '$salesmanshops',
+        gomap: 1
+
       },
     },
     { $skip: 10 * page },
@@ -737,6 +739,7 @@ const getshop_myshops = async (page, userId) => {
         active: 1,
         mobile: 1,
         date: 1,
+        gomap: 1
       },
     },
     { $skip: 10 * page },
