@@ -166,6 +166,9 @@ const getshop_myshops_asm = async (page, userId) => {
   console.log(userId);
   let values = await Shop.aggregate([
     {
+      $sort: { status: 1, gomap: -1 }
+    },
+    {
       $match: {
         $or: [
           { salesManStatus: { $eq: 'Assign' } },
@@ -366,6 +369,8 @@ const getshop_myshops_asm = async (page, userId) => {
         mobile: 1,
         date: 1,
         salesmanshops: '$salesmanshops',
+        gomap: 1
+
       },
     },
     { $skip: 10 * page },
@@ -586,7 +591,7 @@ const getshop_myshops = async (page, userId) => {
   console.log(userId);
   let values = await Shop.aggregate([
     {
-      $sort: { status: 1 }
+      $sort: { status: 1, gomap: -1 }
     },
     {
       $match: {
@@ -734,6 +739,7 @@ const getshop_myshops = async (page, userId) => {
         active: 1,
         mobile: 1,
         date: 1,
+        gomap: 1
       },
     },
     { $skip: 10 * page },
@@ -3332,6 +3338,15 @@ const update_pincode = async (query, body) => {
   return shop;
 };
 
+
+const gomap_view_now = async (id) => {
+  let shop = await Shop.findByIdAndUpdate(
+    { _id: id },
+    { gomap: moment() },
+    { new: true }
+  );
+  return shop;
+};
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -3377,7 +3392,7 @@ module.exports = {
   searchShops_By_Name,
   data2,
   data3,
-
   get_wardby_shops,
   update_pincode,
+  gomap_view_now
 };
