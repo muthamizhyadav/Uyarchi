@@ -2246,6 +2246,7 @@ const getGroupDetailsForDE = async (page) => {
         deliveryexecutiveName: '$b2buserDta.name',
         // FinishingStatus: 1,
         // route:1,
+        returnStockstatus: 1,
         shoporderclonesId: '$shopIDDatas._id',
       },
     },

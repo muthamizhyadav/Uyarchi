@@ -16,7 +16,7 @@ const create_ReturnStock = async (body, userid) => {
   }
   await wardAdminGroup.findByIdAndUpdate(
     { _id: groupId },
-    { returnStockstatus: 'returnedStock', returnstockdate: moment() },
+    { returnStockstatus: 'returnedStock', returnstockdate: moment(), status: 'returnedStock' },
     { new: true }
   );
   let findGroup = await wardAdminGroup.findOne({ _id: groupId });
