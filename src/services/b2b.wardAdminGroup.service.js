@@ -1321,7 +1321,7 @@ const assignOnly_DE = async (query, status) => {
   }
   console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'DE' } }] } },
+    { $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'DE' }`` }] } },
     {
       $lookup: {
         from: 'orderassigns',
