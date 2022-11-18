@@ -2597,6 +2597,18 @@ const getAssign_bySalesman = async (id) => {
       },
     },
     {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'salesManId',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users',
+    },
+
+    {
       $project: {
         _id: 1,
         salesManId: 1,
@@ -2610,6 +2622,7 @@ const getAssign_bySalesman = async (id) => {
         shopLat: '$shopData.Slat',
         shopLong: '$shopData.Slong',
         shopAddress: '$shopData.address',
+        salesmanName: '$users.name',
       },
     },
   ]);
