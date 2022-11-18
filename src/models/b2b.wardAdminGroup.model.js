@@ -212,6 +212,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
   orderPickedUserId: {
     type: String,
   },
+  cashReturnedDE: {
+    type: String,
+  },
 });
 
 const wardAdminGroup = mongoose.model('wardAdminGroup', wardAdminGroupSchema);
