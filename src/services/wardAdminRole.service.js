@@ -2626,8 +2626,51 @@ const getAssign_bySalesman = async (id) => {
       },
     },
   ]);
-  // let dataApproved = async()
-  return values;
+  let dataApproved = await SalesManShop.aggregate([
+    {
+      $match: {
+        $or: [
+          { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+          { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [{ $match: { status: 'data_approved' } }],
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+  ]);
+  let dataNotApproved = await SalesManShop.aggregate([
+    {
+      $match: {
+        $or: [
+          { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+          { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [{ $match: { status: { $ne: 'data_approved' } } }],
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+  ]);
+  return { values: values, dataApproved: dataApproved.length, dataNotApproved: dataNotApproved.length };
 };
 
 module.exports = {
