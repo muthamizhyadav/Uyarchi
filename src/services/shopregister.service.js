@@ -1199,7 +1199,11 @@ const getmyorder_byId = async (shopId, query) => {
       }
     }
   ])
-  return value;
+  if (value.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order Not Found');
+
+  }
+  return value[0];
 };
 
 module.exports = {
