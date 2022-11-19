@@ -104,7 +104,7 @@ const updateAcknowledgeSingle = async (id, updateBody, userId) => {
     { status: 'Acknowledged', statusUpdate: moment(), AcknowledgeCreated: moment() },
     { new: true }
   );
-  let statusActionArray = await ShopOrderClone.findById(id)
+  let statusActionArray = await ShopOrderClone.findById(id);
   await statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Acknowledged' });
   statusActionArray.save();
   return product;
@@ -112,33 +112,41 @@ const updateAcknowledgeSingle = async (id, updateBody, userId) => {
 
 const updateApprovedMultiSelect = async (body, userId) => {
   body.arr.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Approved', statusUpdate: moment(), approveCreated: moment() }, { new: true });
+    await ShopOrderClone.findByIdAndUpdate(
+      { _id: e },
+      { status: 'Approved', statusUpdate: moment(), approveCreated: moment() },
+      { new: true }
+    );
 
-    let statusActionArray = await ShopOrderClone.findById(e)
+    let statusActionArray = await ShopOrderClone.findById(e);
     statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Approved' });
     statusActionArray.save();
   });
-
-
 
   return 'status updated successfully';
 };
 const updateRejectMultiSelect = async (body, userId) => {
   body.arr.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Rejected', statusUpdate: moment(), rejectCreated: moment() }, { new: true });
-    let statusActionArray = await ShopOrderClone.findById(e)
+    await ShopOrderClone.findByIdAndUpdate(
+      { _id: e },
+      { status: 'Rejected', statusUpdate: moment(), rejectCreated: moment() },
+      { new: true }
+    );
+    let statusActionArray = await ShopOrderClone.findById(e);
     statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Rejected' });
     statusActionArray.save();
   });
-
-
 
   return 'status updated successfully';
 };
 
 const updatePackedMultiSelect = async (body, userId) => {
   body.arr.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Packed', statusUpdate: moment(), PackedCreated: moment() }, { new: true });
+    await ShopOrderClone.findByIdAndUpdate(
+      { _id: e },
+      { status: 'Packed', statusUpdate: moment(), PackedCreated: moment() },
+      { new: true }
+    );
 
     let statusActionArray = await ShopOrderClone.findById(e);
     statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Packed' });
@@ -473,7 +481,11 @@ const updateProduct = async (id, updateBody, userId) => {
 
 const updateRejected = async (body, userId) => {
   body.arr.forEach(async (e) => {
-    await ShopOrderClone.findByIdAndUpdate({ _id: e }, { status: 'Acknowledged', statusUpdate: moment(), AcknowledgeCreated: moment() }, { new: true });
+    await ShopOrderClone.findByIdAndUpdate(
+      { _id: e },
+      { status: 'Acknowledged', statusUpdate: moment(), AcknowledgeCreated: moment() },
+      { new: true }
+    );
 
     let statusActionArray = await ShopOrderClone.findById(e);
     statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Acknowledged' });
@@ -1273,7 +1285,7 @@ const wardDeliveryExecutive = async () => {
         pipeline: [
           {
             $match: {
-              manageDeliveryStatus: { $ne: 'Delivery Completed' },
+              manageDeliveryStatus: { $eq: 'cashReturned' },
               GroupBillDate: { $eq: today },
             },
           },
