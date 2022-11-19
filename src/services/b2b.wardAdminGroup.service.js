@@ -1299,7 +1299,7 @@ const assignOnly = async (query, status) => {
   return { values: values, total: total.length, delivery: delivery };
 };
 
-const assignOnly_DE = async (query, status) => {
+const assignOnly_DE = async (query, status, userid) => {
   let page = query.page == null || query.page == '' ? 0 : query.page;
   // console.log(page)
   let macthStatus = { active: true };
@@ -1320,7 +1320,9 @@ const assignOnly_DE = async (query, status) => {
   }
   console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'DE' } }] } },
+    {
+      $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'DE' } }, { deliveryExecutiveId: { $eq: userid } }] },
+    },
     {
       $lookup: {
         from: 'orderassigns',
@@ -1459,7 +1461,9 @@ const assignOnly_DE = async (query, status) => {
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'DE' } }] } },
+    {
+      $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'DE' } }, { deliveryExecutiveId: { $eq: userid } }] },
+    },
     {
       $lookup: {
         from: 'orderassigns',

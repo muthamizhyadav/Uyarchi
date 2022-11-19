@@ -135,8 +135,9 @@ const cashgetAssigned = catchAsync(async (req, res) => {
   res.send(details);
 });
 const deliverygetAssigned = catchAsync(async (req, res) => {
-  console.log('hello');
-  const details = await wardAdminGroupService.assignOnly_DE(req.query, 'delivery');
+  let userid = req.userId;
+  console.log(userid);
+  const details = await wardAdminGroupService.assignOnly_DE(req.query, 'delivery', userid);
   res.send(details);
 });
 const delivery_selfpickup = catchAsync(async (req, res) => {

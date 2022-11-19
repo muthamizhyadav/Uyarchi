@@ -42,7 +42,7 @@ router.route('/get/billDetails/:id').get(wardAdminGroupController.getBillDetails
 //checked
 router.route('/get/assignedOnle').get(wardAdminGroupController.getAssigned);
 router.route('/get/assignedOnle/cash').get(wardAdminGroupController.cashgetAssigned);
-router.route('/get/assignedOnle/delivery').get(wardAdminGroupController.deliverygetAssigned);
+router.route('/get/assignedOnle/delivery').get(authorization, wardAdminGroupController.deliverygetAssigned);
 router.route('/stationery/getself/pickup/delivery').get(wardAdminGroupController.delivery_selfpickup);
 
 router.route('/get/details/deliveryExecutive/:id/:page').get(wardAdminGroupController.getDeliveryOrderSeparate);
