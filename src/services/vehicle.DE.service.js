@@ -37,7 +37,7 @@ const getAll_Vehicle_Details = async () => {
         from: 'wardadmingroups',
         localField: '_id',
         foreignField: 'vehicleId',
-        pipeline: [{ $match: { manageDeliveryStatus: { $ne: 'cashReturned' } } }],
+        pipeline: [{ $match: { manageDeliveryStatus: { $eq: 'cashReturned' } } }],
         as: 'wardadmingroups',
       },
     },
