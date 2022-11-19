@@ -3250,6 +3250,120 @@ const pincode = async () => {
   ]);
 }
 
+const getnotAssignsalesmanOrderShops_lat = async (zone,id) => {
+  let zoneMatch;
+  let wardMatch;
+
+  if(zone != 'null'){
+     zoneMatch = [{ _id: { $eq: zone } }];
+  }else{
+    zoneMatch = [{ active: { $eq: true } }];
+  }
+
+  if(id != 'null'){
+    wardMatch = [{ _id: { $eq: id } }];
+ }else{
+  wardMatch = [{ active: { $eq: true } }];
+ }
+
+  let data = await Shop.aggregate([
+    {
+      $match: {
+        $and: [{ status: { $eq: "data_approved" } }],
+      },
+    },
+    {
+      $match: {
+        $or: [
+          {
+            $and: [
+              { salesmanOrderStatus: { $ne: 'Assign' } },
+              { salesmanOrderStatus: { $ne: 'tempReassign' } },
+              { salesmanOrderStatus: { $eq: 'Reassign' } },
+            ],
+          },
+          {
+            $and: [
+              { salesmanOrderStatus: { $ne: 'Assign' } },
+              { salesmanOrderStatus: { $ne: 'tempReassign' } },
+              { salesmanOrderStatus: { $eq: null } },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        as: 'streets',
+      },
+    },
+    {
+      $unwind: '$streets',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: wardMatch,
+            },
+          },
+        ],
+        as: 'wards',
+      },
+    },
+    {
+      $unwind: '$wards',
+    },
+    {
+      $lookup: {
+        from: 'zones',
+        localField: 'wards.zoneId',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: zoneMatch,
+            },
+          },
+        ],
+        as: 'zones',
+      },
+    },
+    {
+      $unwind: '$zones',
+    },
+    {
+      $project: {
+        SOwner: 1,
+        SName: 1,
+        mobile: 1,
+        address: 1,
+        Slat: 1,
+        Slong: 1,
+        Uid:1,
+        date:1,
+        ward:'$wards.ward',
+        Wardid:1,
+        zoneId:'$wards.zoneId',
+        zone:'$zones.zone',
+        streetId: '$streets._id',
+        streetname: '$streets.street',
+        locality: '$streets.locality',
+        _id: 1,
+        displaycount: 1,
+        Pincode:1,
+      },
+    },
+  ]);
+  return { data: data};
+};
   module.exports = {
     createtelecallerAssignReassign,
     getAllTelecallerHead,
@@ -3284,4 +3398,5 @@ const pincode = async () => {
     history_Assign_Reaasign_datatelecaller,
     history_Assign_Reaasign_datasalesman,
     pincode,
+    getnotAssignsalesmanOrderShops_lat,
   }
