@@ -190,6 +190,14 @@ const pincode = catchAsync(async (req, res) => {
   const data = await telecallerService.pincode();
   res.send(data);
 });
+
+const getnotAssignsalesmanOrderShops_lat = catchAsync(async (req, res) => {
+  const data = await telecallerService.getnotAssignsalesmanOrderShops_lat(
+    req.params.zone,
+    req.params.id,
+  );
+  res.send(data);
+});
 module.exports = {
   createtelecallerAssignReassign,
   getAllTelecallerHead,
@@ -224,4 +232,5 @@ module.exports = {
   history_Assign_Reaasign_datatelecaller,
   history_Assign_Reaasign_datasalesman,
   pincode,
+  getnotAssignsalesmanOrderShops_lat,
 };
