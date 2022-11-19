@@ -598,7 +598,7 @@ const getNotAssignData = async (page) => {
       $match: {
         $and: [
           { creditBillAssignedStatus: { $ne: 'Assigned' } },
-          { status: { $eq: 'Delivered' } },
+          { status: { $in: ['Delivered', 'returnedStock'] } },
           { statusOfBill: { $eq: 'Pending' } },
         ],
       },
@@ -743,7 +743,7 @@ const getNotAssignData = async (page) => {
       $match: {
         $and: [
           { creditBillAssignedStatus: { $ne: 'Assigned' } },
-          { status: { $eq: 'Delivered' } },
+          { status: { $in: ['Delivered', 'returnedStock'] } },
           { statusOfBill: { $eq: 'Pending' } },
         ],
       },
