@@ -1321,7 +1321,15 @@ const assignOnly_DE = async (query, status, userid) => {
   console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
     {
-      $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'DE' } }, { deliveryExecutiveId: { $eq: userid } }] },
+      $match: {
+        $and: [
+          statusMatch,
+          macthStatus,
+          { pickputype: { $eq: 'DE' } },
+          { deliveryExecutiveId: { $eq: userid } },
+          { manageDeliveryStatus: { $ne: 'cashReturned' } },
+        ],
+      },
     },
     {
       $lookup: {
@@ -1355,12 +1363,12 @@ const assignOnly_DE = async (query, status, userid) => {
               preserveNullAndEmptyArrays: true,
             },
           },
-          // {
-          //   $project: {
-          //     pending: { $eq: ['$shopdata._id', null] },
-          //     shopdata: '$shopdata.deliveryExecutiveId',
-          //   },
-          // },
+          {
+            $project: {
+              pending: { $eq: ['$shopdata._id', null] },
+              shopdata: '$shopdata.deliveryExecutiveId',
+            },
+          },
         ],
         as: 'dataDetails',
       },
@@ -1449,6 +1457,7 @@ const assignOnly_DE = async (query, status, userid) => {
         as: 'groupOrders',
       },
     },
+
     {
       $project: {
         shopOrderCloneId: '$wdfsaf._id',
@@ -1466,6 +1475,9 @@ const assignOnly_DE = async (query, status, userid) => {
         groupOrders: '$groupOrders',
         pickputype: 1,
         FinishingStatus: 1,
+        statusButton: {
+          $cond: { if: { $eq: ['$manageDeliveryStatus', ['Delivered', 'UnDelivered']] }, then: true, else: false },
+        },
       },
     },
     { $skip: 10 * page },
@@ -1473,7 +1485,15 @@ const assignOnly_DE = async (query, status, userid) => {
   ]);
   let total = await wardAdminGroup.aggregate([
     {
-      $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'DE' } }, { deliveryExecutiveId: { $eq: userid } }] },
+      $match: {
+        $and: [
+          statusMatch,
+          macthStatus,
+          { pickputype: { $eq: 'DE' } },
+          { deliveryExecutiveId: { $eq: userid } },
+          { manageDeliveryStatus: { $ne: 'cashReturned' } },
+        ],
+      },
     },
     {
       $lookup: {
