@@ -95,7 +95,7 @@ const createGroup = async (body, userId) => {
       AssignedstatusPerDay: 1,
     });
 
-    let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: productId }, { new: true });
+    let statusActionArray = await ShopOrderClone.findById(productId);
     statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Assigned' });
     statusActionArray.save();
   });
@@ -2700,7 +2700,7 @@ const createAddOrdINGrp = async (id, body, userId) => {
         AssignedstatusPerDay: 2,
       });
     }
-    let statusActionArray = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { new: true });
+    let statusActionArray = await ShopOrderClone.findById(id);
     statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Assigned' });
     statusActionArray.save();
   });
