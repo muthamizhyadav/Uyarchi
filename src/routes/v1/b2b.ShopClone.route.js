@@ -96,5 +96,9 @@ router.route('/vendor/shop/:page').get(b2bShopCloneController.get_total_vendorSh
 router.route('/search/shops/bySname/:key').get(b2bShopCloneController.searchShops_By_Name);
 router.route('/getshops/from/ward').get(b2bShopCloneController.get_wardby_shops);
 router.route("/addpincode/update/DAdata").put(b2bShopCloneController.update_pincode)
+router.route("/wardby/shop/assigned").get(b2bShopCloneController.ward_by_users)
+
+
+
 
 module.exports = router;
