@@ -268,6 +268,19 @@ const wardParticularZoneData  = async (id, Uid) => {
     return data;
 }
 
+
+const wardParticularZoneData_only  = async (id) => {
+    const data = await Ward.aggregate([
+      { $match: { zoneId: id } },
+      {
+        $project:{
+          ward:1,
+        }
+      }
+    ])
+    return data;
+}
+
 module.exports = {
   createWard,
   getWardByZoneId,
@@ -280,5 +293,6 @@ module.exports = {
   createDummyStreet,
   getWardByZoneIdBySalesman,
   getAllward,
-  wardParticularZoneData
+  wardParticularZoneData,
+  wardParticularZoneData_only,
 };
