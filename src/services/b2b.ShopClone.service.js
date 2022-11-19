@@ -1781,7 +1781,12 @@ const getShopById = async (id) => {
         as: 'shoptype',
       },
     },
-    { $unwind: '$shoptype' },
+    {
+      $unwind: {
+        path: '$shoptype',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
         _id: 1,
@@ -3322,7 +3327,7 @@ const get_wardby_shops = async (query) => {
     { $group: { _id: null, count: { $sum: 1 } } },
   ]);
   let data_approved = await Shop.aggregate([
-    { $match: { $and: [user,{ Wardid: { $eq: wardId } }, { status: { $eq: 'data_approved' } }] } },
+    { $match: { $and: [user, { Wardid: { $eq: wardId } }, { status: { $eq: 'data_approved' } }] } },
     { $group: { _id: null, count: { $sum: 1 } } },
   ]);
   // console.log(assign)
