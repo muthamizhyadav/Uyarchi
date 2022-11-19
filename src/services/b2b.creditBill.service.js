@@ -2308,7 +2308,7 @@ const getCreditBillMaster = async (query) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { status: { $eq: 'Delivered' } }],
+        $and: [dateMatch, { status: { $in: ['Delivered', 'returnedStock'] } }],
       },
     },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
@@ -2571,7 +2571,7 @@ const getCreditBillMaster = async (query) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { status: { $eq: 'Delivered' } }],
+        $and: [dateMatch, { status: { $in: ['Delivered', 'returnedStock'] } }],
       },
     },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
@@ -2829,7 +2829,7 @@ const getCreditBillMaster = async (query) => {
   let todaycount = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: 'Delivered' } }],
+        $and: [dateMatch, { status: { $in: ['Delivered', 'returnedStock'] } }],
       },
     },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
@@ -3086,7 +3086,7 @@ const getCreditBillMaster = async (query) => {
   let yersterdayCount = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: 'Delivered' } }],
+        $and: [dateMatch, { status: { $in: ['Delivered', 'returnedStock'] } }],
       },
     },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
@@ -3342,7 +3342,7 @@ const getCreditBillMaster = async (query) => {
   let assign = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ status: { $eq: 'Delivered' } }],
+        $and: [dateMatch, { status: { $in: ['Delivered', 'returnedStock'] } }],
       },
     },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
