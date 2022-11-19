@@ -5,7 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const OrderReviewService = require('../services/orderReview.service');
 
 const createOrderReview = catchAsync(async (req, res) => {
-  const data = await OrderReviewService.createOrderReview(req.body);
+  const data = await OrderReviewService.createOrderReview(req.shopId, req.body);
   res.send(data);
 });
 
