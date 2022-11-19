@@ -175,8 +175,8 @@ const add_productOrderClone = async (shopId, e, orders) => {
     return await ProductorderClone.create({
         orderId: orders._id,
         productid: e.productId,
-        quantity: e.price,
-        priceperkg: e.priceperkg,
+        quantity: e.cart_QTY,
+        priceperkg: e.price,
         GST_Number: gst.GST_Number,
         HSN_Code: gst.HSN_Code,
         // packtypeId: e.packtypeId,
