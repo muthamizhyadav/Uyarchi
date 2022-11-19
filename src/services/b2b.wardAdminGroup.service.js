@@ -1299,7 +1299,7 @@ const assignOnly = async (query, status) => {
   return { values: values, total: total.length, delivery: delivery };
 };
 
-const assignOnly_DE = async (query, status) => {
+const assignOnly_DE = async (query, status, userid) => {
   let page = query.page == null || query.page == '' ? 0 : query.page;
   // console.log(page)
   let macthStatus = { active: true };
@@ -1320,7 +1320,9 @@ const assignOnly_DE = async (query, status) => {
   }
   console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'DE' } }] } },
+    {
+      $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'DE' } }, { deliveryExecutiveId: { $eq: userid } }] },
+    },
     {
       $lookup: {
         from: 'orderassigns',
@@ -1459,7 +1461,9 @@ const assignOnly_DE = async (query, status) => {
     { $limit: 10 },
   ]);
   let total = await wardAdminGroup.aggregate([
-    { $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'DE' } }] } },
+    {
+      $match: { $and: [statusMatch, macthStatus, { pickputype: { $eq: 'DE' } }, { deliveryExecutiveId: { $eq: userid } }] },
+    },
     {
       $lookup: {
         from: 'orderassigns',
@@ -2255,20 +2259,6 @@ const getGroupDetailsForDE = async (page) => {
     },
     { $unwind: '$b2buserDta' },
     {
-      $unwind: '$Orderdatas',
-    },
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'Orderdatas._id',
-        foreignField: '_id',
-        as: 'shopIDDatas',
-      },
-    },
-    {
-      $unwind: '$shopIDDatas',
-    },
-    {
       $project: {
         groupId: 1,
         assignDate: 1,
@@ -2279,10 +2269,7 @@ const getGroupDetailsForDE = async (page) => {
         pettyCash: 1,
         status: 1,
         deliveryexecutiveName: '$b2buserDta.name',
-        // FinishingStatus: 1,
-        // route:1,
         returnStockstatus: 1,
-        shoporderclonesId: '$shopIDDatas._id',
       },
     },
 
@@ -2305,20 +2292,6 @@ const getGroupDetailsForDE = async (page) => {
       },
     },
     { $unwind: '$b2buserDta' },
-    {
-      $unwind: '$Orderdatas',
-    },
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'Orderdatas._id',
-        foreignField: '_id',
-        as: 'shopIDDatas',
-      },
-    },
-    {
-      $unwind: '$shopIDDatas',
-    },
   ]);
 
   return { values: values, total: total.length };
@@ -2356,7 +2329,7 @@ const getAllGroup = async (id, date, FinishingStatus, page) => {
     },
     {
       $match: {
-        $and: [{ status: { $eq: 'Packed' } }],
+        $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
       },
     },
     {
@@ -2410,7 +2383,7 @@ const getAllGroup = async (id, date, FinishingStatus, page) => {
     },
     {
       $match: {
-        $and: [{ status: { $eq: 'Packed' } }],
+        $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
       },
     },
   ]);

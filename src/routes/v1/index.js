@@ -98,15 +98,20 @@ const returnStockroute = require('./returnStock.route');
 const vehicleRoutes = require('./vehicle.DE.route');
 const telecallerAssignroute = require('./telecallerAssign.route');
 const BillAdjRoute = require('./Bill.Adj.route');
-const DemoReg = require('./demoReg.route')
+const DemoReg = require('./demoReg.route');
 const UserFineRoute = require('./user_Fine.route');
 const manageJob = require('./manageJob.route');
-const paymentgatway = require("./paymentgatway.route");
-const checkot = require("./checkout.route")
+const paymentgatway = require('./paymentgatway.route');
+const checkot = require('./checkout.route');
+const OrderReviewRoute = require('./orderReview.route');
 const defaultRoutes = [
   {
     path: '/checkout',
     route: checkot,
+  },
+  {
+    path: '/orderReview',
+    route: OrderReviewRoute,
   },
   {
     path: '/paymentgatway',
@@ -506,7 +511,7 @@ const defaultRoutes = [
   {
     path: '/manageJobPath',
     route: manageJob,
-  }
+  },
   // {
   //   path: '/sales',
   //   route: salesApp,
