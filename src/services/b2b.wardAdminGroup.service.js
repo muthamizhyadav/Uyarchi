@@ -2259,20 +2259,6 @@ const getGroupDetailsForDE = async (page) => {
     },
     { $unwind: '$b2buserDta' },
     {
-      $unwind: '$Orderdatas',
-    },
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'Orderdatas._id',
-        foreignField: '_id',
-        as: 'shopIDDatas',
-      },
-    },
-    {
-      $unwind: '$shopIDDatas',
-    },
-    {
       $project: {
         groupId: 1,
         assignDate: 1,
@@ -2283,10 +2269,7 @@ const getGroupDetailsForDE = async (page) => {
         pettyCash: 1,
         status: 1,
         deliveryexecutiveName: '$b2buserDta.name',
-        // FinishingStatus: 1,
-        // route:1,
         returnStockstatus: 1,
-        shoporderclonesId: '$shopIDDatas._id',
       },
     },
 
@@ -2309,20 +2292,6 @@ const getGroupDetailsForDE = async (page) => {
       },
     },
     { $unwind: '$b2buserDta' },
-    {
-      $unwind: '$Orderdatas',
-    },
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'Orderdatas._id',
-        foreignField: '_id',
-        as: 'shopIDDatas',
-      },
-    },
-    {
-      $unwind: '$shopIDDatas',
-    },
   ]);
 
   return { values: values, total: total.length };
