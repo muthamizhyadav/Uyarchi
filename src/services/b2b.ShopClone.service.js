@@ -3178,12 +3178,17 @@ const get_total_vendorShop = async (page) => {
 // { salesManStatus: { $eq: 'tempReassign' } },
 const get_wardby_shops = async (query) => {
   let wardId = query.ward;
+  let user = { active: true };
+  if (query.users != "" && query.users != null && query.users != 'null') {
+    user = { Uid: { $eq: query.users } }
+  }
   // console.log("hello")
   let shopss = await Shop.aggregate([
     {
       $match: {
         $and: [
           { Wardid: { $eq: wardId } },
+          user
           //  { salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }
         ],
       },
@@ -3309,6 +3314,7 @@ const get_wardby_shops = async (query) => {
       $match: {
         $and: [
           { Wardid: { $eq: wardId } },
+          user,
           { $or: [{ salesManStatus: { $eq: 'tempReassign' } }, { salesManStatus: { $eq: 'Assign' } }] },
         ],
       },
@@ -3316,7 +3322,7 @@ const get_wardby_shops = async (query) => {
     { $group: { _id: null, count: { $sum: 1 } } },
   ]);
   let data_approved = await Shop.aggregate([
-    { $match: { $and: [{ Wardid: { $eq: wardId } }, { status: { $eq: 'data_approved' } }] } },
+    { $match: { $and: [user,{ Wardid: { $eq: wardId } }, { status: { $eq: 'data_approved' } }] } },
     { $group: { _id: null, count: { $sum: 1 } } },
   ]);
   // console.log(assign)
