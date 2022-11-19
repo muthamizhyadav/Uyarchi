@@ -37,11 +37,9 @@ const getAll_Vehicle_Details = async () => {
         from: 'wardadmingroups',
         localField: '_id',
         foreignField: 'vehicleId',
-        pipeline: [
-          { $match: { manageDeliveryStatus: { $ne: "Delivery Completed" } } }
-        ],
+        pipeline: [{ $match: { manageDeliveryStatus: { $ne: 'cashReturned' } } }],
         as: 'wardadmingroups',
-      }
+      },
     },
     {
       $project: {
@@ -58,14 +56,13 @@ const getAll_Vehicle_Details = async () => {
         created: 1,
         date: 1,
         time: 1,
-        wardadmingroups: { $size: "$wardadmingroups" }
+        wardadmingroups: { $size: '$wardadmingroups' },
       },
     },
-    { $match: { wardadmingroups: { $eq: 0 } } }
-  ])
+    { $match: { wardadmingroups: { $eq: 0 } } },
+  ]);
   return vehicles;
 };
-
 
 const assigndriverVehile = async (body) => {
   let serverdates = moment().format('YYYY-MM-DD');
@@ -90,8 +87,10 @@ const assigndriverVehile = async (body) => {
   // console.log(totalcount);
   userId = 'D' + center + totalcount;
 
-
-  let bodydata = { ...body, ...{ created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HHmm'), groupID: userId } }
+  let bodydata = {
+    ...body,
+    ...{ created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HHmm'), groupID: userId },
+  };
   let driver = await AssignDriver.create(bodydata);
   // console.log(body)
   body.group.forEach(async (res) => {
@@ -100,26 +99,24 @@ const assigndriverVehile = async (body) => {
       assignGroupId: driver._id,
       created: moment(),
       date: moment().format('YYYY-MM-DD'),
-      time: moment().format('HHmm')
-    })
-  })
-
+      time: moment().format('HHmm'),
+    });
+  });
 
   return driver;
-
-}
+};
 
 const getallassigngroups = async (query) => {
   let page = query.page == null || query.page == '' ? 0 : query.page;
   let date = query.date;
   let user = query.driver;
-  let dateMatch = { active: true }
-  let userMatch = { active: true }
+  let dateMatch = { active: true };
+  let userMatch = { active: true };
   if (date != null && date != '' && user != 'null') {
-    dateMatch = { date: { $eq: date } }
+    dateMatch = { date: { $eq: date } };
   }
   if (user != null && user != '' && user != 'null') {
-    userMatch = { driverID: { $eq: user } }
+    userMatch = { driverID: { $eq: user } };
   }
   let driver = await AssignDriver.aggregate([
     { $sort: { date: -1 } },
@@ -142,12 +139,12 @@ const getallassigngroups = async (query) => {
         date: 1,
         time: 1,
         groupID: 1,
-        driverName: "$b2busers.name",
+        driverName: '$b2busers.name',
         route: 1,
-      }
+      },
     },
     { $skip: 10 * page },
-    { $limit: 10 }
+    { $limit: 10 },
   ]);
   let total = await AssignDriver.aggregate([
     { $sort: { date: -1 } },
@@ -170,17 +167,17 @@ const getallassigngroups = async (query) => {
         date: 1,
         time: 1,
         groupID: 1,
-        driverName: "$b2busers.name",
+        driverName: '$b2busers.name',
         route: 1,
-      }
+      },
     },
   ]);
 
   return { value: driver, total: total.length };
-}
+};
 
 const drivergroups = async (query) => {
-  let groupid = query.id
+  let groupid = query.id;
 
   let driver = await AssignDriver.aggregate([
     { $sort: { date: -1 } },
@@ -235,9 +232,7 @@ const drivergroups = async (query) => {
                     from: 'orderassigns',
                     localField: '_id',
                     foreignField: 'wardAdminGroupID',
-                    pipeline: [
-                      { $group: { _id: null, count: { $sum: 1 } } }
-                    ],
+                    pipeline: [{ $group: { _id: null, count: { $sum: 1 } } }],
                     as: 'orderassigns',
                   },
                 },
@@ -251,16 +246,15 @@ const drivergroups = async (query) => {
                   $project: {
                     groupId: 1,
                     _id: 1,
-                    stationeryExName: "$b2busers.name",
+                    stationeryExName: '$b2busers.name',
                     assignTime: 1,
                     assignDate: 1,
                     GroupBillId: 1,
                     pickuplocation: 1,
-                    pickuplocation: "$managepickuplocations.locationName",
-                    orderCount: "$orderassigns.count"
-
-                  }
-                }
+                    pickuplocation: '$managepickuplocations.locationName',
+                    orderCount: '$orderassigns.count',
+                  },
+                },
               ],
               as: 'wardadmingroups',
             },
@@ -270,17 +264,17 @@ const drivergroups = async (query) => {
           },
           {
             $project: {
-              _id: "$wardadmingroups._id",
-              stationeryExName: "$wardadmingroups.stationeryExName",
-              groupId: "$wardadmingroups.groupId",
-              assignTime: "$wardadmingroups.assignTime",
-              assignDate: "$wardadmingroups.assignDate",
-              GroupBillId: "$wardadmingroups.GroupBillId",
-              pickuplocation: "$wardadmingroups.pickuplocation",
-              GroupBillId: "$wardadmingroups.GroupBillId",
-              orderCount: "$wardadmingroups.orderCount"
-            }
-          }
+              _id: '$wardadmingroups._id',
+              stationeryExName: '$wardadmingroups.stationeryExName',
+              groupId: '$wardadmingroups.groupId',
+              assignTime: '$wardadmingroups.assignTime',
+              assignDate: '$wardadmingroups.assignDate',
+              GroupBillId: '$wardadmingroups.GroupBillId',
+              pickuplocation: '$wardadmingroups.pickuplocation',
+              GroupBillId: '$wardadmingroups.GroupBillId',
+              orderCount: '$wardadmingroups.orderCount',
+            },
+          },
         ],
         as: 'assigndrivehistories',
       },
@@ -292,10 +286,10 @@ const drivergroups = async (query) => {
         date: 1,
         time: 1,
         groupID: 1,
-        driverName: "$b2busers.name",
+        driverName: '$b2busers.name',
         route: 1,
-        assigndrivehistories: "$assigndrivehistories"
-      }
+        assigndrivehistories: '$assigndrivehistories',
+      },
     },
   ]);
 
@@ -303,7 +297,7 @@ const drivergroups = async (query) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Odrer Not Found');
   }
   return driver[0];
-}
+};
 
 module.exports = {
   createVehicle,
@@ -312,5 +306,5 @@ module.exports = {
   getAll_Vehicle_Details,
   assigndriverVehile,
   getallassigngroups,
-  drivergroups
+  drivergroups,
 };
