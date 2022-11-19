@@ -1363,12 +1363,12 @@ const assignOnly_DE = async (query, status, userid) => {
               preserveNullAndEmptyArrays: true,
             },
           },
-          // {
-          //   $project: {
-          //     pending: { $eq: ['$shopdata._id', null] },
-          //     shopdata: '$shopdata.deliveryExecutiveId',
-          //   },
-          // },
+          {
+            $project: {
+              pending: { $eq: ['$shopdata._id', null] },
+              shopdata: '$shopdata.deliveryExecutiveId',
+            },
+          },
         ],
         as: 'dataDetails',
       },
