@@ -1316,7 +1316,7 @@ const assignOnly_DE = async (query, status) => {
       // pettyStockAllocateStatus: { $ne: 'Pending' },
       FinishingStatus: { $ne: 'Finished' },
     };
-    statusMatch = { status: { $in: ['Assigned', 'Packed','returnedStock'] } };
+    statusMatch = { status: { $in: ['Assigned', 'Packed', 'returnedStock'] } };
   }
   console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
@@ -1332,33 +1332,33 @@ const assignOnly_DE = async (query, status) => {
               from: 'shoporderclones',
               localField: 'orderId',
               foreignField: '_id',
-              pipeline: [
-                {
-                  $match: {
-                    $and: [{ customerDeliveryStatus: { $eq: 'Pending' } }],
-                  },
-                },
-                {
-                  $group: {
-                    _id: null,
-                  },
-                },
-              ],
+              // pipeline: [
+              //   {
+              //     $match: {
+              //       $and: [{ customerDeliveryStatus: { $eq: 'Pending' } }],
+              //     },
+              //   },
+              //   {
+              //     $group: {
+              //       _id: null,
+              //     },
+              //   },
+              // ],
               as: 'shopdata',
             },
           },
           { $unwind: '$shopdata' },
-          {
-            $project: {
-              pending: { $eq: ['$shopdata._id', null] },
-              shopdata: '$shopdata.deliveryExecutiveId',
-            },
-          },
+          // {
+          //   $project: {
+          //     pending: { $eq: ['$shopdata._id', null] },
+          //     shopdata: '$shopdata.deliveryExecutiveId',
+          //   },
+          // },
         ],
         as: 'dataDetails',
       },
     },
-    { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
+    // { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
     {
       $lookup: {
         from: 'b2busers',
