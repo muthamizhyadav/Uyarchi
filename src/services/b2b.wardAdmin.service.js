@@ -1272,10 +1272,10 @@ const wardDeliveryExecutive = async () => {
   let today = moment().format('YYYY-MM-DD');
 
   // assignDate;
-
+  console.log("hello")
   let value = await Users.aggregate([
     {
-      $match: { userRole: { $in: ['36151bdd-a8ce-4f80-987e-1f454cd0993f'] } },
+      $match: { $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' } }] },
     },
     {
       $lookup: {
@@ -1285,12 +1285,25 @@ const wardDeliveryExecutive = async () => {
         pipeline: [
           {
             $match: {
-              manageDeliveryStatus: { $eq: 'cashReturned' },
-              GroupBillDate: { $eq: today },
+              $and: [
+                { manageDeliveryStatus: { $in: ['Pending', 'Delivery Completed', 'Delivery start', 'petty cash picked', 'petty stock picked', 'Order Picked','StockReturned'] } },
+                { GroupBillDate: { $eq: today } },
+              ]
             },
           },
         ],
         as: 'deliveryExecutiveName',
+      },
+    },
+    {
+      $unwind: {
+        path: '$deliveryExecutiveName',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        reorderamount: { $ifNull: ['$deliveryExecutiveName', 0] },
       },
     },
     {
@@ -1306,11 +1319,11 @@ const wardDeliveryExecutive = async () => {
         password: 1,
         createdAt: 1,
         updatedAt: 1,
-        totalItems: { $size: '$deliveryExecutiveName' },
+        reorderamount: "$reorderamount"
       },
     },
     {
-      $match: { totalItems: { $eq: 0 } },
+      $match: { reorderamount: { $eq: 0 } },
     },
   ]);
 
