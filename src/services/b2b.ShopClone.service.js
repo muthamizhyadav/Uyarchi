@@ -3347,6 +3347,81 @@ const gomap_view_now = async (id) => {
   );
   return shop;
 };
+
+const ward_by_users = async (query) => {
+  // console.log("res", query);
+  let user = { active: true }
+  if (query.users != 'null' && query.users != null && query.users != '') {
+    user = { Uid: { $eq: query.users } }
+  }
+  let shop = await Shop.aggregate([
+    {
+      $match: { $and: [user] }
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'zones',
+              localField: 'zoneId',
+              foreignField: '_id',
+              as: 'zones',
+            },
+          },
+          {
+            $unwind: '$zones',
+          },
+          {
+            $lookup: {
+              from: 'districts',
+              localField: 'district',
+              foreignField: '_id',
+              as: 'districts',
+            },
+          },
+          {
+            $unwind: '$districts',
+          },
+          {
+            $project: {
+              ward: 1,
+              _id: 1,
+              zone: "$zones.zone",
+              zoneCode: "$zones.zoneCode",
+              district: "$districts.district",
+            }
+          }
+        ],
+        as: 'wards',
+      },
+    },
+    {
+      $unwind: '$wards',
+    },
+    {
+      $group: {
+        _id: { Wardid: "$Wardid", ward: "$wards.ward", zone: "$wards.zone", zoneCode: "$wards.zoneCode", district: "$wards.district" },
+      }
+    },
+    {
+      $project: {
+        _id: "$_id.Wardid",
+        Wardid: "$_id.Wardid",
+        ward: "$_id.ward",
+        zone: "$_id.zone",
+        zoneCode: "$_id.zoneCode",
+        districtName: "$_id.district",
+      }
+    }
+  ])
+
+  return shop;
+
+}
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -3394,5 +3469,6 @@ module.exports = {
   data3,
   get_wardby_shops,
   update_pincode,
-  gomap_view_now
+  gomap_view_now,
+  ward_by_users
 };
