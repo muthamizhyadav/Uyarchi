@@ -9,7 +9,8 @@ const {
   WardAdminRoleAsmHistory,
   WardAdminRoleHistory,
   WithoutAsmWithAsm,
-  Tartgetvalue, TartgetHistory
+  Tartgetvalue,
+  TartgetHistory,
 } = require('../models/wardAdminRole.model');
 const { Roles } = require('../models');
 const { Shop } = require('../models/b2b.ShopClone.model');
@@ -18,8 +19,13 @@ const Ward = require('../models/ward.model');
 const moment = require('moment');
 const { findByIdAndUpdate } = require('../models/b2b.pettyStock.model');
 const { ValidationRequestList } = require('twilio/lib/rest/api/v2010/account/validationRequest');
-const { ShopOrder, ProductorderSchema, ShopOrderClone, ProductorderClone, MismatchStock } = require('../models/shopOrder.model');
-
+const {
+  ShopOrder,
+  ProductorderSchema,
+  ShopOrderClone,
+  ProductorderClone,
+  MismatchStock,
+} = require('../models/shopOrder.model');
 
 const createwardAdminRole = async (body) => {
   let serverdate = moment().format('yyy-MM-DD');
@@ -739,7 +745,7 @@ const allAssignReassignSalesman = async (id) => {
 
 const createSalesmanShop = async (body) => {
   let { arr } = body;
-  let creat = moment().format('yyy-MM-DD')
+  let creat = moment().format('yyy-MM-DD');
   let creat1 = moment().format('HHmmss');
   let serverdate = moment().format('yyy-MM-DD');
   let time = moment().format('hh:mm a');
@@ -755,7 +761,7 @@ const createSalesmanShop = async (body) => {
         time: time,
         date: serverdate,
         created: creat,
-        createdTime: creat1
+        createdTime: creat1,
       });
     });
   } else {
@@ -882,16 +888,16 @@ const getSalesman = async (id) => {
     },
     {
       $group: {
-        _id: { createdTime: '$createdTime', created: '$created', },
+        _id: { createdTime: '$createdTime', created: '$created' },
         count: { $sum: 1 },
       },
     },
     {
       $project: {
-        date: "$_id.created",
-        createdTime: "$_id.createdTime",
-        count: 1
-      }
+        date: '$_id.created',
+        createdTime: '$_id.createdTime',
+        count: 1,
+      },
     },
     {
       $sort: { date: -1, createdTime: -1 },
@@ -2125,7 +2131,6 @@ const assignShopsSalesmandatewise = async (id, wardid, page) => {
         // Slong: { $push:['$Slong','$Slat']},
         //  categoryId: { $sum: "$Slong"},
         //  parentId: { $sum: "$Uid"}
-
       },
     },
     {
@@ -2283,27 +2288,23 @@ const assignShopsOnlydatewise = async (id, wardid, page) => {
   return { data: data, count: total.length };
 };
 
-
-
-
-
 const createtartget = async (userId, body) => {
   // Tartgetvalue, TartgetHistory
   let object = {
-    ...body, ...{
+    ...body,
+    ...{
       date: moment().format('YYYY-MM-DD'),
       time: moment().format('hhmmss'),
       created: moment(),
-      Auther: userId
-    }
-  }
-  let target = await Tartgetvalue.findOne({ b2buser: body.b2buser, date: moment().format('YYYY-MM-DD') })
+      Auther: userId,
+    },
+  };
+  let target = await Tartgetvalue.findOne({ b2buser: body.b2buser, date: moment().format('YYYY-MM-DD') });
   if (!target) {
     target = await Tartgetvalue.create(object);
-  }
-  else {
-    let targetKg = target.targetKg + parseInt(body.targetKg)
-    let targetvalue = target.targetvalue + parseInt(body.targetvalue)
+  } else {
+    let targetKg = target.targetKg + parseInt(body.targetKg);
+    let targetvalue = target.targetvalue + parseInt(body.targetvalue);
     target = await Tartgetvalue.findByIdAndUpdate(
       { _id: target._id },
       {
@@ -2320,11 +2321,10 @@ const createtartget = async (userId, body) => {
     created: moment(),
     targetKg: body.targetKg,
     targetvalue: body.targetvalue,
-    teamtype: body.teamtype
+    teamtype: body.teamtype,
   });
-  return target
-}
-
+  return target;
+};
 
 const get_user_target = async (userid, id) => {
   let todaydata = await TartgetHistory.aggregate([
@@ -2337,15 +2337,15 @@ const get_user_target = async (userid, id) => {
           {
             $match: {
               b2buser: { $eq: id },
-              date: { $eq: moment().format('YYYY-MM-DD') }
-            }
+              date: { $eq: moment().format('YYYY-MM-DD') },
+            },
           },
         ],
         as: 'targetvalues',
       },
     },
     {
-      $unwind: "$targetvalues"
+      $unwind: '$targetvalues',
     },
     {
       $project: {
@@ -2354,17 +2354,17 @@ const get_user_target = async (userid, id) => {
         targetKg: 1,
         targetvalue: 1,
         _id: 1,
-      }
-    }
-  ])
+      },
+    },
+  ]);
 
   return todaydata;
-}
+};
 
 const getall_targets = async (query) => {
   let page = query.page == null || query.page == 'null' || query.page == '' ? 0 : query.page;
-  let user = query.user
-  let date = query.date
+  let user = query.user;
+  let date = query.date;
   let userMatch = { active: true };
   let dateMatch = { active: true };
   if (date != null && date != '' && date != 'null') {
@@ -2376,8 +2376,8 @@ const getall_targets = async (query) => {
   let value = await Tartgetvalue.aggregate([
     {
       $match: {
-        $and: [dateMatch, userMatch]
-      }
+        $and: [dateMatch, userMatch],
+      },
     },
     {
       $lookup: {
@@ -2413,21 +2413,21 @@ const getall_targets = async (query) => {
         date: 1,
         time: 1,
         created: 1,
-        name: "$b2busers.name",
-        userRole: "$b2busers.userRole",
-        targethistories: "$targethistories",
-      }
+        name: '$b2busers.name',
+        userRole: '$b2busers.userRole',
+        targethistories: '$targethistories',
+      },
     },
     { $skip: 10 * page },
     {
-      $limit: 10
+      $limit: 10,
     },
-  ])
+  ]);
   let total = await Tartgetvalue.aggregate([
     {
       $match: {
-        $and: [dateMatch, userMatch]
-      }
+        $and: [dateMatch, userMatch],
+      },
     },
     {
       $lookup: {
@@ -2463,24 +2463,24 @@ const getall_targets = async (query) => {
         date: 1,
         time: 1,
         created: 1,
-        name: "$b2busers.name",
-        userRole: "$b2busers.userRole",
-        targethistories: "$targethistories",
-      }
+        name: '$b2busers.name',
+        userRole: '$b2busers.userRole',
+        targethistories: '$targethistories',
+      },
     },
-  ])
+  ]);
 
   return { values: value, total: total.length };
-}
+};
 
 const getusertarget = async (userID) => {
   let value = await Tartgetvalue.findOne({ b2buser: userID, date: moment().format('YYYY-MM-DD') });
-  let date = moment().format("YYYY-MM-DD")
+  let date = moment().format('YYYY-MM-DD');
   let achivedTarget = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ Uid: { $eq: userID } }, { date: { $eq: date } }]
-      }
+        $and: [{ Uid: { $eq: userID } }, { date: { $eq: date } }],
+      },
     },
     {
       $lookup: {
@@ -2488,7 +2488,7 @@ const getusertarget = async (userID) => {
         localField: '_id',
         foreignField: 'orderId',
         pipeline: [
-          { $match: { $and: [{ unit: { $eq: "KG" } }] } },
+          { $match: { $and: [{ unit: { $eq: 'KG' } }] } },
           {
             $group: {
               _id: null,
@@ -2496,9 +2496,9 @@ const getusertarget = async (userID) => {
                 $sum: {
                   $multiply: ['$finalQuantity', '$packKg'],
                 },
-              }
-            }
-          }
+              },
+            },
+          },
         ],
         as: 'productorderclones',
       },
@@ -2520,15 +2520,15 @@ const getusertarget = async (userID) => {
         localField: '_id',
         foreignField: 'orderId',
         pipeline: [
-          { $match: { $and: [{ unit: { $ne: "KG" } }] } },
+          { $match: { $and: [{ unit: { $ne: 'KG' } }] } },
           {
             $group: {
               _id: null,
               quantity: {
-                $sum: "$finalQuantity"
-              }
-            }
-          }
+                $sum: '$finalQuantity',
+              },
+            },
+          },
         ],
         as: 'productorderclones_notkg',
       },
@@ -2547,29 +2547,162 @@ const getusertarget = async (userID) => {
     {
       $project: {
         _id: 1,
-        totalquantity: { $sum: ["$kgs", "$notkgs"] },
+        totalquantity: { $sum: ['$kgs', '$notkgs'] },
         subtotal: 1,
-        date: 1
-      }
+        date: 1,
+      },
     },
     {
       $group: {
         _id: 1,
-        totalquantity: { $sum: "$totalquantity" },
-        ordervalues: { $sum: "$subtotal" },
-      }
-    }
-  ])
+        totalquantity: { $sum: '$totalquantity' },
+        ordervalues: { $sum: '$subtotal' },
+      },
+    },
+  ]);
   // return achivedTarget;
   let achivedTarget_obj = {
     orderedKGS: achivedTarget.length == 0 ? 0 : achivedTarget[0].totalquantity,
     ordervalues: achivedTarget.length == 0 ? 0 : achivedTarget[0].ordervalues,
-  }
+  };
 
   return {
-    ...achivedTarget_obj, ...{ targetKg: value == null ? 0 : value.targetKg, targetvalue: value == null ? 0 : value.targetvalue }
+    ...achivedTarget_obj,
+    ...{ targetKg: value == null ? 0 : value.targetKg, targetvalue: value == null ? 0 : value.targetvalue },
   };
-}
+};
+
+const getAssign_bySalesman = async (id) => {
+  let values = await SalesManShop.aggregate([
+    {
+      $match: {
+        $or: [
+          { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+          { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shopData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'salesManId',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users',
+    },
+    {
+      $project: {
+        _id: 1,
+        salesManId: 1,
+        shopId: 1,
+        status: 1,
+        date: 1,
+        fromSalesManId: 1,
+        time: 1,
+        shopName: '$shopData.SName',
+        shopOwner: '$shopData.SOwner',
+        shopLat: '$shopData.Slat',
+        shopLong: '$shopData.Slong',
+        shopAddress: '$shopData.address',
+        salesmanName: '$users.name',
+        shopStatus: '$shopData.status',
+      },
+    },
+  ]);
+  let dataApproved = await SalesManShop.aggregate([
+    {
+      $match: {
+        $or: [
+          { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+          { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [{ $match: { status: 'data_approved' } }],
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+  ]);
+  let dataNotApproved = await SalesManShop.aggregate([
+    {
+      $match: {
+        $or: [
+          { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+          { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [{ $match: { status: { $ne: 'data_approved' } } }],
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+  ]);
+
+  let todaydate = moment().format('YYYY-MM-DD');
+
+  let TodayApproved = await SalesManShop.aggregate([
+    {
+      $match: {
+        $or: [
+          { $and: [{ fromSalesManId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
+          { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'tempReassign' } }] },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [{ $match: { $and: [{ status: { $eq: 'data_approved' } }, { DA_DATE: { $eq: todaydate } }] } }],
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+  ]);
+  return {
+    values: values,
+    dataApproved: dataApproved.length,
+    dataNotApproved: dataNotApproved.length,
+    TodayApproved: TodayApproved.length,
+  };
+};
+
 module.exports = {
   createwardAdminRole,
   getAll,
@@ -2621,12 +2754,11 @@ module.exports = {
   assignShopsSalesmandatewise,
   assignShopsOnlydatewise,
 
-
-
-
   // 08-11-2022
   createtartget,
   get_user_target,
   getall_targets,
-  getusertarget
+  getusertarget,
+  // map view
+  getAssign_bySalesman,
 };

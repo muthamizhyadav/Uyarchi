@@ -70,6 +70,19 @@ const OrderPaymentSchema = new mongoose.Schema({
   creditApprovalStatus: {
     type: String,
     default: "Pending"
+  },
+  onlinepaymentId: {
+    type: String,
+  },
+  onlineorderId: {
+    type: String,
+  },
+  paymentTypes: {
+    type: String,
+    default: "offline",
+  },
+  paymentGatway:{
+    type: String,
   }
 });
 

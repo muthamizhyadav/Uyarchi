@@ -455,7 +455,12 @@ const get_wardby_shops = catchAsync(async (req, res) => {
 });
 
 const update_pincode = catchAsync(async (req, res) => {
-  const data = await b2bCloneService.update_pincode(req.query,req.body);
+  const data = await b2bCloneService.update_pincode(req.query, req.body);
+  res.send(data);
+});
+
+const gomap_view_now = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.gomap_view_now(req.params.id);
   res.send(data);
 });
 module.exports = {
@@ -507,5 +512,6 @@ module.exports = {
 
 
   get_wardby_shops,
-  update_pincode
+  update_pincode,
+  gomap_view_now
 };

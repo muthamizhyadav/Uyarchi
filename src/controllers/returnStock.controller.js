@@ -6,13 +6,7 @@ const ReturnService = require('../services/returnStock.service');
 const create_ReturnStock = catchAsync(async (req, res) => {
   let userid = req.userId;
   const returnstock = await ReturnService.create_ReturnStock(req.body, userid);
-  if (req.files) {
-    req.files.forEach(function (files, index, arr) {
-      returnstock.image.push('images/returnstock/' + files.filename);
-    });
-  }
   res.send(returnstock);
-  await returnstock.save();
 });
 
 module.exports = {

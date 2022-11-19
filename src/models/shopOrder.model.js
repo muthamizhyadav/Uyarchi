@@ -193,7 +193,7 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   modifiedStatus: {
     type: String,
-    default: "Pending"
+    default: 'Pending',
   },
   AssignedStatus: {
     type: String,
@@ -231,7 +231,6 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   statusUpdate: {
     type: Date,
   },
-
   customerBillId: {
     type: String,
   },
@@ -290,7 +289,7 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   raiseissue: {
     type: Boolean,
-    default: false
+    default: false,
   },
   issueDate: {
     type: Date,
@@ -306,28 +305,34 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
     default: 'Pending',
   },
   AssignedCreated: {
-    type: Date
+    type: Date,
   },
   statusActionArray: {
     type: Array,
     default: [],
   },
   AcknowledgeCreated: {
-    type: Date
+    type: Date,
   },
   rejectCreated: {
-    type: Date
+    type: Date,
   },
-  approveCreated:{
-    type: Date
+  approveCreated: {
+    type: Date,
   },
   modifiedCreated: {
-    type: Date
+    type: Date,
   },
   PackedCreated: {
-    type: Date
-  }
-
+    type: Date,
+  },
+  orderType: {
+    type: String,
+    default: 'Salesman',
+  },
+  returnedCash: {
+    type: Date,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
@@ -463,7 +468,7 @@ const productorderCloneSchema = new mongoose.Schema({
   },
   issueraised: {
     type: Boolean,
-    default: false
+    default: false,
   },
   issuetype: {
     type: String,
@@ -479,17 +484,12 @@ const productorderCloneSchema = new mongoose.Schema({
   },
   issueDate: {
     type: Date,
-  }
+  },
 });
 
 productorderCloneSchema.plugin(toJSON);
 productorderCloneSchema.plugin(paginate);
 const ProductorderClone = mongoose.model('ProductOrderClone', productorderCloneSchema);
-
-
-
-
-
 
 const mismatchStock = new mongoose.Schema({
   _id: {

@@ -3,11 +3,11 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const wardAdminGroupService = require('../services/b2b.wardAdminGroup.service');
 const { ProductorderClone } = require('../models/shopOrder.model');
-const {wardAdminGroup} = require('../models/b2b.wardAdminGroup.model');
+const { wardAdminGroup } = require('../models/b2b.wardAdminGroup.model');
 const pettyStockModel = require('../models/b2b.pettyStock.model');
 
 const createGroupOrder = catchAsync(async (req, res) => {
-  const shopOrderClone = await wardAdminGroupService.createGroup(req.body,req.userId);
+  const shopOrderClone = await wardAdminGroupService.createGroup(req.body, req.userId);
   res.send(shopOrderClone);
 });
 
@@ -27,7 +27,7 @@ const updatePickedPettyStock = catchAsync(async (req, res) => {
 });
 
 const updateManageStatuscashcollect = catchAsync(async (req, res) => {
-  const pickedPettyStock = await wardAdminGroupService.updateManageStatuscashcollect(req.params.id, req.body,req.userId);
+  const pickedPettyStock = await wardAdminGroupService.updateManageStatuscashcollect(req.params.id, req.body, req.userId);
   res.send(pickedPettyStock);
 });
 
@@ -37,16 +37,16 @@ const updatePickedPettyCash = catchAsync(async (req, res) => {
 });
 
 const updatePickedPettystockcollected = catchAsync(async (req, res) => {
-  const pickedPettyCash = await wardAdminGroupService.updateManageStatuscollected(req.params.id, req.body,req.userId);
+  const pickedPettyCash = await wardAdminGroupService.updateManageStatuscollected(req.params.id, req.body, req.userId);
   res.send(pickedPettyCash);
 });
 
 const updateDontAllocate = catchAsync(async (req, res) => {
-  const notAloocate = await wardAdminGroupService.updateManageStatus(req.params.id, req.body,req.userId);
+  const notAloocate = await wardAdminGroupService.updateManageStatus(req.params.id, req.body, req.userId);
   res.send(notAloocate);
 });
 const updateDontAllocatecash = catchAsync(async (req, res) => {
-  const notAloocate = await wardAdminGroupService.updateManageStatuscash(req.params.id, req.body,req.userId);
+  const notAloocate = await wardAdminGroupService.updateManageStatuscash(req.params.id, req.body, req.userId);
   res.send(notAloocate);
 });
 const updateAllocate = catchAsync(async (req, res) => {
@@ -55,7 +55,7 @@ const updateAllocate = catchAsync(async (req, res) => {
 });
 
 const updateDeliveryStarted = catchAsync(async (req, res) => {
-  const deleiveryStarted = await wardAdminGroupService.delevery_start(req.params.id, req.body,req.userId);
+  const deleiveryStarted = await wardAdminGroupService.delevery_start(req.params.id, req.body, req.userId);
   res.send(deleiveryStarted);
 });
 
@@ -67,7 +67,7 @@ const updatePettyCashReturnStatus = catchAsync(async (req, res) => {
 });
 
 const updateDeliveryCompleted = catchAsync(async (req, res) => {
-  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, req.body,req.userId);
+  const deliveryCompleted = await wardAdminGroupService.updateOrderStatus(req.params.id, req.body, req.userId);
   res.send(deliveryCompleted);
 });
 const creditupdateDeliveryCompleted = catchAsync(async (req, res) => {
@@ -96,7 +96,7 @@ const updateManageStatus = catchAsync(async (req, res) => {
 });
 
 const updateManagecompleted = catchAsync(async (req, res) => {
-  const data = await wardAdminGroupService.updateordercomplete(req.params.id, req.body,req.userId);
+  const data = await wardAdminGroupService.updateordercomplete(req.params.id, req.body, req.userId);
   res.send(data);
 });
 
@@ -126,7 +126,7 @@ const getBillDetails = catchAsync(async (req, res) => {
 });
 
 const getAssigned = catchAsync(async (req, res) => {
-  console.log("stock")
+  console.log('stock');
   const details = await wardAdminGroupService.assignOnly(req.query, 'stock');
   res.send(details);
 });
@@ -135,12 +135,13 @@ const cashgetAssigned = catchAsync(async (req, res) => {
   res.send(details);
 });
 const deliverygetAssigned = catchAsync(async (req, res) => {
-  console.log("hello")
-  const details = await wardAdminGroupService.assignOnly_DE(req.query, 'delivery');
+  let userid = req.userId;
+  console.log(userid);
+  const details = await wardAdminGroupService.assignOnly_DE(req.query, 'delivery', userid);
   res.send(details);
 });
 const delivery_selfpickup = catchAsync(async (req, res) => {
-  console.log("hello")
+  console.log('hello');
   const details = await wardAdminGroupService.assignOnly_SP(req.query, 'delivery');
   res.send(details);
 });
@@ -182,7 +183,7 @@ const getReturnWDEtoWLE = catchAsync(async (req, res) => {
 // });
 
 const pettyCashSubmit = catchAsync(async (req, res) => {
-  const pettystock = await wardAdminGroupService.pettyCashSubmit(req.params.id, req.body,req.userId);
+  const pettystock = await wardAdminGroupService.pettyCashSubmit(req.params.id, req.body, req.userId);
   res.send(pettystock);
 });
 
@@ -197,7 +198,7 @@ const Deliverystart = catchAsync(async (req, res) => {
 });
 
 const deliveryCompleted = catchAsync(async (req, res) => {
-  const completed = await wardAdminGroupService.pettyStockSubmit(req.params.id, req.body,req.userId);
+  const completed = await wardAdminGroupService.pettyStockSubmit(req.params.id, req.body, req.userId);
   res.send(completed);
 });
 
@@ -236,12 +237,17 @@ const getPettyCashDetails = catchAsync(async (req, res) => {
 });
 
 const getAllGroup = catchAsync(async (req, res) => {
-  const group = await wardAdminGroupService.getAllGroup(req.params.id, req.params.date, req.params.FinishingStatus, req.params.page);
+  const group = await wardAdminGroupService.getAllGroup(
+    req.params.id,
+    req.params.date,
+    req.params.FinishingStatus,
+    req.params.page
+  );
   res.send(group);
 });
 
 const pettyStockCreate = catchAsync(async (req, res) => {
-  const shopOrder = await wardAdminGroupService.pettyStockCreate(req.params.id, req.body,req.userId);
+  const shopOrder = await wardAdminGroupService.pettyStockCreate(req.params.id, req.body, req.userId);
   res.send(shopOrder);
 });
 
@@ -261,7 +267,7 @@ const getPEttyCashQuantity = catchAsync(async (req, res) => {
 });
 
 const returnStock = catchAsync(async (req, res) => {
-  console.log(req.params.id)
+  console.log(req.params.id);
   const returnStock = await wardAdminGroupService.returnStock(req.params.id);
   res.send(returnStock);
 });
@@ -294,7 +300,7 @@ const submitCashGivenByWDE = catchAsync(async (req, res) => {
 });
 
 const createAddOrdINGrp = catchAsync(async (req, res) => {
-  const cashAsGivenByWDE = await wardAdminGroupService.createAddOrdINGrp(req.params.id, req.body,req.userId);
+  const cashAsGivenByWDE = await wardAdminGroupService.createAddOrdINGrp(req.params.id, req.body, req.userId);
   res.send(cashAsGivenByWDE);
 });
 
@@ -302,7 +308,6 @@ const finishingAccount = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.finishingAccount(req.params.id, req.params.page);
   res.send(details);
 });
-
 
 const submitDispute = catchAsync(async (req, res) => {
   const details = await wardAdminGroupService.submitDispute(req.params.id, req.body);
@@ -324,7 +329,6 @@ const createfineData = catchAsync(async (req, res) => {
   res.send(data);
 });
 
-
 const getOrderDataByPassing = catchAsync(async (req, res) => {
   const data = await wardAdminGroupService.getOrderDataByPassing(req.params.id);
   res.send(data);
@@ -337,22 +341,44 @@ const deliveryExecutiveSorting = catchAsync(async (req, res) => {
 
 const getGroupDetailsForDE = catchAsync(async (req, res) => {
   const groupDetails = await wardAdminGroupService.getGroupDetailsForDE(req.params.page);
-  res.send(groupDetails)
+  res.send(groupDetails);
 });
 
 const getGroupOrders_driver = catchAsync(async (req, res) => {
   const groupDetails = await wardAdminGroupService.getGroupOrders_driver(req.query, 'delivery');
-  res.send(groupDetails)
+  res.send(groupDetails);
 });
 
 const get_stock_roport_selfpickup = catchAsync(async (req, res) => {
   const groupDetails = await wardAdminGroupService.get_stock_roport_selfpickup(req.query);
-  res.send(groupDetails)
+  res.send(groupDetails);
 });
 
-const  createArrayPettyCash = catchAsync(async (req, res) => {
-  const details = await wardAdminGroupService.createArrayPettyCash(req.params.id,req.body);
+const createArrayPettyCash = catchAsync(async (req, res) => {
+  const details = await wardAdminGroupService.createArrayPettyCash(req.params.id, req.body);
   res.send(details);
+});
+
+const storeReturn_images_toGroup = catchAsync(async (req, res) => {
+  const group = await wardAdminGroupService.storeReturn_images_toGroup(req.params.id, req.body);
+  if (req.files) {
+    req.files.forEach(function (files, index, arr) {
+      group.returnStockimages.push('images/returnstock/' + files.filename);
+    });
+  }
+  res.send(group);
+});
+
+const returnedCash = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const group = await wardAdminGroupService.returnedCash(req.params.id, userId);
+  res.send(group);
+});
+
+const returnedStock = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const group = await wardAdminGroupService.returnedStock(req.params.id, userId);
+  res.send(group);
 });
 
 module.exports = {
@@ -446,5 +472,8 @@ module.exports = {
   getGroupOrders_driver,
   delivery_selfpickup,
   get_stock_roport_selfpickup,
-  createArrayPettyCash
+  createArrayPettyCash,
+  storeReturn_images_toGroup,
+  returnedCash,
+  returnedStock,
 };

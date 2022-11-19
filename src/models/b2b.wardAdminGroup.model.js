@@ -42,7 +42,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
   deliveryExecutiveId: {
     type: String,
   },
-
+  returnStockimages: {
+    type: Array,
+  },
   totalOrders: {
     type: Number,
   },
@@ -72,6 +74,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
   AllocateStatus: {
     type: String,
     default: 'Assigned',
+  },
+  cashReturned: {
+    type: Date,
   },
   // NotAllocateStatus: {
   //   type: String,
@@ -205,6 +210,12 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: Date,
   },
   orderPickedUserId: {
+    type: String,
+  },
+  cashReturnedDE: {
+    type: String,
+  },
+  StockReturnedDE: {
     type: String,
   },
 });

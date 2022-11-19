@@ -168,7 +168,7 @@ const shopSchema = mongoose.Schema({
   DA_TIME: {
     type: Number,
   },
-  da_landmark:{
+  da_landmark: {
     type: String,
   },
   salesmanOrderStatus: {
@@ -177,6 +177,10 @@ const shopSchema = mongoose.Schema({
   Pincode: {
     type: Number,
   },
+  gomap: {
+    type: Date,
+
+  }
 });
 
 // assignSchema.plugin(toJSON);

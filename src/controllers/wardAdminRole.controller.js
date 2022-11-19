@@ -134,7 +134,12 @@ const Return_Assign_To_SalesMan = catchAsync(async (req, res) => {
 });
 
 const history_Assign_Reaasign_data = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.history_Assign_Reaasign_data(req.params.id, req.params.date, req.params.idSearch, req.params.tempid);
+  const data = await wardAdminRoleService.history_Assign_Reaasign_data(
+    req.params.id,
+    req.params.date,
+    req.params.idSearch,
+    req.params.tempid
+  );
   res.send(data);
 });
 const getAllSalesmanShops = catchAsync(async (req, res) => {
@@ -163,8 +168,8 @@ const createwithAsmwithoutAsm = catchAsync(async (req, res) => {
 });
 
 const getwithAsmwithoutAsm = catchAsync(async (req, res) => {
-  let data
-  if (req.params.type === "withoutAsm") {
+  let data;
+  if (req.params.type === 'withoutAsm') {
     data = await wardAdminRoleService.getwithAsmwithoutAsm(req.params.type, req.params.date);
   } else {
     data = await wardAdminRoleService.getwithAsmwithoutAsm1(req.params.type, req.params.date);
@@ -187,7 +192,6 @@ const asmdata = catchAsync(async (req, res) => {
   res.send(data);
 });
 
-
 const asmSalesman = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.asmSalesman(req.params.id);
   res.send(data);
@@ -207,7 +211,6 @@ const getAlldataASm = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.getAlldataASm(req.params.id);
   res.send(data);
 });
-
 
 const getAllDatasalesmanDataAndAssign = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.getAllDatasalesmanDataAndAssign(req.params.id, req.params.date, req.params.page);
@@ -249,29 +252,34 @@ const assignShopsOnlydatewise = catchAsync(async (req, res) => {
   res.send(data);
 });
 
-
-
 const createtartget = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.createtartget(req.userId, req.body);
   res.send(data);
-})
-
+});
 
 const get_user_target = catchAsync(async (req, res) => {
-  console.log(req.query.id)
+  console.log(req.query.id);
   const data = await wardAdminRoleService.get_user_target(req.userId, req.query.id);
   res.send(data);
-})
+});
 
 const getall_targets = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.getall_targets(req.query);
   res.send(data);
-})
+});
 
 const getusertarget = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.getusertarget(req.userId);
   res.send(data);
-})
+});
+
+const getAssign_bySalesman = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  console.log(userId);
+  const data = await wardAdminRoleService.getAssign_bySalesman(userId);
+  res.send(data);
+});
+
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -320,11 +328,12 @@ module.exports = {
   assignShopsSalesmandatewise,
   assignShopsOnlydatewise,
 
-
   // 08-11-2022
 
   createtartget,
   get_user_target,
   getall_targets,
-  getusertarget
+  getusertarget,
+  // map view
+  getAssign_bySalesman,
 };
