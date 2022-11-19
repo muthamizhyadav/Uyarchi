@@ -3417,6 +3417,9 @@ const ward_by_users = async (query) => {
         districtName: "$_id.district",
       }
     },
+    {
+      $sort: { ward: 1 }
+    },
     { $skip: 10 * page },
     { $limit: 10 },
   ])
