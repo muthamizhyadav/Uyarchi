@@ -598,7 +598,7 @@ const getNotAssignData = async (page) => {
       $match: {
         $and: [
           { creditBillAssignedStatus: { $ne: 'Assigned' } },
-          { status: { $eq: 'Delivered' } },
+          { status: { $in: ['Delivered', 'returnedStock'] } },
           { statusOfBill: { $eq: 'Pending' } },
         ],
       },
@@ -743,7 +743,7 @@ const getNotAssignData = async (page) => {
       $match: {
         $and: [
           { creditBillAssignedStatus: { $ne: 'Assigned' } },
-          { status: { $eq: 'Delivered' } },
+          { status: { $in: ['Delivered', 'returnedStock'] } },
           { statusOfBill: { $eq: 'Pending' } },
         ],
       },
@@ -4231,7 +4231,7 @@ const afterCompletion_Of_Delivered = async (shop, date, userId, page) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ status: 'Delivered' }],
+        $and: [{ status: { $in: ['Delivered', 'returnedStock'] } }],
       },
     },
     {
@@ -4386,7 +4386,7 @@ const afterCompletion_Of_Delivered = async (shop, date, userId, page) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ status: 'Delivered' }],
+        $and: [{ status: { $in: ['Delivered', 'returnedStock'] } }],
       },
     },
     {
