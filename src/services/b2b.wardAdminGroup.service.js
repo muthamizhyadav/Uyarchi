@@ -1314,7 +1314,7 @@ const assignOnly_DE = async (query, status, userid) => {
     macthStatus = {
       // pettyCashAllocateStatus: { $ne: 'Pending' },
       // pettyStockAllocateStatus: { $ne: 'Pending' },
-      FinishingStatus: { $ne: 'Finished' },
+      // FinishingStatus: { $ne: 'Finished' },
     };
     statusMatch = { status: { $in: ['Assigned', 'Packed', 'returnedStock'] } };
   }
@@ -1349,7 +1349,12 @@ const assignOnly_DE = async (query, status, userid) => {
               as: 'shopdata',
             },
           },
-          { $unwind: '$shopdata' },
+          {
+            $unwind: {
+              path: '$shopdata',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
           // {
           //   $project: {
           //     pending: { $eq: ['$shopdata._id', null] },
@@ -1360,7 +1365,7 @@ const assignOnly_DE = async (query, status, userid) => {
         as: 'dataDetails',
       },
     },
-    // { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
+    { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
     {
       $lookup: {
         from: 'b2busers',
@@ -1370,7 +1375,10 @@ const assignOnly_DE = async (query, status, userid) => {
       },
     },
     {
-      $unwind: '$UserName',
+      $unwind: {
+        path: '$UserName',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $lookup: {
@@ -1416,7 +1424,10 @@ const assignOnly_DE = async (query, status, userid) => {
             },
           },
           {
-            $unwind: '$shoporderclones',
+            $unwind: {
+              path: '$shoporderclones',
+              preserveNullAndEmptyArrays: true,
+            },
           },
           {
             $project: {
