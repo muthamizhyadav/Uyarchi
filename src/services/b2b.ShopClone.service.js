@@ -3349,7 +3349,7 @@ const gomap_view_now = async (id) => {
 };
 
 const ward_by_users = async (query) => {
-  // console.log("res", query);
+  const page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page
   let user = { active: true }
   if (query.users != 'null' && query.users != null && query.users != '') {
     user = { Uid: { $eq: query.users } }
@@ -3416,7 +3416,9 @@ const ward_by_users = async (query) => {
         zoneCode: "$_id.zoneCode",
         districtName: "$_id.district",
       }
-    }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ])
 
   return shop;
