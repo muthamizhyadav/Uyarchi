@@ -2329,7 +2329,7 @@ const getAllGroup = async (id, date, FinishingStatus, page) => {
     },
     {
       $match: {
-        $and: [{ status: { $eq: 'Packed' } }],
+        $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
       },
     },
     {
@@ -2383,7 +2383,7 @@ const getAllGroup = async (id, date, FinishingStatus, page) => {
     },
     {
       $match: {
-        $and: [{ status: { $eq: 'Packed' } }],
+        $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
       },
     },
   ]);
