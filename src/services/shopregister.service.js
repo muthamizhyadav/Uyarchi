@@ -1355,11 +1355,17 @@ const cancelorder_byshop = async (shopId, query) => {
       },
     },
   ]);
-  return { value: value,total:total.length }
+  return { value: value, total: total.length }
 }
 
 const cancelbyorder = async (shopId, query) => {
   return { hello: true }
+  const shoporder = await ShopOrderClone.findById(query.id)
+  if (shoporder.shopId == shopId) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop Order Not Found');
+  }
+  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: query.id }, { status: "Cancelled" }, { new: true })
+  return { message: "success" };
 }
 
 module.exports = {
