@@ -4263,7 +4263,7 @@ const afterCompletion_Of_Delivered = async (shop, date, userId, page) => {
     },
     {
       $match: {
-        statusActionArray: { $elemMatch: { status: { $ne: "unDelivered" } } }
+        statusActionArray: { $elemMatch: { status: "Delivered" } }
       }
     },
     {
@@ -4420,6 +4420,11 @@ const afterCompletion_Of_Delivered = async (shop, date, userId, page) => {
       $match: {
         $and: [{ status: { $in: ['Delivered', 'returnedStock'] } }],
       },
+    },
+    {
+      $match: {
+        statusActionArray: { $elemMatch: { status: "Delivered" } }
+      }
     },
     {
       $match: {
