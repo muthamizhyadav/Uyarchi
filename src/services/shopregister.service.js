@@ -1221,6 +1221,23 @@ const getmyorder_byId = async (shopId, query) => {
   return value[0];
 };
 
+const cancelorder_byshop = async (shopId, query) => {
+  // return { hello: true }
+  let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
+  console.log(page)
+  const value = await ShopOrderClone.aggregate([
+    { $match: { $and: [{ shopId: { $eq: shopId } }, { status: { $in:['ordered', 'Acknowledged']} }] } },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+
+  return { value: value }
+}
+
+const cancelbyorder = async (shopId, query) => {
+  return { hello: true }
+}
+
 module.exports = {
   register_shop,
   verify_otp,
@@ -1238,5 +1255,7 @@ module.exports = {
   get_raiseproduct,
   get_myissues,
   get_my_issue_byorder,
-  getmyorder_byId
+  getmyorder_byId,
+  cancelorder_byshop,
+  cancelbyorder
 };
