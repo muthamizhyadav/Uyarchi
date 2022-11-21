@@ -20,6 +20,8 @@ router.route('/raiseorder/issue/:id').get(shopverify, shopregister.get_raiseorde
 router.route('/raiseproduct/issue/:id').put(shopverify, shopregister.get_raiseproduct);
 router.route('/myissues/get/all').get(shopverify, shopregister.get_myissues);
 router.route('/myissues/issue/:id').get(shopverify, shopregister.get_my_issue_byorder);
+router.route('/cancel/order/bycustomer').get(shopverify,shopregister.cancelorder_byshop);
+router.route('/cancel/byorder').put(shopverify,shopregister.cancelorder_byshop);
 
 
 
