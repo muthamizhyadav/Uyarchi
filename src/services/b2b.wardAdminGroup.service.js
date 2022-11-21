@@ -337,6 +337,8 @@ const updateOrderStatus_forundelivey = async (id, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
   deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
+  deliveryStatus.statusActionArray.push({ userid: "", date: moment(), status: "unDelivered" })
+  deliveryStatus.save()
   return deliveryStatus;
 };
 const orderPicked = async (deliveryExecutiveId) => {
@@ -1316,9 +1318,8 @@ const assignOnly_DE = async (query, status, userid) => {
       // pettyStockAllocateStatus: { $ne: 'Pending' },
       // FinishingStatus: { $ne: 'Finished' },
     };
-    statusMatch = { status: { $in: ['Assigned', 'Packed', 'returnedStock'] } };
+    statusMatch = { status: { $in: ['Assigned', 'Packed', 'returnedStock',] } };
   }
-  console.log(statusMatch);
   let values = await wardAdminGroup.aggregate([
     {
       $match: {

@@ -2311,6 +2311,11 @@ const getCreditBillMaster = async (query) => {
         $and: [dateMatch, { status: { $in: ['Delivered', 'returnedStock'] } }],
       },
     },
+    {
+      $match: {
+        statusActionArray: { $elemMatch: { status: { $ne: "unDelivered" } } }
+      }
+    },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
     {
       $match: dateM,
@@ -4233,6 +4238,11 @@ const afterCompletion_Of_Delivered = async (shop, date, userId, page) => {
       $match: {
         $and: [{ status: { $in: ['Delivered', 'returnedStock'] } }],
       },
+    },
+    {
+      $match: {
+        statusActionArray: { $elemMatch: { status: { $ne: "unDelivered" } } }
+      }
     },
     {
       $match: {
