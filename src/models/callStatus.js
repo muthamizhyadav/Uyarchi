@@ -86,8 +86,10 @@ const callStatusSchema = mongoose.Schema({
   },
   order_Type: {
     type: String,
-
-  }
+  },
+  TotalAmount:{
+    type:Number,
+  },
 });
 
 callStatusSchema.plugin(toJSON);
