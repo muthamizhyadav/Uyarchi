@@ -301,6 +301,8 @@ const updateOrderStatus = async (id, updateBody, userId) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
   deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
+  deliveryStatus.statusActionArray.push({ userid: "", date: moment(), status: "Delivered" })
+  deliveryStatus.save()
   let paidamount = updateBody.paidamount;
   if (paidamount == null) {
     paidamount = 0;

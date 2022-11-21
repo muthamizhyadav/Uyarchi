@@ -2308,14 +2308,10 @@ const getCreditBillMaster = async (query) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { status: { $in: ['Delivered', 'returnedStock'] } }],
+        $and: [dateMatch, { status: { $in: ['Delivered', 'returnedStock'] } }, { statusActionArray: { $elemMatch: { status: { $nin: ["unDelivered"] } } } }],
       },
     },
-    {
-      $match: {
-        statusActionArray: { $elemMatch: { status: { $ne: "unDelivered" } } }
-      }
-    },
+
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
     {
       $match: dateM,
@@ -2560,7 +2556,13 @@ const getCreditBillMaster = async (query) => {
         active: 1,
         Scheduledate: 1,
         creationDate: 1,
+        statusActionArray: 1,
       },
+    },
+    {
+      $match: {
+        statusActionArray: { $elemMatch: { status: "Delivered" } }
+      }
     },
     {
       $match: {
@@ -2578,6 +2580,11 @@ const getCreditBillMaster = async (query) => {
       $match: {
         $and: [dateMatch, { status: { $in: ['Delivered', 'returnedStock'] } }],
       },
+    },
+    {
+      $match: {
+        statusActionArray: { $elemMatch: { status: "Delivered" } }
+      }
     },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
     {
@@ -3080,6 +3087,11 @@ const getCreditBillMaster = async (query) => {
     },
     {
       $match: {
+        statusActionArray: { $elemMatch: { status: "Delivered" } }
+      }
+    },
+    {
+      $match: {
         $and: [userMatch],
       },
     },
@@ -3337,6 +3349,11 @@ const getCreditBillMaster = async (query) => {
     },
     {
       $match: {
+        statusActionArray: { $elemMatch: { status: "Delivered" } }
+      }
+    },
+    {
+      $match: {
         $and: [userMatch],
       },
     },
@@ -3349,6 +3366,11 @@ const getCreditBillMaster = async (query) => {
       $match: {
         $and: [dateMatch, { status: { $in: ['Delivered', 'returnedStock'] } }],
       },
+    },
+    {
+      $match: {
+        statusActionArray: { $elemMatch: { status: "Delivered" } }
+      }
     },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
 
