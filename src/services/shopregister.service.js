@@ -1308,8 +1308,54 @@ const cancelorder_byshop = async (shopId, query) => {
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
-
-  return { value: value }
+  const total = await ShopOrderClone.aggregate([
+    { $match: { $and: [{ shopId: { $eq: shopId } }, { status: { $in: ['ordered', 'Acknowledged'] } }] } },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              productpacktypeId: 1,
+              packKg: 1,
+              unit: 1,
+              date: 1,
+              time: 1,
+              customerId: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              created: 1,
+              productTitle: '$products.productTitle',
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+  ]);
+  return { value: value,total:total.length }
 }
 
 const cancelbyorder = async (shopId, query) => {
