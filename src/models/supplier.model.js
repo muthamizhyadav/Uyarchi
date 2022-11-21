@@ -53,6 +53,12 @@ const supplierSchema = new mongoose.Schema({
   productDealingWith: {
     type: Array,
   },
+  createdByStatus:{
+    type:String
+  },
+  approvedStatus:{
+    type:String,
+  },
   active: {
     type: Boolean,
     default: true,

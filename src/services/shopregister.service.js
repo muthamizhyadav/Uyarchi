@@ -137,6 +137,20 @@ const get_myorder = async (req, query) => {
       },
     },
     {
+      $lookup: {
+        from: 'orderreviews',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderreviews',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderreviews',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         product: '$productOrderdata',
         _id: 1,
@@ -168,6 +182,7 @@ const get_myorder = async (req, query) => {
         time: 1,
         created: 1,
         timeslot: 1,
+        orderreviews: "$orderreviews"
       },
     },
     { $skip: 10 * page },
@@ -1206,6 +1221,153 @@ const getmyorder_byId = async (shopId, query) => {
   return value[0];
 };
 
+const cancelorder_byshop = async (shopId, query) => {
+  // return { hello: true }
+  let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
+  console.log(page)
+  const value = await ShopOrderClone.aggregate([
+    { $match: { $and: [{ shopId: { $eq: shopId } }, { status: { $in: ['ordered', 'Acknowledged'] } }] } },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              productpacktypeId: 1,
+              packKg: 1,
+              unit: 1,
+              date: 1,
+              time: 1,
+              customerId: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              created: 1,
+              productTitle: '$products.productTitle',
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $project: {
+        productOrderdata: "$productOrderdata",
+        _id: 1,
+        status: 1,
+        productStatus: 1,
+        customerDeliveryStatus: 1,
+        receiveStatus: 1,
+        pettyCashReceiveStatus: 1,
+        AssignedStatus: 1,
+        completeStatus: 1,
+        UnDeliveredStatus: 1,
+        customerBilldate: 1,
+        customerBilltime: 1,
+        lapsedOrder: 1,
+        delivery_type: 1,
+        Payment: 1,
+        devevery_mode: 1,
+        time_of_delivery: 1,
+        total: 1,
+        gsttotal: 1,
+        subtotal: 1,
+        SGST: 1,
+        CGST: 1,
+        paidamount: 1,
+        Uid: 1,
+        OrderId: 1,
+        customerBillId: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        timeslot: 1,
+      }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  const total = await ShopOrderClone.aggregate([
+    { $match: { $and: [{ shopId: { $eq: shopId } }, { status: { $in: ['ordered', 'Acknowledged'] } }] } },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              productpacktypeId: 1,
+              packKg: 1,
+              unit: 1,
+              date: 1,
+              time: 1,
+              customerId: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              created: 1,
+              productTitle: '$products.productTitle',
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+  ]);
+  return { value: value, total: total.length }
+}
+
+const cancelbyorder = async (shopId, query) => {
+  // return { hello: true }
+  const shoporder = await ShopOrderClone.findById(query.id)
+  if (shoporder.shopId == shopId) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop Order Not Found');
+  }
+  shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: query.id }, { status: "Cancelled" }, { new: true })
+  return { message: "success" };
+}
+
 module.exports = {
   register_shop,
   verify_otp,
@@ -1223,5 +1385,7 @@ module.exports = {
   get_raiseproduct,
   get_myissues,
   get_my_issue_byorder,
-  getmyorder_byId
+  getmyorder_byId,
+  cancelorder_byshop,
+  cancelbyorder
 };
