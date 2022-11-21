@@ -137,6 +137,20 @@ const get_myorder = async (req, query) => {
       },
     },
     {
+      $lookup: {
+        from: 'orderreviews',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderreviews',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderreviews',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         product: '$productOrderdata',
         _id: 1,
@@ -168,6 +182,7 @@ const get_myorder = async (req, query) => {
         time: 1,
         created: 1,
         timeslot: 1,
+        orderreviews: "$orderreviews"
       },
     },
     { $skip: 10 * page },
