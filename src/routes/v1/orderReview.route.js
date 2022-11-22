@@ -8,5 +8,9 @@ router.route('/').post(shopverify, orderReviewController.createOrderReview).get(
 
 
 router.route('/manage/review/getall').get(orderReviewController.getallReviews)
+router.route('/replay/admin').put(orderReviewController.replay_review)
+router.route('/review/toggle').put(orderReviewController.review_toggle)
+
+
 
 module.exports = router;

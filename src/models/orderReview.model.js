@@ -34,7 +34,19 @@ const orderReviewSchema = new mongoose.Schema({
   },
   status: {
     type: String,
+    default: "Pending"
   },
+  show: {
+    type: Boolean,
+    default: false,
+  },
+  replay: {
+    type: String,
+  },
+  replayDate: {
+    type: Date,
+
+  }
 });
 
 const OrderReview = mongoose.model('orderReview', orderReviewSchema);

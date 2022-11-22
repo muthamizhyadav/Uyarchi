@@ -19,8 +19,19 @@ const getallReviews = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const replay_review = catchAsync(async (req, res) => {
+  const data = await OrderReviewService.replay_review(req.query);
+  res.send(data);
+});
+
+const review_toggle = catchAsync(async (req, res) => {
+  const data = await OrderReviewService.review_toggle(req.query);
+  res.send(data);
+});
 module.exports = {
   createOrderReview,
   getAllReview,
-  getallReviews
+  getallReviews,
+  replay_review,
+  review_toggle
 };
