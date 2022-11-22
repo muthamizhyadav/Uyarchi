@@ -301,7 +301,7 @@ const updateOrderStatus = async (id, updateBody, userId) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
   deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
-  deliveryStatus.statusActionArray.push({ userid: "", date: moment(), status: "Delivered" })
+  deliveryStatus.statusActionArray.push({ userid: "", date: moment().toString(), status: "Delivered" })
   deliveryStatus.save()
   let paidamount = updateBody.paidamount;
   if (paidamount == null) {
@@ -339,7 +339,7 @@ const updateOrderStatus_forundelivey = async (id, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
   deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
-  deliveryStatus.statusActionArray.push({ userid: "", date: moment(), status: "unDelivered" })
+  deliveryStatus.statusActionArray.push({ userid: "", date: moment().toString(), status: "unDelivered" })
   deliveryStatus.save()
   return deliveryStatus;
 };
