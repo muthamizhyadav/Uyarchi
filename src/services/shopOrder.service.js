@@ -4237,6 +4237,157 @@ const getmanageIssus_byID = async (query) => {
 };
 
 
+const UnDeliveredOrders = async (query) => {
+  let dateMatch = { active: true };
+  let date = query.date;
+  if (date != null && date != '') {
+    date = date.split(',');
+    startdate = date[0];
+    enddata = date[1];
+    dateMatch = { $and: [{ createdDate: { $gte: startdate } }, { createdDate: { $lte: enddata } }] };
+  }
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: { statusActionArray: { $elemMatch: { status: { $in: ['unDelivered'] } } } }
+    },
+    {
+      $addFields: {
+        createdDate: { $dateToString: { date: "$created", format: "%Y-%m-%d" } },
+      }
+    },
+    {
+      $match: dateMatch,
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'wards',
+              localField: 'Wardid',
+              foreignField: '_id',
+              as: 'wardData',
+            },
+          },
+          { $unwind: '$wardData' },
+          {
+            $lookup: {
+              from: 'streets',
+              localField: 'Strid',
+              foreignField: '_id',
+              as: 'streetData',
+            },
+          },
+          { $unwind: '$streetData' },
+        ],
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderassign',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: '$paidAmt',
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        shopId: 1,
+        status: 1,
+        customerDeliveryStatus: 1,
+        OrderId: 1,
+        customerBillId: 1,
+        shopName: '$shopData.SName',
+        wardId: '$shopData.Wardid',
+        street: '$shopData.streetData.street',
+        ward: '$shopData.wardData.ward',
+        orderassign: '$orderassign',
+        paidAmt: { $ifNull: ['$orderpayments.amount', 0] },
+        orderedAmt: { $round: ['$productData.price'] },
+        pendingAmount: { $subtract: [{ $round: ['$productData.price'] }, { $ifNull: ['$orderpayments.amount', 0] }] },
+        createdDate: 1,
+      }
+    }
+  ])
+  return values
+}
+
 
 
 module.exports = {
@@ -4294,5 +4445,6 @@ module.exports = {
   details_Of_Payment_by_Id,
   getPaymenthistory,
   getallmanageIssus,
-  getmanageIssus_byID
+  getmanageIssus_byID,
+  UnDeliveredOrders
 };
