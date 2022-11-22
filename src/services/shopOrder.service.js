@@ -4237,10 +4237,26 @@ const getmanageIssus_byID = async (query) => {
 };
 
 
-const UnDeliveredOrders = async (page) => {
+const UnDeliveredOrders = async (query) => {
+  let dateMatch = { active: true };
+  let date = query.date;
+  if (date != null && date != '') {
+    date = date.split(',');
+    startdate = date[0];
+    enddata = date[1];
+    dateMatch = { $and: [{ createdDate: { $gte: startdate } }, { createdDate: { $lte: enddata } }] };
+  }
   let values = await ShopOrderClone.aggregate([
     {
       $match: { statusActionArray: { $elemMatch: { status: { $in: ['unDelivered'] } } } }
+    },
+    {
+      $addFields: {
+        createdDate: { $dateToString: { date: "$created", format: "%Y-%m-%d" } },
+      }
+    },
+    {
+      $match: dateMatch,
     },
     {
       $lookup: {
@@ -4364,7 +4380,8 @@ const UnDeliveredOrders = async (page) => {
         orderassign: '$orderassign',
         paidAmt: { $ifNull: ['$orderpayments.amount', 0] },
         orderedAmt: { $round: ['$productData.price'] },
-        pendingAmount: { $subtract: [{ $round: ['$productData.price'] }, { $ifNull: ['$orderpayments.amount', 0] }] }
+        pendingAmount: { $subtract: [{ $round: ['$productData.price'] }, { $ifNull: ['$orderpayments.amount', 0] }] },
+        createdDate: 1,
       }
     }
   ])
