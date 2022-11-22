@@ -14,7 +14,13 @@ const getAllReview = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getallReviews = catchAsync(async (req, res) => {
+  const data = await OrderReviewService.getallReviews(req.query);
+  res.send(data);
+});
+
 module.exports = {
   createOrderReview,
   getAllReview,
+  getallReviews
 };
