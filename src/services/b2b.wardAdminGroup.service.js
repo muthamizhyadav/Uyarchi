@@ -1594,8 +1594,13 @@ const getDeliveryOrderSeparate = async (id, page) => {
                     as: 'orderpaymentsData',
                   },
                 },
-                { $unwind: '$orderpaymentsData' },
-
+                // { $unwind: '$orderpaymentsData' },
+                {
+                  $unwind: {
+                    path: '$orderpaymentsData',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
                 {
                   $lookup: {
                     from: 'productorderclones',
