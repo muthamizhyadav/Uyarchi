@@ -620,15 +620,15 @@ const returnStock = async (id) => {
         as: 'totalpetty',
       },
     },
-    // {
-    //   $unwind: '$totalpetty',
-    // },
     {
-      $unwind: {
-        path: '$totalpetty',
-        preserveNullAndEmptyArrays: true,
-      },
+      $unwind: '$totalpetty',
     },
+    // {
+    //   $unwind: {
+    //     path: '$totalpetty',
+    //     preserveNullAndEmptyArrays: true,
+    //   },
+    // },
     {
       $lookup: {
         from: 'productorderclones',
