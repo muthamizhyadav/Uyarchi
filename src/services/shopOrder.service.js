@@ -3761,7 +3761,7 @@ const OGorders_MDorders = async (id) => {
         orderedAmt: { $round: ['$productData.price', 0] },
         pendingAmt: { $subtract: [{ $round: ['$productData.price', 0] }, '$orderpayments.price'] },
         paidAmt: '$orderpayments.price',
-        route: { $ifNull: ['$orderassign.route', 'Rejected'] },
+        route: { $ifNull: ['$orderassign.route', 'nill'] },
         vehicleName: { $ifNull: ['$orderassign.vehicleName', 'nill'] },
         productByOrder: '$productByOrder',
         modifiedStatus: 1,
