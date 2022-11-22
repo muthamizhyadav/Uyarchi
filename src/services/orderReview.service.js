@@ -109,5 +109,6 @@ module.exports = {
   createOrderReview,
   getAllReview,
   getallReviews,
-  replay_review
+  replay_review,
+  review_toggle
 };
