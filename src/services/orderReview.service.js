@@ -61,8 +61,8 @@ const getallReviews = async (query) => {
         orderId: 1,
         status: 1,
         show:1,
-        replay:1,
-        replayDate:1
+        reply:1,
+        replyDate:1
       }
     },
     { $skip: 10 * page },
@@ -96,22 +96,23 @@ const getallReviews = async (query) => {
   return { value: getreview, total: total.length };
 };
 
-const replay_review = async (query, body) => {
+const reply_review = async (query, body) => {
   let id = query.id;
-  let review = await OrderReview.findByIdAndUpdate({ _id: id }, { replay: body.replay, replayDate: moment(), status: "Replied" }, { new: true })
+  let review = await OrderReview.findByIdAndUpdate({ _id: id }, { reply: body.reply, replyDate: moment(), status: "Replied" }, { new: true })
   return review;
 }
 
 const review_toggle = async (query) => {
   let id = query.id;
   let review = await OrderReview.findById(id)
-  review = await OrderReview.findByIdAndUpdate({ _id: id }, { review: !review.show }, { new: true })
+  console.log(!review.show)
+  review =await OrderReview.findByIdAndUpdate({ _id: id }, { show: !review.show }, { new: true })
   return review;
 }
 module.exports = {
   createOrderReview,
   getAllReview,
   getallReviews,
-  replay_review,
+  reply_review,
   review_toggle
 };
