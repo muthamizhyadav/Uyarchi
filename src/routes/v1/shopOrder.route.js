@@ -67,5 +67,5 @@ router.route('/ward/Admin/order/particular/order/details/:id').get(shopOrderCont
 router.route('/payment/history/byOrder/:id').get(shopOrderController.getPaymenthistory);
 router.route('/getallmanage/issues').get(shopOrderController.getallmanageIssus);
 router.route('/getmanage/issues/byID').get(shopOrderController.getmanageIssus_byID);
-
+router.route('/undelivered/ordes/data').get(shopOrderController.UnDeliveredOrders)
 module.exports = router;
