@@ -12,6 +12,7 @@ const { Product } = require('../models/product.model');
 const orderPayment = require('../models/orderpayment.model');
 const creditBillGroup = require('../models/b2b.creditBillGroup.model');
 const creditBill = require('../models/b2b.creditBill.model');
+const { shopOrderService } = require('.');
 
 const createGroup = async (body, userId) => {
   let serverdates = moment().format('YYYY-MM-DD');
@@ -301,7 +302,7 @@ const updateOrderStatus = async (id, updateBody, userId) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
   deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
-  deliveryStatus.statusActionArray.push({ userid: "", date: moment(), status: "Delivered" })
+  deliveryStatus.statusActionArray.push({ userid: "", date: moment().toString(), status: "Delivered" })
   deliveryStatus.save()
   let paidamount = updateBody.paidamount;
   if (paidamount == null) {
@@ -339,7 +340,7 @@ const updateOrderStatus_forundelivey = async (id, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
   deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
-  deliveryStatus.statusActionArray.push({ userid: "", date: moment(), status: "unDelivered" })
+  deliveryStatus.statusActionArray.push({ userid: "", date: moment().toString(), status: "unDelivered" })
   deliveryStatus.save()
   return deliveryStatus;
 };
@@ -397,6 +398,7 @@ const updateordercomplete = async (id, updateBody, userId) => {
   });
   return Manage;
 };
+
 const delevery_start = async (id, updateBody, userId) => {
   let Manage = await getById(id);
   if (!Manage) {
@@ -618,15 +620,15 @@ const returnStock = async (id) => {
         as: 'totalpetty',
       },
     },
-    // {
-    //   $unwind: '$totalpetty',
-    // },
     {
-      $unwind: {
-        path: '$totalpetty',
-        preserveNullAndEmptyArrays: true,
-      },
+      $unwind: '$totalpetty',
     },
+    // {
+    //   $unwind: {
+    //     path: '$totalpetty',
+    //     preserveNullAndEmptyArrays: true,
+    //   },
+    // },
     {
       $lookup: {
         from: 'productorderclones',
@@ -660,8 +662,14 @@ const returnStock = async (id) => {
               as: 'shoporderclones',
             },
           },
+          // {
+          //   $unwind: '$shoporderclones',
+          // },
           {
-            $unwind: '$shoporderclones',
+            $unwind: {
+              path: '$shoporderclones',
+              preserveNullAndEmptyArrays: true,
+            },
           },
           {
             $group: {
@@ -710,8 +718,14 @@ const returnStock = async (id) => {
                     as: 'orderassigns',
                   },
                 },
+                // {
+                //   $unwind: '$orderassigns',
+                // },
                 {
-                  $unwind: '$orderassigns',
+                  $unwind: {
+                    path: '$orderassigns',
+                    preserveNullAndEmptyArrays: true,
+                  },
                 },
               ],
               as: 'shoporderclonesData',
@@ -806,6 +820,13 @@ const pettyStockSubmit = async (id, updateBody, userId) => {
     { manageDeliveryStatus: 'Delivery Completed', deliveryCompleteCreate: moment(), deliveryCompleteUserId: userId },
     { new: true }
   );
+  deliveryStatus.Orderdatas.forEach(async (e) => {
+    let id = e._id
+    let shoporder = await ShopOrderClone.findById(id)
+    shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: "Delivery Completed" }, { new: true })
+    shoporder.statusActionArray.push({ userid: userId, date: moment().toString(), status: "Delivery Completed" })
+    shoporder.save()
+  })
 
   // let valueStatus = await wardAdminGroupModel_ORDERS.find({ orderId: id });
   // console.log(valueStatus);
@@ -1345,18 +1366,18 @@ const assignOnly_DE = async (query, status, userid) => {
               from: 'shoporderclones',
               localField: 'orderId',
               foreignField: '_id',
-              // pipeline: [
-              //   {
-              //     $match: {
-              //       $and: [{ customerDeliveryStatus: { $eq: 'Pending' } }],
-              //     },
-              //   },
-              //   {
-              //     $group: {
-              //       _id: null,
-              //     },
-              //   },
-              // ],
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ customerDeliveryStatus: { $eq: 'Pending' } }],
+                  },
+                },
+                {
+                  $group: {
+                    _id: null,
+                  },
+                },
+              ],
               as: 'shopdata',
             },
           },
@@ -2361,11 +2382,11 @@ const getAllGroup = async (id, date, FinishingStatus, page) => {
         $and: match,
       },
     },
-    {
-      $match: {
-        $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
+    //   },
+    // },
     {
       $lookup: {
         from: 'b2busers',
@@ -2415,11 +2436,11 @@ const getAllGroup = async (id, date, FinishingStatus, page) => {
         $and: match,
       },
     },
-    {
-      $match: {
-        $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
+    //   },
+    // },
   ]);
   return { values: values, total: total.length };
 };
