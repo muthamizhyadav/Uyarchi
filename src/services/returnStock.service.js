@@ -19,13 +19,13 @@ const create_ReturnStock = async (body, userid) => {
     { returnStockstatus: 'returnedStock', returnstockdate: moment(), status: 'returnedStock' },
     { new: true }
   );
-  let findGroup = await wardAdminGroup.findOne({ _id: groupId });
-  await findGroup.Orderdatas.forEach(async (e) => {
-    let shoporder = await ShopOrderClone.findOne({ _id: e._id });
-    await ShopOrderClone.findByIdAndUpdate({ _id: e._id }, { status: 'returnedStock' }, { new: true });
-    shoporder.statusActionArray.push({ userid: userid, date: moment().toString(), status: 'returnedStock' });
-    shoporder.save();
-  });
+  // let findGroup = await wardAdminGroup.findOne({ _id: groupId });
+  // await findGroup.Orderdatas.forEach(async (e) => {
+  //   let shoporder = await ShopOrderClone.findOne({ _id: e._id });
+  //   await ShopOrderClone.findByIdAndUpdate({ _id: e._id }, { status: 'returnedStock' }, { new: true });
+  //   shoporder.statusActionArray.push({ userid: userid, date: moment().toString(), status: 'returnedStock' });
+  //   shoporder.save();
+  // });
 
   let create = await ReturnStock.create(values);
   return create;
