@@ -12,6 +12,7 @@ const { Product } = require('../models/product.model');
 const orderPayment = require('../models/orderpayment.model');
 const creditBillGroup = require('../models/b2b.creditBillGroup.model');
 const creditBill = require('../models/b2b.creditBill.model');
+const { shopOrderService } = require('.');
 
 const createGroup = async (body, userId) => {
   let serverdates = moment().format('YYYY-MM-DD');
@@ -397,6 +398,7 @@ const updateordercomplete = async (id, updateBody, userId) => {
   });
   return Manage;
 };
+
 const delevery_start = async (id, updateBody, userId) => {
   let Manage = await getById(id);
   if (!Manage) {
@@ -806,6 +808,12 @@ const pettyStockSubmit = async (id, updateBody, userId) => {
     { manageDeliveryStatus: 'Delivery Completed', deliveryCompleteCreate: moment(), deliveryCompleteUserId: userId },
     { new: true }
   );
+  deliveryStatus.Orderdatas.forEach(async (e) => {
+    let id = e._id
+    let shoporder = await ShopOrderClone.findById(id)
+    shoporder.statusActionArray.push({ userid: userId, date: moment().toString(), status: "Delivery Completed" })
+    shopOrderService.save()
+  })
 
   // let valueStatus = await wardAdminGroupModel_ORDERS.find({ orderId: id });
   // console.log(valueStatus);
