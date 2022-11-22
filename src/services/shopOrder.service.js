@@ -3996,6 +3996,58 @@ const getallmanageIssus = async (query) => {
         as: 'productOrderdata',
       },
     },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'shopData.Strid',
+        foreignField: '_id',
+        as: 'streetsData',
+      },
+    },
+    {
+      $unwind: '$streetsData',
+    },
+    {
+      $project: {
+        _id: 1,
+        OrderId: 1,
+        Payment: 1,
+        UnDeliveredStatus: 1,
+        created: 1,
+        street: '$streetsData.street',
+        type: '$shopData.type',
+        SName: '$shopData.SName',
+        name: '$b2busersData.name',
+        productOrderdata: "$productOrderdata",
+        statusActionArray: 1,
+        delivered_date: 1,
+        reason: 1,
+        status:1
+
+      },
+    },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -4009,7 +4061,7 @@ const getallmanageIssus = async (query) => {
       }
     },
   ]);
-  return {value:issues,total:total.length};
+  return { value: issues, total: total.length };
 };
 
 
