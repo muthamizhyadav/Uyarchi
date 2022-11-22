@@ -1366,18 +1366,18 @@ const assignOnly_DE = async (query, status, userid) => {
               from: 'shoporderclones',
               localField: 'orderId',
               foreignField: '_id',
-              // pipeline: [
-              //   {
-              //     $match: {
-              //       $and: [{ customerDeliveryStatus: { $eq: 'Pending' } }],
-              //     },
-              //   },
-              //   {
-              //     $group: {
-              //       _id: null,
-              //     },
-              //   },
-              // ],
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ customerDeliveryStatus: { $eq: 'Pending' } }],
+                  },
+                },
+                {
+                  $group: {
+                    _id: null,
+                  },
+                },
+              ],
               as: 'shopdata',
             },
           },
