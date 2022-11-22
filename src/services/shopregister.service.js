@@ -1359,8 +1359,7 @@ const cancelorder_byshop = async (shopId, query) => {
 }
 
 const cancelbyorder = async (shopId, query) => {
-  console.log(shopId)
-  const shoporder = await ShopOrderClone.findById(query.id);
+  let shoporder = await ShopOrderClone.findById(query.id);
   console.log(shoporder)
   if (shoporder.shopId != shopId) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Shop Order Not Found');
