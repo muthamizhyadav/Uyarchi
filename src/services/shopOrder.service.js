@@ -4240,6 +4240,7 @@ const getmanageIssus_byID = async (query) => {
 const UnDeliveredOrders = async (query) => {
   let dateMatch = { active: true };
   let date = query.date;
+  let page = parseInt(query.page);
   if (date != null && date != '') {
     date = date.split(',');
     startdate = date[0];
@@ -4384,9 +4385,131 @@ const UnDeliveredOrders = async (query) => {
         createdDate: 1,
         undeliveyreason: 1,
       }
-    }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ])
-  return values
+  let total = await ShopOrderClone.aggregate([
+    {
+      $match: { statusActionArray: { $elemMatch: { status: { $in: ['unDelivered'] } } } }
+    },
+    {
+      $addFields: {
+        createdDate: { $dateToString: { date: "$created", format: "%Y-%m-%d" } },
+      }
+    },
+    {
+      $match: dateMatch,
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'wards',
+              localField: 'Wardid',
+              foreignField: '_id',
+              as: 'wardData',
+            },
+          },
+          { $unwind: '$wardData' },
+          {
+            $lookup: {
+              from: 'streets',
+              localField: 'Strid',
+              foreignField: '_id',
+              as: 'streetData',
+            },
+          },
+          { $unwind: '$streetData' },
+        ],
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderassign',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: '$paidAmt',
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+  ])
+  return { values: values, total: total.length }
 }
 
 
