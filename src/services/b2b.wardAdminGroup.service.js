@@ -620,9 +620,9 @@ const returnStock = async (id) => {
         as: 'totalpetty',
       },
     },
-    {
-      $unwind: '$totalpetty',
-    },
+    // {
+    //   $unwind: '$totalpetty',
+    // },
     {
       $unwind: {
         path: '$totalpetty',
@@ -665,17 +665,10 @@ const returnStock = async (id) => {
           {
             $unwind: '$shoporderclones',
           },
-          // {
-          //   $unwind: {
-          //     path: '$shoporderclones',
-          //     preserveNullAndEmptyArrays: true,
-          //   },
-          // },
           {
             $group: {
               _id: null,
               Qty: { $sum: '$finalQuantity' },
-              finalQuantity: { $sum: '$finalPricePerKg' },
             },
           },
         ],
@@ -689,9 +682,7 @@ const returnStock = async (id) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-
     //  Un Delivered count
-
     {
       $lookup: {
         from: 'productorderclones',
@@ -718,14 +709,9 @@ const returnStock = async (id) => {
                     as: 'orderassigns',
                   },
                 },
-                // {
-                //   $unwind: '$orderassigns',
-                // },
+
                 {
-                  $unwind: {
-                    path: '$orderassigns',
-                    preserveNullAndEmptyArrays: true,
-                  },
+                  $unwind: '$orderassigns',
                 },
               ],
               as: 'shoporderclonesData',
@@ -739,7 +725,6 @@ const returnStock = async (id) => {
             $group: {
               _id: null,
               UnQty: { $sum: '$finalQuantity' },
-              UnfinalQuantity: { $sum: '$finalPricePerKg' },
             },
           },
         ],
@@ -780,12 +765,10 @@ const returnStock = async (id) => {
         productTitle: 1,
         productid: 1,
         status: '$returnStock.status',
-        // totalpetty: '$totalpetty',
         productorderclones: '$productorderclones',
         productorderclonesData: '$productorderclonesData',
         mismatch: { $subtract: ['$returnStock.actualStock', '$returnStock.actualWastage'] },
         pettyStock: '$totalpetty.pettyStock',
-
         DeliveryQuantity: '$productorderclones.Qty',
         actualStock: '$returnStock.actualStock',
         actualWastage: '$returnStock.actualWastage',
@@ -806,7 +789,6 @@ const returnStock = async (id) => {
       },
     },
   ]);
-
   return values;
 };
 
@@ -3182,15 +3164,15 @@ const submitDispute = async (id, updatebody) => {
 const returnStockData = async (id) => {
   let values = await Product.aggregate([
     // Delivered count
-    {
-      $lookup: {
-        from: 'wardadmingroupfines',
-        localField: '_id',
-        foreignField: 'productId',
-        pipeline: [{ $match: { groupId: id } }],
-        as: 'wardadmingroupfines',
-      },
-    },
+    // {
+    //   $lookup: {
+    //     from: 'wardadmingroupfines',
+    //     localField: '_id',
+    //     foreignField: 'productId',
+    //     pipeline: [{ $match: { groupId: id } }],
+    //     as: 'wardadmingroupfines',
+    //   },
+    // },
     {
       $lookup: {
         from: 'pettystockmodels',
@@ -3349,35 +3331,35 @@ const returnStockData = async (id) => {
       },
     },
 
-    {
-      $project: {
-        _id: 1,
-        productTitle: 1,
-        productid: 1,
-        status: '$returnStock.status',
-        image: '$returnStock.image',
-        // totalpetty: '$totalpetty',
-        productorderclones: '$productorderclones',
-        productorderclonesData: '$productorderclonesData',
-        mismatch: { $subtract: ['$returnStock.actualStock', '$returnStock.actualWastage'] },
-        pettyStock: '$totalpetty.pettyStock',
+    // {
+    //   $project: {
+    //     _id: 1,
+    //     productTitle: 1,
+    //     productid: 1,
+    //     status: '$returnStock.status',
+    //     image: '$returnStock.image',
+    //     // totalpetty: '$totalpetty',
+    //     productorderclones: '$productorderclones',
+    //     productorderclonesData: '$productorderclonesData',
+    //     mismatch: { $subtract: ['$returnStock.actualStock', '$returnStock.actualWastage'] },
+    //     pettyStock: '$totalpetty.pettyStock',
 
-        DeliveryQuantity: '$productorderclones.Qty',
-        actualStock: '$returnStock.actualStock',
-        actualWastage: '$returnStock.actualWastage',
-        mis: '$returnStock.misMatch',
-        productorderclones: { $eq: ['$productorderclones._id', null] },
-        UndeliveryQuantity: '$productorderclonesData.UnQty',
-        totalSum: { $add: ['$productorderclones.Qty', '$productorderclonesData.UnQty'] },
-        productorderclonesData: { $eq: ['$productorderclonesData._id', null] },
-        fineStatus: '$wardadmingroupfines.status',
-      },
-    },
-    {
-      $match: {
-        $or: [{ productorderclones: true }, { productorderclonesData: true }],
-      },
-    },
+    //     DeliveryQuantity: '$productorderclones.Qty',
+    //     actualStock: '$returnStock.actualStock',
+    //     actualWastage: '$returnStock.actualWastage',
+    //     mis: '$returnStock.misMatch',
+    //     productorderclones: { $eq: ['$productorderclones._id', null] },
+    //     UndeliveryQuantity: '$productorderclonesData.UnQty',
+    //     totalSum: { $add: ['$productorderclones.Qty', '$productorderclonesData.UnQty'] },
+    //     productorderclonesData: { $eq: ['$productorderclonesData._id', null] },
+    //     // fineStatus: '$wardadmingroupfines.status',
+    //   },
+    // },
+    // {
+    //   $match: {
+    //     $or: [{ productorderclones: true }, { productorderclonesData: true }],
+    //   },
+    // },
   ]);
 
   return values;
