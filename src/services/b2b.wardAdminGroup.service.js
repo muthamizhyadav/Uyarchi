@@ -718,8 +718,14 @@ const returnStock = async (id) => {
                     as: 'orderassigns',
                   },
                 },
+                // {
+                //   $unwind: '$orderassigns',
+                // },
                 {
-                  $unwind: '$orderassigns',
+                  $unwind: {
+                    path: '$orderassigns',
+                    preserveNullAndEmptyArrays: true,
+                  },
                 },
               ],
               as: 'shoporderclonesData',
