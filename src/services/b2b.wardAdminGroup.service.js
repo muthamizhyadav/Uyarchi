@@ -813,7 +813,7 @@ const pettyStockSubmit = async (id, updateBody, userId) => {
     let shoporder = await ShopOrderClone.findById(id)
     shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: "Delivery Completed" }, { new: true })
     shoporder.statusActionArray.push({ userid: userId, date: moment().toString(), status: "Delivery Completed" })
-    shopOrderService.save()
+    shoporder.save()
   })
 
   // let valueStatus = await wardAdminGroupModel_ORDERS.find({ orderId: id });
