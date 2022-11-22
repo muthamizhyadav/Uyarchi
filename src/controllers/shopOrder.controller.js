@@ -341,6 +341,12 @@ const getPaymenthistory = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getallmanageIssus = catchAsync(async (req, res) => {
+  const data = await shopOrderService.getallmanageIssus(req.query);
+  res.send(data);
+});
+
+
 module.exports = {
   vieworderbill_byshop,
   createshopOrder,
@@ -392,4 +398,5 @@ module.exports = {
   OGorders_MDorders,
   details_Of_Payment_by_Id,
   getPaymenthistory,
+  getallmanageIssus
 };

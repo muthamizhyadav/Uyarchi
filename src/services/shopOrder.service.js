@@ -3936,6 +3936,82 @@ const getPaymenthistory = async (id) => {
   return values;
 };
 
+const getallmanageIssus = async (query) => {
+  let page = query.page == null || query.page == "" || query.page == 'null' ? 0 : query.page;
+  let issues = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { raiseissue: { $eq: true } }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $match: { $and: [{ issueraised: { $eq: true } }] } },
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              packKg: 1,
+              unit: 1,
+              productTitle: '$products.productTitle',
+              created: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              GST_Number: 1,
+              GSTamount: {
+                $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$priceperkg'] }, '$GST_Number'] }, 100],
+              },
+              issue: 1,
+              issueDate: 1,
+              issuediscription: 1,
+              issuequantity: 1,
+              issuetype: 1
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+
+  let total = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { raiseissue: { $eq: true } }
+        ]
+      }
+    },
+  ]);
+  return {value:issues,total:total.length};
+};
+
 
 
 module.exports = {
@@ -3992,4 +4068,5 @@ module.exports = {
   OGorders_MDorders,
   details_Of_Payment_by_Id,
   getPaymenthistory,
+  getallmanageIssus
 };

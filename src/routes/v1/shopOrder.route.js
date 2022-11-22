@@ -65,6 +65,6 @@ router.route('/ward/Admin/order/tracking/:page').get(shopOrderController.WA_Orde
 router.route('/ward/Admin/order/particular/order/:id').get(shopOrderController.OGorders_MDorders);
 router.route('/ward/Admin/order/particular/order/details/:id').get(shopOrderController.details_Of_Payment_by_Id);
 router.route('/payment/history/byOrder/:id').get(shopOrderController.getPaymenthistory);
-
+router.route('/getallmanage/issues').get(shopOrderController.getallmanageIssus);
 
 module.exports = router;
