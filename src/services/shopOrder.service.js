@@ -4295,7 +4295,27 @@ const UnDeliveredOrders = async (query) => {
         from: 'orderassigns',
         localField: '_id',
         foreignField: 'orderId',
+        pipeline: [{
+          $sort: { created: -1 }
+        }, { $limit: 1 },
+        {
+          $lookup: {
+            from: 'wardadmingroups',
+            localField: 'wardAdminGroupID',
+            foreignField: '_id',
+            as: 'group',
+          },
+        },
+        { $unwind: '$group' },
+        ],
         as: 'orderassign',
+      },
+    },
+    {
+
+      $unwind: {
+        path: '$orderassign',
+        preserveNullAndEmptyArrays: true,
       },
     },
     {
@@ -4349,6 +4369,11 @@ const UnDeliveredOrders = async (query) => {
         foreignField: 'orderId',
         pipeline: [
           {
+            $match: {
+              $and: [{ type: { $eq: 'advanced' } }],
+            },
+          },
+          {
             $group: {
               _id: null,
               amount: {
@@ -4366,6 +4391,18 @@ const UnDeliveredOrders = async (query) => {
         preserveNullAndEmptyArrays: true,
       },
     },
+    //deliveryExecutiveId
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users',
+    },
     {
       $project: {
         _id: 1,
@@ -4378,12 +4415,15 @@ const UnDeliveredOrders = async (query) => {
         wardId: '$shopData.Wardid',
         street: '$shopData.streetData.street',
         ward: '$shopData.wardData.ward',
-        orderassign: '$orderassign',
+        // orderassign: '$orderassign',
         paidAmt: { $ifNull: ['$orderpayments.amount', 0] },
         orderedAmt: { $round: ['$productData.price'] },
         pendingAmount: { $subtract: [{ $round: ['$productData.price'] }, { $ifNull: ['$orderpayments.amount', 0] }] },
         createdDate: 1,
         undeliveyreason: 1,
+        groupId: { $ifNull: ['$orderassign.group.groupId', 'nill'] },
+        // users: '$users',
+        DE: '$users.name',
       }
     },
     { $skip: 10 * page },
