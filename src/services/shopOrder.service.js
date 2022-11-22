@@ -2676,7 +2676,7 @@ const getBills_ByShop = async (shopId) => {
 const getBills_DetailsByshop = async (shopId, page) => {
   let values = await ShopOrderClone.aggregate([
     {
-      $match: { $and: [{ shopId: shopId }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $ne: 'Paid' } }] },
+      $match: { $and: [{ shopId: shopId }, { status: { $in: ['Delivered', 'Delivery Completed'] } }, { statusOfBill: { $ne: 'Paid' } }] },
     },
     {
       $lookup: {
@@ -4382,6 +4382,7 @@ const UnDeliveredOrders = async (query) => {
         orderedAmt: { $round: ['$productData.price'] },
         pendingAmount: { $subtract: [{ $round: ['$productData.price'] }, { $ifNull: ['$orderpayments.amount', 0] }] },
         createdDate: 1,
+        undeliveyreason: 1,
       }
     }
   ])
