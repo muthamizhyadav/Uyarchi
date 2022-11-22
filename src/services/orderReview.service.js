@@ -105,7 +105,8 @@ const replay_review = async (query, body) => {
 const review_toggle = async (query) => {
   let id = query.id;
   let review = await OrderReview.findById(id)
-  review = await OrderReview.findByIdAndUpdate({ _id: id }, { review: !review.show }, { new: true })
+  console.log(!review.show)
+  review =await OrderReview.findByIdAndUpdate({ _id: id }, { show: !review.show }, { new: true })
   return review;
 }
 module.exports = {
