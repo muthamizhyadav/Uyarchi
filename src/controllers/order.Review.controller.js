@@ -20,7 +20,7 @@ const getallReviews = catchAsync(async (req, res) => {
 });
 
 const replay_review = catchAsync(async (req, res) => {
-  const data = await OrderReviewService.replay_review(req.query);
+  const data = await OrderReviewService.replay_review(req.query,req.body);
   res.send(data);
 });
 
