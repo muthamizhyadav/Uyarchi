@@ -662,8 +662,14 @@ const returnStock = async (id) => {
               as: 'shoporderclones',
             },
           },
+          // {
+          //   $unwind: '$shoporderclones',
+          // },
           {
-            $unwind: '$shoporderclones',
+            $unwind: {
+              path: '$shoporderclones',
+              preserveNullAndEmptyArrays: true,
+            },
           },
           {
             $group: {
