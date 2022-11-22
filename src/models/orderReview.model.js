@@ -40,10 +40,10 @@ const orderReviewSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  replay: {
+  reply: {
     type: String,
   },
-  replayDate: {
+  replyDate: {
     type: Date,
 
   }
