@@ -271,6 +271,8 @@ const getCallstatusForSuddenOrders = async (page) => {
         productid: 1,
         order_Type: 1,
         supplierid: 1,
+        SuddenCreatedBy:1,
+        SuddenStatus:1,
       },
     },
     { $skip: 10 * page },
