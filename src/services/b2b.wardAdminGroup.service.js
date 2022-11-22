@@ -623,12 +623,12 @@ const returnStock = async (id) => {
     {
       $unwind: '$totalpetty',
     },
-    // {
-    //   $unwind: {
-    //     path: '$totalpetty',
-    //     preserveNullAndEmptyArrays: true,
-    //   },
-    // },
+    {
+      $unwind: {
+        path: '$totalpetty',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $lookup: {
         from: 'productorderclones',
@@ -662,15 +662,15 @@ const returnStock = async (id) => {
               as: 'shoporderclones',
             },
           },
-          // {
-          //   $unwind: '$shoporderclones',
-          // },
           {
-            $unwind: {
-              path: '$shoporderclones',
-              preserveNullAndEmptyArrays: true,
-            },
+            $unwind: '$shoporderclones',
           },
+          // {
+          //   $unwind: {
+          //     path: '$shoporderclones',
+          //     preserveNullAndEmptyArrays: true,
+          //   },
+          // },
           {
             $group: {
               _id: null,
@@ -3116,7 +3116,7 @@ const finishingAccount = async (id, page) => {
         pipeline: [
           {
             $match: {
-              $and: [{ status: { $eq: 'UnDelivered' } }],
+              statusActionArray: { $elemMatch: { status: { $in: ['Delivered'] } } }
             },
           },
         ],
@@ -3147,7 +3147,7 @@ const finishingAccount = async (id, page) => {
         pipeline: [
           {
             $match: {
-              $and: [{ status: { $eq: 'UnDelivered' } }],
+              statusActionArray: { $elemMatch: { status: { $in: ['unDelivered'] } } }
             },
           },
         ],
