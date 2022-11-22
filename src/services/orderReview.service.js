@@ -59,7 +59,10 @@ const getallReviews = async (query) => {
         date: 1,
         shopId: 1,
         orderId: 1,
-        status: 1
+        status: 1,
+        show:1,
+        replay:1,
+        replayDate:1
       }
     },
     { $skip: 10 * page },
