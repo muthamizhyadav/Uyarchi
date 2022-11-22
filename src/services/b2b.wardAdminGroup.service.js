@@ -620,9 +620,9 @@ const returnStock = async (id) => {
         as: 'totalpetty',
       },
     },
-    // {
-    //   $unwind: '$totalpetty',
-    // },
+    {
+      $unwind: '$totalpetty',
+    },
     {
       $unwind: {
         path: '$totalpetty',
@@ -662,15 +662,15 @@ const returnStock = async (id) => {
               as: 'shoporderclones',
             },
           },
-          // {
-          //   $unwind: '$shoporderclones',
-          // },
           {
-            $unwind: {
-              path: '$shoporderclones',
-              preserveNullAndEmptyArrays: true,
-            },
+            $unwind: '$shoporderclones',
           },
+          // {
+          //   $unwind: {
+          //     path: '$shoporderclones',
+          //     preserveNullAndEmptyArrays: true,
+          //   },
+          // },
           {
             $group: {
               _id: null,
@@ -1366,18 +1366,18 @@ const assignOnly_DE = async (query, status, userid) => {
               from: 'shoporderclones',
               localField: 'orderId',
               foreignField: '_id',
-              // pipeline: [
-              //   {
-              //     $match: {
-              //       $and: [{ customerDeliveryStatus: { $eq: 'Pending' } }],
-              //     },
-              //   },
-              //   {
-              //     $group: {
-              //       _id: null,
-              //     },
-              //   },
-              // ],
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ customerDeliveryStatus: { $eq: 'Pending' } }],
+                  },
+                },
+                {
+                  $group: {
+                    _id: null,
+                  },
+                },
+              ],
               as: 'shopdata',
             },
           },
@@ -2382,11 +2382,11 @@ const getAllGroup = async (id, date, FinishingStatus, page) => {
         $and: match,
       },
     },
-    {
-      $match: {
-        $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
+    //   },
+    // },
     {
       $lookup: {
         from: 'b2busers',
@@ -2436,11 +2436,11 @@ const getAllGroup = async (id, date, FinishingStatus, page) => {
         $and: match,
       },
     },
-    {
-      $match: {
-        $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
+    //   },
+    // },
   ]);
   return { values: values, total: total.length };
 };
@@ -3116,7 +3116,7 @@ const finishingAccount = async (id, page) => {
         pipeline: [
           {
             $match: {
-              $and: [{ status: { $eq: 'UnDelivered' } }],
+              statusActionArray: { $elemMatch: { status: { $in: ['Delivered'] } } }
             },
           },
         ],
@@ -3147,7 +3147,7 @@ const finishingAccount = async (id, page) => {
         pipeline: [
           {
             $match: {
-              $and: [{ status: { $eq: 'UnDelivered' } }],
+              statusActionArray: { $elemMatch: { status: { $in: ['unDelivered'] } } }
             },
           },
         ],

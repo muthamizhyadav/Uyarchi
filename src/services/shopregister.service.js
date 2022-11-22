@@ -1006,7 +1006,7 @@ const get_myissues = async (shopId) => {
     {
       $match: {
         shopId: { $eq: shopId },
-        status: { $eq: "Delivered" },
+        // status: { $eq: "Delivered" },
         raiseissue: { $eq: true }
       }
     },

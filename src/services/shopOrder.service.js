@@ -3936,6 +3936,306 @@ const getPaymenthistory = async (id) => {
   return values;
 };
 
+const getallmanageIssus = async (query) => {
+  let page = query.page == null || query.page == "" || query.page == 'null' ? 0 : query.page;
+  let issues = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { raiseissue: { $eq: true } }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $match: { $and: [{ issueraised: { $eq: true } }] } },
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              packKg: 1,
+              unit: 1,
+              productTitle: '$products.productTitle',
+              created: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              GST_Number: 1,
+              GSTamount: {
+                $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$priceperkg'] }, '$GST_Number'] }, 100],
+              },
+              issue: 1,
+              issueDate: 1,
+              issuediscription: 1,
+              issuequantity: 1,
+              issuetype: 1
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'shopData.Strid',
+        foreignField: '_id',
+        as: 'streetsData',
+      },
+    },
+    {
+      $unwind: '$streetsData',
+    },
+    {
+      $project: {
+        _id: 1,
+        OrderId: 1,
+        Payment: 1,
+        UnDeliveredStatus: 1,
+        created: 1,
+        street: '$streetsData.street',
+        type: '$shopData.type',
+        SName: '$shopData.SName',
+        name: '$b2busersData.name',
+        productOrderdata: "$productOrderdata",
+        statusActionArray: 1,
+        delivered_date: 1,
+        reason: 1,
+        status: 1
+
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+
+  let total = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { raiseissue: { $eq: true } }
+        ]
+      }
+    },
+  ]);
+  return { value: issues, total: total.length };
+};
+
+
+const getmanageIssus_byID = async (query) => {
+  let issues = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { raiseissue: { $eq: true } },
+          { _id: { $eq: query.id } }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              packKg: 1,
+              unit: 1,
+              productTitle: '$products.productTitle',
+              created: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              GST_Number: 1,
+              GSTamount: {
+                $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$priceperkg'] }, '$GST_Number'] }, 100],
+              },
+              issue: 1,
+              issueDate: 1,
+              issuediscription: 1,
+              issuequantity: 1,
+              issuetype: 1
+            },
+          },
+        ],
+        as: 'allProducts',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $match: { $and: [{ issueraised: { $eq: true } }] } },
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              orderId: 1,
+              productid: 1,
+              quantity: 1,
+              priceperkg: 1,
+              GST_Number: 1,
+              HSN_Code: 1,
+              packtypeId: 1,
+              packKg: 1,
+              unit: 1,
+              productTitle: '$products.productTitle',
+              created: 1,
+              finalQuantity: 1,
+              finalPricePerKg: 1,
+              GST_Number: 1,
+              GSTamount: {
+                $divide: [{ $multiply: [{ $multiply: ['$finalQuantity', '$priceperkg'] }, '$GST_Number'] }, 100],
+              },
+              issue: 1,
+              issueDate: 1,
+              issuediscription: 1,
+              issuequantity: 1,
+              issuetype: 1
+            },
+          },
+        ],
+        as: 'issueProducts',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    {
+      $unwind: '$b2busersData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'shopData.Strid',
+        foreignField: '_id',
+        as: 'streetsData',
+      },
+    },
+    {
+      $unwind: '$streetsData',
+    },
+    {
+      $project: {
+        _id: 1,
+        OrderId: 1,
+        Payment: 1,
+        UnDeliveredStatus: 1,
+        created: 1,
+        street: '$streetsData.street',
+        type: '$shopData.type',
+        SName: '$shopData.SName',
+        name: '$b2busersData.name',
+        productOrderdata: "$productOrderdata",
+        statusActionArray: 1,
+        delivered_date: 1,
+        reason: 1,
+        status: 1,
+        allProducts: "$allProducts",
+        issueProducts: "$issueProducts",
+
+
+      },
+    },
+  ]);
+  if (issues.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop order Not Found');
+  }
+  return issues[0];
+};
+
 
 
 module.exports = {
@@ -3992,4 +4292,6 @@ module.exports = {
   OGorders_MDorders,
   details_Of_Payment_by_Id,
   getPaymenthistory,
+  getallmanageIssus,
+  getmanageIssus_byID
 };
