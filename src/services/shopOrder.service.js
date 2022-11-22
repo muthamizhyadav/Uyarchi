@@ -4239,13 +4239,25 @@ const getmanageIssus_byID = async (query) => {
 
 const UnDeliveredOrders = async (query) => {
   let dateMatch = { active: true };
+  let deMacth = { active: true };
+  let searchMatch = { active: true };
   let date = query.date;
+  let de = query.de;
+  let search = query.search;
   let page = parseInt(query.page);
   if (date != null && date != '') {
     date = date.split(',');
     startdate = date[0];
     enddata = date[1];
     dateMatch = { $and: [{ createdDate: { $gte: startdate } }, { createdDate: { $lte: enddata } }] };
+  }
+  if (de != null && de != '') {
+    deMacth = { $and: [{ deliveryExecutiveId: { $eq: de } }] }
+  }
+  if (search != null && search != '') {
+    searchMatch = {
+      $or: [{ SName: { $regex: search, $options: 'i' } }],
+    };
   }
   let values = await ShopOrderClone.aggregate([
     {
@@ -4257,14 +4269,18 @@ const UnDeliveredOrders = async (query) => {
       }
     },
     {
-      $match: dateMatch,
+      $match: { $and: [dateMatch, deMacth] },
     },
+
     {
       $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
         pipeline: [
+          {
+            $match: { $and: [searchMatch] }
+          },
           {
             $lookup: {
               from: 'wards',
@@ -4424,6 +4440,7 @@ const UnDeliveredOrders = async (query) => {
         groupId: { $ifNull: ['$orderassign.group.groupId', 'nill'] },
         // users: '$users',
         DE: '$users.name',
+        deliveryExecutiveId: 1,
       }
     },
     { $skip: 10 * page },
@@ -4439,7 +4456,7 @@ const UnDeliveredOrders = async (query) => {
       }
     },
     {
-      $match: dateMatch,
+      $match: { $and: [dateMatch, deMacth] },
     },
     {
       $lookup: {
@@ -4447,6 +4464,9 @@ const UnDeliveredOrders = async (query) => {
         localField: 'shopId',
         foreignField: '_id',
         pipeline: [
+          {
+            $match: { $and: [searchMatch] }
+          },
           {
             $lookup: {
               from: 'wards',
