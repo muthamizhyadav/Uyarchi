@@ -90,6 +90,12 @@ const callStatusSchema = mongoose.Schema({
   TotalAmount:{
     type:Number,
   },
+  SuddenCreatedBy:{
+    type:String,
+  },
+  SuddenStatus:{
+    type:String,
+  },
 });
 
 callStatusSchema.plugin(toJSON);
