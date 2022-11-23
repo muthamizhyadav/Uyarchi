@@ -728,6 +728,7 @@ const getNotAssignData = async (page) => {
         },
       },
     },
+    { $match: { pendingAmount: { $gt: 0 } } },
     {
       $match: {
         $and: [{ condition1: { $eq: true } }],
@@ -743,7 +744,7 @@ const getNotAssignData = async (page) => {
       $match: {
         $and: [
           { creditBillAssignedStatus: { $ne: 'Assigned' } },
-          { status: { $in: ['Delivered', 'returnedStock'] } },
+          { status: { $in: ['Delivered', 'Delivery Completed'] } },
           { statusOfBill: { $eq: 'Pending' } },
         ],
       },
@@ -822,6 +823,27 @@ const getNotAssignData = async (page) => {
     // { $unwind: '$creditbillsData'},
 
     {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $sort: { created: -1 },
+          },
+          { $limit: 1 },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
       $project: {
         Schedulereason: 1,
         Scheduledate: 1,
@@ -837,7 +859,8 @@ const getNotAssignData = async (page) => {
         totalHistory: {
           $sum: '$creditData.historyDtaa.amountPayingWithDEorSM',
         },
-
+        lastPaidAmount: '$orderpayments.paidAmt',
+        lastPaidDate: '$orderpayments.created',
         paidAmount: '$paymentData.price',
 
         pendingAmount: { $round: { $subtract: ['$productData.price', '$paymentData.price'] } },
@@ -851,6 +874,7 @@ const getNotAssignData = async (page) => {
         },
       },
     },
+    { $match: { pendingAmount: { $gt: 0 } } },
     {
       $match: {
         $and: [{ condition1: { $eq: true } }],

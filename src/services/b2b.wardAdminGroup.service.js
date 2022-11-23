@@ -2858,7 +2858,7 @@ const finishingAccount = async (id, page) => {
               $and: [{ type: { $ne: 'advanced' } }],
             },
           },
-          { $group: { _id:null, price: { $sum: '$paidAmt' } } },
+          { $group: { _id: null, price: { $sum: '$paidAmt' } } },
         ],
         as: 'orderDataNotEqual',
       },
