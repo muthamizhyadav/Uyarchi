@@ -37,7 +37,7 @@ const getAll_Vehicle_Details = async () => {
         from: 'wardadmingroups',
         localField: '_id',
         foreignField: 'vehicleId',
-        pipeline: [{ $match: { manageDeliveryStatus: { $eq: 'cashReturned' } } }],
+        pipeline: [{ $match: { manageDeliveryStatus: { $ne: 'cashReturned' } } }],
         as: 'wardadmingroups',
       },
     },
@@ -56,7 +56,8 @@ const getAll_Vehicle_Details = async () => {
         created: 1,
         date: 1,
         time: 1,
-        wardadmingroups: { $size: '$wardadmingroups' },
+        // wardadmingroups: '$wardadmingroups',
+        wardadmingroups: { $size: '$wardadmingroups' }
       },
     },
     { $match: { wardadmingroups: { $eq: 0 } } },
