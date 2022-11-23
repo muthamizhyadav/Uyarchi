@@ -4436,7 +4436,7 @@ const afterCompletion_Of_Delivered = async (shop, date, userId, page) => {
         foreignField: 'orderId',
         pipeline: [
           {
-            $sort: { time: -1 },
+            $sort: { created: -1 },
           },
           {
             $match: { paidAmt: { $ne: 0 } },
