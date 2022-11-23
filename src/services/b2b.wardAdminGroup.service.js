@@ -2937,7 +2937,6 @@ const finishingAccount = async (id, page) => {
         paymentType: 1,
         FinalPaidAmount: 1,
         AddIniAndFinal: 1,
-        orderDataNotEqual:1,
         FinalPendingAmount: {
           $subtract: ['$TotalOrderAmountWithGST', '$AddIniAndFinal'],
         },
