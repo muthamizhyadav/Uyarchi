@@ -2578,7 +2578,7 @@ const getCreditBillMaster = async (query) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { status: { $in: ['Delivered', 'returnedStock'] } }],
+        $and: [dateMatch, { statusActionArray: { $elemMatch: { status: { $in: ["Delivered"] } } } }],
       },
     },
     {
@@ -2824,6 +2824,11 @@ const getCreditBillMaster = async (query) => {
         active: 1,
         Scheduledate: 1,
       },
+    },
+    {
+      $match: {
+        statusActionArray: { $elemMatch: { status: "Delivered" } }
+      }
     },
     {
       $match: {
