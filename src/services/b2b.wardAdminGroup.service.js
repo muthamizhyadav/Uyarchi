@@ -2858,7 +2858,7 @@ const finishingAccount = async (id, page) => {
               $and: [{ type: { $ne: 'advanced' } }],
             },
           },
-          { $group: { _id: null, price: { $sum: '$paidAmt' } } },
+          { $group: { _id: 1, price: { $sum: '$paidAmt' } } },
         ],
         as: 'orderDataNotEqual',
       },
@@ -2870,27 +2870,27 @@ const finishingAccount = async (id, page) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-    // {
-    //   $lookup: {
-    //     from: 'orderpayments',
-    //     localField: 'orderId',
-    //     foreignField: 'orderId',
-    //     pipeline: [
-    //       {
-    //         $match: {
-    //           $and: [{ type: { $ne: 'advanced' } }],
-    //         },
-    //       },
-    //     ],
-    //     as: 'orderDataNotEqual1',
-    //   },
-    // },
-    // {
-    //   $unwind: {
-    //     path: '$orderDataNotEqual1',
-    //     preserveNullAndEmptyArrays: true,
-    //   },
-    // },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: 'orderDataNotEqual._id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ type: { $ne: 'advanced' } }],
+            },
+          },
+        ],
+        as: 'orderDataNotEqual1',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderDataNotEqual1',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
 
     {
       $project: {
@@ -2907,9 +2907,9 @@ const finishingAccount = async (id, page) => {
         InitialPendingAmount: {
           $subtract: ['$shopData.productData.price', '$orderData.price'],
         },
-
+        FinalPaymentMode:'$orderDataNotEqual.payment',
         // FinalPaymentMode: '$orderDataNotEqual1.payment',
-        // paymentType: '$orderDataNotEqual1.paymentMethod',
+        paymentType: '$orderDataNotEqual1.paymentMethod',
         // FinalPaidAmount: "$orderDataNotEqual.paidAmt",
         AddIniAndFinal: {
           $add: ['$orderData.price', '$orderDataNotEqual.price'],
