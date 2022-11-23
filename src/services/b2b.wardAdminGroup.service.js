@@ -2395,11 +2395,11 @@ const getAllGroup = async (id, date, FinishingStatus, page) => {
         $and: match,
       },
     },
-    // {
-    //   $match: {
-    //     $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
-    //   },
-    // },
+    {
+      $match: {
+        $and: [{ manageDeliveryStatus: { $in: ['returnedStock', 'Delivery Completed', 'cashReturned'] } }],
+      },
+    },
     {
       $lookup: {
         from: 'b2busers',
@@ -2449,11 +2449,11 @@ const getAllGroup = async (id, date, FinishingStatus, page) => {
         $and: match,
       },
     },
-    // {
-    //   $match: {
-    //     $and: [{ status: { $in: ['returnedStock', 'Delivered', 'UnDelivered'] } }],
-    //   },
-    // },
+    {
+      $match: {
+        $and: [{ manageDeliveryStatus: { $in: ['returnedStock', 'Delivery Completed', 'cashReturned'] } }],
+      },
+    },
   ]);
   return { values: values, total: total.length };
 };
