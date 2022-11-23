@@ -2858,7 +2858,7 @@ const finishingAccount = async (id, page) => {
               $and: [{ type: { $ne: 'advanced' } }],
             },
           },
-          { $group: { _id: 1, price: { $sum: '$paidAmt' } } },
+          { $group: { _id:null, price: { $sum: '$paidAmt' } } },
         ],
         as: 'orderDataNotEqual',
       },
@@ -2907,16 +2907,16 @@ const finishingAccount = async (id, page) => {
         InitialPendingAmount: {
           $subtract: ['$shopData.productData.price', '$orderData.price'],
         },
-        FinalPaymentMode:'$orderDataNotEqual.payment',
+        FinalPaymentMode: '$orderDataNotEqual.payment',
         // FinalPaymentMode: '$orderDataNotEqual1.payment',
         paymentType: '$orderDataNotEqual1.paymentMethod',
         // FinalPaidAmount: "$orderDataNotEqual.paidAmt",
         AddIniAndFinal: {
           $add: ['$orderData.price', '$orderDataNotEqual.price'],
         },
-
+        orderDataNotEqual: '$orderDataNotEqual',
         // FinalPendingAmount: {
-        //   $subtract: ["$TotalOrderAmountWithGST","$AddIniAndFinal"]
+        //   $subtract: ["$shopData.productData.price","$AddIniAndFinal"]
         // },
       },
     },
@@ -2933,12 +2933,11 @@ const finishingAccount = async (id, page) => {
         InitialPaidAmount: 1,
         TotalOrderAmountWithGST: 1,
         InitialPendingAmount: 1,
-
         FinalPaymentMode: 1,
         paymentType: 1,
         FinalPaidAmount: 1,
         AddIniAndFinal: 1,
-
+        orderDataNotEqual:1,
         FinalPendingAmount: {
           $subtract: ['$TotalOrderAmountWithGST', '$AddIniAndFinal'],
         },
