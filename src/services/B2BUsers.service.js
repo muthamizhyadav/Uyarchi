@@ -459,6 +459,14 @@ const get_drivers_all = async (id) => {
   return users;
 };
 
+const deliveryExecutive = async () => {
+  let values = await Users.find({ userRole: "36151bdd-a8ce-4f80-987e-1f454cd0993f" })
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'There is no Delivery executive')
+  }
+  return values
+}
+
 module.exports = {
   createUser,
   UsersLogin,
@@ -485,5 +493,6 @@ module.exports = {
   gettargetedusers_credit,
   get_stationery_user,
   get_stationery_user,
-  get_drivers_all
+  get_drivers_all,
+  deliveryExecutive
 };

@@ -159,6 +159,12 @@ const get_drivers_all = catchAsync(async (req, res) => {
   const users = await b2bUsersService.get_drivers_all();
   res.send(users);
 });
+
+const deliveryExecutive = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.deliveryExecutive()
+  res.send(users)
+})
+
 module.exports = {
   createB2bUsers,
   getsalesExecuteRolesUsers,
@@ -185,5 +191,6 @@ module.exports = {
   gettargetedusers,
   gettargetedusers_credit,
   get_stationery_user,
-  get_drivers_all
+  get_drivers_all,
+  deliveryExecutive,
 };
