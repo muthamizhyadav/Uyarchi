@@ -2561,11 +2561,6 @@ const getCreditBillMaster = async (query) => {
     },
     {
       $match: {
-        statusActionArray: { $elemMatch: { status: "Delivered" } }
-      }
-    },
-    {
-      $match: {
         $and: [userMatch],
       },
     },
@@ -2578,14 +2573,10 @@ const getCreditBillMaster = async (query) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { statusActionArray: { $elemMatch: { status: { $in: ["Delivered"] } } } }],
+        $and: [dateMatch, { statusActionArray: { $elemMatch: { status: { $nin: ["unDelivered"] } } } }],
       },
     },
-    {
-      $match: {
-        statusActionArray: { $elemMatch: { status: "Delivered" } }
-      }
-    },
+
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
     {
       $match: dateM,
@@ -2667,7 +2658,12 @@ const getCreditBillMaster = async (query) => {
         from: 'orderpayments',
         localField: '_id',
         foreignField: 'orderId',
-        pipeline: [{ $limit: 1 }],
+        pipeline: [
+          {
+            $sort: { created: -1 },
+          },
+          { $limit: 1 },
+        ],
         as: 'orderpayments',
       },
     },
@@ -2810,6 +2806,7 @@ const getCreditBillMaster = async (query) => {
         delivered_date: 1,
         TotalAmount: { $round: '$productData.price' },
         lastPaidAmount: '$orderpayments.paidAmt',
+        lastPaidDate: '$orderpayments.created',
         paidAMount: {
           $sum: ['$orderpaymentsall.amount', '$reorderamount'],
         },
@@ -2823,12 +2820,9 @@ const getCreditBillMaster = async (query) => {
         AssignedUserId: '$creditbills.AssignedUserId',
         active: 1,
         Scheduledate: 1,
+        creationDate: 1,
+        statusActionArray: 1,
       },
-    },
-    {
-      $match: {
-        statusActionArray: { $elemMatch: { status: "Delivered" } }
-      }
     },
     {
       $match: {
