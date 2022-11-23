@@ -3891,7 +3891,7 @@ const details_Of_Payment_by_Id = async (id) => {
         pipeline: [
           { $match: { type: 'advanced' } },
           {
-            $sort: { date: -1, time: -1 },
+            $sort: { created: -1 },
           },
           { $limit: 1 },
         ],
@@ -3901,6 +3901,27 @@ const details_Of_Payment_by_Id = async (id) => {
     {
       $unwind: {
         path: '$orderpayment',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $match: { type: { $ne: 'advanced' } } },
+          {
+            $sort: { created: -1 },
+          },
+          { $limit: 1 },
+        ],
+        as: 'orderpaymentlast',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpaymentlast',
         preserveNullAndEmptyArrays: true,
       },
     },
@@ -3919,6 +3940,10 @@ const details_Of_Payment_by_Id = async (id) => {
         pendingAmt: { $subtract: [{ $round: ['$productData.price', 0] }, '$orderpayments.price'] },
         orderedAmt: { $round: ['$productData.price', 0] },
         paidAmt: '$orderpayments.price',
+        orderpaymentlast: '$orderpaymentlast',
+        delivery_paymentMethod: { $ifNull: ['$orderpaymentlast.paymentMethod', 'nill'] },
+        delivered_payment: { $ifNull: ['$orderpaymentlast.payment', 'nill'] },
+        delivered_PaidAmt: { $ifNull: ['$orderpaymentlast.paidAmt', 'nill'] },
       },
     },
   ]);
