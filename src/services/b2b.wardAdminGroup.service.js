@@ -2870,27 +2870,27 @@ const finishingAccount = async (id, page) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-    {
-      $lookup: {
-        from: 'orderpayments',
-        localField: 'orderId',
-        foreignField: 'orderId',
-        pipeline: [
-          {
-            $match: {
-              $and: [{ type: { $ne: 'advanced' } }],
-            },
-          },
-        ],
-        as: 'orderDataNotEqual1',
-      },
-    },
-    {
-      $unwind: {
-        path: '$orderDataNotEqual1',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
+    // {
+    //   $lookup: {
+    //     from: 'orderpayments',
+    //     localField: 'orderId',
+    //     foreignField: 'orderId',
+    //     pipeline: [
+    //       {
+    //         $match: {
+    //           $and: [{ type: { $ne: 'advanced' } }],
+    //         },
+    //       },
+    //     ],
+    //     as: 'orderDataNotEqual1',
+    //   },
+    // },
+    // {
+    //   $unwind: {
+    //     path: '$orderDataNotEqual1',
+    //     preserveNullAndEmptyArrays: true,
+    //   },
+    // },
 
     {
       $project: {
@@ -2908,8 +2908,8 @@ const finishingAccount = async (id, page) => {
           $subtract: ['$shopData.productData.price', '$orderData.price'],
         },
 
-        FinalPaymentMode: '$orderDataNotEqual1.payment',
-        paymentType: '$orderDataNotEqual1.paymentMethod',
+        // FinalPaymentMode: '$orderDataNotEqual1.payment',
+        // paymentType: '$orderDataNotEqual1.paymentMethod',
         // FinalPaidAmount: "$orderDataNotEqual.paidAmt",
         AddIniAndFinal: {
           $add: ['$orderData.price', '$orderDataNotEqual.price'],
