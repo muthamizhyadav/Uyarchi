@@ -2348,7 +2348,7 @@ const getGroupDetailsForDE = async (page) => {
   let total = await wardAdminGroup.aggregate([
     {
       $match: {
-        $or: [{ manageDeliveryStatus: { $in: ['manageDeliveryStatus', 'cashReturned', 'returnedStock'] } }],
+        $or: [{ manageDeliveryStatus: { $in: ['Delivery Completed', 'cashReturned', 'returnedStock'] } }],
       },
     },
     {
