@@ -3363,7 +3363,7 @@ const getCreditBillMaster = async (query) => {
   let assign = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { status: { $in: ['Delivered', 'returnedStock'] } }],
+        $and: [dateMatch],
       },
     },
     {
