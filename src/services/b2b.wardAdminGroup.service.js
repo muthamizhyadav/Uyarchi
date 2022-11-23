@@ -574,6 +574,30 @@ const getPettyStock = async (id) => {
 const returnStock = async (id) => {
   console.log(id);
   let values = await Product.aggregate([
+
+    // {
+    //   $lookup: {
+    //     from: 'pettystockmodels',
+    //     localField: '_id',
+    //     foreignField: 'productId',
+    //     pipeline: [{
+    //       $lookup: {
+    //         from: 'wardadmingroups',
+    //         localField: 'wardAdminId',
+    //         foreignField: '_id',
+    //         as: 'group',
+    //       }
+    //     },
+    //     {
+    //       $unwind: '$group'
+    //     }
+    //     ],
+    //     as: 'pettyStock'
+    //   }
+    // },
+    // {
+    //   $unwind: '$pettyStock'
+    // },
     // Delivered count
     {
       $lookup: {
@@ -780,7 +804,9 @@ const returnStock = async (id) => {
         vehicleName: '$totalpetty.group.vehicles.vehicle_type',
         vehicleNumber: '$totalpetty.group.vehicles.vehicleNo',
         route: '$totalpetty.group.route',
-        GroupBillId: '$totalpetty.group.GroupBillId',
+        DEStatus: '$totalpetty.group.manageDeliveryStatus',
+        groupStatus: '$totalpetty.group.manageDeliveryStatus',
+        GroupBillId: '$totalpetty.group.status',
       },
     },
     {
