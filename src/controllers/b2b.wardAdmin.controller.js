@@ -249,7 +249,7 @@ const trackOrdersByGroupOrder = catchAsync(async (req, res) => {
 });
 
 const mismacthGroupCount = catchAsync(async (req, res) => {
-  const data = await wardAdminService.mismacthGroupCount()
+  const data = await wardAdminService.mismacthGroupCount(req.params.page)
   res.send(data)
 })
 

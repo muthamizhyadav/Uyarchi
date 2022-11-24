@@ -69,5 +69,5 @@ router.route('/get/shop/details/:id').get(wardAdminController.getshopDetails);
 router.route('/manage/group/orders').get(wardAdminController.manage_group_orders);
 router.route('/manage/group/orders/bygroup/:id').get(wardAdminController.manage_Orders_ByGroup);
 router.route('/manage/group/orders/bygroup/byproducts/:id').get(wardAdminController.trackOrdersByGroupOrder);
-router.route('/mis/macthGroupCount').get(wardAdminController.mismacthGroupCount);
+router.route('/mis/macthGroupCount/:page').get(wardAdminController.mismacthGroupCount);
 module.exports = router;
