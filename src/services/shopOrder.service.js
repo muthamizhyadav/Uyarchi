@@ -4634,7 +4634,12 @@ const getall_ordered_shops = async (query) => {
     { $limit: 10 }
   ])
 
-  return values;
+  let total = await ShopOrderClone.aggregate([
+    { $sort: { created: -1 } },
+    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
+  ])
+
+  return { value: values, total: total.length };
 
 }
 
