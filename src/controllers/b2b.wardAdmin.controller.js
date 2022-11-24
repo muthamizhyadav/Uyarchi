@@ -255,7 +255,7 @@ const mismacthGroupCount = catchAsync(async (req, res) => {
 
 
 const group_In_misMatch = catchAsync(async (req, res) => {
-  const data = await wardAdminService.group_In_misMatch(req.params.id);
+  const data = await wardAdminService.group_In_misMatch(req.params.id, req.params.page);
   res.send(data)
 })
 module.exports = {
