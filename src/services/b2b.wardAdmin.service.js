@@ -4728,13 +4728,26 @@ const misMatchStocks = async (id) => {
       $unwind: '$returnStocks'
     },
     {
+      $lookup: {
+        from: 'returnstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        as: 'returnStock',
+      },
+    },
+    {
+      $unwind: '$returnStock'
+    },
+    {
       $project: {
         _id: 1,
         GroupBillId: 1,
         assignDate: 1,
         assignTime: 1,
         deliveryExecutiveId: 1,
-        totalMis_match: '$returnStocks.totalMisMatch'
+        totalMis_match: '$returnStocks.totalMisMatch',
+        groupId: 1,
+        returnStock: '$returnStock.image',
       }
     }
   ])
