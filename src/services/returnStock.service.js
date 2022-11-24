@@ -4,9 +4,10 @@ const moment = require('moment');
 const ReturnStock = require('../models/returnStocks.model');
 const { wardAdminGroup } = require('../models/b2b.wardAdminGroup.model');
 const { ShopOrderClone } = require('../models/shopOrder.model');
+const ReturnStockhistories = require('../models/returnStock.histories.model')
 
 const create_ReturnStock = async (body, userid) => {
-  let { groupId } = body;
+  let { groupId, stocks } = body;
   let values = {
     ...body,
     ...{ created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HHmmss'), status: 'received' },
@@ -14,6 +15,10 @@ const create_ReturnStock = async (body, userid) => {
   if (!groupId) {
     throw new ApiError('Gruop Id Required');
   }
+  stocks.forEach(async(e) => {
+    let value = { productId: e.id, returnStockId: values._id, product: productName, actualStock: e.actualStock, wastageStock: e.wastageStock, mismatch: e.mismatch, groupId: groupId }
+    await ReturnStockhistories.created(value)
+  })
   await wardAdminGroup.findByIdAndUpdate(
     { _id: groupId },
     { returnStockstatus: 'returnedStock', returnstockdate: moment(), status: 'returnedStock' },
