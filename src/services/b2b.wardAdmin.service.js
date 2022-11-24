@@ -3593,6 +3593,89 @@ const mismatchCount = async (page) => {
   return data;
 };
 
+const group_In_misMatch = async (id) => {
+  let values = await Users.aggregate([{
+    $match: {
+      $and: [{ _id: { $eq: id } }],
+    },
+  }, {
+    $lookup: {
+      from: 'wardadmingroups',
+      localField: '_id',
+      foreignField: 'deliveryExecutiveId',
+      pipeline: [
+        {
+          $match: {
+            $and: [{ ByCashIncPettyCash: { $ne: null } }],
+          },
+        },
+        {
+          $lookup: {
+            from: 'orderassigns',
+            localField: '_id',
+            foreignField: 'wardAdminGroupID',
+            pipeline: [
+              {
+                $lookup: {
+                  from: 'orderpayments',
+                  localField: 'orderId',
+                  foreignField: 'orderId',
+                  pipeline: [
+                    {
+                      $match: {
+                        $and: [{ type: { $ne: 'advanced' } }],
+                      },
+                    },
+                    {
+                      $group: {
+                        _id: null,
+                        total: {
+                          $sum: '$paidAmt',
+                        },
+                      },
+                    },
+                  ],
+                  as: 'orderpaymentsData',
+                },
+              },
+              {
+                $unwind: '$orderpaymentsData',
+              },
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: '$orderpaymentsData.total' },
+                },
+              },
+            ],
+            as: 'orderassignsData',
+          },
+        },
+        {
+          $unwind: '$orderassignsData',
+        },
+      ],
+      as: 'wardadmingroupsData',
+    },
+  },
+  {
+    $unwind: '$wardadmingroupsData',
+  },
+  {
+    $project: {
+      name: 1,
+      cash_As_perSystem: '$wardadmingroupsData.orderassignsData.total',
+      groupId: '$wardadmingroupsData.groupId',
+      pettyCash: '$wardadmingroupsData.pettyCash',
+      group: '$wardadmingroupsData._id',
+      mismatch: '$wardadmingroupsData.ByCashIncPettyCash',
+      assignDate: '$wardadmingroupsData.assignDate',
+    },
+  },
+  ])
+  return values
+}
+
 const mismatchGroup = async (id) => {
   let data = await Users.aggregate([
     {
@@ -4448,4 +4531,5 @@ module.exports = {
   manage_Orders_ByGroup,
   trackOrdersByGroupOrder,
   mismacthGroupCount,
+  group_In_misMatch,
 };

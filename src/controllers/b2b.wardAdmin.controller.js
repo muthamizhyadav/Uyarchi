@@ -253,6 +253,11 @@ const mismacthGroupCount = catchAsync(async (req, res) => {
   res.send(data)
 })
 
+
+const group_In_misMatch = catchAsync(async (req, res) => {
+  const data = await wardAdminService.group_In_misMatch(req.params.id);
+  res.send(data)
+})
 module.exports = {
   getDetails,
   getproductDetails,
@@ -294,4 +299,5 @@ module.exports = {
   manage_Orders_ByGroup,
   trackOrdersByGroupOrder,
   mismacthGroupCount,
+  group_In_misMatch,
 };
