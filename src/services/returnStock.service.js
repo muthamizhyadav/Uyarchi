@@ -8,6 +8,7 @@ const ReturnStockhistories = require('../models/returnStock.histories.model')
 
 const create_ReturnStock = async (body, userid) => {
   let { groupId, stocks } = body;
+  console.log(stocks)
   let values = {
     ...body,
     ...{ created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HHmmss'), status: 'received' },
@@ -15,9 +16,9 @@ const create_ReturnStock = async (body, userid) => {
   if (!groupId) {
     throw new ApiError('Gruop Id Required');
   }
-  stocks.forEach(async(e) => {
-    let value = { productId: e.id, returnStockId: values._id, product: productName, actualStock: e.actualStock, wastageStock: e.wastageStock, mismatch: e.mismatch, groupId: groupId }
-    await ReturnStockhistories.created(value)
+  stocks.forEach(async (e) => {
+    let value = { productId: e.id, returnStockId: values._id, product: e.productName, actualStock: e.actualStock, wastageStock: e.wastageStock, mismatch: e.mismatch, groupId: groupId, created: moment() }
+    await ReturnStockhistories.create(value)
   })
   await wardAdminGroup.findByIdAndUpdate(
     { _id: groupId },

@@ -21,13 +21,13 @@ const ReturnStock_history = new mongoose.Schema({
         type: String,
     },
     actualStock: {
-        type: String,
+        type: Number,
     },
     mismatch: {
-        type: String,
+        type: Number,
     },
     wastageStock: {
-        type: String,
+        type: Number,
     },
     created: {
         type: Date
