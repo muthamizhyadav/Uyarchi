@@ -4142,6 +4142,12 @@ const returnedStock = async (id, userid) => {
   return value;
 };
 
+const updateFine_Credit_status = async (id, body) => {
+  let { status } = body
+  let values = await wardAdminGroup.findByIdAndUpdate({ _id: id }, { misMatchAmountStatus: status }, { new: true })
+  return values
+}
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -4213,4 +4219,5 @@ module.exports = {
   storeReturn_images_toGroup,
   returnedCash,
   returnedStock,
+  updateFine_Credit_status,
 };
