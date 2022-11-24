@@ -4630,6 +4630,53 @@ const getall_ordered_shops = async (query) => {
   let values = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
     { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclones',
+      },
+    },
+    {
+      $unwind: "$b2bshopclones"
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },
+    {
+      $unwind: {
+        path: '$b2busers',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        orderType: 1,
+        status: 1,
+        created: 1,
+        OrderId: 1,
+        product: "$productOrderdata",
+        SName: "$b2bshopclones.SName",
+        mobile: "$b2bshopclones.mobile",
+        address: "$b2bshopclones.address",
+        orderBy: "$b2busers.name"
+      }
+    },
     { $skip: 10 * page },
     { $limit: 10 }
   ])
