@@ -8,31 +8,31 @@ router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusM
 
 router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 // checked modified
-router.route('/updateProductById/:orderId').put(authorization,wardAdminController.updateProduct);
+router.route('/updateProductById/:orderId').put(authorization, wardAdminController.updateProduct);
 
 // router.route('/getDetails/:limit/:page/:status').get(wardAdminController.statusMatchingAppOrModi);
 router.route('/getDetails/:type/:time/:status/:limit/:page').get(wardAdminController.statusMatchingAppOrModi);
 // router.route('/getProductDetails/:id').get(wardAdminController.getproductDetails);
 // checked modified
 // checked
-router.route('/updateAcknowledge').put(authorization,wardAdminController.updateAcknowledge);
+router.route('/updateAcknowledge').put(authorization, wardAdminController.updateAcknowledge);
 // checked
-router.route('/updateApproved').put(authorization,wardAdminController.updateApproval);
+router.route('/updateApproved').put(authorization, wardAdminController.updateApproval);
 
-router.route('/updatePacked').put(authorization,wardAdminController.updatePackedStatus);
+router.route('/updatePacked').put(authorization, wardAdminController.updatePackedStatus);
 
 // checked
-router.route('/updateRejected').put(authorization,wardAdminController.updateRejectionStatus);
+router.route('/updateRejected').put(authorization, wardAdminController.updateRejectionStatus);
 // Checked;
-router.route('/updateApproved/:id').put(authorization,wardAdminController.updateApproved);
+router.route('/updateApproved/:id').put(authorization, wardAdminController.updateApproved);
 
 // checked not Use
 router.route('/updateModified/:id').put(wardAdminController.updateModified);
 
 // checked Modified
-router.route('/updateRejected/:id').put(authorization,wardAdminController.updateRejected);
+router.route('/updateRejected/:id').put(authorization, wardAdminController.updateRejected);
 
-router.route('/wardloadingExecutive/updatePacked/:id').put(authorization,wardAdminController.updatePacked);
+router.route('/wardloadingExecutive/updatePacked/:id').put(authorization, wardAdminController.updatePacked);
 
 router.route('/wardloadingExecutive/updateAssign/:id').put(wardAdminController.updateAssigned);
 
@@ -54,7 +54,7 @@ router.route('/delivery/Executive/Name/:id').put(wardAdminController.deliveryexe
 
 router.route('/Array/craeteArrayData').post(wardAdminController.createArrayData);
 // checked
-router.route('/update/acknowleded/status/single/:id').put(authorization,wardAdminController.updateAcknowledgeSingle);
+router.route('/update/acknowleded/status/single/:id').put(authorization, wardAdminController.updateAcknowledgeSingle);
 
 router.route('/get/status/Count').get(wardAdminController.countStatus);
 // checked Modified
@@ -69,5 +69,8 @@ router.route('/get/shop/details/:id').get(wardAdminController.getshopDetails);
 router.route('/manage/group/orders').get(wardAdminController.manage_group_orders);
 router.route('/manage/group/orders/bygroup/:id').get(wardAdminController.manage_Orders_ByGroup);
 router.route('/manage/group/orders/bygroup/byproducts/:id').get(wardAdminController.trackOrdersByGroupOrder);
-
+router.route('/mis/macthGroupCount/:page').get(wardAdminController.mismacthGroupCount);
+router.route('/group/misMatch/de/:id/:page').get(wardAdminController.group_In_misMatch)
+router.route('/stock/mis/macthGroupCount/:page').get(wardAdminController.mismacthStock);
+router.route('/stcks/mis/match/group/byDe/:id').get(wardAdminController.misMatchStocks)
 module.exports = router;

@@ -598,8 +598,9 @@ const getNotAssignData = async (page) => {
       $match: {
         $and: [
           { creditBillAssignedStatus: { $ne: 'Assigned' } },
-          { status: { $in: ['Delivered', 'Delivery Completed'] } },
+          { status: { $in: ['Delivered', 'Delivery Completed',] } },
           { statusOfBill: { $eq: 'Pending' } },
+          { customerDeliveryStatus: { $ne: 'UnDelivered' } },
         ],
       },
     },
@@ -746,6 +747,7 @@ const getNotAssignData = async (page) => {
           { creditBillAssignedStatus: { $ne: 'Assigned' } },
           { status: { $in: ['Delivered', 'Delivery Completed'] } },
           { statusOfBill: { $eq: 'Pending' } },
+          { customerDeliveryStatus: { $ne: 'UnDelivered' } },
         ],
       },
     },
@@ -3121,7 +3123,7 @@ const getCreditBillMaster = async (query) => {
   let yersterdayCount = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { status: { $in: ['Delivered', 'returnedStock'] } }],
+        $and: [dateMatch, { statusActionArray: { $elemMatch: { status: { $in: ["Delivered"] } } } }],
       },
     },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
@@ -3364,11 +3366,6 @@ const getCreditBillMaster = async (query) => {
         Scheduledate: 1,
         creationDate: 1,
       },
-    },
-    {
-      $match: {
-        statusActionArray: { $elemMatch: { status: "Delivered" } }
-      }
     },
     {
       $match: {
@@ -4179,6 +4176,11 @@ const getbilldetails = async (query) => {
       },
     },
     { $limit: 20 },
+    {
+      $match: {
+        paidAmt: { $gt: 0 }
+      }
+    }
   ]);
 
   let total = await OrderPayment.aggregate([

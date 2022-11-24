@@ -13,6 +13,7 @@ const orderPayment = require('../models/orderpayment.model');
 const creditBillGroup = require('../models/b2b.creditBillGroup.model');
 const creditBill = require('../models/b2b.creditBill.model');
 const { shopOrderService } = require('.');
+const ReturnStock_history = require('../models/returnStock.histories.model')
 
 const createGroup = async (body, userId) => {
   let serverdates = moment().format('YYYY-MM-DD');
@@ -4142,6 +4143,56 @@ const returnedStock = async (id, userid) => {
   return value;
 };
 
+const updateFine_Credit_status = async (id, body) => {
+  let { status } = body
+  let values = await wardAdminGroup.findByIdAndUpdate({ _id: id }, { misMatchAmountStatus: status }, { new: true })
+  return values
+}
+
+const misMatchProducts_by_group = async (id) => {
+  let values = await ReturnStock_history.aggregate([
+    {
+      $match: {
+        groupId: id
+      }
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productId',
+        foreignField: '_id',
+        pipeline: [{
+          $lookup: {
+            from: 'historypacktypes',
+            localField: '_id',
+            foreignField: 'productId',
+            pipeline: [{ $match: { date: moment().format('YYYY-MM-DD') } }, { $sort: { created: -1 } }, { $limit: 1 }],
+            as: 'productpacks',
+          },
+        }, { $unwind: '$productpacks' }],
+        as: 'products',
+      },
+    },
+    {
+      $unwind: '$products'
+    },
+    {
+      $project: {
+        _id: 1,
+        productId: 1,
+        product: 1,
+        mismatch: 1,
+        groupId: 1,
+        productName: '$products.productTitle',
+        sellingPrice: '$products.productpacks.salesendPrice',
+        totalPrice: { $multiply: ['$products.productpacks.salesendPrice', '$mismatch'] },
+        status: { $ifNull: ['$misMatchAmountStatus', 'Pending'] }
+      }
+    }
+  ])
+  return values
+}
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -4213,4 +4264,6 @@ module.exports = {
   storeReturn_images_toGroup,
   returnedCash,
   returnedStock,
+  updateFine_Credit_status,
+  misMatchProducts_by_group,
 };
