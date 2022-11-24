@@ -145,4 +145,5 @@ router
   .put(returnImage.array('returnStockimages'), wardAdminGroupController.storeReturn_images_toGroup);
 router.route('/return/cash/:id').get(authorization, wardAdminGroupController.returnedCash);
 router.route('/return/stock/De/:id').get(authorization, wardAdminGroupController.returnedStock);
+router.route('/updateFine/Credit/status/update/:id').put(wardAdminGroupController.updateFine_Credit_status)
 module.exports = router;
