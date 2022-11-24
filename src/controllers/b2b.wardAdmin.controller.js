@@ -29,7 +29,7 @@ const getproductDetails = catchAsync(async (req, res) => {
 // })
 
 const updateProduct = catchAsync(async (req, res) => {
-  const product = await wardAdminService.updateProduct(req.params.orderId, req.body,req.userId);
+  const product = await wardAdminService.updateProduct(req.params.orderId, req.body, req.userId);
   res.send(product);
 });
 
@@ -39,26 +39,26 @@ const deliveryexecutive = catchAsync(async (req, res) => {
 });
 
 const updateAcknowledge = catchAsync(async (req, res) => {
-  const acknowledgement = await wardAdminService.updateRejected(req.body,req.userId);
+  const acknowledgement = await wardAdminService.updateRejected(req.body, req.userId);
   res.send(acknowledgement);
 });
 const updateApproval = catchAsync(async (req, res) => {
-  const approval = await wardAdminService.updateApprovedMultiSelect(req.body,req.userId);
+  const approval = await wardAdminService.updateApprovedMultiSelect(req.body, req.userId);
   res.send(approval);
 });
 
 const updateRejectionStatus = catchAsync(async (req, res) => {
-  const rejected = await wardAdminService.updateRejectMultiSelect(req.body,req.userId);
+  const rejected = await wardAdminService.updateRejectMultiSelect(req.body, req.userId);
   res.send(rejected);
 });
 
 const updatePackedStatus = catchAsync(async (req, res) => {
-  const rejected = await wardAdminService.updatePackedMultiSelect(req.body,req.userId);
+  const rejected = await wardAdminService.updatePackedMultiSelect(req.body, req.userId);
   res.send(rejected);
 });
 
 const updateApproved = catchAsync(async (req, res) => {
-  const approved = await wardAdminService.updateStatusApprovedOrModified(req.params.id, req.body,req.userId);
+  const approved = await wardAdminService.updateStatusApprovedOrModified(req.params.id, req.body, req.userId);
   res.status(200).send(approved);
 });
 
@@ -68,7 +68,7 @@ const updateModified = catchAsync(async (req, res) => {
 });
 
 const updateRejected = catchAsync(async (req, res) => {
-  const rejected = await wardAdminService.updateStatusrejectOrModified(req.params.id, req.body,req.userId);
+  const rejected = await wardAdminService.updateStatusrejectOrModified(req.params.id, req.body, req.userId);
   res.status(200).send(rejected);
 });
 
@@ -88,7 +88,7 @@ const wardloadExecutivepacked = catchAsync(async (req, res) => {
 });
 
 const updatePacked = catchAsync(async (req, res) => {
-  const packed = await wardAdminService.updateStatusForAssugnedAndPacked(req.params.id, req.body,req.userId);
+  const packed = await wardAdminService.updateStatusForAssugnedAndPacked(req.params.id, req.body, req.userId);
   res.send(packed);
 });
 
@@ -115,7 +115,7 @@ const wardDeliveryExecutive = catchAsync(async (req, res) => {
 });
 
 const updateAcknowledgeSingle = catchAsync(async (req, res) => {
-  const Acknowledged = await wardAdminService.updateAcknowledgeSingle(req.params.id, req.body,req.userId);
+  const Acknowledged = await wardAdminService.updateAcknowledgeSingle(req.params.id, req.body, req.userId);
   res.send(Acknowledged);
 });
 
@@ -248,6 +248,11 @@ const trackOrdersByGroupOrder = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const mismacthGroupCount = catchAsync(async (req, res) => {
+  const data = await wardAdminService.mismacthGroupCount()
+  res.send(data)
+})
+
 module.exports = {
   getDetails,
   getproductDetails,
@@ -288,4 +293,5 @@ module.exports = {
   getshopDetails,
   manage_Orders_ByGroup,
   trackOrdersByGroupOrder,
+  mismacthGroupCount,
 };

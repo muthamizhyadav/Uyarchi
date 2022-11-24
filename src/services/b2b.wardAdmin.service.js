@@ -1286,7 +1286,7 @@ const wardDeliveryExecutive = async () => {
           {
             $match: {
               $and: [
-                { manageDeliveryStatus: { $in: ['Pending', 'Delivery Completed', 'Delivery start', 'petty cash picked', 'petty stock picked', 'Order Picked','StockReturned'] } },
+                { manageDeliveryStatus: { $in: ['Pending', 'Delivery Completed', 'Delivery start', 'petty cash picked', 'petty stock picked', 'Order Picked', 'StockReturned'] } },
                 { GroupBillDate: { $eq: today } },
               ]
             },
@@ -3416,6 +3416,72 @@ const countStatus = async () => {
   };
 };
 
+const mismacthGroupCount = async () => {
+  let values = await Users.aggregate([{
+    $match: {
+      $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' } }],
+    },
+  }, {
+    $lookup: {
+      from: 'wardadmingroups',
+      localField: '_id',
+      foreignField: 'deliveryExecutiveId',
+      pipeline: [
+        {
+          $match: {
+            $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            total: {
+              $sum: '$ByCashIncPettyCash',
+            },
+          },
+        },
+      ],
+      as: 'wardadmingroupsData',
+    },
+  },
+  {
+    $unwind: '$wardadmingroupsData',
+  },
+  {
+    $lookup: {
+      from: 'wardadmingroups',
+      localField: '_id',
+      foreignField: 'deliveryExecutiveId',
+      pipeline: [
+        {
+          $match: {
+            $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            total: {
+              $sum: '$ByCashIncPettyCash',
+            },
+          },
+        },
+      ],
+      as: 'wardadmingroups',
+    },
+  },
+  {
+    $project: {
+      name: 1,
+      totalAmount: '$wardadmingroupsData.total',
+      groupCount: { $size: '$wardadmingroups' },
+    },
+  },
+  ])
+  return values
+}
+
+
 const mismatchCount = async (page) => {
   let data = await Users.aggregate([
     {
@@ -4319,4 +4385,5 @@ module.exports = {
   getshopDetails,
   manage_Orders_ByGroup,
   trackOrdersByGroupOrder,
+  mismacthGroupCount,
 };
