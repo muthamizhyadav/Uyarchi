@@ -16,10 +16,6 @@ const create_ReturnStock = async (body, userid) => {
   if (!groupId) {
     throw new ApiError('Gruop Id Required');
   }
-  stocks.forEach(async (e) => {
-    let value = { productId: e.id, returnStockId: values._id, product: e.productName, actualStock: e.actualStock, wastageStock: e.wastageStock, mismatch: e.mismatch, groupId: groupId, created: moment() }
-    await ReturnStockhistories.create(value)
-  })
   await wardAdminGroup.findByIdAndUpdate(
     { _id: groupId },
     { returnStockstatus: 'returnedStock', returnstockdate: moment(), status: 'returnedStock' },
@@ -34,6 +30,10 @@ const create_ReturnStock = async (body, userid) => {
   // });
 
   let create = await ReturnStock.create(values);
+  stocks.forEach(async (e) => {
+    let value = { productId: e.id, returnStockId: create._id, product: e.productName, actualStock: e.actualStock, wastageStock: e.wastageStock, mismatch: e.mismatch, groupId: groupId, created: moment() }
+    await ReturnStockhistories.create(value)
+  })
   return create;
 };
 
