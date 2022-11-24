@@ -4149,6 +4149,13 @@ const updateFine_Credit_status = async (id, body) => {
   return values
 }
 
+const updateFine_Stock_status = async (id, body) => {
+  let { status } = body
+  let values = await wardAdminGroup.findByIdAndUpdate({ _id: id }, { mismatchStockStatus: status }, { new: true })
+  return values
+}
+
+
 const misMatchProducts_by_group = async (id) => {
   let values = await ReturnStock_history.aggregate([
     {
@@ -4266,4 +4273,5 @@ module.exports = {
   returnedStock,
   updateFine_Credit_status,
   misMatchProducts_by_group,
+  updateFine_Stock_status,
 };

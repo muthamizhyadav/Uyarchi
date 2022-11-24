@@ -147,4 +147,6 @@ router.route('/return/cash/:id').get(authorization, wardAdminGroupController.ret
 router.route('/return/stock/De/:id').get(authorization, wardAdminGroupController.returnedStock);
 router.route('/updateFine/Credit/status/update/:id').put(wardAdminGroupController.updateFine_Credit_status)
 router.route('/mismatch/products/stocks/by/group/:id').get(wardAdminGroupController.misMatchProducts_by_group)
+// updateFine_Stock_status
+router.route('/updateFine/Credit/status/update/stock/:id').put(wardAdminGroupController.updateFine_Stock_status)
 module.exports = router;
