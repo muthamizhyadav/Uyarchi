@@ -4598,6 +4598,46 @@ const UnDeliveredOrders = async (query) => {
 }
 
 
+const getall_ordered_shops = async (query) => {
+  console.log(query)
+  let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
+  let statusMatch = { status: { $eq: query.status } };
+  let deliveryType = { delivery_type: { $eq: query.deliverytype } };
+  let timeSlot = { active: true };
+  let deliveryMode = { active: true };
+  let today = moment().format('YYYY-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  let dateMacth = { active: true }
+  console.log(today)
+  console.log(yesterday)
+  if (query.deliverytype == 'all') {
+    deliveryType = { delivery_type: { $in: ['IMD', 'NDD'] } }
+    dateMacth = { date: { $in: [yesterday, today] } }
+  }
+  if (query.deliverytype == 'IMD' || query.deliverytype == 'NDD') {
+    dateMacth = { date: { $in: [today] } }
+  }
+  if (query.deliverytype == 'YOD') {
+    dateMacth = { date: { $in: [yesterday] } }
+  }
+  if (query.timeslot != 'all') {
+    timeSlot = { time_of_delivery: { $eq: query.timeslot } }
+  }
+  if (query.deliverymode != 'all') {
+    deliveryMode = { devevery_mode: { $eq: query.deliverymode } }
+  }
+
+  let values = await ShopOrderClone.aggregate([
+    { $sort: { created: -1 } },
+    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
+    { $skip: 10 * page },
+    { $limit: 10 }
+  ])
+
+  return values;
+
+}
+
 
 module.exports = {
   // product
@@ -4655,5 +4695,6 @@ module.exports = {
   getPaymenthistory,
   getallmanageIssus,
   getmanageIssus_byID,
-  UnDeliveredOrders
+  UnDeliveredOrders,
+  getall_ordered_shops
 };
