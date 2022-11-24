@@ -4166,12 +4166,29 @@ const misMatchProducts_by_group = async (id) => {
             from: 'historypacktypes',
             localField: '_id',
             foreignField: 'productId',
+            pipeline: [{ $match: { date: moment().format('YYYY-MM-DD') } }, { $sort: { created: -1 } }, { $limit: 1 }],
             as: 'productpacks',
           },
-        }],
+        }, { $unwind: '$productpacks' }],
         as: 'products',
       },
     },
+    {
+      $unwind: '$products'
+    },
+    {
+      $project: {
+        _id: 1,
+        productId: 1,
+        product: 1,
+        mismatch: 1,
+        groupId: 1,
+        productName: '$products.productTitle',
+        sellingPrice: '$products.productpacks.salesendPrice',
+        totalPrice: { $multiply: ['$products.productpacks.salesendPrice', '$mismatch'] },
+        status: { $ifNull: ['$misMatchAmountStatus', 'Pending'] }
+      }
+    }
   ])
   return values
 }
