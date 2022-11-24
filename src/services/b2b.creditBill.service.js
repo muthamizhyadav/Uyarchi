@@ -4176,6 +4176,11 @@ const getbilldetails = async (query) => {
       },
     },
     { $limit: 20 },
+    {
+      $match: {
+        paidAmt: { $gt: 0 }
+      }
+    }
   ]);
 
   let total = await OrderPayment.aggregate([

@@ -13,6 +13,7 @@ const orderPayment = require('../models/orderpayment.model');
 const creditBillGroup = require('../models/b2b.creditBillGroup.model');
 const creditBill = require('../models/b2b.creditBill.model');
 const { shopOrderService } = require('.');
+const ReturnStock_history = require('../models/returnStock.histories.model')
 
 const createGroup = async (body, userId) => {
   let serverdates = moment().format('YYYY-MM-DD');
@@ -4148,6 +4149,33 @@ const updateFine_Credit_status = async (id, body) => {
   return values
 }
 
+const misMatchProducts_by_group = async (id) => {
+  let values = await ReturnStock_history.aggregate([
+    {
+      $match: {
+        groupId: id
+      }
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productId',
+        foreignField: '_id',
+        pipeline: [{
+          $lookup: {
+            from: 'historypacktypes',
+            localField: '_id',
+            foreignField: 'productId',
+            as: 'productpacks',
+          },
+        }],
+        as: 'products',
+      },
+    },
+  ])
+  return values
+}
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -4220,4 +4248,5 @@ module.exports = {
   returnedCash,
   returnedStock,
   updateFine_Credit_status,
+  misMatchProducts_by_group,
 };
