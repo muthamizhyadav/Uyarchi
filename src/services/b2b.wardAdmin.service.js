@@ -3668,6 +3668,7 @@ const group_In_misMatch = async (id, page) => {
       groupId: '$wardadmingroupsData.groupId',
       pettyCash: '$wardadmingroupsData.pettyCash',
       group: '$wardadmingroupsData._id',
+      status: { $ifNull: ['$wardadmingroupsData.misMatchAmountStatus', 'Pending'] },
       mismatch: '$wardadmingroupsData.ByCashIncPettyCash',
       assignDate: '$wardadmingroupsData.assignDate',
     },
