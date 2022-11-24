@@ -5,7 +5,7 @@ const { ProductorderClone } = require('../models/shopOrder.model');
 const { Shop } = require('../models/b2b.ShopClone.model');
 const { Users } = require('../models/B2Busers.model');
 const Roles = require('../models/roles.model');
-const { wardAdminGroup, wardAdminGroupModel_ORDERS } = require('../models/b2b.wardAdminGroup.model');
+const { wardAdminGroup, wardAdminGroupModel_ORDERS, WardAdminGroupfine } = require('../models/b2b.wardAdminGroup.model');
 const moment = require('moment');
 // GET DETAILS
 
@@ -3543,6 +3543,133 @@ const mismacthGroupCount = async (page) => {
   return { values: values, total: total.length }
 }
 
+const mismacthStock = async (page) => {
+  let values = await Users.aggregate([{
+    $match: {
+      $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' } }],
+    },
+  }, {
+    $lookup: {
+      from: 'wardadmingroups',
+      localField: '_id',
+      foreignField: 'deliveryExecutiveId',
+      pipeline: [
+        {
+          $match: {
+            $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            total: {
+              $sum: '$ByCashIncPettyCash',
+            },
+          },
+        },
+      ],
+      as: 'wardadmingroupsData',
+    },
+  },
+  {
+    $unwind: '$wardadmingroupsData',
+  },
+  {
+    $lookup: {
+      from: 'wardadmingroups',
+      localField: '_id',
+      foreignField: 'deliveryExecutiveId',
+      pipeline: [
+        {
+          $match: {
+            $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            total: {
+              $sum: '$ByCashIncPettyCash',
+            },
+          },
+        },
+      ],
+      as: 'wardadmingroups',
+    },
+  },
+  {
+    $project: {
+      name: 1,
+      totalAmount: '$wardadmingroupsData.total',
+      groupCount: { $size: '$wardadmingroups' },
+    },
+  },
+  {
+    $skip: 10 * page
+  },
+  {
+    $limit: 10,
+  }
+  ])
+
+  let total = await Users.aggregate([{
+    $match: {
+      $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' } }],
+    },
+  }, {
+    $lookup: {
+      from: 'wardadmingroups',
+      localField: '_id',
+      foreignField: 'deliveryExecutiveId',
+      pipeline: [
+        {
+          $match: {
+            $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            total: {
+              $sum: '$ByCashIncPettyCash',
+            },
+          },
+        },
+      ],
+      as: 'wardadmingroupsData',
+    },
+  },
+  {
+    $unwind: '$wardadmingroupsData',
+  },
+  {
+    $lookup: {
+      from: 'wardadmingroups',
+      localField: '_id',
+      foreignField: 'deliveryExecutiveId',
+      pipeline: [
+        {
+          $match: {
+            $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            total: {
+              $sum: '$ByCashIncPettyCash',
+            },
+          },
+        },
+      ],
+      as: 'wardadmingroups',
+    },
+  },
+  ])
+
+  return { values: values, total: total.length }
+}
+
 
 const mismatchCount = async (page) => {
   let data = await Users.aggregate([
@@ -4577,6 +4704,43 @@ const trackOrdersByGroupOrder = async (id) => {
   return values;
 };
 
+const misMatchStocks = async (id) => {
+  let values = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        deliveryExecutiveId: id
+      }
+    },
+    {
+      $lookup: {
+        from: 'returnstockhistories',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          {
+            $group: { _id: null, totalMisMatch: { $sum: '$mismatch' } },
+          },
+        ],
+        as: 'returnStocks',
+      },
+    },
+    {
+      $unwind: '$returnStocks'
+    },
+    {
+      $project: {
+        _id: 1,
+        GroupBillId: 1,
+        assignDate: 1,
+        assignTime: 1,
+        deliveryExecutiveId: 1,
+        totalMis_match: '$returnStocks.totalMisMatch'
+      }
+    }
+  ])
+  return values
+}
+
 module.exports = {
   getdetails,
   getproductdetails,
@@ -4617,4 +4781,6 @@ module.exports = {
   trackOrdersByGroupOrder,
   mismacthGroupCount,
   group_In_misMatch,
+  mismacthStock,
+  misMatchStocks,
 };
