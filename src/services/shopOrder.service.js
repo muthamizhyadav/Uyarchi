@@ -4708,6 +4708,9 @@ const getall_ordered_shops = async (query) => {
         address: "$b2bshopclones.address",
         orderBy: "$b2busers.name",
         delivery_type: 1,
+        devevery_mode: 1,
+        time_of_delivery: 1
+
 
       }
     },
@@ -4727,12 +4730,12 @@ const getall_ordered_shops = async (query) => {
   console.log();
   let counts = await get_order_counts(statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth)
 
-  return { value: values, total: total.length,counts:counts };
+  return { value: values, total: total.length, counts: counts };
 
 }
 
 
-const get_order_counts = async (status, deliverytype, timeslot, deliverymode,dateMacth) => {
+const get_order_counts = async (status, deliverytype, timeslot, deliverymode, dateMacth) => {
   let today = moment().format('YYYY-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
   let orderstatus = await ShopOrderClone.aggregate([
