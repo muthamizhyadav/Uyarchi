@@ -4610,6 +4610,22 @@ const getall_ordered_shops = async (query) => {
   let dateMacth = { active: true }
   console.log(today)
   console.log(yesterday)
+  if (query.status == 'Approved') {
+    statusMatch = {
+      status: {
+        $in: ['Acknowledged',
+          'Approved',
+          'Modified',
+          'Packed',
+          'Assigned',
+          'Order Picked',
+          'Delivery start',
+          'UnDelivered',
+          'Delivery Completed'
+        ]
+      }
+    }
+  }
   if (query.deliverytype == 'all') {
     deliveryType = {
       $or: [
