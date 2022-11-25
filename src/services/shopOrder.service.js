@@ -4667,6 +4667,36 @@ const getall_ordered_shops = async (query) => {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: "$products"
+          },
+          {
+            $project: {
+              _id: 1,
+              GST_Number: 1,
+              created: 1,
+              HSN_Code: 1,
+              finalPricePerKg: 1,
+              finalQuantity: 1,
+              orderId: 1,
+              packKg: 1,
+              priceperkg: 1,
+              quantity: 1,
+              status: 1,
+              unit: 1,
+              productTitle: "$products.productTitle"
+            }
+          }
+        ],
         as: 'productOrderdata',
       },
     },
