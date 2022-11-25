@@ -4732,7 +4732,7 @@ const getall_ordered_shops = async (query) => {
 }
 
 
-const get_order_counts = async (status, deliverytype, timeslot, deliverymode) => {
+const get_order_counts = async (status, deliverytype, timeslot, deliverymode,dateMacth) => {
   let today = moment().format('YYYY-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
   let orderstatus = await ShopOrderClone.aggregate([
@@ -4940,22 +4940,7 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode) =>
           status,
           deliverytype,
           deliverymode,
-          {
-            $or: [
-              {
-                $and: [
-                  { delivery_type: { $eq: 'IMD' } },
-                  { date: { $eq: today } }
-                ]
-              },
-              {
-                $and: [
-                  { delivery_type: { $eq: 'NDD' } },
-                  { date: { $eq: yesterday } }
-                ]
-              }
-            ]
-          }
+          dateMacth
         ]
       }
     }
@@ -4967,23 +4952,8 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode) =>
           status,
           deliverytype,
           deliverymode,
+          dateMacth,
           { time_of_delivery: { $eq: "5-6" } },
-          {
-            $or: [
-              {
-                $and: [
-                  { delivery_type: { $eq: 'IMD' } },
-                  { date: { $eq: today } }
-                ]
-              },
-              {
-                $and: [
-                  { delivery_type: { $eq: 'NDD' } },
-                  { date: { $eq: yesterday } }
-                ]
-              }
-            ]
-          }
         ]
       }
     }
@@ -4995,23 +4965,8 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode) =>
           status,
           deliverytype,
           deliverymode,
+          dateMacth,
           { time_of_delivery: { $eq: "7-10" } },
-          {
-            $or: [
-              {
-                $and: [
-                  { delivery_type: { $eq: 'IMD' } },
-                  { date: { $eq: today } }
-                ]
-              },
-              {
-                $and: [
-                  { delivery_type: { $eq: 'NDD' } },
-                  { date: { $eq: yesterday } }
-                ]
-              }
-            ]
-          }
         ]
       }
     }
@@ -5023,23 +4978,8 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode) =>
           status,
           deliverytype,
           deliverymode,
+          dateMacth,
           { time_of_delivery: { $eq: "14-16" } },
-          {
-            $or: [
-              {
-                $and: [
-                  { delivery_type: { $eq: 'IMD' } },
-                  { date: { $eq: today } }
-                ]
-              },
-              {
-                $and: [
-                  { delivery_type: { $eq: 'NDD' } },
-                  { date: { $eq: yesterday } }
-                ]
-              }
-            ]
-          }
         ]
       }
     }
@@ -5064,22 +5004,7 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode) =>
           status,
           deliverytype,
           timeslot,
-          {
-            $or: [
-              {
-                $and: [
-                  { delivery_type: { $eq: 'IMD' } },
-                  { date: { $eq: today } }
-                ]
-              },
-              {
-                $and: [
-                  { delivery_type: { $eq: 'NDD' } },
-                  { date: { $eq: yesterday } }
-                ]
-              }
-            ]
-          }
+          dateMacth
         ]
       }
     }
@@ -5092,22 +5017,7 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode) =>
           deliverytype,
           timeslot,
           { devevery_mode: { $eq: "SP" } },
-          {
-            $or: [
-              {
-                $and: [
-                  { delivery_type: { $eq: 'IMD' } },
-                  { date: { $eq: today } }
-                ]
-              },
-              {
-                $and: [
-                  { delivery_type: { $eq: 'NDD' } },
-                  { date: { $eq: yesterday } }
-                ]
-              }
-            ]
-          }
+          dateMacth
         ]
       }
     }
@@ -5120,22 +5030,7 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode) =>
           deliverytype,
           timeslot,
           { devevery_mode: { $eq: "DE" } },
-          {
-            $or: [
-              {
-                $and: [
-                  { delivery_type: { $eq: 'IMD' } },
-                  { date: { $eq: today } }
-                ]
-              },
-              {
-                $and: [
-                  { delivery_type: { $eq: 'NDD' } },
-                  { date: { $eq: yesterday } }
-                ]
-              }
-            ]
-          }
+          dateMacth
         ]
       }
     }
