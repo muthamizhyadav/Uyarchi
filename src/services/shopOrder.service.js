@@ -4611,8 +4611,23 @@ const getall_ordered_shops = async (query) => {
   console.log(today)
   console.log(yesterday)
   if (query.deliverytype == 'all') {
-    deliveryType = { delivery_type: { $in: ['IMD', 'NDD'] } }
-    dateMacth = { date: { $in: [yesterday, today] } }
+    deliveryType = {
+      $or: [
+        {
+          $and: [
+            { delivery_type: { $eq: 'IMD' } },
+            { date: { $eq: today } }
+          ]
+        },
+        {
+          $and: [
+            { delivery_type: { $eq: 'NDD' } },
+            { date: { $eq: yesterday } }
+          ]
+        }
+      ]
+    }
+    dateMacth = { active: true }
   }
   if (query.deliverytype == 'IMD' || query.deliverytype == 'NDD') {
     dateMacth = { date: { $in: [today] } }
@@ -4674,7 +4689,9 @@ const getall_ordered_shops = async (query) => {
         SName: "$b2bshopclones.SName",
         mobile: "$b2bshopclones.mobile",
         address: "$b2bshopclones.address",
-        orderBy: "$b2busers.name"
+        orderBy: "$b2busers.name",
+        delivery_type: 1,
+
       }
     },
     { $skip: 10 * page },
