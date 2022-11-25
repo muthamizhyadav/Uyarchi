@@ -492,7 +492,7 @@ const updateRejected = async (body, userId) => {
     statusActionArray.save();
   });
 
-  return 'status updated successfully';
+  return { mesage: 'status updated successfully' };
 };
 
 //WARD LOADING EXECUTIVE
