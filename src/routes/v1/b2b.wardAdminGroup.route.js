@@ -145,4 +145,9 @@ router
   .put(returnImage.array('returnStockimages'), wardAdminGroupController.storeReturn_images_toGroup);
 router.route('/return/cash/:id').get(authorization, wardAdminGroupController.returnedCash);
 router.route('/return/stock/De/:id').get(authorization, wardAdminGroupController.returnedStock);
+router.route('/updateFine/Credit/status/update/:id').put(wardAdminGroupController.updateFine_Credit_status)
+router.route('/mismatch/products/stocks/by/group/:id').get(wardAdminGroupController.misMatchProducts_by_group)
+// updateFine_Stock_status
+router.route('/updateFine/Credit/status/update/stock/:id').put(wardAdminGroupController.updateFine_Stock_status)
+router.route('/update/fine/status').post(wardAdminGroupController.product_fine)
 module.exports = router;

@@ -13,7 +13,7 @@ const Adj_bill_historySchema = new mongoose.Schema({
     type: String,
   },
   un_Billed_amt: {
-    type: String,
+    type: Number,
   },
   payment_method: {
     type: String,

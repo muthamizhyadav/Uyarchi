@@ -351,6 +351,16 @@ const getmanageIssus_byID = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const UnDeliveredOrders = catchAsync(async (req, res) => {
+  const data = await shopOrderService.UnDeliveredOrders(req.query)
+  res.send(data)
+})
+
+const getall_ordered_shops = catchAsync(async (req, res) => {
+  const data = await shopOrderService.getall_ordered_shops(req.query)
+  res.send(data)
+})
+
 
 module.exports = {
   vieworderbill_byshop,
@@ -404,5 +414,7 @@ module.exports = {
   details_Of_Payment_by_Id,
   getPaymenthistory,
   getallmanageIssus,
-  getmanageIssus_byID
+  getmanageIssus_byID,
+  UnDeliveredOrders,
+  getall_ordered_shops
 };

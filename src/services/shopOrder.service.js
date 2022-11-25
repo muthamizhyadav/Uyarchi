@@ -2676,7 +2676,7 @@ const getBills_ByShop = async (shopId) => {
 const getBills_DetailsByshop = async (shopId, page) => {
   let values = await ShopOrderClone.aggregate([
     {
-      $match: { $and: [{ shopId: shopId }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $ne: 'Paid' } }] },
+      $match: { $and: [{ shopId: shopId }, { status: { $in: ['Delivered', 'Delivery Completed'] } }, { statusOfBill: { $ne: 'Paid' } }] },
     },
     {
       $lookup: {
@@ -2780,7 +2780,7 @@ const getBills_DetailsByshop = async (shopId, page) => {
         totalPendingAmount: {
           $round: [{ $subtract: ['$productData.price', { $ifNull: ['$orderpayments.amount', 0] }] }],
         },
-        totalAmount: '$productData.price',
+        totalAmount: { $round: ['$productData.price'] },
         adjBill: '$adjBill.un_Billed_amt',
         shops: '$shops.SName',
         OrderId: 1,
@@ -3761,12 +3761,12 @@ const OGorders_MDorders = async (id) => {
         orderedAmt: { $round: ['$productData.price', 0] },
         pendingAmt: { $subtract: [{ $round: ['$productData.price', 0] }, '$orderpayments.price'] },
         paidAmt: '$orderpayments.price',
-        route: { $ifNull: ['$orderassign.route', 'Rejected'] },
-        vehicleName: { $ifNull: ['$orderassign.vehicleName', 'Rejected'] },
+        route: { $ifNull: ['$orderassign.route', 'nill'] },
+        vehicleName: { $ifNull: ['$orderassign.vehicleName', 'nill'] },
         productByOrder: '$productByOrder',
         modifiedStatus: 1,
-        deliveryExecutive: { $ifNull: ['$deliveryExecutive.name', 'Rejected'] },
-        groupId: { $ifNull: ['$orderassign.groupId', 'Rejected'] },
+        deliveryExecutive: { $ifNull: ['$deliveryExecutive.name', 'nill'] },
+        groupId: { $ifNull: ['$orderassign.groupId', 'nill'] },
         productByOrder: '$productsByorders',
         created: 1,
       },
@@ -3891,7 +3891,7 @@ const details_Of_Payment_by_Id = async (id) => {
         pipeline: [
           { $match: { type: 'advanced' } },
           {
-            $sort: { date: -1, time: -1 },
+            $sort: { created: -1 },
           },
           { $limit: 1 },
         ],
@@ -3901,6 +3901,27 @@ const details_Of_Payment_by_Id = async (id) => {
     {
       $unwind: {
         path: '$orderpayment',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $match: { type: { $ne: 'advanced' } } },
+          {
+            $sort: { created: -1 },
+          },
+          { $limit: 1 },
+        ],
+        as: 'orderpaymentlast',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpaymentlast',
         preserveNullAndEmptyArrays: true,
       },
     },
@@ -3919,6 +3940,10 @@ const details_Of_Payment_by_Id = async (id) => {
         pendingAmt: { $subtract: [{ $round: ['$productData.price', 0] }, '$orderpayments.price'] },
         orderedAmt: { $round: ['$productData.price', 0] },
         paidAmt: '$orderpayments.price',
+        orderpaymentlast: '$orderpaymentlast',
+        delivery_paymentMethod: { $ifNull: ['$orderpaymentlast.paymentMethod', 'nill'] },
+        delivered_payment: { $ifNull: ['$orderpaymentlast.payment', 'nill'] },
+        delivered_PaidAmt: { $ifNull: ['$orderpaymentlast.paidAmt', 'nill'] },
       },
     },
   ]);
@@ -4237,6 +4262,467 @@ const getmanageIssus_byID = async (query) => {
 };
 
 
+const UnDeliveredOrders = async (query) => {
+  let dateMatch = { active: true };
+  let deMacth = { active: true };
+  let searchMatch = { active: true };
+  let date = query.date;
+  let de = query.de;
+  let search = query.search;
+  let page = parseInt(query.page);
+  if (date != null && date != '') {
+    date = date.split(',');
+    startdate = date[0];
+    enddata = date[1];
+    dateMatch = { $and: [{ createdDate: { $gte: startdate } }, { createdDate: { $lte: enddata } }] };
+  }
+  if (de != null && de != '') {
+    deMacth = { $and: [{ deliveryExecutiveId: { $eq: de } }] }
+  }
+  if (search != null && search != '') {
+    searchMatch = {
+      $or: [{ SName: { $regex: search, $options: 'i' } }],
+    };
+  }
+  let values = await ShopOrderClone.aggregate([
+    {
+      $match: { statusActionArray: { $elemMatch: { status: { $in: ['unDelivered'] } } } }
+    },
+    {
+      $addFields: {
+        createdDate: { $dateToString: { date: "$created", format: "%Y-%m-%d" } },
+      }
+    },
+    {
+      $match: { $and: [dateMatch, deMacth] },
+    },
+
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: { $and: [searchMatch] }
+          },
+          {
+            $lookup: {
+              from: 'wards',
+              localField: 'Wardid',
+              foreignField: '_id',
+              as: 'wardData',
+            },
+          },
+          { $unwind: '$wardData' },
+          {
+            $lookup: {
+              from: 'streets',
+              localField: 'Strid',
+              foreignField: '_id',
+              as: 'streetData',
+            },
+          },
+          { $unwind: '$streetData' },
+        ],
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [{
+          $sort: { created: -1 }
+        }, { $limit: 1 },
+        {
+          $lookup: {
+            from: 'wardadmingroups',
+            localField: 'wardAdminGroupID',
+            foreignField: '_id',
+            as: 'group',
+          },
+        },
+        { $unwind: '$group' },
+        ],
+        as: 'orderassign',
+      },
+    },
+    {
+
+      $unwind: {
+        path: '$orderassign',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ type: { $eq: 'advanced' } }],
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: '$paidAmt',
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    //deliveryExecutiveId
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users',
+    },
+    {
+      $project: {
+        _id: 1,
+        shopId: 1,
+        status: 1,
+        customerDeliveryStatus: 1,
+        OrderId: 1,
+        customerBillId: 1,
+        shopName: '$shopData.SName',
+        wardId: '$shopData.Wardid',
+        street: '$shopData.streetData.street',
+        ward: '$shopData.wardData.ward',
+        // orderassign: '$orderassign',
+        paidAmt: { $ifNull: ['$orderpayments.amount', 0] },
+        orderedAmt: { $round: ['$productData.price'] },
+        pendingAmount: { $subtract: [{ $round: ['$productData.price'] }, { $ifNull: ['$orderpayments.amount', 0] }] },
+        createdDate: 1,
+        undeliveyreason: 1,
+        groupId: { $ifNull: ['$orderassign.group.groupId', 'nill'] },
+        // users: '$users',
+        DE: '$users.name',
+        deliveryExecutiveId: 1,
+      }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ])
+  let total = await ShopOrderClone.aggregate([
+    {
+      $match: { statusActionArray: { $elemMatch: { status: { $in: ['unDelivered'] } } } }
+    },
+    {
+      $addFields: {
+        createdDate: { $dateToString: { date: "$created", format: "%Y-%m-%d" } },
+      }
+    },
+    {
+      $match: { $and: [dateMatch, deMacth] },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $match: { $and: [searchMatch] }
+          },
+          {
+            $lookup: {
+              from: 'wards',
+              localField: 'Wardid',
+              foreignField: '_id',
+              as: 'wardData',
+            },
+          },
+          { $unwind: '$wardData' },
+          {
+            $lookup: {
+              from: 'streets',
+              localField: 'Strid',
+              foreignField: '_id',
+              as: 'streetData',
+            },
+          },
+          { $unwind: '$streetData' },
+        ],
+        as: 'shopData',
+      },
+    },
+    {
+      $unwind: '$shopData',
+    },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'orderassign',
+      },
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: '$paidAmt',
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+  ])
+  return { values: values, total: total.length }
+}
+
+
+const getall_ordered_shops = async (query) => {
+  console.log(query)
+  let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
+  let statusMatch = { status: { $eq: query.status } };
+  let deliveryType = { delivery_type: { $eq: query.deliverytype } };
+  let timeSlot = { active: true };
+  let deliveryMode = { active: true };
+  let today = moment().format('YYYY-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  let dateMacth = { active: true }
+  console.log(today)
+  console.log(yesterday)
+  if (query.status == 'Approved') {
+    statusMatch = {
+      status: {
+        $in: ['Acknowledged',
+          'Approved',
+          'Modified',
+          'Packed',
+          'Assigned',
+          'Order Picked',
+          'Delivery start',
+          'UnDelivered',
+          'Delivery Completed'
+        ]
+      }
+    }
+  }
+  if (query.deliverytype == 'all') {
+    deliveryType = {
+      $or: [
+        {
+          $and: [
+            { delivery_type: { $eq: 'IMD' } },
+            { date: { $eq: today } }
+          ]
+        },
+        {
+          $and: [
+            { delivery_type: { $eq: 'NDD' } },
+            { date: { $eq: yesterday } }
+          ]
+        }
+      ]
+    }
+    dateMacth = { active: true }
+  }
+  if (query.deliverytype == 'IMD' || query.deliverytype == 'NDD') {
+    dateMacth = { date: { $in: [today] } }
+  }
+  if (query.deliverytype == 'YOD') {
+    dateMacth = { date: { $in: [yesterday] } }
+  }
+  if (query.timeslot != 'all') {
+    timeSlot = { time_of_delivery: { $eq: query.timeslot } }
+  }
+  if (query.deliverymode != 'all') {
+    deliveryMode = { devevery_mode: { $eq: query.deliverymode } }
+  }
+
+  let values = await ShopOrderClone.aggregate([
+    { $sort: { created: -1 } },
+    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclones',
+      },
+    },
+    {
+      $unwind: "$b2bshopclones"
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },
+    {
+      $unwind: {
+        path: '$b2busers',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        orderType: 1,
+        status: 1,
+        created: 1,
+        OrderId: 1,
+        product: "$productOrderdata",
+        SName: "$b2bshopclones.SName",
+        mobile: "$b2bshopclones.mobile",
+        address: "$b2bshopclones.address",
+        orderBy: "$b2busers.name",
+        delivery_type: 1,
+
+      }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 }
+  ])
+
+  let total = await ShopOrderClone.aggregate([
+    { $sort: { created: -1 } },
+    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
+  ])
+
+  return { value: values, total: total.length };
+
+}
+
 
 module.exports = {
   // product
@@ -4293,5 +4779,7 @@ module.exports = {
   details_Of_Payment_by_Id,
   getPaymenthistory,
   getallmanageIssus,
-  getmanageIssus_byID
+  getmanageIssus_byID,
+  UnDeliveredOrders,
+  getall_ordered_shops
 };

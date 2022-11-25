@@ -78,6 +78,14 @@ const wardAdminGroupSchema = new mongoose.Schema({
   cashReturned: {
     type: Date,
   },
+  misMatchAmountStatus: {
+    type: String,
+    default: "Pending"
+  },
+  mismatchStockStatus: {
+    type: String,
+    default: "Pending"
+  },
   // NotAllocateStatus: {
   //   type: String,
   //   default: "Pending",
