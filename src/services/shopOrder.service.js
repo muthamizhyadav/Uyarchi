@@ -4956,7 +4956,7 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
           deliverytype,
           deliverymode,
           dateMacth,
-          { time_of_delivery: { $eq: "5-6" } },
+          { time_of_delivery: { $eq: "5-7" } },
         ]
       }
     }
@@ -4992,7 +4992,7 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
 
   let timeSlots = {
     'all': time_all.length,
-    '5-6': time_5_6.length,
+    '5-7': time_5_6.length,
     '7-10': time_7_10.length,
     '14-16': time_2_4.length
   }
