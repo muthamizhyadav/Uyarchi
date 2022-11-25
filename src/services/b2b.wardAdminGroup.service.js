@@ -4018,36 +4018,52 @@ const misMatchProducts_by_group = async (id) => {
       }
     },
     {
+      $addFields: { dates: { $dateToString: { format: "%Y-%m-%d", date: "$created" } } }
+    },
+    {
       $lookup: {
-        from: 'products',
-        localField: 'productId',
-        foreignField: '_id',
-        pipeline: [{
-          $lookup: {
-            from: 'historypacktypes',
-            localField: '_id',
-            foreignField: 'productId',
-            pipeline: [{ $match: { date: moment().format('YYYY-MM-DD') } }, { $sort: { created: -1 } }, { $limit: 1 }],
-            as: 'productpacks',
+        from: 'historypacktypes',
+        let: { productid: "$productId", date: "$dates" },
+        pipeline: [
+          {
+            $match:
+            {
+              $expr:
+              {
+                $and:
+                  [
+                    { $eq: ["$productId", "$$productid"] },
+                    { $eq: ["$date", "$$date"] }
+                  ]
+              }
+            }
           },
-        }, { $unwind: '$productpacks' }],
-        as: 'products',
+        ],
+        as: 'packtype',
       },
     },
     {
-      $unwind: '$products'
+      $unwind: '$packtype'
     },
     {
       $project: {
         _id: 1,
         productId: 1,
         product: 1,
+        actualStock: 1,
+        wastageStock: 1,
         mismatch: 1,
         groupId: 1,
-        productName: '$products.productTitle',
-        sellingPrice: '$products.productpacks.salesendPrice',
-        totalPrice: { $multiply: ['$products.productpacks.salesendPrice', '$mismatch'] },
-        status: { $ifNull: ['$fineStatus', 'Pending'] }
+        fineStatus: { $ifNull: ['$fineStatus', 'Pending'] },
+        dates: 1,
+        salesprice: '$packtype.salesendPrice',
+        packtypeId: '$packtype.packtypeId',
+        totalPrice: { $multiply: ['$mismatch', '$packtype.salesendPrice'] }
+      }
+    },
+    {
+      $match: {
+        totalPrice: { $gt: 0 }
       }
     }
   ])
