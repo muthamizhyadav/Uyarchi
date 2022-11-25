@@ -3191,206 +3191,60 @@ const submitDispute = async (id, updatebody) => {
 };
 
 const returnStockData = async (id) => {
-  let values = await Product.aggregate([
-    // Delivered count
-    // {
-    //   $lookup: {
-    //     from: 'wardadmingroupfines',
-    //     localField: '_id',
-    //     foreignField: 'productId',
-    //     pipeline: [{ $match: { groupId: id } }],
-    //     as: 'wardadmingroupfines',
-    //   },
-    // },
+  let values = await ReturnStock_history.aggregate([
     {
-      $lookup: {
-        from: 'pettystockmodels',
-        localField: '_id',
-        foreignField: 'productId',
-        pipeline: [
-          {
-            $match: {
-              groupId: id,
-            },
-          },
-        ],
-        as: 'totalpetty',
-      },
+      $match: { groupId: id }
     },
-    // {
-    //   $unwind: '$totalpetty',
-    // },
     {
-      $unwind: {
-        path: '$totalpetty',
-        preserveNullAndEmptyArrays: true,
-      },
+      $addFields: { dates: { $dateToString: { format: "%Y-%m-%d", date: "$created" } } }
     },
     {
       $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'productid',
+        from: 'historypacktypes',
+        let: { productid: "$productId", date: "$dates" },
         pipeline: [
           {
-            $lookup: {
-              from: 'shoporderclones',
-              localField: 'orderId',
-              foreignField: '_id',
-              pipeline: [
-                {
-                  $match: {
-                    $and: [{ customerDeliveryStatus: { $eq: 'Delivered' } }],
-                  },
-                },
-                {
-                  $lookup: {
-                    from: 'orderassigns',
-                    localField: '_id',
-                    foreignField: 'orderId',
-                    pipeline: [{ $match: { wardAdminGroupID: id } }],
-                    as: 'orderassigns',
-                  },
-                },
-                {
-                  $unwind: '$orderassigns',
-                },
-              ],
-              as: 'shoporderclones',
-            },
-          },
-          {
-            $unwind: '$shoporderclones',
-          },
-          {
-            $group: {
-              _id: null,
-              Qty: { $sum: '$finalQuantity' },
-              finalQuantity: { $sum: '$finalPricePerKg' },
-            },
+            $match:
+            {
+              $expr:
+              {
+                $and:
+                  [
+                    { $eq: ["$productId", "$$productid"] },
+                    { $eq: ["$date", "$$date"] }
+                  ]
+              }
+            }
           },
         ],
-        as: 'productorderclones',
-      },
-    },
-
-    {
-      $unwind: {
-        path: '$productorderclones',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-
-    //  Un Delivered count
-
-    {
-      $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'productid',
-        pipeline: [
-          {
-            $lookup: {
-              from: 'shoporderclones',
-              localField: 'orderId',
-              foreignField: '_id',
-              pipeline: [
-                {
-                  $match: {
-                    $and: [{ customerDeliveryStatus: { $eq: 'UnDelivered' } }],
-                  },
-                },
-                {
-                  $lookup: {
-                    from: 'orderassigns',
-                    localField: '_id',
-                    foreignField: 'orderId',
-                    pipeline: [{ $match: { wardAdminGroupID: id } }],
-                    as: 'orderassigns',
-                  },
-                },
-                {
-                  $unwind: '$orderassigns',
-                },
-              ],
-              as: 'shoporderclonesData',
-            },
-          },
-          {
-            $unwind: '$shoporderclonesData',
-          },
-
-          {
-            $group: {
-              _id: null,
-              UnQty: { $sum: '$finalQuantity' },
-              UnfinalQuantity: { $sum: '$finalPricePerKg' },
-            },
-          },
-        ],
-        as: 'productorderclonesData',
-      },
-    },
-
-    {
-      $unwind: {
-        path: '$productorderclonesData',
-        preserveNullAndEmptyArrays: true,
+        as: 'packtype',
       },
     },
     {
-      $lookup: {
-        from: 'returnstocks',
-        localField: '_id',
-        foreignField: 'productId',
-        pipeline: [
-          {
-            $match: {
-              $and: [{ groupId: { $eq: id } }],
-            },
-          },
-        ],
-        as: 'returnStock',
-      },
+      $unwind: '$packtype'
     },
     {
-      $unwind: {
-        path: '$returnStock',
-        preserveNullAndEmptyArrays: true,
-      },
+      $project: {
+        _id: 1,
+        productId: 1,
+        product: 1,
+        actualStock: 1,
+        wastageStock: 1,
+        mismatch: 1,
+        groupId: 1,
+        fineStatus: { $ifNull: ['$fineStatus', 'Pending'] },
+        dates: 1,
+        salesprice: '$packtype.salesendPrice',
+        packtypeId: '$packtype.packtypeId',
+        totalPrice: { $multiply: ['$mismatch', '$packtype.salesendPrice'] }
+      }
     },
-
-    // {
-    //   $project: {
-    //     _id: 1,
-    //     productTitle: 1,
-    //     productid: 1,
-    //     status: '$returnStock.status',
-    //     image: '$returnStock.image',
-    //     // totalpetty: '$totalpetty',
-    //     productorderclones: '$productorderclones',
-    //     productorderclonesData: '$productorderclonesData',
-    //     mismatch: { $subtract: ['$returnStock.actualStock', '$returnStock.actualWastage'] },
-    //     pettyStock: '$totalpetty.pettyStock',
-
-    //     DeliveryQuantity: '$productorderclones.Qty',
-    //     actualStock: '$returnStock.actualStock',
-    //     actualWastage: '$returnStock.actualWastage',
-    //     mis: '$returnStock.misMatch',
-    //     productorderclones: { $eq: ['$productorderclones._id', null] },
-    //     UndeliveryQuantity: '$productorderclonesData.UnQty',
-    //     totalSum: { $add: ['$productorderclones.Qty', '$productorderclonesData.UnQty'] },
-    //     productorderclonesData: { $eq: ['$productorderclonesData._id', null] },
-    //     // fineStatus: '$wardadmingroupfines.status',
-    //   },
-    // },
-    // {
-    //   $match: {
-    //     $or: [{ productorderclones: true }, { productorderclonesData: true }],
-    //   },
-    // },
-  ]);
-
+    {
+      $match: {
+        totalPrice: { $gt: 0 }
+      }
+    }
+  ])
   return values;
 };
 
