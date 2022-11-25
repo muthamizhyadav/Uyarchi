@@ -82,6 +82,10 @@ const wardAdminGroupSchema = new mongoose.Schema({
     type: String,
     default: "Pending"
   },
+  mismatchStockStatus: {
+    type: String,
+    default: "Pending"
+  },
   // NotAllocateStatus: {
   //   type: String,
   //   default: "Pending",

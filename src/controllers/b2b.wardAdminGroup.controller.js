@@ -392,6 +392,11 @@ const misMatchProducts_by_group = catchAsync(async (req, res) => {
   res.send(data)
 })
 
+const updateFine_Stock_status = catchAsync(async (req, res) => {
+  const data = await wardAdminGroupService.updateFine_Stock_status(req.params.id, req.body)
+  res.send(data)
+})
+
 
 module.exports = {
   createGroupOrder,
@@ -490,4 +495,5 @@ module.exports = {
   returnedStock,
   updateFine_Credit_status,
   misMatchProducts_by_group,
+  updateFine_Stock_status,
 };

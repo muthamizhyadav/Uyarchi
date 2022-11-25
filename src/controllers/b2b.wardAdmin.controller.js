@@ -268,6 +268,8 @@ const misMatchStocks = catchAsync(async (req, res) => {
   res.send(data)
 })
 
+
+
 module.exports = {
   getDetails,
   getproductDetails,
