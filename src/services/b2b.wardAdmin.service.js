@@ -2037,7 +2037,7 @@ const gettimeslatcount = async (type) => {
               ],
             },
           },
-          { time_of_delivery: { $eq: '5-6' } },
+          { time_of_delivery: { $eq: '5-7' } },
           dateMatch,
           typeMatch,
         ],
@@ -2580,7 +2580,7 @@ const gettimeslatcountassign = async (type, devevery_mode) => {
       },
     },
   ]);
-  let count5_6 = await ShopOrderClone.aggregate([
+  let count5_7 = await ShopOrderClone.aggregate([
     {
       $match: {
         $and: [
@@ -2589,7 +2589,7 @@ const gettimeslatcountassign = async (type, devevery_mode) => {
               $in: ['Approved', 'Modified'],
             },
           },
-          { time_of_delivery: { $eq: '5-6' } },
+          { time_of_delivery: { $eq: '5-7' } },
           dateMatch,
           {
             devevery_mode: { $eq: devevery_mode },
@@ -2690,7 +2690,7 @@ const gettimeslatcountassign = async (type, devevery_mode) => {
   ]);
   return {
     all: countall.length,
-    '5_6': count5_6.length,
+    '5_7': count5_7.length,
     '6_7': count6_7.length,
     '7_8': count7_8.length,
     '8_9': count8_9.length,
