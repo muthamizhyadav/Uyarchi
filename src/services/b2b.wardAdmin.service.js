@@ -123,7 +123,7 @@ const updateApprovedMultiSelect = async (body, userId) => {
     statusActionArray.save();
   });
 
-  return 'status updated successfully';
+  return {message:'status updated successfully'};
 };
 const updateRejectMultiSelect = async (body, userId) => {
   body.arr.forEach(async (e) => {
@@ -137,7 +137,7 @@ const updateRejectMultiSelect = async (body, userId) => {
     statusActionArray.save();
   });
 
-  return 'status updated successfully';
+  return {message:'status updated successfully'};
 };
 
 const updatePackedMultiSelect = async (body, userId) => {
