@@ -4193,11 +4193,19 @@ const misMatchProducts_by_group = async (id) => {
         productName: '$products.productTitle',
         sellingPrice: '$products.productpacks.salesendPrice',
         totalPrice: { $multiply: ['$products.productpacks.salesendPrice', '$mismatch'] },
-        status: { $ifNull: ['$misMatchAmountStatus', 'Pending'] }
+        status: { $ifNull: ['$fineStatus', 'Pending'] }
       }
     }
   ])
   return values
+}
+
+const product_fine = async (body) => {
+  const { productId, groupId, status } = body
+  let values = await ReturnStock_history.updateMany({ groupId: groupId, productId: productId }, { $set: { fineStatus: status } })
+  if (values) {
+    return { status: `${status} updated SucessFully` }
+  }
 }
 
 module.exports = {
@@ -4274,4 +4282,5 @@ module.exports = {
   updateFine_Credit_status,
   misMatchProducts_by_group,
   updateFine_Stock_status,
+  product_fine,
 };

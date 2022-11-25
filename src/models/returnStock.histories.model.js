@@ -32,6 +32,10 @@ const ReturnStock_history = new mongoose.Schema({
     created: {
         type: Date
     },
+    fineStatus: {
+        type: String,
+        default: "Pending"
+    },
     active: {
         type: Boolean,
         default: true
