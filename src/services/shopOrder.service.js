@@ -4930,7 +4930,6 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode) =>
     YOD: delevery_yod.length,
     NDD: delevery_ndd.length
   }
-  console.log(deliveryType)
 
   //  Time Slots
 
@@ -5054,7 +5053,6 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode) =>
     '7-10': time_7_10.length,
     '14-16': time_2_4.length
   }
-  console.log(timeSlots)
 
   // Delivery Mode
 
@@ -5154,7 +5152,6 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode) =>
 
 
   return { deliveryType: deliveryType, deliveryMode: deliveryMode, timeSlots: timeSlots, orders: orders }
-  console.log(deliveryMode)
 
 }
 
