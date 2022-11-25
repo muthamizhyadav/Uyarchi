@@ -3597,12 +3597,12 @@ const mismacthStock = async (page) => {
         // groupid:"$wardadmingroupsData._id",
       },
     },
-  {
-    $skip: 10 * page
-  },
-  {
-    $limit: 10,
-  }
+    {
+      $skip: 10 * page
+    },
+    {
+      $limit: 10,
+    }
   ])
 
   let total = await Users.aggregate([
@@ -3657,7 +3657,7 @@ const mismacthStock = async (page) => {
         // groupid:"$wardadmingroupsData._id",
       },
     },
-  
+
   ])
 
   return { values: values, total: total.length }
@@ -3793,6 +3793,7 @@ const group_In_misMatch = async (id, page) => {
       assignDate: '$wardadmingroupsData.assignDate',
     },
   },
+  { $match: { mismatch: { $gt: 0 } } },
   {
     $skip: 10 * page
   }, {
@@ -3877,6 +3878,7 @@ const group_In_misMatch = async (id, page) => {
       assignDate: '$wardadmingroupsData.assignDate',
     },
   },
+  { $match: { mismatch: { $gt: 0 } } },
   ])
   return { values: values, total: total.length }
 }
