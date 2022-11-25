@@ -4613,7 +4613,7 @@ const getall_ordered_shops = async (query) => {
   if (query.status == 'Approved') {
     statusMatch = {
       status: {
-        $in: ['Acknowledged',
+        $in: [
           'Approved',
           'Modified',
           'Packed',
@@ -4650,6 +4650,7 @@ const getall_ordered_shops = async (query) => {
   }
   if (query.deliverytype == 'YOD') {
     dateMacth = { date: { $in: [yesterday] } }
+    deliveryType = { delivery_type: { $eq: "NDD" } };
   }
   if (query.timeslot != 'all') {
     timeSlot = { time_of_delivery: { $eq: query.timeslot } }
@@ -4714,15 +4715,448 @@ const getall_ordered_shops = async (query) => {
     { $limit: 10 }
   ])
 
+
+
+
   let total = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
     { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
   ])
 
-  return { value: values, total: total.length };
+
+  console.log();
+  let counts = await get_order_counts(statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth)
+
+  return { value: values, total: total.length,counts:counts };
 
 }
 
+
+const get_order_counts = async (status, deliverytype, timeslot, deliverymode) => {
+  let today = moment().format('YYYY-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  let orderstatus = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { status: { $eq: "ordered" } },
+          {
+            $or: [
+              {
+                $and: [
+                  { delivery_type: { $eq: 'IMD' } },
+                  { date: { $eq: today } }
+                ]
+              },
+              {
+                $and: [
+                  { delivery_type: { $eq: 'NDD' } },
+                  { date: { $eq: yesterday } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]);
+  let Acknowledgedstatus = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { status: { $eq: "Acknowledged" } },
+          {
+            $or: [
+              {
+                $and: [
+                  { delivery_type: { $eq: 'IMD' } },
+                  { date: { $eq: today } }
+                ]
+              },
+              {
+                $and: [
+                  { delivery_type: { $eq: 'NDD' } },
+                  { date: { $eq: yesterday } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]);
+  let Approvedstatus = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: [
+                'Approved',
+                'Modified',
+                'Packed',
+                'Assigned',
+                'Order Picked',
+                'Delivery start',
+                'UnDelivered',
+                'Delivery Completed'
+              ]
+            }
+          },
+          {
+            $or: [
+              {
+                $and: [
+                  { delivery_type: { $eq: 'IMD' } },
+                  { date: { $eq: today } }
+                ]
+              },
+              {
+                $and: [
+                  { delivery_type: { $eq: 'NDD' } },
+                  { date: { $eq: yesterday } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]);
+  let rejectstatus = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { status: { $eq: "Rejected" } },
+          {
+            $or: [
+              {
+                $and: [
+                  { delivery_type: { $eq: 'IMD' } },
+                  { date: { $eq: today } }
+                ]
+              },
+              {
+                $and: [
+                  { delivery_type: { $eq: 'NDD' } },
+                  { date: { $eq: yesterday } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]);
+  let orders = {
+    ordered: orderstatus.length,
+    Acknowledged: Acknowledgedstatus.length,
+    Approved: Approvedstatus.length,
+    Rejected: rejectstatus.length,
+  }
+
+
+  // Delivery type
+  let delevery_all = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          status,
+          timeslot,
+          deliverymode,
+          {
+            $or: [
+              {
+                $and: [
+                  { delivery_type: { $eq: 'IMD' } },
+                  { date: { $eq: today } }
+                ]
+              },
+              {
+                $and: [
+                  { delivery_type: { $eq: 'NDD' } },
+                  { date: { $eq: yesterday } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]);
+  let delevery_imd = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          status,
+          timeslot,
+          deliverymode,
+          { delivery_type: { $eq: 'IMD' } },
+          { date: { $eq: today } }
+        ]
+      }
+    }
+  ]);
+  let delevery_yod = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          status,
+          timeslot,
+          deliverymode,
+          { delivery_type: { $eq: 'NDD' } },
+          { date: { $eq: yesterday } }
+        ]
+      }
+    }
+  ]);
+
+  let delevery_ndd = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          status,
+          timeslot,
+          deliverymode,
+          { delivery_type: { $eq: 'NDD' } },
+          { date: { $eq: today } }
+        ]
+      }
+    }
+  ]);
+  let deliveryType = {
+    all: delevery_all.length,
+    IMD: delevery_imd.length,
+    YOD: delevery_yod.length,
+    NDD: delevery_ndd.length
+  }
+  console.log(deliveryType)
+
+  //  Time Slots
+
+  let time_all = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          status,
+          deliverytype,
+          deliverymode,
+          {
+            $or: [
+              {
+                $and: [
+                  { delivery_type: { $eq: 'IMD' } },
+                  { date: { $eq: today } }
+                ]
+              },
+              {
+                $and: [
+                  { delivery_type: { $eq: 'NDD' } },
+                  { date: { $eq: yesterday } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]);
+  let time_5_6 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          status,
+          deliverytype,
+          deliverymode,
+          { time_of_delivery: { $eq: "5-6" } },
+          {
+            $or: [
+              {
+                $and: [
+                  { delivery_type: { $eq: 'IMD' } },
+                  { date: { $eq: today } }
+                ]
+              },
+              {
+                $and: [
+                  { delivery_type: { $eq: 'NDD' } },
+                  { date: { $eq: yesterday } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]);
+  let time_7_10 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          status,
+          deliverytype,
+          deliverymode,
+          { time_of_delivery: { $eq: "7-10" } },
+          {
+            $or: [
+              {
+                $and: [
+                  { delivery_type: { $eq: 'IMD' } },
+                  { date: { $eq: today } }
+                ]
+              },
+              {
+                $and: [
+                  { delivery_type: { $eq: 'NDD' } },
+                  { date: { $eq: yesterday } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]);
+  let time_2_4 = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          status,
+          deliverytype,
+          deliverymode,
+          { time_of_delivery: { $eq: "14-16" } },
+          {
+            $or: [
+              {
+                $and: [
+                  { delivery_type: { $eq: 'IMD' } },
+                  { date: { $eq: today } }
+                ]
+              },
+              {
+                $and: [
+                  { delivery_type: { $eq: 'NDD' } },
+                  { date: { $eq: yesterday } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]);
+
+
+
+  let timeSlots = {
+    'all': time_all.length,
+    '5-6': time_5_6.length,
+    '7-10': time_7_10.length,
+    '14-16': time_2_4.length
+  }
+  console.log(timeSlots)
+
+  // Delivery Mode
+
+
+  let delivery_mode_all = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          status,
+          deliverytype,
+          timeslot,
+          {
+            $or: [
+              {
+                $and: [
+                  { delivery_type: { $eq: 'IMD' } },
+                  { date: { $eq: today } }
+                ]
+              },
+              {
+                $and: [
+                  { delivery_type: { $eq: 'NDD' } },
+                  { date: { $eq: yesterday } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]);
+  let delivery_mode_sp = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          status,
+          deliverytype,
+          timeslot,
+          { devevery_mode: { $eq: "SP" } },
+          {
+            $or: [
+              {
+                $and: [
+                  { delivery_type: { $eq: 'IMD' } },
+                  { date: { $eq: today } }
+                ]
+              },
+              {
+                $and: [
+                  { delivery_type: { $eq: 'NDD' } },
+                  { date: { $eq: yesterday } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]);
+  let delivery_mode_de = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          status,
+          deliverytype,
+          timeslot,
+          { devevery_mode: { $eq: "DE" } },
+          {
+            $or: [
+              {
+                $and: [
+                  { delivery_type: { $eq: 'IMD' } },
+                  { date: { $eq: today } }
+                ]
+              },
+              {
+                $and: [
+                  { delivery_type: { $eq: 'NDD' } },
+                  { date: { $eq: yesterday } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]);
+
+
+
+
+  let deliveryMode = {
+    'all': delivery_mode_all.length,
+    'SP': delivery_mode_sp.length,
+    'DE': delivery_mode_de.length,
+  }
+
+
+  return { deliveryType: deliveryType, deliveryMode: deliveryMode, timeSlots: timeSlots, orders: orders }
+  console.log(deliveryMode)
+
+}
 
 module.exports = {
   // product
