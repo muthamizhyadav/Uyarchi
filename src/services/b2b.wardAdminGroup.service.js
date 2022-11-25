@@ -2904,7 +2904,7 @@ const finishingAccount = async (id, page) => {
         initialPaymentMode: '$shopData.Payment',
         payType: '$shopData.paymentMethod',
         InitialPaidAmount: '$orderData.paidAmt',
-        TotalOrderAmountWithGST: '$shopData.productData.price',
+        TotalOrderAmountWithGST: { $round: ['$shopData.productData.price'] },
         InitialPendingAmount: {
           $subtract: ['$shopData.productData.price', '$orderData.price'],
         },
@@ -2933,7 +2933,7 @@ const finishingAccount = async (id, page) => {
         finalpaid: 1,
         InitialPaidAmount: 1,
         TotalOrderAmountWithGST: 1,
-        InitialPendingAmount: 1,
+        InitialPendingAmount: {$round:['$InitialPendingAmount']},
         FinalPaymentMode: 1,
         paymentType: 1,
         FinalPaidAmount: 1,
