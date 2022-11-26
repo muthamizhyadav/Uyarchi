@@ -5147,6 +5147,228 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
 
 }
 
+const get_approved_orders = async (query) => {
+
+  //console.log(query)
+  let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
+  let statusMatch = {
+    status: {
+      $in: ['Approved',
+        'Modified',]
+    }
+  };
+  let deliveryType = { delivery_type: { $eq: query.deliverytype } };
+  let timeSlot = { active: true };
+  let deliveryMode = { active: true };
+  let today = moment().format('YYYY-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  let dateMacth = { active: true }
+  //console.log(today)
+  //console.log(yesterday)
+  if (query.deliverytype == 'all') {
+    deliveryType = {
+      $or: [
+        {
+          $and: [
+            { delivery_type: { $eq: 'IMD' } },
+            { date: { $eq: today } }
+          ]
+        },
+        {
+          $and: [
+            { delivery_type: { $eq: 'NDD' } },
+            { date: { $eq: yesterday } }
+          ]
+        }
+      ]
+    }
+    dateMacth = { active: true }
+  }
+  if (query.deliverytype == 'IMD' || query.deliverytype == 'NDD') {
+    dateMacth = { date: { $in: [today] } }
+  }
+  if (query.deliverytype == 'YOD') {
+    dateMacth = { date: { $in: [yesterday] } }
+    deliveryType = { delivery_type: { $eq: "NDD" } };
+  }
+  if (query.timeslot != 'all') {
+    timeSlot = { time_of_delivery: { $eq: query.timeslot } }
+  }
+  if (query.deliverymode != 'all') {
+    deliveryMode = { devevery_mode: { $eq: query.deliverymode } }
+  }
+
+  let values = await ShopOrderClone.aggregate([
+    { $sort: { created: -1 } },
+    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: "$products"
+          },
+          {
+            $project: {
+              _id: 1,
+              GST_Number: 1,
+              created: 1,
+              HSN_Code: 1,
+              finalPricePerKg: 1,
+              finalQuantity: 1,
+              orderId: 1,
+              packKg: 1,
+              priceperkg: 1,
+              quantity: 1,
+              status: 1,
+              unit: 1,
+              productTitle: "$products.productTitle"
+            }
+          }
+        ],
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: '$paidAmt',
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclones',
+      },
+    },
+    {
+      $unwind: "$b2bshopclones"
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },
+    {
+      $unwind: {
+        path: '$b2busers',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    { $unwind: '$productData' },
+    {
+      $project: {
+        _id: 1,
+        orderType: 1,
+        status: 1,
+        created: 1,
+        OrderId: 1,
+        product: "$productOrderdata",
+        SName: "$b2bshopclones.SName",
+        mobile: "$b2bshopclones.mobile",
+        address: "$b2bshopclones.address",
+        orderBy: "$b2busers.name",
+        delivery_type: 1,
+        devevery_mode: 1,
+        time_of_delivery: 1,
+        paidAmount: "$orderpayments.amount",
+        subtotal: "$productData.price"
+      }
+    },
+    { $skip: 10 * page },
+    { $limit: 10 }
+  ])
+
+
+
+
+  let total = await ShopOrderClone.aggregate([
+    { $sort: { created: -1 } },
+    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
+  ])
+
+
+  let counts = await get_order_counts(statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth)
+
+  return { value: values, total: total.length,counts:counts };
+
+
+
+}
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -5204,5 +5426,6 @@ module.exports = {
   getallmanageIssus,
   getmanageIssus_byID,
   UnDeliveredOrders,
-  getall_ordered_shops
+  getall_ordered_shops,
+  get_approved_orders
 };
