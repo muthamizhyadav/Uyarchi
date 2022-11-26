@@ -285,6 +285,21 @@ const overall_Count_And_Data = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.overall_Count_And_Data(req.params.id);
   res.send(data);
 });
+
+const map1 = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.map1(req.params.id);
+  res.send(data);
+});
+
+const map2 = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.map2(req.params.id);
+  res.send(data);
+});
+
+const map3 = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.map3(req.params.id);
+  res.send(data);
+});
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -343,4 +358,7 @@ module.exports = {
   getAssign_bySalesman,
   // 26-11-2022
   overall_Count_And_Data,
+  map1,
+  map2,
+  map3,
 };
