@@ -397,8 +397,8 @@ const getNotAssignSalesManData = catchAsync(async (req, res) => {
     req.params.zone,
     req.params.id,
     req.params.street,
-    req.params.page,
-    req.params.limit,
+    // req.params.page,
+    // req.params.limit,
     req.params.uid,
     req.params.date
   );
