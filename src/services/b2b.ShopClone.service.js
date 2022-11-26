@@ -2473,7 +2473,7 @@ const getVendorShops = async (key) => {
 
 // getnotAssignSalesmanData
 
-const getnotAssignSalesmanData = async (zone, id, street, page, limit, uid, date) => {
+const getnotAssignSalesmanData = async (zone, id, street, uid, date) => {
   let match;
   let zoneMatch;
   let wardMatch;
@@ -2639,12 +2639,12 @@ const getnotAssignSalesmanData = async (zone, id, street, page, limit, uid, date
     {
       $sort: { streetId: 1 },
     },
-    {
-      $skip: parseInt(limit) * parseInt(page),
-    },
-    {
-      $limit: parseInt(limit),
-    },
+    // {
+    //   $skip: parseInt(limit) * parseInt(page),
+    // },
+    // {
+    //   $limit: parseInt(limit),
+    // },
   ]);
   let temp = await Shop.aggregate([
     {
