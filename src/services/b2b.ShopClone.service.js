@@ -1675,6 +1675,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         da_long: 1,
         da_landmark: 1,
         Pincode: 1,
+        daStatus:1,
       },
     },
     { $skip: 10 * page },
