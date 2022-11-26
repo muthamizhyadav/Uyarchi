@@ -280,6 +280,11 @@ const getAssign_bySalesman = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+
+const overall_Count_And_Data = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.overall_Count_And_Data(req.params.id);
+  res.send(data);
+});
 module.exports = {
   getDataById,
   getAllwardAdminRole,
@@ -336,4 +341,6 @@ module.exports = {
   getusertarget,
   // map view
   getAssign_bySalesman,
+  // 26-11-2022
+  overall_Count_And_Data,
 };
