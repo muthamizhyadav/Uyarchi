@@ -2334,13 +2334,13 @@ const getCreditBillMaster = async (query) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { statusActionArray: { $elemMatch: { status: { $in: ["Delivered"] } } } }],
+        $and: [{ statusActionArray: { $elemMatch: { status: { $in: ["Delivered"] } } } }],
       },
     },
 
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
     {
-      $match: dateM,
+      $match: { $and: [dateM, dateMatch] },
     },
     {
       $lookup: {
