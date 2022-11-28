@@ -2018,8 +2018,10 @@ const getsalesmanOrderAssignedShops = async (id) => {
   return { data: data, salesmanName: name.name, count:total.length, lastdata};
 };
 
-const getnotAssignsalesmanOrderShops = async (zone,id, street, page, limit, uid, date, dastatus, pincode) => {
+const getnotAssignsalesmanOrderShops = async (zone,id, street, page, limit, uid, date, dastatus, pincode,Da) => {
+  let capture
   let match;
+  let daUser;
   let zoneMatch;
   let wardMatch;
   let streetMatch;
@@ -2054,7 +2056,11 @@ const getnotAssignsalesmanOrderShops = async (zone,id, street, page, limit, uid,
   streetMatch = [{ active: { $eq: true } }];
 }
 // console.log(streetMatch)
-
+if(uid != 'null'){
+  capture = [{ Uid: { $eq: uid } }];
+}else{
+  capture = [{ active: { $eq: true } }];
+}
 if(uid != 'null' &&  date == 'null'){
   match = [{ Uid: { $eq: uid } }];
 }else if(date != 'null' && uid == 'null' ){
@@ -2063,6 +2069,11 @@ if(uid != 'null' &&  date == 'null'){
   match = [{ Uid: { $eq: uid } },{ date: { $eq: date } }];
 }else{
   match = [{ active: { $eq: true } }];
+}
+if(Da != 'null'){
+  daUser = [{ DA_USER: { $eq: Da } }];
+}else{
+  daUser = [{ active: { $eq: true } }];
 }
   // let match;
   // if (uid != 'null' && date == 'null') {
@@ -2074,7 +2085,7 @@ if(uid != 'null' &&  date == 'null'){
   // } else {
   //   match = [{ Wardid: { $eq: id } }];
   // }
-  // console.log(match)
+  // console.log(capture)
   let data = await Shop.aggregate([
     {
       $match: {
@@ -2094,6 +2105,11 @@ if(uid != 'null' &&  date == 'null'){
     {
       $match: {
         $and: pincodeMatch,
+      },
+    },
+    {
+      $match: {
+        $and: daUser,
       },
     },
     // {
@@ -2200,6 +2216,7 @@ if(uid != 'null' &&  date == 'null'){
         _id: 1,
         displaycount: 1,
         Pincode:1,
+        DA_USER:1,
       },
     },
     {
@@ -2228,6 +2245,11 @@ if(uid != 'null' &&  date == 'null'){
     {
       $match: {
         $and: pincodeMatch,
+      },
+    },
+    {
+      $match: {
+        $and: daUser,
       },
     },
     // {
@@ -2345,6 +2367,11 @@ if(uid != 'null' &&  date == 'null'){
         $and: pincodeMatch,
       },
     },
+    {
+      $match: {
+        $and: daUser,
+      },
+    },
     // {
     //   $match: {
     //     $or: [
@@ -2451,7 +2478,245 @@ if(uid != 'null' &&  date == 'null'){
       },
     },
   ]);
-  return { data: data, total: total.length, overall: allnoAssing.length };
+  let total1 = await Shop.aggregate([
+    {
+      $match: {
+        $and: capture,
+      },
+    },
+    {
+      $match: {
+        $or: [
+          {
+            $and: [
+              { salesManStatus: { $eq: 'Assign' } },
+            ],
+          },
+          {
+            $and: [
+              { salesManStatus: { $eq: 'tempReassign' } },
+            ],
+          },
+        ],
+      },
+    },
+    // {
+    //   $lookup: {
+    //     from: 'streets',
+    //     localField: 'Strid',
+    //     foreignField: '_id',
+    //     pipeline:[
+    //       {
+    //         $match: {
+    //           $and: streetMatch,
+    //         },
+    //       },
+    //     ],
+    //     as: 'streets',
+    //   },
+    // },
+    // {
+    //   $unwind: '$streets',
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'wards',
+    //     localField: 'Wardid',
+    //     foreignField: '_id',
+    //     pipeline:[
+    //       {
+    //         $match: {
+    //           $and: wardMatch,
+    //         },
+    //       },
+    //     ],
+    //     as: 'wards',
+    //   },
+    // },
+    // {
+    //   $unwind: '$wards',
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'zones',
+    //     localField: 'wards.zoneId',
+    //     foreignField: '_id',
+    //     pipeline:[
+    //       {
+    //         $match: {
+    //           $and: zoneMatch,
+    //         },
+    //       },
+    //     ],
+    //     as: 'zones',
+    //   },
+    // },
+    // {
+    //   $unwind: '$zones',
+    // },
+    // {
+    //   $project: {
+    //     SOwner: 1,
+    //     SName: 1,
+    //     mobile: 1,
+    //     address: 1,
+    //     Slat: 1,
+    //     Slong: 1,
+    //     Uid:1,
+    //     date:1,
+    //     ward:'$wards.ward',
+    //     Wardid:1,
+    //     zoneId:'$wards.zoneId',
+    //     zone:'$zones.zone',
+    //     streetId: '$streets._id',
+    //     streetname: '$streets.street',
+    //     locality: '$streets.locality',
+    //     _id: 1,
+    //     displaycount: 1,
+    //   },
+    // },
+  ]);
+  let lat = await Shop.aggregate([
+    {
+      $match: {
+        $and: match,
+      },
+    },
+    {
+      $match: {
+        $and: [{ status: { $eq: "data_approved" } }],
+      },
+    },
+    {
+      $match: {
+        $and: dastatusMatch,
+      },
+    },
+    {
+      $match: {
+        $and: pincodeMatch,
+      },
+    },
+    {
+      $match: {
+        $and: daUser,
+      },
+    },
+    // {
+    //   $match: {
+    //     $or: [
+    //       { salesManStatus: { $ne: 'Assign' } },
+    //       { salesManStatus: { $eq: null } },
+    //       { salesManStatus: { $eq: 'Reassign' } },
+    //       { salesManStatus: { $ne: 'tempReassign' } },
+    //     ],
+    //   },
+    // },
+    {
+      $match: {
+        $or: [
+          {
+            $and: [
+              { salesmanOrderStatus: { $ne: 'Assign' } },
+              { salesmanOrderStatus: { $ne: 'tempReassign' } },
+              { salesmanOrderStatus: { $eq: 'Reassign' } },
+            ],
+          },
+          {
+            $and: [
+              { salesmanOrderStatus: { $ne: 'Assign' } },
+              { salesmanOrderStatus: { $ne: 'tempReassign' } },
+              { salesmanOrderStatus: { $eq: null } },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: streetMatch,
+            },
+          },
+        ],
+        as: 'streets',
+      },
+    },
+    {
+      $unwind: '$streets',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: wardMatch,
+            },
+          },
+        ],
+        as: 'wards',
+      },
+    },
+    {
+      $unwind: '$wards',
+    },
+    {
+      $lookup: {
+        from: 'zones',
+        localField: 'wards.zoneId',
+        foreignField: '_id',
+        pipeline:[
+          {
+            $match: {
+              $and: zoneMatch,
+            },
+          },
+        ],
+        as: 'zones',
+      },
+    },
+    {
+      $unwind: '$zones',
+    },
+    {
+      $project: {
+        // SOwner: 1,
+        // SName: 1,
+        // mobile: 1,
+        // address: 1,
+        Slat: 1,
+        Slong: 1,
+        // Uid:1,
+        // date:1,
+        // ward:'$wards.ward',
+        // Wardid:1,
+        // zoneId:'$wards.zoneId',
+        // zone:'$zones.zone',
+        // streetId: '$streets._id',
+        // streetname: '$streets.street',
+        // locality: '$streets.locality',
+        // _id: 1,
+        // displaycount: 1,
+        // Pincode:1,
+        // DA_USER:1,
+      },
+    },
+  ]);
+  let cap
+  if(uid != 'null'){
+     cap = total1.length
+  }else{
+     cap = 0 ;
+  }
+  return { data: data, total: total.length, overall: allnoAssing.length, assignCount:cap, lat:lat};
 };
 
 const getUserssalesmanWith_skiped = async (id) => {

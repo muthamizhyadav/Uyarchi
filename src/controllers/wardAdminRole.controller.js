@@ -282,7 +282,7 @@ const getAssign_bySalesman = catchAsync(async (req, res) => {
 
 
 const overall_Count_And_Data = catchAsync(async (req, res) => {
-  const data = await wardAdminRoleService.overall_Count_And_Data(req.params.id);
+  const data = await wardAdminRoleService.overall_Count_And_Data(req.params.id, req.params.uid);
   res.send(data);
 });
 
@@ -298,6 +298,11 @@ const map2 = catchAsync(async (req, res) => {
 
 const map3 = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.map3(req.params.id);
+  res.send(data);
+});
+
+const assignData = catchAsync(async (req, res) => {
+  const data = await wardAdminRoleService.assignData(req.params.id, req.params.uid);
   res.send(data);
 });
 module.exports = {
@@ -361,4 +366,5 @@ module.exports = {
   map1,
   map2,
   map3,
+  assignData,
 };
