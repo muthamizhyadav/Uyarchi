@@ -109,6 +109,11 @@ const updaterandom_product = catchAsync(async (req, res) => {
   const receicedProduct = await ReceivedProductService.updaterandom_product(req.body);
   res.send(receicedProduct);
 });
+
+const getSupplierBillsDetails1 = catchAsync(async (req, res) => {
+  const receivedProduct = await ReceivedProductService.getSupplierBillsDetails1(req.params.page);
+  res.send(receivedProduct);
+});
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,
@@ -122,5 +127,6 @@ module.exports = {
   uploadImageById,
   getreceivedProductBySupplier,
   getSupplierDetailByGroupId,
-  updaterandom_product
+  updaterandom_product,
+  getSupplierBillsDetails1,
 };

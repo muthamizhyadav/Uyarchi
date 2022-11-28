@@ -137,6 +137,7 @@ const getnotAssignsalesmanOrderShops = catchAsync(async (req, res) => {
     req.params.date,
     req.params.dastatus,
     req.params.pincode,
+    req.params.Da
   );
   res.send(data);
 });

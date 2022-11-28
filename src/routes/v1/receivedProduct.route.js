@@ -26,5 +26,6 @@ router.route('/supplierDetail/byGroup/:id').get(receivedProductController.getSup
 
 
 router.route('/updaterandom/product').post(receivedProductController.updaterandom_product);
+router.route('/getSupplierBillsDetails1/:page').get(receivedProductController.getSupplierBillsDetails1);
 
 module.exports = router;
