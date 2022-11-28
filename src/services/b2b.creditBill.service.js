@@ -2316,7 +2316,7 @@ const getCreditBillMaster = async (query) => {
     enddata = date[1];
     // console.log(startdate)
     // console.log(enddata)
-    dateMatch = { $and: [{ delivered_date: { $gte: startdate } }, { delivered_date: { $lte: enddata } }] };
+    dateMatch = { $and: [{ creationDate: { $gte: startdate } }, { creationDate: { $lte: enddata } }] };
   }
   if (user != null && user != '') {
     userMatch = { AssignedUserId: { $eq: user } };
