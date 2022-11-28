@@ -2678,9 +2678,9 @@ const getBills_DetailsByshop = async (shopId, page) => {
     {
       $match: { $and: [{ shopId: shopId }] },
     },
-    // {
-    //   $match: { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } }
-    // },
+    {
+      $match: { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } }
+    },
     {
       $lookup: {
         from: 'productorderclones',
