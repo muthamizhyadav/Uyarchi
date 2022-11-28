@@ -298,7 +298,7 @@ const adjustment_bill = async (id, userId) => {
   let shoporder = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ shopId: { $eq: id } }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
+        $and: [{ shopId: { $eq: id } }, { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } }, { statusOfBill: { $eq: 'Pending' } }],
       },
     },
     {
@@ -433,7 +433,7 @@ const adjustment_bill = async (id, userId) => {
       },
     },
   ]);
-  // console.log(shoporder)
+  console.log(shoporder)
   if (shoporder.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Pending Bill Not Available');
   }
