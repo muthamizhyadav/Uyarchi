@@ -499,7 +499,7 @@ const adjustment_bill_pay = async (id, userId, body) => {
       $match: {
         $and: [
           { shopId: { $eq: id } },
-          { status: { $eq: 'Delivered' } },
+          { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } },
           { statusOfBill: { $eq: 'Pending' } },
           { _id: { $in: body.orders } },
         ],
@@ -637,7 +637,7 @@ const adjustment_bill_pay = async (id, userId, body) => {
       },
     },
   ]);
-  // console.log(shoporder)
+  console.log(shoporder)
   if (shoporder.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Pending Bill Not Available');
   }
