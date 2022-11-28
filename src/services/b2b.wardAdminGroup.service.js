@@ -2398,7 +2398,7 @@ const getAllGroup = async (id, date, FinishingStatus, page) => {
     },
     {
       $match: {
-        $and: [{ manageDeliveryStatus: { $in: ['returnedStock', 'Delivery Completed', 'cashReturned'] } }],
+        $and: [{ manageDeliveryStatus: { $in: ['returnedStock', 'Delivery Completed', 'cashReturned', 'StockReturned'] } }],
       },
     },
     {
@@ -2437,7 +2437,7 @@ const getAllGroup = async (id, date, FinishingStatus, page) => {
         deliveryexecutiveName: '$b2buserDta.name',
         FinishingStatus: 1,
         route: 1,
-        shoporderclonesId: '$shopIDDatas._id',
+        // shoporderclonesId: '$shopIDDatas._id',
       },
     },
 
@@ -2452,7 +2452,46 @@ const getAllGroup = async (id, date, FinishingStatus, page) => {
     },
     {
       $match: {
-        $and: [{ manageDeliveryStatus: { $in: ['returnedStock', 'Delivery Completed', 'cashReturned'] } }],
+        $and: [{ manageDeliveryStatus: { $in: ['returnedStock', 'Delivery Completed', 'cashReturned', 'StockReturned'] } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2buserDta',
+      },
+    },
+    { $unwind: '$b2buserDta' },
+    // {
+    //   $unwind: '$Orderdatas',
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'shoporderclones',
+    //     localField: 'Orderdatas._id',
+    //     foreignField: '_id',
+    //     as: 'shopIDDatas',
+    //   },
+    // },
+    // {
+    //   $unwind: '$shopIDDatas',
+    // },
+    {
+      $project: {
+        groupId: 1,
+        assignDate: 1,
+        assignTime: 1,
+        deliveryExecutiveId: 1,
+        manageDeliveryStatus: 1,
+        totalOrders: 1,
+        pettyCash: 1,
+        status: 1,
+        deliveryexecutiveName: '$b2buserDta.name',
+        FinishingStatus: 1,
+        route: 1,
+        // shoporderclonesId: '$shopIDDatas._id',
       },
     },
   ]);
@@ -2933,7 +2972,7 @@ const finishingAccount = async (id, page) => {
         finalpaid: 1,
         InitialPaidAmount: 1,
         TotalOrderAmountWithGST: 1,
-        InitialPendingAmount: {$round:['$InitialPendingAmount']},
+        InitialPendingAmount: { $round: ['$InitialPendingAmount'] },
         FinalPaymentMode: 1,
         paymentType: 1,
         FinalPaidAmount: 1,
