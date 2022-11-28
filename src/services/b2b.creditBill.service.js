@@ -2316,7 +2316,7 @@ const getCreditBillMaster = async (query) => {
     enddata = date[1];
     // console.log(startdate)
     // console.log(enddata)
-    dateMatch = { $and: [{ Scheduledate: { $gte: startdate } }, { Scheduledate: { $lte: enddata } }] };
+    dateMatch = { $and: [{ creationDate: { $gte: startdate } }, { creationDate: { $lte: enddata } }] };
   }
   if (user != null && user != '') {
     userMatch = { AssignedUserId: { $eq: user } };
@@ -2334,13 +2334,13 @@ const getCreditBillMaster = async (query) => {
   let values = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { statusActionArray: { $elemMatch: { status: { $in: ["Delivered"] } } } }],
+        $and: [{ statusActionArray: { $elemMatch: { status: { $in: ["Delivered"] } } } }],
       },
     },
 
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
     {
-      $match: dateM,
+      $match: { $and: [dateM, dateMatch] },
     },
     {
       $lookup: {
@@ -2599,36 +2599,33 @@ const getCreditBillMaster = async (query) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { statusActionArray: { $elemMatch: { status: { $in: ["Delivered"] } } } }],
+        $and: [{ statusActionArray: { $elemMatch: { status: { $in: ["Delivered"] } } } }],
       },
     },
 
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
-    {
-      $match: dateM,
-    },
     {
       $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
         pipeline: [
-          {
-            $match: {
-              $and: [wardMatch, searchMatch],
-            },
-          },
+          // {
+          //   $match: {
+          //     $and: [wardMatch, searchMatch],
+          //   },
+          // },
           {
             $lookup: {
               from: 'wards',
               localField: 'Wardid',
               foreignField: '_id',
               pipeline: [
-                {
-                  $match: {
-                    $and: [zoneMatch],
-                  },
-                },
+                // {
+                //   $match: {
+                //     $and: [zoneMatch],
+                //   },
+                // },
               ],
               as: 'wards',
             },
@@ -2850,11 +2847,11 @@ const getCreditBillMaster = async (query) => {
         statusActionArray: 1,
       },
     },
-    {
-      $match: {
-        $and: [userMatch],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [userMatch],
+    //   },
+    // },
     {
       $match: { pendingAmount: { $gt: 0 } },
     },
@@ -2866,7 +2863,7 @@ const getCreditBillMaster = async (query) => {
   let todaycount = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { statusActionArray: { $elemMatch: { status: { $in: ["Delivered"] } } } }],
+        $and: [{ statusActionArray: { $elemMatch: { status: { $in: ["Delivered"] } } } }],
       },
     },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
@@ -2885,11 +2882,11 @@ const getCreditBillMaster = async (query) => {
               localField: 'Wardid',
               foreignField: '_id',
               pipeline: [
-                {
-                  $match: {
-                    $and: [zoneMatch],
-                  },
-                },
+                // {
+                //   $match: {
+                //     $and: [zoneMatch],
+                //   },
+                // },
               ],
               as: 'wards',
             },
@@ -3110,11 +3107,11 @@ const getCreditBillMaster = async (query) => {
         creationDate: 1,
       },
     },
-    {
-      $match: {
-        $and: [userMatch],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [userMatch],
+    //   },
+    // },
     {
       $match: { pendingAmount: { $gt: 0 } },
     },
@@ -3123,7 +3120,7 @@ const getCreditBillMaster = async (query) => {
   let yersterdayCount = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [dateMatch, { statusActionArray: { $elemMatch: { status: { $in: ["Delivered"] } } } }],
+        $and: [ { statusActionArray: { $elemMatch: { status: { $in: ["Delivered"] } } } }],
       },
     },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
@@ -3142,11 +3139,11 @@ const getCreditBillMaster = async (query) => {
               localField: 'Wardid',
               foreignField: '_id',
               pipeline: [
-                {
-                  $match: {
-                    $and: [zoneMatch],
-                  },
-                },
+                // {
+                //   $match: {
+                //     $and: [zoneMatch],
+                //   },
+                // },
               ],
               as: 'wards',
             },
@@ -3367,21 +3364,21 @@ const getCreditBillMaster = async (query) => {
         creationDate: 1,
       },
     },
-    {
-      $match: {
-        $and: [userMatch],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [userMatch],
+    //   },
+    // },
     {
       $match: { pendingAmount: { $gt: 0 } },
     },
   ]);
   let assign = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [dateMatch],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [dateMatch],
+    //   },
+    // },
     {
       $match: {
         statusActionArray: { $elemMatch: { status: "Delivered" } }

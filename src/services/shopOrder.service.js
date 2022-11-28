@@ -2676,8 +2676,11 @@ const getBills_ByShop = async (shopId) => {
 const getBills_DetailsByshop = async (shopId, page) => {
   let values = await ShopOrderClone.aggregate([
     {
-      $match: { $and: [{ shopId: shopId }, { status: { $in: ['Delivered', 'Delivery Completed'] } }, { statusOfBill: { $ne: 'Paid' } }] },
+      $match: { $and: [{ shopId: shopId }] },
     },
+    // {
+    //   $match: { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } }
+    // },
     {
       $lookup: {
         from: 'productorderclones',
@@ -2788,6 +2791,11 @@ const getBills_DetailsByshop = async (shopId, page) => {
       },
     },
     {
+      $match: {
+        totalPendingAmount: { $gt: 0 }
+      }
+    },
+    {
       $skip: 10 * page,
     },
     {
@@ -2796,8 +2804,11 @@ const getBills_DetailsByshop = async (shopId, page) => {
   ]);
   let total = await ShopOrderClone.aggregate([
     {
-      $match: { $and: [{ shopId: shopId }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $ne: 'Paid' } }] },
+      $match: { $and: [{ shopId: shopId }] },
     },
+    // {
+    //   $match: { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } }
+    // },
     {
       $lookup: {
         from: 'productorderclones',
@@ -2893,6 +2904,24 @@ const getBills_DetailsByshop = async (shopId, page) => {
         path: '$shops',
         preserveNullAndEmptyArrays: true,
       },
+    },
+    {
+      $project: {
+        paidAmt: { $ifNull: ['$orderpayments.amount', 0] },
+        totalPendingAmount: {
+          $round: [{ $subtract: ['$productData.price', { $ifNull: ['$orderpayments.amount', 0] }] }],
+        },
+        totalAmount: { $round: ['$productData.price'] },
+        adjBill: '$adjBill.un_Billed_amt',
+        shops: '$shops.SName',
+        OrderId: 1,
+        date: 1,
+      },
+    },
+    {
+      $match: {
+        totalPendingAmount: { $gt: 0 }
+      }
     },
   ]);
   let shops = await BillAdj.findOne({ shopId: shopId });
@@ -5363,7 +5392,7 @@ const get_approved_orders = async (query) => {
 
   let counts = await get_order_counts(statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth)
 
-  return { value: values, total: total.length,counts:counts };
+  return { value: values, total: total.length, counts: counts };
 
 
 

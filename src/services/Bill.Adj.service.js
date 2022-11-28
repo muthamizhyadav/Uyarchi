@@ -178,7 +178,7 @@ const getCustomer_bills = async (page) => {
         payment_method: 1,
         date: 1,
         shopName: 1,
-        totalAmount: 1,
+        totalAmount: { $round: ['$totalAmount'] },
         paidAmt: 1,
         totalPendingAmount: { $round: [{ $subtract: ['$totalAmount', '$paidAmt'] }] },
       },
