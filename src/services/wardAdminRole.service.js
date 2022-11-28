@@ -2851,31 +2851,10 @@ const map3 = async (id) =>{
 }
 
 
-const overall_Count_And_Data = async (id,uid) => {
-  let match
-  let capture
-  if(id != "null"){
-    match = { _id: { $eq: id } };
-  }else{
-    match = { active: { $eq: true } };
-  }
-  if(uid != "null"){
-    capture = {Uid: { $eq: uid } };
-  }else{
-    capture = { active: { $eq: true } };
-  }
-  console.log(capture)
+const overall_Count_And_Data = async (id) => {
   const data = await Users.aggregate([
-    // {
-    //   $match: { $and: [{ _id: { $eq: id } }] },
-    // },
     {
-      $match: {
-        $and: [match],
-      },
-    },
-    {
-      $match:{$and:[{userRole:{$eq:"fb0dd028-c608-4caa-a7a9-b700389a098d"}}]}
+      $match: { $and: [{ _id: { $eq: id } }] },
     },
     {
       $lookup: {
@@ -2889,19 +2868,14 @@ const overall_Count_And_Data = async (id,uid) => {
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
-               pipeline:[
-                {
-                  $match: {
-                    $and: [capture],
-                  },
-                },
+              // pipeline:[
               //   // {
               //   //   $project: {
               //   //     Slat: 1,
               //   //     Slong: 1
               //   //   }
               //   // },
-               ],
+              // ],
               as: 'b2bshopclones',
             },
           },
@@ -2937,11 +2911,6 @@ const overall_Count_And_Data = async (id,uid) => {
               foreignField: '_id',
               pipeline: [
                 { $match: { $and: [{ status: { $eq: 'data_approved' } }] } },
-                {
-                  $match: {
-                    $and: [capture],
-                  },
-                },
                 // {
                 //   $project: {
                 //     Slat: 1,
@@ -2983,11 +2952,6 @@ const overall_Count_And_Data = async (id,uid) => {
               foreignField: '_id',
               pipeline: [
                 { $match: { $and: [{ status: { $eq: 'Pending' } }] } },
-                {
-                  $match: {
-                    $and: [capture],
-                  },
-                },
                 // {
                 //   $project: {
                 //     Slat: 1,
@@ -3022,419 +2986,353 @@ const overall_Count_And_Data = async (id,uid) => {
         pending: '$salesmanshopsdataPending.count',
       },
     },
-    { $match: { $and: [{ Assign: { $ne:null} }] } },
   ]);
-  // const dateWise = await SalesManShop.aggregate([
-  //   {
-  //     $match: { $and: [{ salesManId: { $eq: id } },{ status: { $eq: 'Assign' } }] },
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'b2bshopclones',
-  //       localField: 'shopId',
-  //       foreignField: '_id',
-  //       pipeline: [
-  //         { $match: { $and: [{ status: { $eq: 'data_approved' } }] } },
-  //         {
-  //           $group:{
-  //             _id:1,
-  //             count:{$sum:1},
-  //           }
-  //         }
-  //       ],
-  //       as: 'salesmanshopsdataApproved',
-  //     },
-  //   },
-  //   {
-  //     $unwind: {
-  //       path: '$salesmanshopsdataApproved',
-  //       preserveNullAndEmptyArrays: true,
-  //     },
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'b2bshopclones',
-  //       localField: 'shopId',
-  //       foreignField: '_id',
-  //       pipeline: [
-  //         { $match: { $and: [{ status: { $eq: 'Pending' } }] } },
-  //         {
-  //           $group:{
-  //             _id:1,
-  //             count:{$sum:1},
-  //           }
-  //         }
-  //       ],
-  //       as: 'salesmanshopsdataPending',
-  //     },
-  //   },
-  //   {
-  //     $unwind: {
-  //       path: '$salesmanshopsdataPending',
-  //       preserveNullAndEmptyArrays: true,
-  //     },
-  //   },
-  //   {
-  //     $addFields: {
-  //       pending: { $ifNull: ['$salesmanshopsdataPending.count', 0] },
-  //     },
-  //   },
-  //   {
-  //     $addFields: {
-  //       approve: { $ifNull: ['$salesmanshopsdataApproved.count', 0] },
-  //     },
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'b2bshopclones',
-  //       localField: 'shopId',
-  //       foreignField: '_id',
-  //       pipeline: [
-  //         { $match: { $and: [{daStatus:"HighlyInterested"}] } },
-  //         {
-  //           $group:{
-  //             _id:1,
-  //             count:{$sum:1},
-  //           }
-  //         }
-  //       ],
-  //       as: 'HighlyInterested',
-  //     },
-  //   },
-  //   {
-  //     $unwind: {
-  //       path: '$HighlyInterested',
-  //       preserveNullAndEmptyArrays: true,
-  //     },
-  //   },
-  //   {
-  //     $addFields: {
-  //       HighlyInterested: { $ifNull: ['$HighlyInterested.count', 0] },
-  //     },
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'b2bshopclones',
-  //       localField: 'shopId',
-  //       foreignField: '_id',
-  //       pipeline: [
-  //         { $match: { $and: [{daStatus:"ModeratelyInterested"}] } },
-  //         {
-  //           $group:{
-  //             _id:1,
-  //             count:{$sum:1},
-  //           }
-  //         }
-  //       ],
-  //       as: 'ModeratelyInterested',
-  //     },
-  //   },
-  //   {
-  //     $unwind: {
-  //       path: '$ModeratelyInterested',
-  //       preserveNullAndEmptyArrays: true,
-  //     },
-  //   },
-  //   {
-  //     $addFields: {
-  //       ModeratelyInterested: { $ifNull: ['$ModeratelyInterested.count', 0] },
-  //     },
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'b2bshopclones',
-  //       localField: 'shopId',
-  //       foreignField: '_id',
-  //       pipeline: [
-  //         { $match: { $and: [{daStatus:"Not Interested"}] } },
-  //         {
-  //           $group:{
-  //             _id:1,
-  //             count:{$sum:1},
-  //           }
-  //         }
-  //       ],
-  //       as: 'NotInterested',
-  //     },
-  //   },
-  //   {
-  //     $unwind: {
-  //       path: '$NotInterested',
-  //       preserveNullAndEmptyArrays: true,
-  //     },
-  //   },
-  //   {
-  //     $addFields: {
-  //       NotInterested: { $ifNull: ['$NotInterested.count', 0] },
-  //     },
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'b2bshopclones',
-  //       localField: 'shopId',
-  //       foreignField: '_id',
-  //       pipeline: [
-  //         { $match: { $and: [{daStatus:"Cannot Spot the Shop"}] } },
-  //         {
-  //           $group:{
-  //             _id:1,
-  //             count:{$sum:1},
-  //           }
-  //         }
-  //       ],
-  //       as: 'CannotSpottheShop',
-  //     },
-  //   },
-  //   {
-  //     $unwind: {
-  //       path: '$CannotSpottheShop',
-  //       preserveNullAndEmptyArrays: true,
-  //     },
-  //   },
-  //   {
-  //     $addFields: {
-  //       CannotSpottheShop: { $ifNull: ['$CannotSpottheShop.count', 0] },
-  //     },
-  //   },
-  //   {
-  //     $project:{
-  //       _id:1,
-  //       date:1,
-  //       pending:1,
-  //       approve:1,
-  //       HighlyInterested:1,
-  //       ModeratelyInterested:1,
-  //       NotInterested:1,
-  //       CannotSpottheShop:1,
-  //     }
-  //   },
-  //   {
-  //     $group: {
-  //       _id: { date: '$date', },
-  //       quantity: {
-  //         $sum: 1,
-  //       },
-  //       pending:{
-  //         $sum:"$pending"
-  //       },
-  //       approved:{
-  //         $sum:"$approve"
-  //       },
-  //       HighlyInterested:{
-  //         $sum:"$HighlyInterested"
-  //       },
-  //       ModeratelyInterested:{
-  //         $sum:"$ModeratelyInterested"
-  //       },
-  //       NotInterested:{
-  //         $sum:"$NotInterested"
-  //       },
-  //       CannotSpottheShop:{
-  //         $sum:"$CannotSpottheShop"
-  //       },
-  //     },
-  //   },
-  // ]);
-//   const totalInterest = await Users.aggregate([
-//     {
-//       $match: { $and: [{ _id: { $eq: id } }] },
-//     },
-//     {
-//       $match:{$and:[{userRole:{$eq:"fb0dd028-c608-4caa-a7a9-b700389a098d"}}]}
-//     },
-//     {
-//       $lookup: {
-//         from: 'salesmanshops',
-//         localField: '_id',
-//         foreignField: 'salesManId',
-//         pipeline: [
-//           { $match: { $and: [{ status: { $eq: 'Assign' } }] } },
-//           {
-//             $lookup: {
-//               from: 'b2bshopclones',
-//               localField: 'shopId',
-//               foreignField: '_id',
-//               pipeline:[
-//                 { $match: { $and: [{ daStatus: { $eq: 'HighlyInterested' } }] } },
-//               ],
-//               as: 'b2bshopclones',
-//             },
-//           },
-//           { $unwind: '$b2bshopclones'},
-//           // {
-//           //   $group: {
-//           //     _id: null,
-//           //     count: { $sum: 1 },
-//           //   },
-//           // },
-//         ],
-        
-//         as: 'salesmanshopsdata',
-//       },
-//     },
-//     {
-//       $lookup: {
-//         from: 'salesmanshops',
-//         localField: '_id',
-//         foreignField: 'salesManId',
-//         pipeline: [
-//           { $match: { $and: [{ status: { $eq: 'Assign' } }] } },
-//           {
-//             $lookup: {
-//               from: 'b2bshopclones',
-//               localField: 'shopId',
-//               foreignField: '_id',
-//               pipeline:[
-//                 { $match: { $and: [{ daStatus: { $eq: 'ModeratelyInterested' } }] } },
-//               ],
-//               as: 'b2bshopclones',
-//             },
-//           },
-//           { $unwind: '$b2bshopclones'},
-//           // {
-//           //   $group: {
-//           //     _id: null,
-//           //     count: { $sum: 1 },
-//           //   },
-//           // },
-//         ],
-        
-//         as: 'salesmanshopsdataMod',
-//       },
-//     },
-//     {
-//       $lookup: {
-//         from: 'salesmanshops',
-//         localField: '_id',
-//         foreignField: 'salesManId',
-//         pipeline: [
-//           { $match: { $and: [{ status: { $eq: 'Assign' } }] } },
-//           {
-//             $lookup: {
-//               from: 'b2bshopclones',
-//               localField: 'shopId',
-//               foreignField: '_id',
-//               pipeline:[
-//                 { $match: { $and: [{ daStatus: { $eq: 'Not Interested' } }] } },
-//               ],
-//               as: 'b2bshopclones',
-//             },
-//           },
-//           { $unwind: '$b2bshopclones'},
-//           // {
-//           //   $group: {
-//           //     _id: null,
-//           //     count: { $sum: 1 },
-//           //   },
-//           // },
-//         ],
-        
-//         as: 'salesmanshopsdataNot',
-//       },
-//     },
-//     {
-//       $lookup: {
-//         from: 'salesmanshops',
-//         localField: '_id',
-//         foreignField: 'salesManId',
-//         pipeline: [
-//           { $match: { $and: [{ status: { $eq: 'Assign' } }] } },
-//           {
-//             $lookup: {
-//               from: 'b2bshopclones',
-//               localField: 'shopId',
-//               foreignField: '_id',
-//               pipeline:[
-//                 { $match: { $and: [{ daStatus: { $eq: 'Cannot Spot the Shop' } }] } },
-//               ],
-//               as: 'b2bshopclones',
-//             },
-//           },
-//           { $unwind: '$b2bshopclones'},
-//           // {
-//           //   $group: {
-//           //     _id: null,
-//           //     count: { $sum: 1 },
-//           //   },
-//           // },
-//         ],
-        
-//         as: 'salesmanshopsdataCan',
-//       },
-//     },
-// {
-//   $project:{
-//        high:"$salesmanshopsdata.b2bshopclones",
-//        mod:"$salesmanshopsdataMod.b2bshopclones",
-//        not:"$salesmanshopsdataNot.b2bshopclones",
-//        can:"$salesmanshopsdataCan.b2bshopclones"
-//   }
-// }
-//   ])
-// dateWise: dateWise, totalInterest:totalInterest
-  return { date: data};
-};
-
-const assignData = async (id,uid) =>{
-  let capture
-  if(uid != "null"){
-    capture = {Uid: { $eq: uid } };
-  }else{
-    capture = { active: { $eq: true } };
-  }
-  console.log(capture)
-  const data = await SalesManShop.aggregate([
+  const dateWise = await SalesManShop.aggregate([
     {
       $match: { $and: [{ salesManId: { $eq: id } },{ status: { $eq: 'Assign' } }] },
     },
-  
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [
+          { $match: { $and: [{ status: { $eq: 'data_approved' } }] } },
+          {
+            $group:{
+              _id:1,
+              count:{$sum:1},
+            }
+          }
+        ],
+        as: 'salesmanshopsdataApproved',
+      },
+    },
+    {
+      $unwind: {
+        path: '$salesmanshopsdataApproved',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [
+          { $match: { $and: [{ status: { $eq: 'Pending' } }] } },
+          {
+            $group:{
+              _id:1,
+              count:{$sum:1},
+            }
+          }
+        ],
+        as: 'salesmanshopsdataPending',
+      },
+    },
+    {
+      $unwind: {
+        path: '$salesmanshopsdataPending',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        pending: { $ifNull: ['$salesmanshopsdataPending.count', 0] },
+      },
+    },
+    {
+      $addFields: {
+        approve: { $ifNull: ['$salesmanshopsdataApproved.count', 0] },
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [
+          { $match: { $and: [{daStatus:"HighlyInterested"}] } },
+          {
+            $group:{
+              _id:1,
+              count:{$sum:1},
+            }
+          }
+        ],
+        as: 'HighlyInterested',
+      },
+    },
+    {
+      $unwind: {
+        path: '$HighlyInterested',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        HighlyInterested: { $ifNull: ['$HighlyInterested.count', 0] },
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [
+          { $match: { $and: [{daStatus:"ModeratelyInterested"}] } },
+          {
+            $group:{
+              _id:1,
+              count:{$sum:1},
+            }
+          }
+        ],
+        as: 'ModeratelyInterested',
+      },
+    },
+    {
+      $unwind: {
+        path: '$ModeratelyInterested',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        ModeratelyInterested: { $ifNull: ['$ModeratelyInterested.count', 0] },
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [
+          { $match: { $and: [{daStatus:"Not Interested"}] } },
+          {
+            $group:{
+              _id:1,
+              count:{$sum:1},
+            }
+          }
+        ],
+        as: 'NotInterested',
+      },
+    },
+    {
+      $unwind: {
+        path: '$NotInterested',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        NotInterested: { $ifNull: ['$NotInterested.count', 0] },
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [
+          { $match: { $and: [{daStatus:"Cannot Spot the Shop"}] } },
+          {
+            $group:{
+              _id:1,
+              count:{$sum:1},
+            }
+          }
+        ],
+        as: 'CannotSpottheShop',
+      },
+    },
+    {
+      $unwind: {
+        path: '$CannotSpottheShop',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        CannotSpottheShop: { $ifNull: ['$CannotSpottheShop.count', 0] },
+      },
+    },
+    {
+      $project:{
+        _id:1,
+        date:1,
+        pending:1,
+        approve:1,
+        HighlyInterested:1,
+        ModeratelyInterested:1,
+        NotInterested:1,
+        CannotSpottheShop:1,
+      }
+    },
+    {
+      $group: {
+        _id: { date: '$date', },
+        quantity: {
+          $sum: 1,
+        },
+        pending:{
+          $sum:"$pending"
+        },
+        approved:{
+          $sum:"$approve"
+        },
+        HighlyInterested:{
+          $sum:"$HighlyInterested"
+        },
+        ModeratelyInterested:{
+          $sum:"$ModeratelyInterested"
+        },
+        NotInterested:{
+          $sum:"$NotInterested"
+        },
+        CannotSpottheShop:{
+          $sum:"$CannotSpottheShop"
+        },
+      },
+    },
+  ]);
+  const totalInterest = await Users.aggregate([
+    {
+      $match: { $and: [{ _id: { $eq: id } }] },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'salesManId',
+        pipeline: [
+          { $match: { $and: [{ status: { $eq: 'Assign' } }] } },
           {
             $lookup: {
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
-               pipeline:[
-                {
-                  $match: {
-                    $and: [capture],
-                  },
-                },
-            
-              //   // {
-              //   //   $project: {
-              //   //     Slat: 1,
-              //   //     Slong: 1
-              //   //   }
-              //   // },
-               ],
-               
+              pipeline:[
+                { $match: { $and: [{ daStatus: { $eq: 'HighlyInterested' } }] } },
+              ],
               as: 'b2bshopclones',
             },
           },
           { $unwind: '$b2bshopclones'},
+          // {
+          //   $group: {
+          //     _id: null,
+          //     count: { $sum: 1 },
+          //   },
+          // },
+        ],
+        
+        as: 'salesmanshopsdata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'salesManId',
+        pipeline: [
+          { $match: { $and: [{ status: { $eq: 'Assign' } }] } },
           {
-            $group: {
-              _id: {date:"$date"},
-              count: { $sum: 1 },
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'shopId',
+              foreignField: '_id',
+              pipeline:[
+                { $match: { $and: [{ daStatus: { $eq: 'ModeratelyInterested' } }] } },
+              ],
+              as: 'b2bshopclones',
             },
           },
-    // {
-    //   $unwind: {
-    //     path: '$salesmanshopsdata',
-    //     preserveNullAndEmptyArrays: true,
-    //   },
-    // },
-    // {
-    //   $project: {
-    //     count: '$salesmanshopsdata.count',
-    //     // dataApproved: '$salesmanshopsdataApproved.count',
-    //     // pending: '$salesmanshopsdataPending.count',
-    //   },
-    // },
-  ])
-  return data;
+          { $unwind: '$b2bshopclones'},
+          // {
+          //   $group: {
+          //     _id: null,
+          //     count: { $sum: 1 },
+          //   },
+          // },
+        ],
+        
+        as: 'salesmanshopsdataMod',
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'salesManId',
+        pipeline: [
+          { $match: { $and: [{ status: { $eq: 'Assign' } }] } },
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'shopId',
+              foreignField: '_id',
+              pipeline:[
+                { $match: { $and: [{ daStatus: { $eq: 'Not Interested' } }] } },
+              ],
+              as: 'b2bshopclones',
+            },
+          },
+          { $unwind: '$b2bshopclones'},
+          // {
+          //   $group: {
+          //     _id: null,
+          //     count: { $sum: 1 },
+          //   },
+          // },
+        ],
+        
+        as: 'salesmanshopsdataNot',
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'salesManId',
+        pipeline: [
+          { $match: { $and: [{ status: { $eq: 'Assign' } }] } },
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'shopId',
+              foreignField: '_id',
+              pipeline:[
+                { $match: { $and: [{ daStatus: { $eq: 'Cannot Spot the Shop' } }] } },
+              ],
+              as: 'b2bshopclones',
+            },
+          },
+          { $unwind: '$b2bshopclones'},
+          // {
+          //   $group: {
+          //     _id: null,
+          //     count: { $sum: 1 },
+          //   },
+          // },
+        ],
+        
+        as: 'salesmanshopsdataCan',
+      },
+    },
+{
+  $project:{
+       high:"$salesmanshopsdata.b2bshopclones",
+       mod:"$salesmanshopsdataMod.b2bshopclones",
+       not:"$salesmanshopsdataNot.b2bshopclones",
+       can:"$salesmanshopsdataCan.b2bshopclones"
+  }
 }
-
+  ])
+  return { date: data, dateWise: dateWise, totalInterest:totalInterest};
+};
 
 module.exports = {
   createwardAdminRole,
@@ -3499,5 +3397,4 @@ module.exports = {
   map1,
   map2,
   map3,
-  assignData,
 };

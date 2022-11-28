@@ -1390,12 +1390,15 @@ const getSupplierBillsDetails1 = async (id,page) => {
             pendingAmount: "$receivedproducts.pendingAmount",
             pendingBillcount: "$receivedproducts.pendingBillcount",
             // bendingBill:"$receivedproducts",
-            supplierbills: "$supplierbills",
+            // supplierbills: "$supplierbills",
             // lastBill: "$supplierbillsONE"
           }
         },
         {
           $match: { pendingAmount: { $ne: 0 } }
+        },
+        {
+          $match: { pendingAmount: { $ne: null } }
         },
         {
           $limit: 10,
@@ -1531,6 +1534,9 @@ const getSupplierBillsDetails1 = async (id,page) => {
         {
           $match: { pendingAmount: { $ne: 0 } }
         },
+        {
+          $match: { pendingAmount: { $ne:null } }
+        }
     
       ]);
   return {data:values, total:total.length};
@@ -1681,11 +1687,27 @@ const previousOrderdata = async (id) =>{
     {
       $unwind: "$receivedstocks"
     },
+    // {
+    //   $lookup: {
+    //     from: 'receivedproducts',
+    //     let: {
+    //       localField: '$callstatuses._id',
+    //     },
+    //     pipeline: [
+    //       { $match: { $expr: { $eq: ['$callstatus', '$$localField'] } } },
+    //     ],
+    //     as: 'receivedproducts',
+    //   },
+    // },
+    // {
+    //   $unwind: "$receivedproducts"
+    // },
     {
       $project:{
         date:"$callstatuses.date",
         order:"$callstatuses.confirmOrder",
         delivery:"$receivedstocks.incomingQuantity",
+        // status:"$receivedproducts.status"
       }
     }
   ])
