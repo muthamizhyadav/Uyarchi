@@ -111,7 +111,17 @@ const updaterandom_product = catchAsync(async (req, res) => {
 });
 
 const getSupplierBillsDetails1 = catchAsync(async (req, res) => {
-  const receivedProduct = await ReceivedProductService.getSupplierBillsDetails1(req.params.page);
+  const receivedProduct = await ReceivedProductService.getSupplierBillsDetails1(req.params.id, req.params.page);
+  res.send(receivedProduct);
+});
+
+const getAllWithPagination_billed_supplier1 = catchAsync(async (req, res) => {
+  let receivedProduct = await ReceivedProductService.getAllWithPaginationBilled_Supplier1(req.params.id, 'Billed');
+  res.send(receivedProduct);
+});
+
+const previousOrderdata = catchAsync(async (req, res) => {
+  let receivedProduct = await ReceivedProductService.previousOrderdata(req.params.id);
   res.send(receivedProduct);
 });
 module.exports = {
@@ -129,4 +139,6 @@ module.exports = {
   getSupplierDetailByGroupId,
   updaterandom_product,
   getSupplierBillsDetails1,
+  getAllWithPagination_billed_supplier1,
+  previousOrderdata,
 };

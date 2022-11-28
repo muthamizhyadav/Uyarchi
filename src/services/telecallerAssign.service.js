@@ -2085,7 +2085,7 @@ if(Da != 'null'){
   // } else {
   //   match = [{ Wardid: { $eq: id } }];
   // }
-  // console.log(match)
+  // console.log(capture)
   let data = await Shop.aggregate([
     {
       $match: {
@@ -2576,7 +2576,13 @@ if(Da != 'null'){
     //   },
     // },
   ]);
-  return { data: data, total: total.length, overall: allnoAssing.length, assignCount:total1.length};
+  let cap
+  if(uid != 'null'){
+     cap = total1.length
+  }else{
+     cap = 0 ;
+  }
+  return { data: data, total: total.length, overall: allnoAssing.length, assignCount:cap};
 };
 
 const getUserssalesmanWith_skiped = async (id) => {
