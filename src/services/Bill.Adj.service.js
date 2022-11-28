@@ -76,6 +76,9 @@ const getCustomer_bills = async (page) => {
               foreignField: 'shopId',
               pipeline: [
                 {
+                  $match: { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } }
+                },
+                {
                   $lookup: {
                     from: 'productorderclones',
                     localField: '_id',
