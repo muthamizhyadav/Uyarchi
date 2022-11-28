@@ -83,7 +83,7 @@ router.route('/getVendorShops/uyar-dial/:key').get(b2bShopCloneController.getVen
 
 // salesmanShops
 router
-  .route('/getNotAssignReassignSalesman/data/:zone/:id/:street/:page/:limit/:uid/:date')
+  .route('/getNotAssignReassignSalesman/data/:zone/:id/:street/:uid/:date')
   .get(b2bShopCloneController.getNotAssignSalesManData);
 router.route('/getShops/By/type/:id/:page').get(b2bShopCloneController.GetShopsByShopType);
 router.route('/getShops/By/type/reviews/:id/:page').get(b2bShopCloneController.GetShopsReviewsByShopType);

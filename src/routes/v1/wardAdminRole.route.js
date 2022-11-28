@@ -64,4 +64,9 @@ router.route('/getuser/target/byusers').get(authorization, wardAdminRoleControll
 // map view
 router.route('/get/Assign/shops/BySalesman').get(authorization, wardAdminRoleController.getAssign_bySalesman);
 
+// 26-11-2022
+router.route('/overall_Count_And_Data/:id').get(wardAdminRoleController.overall_Count_And_Data);
+router.route('/map1/:id').get(wardAdminRoleController.map1);
+router.route('/map2/:id').get(wardAdminRoleController.map2);
+router.route('/map3/:id').get(wardAdminRoleController.map3);
 module.exports = router;

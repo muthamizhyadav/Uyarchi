@@ -1675,6 +1675,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         da_long: 1,
         da_landmark: 1,
         Pincode: 1,
+        daStatus:1,
       },
     },
     { $skip: 10 * page },
@@ -2473,7 +2474,7 @@ const getVendorShops = async (key) => {
 
 // getnotAssignSalesmanData
 
-const getnotAssignSalesmanData = async (zone, id, street, page, limit, uid, date) => {
+const getnotAssignSalesmanData = async (zone, id, street, uid, date) => {
   let match;
   let zoneMatch;
   let wardMatch;
@@ -2639,12 +2640,12 @@ const getnotAssignSalesmanData = async (zone, id, street, page, limit, uid, date
     {
       $sort: { streetId: 1 },
     },
-    {
-      $skip: parseInt(limit) * parseInt(page),
-    },
-    {
-      $limit: parseInt(limit),
-    },
+    // {
+    //   $skip: parseInt(limit) * parseInt(page),
+    // },
+    // {
+    //   $limit: parseInt(limit),
+    // },
   ]);
   let temp = await Shop.aggregate([
     {

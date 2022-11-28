@@ -69,6 +69,7 @@ router.route('/getallmanage/issues').get(shopOrderController.getallmanageIssus);
 router.route('/getmanage/issues/byID').get(shopOrderController.getmanageIssus_byID);
 router.route('/undelivered/ordes/data').get(shopOrderController.UnDeliveredOrders)
 router.route('/getall/shoporder/ordered').get(shopOrderController.getall_ordered_shops)
+router.route('/getall/shoporder/approved').get(shopOrderController.get_approved_orders)
 
 
 module.exports = router;
