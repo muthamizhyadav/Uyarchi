@@ -2788,7 +2788,7 @@ if(Da != 'null'){
   ]);
   let cap
   // if(uid != 'null'){
-     cap = total1
+     cap = total1.length
   // }else{
     //  cap = 0 ;
   // }
