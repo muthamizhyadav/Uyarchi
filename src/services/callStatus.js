@@ -137,7 +137,7 @@ const getDataWithSupplierId = async (id, page) => {
         confirmcallstatus: 1,
         confirmprice: 1,
         exp_date: 1,
-        Expdate: { $ifNull: ['$Expdate', 'null'] },
+        ExpectedDate: { $ifNull: ['$Expdate', 'null'] },
         supplierContact: '$supplierData.primaryContactNumber',
         supplierName: '$supplierData.primaryContactName',
         productTitle: '$ProductData.productTitle',
