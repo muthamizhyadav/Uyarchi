@@ -5352,7 +5352,7 @@ const get_ward_by_orders = async (query) => {
         OrderCount:1
       },
     },
-
+    {$sort:{Pincode:-1}},
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
