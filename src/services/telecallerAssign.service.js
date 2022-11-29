@@ -2027,6 +2027,7 @@ const getnotAssignsalesmanOrderShops = async (zone,id, street, page, limit, uid,
   let streetMatch;
   let dastatusMatch;
   let pincodeMatch;
+  let daUser1;
   if(dastatus != 'null'){
     dastatusMatch = [{ daStatus: { $eq: dastatus } }];
   }else{
@@ -2076,6 +2077,14 @@ if(Da != 'null'){
 }else{
   // daUser = {$and:[{ active: { $eq: true } }]};
    daUser = [{ active: { $eq: true } }];
+}
+
+if(Da != 'null'){
+  // daUser1 = [{ DA_USER: { $eq: Da } }];
+  daUser1 ={$or:[{ $and: [{ fromSalesManId: { $eq: Da } }, { status: { $eq: 'Assign' } }] },{ $and: [{ salesManId: { $eq: Da } }, { status: { $eq: 'tempReassign' } }]}]}
+}else{
+  daUser1 = {$and:[{ active: { $eq: true } }]};
+  //  daUser1 = [{ active: { $eq: true } }];
 }
   // let match;
   // if (uid != 'null' && date == 'null') {
@@ -2550,26 +2559,25 @@ if(Da != 'null'){
         ],
       },
     },
+
     
 
-    // {
-    //   $lookup: {
-    //     from: 'streets',
-    //     localField: 'Strid',
-    //     foreignField: '_id',
-    //     pipeline:[
-    //       {
-    //         $match: {
-    //           $and: streetMatch,
-    //         },
-    //       },
-    //     ],
-    //     as: 'streets',
-    //   },
-    // },
-    // {
-    //   $unwind: '$streets',
-    // },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline:[
+          {
+            $match:daUser1
+          },
+        ],
+        as: 'salesmanshops',
+      },
+    },
+    {
+      $unwind: '$salesmanshops',
+    },
     // {
     //   $lookup: {
     //     from: 'wards',
@@ -2779,12 +2787,12 @@ if(Da != 'null'){
     },
   ]);
   let cap
-  if(uid != 'null'){
-     cap = total1.length
-  }else{
-     cap = 0 ;
-  }
-  return { data: data, total: total.length, overall: allnoAssing.length, assignCount:cap, lat:lat};
+  // if(uid != 'null'){
+     cap = total1
+  // }else{
+    //  cap = 0 ;
+  // }
+  return { total: total.length, overall: allnoAssing.length, assignCount:cap, lat:lat};
 };
 
 const getUserssalesmanWith_skiped = async (id) => {

@@ -1707,6 +1707,7 @@ const previousOrderdata = async (id) =>{
         date:"$callstatuses.date",
         order:"$callstatuses.confirmOrder",
         delivery:"$receivedstocks.incomingQuantity",
+        status:"$callstatuses.StockReceived",
         // status:"$receivedproducts.status"
       }
     }
