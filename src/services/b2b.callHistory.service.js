@@ -515,7 +515,13 @@ const getById = async (id) => {
 const getShop_pending = async (date, status, key, page, userId, userRole) => {
   let keys = { active: { $eq: true } };
   if (key != 'null') {
-    keys = { $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }] };
+    keys = {
+      $or: [
+        { SName: { $regex: key, $options: 'i' } },
+        { mobile: { $regex: key, $options: 'i' } },
+        { Pincode: { $regex: key, $options: 'i' } },
+      ],
+    };
   }
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
@@ -1069,7 +1075,13 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
   console.log(status);
   let keys = { active: { $eq: true } };
   if (key != 'null') {
-    keys = { $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }] };
+    keys = {
+      $or: [
+        { SName: { $regex: key, $options: 'i' } },
+        { mobile: { $regex: key, $options: 'i' } },
+        { Pincode: { $regex: key, $options: 'i' } },
+      ],
+    };
   }
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
@@ -1517,7 +1529,13 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
 const getShop_callback = async (date, status, key, page, userId, userRole) => {
   let keys = { active: { $eq: true } };
   if (key != 'null') {
-    keys = { $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }] };
+    keys = {
+      $or: [
+        { SName: { $regex: key, $options: 'i' } },
+        { mobile: { $regex: key, $options: 'i' } },
+        { Pincode: { $regex: key, $options: 'i' } },
+      ],
+    };
   }
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
@@ -1972,7 +1990,13 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
 const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
   let keys = { active: { $eq: true } };
   if (key != 'null') {
-    keys = { SName: { $regex: key, $options: 'i' } };
+    keys = {
+      $or: [
+        { SName: { $regex: key, $options: 'i' } },
+        { mobile: { $regex: key, $options: 'i' } },
+        { Pincode: { $regex: key, $options: 'i' } },
+      ],
+    };
   }
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
@@ -3003,7 +3027,13 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
   }
   let keys = { active: { $eq: true } };
   if (key != 'null') {
-    keys = { $or: [{ SName: { $regex: key, $options: 'i' } }, { mobile: { $regex: key, $options: 'i' } }] };
+    keys = {
+      $or: [
+        { SName: { $regex: key, $options: 'i' } },
+        { mobile: { $regex: key, $options: 'i' } },
+        { Pincode: { $regex: key, $options: 'i' } },
+      ],
+    };
   }
 
   let values;
