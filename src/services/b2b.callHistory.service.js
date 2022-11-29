@@ -296,8 +296,8 @@ const callingStatusreport = async (date) => {
   //   oldReschedule: oldReschedule,
   // };
   return {
-    success: true
-  }
+    success: true,
+  };
 };
 
 const getById = async (id) => {
@@ -603,7 +603,13 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
   values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ historydate: { $ne: date } }, { lapsed: { $ne: true } }, keys],
+        $and: [
+          { historydate: { $ne: date } },
+          { lapsed: { $ne: true } },
+          keys,
+          { Pincode: { $ne: null } },
+          { Pincode: { $ne: '' } },
+        ],
       },
     },
     { $sort: { historydate: -1, sorttime: -1 } },
@@ -818,10 +824,8 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         pipeline: [
           {
             $match: {
-              $and: [
-                { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }
-              ]
-            }
+              $and: [{ status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
+            },
           },
           {
             $lookup: {
@@ -860,7 +864,6 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
               ],
               as: 'productData',
             },
-
           },
           {
             $unwind: {
@@ -889,20 +892,20 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
           },
           {
             $project: {
-              orderpayments: "$orderpayments.price",
-              productData: "$productData.price",
+              orderpayments: '$orderpayments.price',
+              productData: '$productData.price',
               pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
-            }
+            },
           },
           {
             $group: {
               _id: null,
-              pendingAmount: { $sum: "$pendingAmount" }
-            }
-          }
+              pendingAmount: { $sum: '$pendingAmount' },
+            },
+          },
         ],
-        as: 'pending_amount'
-      }
+        as: 'pending_amount',
+      },
     },
     {
       $unwind: {
@@ -945,7 +948,7 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
         lastfiveorder: '$lastfiveorder',
-        pendingamount: "$pending_amount.pendingAmount",
+        pendingamount: '$pending_amount.pendingAmount',
       },
     },
     {
@@ -1154,7 +1157,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
   values = await Shop.aggregate([
     {
       $match: {
-        $and: [keys, { callingStatus: { $eq: status } }],
+        $and: [keys, { callingStatus: { $eq: status } }, { Pincode: { $ne: null } }, { Pincode: { $ne: '' } }],
       },
     },
 
@@ -1347,9 +1350,8 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         pipeline: [
           {
             $match: {
-              $and: [
-                { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }]
-            }
+              $and: [{ status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
+            },
           },
           {
             $lookup: {
@@ -1388,7 +1390,6 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
               ],
               as: 'productData',
             },
-
           },
           {
             $unwind: {
@@ -1417,20 +1418,20 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
           },
           {
             $project: {
-              orderpayments: "$orderpayments.price",
-              productData: "$productData.price",
+              orderpayments: '$orderpayments.price',
+              productData: '$productData.price',
               pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
-            }
+            },
           },
           {
             $group: {
               _id: null,
-              pendingAmount: { $sum: "$pendingAmount" }
-            }
-          }
+              pendingAmount: { $sum: '$pendingAmount' },
+            },
+          },
         ],
-        as: 'pending_amount'
-      }
+        as: 'pending_amount',
+      },
     },
     {
       $unwind: {
@@ -1472,7 +1473,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
         lastfiveorder: '$lastfiveorder',
-        pendingamount: "$pending_amount.pendingAmount",
+        pendingamount: '$pending_amount.pendingAmount',
       },
     },
     { $skip: 10 * page },
@@ -1605,7 +1606,14 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
   values = await Shop.aggregate([
     {
       $match: {
-        $and: [{ historydate: { $eq: date } }, keys, { callingStatus: { $eq: status } }, { lapsed: { $ne: true } }],
+        $and: [
+          { historydate: { $eq: date } },
+          keys,
+          { callingStatus: { $eq: status } },
+          { lapsed: { $ne: true } },
+          { Pincode: { $ne: null } },
+          { Pincode: { $ne: '' } },
+        ],
       },
     },
     { $sort: { historydate: -1, sorttime: -1 } },
@@ -1788,7 +1796,8 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         ],
         as: 'lastfiveorder',
       },
-    }, {
+    },
+    {
       $lookup: {
         from: 'shoporderclones',
         localField: '_id',
@@ -1796,9 +1805,8 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         pipeline: [
           {
             $match: {
-              $and: [
-                { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }]
-            }
+              $and: [{ status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
+            },
           },
           {
             $lookup: {
@@ -1837,7 +1845,6 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
               ],
               as: 'productData',
             },
-
           },
           {
             $unwind: {
@@ -1866,20 +1873,20 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
           },
           {
             $project: {
-              orderpayments: "$orderpayments.price",
-              productData: "$productData.price",
+              orderpayments: '$orderpayments.price',
+              productData: '$productData.price',
               pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
-            }
+            },
           },
           {
             $group: {
               _id: null,
-              pendingAmount: { $sum: "$pendingAmount" }
-            }
-          }
+              pendingAmount: { $sum: '$pendingAmount' },
+            },
+          },
         ],
-        as: 'pending_amount'
-      }
+        as: 'pending_amount',
+      },
     },
     {
       $unwind: {
@@ -1921,7 +1928,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
         lastfiveorder: '$lastfiveorder',
-        pendingamount: "$pending_amount.pendingAmount",
+        pendingamount: '$pending_amount.pendingAmount',
       },
     },
     { $skip: 10 * page },
@@ -2057,6 +2064,8 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
           { sortdate: { $gte: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD') } },
           keys,
           { callingStatus: { $eq: status } },
+          { Pincode: { $ne: null } },
+          { Pincode: { $ne: '' } },
         ],
       },
     },
@@ -2240,7 +2249,8 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         ],
         as: 'lastfiveorder',
       },
-    }, {
+    },
+    {
       $lookup: {
         from: 'shoporderclones',
         localField: '_id',
@@ -2248,9 +2258,8 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         pipeline: [
           {
             $match: {
-              $and: [
-                { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }]
-            }
+              $and: [{ status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
+            },
           },
           {
             $lookup: {
@@ -2289,7 +2298,6 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
               ],
               as: 'productData',
             },
-
           },
           {
             $unwind: {
@@ -2318,20 +2326,20 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
           },
           {
             $project: {
-              orderpayments: "$orderpayments.price",
-              productData: "$productData.price",
+              orderpayments: '$orderpayments.price',
+              productData: '$productData.price',
               pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
-            }
+            },
           },
           {
             $group: {
               _id: null,
-              pendingAmount: { $sum: "$pendingAmount" }
-            }
-          }
+              pendingAmount: { $sum: '$pendingAmount' },
+            },
+          },
         ],
-        as: 'pending_amount'
-      }
+        as: 'pending_amount',
+      },
     },
     {
       $unwind: {
@@ -2373,7 +2381,7 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         shoporderclones: '$shoporderclones',
         lapsedOrder: 1,
         lastfiveorder: '$lastfiveorder',
-        pendingamount: "$pending_amount.pendingAmount",
+        pendingamount: '$pending_amount.pendingAmount',
       },
     },
     { $skip: 10 * page },
@@ -3002,7 +3010,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
   values = await Shop.aggregate([
     {
       $match: {
-        $and: [keys],
+        $and: [keys, { Pincode: { $ne: null } }, { Pincode: { $ne: '' } }],
       },
     },
     // { $sort: { historydate: -1, sorttime: -1 } },
@@ -3214,9 +3222,8 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
         pipeline: [
           {
             $match: {
-              $and: [
-                { status: { $eq: "Delivered" } }, { statusOfBill: { $eq: "Pending" } }]
-            }
+              $and: [{ status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
+            },
           },
           {
             $lookup: {
@@ -3255,7 +3262,6 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
               ],
               as: 'productData',
             },
-
           },
           {
             $unwind: {
@@ -3284,20 +3290,20 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
           },
           {
             $project: {
-              orderpayments: "$orderpayments.price",
-              productData: "$productData.price",
+              orderpayments: '$orderpayments.price',
+              productData: '$productData.price',
               pendingAmount: { $round: { $subtract: ['$productData.price', '$orderpayments.price'] } },
-            }
+            },
           },
           {
             $group: {
               _id: null,
-              pendingAmount: { $sum: "$pendingAmount" }
-            }
-          }
+              pendingAmount: { $sum: '$pendingAmount' },
+            },
+          },
         ],
-        as: 'pending_amount'
-      }
+        as: 'pending_amount',
+      },
     },
     {
       $unwind: {
@@ -3340,8 +3346,7 @@ const getShop_lapsed = async (date, status, key, page, userId, userRole, faildst
         shoporderclonesun: '$shoporderclonesun',
         lapsedOrder: 1,
         lastfiveorder: '$lastfiveorder',
-        pendingamount: "$pending_amount.pendingAmount",
-
+        pendingamount: '$pending_amount.pendingAmount',
       },
     },
     { $skip: 10 * page },
