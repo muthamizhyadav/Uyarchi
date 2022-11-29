@@ -298,7 +298,7 @@ const adjustment_bill = async (id, userId) => {
   let shoporder = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ shopId: { $eq: id } }, { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } }, { statusOfBill: { $eq: 'Pending' } }],
+        $and: [{ shopId: { $eq: id } }, { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } }],
       },
     },
     {
@@ -500,7 +500,7 @@ const adjustment_bill_pay = async (id, userId, body) => {
         $and: [
           { shopId: { $eq: id } },
           { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } },
-          { statusOfBill: { $eq: 'Pending' } },
+          // { statusOfBill: { $eq: 'Pending' } },
           { _id: { $in: body.orders } },
         ],
       },
