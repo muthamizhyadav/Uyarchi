@@ -5059,7 +5059,7 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
 
 const get_approved_orders = async (query) => {
   //console.log(query);
-  let pincode = { Pincode: { $eq: parseInt(query.pincode) } };
+  let pincode = { $and: [{ Pincode: { $eq: parseInt(query.pincode) } }, { Wardid: { $eq: query.wardId } }] };
   //console.log(pincode);
 
   let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
@@ -5174,7 +5174,20 @@ const get_approved_orders = async (query) => {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
+        pipeline: [
+          { $match: { $and: [pincode] } },
+          {
+            $lookup: {
+              from: 'streets',
+              localField: 'Strid',
+              foreignField: '_id',
+              as: 'streets',
+            },
+          },
+          {
+            $unwind: '$streets',
+          },
+        ],
         as: 'b2bshopclones',
       },
     },
@@ -5246,6 +5259,11 @@ const get_approved_orders = async (query) => {
         SName: '$b2bshopclones.SName',
         mobile: '$b2bshopclones.mobile',
         address: '$b2bshopclones.address',
+        Pincode: '$b2bshopclones.Pincode',
+        slocality: '$b2bshopclones.streets.locality',
+        street: '$b2bshopclones.streets.street',
+        area: '$b2bshopclones.streets.area',
+        da_landmark: '$b2bshopclones.da_landmark',
         orderBy: '$b2busers.name',
         delivery_type: 1,
         devevery_mode: 1,
@@ -5732,6 +5750,7 @@ const get_ward_by_orders = async (query) => {
               _id: 1,
               ward: '$Wardid.ward',
               wardNo: '$Wardid.wardNo',
+              wardID: '$Wardid._id',
               SName: 1,
               Pincode: 1,
               zone: '$Wardid.zones.zone',
@@ -5753,11 +5772,12 @@ const get_ward_by_orders = async (query) => {
         wardNo: '$b2bshopclones.wardNo',
         zone: '$b2bshopclones.zone',
         zoneCode: '$b2bshopclones.zoneCode',
+        wardID: '$b2bshopclones.wardID',
       },
     },
     {
       $group: {
-        _id: { Pincode: '$Pincode', ward: '$ward', zone: '$zone' },
+        _id: { Pincode: '$Pincode', ward: '$ward', zone: '$zone', wardID: '$wardID' },
         OrderCount: { $sum: 1 },
       },
     },
@@ -5767,6 +5787,7 @@ const get_ward_by_orders = async (query) => {
         Pincode: '$_id.Pincode',
         ward: '$_id.ward',
         zone: '$_id.zone',
+        wardID: '$_id.wardID',
         OrderCount: 1,
       },
     },

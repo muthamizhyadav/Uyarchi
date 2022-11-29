@@ -868,6 +868,7 @@ const getSalesman = async (id) => {
         shopId: 1,
         ward: '$wardsData.ward',
         zone: '$zonesData.zone',
+        dataApproved:"$b2bshopclonesData.status",
         status: 1,
         reAssignDate: 1,
         reAssignTime: 1,
