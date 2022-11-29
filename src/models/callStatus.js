@@ -13,6 +13,12 @@ const callStatusSchema = mongoose.Schema({
   strechedUpto: {
     type: Number,
   },
+  Expdate: {
+    type: String,
+  },
+  Type: {
+    type: String
+  },
   price: {
     type: Number,
   },
@@ -87,14 +93,14 @@ const callStatusSchema = mongoose.Schema({
   order_Type: {
     type: String,
   },
-  TotalAmount:{
-    type:Number,
+  TotalAmount: {
+    type: Number,
   },
-  SuddenCreatedBy:{
-    type:String,
+  SuddenCreatedBy: {
+    type: String,
   },
-  SuddenStatus:{
-    type:String,
+  SuddenStatus: {
+    type: String,
   },
 });
 

@@ -366,6 +366,10 @@ const get_approved_orders = catchAsync(async (req, res) => {
   res.send(data)
 })
 
+const get_ward_by_orders = catchAsync(async (req, res) => {
+  const data = await shopOrderService.get_ward_by_orders(req.query)
+  res.send(data)
+})
 
 module.exports = {
   vieworderbill_byshop,
@@ -422,5 +426,6 @@ module.exports = {
   getmanageIssus_byID,
   UnDeliveredOrders,
   getall_ordered_shops,
-  get_approved_orders
+  get_approved_orders,
+  get_ward_by_orders
 };
