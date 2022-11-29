@@ -169,13 +169,25 @@ const getCustomer_bills = async (page) => {
       },
     },
     {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops'
+    },
+    {
       $project: {
         _id: 1,
         shopId: 1,
         un_Billed_amt: 1,
         payment_method: 1,
         date: 1,
-        shopName: '$shopdata.SName',
+        shopName: '$shops.SName',
+        shopId: '$shops._id',
         totalAmount: { $ifNull: ['$shopdata.shoporder.totalOrdered', 0] },
         paidAmt: { $ifNull: ['$shopdata.shoporder.pendingAmt', 0] },
         totalPendingAmount: { $round: [{ $subtract: [{ $ifNull: ['$shopdata.shoporder.totalOrdered', 0] }, { $ifNull: ['$shopdata.shoporder.pendingAmt', 0] }] }] }
