@@ -863,7 +863,8 @@ const getShopNameCloneWithPagination = async (page, userId) => {
 
 const getAllShopOrder = async (UserRole) => {
   let value;
-  if (UserRole == '') //console.log(UserRole);
+  if (UserRole == '')
+    //console.log(UserRole);
     return ShopOrder.find();
 };
 
@@ -2679,7 +2680,7 @@ const getBills_DetailsByshop = async (shopId, page) => {
       $match: { $and: [{ shopId: shopId }] },
     },
     {
-      $match: { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } }
+      $match: { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } },
     },
     {
       $lookup: {
@@ -2792,8 +2793,8 @@ const getBills_DetailsByshop = async (shopId, page) => {
     },
     {
       $match: {
-        totalPendingAmount: { $gt: 0 }
-      }
+        totalPendingAmount: { $gt: 0 },
+      },
     },
     {
       $skip: 10 * page,
@@ -2920,8 +2921,8 @@ const getBills_DetailsByshop = async (shopId, page) => {
     },
     {
       $match: {
-        totalPendingAmount: { $gt: 0 }
-      }
+        totalPendingAmount: { $gt: 0 },
+      },
     },
   ]);
   let shops = await BillAdj.findOne({ shopId: shopId });
@@ -3991,14 +3992,12 @@ const getPaymenthistory = async (id) => {
 };
 
 const getallmanageIssus = async (query) => {
-  let page = query.page == null || query.page == "" || query.page == 'null' ? 0 : query.page;
+  let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
   let issues = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { raiseissue: { $eq: true } }
-        ]
-      }
+        $and: [{ raiseissue: { $eq: true } }],
+      },
     },
     {
       $lookup: {
@@ -4043,7 +4042,7 @@ const getallmanageIssus = async (query) => {
               issueDate: 1,
               issuediscription: 1,
               issuequantity: 1,
-              issuetype: 1
+              issuetype: 1,
             },
           },
         ],
@@ -4094,12 +4093,11 @@ const getallmanageIssus = async (query) => {
         type: '$shopData.type',
         SName: '$shopData.SName',
         name: '$b2busersData.name',
-        productOrderdata: "$productOrderdata",
+        productOrderdata: '$productOrderdata',
         statusActionArray: 1,
         delivered_date: 1,
         reason: 1,
-        status: 1
-
+        status: 1,
       },
     },
     { $skip: 10 * page },
@@ -4109,25 +4107,19 @@ const getallmanageIssus = async (query) => {
   let total = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { raiseissue: { $eq: true } }
-        ]
-      }
+        $and: [{ raiseissue: { $eq: true } }],
+      },
     },
   ]);
   return { value: issues, total: total.length };
 };
 
-
 const getmanageIssus_byID = async (query) => {
   let issues = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          { raiseissue: { $eq: true } },
-          { _id: { $eq: query.id } }
-        ]
-      }
+        $and: [{ raiseissue: { $eq: true } }, { _id: { $eq: query.id } }],
+      },
     },
     {
       $lookup: {
@@ -4171,7 +4163,7 @@ const getmanageIssus_byID = async (query) => {
               issueDate: 1,
               issuediscription: 1,
               issuequantity: 1,
-              issuetype: 1
+              issuetype: 1,
             },
           },
         ],
@@ -4221,7 +4213,7 @@ const getmanageIssus_byID = async (query) => {
               issueDate: 1,
               issuediscription: 1,
               issuequantity: 1,
-              issuetype: 1
+              issuetype: 1,
             },
           },
         ],
@@ -4272,15 +4264,13 @@ const getmanageIssus_byID = async (query) => {
         type: '$shopData.type',
         SName: '$shopData.SName',
         name: '$b2busersData.name',
-        productOrderdata: "$productOrderdata",
+        productOrderdata: '$productOrderdata',
         statusActionArray: 1,
         delivered_date: 1,
         reason: 1,
         status: 1,
-        allProducts: "$allProducts",
-        issueProducts: "$issueProducts",
-
-
+        allProducts: '$allProducts',
+        issueProducts: '$issueProducts',
       },
     },
   ]);
@@ -4289,7 +4279,6 @@ const getmanageIssus_byID = async (query) => {
   }
   return issues[0];
 };
-
 
 const UnDeliveredOrders = async (query) => {
   let dateMatch = { active: true };
@@ -4306,7 +4295,7 @@ const UnDeliveredOrders = async (query) => {
     dateMatch = { $and: [{ createdDate: { $gte: startdate } }, { createdDate: { $lte: enddata } }] };
   }
   if (de != null && de != '') {
-    deMacth = { $and: [{ deliveryExecutiveId: { $eq: de } }] }
+    deMacth = { $and: [{ deliveryExecutiveId: { $eq: de } }] };
   }
   if (search != null && search != '') {
     searchMatch = {
@@ -4315,12 +4304,12 @@ const UnDeliveredOrders = async (query) => {
   }
   let values = await ShopOrderClone.aggregate([
     {
-      $match: { statusActionArray: { $elemMatch: { status: { $in: ['unDelivered'] } } } }
+      $match: { statusActionArray: { $elemMatch: { status: { $in: ['unDelivered'] } } } },
     },
     {
       $addFields: {
-        createdDate: { $dateToString: { date: "$created", format: "%Y-%m-%d" } },
-      }
+        createdDate: { $dateToString: { date: '$created', format: '%Y-%m-%d' } },
+      },
     },
     {
       $match: { $and: [dateMatch, deMacth] },
@@ -4333,7 +4322,7 @@ const UnDeliveredOrders = async (query) => {
         foreignField: '_id',
         pipeline: [
           {
-            $match: { $and: [searchMatch] }
+            $match: { $and: [searchMatch] },
           },
           {
             $lookup: {
@@ -4365,24 +4354,25 @@ const UnDeliveredOrders = async (query) => {
         from: 'orderassigns',
         localField: '_id',
         foreignField: 'orderId',
-        pipeline: [{
-          $sort: { created: -1 }
-        }, { $limit: 1 },
-        {
-          $lookup: {
-            from: 'wardadmingroups',
-            localField: 'wardAdminGroupID',
-            foreignField: '_id',
-            as: 'group',
+        pipeline: [
+          {
+            $sort: { created: -1 },
           },
-        },
-        { $unwind: '$group' },
+          { $limit: 1 },
+          {
+            $lookup: {
+              from: 'wardadmingroups',
+              localField: 'wardAdminGroupID',
+              foreignField: '_id',
+              as: 'group',
+            },
+          },
+          { $unwind: '$group' },
         ],
         as: 'orderassign',
       },
     },
     {
-
       $unwind: {
         path: '$orderassign',
         preserveNullAndEmptyArrays: true,
@@ -4495,19 +4485,19 @@ const UnDeliveredOrders = async (query) => {
         // users: '$users',
         DE: '$users.name',
         deliveryExecutiveId: 1,
-      }
+      },
     },
     { $skip: 10 * page },
     { $limit: 10 },
-  ])
+  ]);
   let total = await ShopOrderClone.aggregate([
     {
-      $match: { statusActionArray: { $elemMatch: { status: { $in: ['unDelivered'] } } } }
+      $match: { statusActionArray: { $elemMatch: { status: { $in: ['unDelivered'] } } } },
     },
     {
       $addFields: {
-        createdDate: { $dateToString: { date: "$created", format: "%Y-%m-%d" } },
-      }
+        createdDate: { $dateToString: { date: '$created', format: '%Y-%m-%d' } },
+      },
     },
     {
       $match: { $and: [dateMatch, deMacth] },
@@ -4519,7 +4509,7 @@ const UnDeliveredOrders = async (query) => {
         foreignField: '_id',
         pipeline: [
           {
-            $match: { $and: [searchMatch] }
+            $match: { $and: [searchMatch] },
           },
           {
             $lookup: {
@@ -4622,10 +4612,9 @@ const UnDeliveredOrders = async (query) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-  ])
-  return { values: values, total: total.length }
-}
-
+  ]);
+  return { values: values, total: total.length };
+};
 
 const getall_ordered_shops = async (query) => {
   //console.log(query)
@@ -4636,7 +4625,7 @@ const getall_ordered_shops = async (query) => {
   let deliveryMode = { active: true };
   let today = moment().format('YYYY-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
-  let dateMacth = { active: true }
+  let dateMacth = { active: true };
   //console.log(today)
   //console.log(yesterday)
   if (query.status == 'Approved') {
@@ -4650,42 +4639,36 @@ const getall_ordered_shops = async (query) => {
           'Order Picked',
           'Delivery start',
           'UnDelivered',
-          'Delivery Completed'
-        ]
-      }
-    }
+          'Delivery Completed',
+        ],
+      },
+    };
   }
   if (query.deliverytype == 'all') {
     deliveryType = {
       $or: [
         {
-          $and: [
-            { delivery_type: { $eq: 'IMD' } },
-            { date: { $eq: today } }
-          ]
+          $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
         },
         {
-          $and: [
-            { delivery_type: { $eq: 'NDD' } },
-            { date: { $eq: yesterday } }
-          ]
-        }
-      ]
-    }
-    dateMacth = { active: true }
+          $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+        },
+      ],
+    };
+    dateMacth = { active: true };
   }
   if (query.deliverytype == 'IMD' || query.deliverytype == 'NDD') {
-    dateMacth = { date: { $in: [today] } }
+    dateMacth = { date: { $in: [today] } };
   }
   if (query.deliverytype == 'YOD') {
-    dateMacth = { date: { $in: [yesterday] } }
-    deliveryType = { delivery_type: { $eq: "NDD" } };
+    dateMacth = { date: { $in: [yesterday] } };
+    deliveryType = { delivery_type: { $eq: 'NDD' } };
   }
   if (query.timeslot != 'all') {
-    timeSlot = { time_of_delivery: { $eq: query.timeslot } }
+    timeSlot = { time_of_delivery: { $eq: query.timeslot } };
   }
   if (query.deliverymode != 'all') {
-    deliveryMode = { devevery_mode: { $eq: query.deliverymode } }
+    deliveryMode = { devevery_mode: { $eq: query.deliverymode } };
   }
 
   let values = await ShopOrderClone.aggregate([
@@ -4706,7 +4689,7 @@ const getall_ordered_shops = async (query) => {
             },
           },
           {
-            $unwind: "$products"
+            $unwind: '$products',
           },
           {
             $project: {
@@ -4722,9 +4705,9 @@ const getall_ordered_shops = async (query) => {
               quantity: 1,
               status: 1,
               unit: 1,
-              productTitle: "$products.productTitle"
-            }
-          }
+              productTitle: '$products.productTitle',
+            },
+          },
         ],
         as: 'productOrderdata',
       },
@@ -4763,7 +4746,7 @@ const getall_ordered_shops = async (query) => {
       },
     },
     {
-      $unwind: "$b2bshopclones"
+      $unwind: '$b2bshopclones',
     },
     {
       $lookup: {
@@ -4826,37 +4809,31 @@ const getall_ordered_shops = async (query) => {
         status: 1,
         created: 1,
         OrderId: 1,
-        product: "$productOrderdata",
-        SName: "$b2bshopclones.SName",
-        mobile: "$b2bshopclones.mobile",
-        address: "$b2bshopclones.address",
-        orderBy: "$b2busers.name",
+        product: '$productOrderdata',
+        SName: '$b2bshopclones.SName',
+        mobile: '$b2bshopclones.mobile',
+        address: '$b2bshopclones.address',
+        orderBy: '$b2busers.name',
         delivery_type: 1,
         devevery_mode: 1,
         time_of_delivery: 1,
-        paidAmount: "$orderpayments.amount",
-        subtotal: "$productData.price"
-      }
+        paidAmount: '$orderpayments.amount',
+        subtotal: '$productData.price',
+      },
     },
     { $skip: 10 * page },
-    { $limit: 10 }
-  ])
-
-
-
+    { $limit: 10 },
+  ]);
 
   let total = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
     { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
-  ])
+  ]);
 
-
-  let counts = await get_order_counts(statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth)
+  let counts = await get_order_counts(statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth);
 
   return { value: values, total: total.length, counts: counts };
-
-}
-
+};
 
 const get_order_counts = async (status, deliverytype, timeslot, deliverymode, dateMacth) => {
   let today = moment().format('YYYY-MM-DD');
@@ -4865,51 +4842,39 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
     {
       $match: {
         $and: [
-          { status: { $eq: "ordered" } },
+          { status: { $eq: 'ordered' } },
           {
             $or: [
               {
-                $and: [
-                  { delivery_type: { $eq: 'IMD' } },
-                  { date: { $eq: today } }
-                ]
+                $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
               },
               {
-                $and: [
-                  { delivery_type: { $eq: 'NDD' } },
-                  { date: { $eq: yesterday } }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    }
+                $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+              },
+            ],
+          },
+        ],
+      },
+    },
   ]);
   let Acknowledgedstatus = await ShopOrderClone.aggregate([
     {
       $match: {
         $and: [
-          { status: { $eq: "Acknowledged" } },
+          { status: { $eq: 'Acknowledged' } },
           {
             $or: [
               {
-                $and: [
-                  { delivery_type: { $eq: 'IMD' } },
-                  { date: { $eq: today } }
-                ]
+                $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
               },
               {
-                $and: [
-                  { delivery_type: { $eq: 'NDD' } },
-                  { date: { $eq: yesterday } }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    }
+                $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+              },
+            ],
+          },
+        ],
+      },
+    },
   ]);
   let Approvedstatus = await ShopOrderClone.aggregate([
     {
@@ -4925,62 +4890,49 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
                 'Order Picked',
                 'Delivery start',
                 'UnDelivered',
-                'Delivery Completed'
-              ]
-            }
+                'Delivery Completed',
+              ],
+            },
           },
           {
             $or: [
               {
-                $and: [
-                  { delivery_type: { $eq: 'IMD' } },
-                  { date: { $eq: today } }
-                ]
+                $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
               },
               {
-                $and: [
-                  { delivery_type: { $eq: 'NDD' } },
-                  { date: { $eq: yesterday } }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    }
+                $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+              },
+            ],
+          },
+        ],
+      },
+    },
   ]);
   let rejectstatus = await ShopOrderClone.aggregate([
     {
       $match: {
         $and: [
-          { status: { $eq: "Rejected" } },
+          { status: { $eq: 'Rejected' } },
           {
             $or: [
               {
-                $and: [
-                  { delivery_type: { $eq: 'IMD' } },
-                  { date: { $eq: today } }
-                ]
+                $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
               },
               {
-                $and: [
-                  { delivery_type: { $eq: 'NDD' } },
-                  { date: { $eq: yesterday } }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    }
+                $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+              },
+            ],
+          },
+        ],
+      },
+    },
   ]);
   let orders = {
     ordered: orderstatus.length,
     Acknowledged: Acknowledgedstatus.length,
     Approved: Approvedstatus.length,
     Rejected: rejectstatus.length,
-  }
-
+  };
 
   // Delivery type
   let delevery_all = await ShopOrderClone.aggregate([
@@ -4993,238 +4945,158 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
           {
             $or: [
               {
-                $and: [
-                  { delivery_type: { $eq: 'IMD' } },
-                  { date: { $eq: today } }
-                ]
+                $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
               },
               {
-                $and: [
-                  { delivery_type: { $eq: 'NDD' } },
-                  { date: { $eq: yesterday } }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    }
+                $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+              },
+            ],
+          },
+        ],
+      },
+    },
   ]);
   let delevery_imd = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          status,
-          timeslot,
-          deliverymode,
-          { delivery_type: { $eq: 'IMD' } },
-          { date: { $eq: today } }
-        ]
-      }
-    }
+        $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
+      },
+    },
   ]);
   let delevery_yod = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          status,
-          timeslot,
-          deliverymode,
-          { delivery_type: { $eq: 'NDD' } },
-          { date: { $eq: yesterday } }
-        ]
-      }
-    }
+        $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+      },
+    },
   ]);
 
   let delevery_ndd = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          status,
-          timeslot,
-          deliverymode,
-          { delivery_type: { $eq: 'NDD' } },
-          { date: { $eq: today } }
-        ]
-      }
-    }
+        $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'NDD' } }, { date: { $eq: today } }],
+      },
+    },
   ]);
   let deliveryType = {
     all: delevery_all.length,
     IMD: delevery_imd.length,
     YOD: delevery_yod.length,
-    NDD: delevery_ndd.length
-  }
+    NDD: delevery_ndd.length,
+  };
 
   //  Time Slots
 
   let time_all = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          status,
-          deliverytype,
-          deliverymode,
-          dateMacth
-        ]
-      }
-    }
+        $and: [status, deliverytype, deliverymode, dateMacth],
+      },
+    },
   ]);
   let time_5_6 = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          status,
-          deliverytype,
-          deliverymode,
-          dateMacth,
-          { time_of_delivery: { $eq: "5-7" } },
-        ]
-      }
-    }
+        $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '5-7' } }],
+      },
+    },
   ]);
   let time_7_10 = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          status,
-          deliverytype,
-          deliverymode,
-          dateMacth,
-          { time_of_delivery: { $eq: "7-10" } },
-        ]
-      }
-    }
+        $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '7-10' } }],
+      },
+    },
   ]);
   let time_2_4 = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          status,
-          deliverytype,
-          deliverymode,
-          dateMacth,
-          { time_of_delivery: { $eq: "14-16" } },
-        ]
-      }
-    }
+        $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '14-16' } }],
+      },
+    },
   ]);
 
-
-
   let timeSlots = {
-    'all': time_all.length,
+    all: time_all.length,
     '5-7': time_5_6.length,
     '7-10': time_7_10.length,
-    '14-16': time_2_4.length
-  }
+    '14-16': time_2_4.length,
+  };
 
   // Delivery Mode
-
 
   let delivery_mode_all = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          status,
-          deliverytype,
-          timeslot,
-          dateMacth
-        ]
-      }
-    }
+        $and: [status, deliverytype, timeslot, dateMacth],
+      },
+    },
   ]);
   let delivery_mode_sp = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          status,
-          deliverytype,
-          timeslot,
-          { devevery_mode: { $eq: "SP" } },
-          dateMacth
-        ]
-      }
-    }
+        $and: [status, deliverytype, timeslot, { devevery_mode: { $eq: 'SP' } }, dateMacth],
+      },
+    },
   ]);
   let delivery_mode_de = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [
-          status,
-          deliverytype,
-          timeslot,
-          { devevery_mode: { $eq: "DE" } },
-          dateMacth
-        ]
-      }
-    }
+        $and: [status, deliverytype, timeslot, { devevery_mode: { $eq: 'DE' } }, dateMacth],
+      },
+    },
   ]);
 
-
-
-
   let deliveryMode = {
-    'all': delivery_mode_all.length,
-    'SP': delivery_mode_sp.length,
-    'DE': delivery_mode_de.length,
-  }
+    all: delivery_mode_all.length,
+    SP: delivery_mode_sp.length,
+    DE: delivery_mode_de.length,
+  };
 
-
-  return { deliveryType: deliveryType, deliveryMode: deliveryMode, timeSlots: timeSlots, orders: orders }
-
-}
+  return { deliveryType: deliveryType, deliveryMode: deliveryMode, timeSlots: timeSlots, orders: orders };
+};
 
 const get_approved_orders = async (query) => {
-
   //console.log(query)
   let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
   let statusMatch = {
     status: {
-      $in: ['Approved',
-        'Modified',]
-    }
+      $in: ['Approved', 'Modified'],
+    },
   };
   let deliveryType = { delivery_type: { $eq: query.deliverytype } };
   let timeSlot = { active: true };
   let deliveryMode = { active: true };
   let today = moment().format('YYYY-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
-  let dateMacth = { active: true }
+  let dateMacth = { active: true };
   //console.log(today)
   //console.log(yesterday)
   if (query.deliverytype == 'all') {
     deliveryType = {
       $or: [
         {
-          $and: [
-            { delivery_type: { $eq: 'IMD' } },
-            { date: { $eq: today } }
-          ]
+          $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
         },
         {
-          $and: [
-            { delivery_type: { $eq: 'NDD' } },
-            { date: { $eq: yesterday } }
-          ]
-        }
-      ]
-    }
-    dateMacth = { active: true }
+          $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+        },
+      ],
+    };
+    dateMacth = { active: true };
   }
   if (query.deliverytype == 'IMD' || query.deliverytype == 'NDD') {
-    dateMacth = { date: { $in: [today] } }
+    dateMacth = { date: { $in: [today] } };
   }
   if (query.deliverytype == 'YOD') {
-    dateMacth = { date: { $in: [yesterday] } }
-    deliveryType = { delivery_type: { $eq: "NDD" } };
+    dateMacth = { date: { $in: [yesterday] } };
+    deliveryType = { delivery_type: { $eq: 'NDD' } };
   }
   if (query.timeslot != 'all') {
-    timeSlot = { time_of_delivery: { $eq: query.timeslot } }
+    timeSlot = { time_of_delivery: { $eq: query.timeslot } };
   }
   if (query.deliverymode != 'all') {
-    deliveryMode = { devevery_mode: { $eq: query.deliverymode } }
+    deliveryMode = { devevery_mode: { $eq: query.deliverymode } };
   }
 
   let values = await ShopOrderClone.aggregate([
@@ -5245,7 +5117,7 @@ const get_approved_orders = async (query) => {
             },
           },
           {
-            $unwind: "$products"
+            $unwind: '$products',
           },
           {
             $project: {
@@ -5261,9 +5133,9 @@ const get_approved_orders = async (query) => {
               quantity: 1,
               status: 1,
               unit: 1,
-              productTitle: "$products.productTitle"
-            }
-          }
+              productTitle: '$products.productTitle',
+            },
+          },
         ],
         as: 'productOrderdata',
       },
@@ -5302,7 +5174,7 @@ const get_approved_orders = async (query) => {
       },
     },
     {
-      $unwind: "$b2bshopclones"
+      $unwind: '$b2bshopclones',
     },
     {
       $lookup: {
@@ -5365,38 +5237,127 @@ const get_approved_orders = async (query) => {
         status: 1,
         created: 1,
         OrderId: 1,
-        product: "$productOrderdata",
-        SName: "$b2bshopclones.SName",
-        mobile: "$b2bshopclones.mobile",
-        address: "$b2bshopclones.address",
-        orderBy: "$b2busers.name",
+        product: '$productOrderdata',
+        SName: '$b2bshopclones.SName',
+        mobile: '$b2bshopclones.mobile',
+        address: '$b2bshopclones.address',
+        orderBy: '$b2busers.name',
         delivery_type: 1,
         devevery_mode: 1,
         time_of_delivery: 1,
-        paidAmount: "$orderpayments.amount",
-        subtotal: "$productData.price"
-      }
+        paidAmount: '$orderpayments.amount',
+        subtotal: '$productData.price',
+      },
     },
     { $skip: 10 * page },
-    { $limit: 10 }
-  ])
-
-
-
+    { $limit: 10 },
+  ]);
 
   let total = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
     { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
-  ])
+  ]);
 
-
-  let counts = await get_order_counts(statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth)
+  let counts = await get_order_counts(statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth);
 
   return { value: values, total: total.length, counts: counts };
+};
 
+const get_ward_by_orders = async (query) => {
+  let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
 
+  let values = await ShopOrderClone.aggregate([
+    { $sort: { created: -1 } },
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $in: ['Approved', 'Modified'],
+            },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'wards',
+              localField: 'Wardid',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'zones',
+                    localField: 'zoneId',
+                    foreignField: '_id',
+                    as: 'zones',
+                  },
+                },
+                {
+                  $unwind: '$zones',
+                },
+              ],
+              as: 'Wardid',
+            },
+          },
+          {
+            $unwind: '$Wardid',
+          },
+          {
+            $project: {
+              _id: 1,
+              ward: '$Wardid.ward',
+              wardNo: '$Wardid.wardNo',
+              SName: 1,
+              Pincode: 1,
+              zone: '$Wardid.zones.zone',
+              zoneCode: '$Wardid.zones.zoneCode',
+            },
+          },
+        ],
+        as: 'b2bshopclones',
+      },
+    },
+    {
+      $unwind: '$b2bshopclones',
+    },
+    {
+      $project: {
+        _id: 1,
+        Pincode: '$b2bshopclones.Pincode',
+        ward: '$b2bshopclones.ward',
+        wardNo: '$b2bshopclones.wardNo',
+        zone: '$b2bshopclones.zone',
+        zoneCode: '$b2bshopclones.zoneCode',
+      },
+    },
+    {
+      $group: {
+        _id: { Pincode: '$Pincode', ward: '$ward', zone: '$zone' },
+        OrderCount: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: '',
+        Pincode: '$_id.Pincode',
+        ward: '$_id.ward',
+        zone: '$_id.zone',
+        OrderCount:1
+      },
+    },
 
-}
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  return values;
+};
 
 module.exports = {
   // product
@@ -5456,5 +5417,6 @@ module.exports = {
   getmanageIssus_byID,
   UnDeliveredOrders,
   getall_ordered_shops,
-  get_approved_orders
+  get_approved_orders,
+  get_ward_by_orders,
 };
