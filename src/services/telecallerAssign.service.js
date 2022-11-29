@@ -2071,9 +2071,11 @@ if(uid != 'null' &&  date == 'null'){
   match = [{ active: { $eq: true } }];
 }
 if(Da != 'null'){
-  daUser ={$or:[{ $and: [{ fromSalesManId: { $eq: Da } }, { status: { $eq: 'Assign' } }] },{ $and: [{ salesManId: { $eq: Da } }, { status: { $eq: 'tempReassign' } }]}]}
+  daUser = [{ DA_USER: { $eq: Da } }];
+  // daUser ={$or:[{ $and: [{ fromSalesManId: { $eq: Da } }, { status: { $eq: 'Assign' } }] },{ $and: [{ salesManId: { $eq: Da } }, { status: { $eq: 'tempReassign' } }]}]}
 }else{
-  daUser = {$and:[{ active: { $eq: true } }]};
+  // daUser = {$and:[{ active: { $eq: true } }]};
+   daUser = [{ active: { $eq: true } }];
 }
   // let match;
   // if (uid != 'null' && date == 'null') {
@@ -2107,27 +2109,27 @@ if(Da != 'null'){
         $and: pincodeMatch,
       },
     },
-    // {
-    //   $match: {
-    //     $and: daUser,
-    //   },
-    // },
     {
-      $lookup: {
-        from: 'salesmanshops',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline:[
-          {
-            $match:daUser
-          },
-        ],
-        as: 'salesmanshops',
+      $match: {
+        $and: daUser,
       },
     },
-    {
-      $unwind: '$salesmanshops',
-    },
+    // {
+    //   $lookup: {
+    //     from: 'salesmanshops',
+    //     localField: '_id',
+    //     foreignField: 'shopId',
+    //     pipeline:[
+    //       {
+    //         $match:daUser
+    //       },
+    //     ],
+    //     as: 'salesmanshops',
+    //   },
+    // },
+    // {
+    //   $unwind: '$salesmanshops',
+    // },
     // {
     //   $match: {
     //     $or: [
@@ -2263,27 +2265,27 @@ if(Da != 'null'){
         $and: pincodeMatch,
       },
     },
-    {
-      $lookup: {
-        from: 'salesmanshops',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline:[
-          {
-            $match:daUser
-          },
-        ],
-        as: 'salesmanshops',
-      },
-    },
-    {
-      $unwind: '$salesmanshops',
-    },
     // {
-    //   $match: {
-    //     $and: daUser,
+    //   $lookup: {
+    //     from: 'salesmanshops',
+    //     localField: '_id',
+    //     foreignField: 'shopId',
+    //     pipeline:[
+    //       {
+    //         $match:daUser
+    //       },
+    //     ],
+    //     as: 'salesmanshops',
     //   },
     // },
+    // {
+    //   $unwind: '$salesmanshops',
+    // },
+    {
+      $match: {
+        $and: daUser,
+      },
+    },
     // {
     //   $match: {
     //     $or: [
@@ -2399,27 +2401,27 @@ if(Da != 'null'){
         $and: pincodeMatch,
       },
     },
-    // {
-    //   $match: {
-    //     $and: daUser,
-    //   },
-    // },
     {
-      $lookup: {
-        from: 'salesmanshops',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline:[
-          {
-            $match:daUser
-          },
-        ],
-        as: 'salesmanshops',
+      $match: {
+        $and: daUser,
       },
     },
-    {
-      $unwind: '$salesmanshops',
-    },
+    // {
+    //   $lookup: {
+    //     from: 'salesmanshops',
+    //     localField: '_id',
+    //     foreignField: 'shopId',
+    //     pipeline:[
+    //       {
+    //         $match:daUser
+    //       },
+    //     ],
+    //     as: 'salesmanshops',
+    //   },
+    // },
+    // {
+    //   $unwind: '$salesmanshops',
+    // },
     // {
     //   $match: {
     //     $or: [
@@ -2647,27 +2649,27 @@ if(Da != 'null'){
         $and: pincodeMatch,
       },
     },
-    // {
-    //   $match: {
-    //     $and: daUser,
-    //   },
-    // },
     {
-      $lookup: {
-        from: 'salesmanshops',
-        localField: '_id',
-        foreignField: 'shopId',
-        pipeline:[
-          {
-            $match:daUser
-          },
-        ],
-        as: 'salesmanshops',
+      $match: {
+        $and: daUser,
       },
     },
-    {
-      $unwind: '$salesmanshops',
-    },
+    // {
+    //   $lookup: {
+    //     from: 'salesmanshops',
+    //     localField: '_id',
+    //     foreignField: 'shopId',
+    //     pipeline:[
+    //       {
+    //         $match:daUser
+    //       },
+    //     ],
+    //     as: 'salesmanshops',
+    //   },
+    // },
+    // {
+    //   $unwind: '$salesmanshops',
+    // },
     // {
     //   $match: {
     //     $or: [
