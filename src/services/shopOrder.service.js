@@ -5059,7 +5059,7 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
 
 const get_approved_orders = async (query) => {
   //console.log(query);
-  let pincode = { Pincode: { $eq: parseInt(query.pincode) } };
+  let pincode = { $and: [{ Pincode: { $eq: parseInt(query.pincode) } }, { Wardid: { $eq: query.wardId } }] };
   //console.log(pincode);
 
   let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
