@@ -2149,6 +2149,7 @@ const getnotAssignsalesmanOrderShops = async (zone, id, street, page, limit, uid
       ],
     };
   } else {
+    ;
     daUser1 = {
       $and: [
         { active: { $eq: true } },
@@ -2852,7 +2853,7 @@ const getnotAssignsalesmanOrderShops = async (zone, id, street, page, limit, uid
   ]);
   let cap;
   // if(uid != 'null'){
-  cap = total1;
+  cap = total1.length;
   // }else{
   //  cap = 0 ;
   // }
@@ -2861,7 +2862,7 @@ const getnotAssignsalesmanOrderShops = async (zone, id, street, page, limit, uid
     total: total.length,
     overall: allnoAssing.length,
     assignCount: cap,
-    assignCountss: cap.length,
+    // assignCountss: cap.length,
     lat: lat,
   };
 };
