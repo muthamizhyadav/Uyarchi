@@ -2072,8 +2072,10 @@ if(uid != 'null' &&  date == 'null'){
 }
 if(Da != 'null'){
   daUser = [{ DA_USER: { $eq: Da } }];
+  // daUser ={$or:[{ $and: [{ fromSalesManId: { $eq: Da } }, { status: { $eq: 'Assign' } }] },{ $and: [{ salesManId: { $eq: Da } }, { status: { $eq: 'tempReassign' } }]}]}
 }else{
-  daUser = [{ active: { $eq: true } }];
+  // daUser = {$and:[{ active: { $eq: true } }]};
+   daUser = [{ active: { $eq: true } }];
 }
   // let match;
   // if (uid != 'null' && date == 'null') {
@@ -2085,7 +2087,7 @@ if(Da != 'null'){
   // } else {
   //   match = [{ Wardid: { $eq: id } }];
   // }
-  // console.log(capture)
+  // console.log(daUser)
   let data = await Shop.aggregate([
     {
       $match: {
@@ -2112,6 +2114,22 @@ if(Da != 'null'){
         $and: daUser,
       },
     },
+    // {
+    //   $lookup: {
+    //     from: 'salesmanshops',
+    //     localField: '_id',
+    //     foreignField: 'shopId',
+    //     pipeline:[
+    //       {
+    //         $match:daUser
+    //       },
+    //     ],
+    //     as: 'salesmanshops',
+    //   },
+    // },
+    // {
+    //   $unwind: '$salesmanshops',
+    // },
     // {
     //   $match: {
     //     $or: [
@@ -2247,6 +2265,22 @@ if(Da != 'null'){
         $and: pincodeMatch,
       },
     },
+    // {
+    //   $lookup: {
+    //     from: 'salesmanshops',
+    //     localField: '_id',
+    //     foreignField: 'shopId',
+    //     pipeline:[
+    //       {
+    //         $match:daUser
+    //       },
+    //     ],
+    //     as: 'salesmanshops',
+    //   },
+    // },
+    // {
+    //   $unwind: '$salesmanshops',
+    // },
     {
       $match: {
         $and: daUser,
@@ -2372,6 +2406,22 @@ if(Da != 'null'){
         $and: daUser,
       },
     },
+    // {
+    //   $lookup: {
+    //     from: 'salesmanshops',
+    //     localField: '_id',
+    //     foreignField: 'shopId',
+    //     pipeline:[
+    //       {
+    //         $match:daUser
+    //       },
+    //     ],
+    //     as: 'salesmanshops',
+    //   },
+    // },
+    // {
+    //   $unwind: '$salesmanshops',
+    // },
     // {
     //   $match: {
     //     $or: [
@@ -2500,6 +2550,8 @@ if(Da != 'null'){
         ],
       },
     },
+    
+
     // {
     //   $lookup: {
     //     from: 'streets',
@@ -2602,6 +2654,22 @@ if(Da != 'null'){
         $and: daUser,
       },
     },
+    // {
+    //   $lookup: {
+    //     from: 'salesmanshops',
+    //     localField: '_id',
+    //     foreignField: 'shopId',
+    //     pipeline:[
+    //       {
+    //         $match:daUser
+    //       },
+    //     ],
+    //     as: 'salesmanshops',
+    //   },
+    // },
+    // {
+    //   $unwind: '$salesmanshops',
+    // },
     // {
     //   $match: {
     //     $or: [
