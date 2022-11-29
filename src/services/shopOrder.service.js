@@ -4835,7 +4835,7 @@ const getall_ordered_shops = async (query) => {
   return { value: values, total: total.length, counts: counts };
 };
 
-const get_order_counts_ordered = async (status, deliverytype, timeslot, deliverymode, dateMacth, pincode) => {
+const get_order_counts_ordered = async (status, deliverytype, timeslot, deliverymode, dateMacth) => {
   //console.log(pincode, 'sdf');
   let today = moment().format('YYYY-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
@@ -4857,18 +4857,6 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
         ],
       },
     },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
-    },
   ]);
   let Acknowledgedstatus = await ShopOrderClone.aggregate([
     {
@@ -4887,18 +4875,6 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
           },
         ],
       },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
     },
   ]);
   let Approvedstatus = await ShopOrderClone.aggregate([
@@ -4932,18 +4908,6 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
         ],
       },
     },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
-    },
   ]);
   let rejectstatus = await ShopOrderClone.aggregate([
     {
@@ -4962,18 +4926,6 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
           },
         ],
       },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
     },
   ]);
   let orders = {
@@ -5004,36 +4956,12 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
         ],
       },
     },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
-    },
   ]);
   let delevery_imd = await ShopOrderClone.aggregate([
     {
       $match: {
         $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
       },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
     },
   ]);
   let delevery_yod = await ShopOrderClone.aggregate([
@@ -5042,18 +4970,6 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
         $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
       },
     },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
-    },
   ]);
 
   let delevery_ndd = await ShopOrderClone.aggregate([
@@ -5061,18 +4977,6 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
       $match: {
         $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'NDD' } }, { date: { $eq: today } }],
       },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
     },
   ]);
   let deliveryType = {
@@ -5090,36 +4994,12 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
         $and: [status, deliverytype, deliverymode, dateMacth],
       },
     },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
-    },
   ]);
   let time_5_6 = await ShopOrderClone.aggregate([
     {
       $match: {
         $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '5-7' } }],
       },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
     },
   ]);
   let time_7_10 = await ShopOrderClone.aggregate([
@@ -5128,36 +5008,12 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
         $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '7-10' } }],
       },
     },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
-    },
   ]);
   let time_2_4 = await ShopOrderClone.aggregate([
     {
       $match: {
         $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '14-16' } }],
       },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
     },
   ]);
 
@@ -5176,18 +5032,6 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
         $and: [status, deliverytype, timeslot, dateMacth],
       },
     },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
-    },
   ]);
   let delivery_mode_sp = await ShopOrderClone.aggregate([
     {
@@ -5195,36 +5039,12 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
         $and: [status, deliverytype, timeslot, { devevery_mode: { $eq: 'SP' } }, dateMacth],
       },
     },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
-    },
   ]);
   let delivery_mode_de = await ShopOrderClone.aggregate([
     {
       $match: {
         $and: [status, deliverytype, timeslot, { devevery_mode: { $eq: 'DE' } }, dateMacth],
       },
-    },
-    {
-      $lookup: {
-        from: 'b2bshopclones',
-        localField: 'shopId',
-        foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
-        as: 'b2bshopclones',
-      },
-    },
-    {
-      $unwind: '$b2bshopclones',
     },
   ]);
 
