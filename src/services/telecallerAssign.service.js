@@ -2792,7 +2792,7 @@ if(Da != 'null'){
   // }else{
     //  cap = 0 ;
   // }
-  return { total: total.length, overall: allnoAssing.length, assignCount:cap, lat:lat};
+  return {data:data, total: total.length, overall: allnoAssing.length, assignCount:cap, lat:lat};
 };
 
 const getUserssalesmanWith_skiped = async (id) => {
