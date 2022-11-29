@@ -4835,7 +4835,7 @@ const getall_ordered_shops = async (query) => {
   return { value: values, total: total.length, counts: counts };
 };
 
-const get_order_counts = async (status, deliverytype, timeslot, deliverymode, dateMacth) => {
+const get_order_counts = async (status, deliverytype, timeslot, deliverymode, dateMacth, pincode) => {
   let today = moment().format('YYYY-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
   let orderstatus = await ShopOrderClone.aggregate([
@@ -4853,6 +4853,7 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
               },
             ],
           },
+          pincode,
         ],
       },
     },
@@ -4872,6 +4873,7 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
               },
             ],
           },
+          pincode,
         ],
       },
     },
@@ -4904,6 +4906,7 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
               },
             ],
           },
+          pincode,
         ],
       },
     },
@@ -4923,6 +4926,7 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
               },
             ],
           },
+          pincode,
         ],
       },
     },
@@ -4952,6 +4956,7 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
               },
             ],
           },
+          pincode,
         ],
       },
     },
@@ -4959,14 +4964,14 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
   let delevery_imd = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
+        $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }, pincode],
       },
     },
   ]);
   let delevery_yod = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+        $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }, pincode],
       },
     },
   ]);
@@ -4974,7 +4979,7 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
   let delevery_ndd = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'NDD' } }, { date: { $eq: today } }],
+        $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'NDD' } }, { date: { $eq: today } }, pincode],
       },
     },
   ]);
@@ -4990,28 +4995,28 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
   let time_all = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [status, deliverytype, deliverymode, dateMacth],
+        $and: [status, deliverytype, deliverymode, dateMacth, pincode],
       },
     },
   ]);
   let time_5_6 = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '5-7' } }],
+        $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '5-7' } }, pincode],
       },
     },
   ]);
   let time_7_10 = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '7-10' } }],
+        $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '7-10' } }, pincode],
       },
     },
   ]);
   let time_2_4 = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '14-16' } }],
+        $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '14-16' } }, pincode],
       },
     },
   ]);
@@ -5028,21 +5033,21 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
   let delivery_mode_all = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [status, deliverytype, timeslot, dateMacth],
+        $and: [status, deliverytype, timeslot, dateMacth, pincode],
       },
     },
   ]);
   let delivery_mode_sp = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [status, deliverytype, timeslot, { devevery_mode: { $eq: 'SP' } }, dateMacth],
+        $and: [status, deliverytype, timeslot, { devevery_mode: { $eq: 'SP' } }, dateMacth, pincode],
       },
     },
   ]);
   let delivery_mode_de = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [status, deliverytype, timeslot, { devevery_mode: { $eq: 'DE' } }, dateMacth],
+        $and: [status, deliverytype, timeslot, { devevery_mode: { $eq: 'DE' } }, dateMacth, pincode],
       },
     },
   ]);
@@ -5058,6 +5063,7 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
 
 const get_approved_orders = async (query) => {
   //console.log(query)
+  let pincode = { Pincode: { $eq: query.pincode } };
   let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
   let statusMatch = {
     status: {
@@ -5101,7 +5107,7 @@ const get_approved_orders = async (query) => {
 
   let values = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
-    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
+    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth, pincode] } },
     {
       $lookup: {
         from: 'productorderclones',
@@ -5255,10 +5261,10 @@ const get_approved_orders = async (query) => {
 
   let total = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
-    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
+    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth, pincode] } },
   ]);
 
-  let counts = await get_order_counts(statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth);
+  let counts = await get_order_counts(statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth, pincode);
 
   return { value: values, total: total.length, counts: counts };
 };
@@ -5349,10 +5355,10 @@ const get_ward_by_orders = async (query) => {
         Pincode: '$_id.Pincode',
         ward: '$_id.ward',
         zone: '$_id.zone',
-        OrderCount:1
+        OrderCount: 1,
       },
     },
-    {$sort:{Pincode:-1}},
+    { $sort: { Pincode: -1 } },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
