@@ -23,7 +23,7 @@ const createCallStatus = async (callStatusBody) => {
     centerdata = '0';
   }
   let BillId = '';
-  let totalcounts = Buy.length + 1;
+  let totalcounts = Buy + 1;
 
   BillId = 'OD' + centerdata + totalcounts;
   let values = { ...callStatusBody, ...{ date: serverdate, time: servertime, created: moment(), OrderId: BillId } };
