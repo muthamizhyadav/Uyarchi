@@ -5,34 +5,40 @@ const catchAsync = require('../utils/catchAsync');
 const supplierUnBilledService = require('../services/supplier.unBilled.service');
 
 const createSupplierUnBilled = catchAsync(async (req, res) => {
-    let data = await supplierUnBilledService.createSupplierUnBilled(req.body);
-    res.send(data)
-})
+  let data = await supplierUnBilledService.createSupplierUnBilled(req.body);
+  res.send(data);
+});
 
 const getUnBilledBySupplier = catchAsync(async (req, res) => {
-    let data = await supplierUnBilledService.getUnBilledBySupplier()
-    res.send(data)
-})
+  let data = await supplierUnBilledService.getUnBilledBySupplier();
+  res.send(data);
+});
 
 const getSupplierAdvance = catchAsync(async (req, res) => {
-    const data = await supplierUnBilledService.getSupplierAdvance(req.params.supplierId)
-    res.send(data)
-})
+  const data = await supplierUnBilledService.getSupplierAdvance(req.params.supplierId);
+  res.send(data);
+});
 
 const getSupplierOrdered_Details = catchAsync(async (req, res) => {
-    const data = await supplierUnBilledService.getSupplierOrdered_Details(req.params.id)
-    res.send(data)
-})
+  const data = await supplierUnBilledService.getSupplierOrdered_Details(req.params.id);
+  res.send(data);
+});
 
 const Unbilled_Details_bySupplier = catchAsync(async (req, res) => {
-    const data = await supplierUnBilledService.Unbilled_Details_bySupplier(req.params.id)
-    res.send(data)
-})
+  const data = await supplierUnBilledService.Unbilled_Details_bySupplier(req.params.id);
+  res.send(data);
+});
+
+const getSupplierbill_amt = catchAsync(async (req, res) => {
+  const data = await supplierUnBilledService.getSupplierbill_amt();
+  res.send(data);
+});
 
 module.exports = {
-    createSupplierUnBilled,
-    getUnBilledBySupplier,
-    getSupplierAdvance,
-    getSupplierOrdered_Details,
-    Unbilled_Details_bySupplier,
-}
+  createSupplierUnBilled,
+  getUnBilledBySupplier,
+  getSupplierAdvance,
+  getSupplierOrdered_Details,
+  Unbilled_Details_bySupplier,
+  getSupplierbill_amt,
+};
