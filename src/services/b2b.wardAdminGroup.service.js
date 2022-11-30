@@ -13,7 +13,7 @@ const orderPayment = require('../models/orderpayment.model');
 const creditBillGroup = require('../models/b2b.creditBillGroup.model');
 const creditBill = require('../models/b2b.creditBill.model');
 const { shopOrderService } = require('.');
-const ReturnStock_history = require('../models/returnStock.histories.model')
+const ReturnStock_history = require('../models/returnStock.histories.model');
 
 const createGroup = async (body, userId) => {
   let serverdates = moment().format('YYYY-MM-DD');
@@ -303,8 +303,8 @@ const updateOrderStatus = async (id, updateBody, userId) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
   deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
-  deliveryStatus.statusActionArray.push({ userid: "", date: moment().toString(), status: "Delivered" })
-  deliveryStatus.save()
+  deliveryStatus.statusActionArray.push({ userid: '', date: moment().toString(), status: 'Delivered' });
+  deliveryStatus.save();
   let paidamount = updateBody.paidamount;
   if (paidamount == null) {
     paidamount = 0;
@@ -341,8 +341,8 @@ const updateOrderStatus_forundelivey = async (id, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
   deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
-  deliveryStatus.statusActionArray.push({ userid: "", date: moment().toString(), status: "unDelivered" })
-  deliveryStatus.save()
+  deliveryStatus.statusActionArray.push({ userid: '', date: moment().toString(), status: 'unDelivered' });
+  deliveryStatus.save();
   return deliveryStatus;
 };
 const orderPicked = async (deliveryExecutiveId) => {
@@ -575,7 +575,6 @@ const getPettyStock = async (id) => {
 const returnStock = async (id) => {
   console.log(id);
   let values = await Product.aggregate([
-
     // {
     //   $lookup: {
     //     from: 'pettystockmodels',
@@ -830,12 +829,12 @@ const pettyStockSubmit = async (id, updateBody, userId) => {
     { new: true }
   );
   deliveryStatus.Orderdatas.forEach(async (e) => {
-    let id = e._id
-    let shoporder = await ShopOrderClone.findById(id)
-    shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: "Delivery Completed" }, { new: true })
-    shoporder.statusActionArray.push({ userid: userId, date: moment().toString(), status: "Delivery Completed" })
-    shoporder.save()
-  })
+    let id = e._id;
+    let shoporder = await ShopOrderClone.findById(id);
+    shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Delivery Completed' }, { new: true });
+    shoporder.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Delivery Completed' });
+    shoporder.save();
+  });
 
   // let valueStatus = await wardAdminGroupModel_ORDERS.find({ orderId: id });
   // console.log(valueStatus);
@@ -1350,7 +1349,7 @@ const assignOnly_DE = async (query, status, userid) => {
       // pettyStockAllocateStatus: { $ne: 'Pending' },
       // FinishingStatus: { $ne: 'Finished' },
     };
-    statusMatch = { status: { $in: ['Assigned', 'Packed', 'returnedStock',] } };
+    statusMatch = { status: { $in: ['Assigned', 'Packed', 'returnedStock'] } };
   }
   let values = await wardAdminGroup.aggregate([
     {
@@ -2797,12 +2796,12 @@ const createAddOrdINGrp = async (id, body, userId) => {
         AssignedstatusPerDay: 2,
       });
     }
-    let statusActionArray = await ShopOrderClone.findById(id);
+    let statusActionArray = await ShopOrderClone.findById(e._id);
     statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Assigned' });
     statusActionArray.save();
   });
 
-  return 'works';
+  return { success: 'works' };
 };
 
 const finishingAccount = async (id, page) => {
@@ -3166,7 +3165,7 @@ const finishingAccount = async (id, page) => {
         pipeline: [
           {
             $match: {
-              statusActionArray: { $elemMatch: { status: { $in: ['Delivered'] } } }
+              statusActionArray: { $elemMatch: { status: { $in: ['Delivered'] } } },
             },
           },
         ],
@@ -3197,7 +3196,7 @@ const finishingAccount = async (id, page) => {
         pipeline: [
           {
             $match: {
-              statusActionArray: { $elemMatch: { status: { $in: ['unDelivered'] } } }
+              statusActionArray: { $elemMatch: { status: { $in: ['unDelivered'] } } },
             },
           },
         ],
@@ -3232,35 +3231,29 @@ const submitDispute = async (id, updatebody) => {
 const returnStockData = async (id) => {
   let values = await ReturnStock_history.aggregate([
     {
-      $match: { groupId: id }
+      $match: { groupId: id },
     },
     {
-      $addFields: { dates: { $dateToString: { format: "%Y-%m-%d", date: "$created" } } }
+      $addFields: { dates: { $dateToString: { format: '%Y-%m-%d', date: '$created' } } },
     },
     {
       $lookup: {
         from: 'historypacktypes',
-        let: { productid: "$productId", date: "$dates" },
+        let: { productid: '$productId', date: '$dates' },
         pipeline: [
           {
-            $match:
-            {
-              $expr:
-              {
-                $and:
-                  [
-                    { $eq: ["$productId", "$$productid"] },
-                    { $eq: ["$date", "$$date"] }
-                  ]
-              }
-            }
+            $match: {
+              $expr: {
+                $and: [{ $eq: ['$productId', '$$productid'] }, { $eq: ['$date', '$$date'] }],
+              },
+            },
           },
         ],
         as: 'packtype',
       },
     },
     {
-      $unwind: '$packtype'
+      $unwind: '$packtype',
     },
     {
       $project: {
@@ -3275,15 +3268,15 @@ const returnStockData = async (id) => {
         dates: 1,
         salesprice: '$packtype.salesendPrice',
         packtypeId: '$packtype.packtypeId',
-        totalPrice: { $multiply: ['$mismatch', '$packtype.salesendPrice'] }
-      }
+        totalPrice: { $multiply: ['$mismatch', '$packtype.salesendPrice'] },
+      },
     },
     {
       $match: {
-        totalPrice: { $gt: 0 }
-      }
-    }
-  ])
+        totalPrice: { $gt: 0 },
+      },
+    },
+  ]);
   return values;
 };
 
@@ -4037,52 +4030,45 @@ const returnedStock = async (id, userid) => {
 };
 
 const updateFine_Credit_status = async (id, body) => {
-  let { status } = body
-  let values = await wardAdminGroup.findByIdAndUpdate({ _id: id }, { misMatchAmountStatus: status }, { new: true })
-  return values
-}
+  let { status } = body;
+  let values = await wardAdminGroup.findByIdAndUpdate({ _id: id }, { misMatchAmountStatus: status }, { new: true });
+  return values;
+};
 
 const updateFine_Stock_status = async (id, body) => {
-  let { status } = body
-  let values = await wardAdminGroup.findByIdAndUpdate({ _id: id }, { mismatchStockStatus: status }, { new: true })
-  return values
-}
-
+  let { status } = body;
+  let values = await wardAdminGroup.findByIdAndUpdate({ _id: id }, { mismatchStockStatus: status }, { new: true });
+  return values;
+};
 
 const misMatchProducts_by_group = async (id) => {
   let values = await ReturnStock_history.aggregate([
     {
       $match: {
-        groupId: id
-      }
+        groupId: id,
+      },
     },
     {
-      $addFields: { dates: { $dateToString: { format: "%Y-%m-%d", date: "$created" } } }
+      $addFields: { dates: { $dateToString: { format: '%Y-%m-%d', date: '$created' } } },
     },
     {
       $lookup: {
         from: 'historypacktypes',
-        let: { productid: "$productId", date: "$dates" },
+        let: { productid: '$productId', date: '$dates' },
         pipeline: [
           {
-            $match:
-            {
-              $expr:
-              {
-                $and:
-                  [
-                    { $eq: ["$productId", "$$productid"] },
-                    { $eq: ["$date", "$$date"] }
-                  ]
-              }
-            }
+            $match: {
+              $expr: {
+                $and: [{ $eq: ['$productId', '$$productid'] }, { $eq: ['$date', '$$date'] }],
+              },
+            },
           },
         ],
         as: 'packtype',
       },
     },
     {
-      $unwind: '$packtype'
+      $unwind: '$packtype',
     },
     {
       $project: {
@@ -4097,25 +4083,28 @@ const misMatchProducts_by_group = async (id) => {
         dates: 1,
         salesprice: '$packtype.salesendPrice',
         packtypeId: '$packtype.packtypeId',
-        totalPrice: { $multiply: ['$mismatch', '$packtype.salesendPrice'] }
-      }
+        totalPrice: { $multiply: ['$mismatch', '$packtype.salesendPrice'] },
+      },
     },
     {
       $match: {
-        totalPrice: { $gt: 0 }
-      }
-    }
-  ])
-  return values
-}
+        totalPrice: { $gt: 0 },
+      },
+    },
+  ]);
+  return values;
+};
 
 const product_fine = async (body) => {
-  const { productId, groupId, status } = body
-  let values = await ReturnStock_history.updateMany({ groupId: groupId, productId: productId }, { $set: { fineStatus: status } })
+  const { productId, groupId, status } = body;
+  let values = await ReturnStock_history.updateMany(
+    { groupId: groupId, productId: productId },
+    { $set: { fineStatus: status } }
+  );
   if (values) {
-    return { status: `${status} updated SucessFully` }
+    return { status: `${status} updated SucessFully` };
   }
-}
+};
 
 module.exports = {
   getPEttyCashQuantity,
