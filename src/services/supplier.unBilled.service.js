@@ -118,9 +118,20 @@ const getSupplierOrdered_Details = async (id) => {
     return values
 }
 
+const Unbilled_Details_bySupplier = async (id) => {
+    const supplier = await SupplierUnbilledHistory.aggregate([
+        {
+            $match: { supplierId: { $eq: id } }
+        }
+    ])
+    let supplierDetails = await Supplier.findById(id)
+    return { values: supplier, supplierDetails: supplierDetails }
+}
+
 module.exports = {
     createSupplierUnBilled,
     getUnBilledBySupplier,
     getSupplierAdvance,
     getSupplierOrdered_Details,
+    Unbilled_Details_bySupplier,
 }
