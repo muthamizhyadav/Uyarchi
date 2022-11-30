@@ -2796,7 +2796,7 @@ const createAddOrdINGrp = async (id, body, userId) => {
         AssignedstatusPerDay: 2,
       });
     }
-    let statusActionArray = await ShopOrderClone.findById(productId);
+    let statusActionArray = await ShopOrderClone.findById(e._id);
     statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Assigned' });
     statusActionArray.save();
   });
