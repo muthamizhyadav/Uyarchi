@@ -285,7 +285,147 @@ const getSupplierbill_amt = async (page) => {
     },
     { $limit: 10 },
   ]);
-  return values;
+  let total = await Supplier.aggregate([
+    {
+      $lookup: {
+        from: 'receivedproducts',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $match: {
+              status: { $eq: 'Billed' },
+            },
+          },
+          {
+            $lookup: {
+              from: 'receivedstocks',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [
+                { $match: { status: { $eq: 'Billed' } } },
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: {
+                        $multiply: ['$billingQuantity', '$billingPrice'],
+                      },
+                    },
+                  },
+                },
+              ],
+              as: 'receivedstocks',
+            },
+          },
+          {
+            $lookup: {
+              from: 'supplierbills',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: '$Amount',
+                    },
+                  },
+                },
+              ],
+              as: 'supplierbills',
+            },
+          },
+          {
+            $unwind: {
+              path: '$supplierbills',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $unwind: {
+              path: '$receivedstocks',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              paidAmount: { $ifNull: ['$supplierbills.amount', 0] },
+              totalAmount: { $ifNull: ['$receivedstocks.amount', 0] },
+            },
+          },
+          {
+            $project: {
+              paidAmount: 1,
+              totalAmount: 1,
+              pendingAmount: { $subtract: ['$totalAmount', '$paidAmount'] },
+              match: { $eq: ['$totalAmount', '$paidAmount'] },
+            },
+          },
+          {
+            $match: { match: { $ne: true } },
+          },
+          {
+            $group: {
+              _id: null,
+              pendingBillcount: { $sum: 1 },
+              pendingAmount: { $sum: '$pendingAmount' },
+            },
+          },
+        ],
+        as: 'receivedproducts',
+      },
+    },
+    {
+      $unwind: {
+        path: '$receivedproducts',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierunbilleds',
+        localField: '_id',
+        foreignField: 'supplierId',
+        as: 'supplierbills',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierbills',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierbills',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [{ $sort: { created: -1 } }, { $limit: 1 }],
+        as: 'supplierbill',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierbill',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        primaryContactName: 1,
+        totalPending_amt: { $ifNull: ['$receivedproducts.pendingAmount', 0] },
+        current_UnBilled_amt: { $ifNull: ['$supplierbills.un_Billed_amt', 0] },
+        lastPaid: { $ifNull: ['$supplierbill.Amount', 0] },
+      },
+    },
+  ]);
+  return { values: values, total: total.length };
+};
+
+const getBillDetails_bySupplier = async (id) => {
+  let values = await Supplier.aggregate([]);
 };
 
 module.exports = {
