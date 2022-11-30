@@ -5,6 +5,7 @@ const moment = require('moment');
 const CallStatus = require('../models/callStatus');
 const Supplier = require('../models/supplier.model');
 const supplierBills = require('../models/supplierBills.model');
+const ReceivedProduct = require('../models/receivedProduct.model');
 
 const createSupplierUnBilled = async (body) => {
   const { supplierId, un_Billed_amt } = body;
@@ -457,6 +458,54 @@ const getBillDetails_bySupplier = async (id) => {
   return { values: values, supplier: supplier };
 };
 
+const supplierOrders_amt_details = async (id) => {
+  let values = await ReceivedProduct.aggregate([
+    {
+      $match: { supplierId: id },
+    },
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
+        as: 'ReceivedData',
+      },
+    },
+    {
+      $unwind: '$ReceivedData',
+    },
+    {
+      $lookup: {
+        from: 'supplierbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$Amount' } } }],
+        as: 'supplierBills',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierBills',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        supplierId: 1,
+        date: 1,
+        BillNo: 1,
+        TotalAmt: { $ifNull: ['$ReceivedData.billingTotal', 0] },
+        paidAmount: { $ifNull: ['$supplierBills.billingTotal', 0] },
+        PendingAmount: { $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] }, 0] },
+      },
+    },
+  ]);
+  let supplier = await Supplier.findById(id);
+  return { values: values, supplier: supplier };
+};
+
 module.exports = {
   createSupplierUnBilled,
   getUnBilledBySupplier,
@@ -465,4 +514,5 @@ module.exports = {
   Unbilled_Details_bySupplier,
   getSupplierbill_amt,
   getBillDetails_bySupplier,
+  supplierOrders_amt_details,
 };
