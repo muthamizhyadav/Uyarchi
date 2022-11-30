@@ -506,6 +506,16 @@ const supplierOrders_amt_details = async (id) => {
   return { values: values, supplier: supplier };
 };
 
+const getPaid_history = async (id) => {
+  let values = await supplierBills.aggregate([
+    {
+      $match: { groupId: id },
+    },
+  ]);
+  let supplier = await Supplier.findById(id);
+  return values;
+};
+
 module.exports = {
   createSupplierUnBilled,
   getUnBilledBySupplier,
@@ -515,4 +525,5 @@ module.exports = {
   getSupplierbill_amt,
   getBillDetails_bySupplier,
   supplierOrders_amt_details,
+  getPaid_history,
 };

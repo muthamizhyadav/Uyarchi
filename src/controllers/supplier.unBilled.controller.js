@@ -44,6 +44,11 @@ const supplierOrders_amt_details = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getPaid_history = catchAsync(async (req, res) => {
+  const data = await supplierUnBilledService.getPaid_history(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   createSupplierUnBilled,
   getUnBilledBySupplier,
@@ -53,4 +58,5 @@ module.exports = {
   getSupplierbill_amt,
   getBillDetails_bySupplier,
   supplierOrders_amt_details,
+  getPaid_history,
 };

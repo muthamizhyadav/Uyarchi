@@ -10,4 +10,5 @@ router.route('/Unbilled/Details/bySupplier/:id').get(supplierController.Unbilled
 router.route('/supplier/Bill/payments/:page').get(supplierController.getSupplierbill_amt);
 router.route('/supplier/Bills/:id').get(supplierController.getBillDetails_bySupplier);
 router.route('/supplier/amount/details/:id').get(supplierController.supplierOrders_amt_details);
+router.route('/getPaid/history/:id').get(supplierController.getPaid_history);
 module.exports = router;
