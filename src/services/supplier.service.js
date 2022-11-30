@@ -391,6 +391,19 @@ const recoverById = async (supplierId) => {
 };
 
 
+const getSupplierWith_Advanced = async () => {
+  let values = await Supplier.aggregate([{
+    $lookup: {
+      from: 'callstatuses',
+      localField: '_id',
+      foreignField: 'supplierid',
+      pipeline: [{ $match: { status: "Advance" } }],
+      as: 'callstatus',
+    },
+  }])
+  return values
+}
+
 module.exports = {
   createSupplier,
   updateSupplierById,
@@ -408,4 +421,5 @@ module.exports = {
   getSupplierAmountDetailsForSupplierBills,
   getSupplierPaymentDetailsBySupplierId,
   getSupplierDataByProductId,
+  getSupplierWith_Advanced,
 };
