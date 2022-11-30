@@ -397,6 +397,19 @@ const getNotAssignSalesManData = catchAsync(async (req, res) => {
     req.params.zone,
     req.params.id,
     req.params.street,
+    req.params.page,
+    req.params.limit,
+    req.params.uid,
+    req.params.date
+  );
+  res.send(data);
+});
+
+const getnotAssignSalesmanDataMap = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.getnotAssignSalesmanDataMap(
+    req.params.zone,
+    req.params.id,
+    req.params.street,
     // req.params.page,
     // req.params.limit,
     req.params.uid,
@@ -519,5 +532,6 @@ module.exports = {
   get_wardby_shops,
   update_pincode,
   gomap_view_now,
-  ward_by_users
+  ward_by_users,
+  getnotAssignSalesmanDataMap,
 };
