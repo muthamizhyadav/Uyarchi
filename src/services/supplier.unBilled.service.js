@@ -426,7 +426,33 @@ const getSupplierbill_amt = async (page) => {
 };
 
 const getBillDetails_bySupplier = async (id) => {
-  let values = await supplierBills.aggregate([{ $match: { supplierId: id } }]);
+  let values = await supplierBills.aggregate([
+    { $match: { supplierId: id } },
+    {
+      $lookup: {
+        from: 'receivedproducts',
+        localField: 'groupId',
+        foreignField: '_id',
+        as: 'received',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$received',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        Amount: 1,
+        paymentMethod: 1,
+        supplierId: 1,
+        Billno: '$received.BillNo',
+        date: '$received.date',
+      },
+    },
+  ]);
   let supplier = await Supplier.findById(id);
   return { values: values, supplier: supplier };
 };
