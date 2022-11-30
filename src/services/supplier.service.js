@@ -8,9 +8,9 @@ const B2bBillStatus = require('../models/b2bbillStatus.model');
 const moment = require('moment');
 
 const createSupplier = async (supplierBody) => {
-  const check = await Supplier.findOne({primaryContactNumber:supplierBody.primaryContactNumber})
+  const check = await Supplier.findOne({ primaryContactNumber: supplierBody.primaryContactNumber })
   console.log(check)
-  if(check){
+  if (check) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Already Register this Number');
   }
   return Supplier.create(supplierBody);
@@ -390,6 +390,15 @@ const recoverById = async (supplierId) => {
   return supplier;
 };
 
+const getSupplierAdvance = async (supplierId) => {
+  let values = await CallStatus.aggregate([
+    {
+      $match: { supplierid: supplierId }
+    }
+  ])
+  return values
+}
+
 module.exports = {
   createSupplier,
   updateSupplierById,
@@ -407,4 +416,5 @@ module.exports = {
   getSupplierAmountDetailsForSupplierBills,
   getSupplierPaymentDetailsBySupplierId,
   getSupplierDataByProductId,
+  getSupplierAdvance,
 };

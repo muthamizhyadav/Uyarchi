@@ -48,6 +48,9 @@ const SupplierUnbilledHistorySchema = new mongoose.Schema({
     un_Billed_amt: {
         type: Number,
     },
+    payment_mode: {
+        type: String,
+    },
     pay_method: {
         type: String,
     },
