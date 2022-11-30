@@ -4,6 +4,7 @@ const { SupplierUnbilled, SupplierUnbilledHistory } = require('../models/supplie
 const moment = require('moment');
 const CallStatus = require('../models/callStatus');
 const Supplier = require('../models/supplier.model');
+const supplierBills = require('../models/supplierBills.model');
 
 const createSupplierUnBilled = async (body) => {
   const { supplierId, un_Billed_amt } = body;
@@ -425,7 +426,9 @@ const getSupplierbill_amt = async (page) => {
 };
 
 const getBillDetails_bySupplier = async (id) => {
-  let values = await Supplier.aggregate([]);
+  let values = await supplierBills.aggregate([{ $match: { supplierId: id } }]);
+  let supplier = await Supplier.findById(id);
+  return { values: values, supplier: supplier };
 };
 
 module.exports = {
@@ -435,4 +438,5 @@ module.exports = {
   getSupplierOrdered_Details,
   Unbilled_Details_bySupplier,
   getSupplierbill_amt,
+  getBillDetails_bySupplier,
 };

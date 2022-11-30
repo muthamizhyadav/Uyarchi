@@ -8,4 +8,5 @@ router.route('/advance/:supplierId').get(supplierController.getSupplierAdvance);
 router.route('/ordered/details/:id').get(supplierController.getSupplierOrdered_Details);
 router.route('/Unbilled/Details/bySupplier/:id').get(supplierController.Unbilled_Details_bySupplier);
 router.route('/supplier/Bill/payments/:page').get(supplierController.getSupplierbill_amt);
+router.route('/supplier/Bills/:id').get(supplierController.getBillDetails_bySupplier);
 module.exports = router;
