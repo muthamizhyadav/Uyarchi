@@ -390,14 +390,6 @@ const recoverById = async (supplierId) => {
   return supplier;
 };
 
-const getSupplierAdvance = async (supplierId) => {
-  let values = await CallStatus.aggregate([
-    {
-      $match: { supplierid: supplierId }
-    }
-  ])
-  return values
-}
 
 module.exports = {
   createSupplier,
@@ -416,5 +408,4 @@ module.exports = {
   getSupplierAmountDetailsForSupplierBills,
   getSupplierPaymentDetailsBySupplierId,
   getSupplierDataByProductId,
-  getSupplierAdvance,
 };

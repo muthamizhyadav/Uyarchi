@@ -85,7 +85,20 @@ const getUnBilledBySupplier = async () => {
     return values
 }
 
+const getSupplierAdvance = async (supplierId) => {
+    let values = await CallStatus.aggregate([
+        {
+            $match: { supplierid: supplierId, status: 'Advance' }
+        },
+        {
+            $group: { _id: null, totalAdvance: { $sum: '$TotalAmount' } }
+        }
+    ])  
+    return values
+}
+
 module.exports = {
     createSupplierUnBilled,
     getUnBilledBySupplier,
+    getSupplierAdvance,
 }
