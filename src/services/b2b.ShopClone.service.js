@@ -3490,7 +3490,7 @@ const get_userbased_dataapproved = async (query) => {
           },
         });
         await Shop.findByIdAndUpdate(
-          { _id: e._id },
+          { _id: shops[i]._id },
           {
             da_distance: dis.data.rows[0].elements[0].distance.text,
             distance: response.data.rows[0].elements[0].distance.text,
