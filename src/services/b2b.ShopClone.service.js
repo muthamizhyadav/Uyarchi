@@ -2475,6 +2475,7 @@ const getVendorShops = async (key) => {
 // getnotAssignSalesmanData
 
 const getnotAssignSalesmanData = async (zone, id, street, uid, date) => {
+  date = date.split("-").reverse().join("-");
   let match;
   let zoneMatch;
   let wardMatch;
