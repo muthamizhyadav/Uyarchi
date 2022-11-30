@@ -411,7 +411,10 @@ const getSupplierWith_Advanced = async () => {
     $project: {
       _id: 1,
       secondaryContactName: 1,
-      totalAdvancedAmt: { $ifNull: ['$callstatus.totalAdvancedAmt', 0] }
+      totalAdvancedAmt: { $ifNull: ['$callstatus.totalAdvancedAmt', 0] },
+      primaryContactName: 1,
+      primaryContactNumber: 1,
+      primaryContactName: 1,
     }
   }
   ])

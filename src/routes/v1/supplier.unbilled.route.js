@@ -6,4 +6,5 @@ router.route('/').post(supplierController.createSupplierUnBilled)
 router.route('/unBilled').get(supplierController.getUnBilledBySupplier)
 router.route('/advance/:supplierId').get(supplierController.getSupplierAdvance)
 router.route('/ordered/details/:id').get(supplierController.getSupplierOrdered_Details)
+router.route('/Unbilled/Details/bySupplier/:id').get(supplierController.Unbilled_Details_bySupplier)
 module.exports = router

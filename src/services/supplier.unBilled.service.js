@@ -78,7 +78,8 @@ const getUnBilledBySupplier = async () => {
                 date: 1,
                 supplierName: '$suppliers.primaryContactName',
                 Advance_raised: { $ifNull: ['$suppliers.suppplierOrders.TotalAdvance', 0] },
-                total_UnbilledAmt: "$unBilledHistory.TotalUnbilled"
+                total_UnbilledAmt: "$unBilledHistory.TotalUnbilled",
+                supplierId: '$suppliers._id',
             }
         }
     ])
@@ -105,15 +106,26 @@ const getSupplierOrdered_Details = async (id) => {
         {
             $project: {
                 _id: 1,
-                totalAmounts: { $multiply: ['$confirmOrder', '$confirmprice'] },
+                totalAmounts: { $ifNull: [{ $multiply: ['$confirmOrder', '$confirmprice'] }, 0] },
                 date: 1,
                 status: 1,
                 date: 1,
-                TotalAdvance: { $ifNull: ['$TotalAmount', 0] },
+                AdvanceRaised: { $ifNull: ['$TotalAmount', 0] },
+                orderId: { $ifNull: ['$OrderId', 'oldData'] }
             }
         }
     ])
     return values
+}
+
+const Unbilled_Details_bySupplier = async (id) => {
+    const supplier = await SupplierUnbilledHistory.aggregate([
+        {
+            $match: { supplierId: { $eq: id } }
+        }
+    ])
+    let supplierDetails = await Supplier.findById(id)
+    return { values: supplier, supplierDetails: supplierDetails }
 }
 
 module.exports = {
@@ -121,4 +133,5 @@ module.exports = {
     getUnBilledBySupplier,
     getSupplierAdvance,
     getSupplierOrdered_Details,
+    Unbilled_Details_bySupplier,
 }
