@@ -397,10 +397,24 @@ const getSupplierWith_Advanced = async () => {
       from: 'callstatuses',
       localField: '_id',
       foreignField: 'supplierid',
-      pipeline: [{ $match: { status: "Advance" } }],
+      pipeline: [{ $match: { status: "Advance" } }, { $group: { _id: null, totalAdvancedAmt: { $sum: '$TotalAmount' } } }],
       as: 'callstatus',
     },
-  }])
+  },
+  {
+    $unwind: {
+      preserveNullAndEmptyArrays: true,
+      path: '$callstatus'
+    }
+  },
+  {
+    $project: {
+      _id: 1,
+      secondaryContactName: 1,
+      totalAdvancedAmt: { $ifNull: ['$callstatus.totalAdvancedAmt', 0] }
+    }
+  }
+  ])
   return values
 }
 
