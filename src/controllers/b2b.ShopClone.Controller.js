@@ -481,6 +481,11 @@ const ward_by_users = catchAsync(async (req, res) => {
   const data = await b2bCloneService.ward_by_users(req.query);
   res.send(data);
 });
+
+const get_userbased_dataapproved = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.get_userbased_dataapproved(req.query);
+  res.send(data);
+});
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -528,10 +533,10 @@ module.exports = {
   data2,
   data3,
 
-
   get_wardby_shops,
   update_pincode,
   gomap_view_now,
   ward_by_users,
   getnotAssignSalesmanDataMap,
+  get_userbased_dataapproved,
 };
