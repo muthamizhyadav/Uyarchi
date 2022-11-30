@@ -9,6 +9,12 @@ const createSupplierUnBilled = catchAsync(async (req, res) => {
     res.send(data)
 })
 
+const getUnBilledBySupplier = catchAsync(async (req, res) => {
+    let data = await supplierUnBilledService.getUnBilledBySupplier()
+    res.send(data)
+})
+
 module.exports = {
     createSupplierUnBilled,
+    getUnBilledBySupplier,
 }
