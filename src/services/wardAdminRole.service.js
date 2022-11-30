@@ -744,6 +744,7 @@ const allAssignReassignSalesman = async (id) => {
 };
 
 const createSalesmanShop = async (body) => {
+  var value;
   let { arr } = body;
   let creat = moment().format('yyy-MM-DD');
   let creat1 = moment().format('HHmmss');
@@ -752,7 +753,7 @@ const createSalesmanShop = async (body) => {
   if (body.status == 'Assign') {
     arr.forEach(async (e) => {
       await Shop.findByIdAndUpdate({ _id: e }, { salesManStatus: body.status }, { new: true });
-      await SalesManShop.create({
+     value = await SalesManShop.create({
         salesManId: body.salesManId,
         shopId: e,
         status: body.status,
@@ -773,7 +774,7 @@ const createSalesmanShop = async (body) => {
       });
       data.forEach(async (f) => {
         await Shop.findByIdAndUpdate({ _id: f.shopId }, { salesManStatus: body.status }, { new: true });
-        await SalesManShop.findByIdAndUpdate(
+      value = await SalesManShop.findByIdAndUpdate(
           { _id: f._id },
           {
             salesManId: f.salesManId,
@@ -788,7 +789,7 @@ const createSalesmanShop = async (body) => {
       });
     });
   }
-  return { message: 'created' };
+  return value;
 };
 
 const getSalesman = async (id) => {
