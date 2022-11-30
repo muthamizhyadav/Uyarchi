@@ -30,7 +30,7 @@ const Unbilled_Details_bySupplier = catchAsync(async (req, res) => {
 });
 
 const getSupplierbill_amt = catchAsync(async (req, res) => {
-  const data = await supplierUnBilledService.getSupplierbill_amt();
+  const data = await supplierUnBilledService.getSupplierbill_amt(req.params.page);
   res.send(data);
 });
 

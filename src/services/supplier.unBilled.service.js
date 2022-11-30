@@ -144,7 +144,7 @@ const Unbilled_Details_bySupplier = async (id) => {
   return { values: supplier, supplierDetails: supplierDetails };
 };
 
-const getSupplierbill_amt = async () => {
+const getSupplierbill_amt = async (page) => {
   let values = await Supplier.aggregate([
     {
       $lookup: {
@@ -280,6 +280,10 @@ const getSupplierbill_amt = async () => {
         lastPaid: { $ifNull: ['$supplierbill.Amount', 0] },
       },
     },
+    {
+      $skip: 10 * page,
+    },
+    { $limit: 10 },
   ]);
   return values;
 };
