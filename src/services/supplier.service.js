@@ -414,6 +414,7 @@ const getSupplierWith_Advanced = async () => {
       totalAdvancedAmt: { $ifNull: ['$callstatus.totalAdvancedAmt', 0] },
       primaryContactName: 1,
       primaryContactNumber: 1,
+      primaryContactName: 1,
     }
   }
   ])
