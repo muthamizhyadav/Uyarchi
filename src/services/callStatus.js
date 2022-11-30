@@ -8,7 +8,24 @@ const moment = require('moment');
 const createCallStatus = async (callStatusBody) => {
   const serverdate = moment().format('YYYY-MM-DD');
   const servertime = moment().format('HHmmss');
-  let values = { ...callStatusBody, ...{ date: serverdate, time: servertime, created: moment() } };
+  let Buy = await CallStatus.find({ date: serverdate }).count()
+  let centerdata = '';
+  if (Buy < 9) {
+    centerdata = '0000';
+  }
+  if (Buy < 99 && Buy >= 9) {
+    centerdata = '000';
+  }
+  if (Buy < 999 && Buy >= 99) {
+    centerdata = '00';
+  }
+  if (Buy < 9999 && Buy >= 999) {
+    centerdata = '0';
+  }
+  let BillId = '';
+  let totalcounts = Buy + 1;
+  BillId = 'OD' + centerdata + totalcounts;
+  let values = { ...callStatusBody, ...{ date: serverdate, time: servertime, created: moment(), OrderId: BillId } };
   return CallStatus.create(values);
 };
 

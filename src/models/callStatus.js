@@ -93,6 +93,9 @@ const callStatusSchema = mongoose.Schema({
   order_Type: {
     type: String,
   },
+  OrderId: {
+    type: String,
+  },
   TotalAmount: {
     type: Number,
   },
