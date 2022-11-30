@@ -106,7 +106,7 @@ const getSupplierOrdered_Details = async (id) => {
         {
             $project: {
                 _id: 1,
-                totalAmounts: { $multiply: ['$confirmOrder', '$confirmprice'] },
+                totalAmounts: { $ifNull: [{ $multiply: ['$confirmOrder', '$confirmprice'] }, 0] },
                 date: 1,
                 status: 1,
                 date: 1,
