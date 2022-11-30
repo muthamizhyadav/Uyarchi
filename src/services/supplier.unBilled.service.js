@@ -110,7 +110,8 @@ const getSupplierOrdered_Details = async (id) => {
                 date: 1,
                 status: 1,
                 date: 1,
-                TotalAdvance: { $ifNull: ['$TotalAmount', 0] },
+                AdvanceRaised: { $ifNull: ['$TotalAmount', 0] },
+                orderId: { $ifNull: ['$OrderId', 'oldData'] }
             }
         }
     ])
