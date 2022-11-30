@@ -5701,7 +5701,18 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
 };
 const get_ward_by_orders = async (query) => {
   let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
-
+  let today = moment().format('YYYY-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  let deliveryType = {
+    $or: [
+      {
+        $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
+      },
+      {
+        $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+      },
+    ],
+  };
   let values = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
     {
@@ -5712,6 +5723,7 @@ const get_ward_by_orders = async (query) => {
               $in: ['Approved', 'Modified'],
             },
           },
+          deliveryType,
         ],
       },
     },
