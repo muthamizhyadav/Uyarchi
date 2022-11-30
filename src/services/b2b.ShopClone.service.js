@@ -3462,7 +3462,7 @@ const get_userbased_dataapproved = async (query) => {
   let lat;
   let long;
   for (let i = 0; i < shops.length; i++) {
-    if (shops[i].da_distance == null) {
+    if (shops[i].distanceStatus != 'updated') {
       let response = await axios.get(
         `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${
           shops[i].Slat + ',' + shops[i].Slong
@@ -3494,7 +3494,7 @@ const get_userbased_dataapproved = async (query) => {
           {
             da_distance: dis.data.rows[0].elements[0].distance.text,
             distance: response.data.rows[0].elements[0].distance.text,
-            da_distance: 'updated',
+            distanceStatus: 'updated',
           },
           { new: true }
         );
