@@ -3451,6 +3451,7 @@ const get_userbased_dataapproved = async (query) => {
   console.log(userId);
   console.log(date);
   const shops = await Shop.aggregate([
+    { $sort: { DA_CREATED: 1 } },
     {
       $match: {
         $and: [{ DA_USER: { $eq: userId } }, { DA_DATE: { $eq: date } }, { status: { $eq: 'data_approved' } }],
@@ -3494,6 +3495,7 @@ const get_userbased_dataapproved = async (query) => {
   // console.log(returns);
 
   return { returns: returns };
+  // return shops;
 };
 module.exports = {
   createShopClone,
