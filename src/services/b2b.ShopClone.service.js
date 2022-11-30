@@ -3010,7 +3010,7 @@ const getnotAssignSalesmanData = async (zone, id, street, page, limit, uid, date
     {
       $project: {
         // SOwner: 1,
-        // SName: 1,
+        SName: 1,
         // mobile: 1,
         // address: 1,
         Slat: 1,
