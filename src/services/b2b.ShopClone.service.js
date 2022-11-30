@@ -166,7 +166,7 @@ const getshop_myshops_asm = async (page, userId) => {
   console.log(userId);
   let values = await Shop.aggregate([
     {
-      $sort: { status: 1, gomap: -1 }
+      $sort: { status: 1, gomap: -1 },
     },
     {
       $match: {
@@ -369,8 +369,7 @@ const getshop_myshops_asm = async (page, userId) => {
         mobile: 1,
         date: 1,
         salesmanshops: '$salesmanshops',
-        gomap: 1
-
+        gomap: 1,
       },
     },
     { $skip: 10 * page },
@@ -591,7 +590,7 @@ const getshop_myshops = async (page, userId) => {
   console.log(userId);
   let values = await Shop.aggregate([
     {
-      $sort: { status: 1, gomap: -1 }
+      $sort: { status: 1, gomap: -1 },
     },
     {
       $match: {
@@ -739,7 +738,7 @@ const getshop_myshops = async (page, userId) => {
         active: 1,
         mobile: 1,
         date: 1,
-        gomap: 1
+        gomap: 1,
       },
     },
     { $skip: 10 * page },
@@ -1519,19 +1518,26 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   let streetMatch = { active: true };
   let startTime = 0;
   let endTime = 2400;
+  let sortTime = { filterDate: -1 };
   let statusMatch = { active: true };
   if (status != 'null') {
     streetMatch = { status: status };
+  }
+  if(status == 'data_approved'){
+    sortTime = { DA_DATE: -1, DA_TIME: -1 };
+
   }
   if (user != 'null' && status != 'data_approved') {
     userMatch = { Uid: user };
   } else if (user != 'null' && status == 'data_approved') {
     userMatch = { DA_USER: user };
+    sortTime = { DA_DATE: -1, DA_TIME: -1 };
   }
   if (startdata != 'null' && enddate != 'null' && status != 'data_approved') {
     dateMatch = { filterDate: { $gte: startdata, $lte: enddate } };
   } else if (startdata != 'null' && enddate != 'null' && status == 'data_approved') {
     dateMatch = { DA_DATE: { $gte: startdata, $lte: enddate } };
+    sortTime = { DA_DATE: -1, DA_TIME: -1 };
   }
   if (starttime != 'null') {
     startTime = parseInt(starttime);
@@ -1549,7 +1555,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
 
   let values = await Shop.aggregate([
     {
-      $sort: { filterDate: -1 },
+      $sort: sortTime,
     },
     {
       $match: {
@@ -1675,7 +1681,7 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
         da_long: 1,
         da_landmark: 1,
         Pincode: 1,
-        daStatus:1,
+        daStatus: 1,
       },
     },
     { $skip: 10 * page },
@@ -3186,8 +3192,8 @@ const get_total_vendorShop = async (page) => {
 const get_wardby_shops = async (query) => {
   let wardId = query.ward;
   let user = { active: true };
-  if (query.users != "" && query.users != null && query.users != 'null') {
-    user = { Uid: { $eq: query.users } }
+  if (query.users != '' && query.users != null && query.users != 'null') {
+    user = { Uid: { $eq: query.users } };
   }
   // console.log("hello")
   let shopss = await Shop.aggregate([
@@ -3195,7 +3201,7 @@ const get_wardby_shops = async (query) => {
       $match: {
         $and: [
           { Wardid: { $eq: wardId } },
-          user
+          user,
           //  { salesManStatus: { $ne: 'Assign' } }, { salesManStatus: { $ne: 'tempReassign' } }
         ],
       },
@@ -3351,25 +3357,20 @@ const update_pincode = async (query, body) => {
   return shop;
 };
 
-
 const gomap_view_now = async (id) => {
-  let shop = await Shop.findByIdAndUpdate(
-    { _id: id },
-    { gomap: moment() },
-    { new: true }
-  );
+  let shop = await Shop.findByIdAndUpdate({ _id: id }, { gomap: moment() }, { new: true });
   return shop;
 };
 
 const ward_by_users = async (query) => {
-  const page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page
-  let user = { active: true }
+  const page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
+  let user = { active: true };
   if (query.users != 'null' && query.users != null && query.users != '') {
-    user = { Uid: { $eq: query.users } }
+    user = { Uid: { $eq: query.users } };
   }
   let shop = await Shop.aggregate([
     {
-      $match: { $and: [user] }
+      $match: { $and: [user] },
     },
     {
       $lookup: {
@@ -3403,11 +3404,11 @@ const ward_by_users = async (query) => {
             $project: {
               ward: 1,
               _id: 1,
-              zone: "$zones.zone",
-              zoneCode: "$zones.zoneCode",
-              district: "$districts.district",
-            }
-          }
+              zone: '$zones.zone',
+              zoneCode: '$zones.zoneCode',
+              district: '$districts.district',
+            },
+          },
         ],
         as: 'wards',
       },
@@ -3417,29 +3418,34 @@ const ward_by_users = async (query) => {
     },
     {
       $group: {
-        _id: { Wardid: "$Wardid", ward: "$wards.ward", zone: "$wards.zone", zoneCode: "$wards.zoneCode", district: "$wards.district" },
-      }
+        _id: {
+          Wardid: '$Wardid',
+          ward: '$wards.ward',
+          zone: '$wards.zone',
+          zoneCode: '$wards.zoneCode',
+          district: '$wards.district',
+        },
+      },
     },
     {
       $project: {
-        _id: "$_id.Wardid",
-        Wardid: "$_id.Wardid",
-        ward: "$_id.ward",
-        zone: "$_id.zone",
-        zoneCode: "$_id.zoneCode",
-        districtName: "$_id.district",
-      }
+        _id: '$_id.Wardid',
+        Wardid: '$_id.Wardid',
+        ward: '$_id.ward',
+        zone: '$_id.zone',
+        zoneCode: '$_id.zoneCode',
+        districtName: '$_id.district',
+      },
     },
     {
-      $sort: { ward: 1 }
+      $sort: { ward: 1 },
     },
     { $skip: 10 * page },
     { $limit: 10 },
-  ])
+  ]);
 
   return shop;
-
-}
+};
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -3488,5 +3494,5 @@ module.exports = {
   get_wardby_shops,
   update_pincode,
   gomap_view_now,
-  ward_by_users
+  ward_by_users,
 };
