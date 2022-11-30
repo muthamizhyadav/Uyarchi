@@ -5174,7 +5174,20 @@ const get_approved_orders = async (query) => {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
-        pipeline: [{ $match: { $and: [pincode] } }],
+        pipeline: [
+          { $match: { $and: [pincode] } },
+          {
+            $lookup: {
+              from: 'streets',
+              localField: 'Strid',
+              foreignField: '_id',
+              as: 'streets',
+            },
+          },
+          {
+            $unwind: '$streets',
+          },
+        ],
         as: 'b2bshopclones',
       },
     },
@@ -5247,6 +5260,10 @@ const get_approved_orders = async (query) => {
         mobile: '$b2bshopclones.mobile',
         address: '$b2bshopclones.address',
         Pincode: '$b2bshopclones.Pincode',
+        slocality: '$b2bshopclones.streets.locality',
+        street: '$b2bshopclones.streets.street',
+        area: '$b2bshopclones.streets.area',
+        da_landmark: '$b2bshopclones.da_landmark',
         orderBy: '$b2busers.name',
         delivery_type: 1,
         devevery_mode: 1,
@@ -5684,7 +5701,18 @@ const get_order_counts = async (status, deliverytype, timeslot, deliverymode, da
 };
 const get_ward_by_orders = async (query) => {
   let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
-
+  let today = moment().format('YYYY-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  let deliveryType = {
+    $or: [
+      {
+        $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
+      },
+      {
+        $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+      },
+    ],
+  };
   let values = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
     {
@@ -5695,6 +5723,7 @@ const get_ward_by_orders = async (query) => {
               $in: ['Approved', 'Modified'],
             },
           },
+          deliveryType,
         ],
       },
     },
