@@ -78,7 +78,8 @@ const getUnBilledBySupplier = async () => {
                 date: 1,
                 supplierName: '$suppliers.primaryContactName',
                 Advance_raised: { $ifNull: ['$suppliers.suppplierOrders.TotalAdvance', 0] },
-                total_UnbilledAmt: "$unBilledHistory.TotalUnbilled"
+                total_UnbilledAmt: "$unBilledHistory.TotalUnbilled",
+                supplierId: '$suppliers._id',
             }
         }
     ])
