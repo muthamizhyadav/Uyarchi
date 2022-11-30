@@ -19,8 +19,14 @@ const getSupplierAdvance = catchAsync(async (req, res) => {
     res.send(data)
 })
 
+const getSupplierOrdered_Details = catchAsync(async (req, res) => {
+    const data = await supplierUnBilledService.getSupplierOrdered_Details(req.params.id)
+    res.send(data)
+})
+
 module.exports = {
     createSupplierUnBilled,
     getUnBilledBySupplier,
     getSupplierAdvance,
+    getSupplierOrdered_Details,
 }

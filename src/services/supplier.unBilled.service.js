@@ -93,7 +93,26 @@ const getSupplierAdvance = async (supplierId) => {
         {
             $group: { _id: null, totalAdvance: { $sum: '$TotalAmount' } }
         }
-    ])  
+    ])
+    return values
+}
+
+const getSupplierOrdered_Details = async (id) => {
+    let values = await CallStatus.aggregate([
+        {
+            $match: { supplierid: id }
+        },
+        {
+            $project: {
+                _id: 1,
+                totalAmounts: { $multiply: ['$confirmOrder', '$confirmprice'] },
+                date: 1,
+                status: 1,
+                date: 1,
+                TotalAdvance: { $ifNull: ['$TotalAmount', 0] },
+            }
+        }
+    ])
     return values
 }
 
@@ -101,4 +120,5 @@ module.exports = {
     createSupplierUnBilled,
     getUnBilledBySupplier,
     getSupplierAdvance,
+    getSupplierOrdered_Details,
 }
