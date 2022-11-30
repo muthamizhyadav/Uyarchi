@@ -3498,9 +3498,9 @@ const get_userbased_dataapproved = async (query) => {
           },
           { new: true }
         );
-      } else {
-        returns.push(shops[i]);
       }
+    } else {
+      returns.push(shops[i]);
     }
     lat = shops[i].Slat;
     long = shops[i].Slong;
