@@ -3462,32 +3462,45 @@ const get_userbased_dataapproved = async (query) => {
   let lat;
   let long;
   for (let i = 0; i < shops.length; i++) {
-    let response = await axios.get(
-      `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${
-        shops[i].Slat + ',' + shops[i].Slong
-      }&destinations=${shops[i].da_lot + ',' + shops[i].da_long}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
-    );
-    if (i == 0) {
-      lat = shops[i].Slat;
-      long = shops[i].Slong;
-    }
-    let dis = await axios.get(
-      `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat + ',' + long}&destinations=${
-        shops[i].Slat + ',' + shops[i].Slong
-      }&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
-    );
-    // console.log(dis.data.rows[0].elements[0].distance.text);
-    // console.log(dis.data.rows[0].elements[0].duration.text);
-    if (response != null) {
-      returns.push({
-        ...shops[i],
-        ...{
-          distance: response.data.rows[0].elements[0].distance.text,
-          duration: response.data.rows[0].elements[0].duration.text,
-          da_distance: dis.data.rows[0].elements[0].distance.text,
-          da_duration: dis.data.rows[0].elements[0].duration.text,
-        },
-      });
+    if (shops[i].distanceStatus != 'updated') {
+      let response = await axios.get(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${
+          shops[i].Slat + ',' + shops[i].Slong
+        }&destinations=${shops[i].da_lot + ',' + shops[i].da_long}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
+      );
+      if (i == 0) {
+        lat = shops[i].Slat;
+        long = shops[i].Slong;
+      }
+      let dis = await axios.get(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat + ',' + long}&destinations=${
+          shops[i].Slat + ',' + shops[i].Slong
+        }&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
+      );
+      // console.log(dis.data.rows[0].elements[0].distance.text);
+      // console.log(dis.data.rows[0].elements[0].duration.text);
+      if (response != null) {
+        returns.push({
+          ...shops[i],
+          ...{
+            distance: response.data.rows[0].elements[0].distance.text,
+            duration: response.data.rows[0].elements[0].duration.text,
+            da_distance: dis.data.rows[0].elements[0].distance.text,
+            da_duration: dis.data.rows[0].elements[0].duration.text,
+          },
+        });
+        await Shop.findByIdAndUpdate(
+          { _id: shops[i]._id },
+          {
+            da_distance: dis.data.rows[0].elements[0].distance.text,
+            distance: response.data.rows[0].elements[0].distance.text,
+            distanceStatus: 'updated',
+          },
+          { new: true }
+        );
+      }
+    } else {
+      returns.push(shops[i]);
     }
     lat = shops[i].Slat;
     long = shops[i].Slong;

@@ -179,8 +179,16 @@ const shopSchema = mongoose.Schema({
   },
   gomap: {
     type: Date,
-
-  }
+  },
+  distance: {
+    type: String,
+  },
+  da_distance: {
+    type: String,
+  },
+  distanceStatus: {
+    type: String,
+  },
 });
 
 // assignSchema.plugin(toJSON);

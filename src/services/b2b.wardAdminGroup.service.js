@@ -374,6 +374,7 @@ const updateManageStatus = async (id, updateBody, userId) => {
       pettyStockAllocateStatus: 'Un Allocate',
       pettyStockUnAllocateCreated: moment(),
       StockUid: userId,
+      status: 'Packed'
     },
     { new: true }
   );
@@ -2503,7 +2504,7 @@ const pettyStockCreate = async (id, pettyStockBody, userId) => {
   console.log(wardadmin);
   let createPetty = await wardAdminGroup.findByIdAndUpdate(
     { _id: id },
-    { pettyStockAllocateStatus: 'Allocated', PettyStockCreate: moment(), StockUid: userId },
+    { pettyStockAllocateStatus: 'Allocated', PettyStockCreate: moment(), StockUid: userId, status: 'Packed' },
     { new: true }
   );
   console.log(pettyStockBody);

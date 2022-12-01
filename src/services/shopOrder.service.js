@@ -5711,6 +5711,9 @@ const get_ward_by_orders = async (query) => {
       {
         $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
       },
+      {
+        $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: today } }],
+      },
     ],
   };
   let values = await ShopOrderClone.aggregate([
