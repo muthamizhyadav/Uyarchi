@@ -527,6 +527,96 @@ const getPaid_history = async (id) => {
   return values;
 };
 
+const billAdjust = async (body) => {
+  let { arr, supplierId, amount } = body;
+  let values = await SupplierUnbilled.findOne({ supplierId: supplierId });
+  if (values.un_Billed_amt < amount) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invaid amount');
+  }
+  const pending = await ReceivedProduct.aggregate([
+    {
+      $match: { $and: [{ _id: { $in: arr } }] },
+    },
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
+        as: 'ReceivedData',
+      },
+    },
+    {
+      $unwind: '$ReceivedData',
+    },
+    {
+      $lookup: {
+        from: 'supplierbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$Amount' } } }],
+        as: 'supplierBills',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierBills',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        PendingAmount: { $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] }, 0] },
+      },
+    },
+  ]);
+  if (pending.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Pending Bill Not Available');
+  }
+
+  pending.forEach(async (e) => {
+    if (amount > 0) {
+      let pendingamount = e.PendingAmount;
+      console.log(pendingamount);
+      if (pendingamount > 0) {
+        let reduceAmount = amount - pendingamount;
+        if (reduceAmount >= 0) {
+          amount = amount - pendingamount;
+          await supplierBills.create({
+            status: 'Paid',
+            groupId: e._id,
+            Amount: pendingamount,
+            paymentMethod: 'Adjusted',
+            supplierId: supplierId,
+            created: moment(),
+            date: moment().format('YYYY-MM-DD'),
+          });
+        } else {
+          reduceAmount = amount;
+          amount = 0;
+          await supplierBills.create({
+            status: 'Paid',
+            groupId: e._id,
+            Amount: reduceAmount,
+            paymentMethod: 'Adjusted',
+            supplierId: supplierId,
+            created: moment(),
+            date: moment().format('YYYY-MM-DD'),
+          });
+        }
+      }
+    }
+  });
+
+  values = await SupplierUnbilled.findByIdAndUpdate(
+    { _id: values._id },
+    { un_Billed_amt: values.un_Billed_amt - body.amount },
+    { new: true }
+  );
+  return values;
+};
+
 module.exports = {
   createSupplierUnBilled,
   getUnBilledBySupplier,
@@ -537,4 +627,5 @@ module.exports = {
   getBillDetails_bySupplier,
   supplierOrders_amt_details,
   getPaid_history,
+  billAdjust,
 };
