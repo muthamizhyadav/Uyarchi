@@ -512,6 +512,9 @@ const supplierOrders_amt_details = async (id) => {
         PendingAmount: { $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] }, 0] },
       },
     },
+    {
+      $match: { PendingAmount: { $gt: 0 } },
+    },
   ]);
   let supplier = await Supplier.findById(id);
   return { values: values, supplier: supplier };
