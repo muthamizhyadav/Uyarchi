@@ -64,7 +64,7 @@ const getRaisedSupplier = async () => {
         supplierName: '$suppliers.primaryContactName',
         raisedBy: 1,
         date: 1,
-        tradeName: '$suppliers.primaryContactName',
+        tradeName: '$suppliers.tradeName',
       },
     },
   ]);
