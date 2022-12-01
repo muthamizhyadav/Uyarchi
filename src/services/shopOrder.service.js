@@ -5107,6 +5107,7 @@ const get_approved_orders = async (query) => {
   if (query.deliverymode != 'all') {
     deliveryMode = { devevery_mode: { $eq: query.deliverymode } };
   }
+  let lossTime = moment().format('H');
   // console.log( moment().format("H"))
   let values = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
@@ -5279,17 +5280,13 @@ const get_approved_orders = async (query) => {
           $or: [
             {
               $and: [
-                { $lte: ['$endSlot', moment().format('H')] },
+                { $lte: ['$endSlot', parseInt(lossTime)] },
                 { $eq: ['$delivery_type', 'IMD'] },
                 { $eq: ['$date', today] },
               ],
             },
             {
-              $and: [
-                { $lte: ['$endSlot', moment().format('H')] },
-                { $eq: ['$delivery_type', 'NDD'] },
-                { $eq: ['$date', yesterday] },
-              ],
+              $and: [{ $lte: ['$endSlot', parseInt(lossTime)] }, { $eq: ['$delivery_type', 'NDD'] }, { $eq: ['$date', yesterday] }],
             },
           ],
         },
