@@ -60,6 +60,20 @@ const getUnBilledBySupplier = async () => {
               path: '$suppplierOrders',
             },
           },
+          {
+            $lookup: {
+              from: 'supplierraisedunbilleds',
+              localField: '_id',
+              foreignField: 'supplierId',
+              as: 'suppplierUnbilled',
+            },
+          },
+          {
+            $unwind: {
+              preserveNullAndEmptyArrays: true,
+              path: '$suppplierUnbilled',
+            },
+          },
         ],
         as: 'suppliers',
       },
@@ -95,9 +109,9 @@ const getUnBilledBySupplier = async () => {
         un_Billed_amt: 1,
         date: 1,
         supplierName: '$suppliers.primaryContactName',
-        Advance_raised: { $ifNull: ['$suppliers.suppplierOrders.TotalAdvance', 0] },
         total_UnbilledAmt: '$unBilledHistory.TotalUnbilled',
         supplierId: '$suppliers._id',
+        suppliersRaisedUnBill: { $ifNull: ['$suppliers.suppplierUnbilled.raised_Amt', 0] },
       },
     },
   ]);
