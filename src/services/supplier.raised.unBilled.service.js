@@ -28,7 +28,7 @@ const createRaisedUnbilled = async (body) => {
 };
 
 const getRaisedSupplier = async () => {
-  let values = await RaiseSupplierAmount.aggregate([
+  let values = await RaisedUnBilled.aggregate([
     {
       $lookup: {
         from: 'suppliers',
@@ -42,14 +42,27 @@ const getRaisedSupplier = async () => {
     },
     {
       $lookup: {
-        from: 'supplierunbilleds',
+        from: 'supplierunbilledhistories',
         localField: 'supplierId',
         foreignField: 'supplierId',
+        pipeline: [{ $group: { _id: null, total: { $sum: '$un_Billed_amt' } } }],
         as: 'unbilled',
       },
     },
     {
-      $unwind: '$unbilled',
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$unbilled',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        supplierId: 1,
+        raised_Amt: 1,
+        added_unBilled_amt: '$unbilled.total',
+        supplierName: '$suppliers.secondaryContactName',
+      },
     },
   ]);
   return values;
