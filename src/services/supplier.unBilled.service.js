@@ -294,6 +294,9 @@ const getSupplierbill_amt = async (page) => {
       },
     },
     {
+      $match: { totalPending_amt: { $gt: 0 } },
+    },
+    {
       $skip: 10 * page,
     },
     { $limit: 10 },
@@ -432,6 +435,9 @@ const getSupplierbill_amt = async (page) => {
         current_UnBilled_amt: { $ifNull: ['$supplierbills.un_Billed_amt', 0] },
         lastPaid: { $ifNull: ['$supplierbill.Amount', 0] },
       },
+    },
+    {
+      $match: { totalPending_amt: { $gt: 0 } },
     },
   ]);
   return { values: values, total: total.length };
