@@ -212,13 +212,13 @@ const updateStatusForAssugnedAndPacked = async (id, updateBody, userId) => {
   );
   let orderassign = await wardAdminGroupModel_ORDERS.findOne({ orderId: id });
   await wardAdminGroupModel_ORDERS.findByIdAndUpdate({ _id: orderassign._id }, { status: 'Packed' }, { new: true });
-  let wardgroup = await wardAdminGroupModel_ORDERS.find({
-    wardAdminGroupID: orderassign.wardAdminGroupID,
-    status: 'Assigned',
-  });
-  if (wardgroup.length == 0) {
-    await wardAdminGroup.findByIdAndUpdate({ _id: orderassign.wardAdminGroupID }, { status: 'Packed' }, { new: true });
-  }
+  // let wardgroup = await wardAdminGroupModel_ORDERS.find({
+  //   wardAdminGroupID: orderassign.wardAdminGroupID,
+  //   status: 'Assigned',
+  // });
+  // if (wardgroup.length == 0) {
+  //   await wardAdminGroup.findByIdAndUpdate({ _id: orderassign.wardAdminGroupID }, { status: 'Packed' }, { new: true });
+  // }
 
   let statusActionArray = await ShopOrderClone.findById(id);
   statusActionArray.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Packed' });
