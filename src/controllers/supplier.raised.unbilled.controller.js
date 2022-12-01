@@ -14,7 +14,13 @@ const getRaisedSupplier = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getRaisedAmountHistory = catchAsync(async (req, res) => {
+  const data = await supplierraisedunbilled.getRaisedAmountHistory(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   createSupplierRaised,
   getRaisedSupplier,
+  getRaisedAmountHistory,
 };

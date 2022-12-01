@@ -79,10 +79,7 @@ const getUnBilledBySupplier = async () => {
       },
     },
     {
-      $unwind: {
-        preserveNullAndEmptyArrays: true,
-        path: '$suppliers',
-      },
+      $unwind: '$suppliers',
     },
     {
       $lookup: {

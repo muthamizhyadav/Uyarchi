@@ -50,7 +50,7 @@ const RaisedUnBilledHistorySchema = new mongoose.Schema({
   raisedId: {
     type: String,
   },
-  raisedby: {
+  raisedBy: {
     type: String,
   },
   active: {
