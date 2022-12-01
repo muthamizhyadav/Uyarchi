@@ -16,7 +16,7 @@ const RaisedUnBilledSchema = new mongoose.Schema({
   raised_Amt: {
     type: Number,
   },
-  raisedby: {
+  raisedBy: {
     type: String,
   },
   supplierId: {
