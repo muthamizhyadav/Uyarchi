@@ -871,6 +871,32 @@ const wardloadExecutive = async (id) => {
       $unwind: '$deliveryExecutive',
     },
     {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id', //Uid
+        foreignField: 'wardAdminGroupID', //Uid
+        pipeline: [
+          {
+            $match: {
+              status: { $ne: 'Packed' },
+            },
+          },
+        ],
+        as: 'orderassigns',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderassigns',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        packedStatus: { $ifNull: ['$orderassigns._id', true] },
+      },
+    },
+    {
       $project: {
         _id: 1,
         manageDeliveryStatus: 1,
@@ -892,6 +918,7 @@ const wardloadExecutive = async (id) => {
         pettyCash: 1,
         deliveryExecutive: '$deliveryExecutive.name',
         status: 1,
+        packedStatus: 1,
       },
     },
   ]);
