@@ -123,7 +123,7 @@ const updateApprovedMultiSelect = async (body, userId) => {
     statusActionArray.save();
   });
 
-  return {message:'status updated successfully'};
+  return { message: 'status updated successfully' };
 };
 const updateRejectMultiSelect = async (body, userId) => {
   body.arr.forEach(async (e) => {
@@ -137,7 +137,7 @@ const updateRejectMultiSelect = async (body, userId) => {
     statusActionArray.save();
   });
 
-  return {message:'status updated successfully'};
+  return { message: 'status updated successfully' };
 };
 
 const updatePackedMultiSelect = async (body, userId) => {
@@ -891,6 +891,7 @@ const wardloadExecutive = async (id) => {
         GroupBillTime: 1,
         pettyCash: 1,
         deliveryExecutive: '$deliveryExecutive.name',
+        status: 1,
       },
     },
   ]);
@@ -1272,7 +1273,7 @@ const wardDeliveryExecutive = async () => {
   let today = moment().format('YYYY-MM-DD');
 
   // assignDate;
-  console.log("hello")
+  console.log('hello');
   let value = await Users.aggregate([
     {
       $match: { $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' } }] },
@@ -1286,9 +1287,21 @@ const wardDeliveryExecutive = async () => {
           {
             $match: {
               $and: [
-                { manageDeliveryStatus: { $in: ['Pending', 'Delivery Completed', 'Delivery start', 'petty cash picked', 'petty stock picked', 'Order Picked', 'StockReturned'] } },
+                {
+                  manageDeliveryStatus: {
+                    $in: [
+                      'Pending',
+                      'Delivery Completed',
+                      'Delivery start',
+                      'petty cash picked',
+                      'petty stock picked',
+                      'Order Picked',
+                      'StockReturned',
+                    ],
+                  },
+                },
                 { GroupBillDate: { $eq: today } },
-              ]
+              ],
             },
           },
         ],
@@ -1319,7 +1332,7 @@ const wardDeliveryExecutive = async () => {
         password: 1,
         createdAt: 1,
         updatedAt: 1,
-        reorderamount: "$reorderamount"
+        reorderamount: '$reorderamount',
       },
     },
     {
@@ -3417,134 +3430,138 @@ const countStatus = async () => {
 };
 
 const mismacthGroupCount = async (page) => {
-  let values = await Users.aggregate([{
-    $match: {
-      $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' } }],
+  let values = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' } }],
+      },
     },
-  }, {
-    $lookup: {
-      from: 'wardadmingroups',
-      localField: '_id',
-      foreignField: 'deliveryExecutiveId',
-      pipeline: [
-        {
-          $match: {
-            $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
-          },
-        },
-        {
-          $group: {
-            _id: null,
-            total: {
-              $sum: '$ByCashIncPettyCash',
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: '_id',
+        foreignField: 'deliveryExecutiveId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
             },
           },
-        },
-      ],
-      as: 'wardadmingroupsData',
-    },
-  },
-  {
-    $unwind: '$wardadmingroupsData',
-  },
-  {
-    $lookup: {
-      from: 'wardadmingroups',
-      localField: '_id',
-      foreignField: 'deliveryExecutiveId',
-      pipeline: [
-        {
-          $match: {
-            $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
-          },
-        },
-        {
-          $group: {
-            _id: null,
-            total: {
-              $sum: '$ByCashIncPettyCash',
+          {
+            $group: {
+              _id: null,
+              total: {
+                $sum: '$ByCashIncPettyCash',
+              },
             },
           },
-        },
-      ],
-      as: 'wardadmingroups',
+        ],
+        as: 'wardadmingroupsData',
+      },
     },
-  },
-  {
-    $project: {
-      name: 1,
-      totalAmount: '$wardadmingroupsData.total',
-      groupCount: { $size: '$wardadmingroups' },
+    {
+      $unwind: '$wardadmingroupsData',
     },
-  },
-  {
-    $skip: 10 * page
-  },
-  {
-    $limit: 10,
-  }
-  ])
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: '_id',
+        foreignField: 'deliveryExecutiveId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              total: {
+                $sum: '$ByCashIncPettyCash',
+              },
+            },
+          },
+        ],
+        as: 'wardadmingroups',
+      },
+    },
+    {
+      $project: {
+        name: 1,
+        totalAmount: '$wardadmingroupsData.total',
+        groupCount: { $size: '$wardadmingroups' },
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
 
-  let total = await Users.aggregate([{
-    $match: {
-      $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' } }],
+  let total = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ userRole: { $eq: '36151bdd-a8ce-4f80-987e-1f454cd0993f' } }],
+      },
     },
-  }, {
-    $lookup: {
-      from: 'wardadmingroups',
-      localField: '_id',
-      foreignField: 'deliveryExecutiveId',
-      pipeline: [
-        {
-          $match: {
-            $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
-          },
-        },
-        {
-          $group: {
-            _id: null,
-            total: {
-              $sum: '$ByCashIncPettyCash',
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: '_id',
+        foreignField: 'deliveryExecutiveId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
             },
           },
-        },
-      ],
-      as: 'wardadmingroupsData',
-    },
-  },
-  {
-    $unwind: '$wardadmingroupsData',
-  },
-  {
-    $lookup: {
-      from: 'wardadmingroups',
-      localField: '_id',
-      foreignField: 'deliveryExecutiveId',
-      pipeline: [
-        {
-          $match: {
-            $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
-          },
-        },
-        {
-          $group: {
-            _id: null,
-            total: {
-              $sum: '$ByCashIncPettyCash',
+          {
+            $group: {
+              _id: null,
+              total: {
+                $sum: '$ByCashIncPettyCash',
+              },
             },
           },
-        },
-      ],
-      as: 'wardadmingroups',
+        ],
+        as: 'wardadmingroupsData',
+      },
     },
-  },
-  ])
+    {
+      $unwind: '$wardadmingroupsData',
+    },
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: '_id',
+        foreignField: 'deliveryExecutiveId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ ByCashIncPettyCash: { $ne: null } }, { ByCashIncPettyCash: { $gt: 0 } }],
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              total: {
+                $sum: '$ByCashIncPettyCash',
+              },
+            },
+          },
+        ],
+        as: 'wardadmingroups',
+      },
+    },
+  ]);
 
-  return { values: values, total: total.length }
-}
+  return { values: values, total: total.length };
+};
 
 const mismacthStock = async (page) => {
-  let count = 0
+  let count = 0;
   let values = await Users.aggregate([
     {
       $match: {
@@ -3598,12 +3615,12 @@ const mismacthStock = async (page) => {
       },
     },
     {
-      $skip: 10 * page
+      $skip: 10 * page,
     },
     {
       $limit: 10,
-    }
-  ])
+    },
+  ]);
 
   let total = await Users.aggregate([
     {
@@ -3657,12 +3674,10 @@ const mismacthStock = async (page) => {
         // groupid:"$wardadmingroupsData._id",
       },
     },
+  ]);
 
-  ])
-
-  return { values: values, total: total.length }
-}
-
+  return { values: values, total: total.length };
+};
 
 const mismatchCount = async (page) => {
   let data = await Users.aggregate([
@@ -3714,174 +3729,179 @@ const mismatchCount = async (page) => {
 };
 
 const group_In_misMatch = async (id, page) => {
-  let values = await Users.aggregate([{
-    $match: {
-      $and: [{ _id: { $eq: id } }],
+  let values = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
     },
-  }, {
-    $lookup: {
-      from: 'wardadmingroups',
-      localField: '_id',
-      foreignField: 'deliveryExecutiveId',
-      pipeline: [
-        {
-          $match: {
-            $and: [{ ByCashIncPettyCash: { $ne: null } }],
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: '_id',
+        foreignField: 'deliveryExecutiveId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ ByCashIncPettyCash: { $ne: null } }],
+            },
           },
-        },
-        {
-          $lookup: {
-            from: 'orderassigns',
-            localField: '_id',
-            foreignField: 'wardAdminGroupID',
-            pipeline: [
-              {
-                $lookup: {
-                  from: 'orderpayments',
-                  localField: 'orderId',
-                  foreignField: 'orderId',
-                  pipeline: [
-                    {
-                      $match: {
-                        $and: [{ type: { $ne: 'advanced' } }],
-                      },
-                    },
-                    {
-                      $group: {
-                        _id: null,
-                        total: {
-                          $sum: '$paidAmt',
+          {
+            $lookup: {
+              from: 'orderassigns',
+              localField: '_id',
+              foreignField: 'wardAdminGroupID',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'orderpayments',
+                    localField: 'orderId',
+                    foreignField: 'orderId',
+                    pipeline: [
+                      {
+                        $match: {
+                          $and: [{ type: { $ne: 'advanced' } }],
                         },
                       },
-                    },
-                  ],
-                  as: 'orderpaymentsData',
-                },
-              },
-              {
-                $unwind: '$orderpaymentsData',
-              },
-              {
-                $group: {
-                  _id: null,
-                  total: { $sum: '$orderpaymentsData.total' },
-                },
-              },
-            ],
-            as: 'orderassignsData',
-          },
-        },
-        {
-          $unwind: '$orderassignsData',
-        },
-      ],
-      as: 'wardadmingroupsData',
-    },
-  },
-  {
-    $unwind: '$wardadmingroupsData',
-  },
-  {
-    $project: {
-      name: 1,
-      cash_As_perSystem: '$wardadmingroupsData.orderassignsData.total',
-      groupId: '$wardadmingroupsData.groupId',
-      pettyCash: '$wardadmingroupsData.pettyCash',
-      group: '$wardadmingroupsData._id',
-      status: { $ifNull: ['$wardadmingroupsData.misMatchAmountStatus', 'Pending'] },
-      mismatch: '$wardadmingroupsData.ByCashIncPettyCash',
-      assignDate: '$wardadmingroupsData.assignDate',
-    },
-  },
-  { $match: { mismatch: { $gt: 0 } } },
-  {
-    $skip: 10 * page
-  }, {
-    $limit: 10
-  }
-  ])
-  let total = await Users.aggregate([{
-    $match: {
-      $and: [{ _id: { $eq: id } }],
-    },
-  }, {
-    $lookup: {
-      from: 'wardadmingroups',
-      localField: '_id',
-      foreignField: 'deliveryExecutiveId',
-      pipeline: [
-        {
-          $match: {
-            $and: [{ ByCashIncPettyCash: { $ne: null } }],
-          },
-        },
-        {
-          $lookup: {
-            from: 'orderassigns',
-            localField: '_id',
-            foreignField: 'wardAdminGroupID',
-            pipeline: [
-              {
-                $lookup: {
-                  from: 'orderpayments',
-                  localField: 'orderId',
-                  foreignField: 'orderId',
-                  pipeline: [
-                    {
-                      $match: {
-                        $and: [{ type: { $ne: 'advanced' } }],
-                      },
-                    },
-                    {
-                      $group: {
-                        _id: null,
-                        total: {
-                          $sum: '$paidAmt',
+                      {
+                        $group: {
+                          _id: null,
+                          total: {
+                            $sum: '$paidAmt',
+                          },
                         },
                       },
-                    },
-                  ],
-                  as: 'orderpaymentsData',
+                    ],
+                    as: 'orderpaymentsData',
+                  },
                 },
-              },
-              {
-                $unwind: '$orderpaymentsData',
-              },
-              {
-                $group: {
-                  _id: null,
-                  total: { $sum: '$orderpaymentsData.total' },
+                {
+                  $unwind: '$orderpaymentsData',
                 },
-              },
-            ],
-            as: 'orderassignsData',
+                {
+                  $group: {
+                    _id: null,
+                    total: { $sum: '$orderpaymentsData.total' },
+                  },
+                },
+              ],
+              as: 'orderassignsData',
+            },
           },
-        },
-        {
-          $unwind: '$orderassignsData',
-        },
-      ],
-      as: 'wardadmingroupsData',
+          {
+            $unwind: '$orderassignsData',
+          },
+        ],
+        as: 'wardadmingroupsData',
+      },
     },
-  },
-  {
-    $unwind: '$wardadmingroupsData',
-  },
-  {
-    $project: {
-      name: 1,
-      cash_As_perSystem: '$wardadmingroupsData.orderassignsData.total',
-      groupId: '$wardadmingroupsData.groupId',
-      pettyCash: '$wardadmingroupsData.pettyCash',
-      group: '$wardadmingroupsData._id',
-      mismatch: '$wardadmingroupsData.ByCashIncPettyCash',
-      assignDate: '$wardadmingroupsData.assignDate',
+    {
+      $unwind: '$wardadmingroupsData',
     },
-  },
-  { $match: { mismatch: { $gt: 0 } } },
-  ])
-  return { values: values, total: total.length }
-}
+    {
+      $project: {
+        name: 1,
+        cash_As_perSystem: '$wardadmingroupsData.orderassignsData.total',
+        groupId: '$wardadmingroupsData.groupId',
+        pettyCash: '$wardadmingroupsData.pettyCash',
+        group: '$wardadmingroupsData._id',
+        status: { $ifNull: ['$wardadmingroupsData.misMatchAmountStatus', 'Pending'] },
+        mismatch: '$wardadmingroupsData.ByCashIncPettyCash',
+        assignDate: '$wardadmingroupsData.assignDate',
+      },
+    },
+    { $match: { mismatch: { $gt: 0 } } },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await Users.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'wardadmingroups',
+        localField: '_id',
+        foreignField: 'deliveryExecutiveId',
+        pipeline: [
+          {
+            $match: {
+              $and: [{ ByCashIncPettyCash: { $ne: null } }],
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderassigns',
+              localField: '_id',
+              foreignField: 'wardAdminGroupID',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'orderpayments',
+                    localField: 'orderId',
+                    foreignField: 'orderId',
+                    pipeline: [
+                      {
+                        $match: {
+                          $and: [{ type: { $ne: 'advanced' } }],
+                        },
+                      },
+                      {
+                        $group: {
+                          _id: null,
+                          total: {
+                            $sum: '$paidAmt',
+                          },
+                        },
+                      },
+                    ],
+                    as: 'orderpaymentsData',
+                  },
+                },
+                {
+                  $unwind: '$orderpaymentsData',
+                },
+                {
+                  $group: {
+                    _id: null,
+                    total: { $sum: '$orderpaymentsData.total' },
+                  },
+                },
+              ],
+              as: 'orderassignsData',
+            },
+          },
+          {
+            $unwind: '$orderassignsData',
+          },
+        ],
+        as: 'wardadmingroupsData',
+      },
+    },
+    {
+      $unwind: '$wardadmingroupsData',
+    },
+    {
+      $project: {
+        name: 1,
+        cash_As_perSystem: '$wardadmingroupsData.orderassignsData.total',
+        groupId: '$wardadmingroupsData.groupId',
+        pettyCash: '$wardadmingroupsData.pettyCash',
+        group: '$wardadmingroupsData._id',
+        mismatch: '$wardadmingroupsData.ByCashIncPettyCash',
+        assignDate: '$wardadmingroupsData.assignDate',
+      },
+    },
+    { $match: { mismatch: { $gt: 0 } } },
+  ]);
+  return { values: values, total: total.length };
+};
 
 const mismatchGroup = async (id) => {
   let data = await Users.aggregate([
@@ -4703,8 +4723,8 @@ const misMatchStocks = async (id) => {
   let values = await wardAdminGroup.aggregate([
     {
       $match: {
-        deliveryExecutiveId: id
-      }
+        deliveryExecutiveId: id,
+      },
     },
     {
       $lookup: {
@@ -4720,7 +4740,7 @@ const misMatchStocks = async (id) => {
       },
     },
     {
-      $unwind: '$returnStocks'
+      $unwind: '$returnStocks',
     },
     {
       $lookup: {
@@ -4731,7 +4751,7 @@ const misMatchStocks = async (id) => {
       },
     },
     {
-      $unwind: '$returnStock'
+      $unwind: '$returnStock',
     },
     {
       $project: {
@@ -4743,11 +4763,11 @@ const misMatchStocks = async (id) => {
         totalMis_match: '$returnStocks.totalMisMatch',
         groupId: 1,
         returnStock: '$returnStock.image',
-      }
-    }
-  ])
-  return values
-}
+      },
+    },
+  ]);
+  return values;
+};
 
 module.exports = {
   getdetails,
