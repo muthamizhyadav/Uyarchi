@@ -1523,9 +1523,8 @@ const getshopWardStreetNamesWithAggregation_withfilter_daily = async (
   if (status != 'null') {
     streetMatch = { status: status };
   }
-  if(status == 'data_approved'){
+  if (status == 'data_approved') {
     sortTime = { DA_DATE: -1, DA_TIME: -1 };
-
   }
   if (user != 'null' && status != 'data_approved') {
     userMatch = { Uid: user };
@@ -2481,7 +2480,7 @@ const getVendorShops = async (key) => {
 // getnotAssignSalesmanData
 
 const getnotAssignSalesmanData = async (zone, id, street, page, limit, uid, date) => {
-  date = date.split("-").reverse().join("-");
+  date = date.split('-').reverse().join('-');
   let match;
   let zoneMatch;
   let wardMatch;
@@ -3038,7 +3037,7 @@ const getnotAssignSalesmanData = async (zone, id, street, page, limit, uid, date
     //   $limit: parseInt(limit),
     // },
   ]);
-  return { data: data, total: total.length, overall: allnoAssing.length, temp: temp.length, lat:lat };
+  return { data: data, total: total.length, overall: allnoAssing.length, temp: temp.length, lat: lat };
 };
 
 const GetShopsByShopType = async (id, page) => {
@@ -3559,7 +3558,7 @@ const ward_by_users = async (query) => {
 };
 
 const getnotAssignSalesmanDataMap = async (zone, id, street, uid, date) => {
-  date = date.split("-").reverse().join("-");
+  date = date.split('-').reverse().join('-');
   let match;
   let zoneMatch;
   let wardMatch;
@@ -3728,6 +3727,72 @@ const getnotAssignSalesmanDataMap = async (zone, id, street, uid, date) => {
   ]);
   return data;
 };
+
+const get_userbased_dataapproved = async (query) => {
+  let userId = query.user;
+  let date = query.date;
+  console.log(userId);
+  console.log(date);
+  const shops = await Shop.aggregate([
+    { $sort: { DA_CREATED: 1 } },
+    {
+      $match: {
+        $and: [{ DA_USER: { $eq: userId } }, { DA_DATE: { $eq: date } }, { status: { $eq: 'data_approved' } }],
+      },
+    },
+  ]);
+  let returns = [];
+  let lat;
+  let long;
+  for (let i = 0; i < shops.length; i++) {
+    if (shops[i].distanceStatus != 'updated') {
+      let response = await axios.get(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${
+          shops[i].Slat + ',' + shops[i].Slong
+        }&destinations=${shops[i].da_lot + ',' + shops[i].da_long}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
+      );
+      if (i == 0) {
+        lat = shops[i].Slat;
+        long = shops[i].Slong;
+      }
+      let dis = await axios.get(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat + ',' + long}&destinations=${
+          shops[i].Slat + ',' + shops[i].Slong
+        }&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
+      );
+      // console.log(dis.data.rows[0].elements[0].distance.text);
+      // console.log(dis.data.rows[0].elements[0].duration.text);
+      if (response != null) {
+        returns.push({
+          ...shops[i],
+          ...{
+            distance: response.data.rows[0].elements[0].distance.text,
+            duration: response.data.rows[0].elements[0].duration.text,
+            da_distance: dis.data.rows[0].elements[0].distance.text,
+            da_duration: dis.data.rows[0].elements[0].duration.text,
+          },
+        });
+        await Shop.findByIdAndUpdate(
+          { _id: shops[i]._id },
+          {
+            da_distance: dis.data.rows[0].elements[0].distance.text,
+            distance: response.data.rows[0].elements[0].distance.text,
+            distanceStatus: 'updated',
+          },
+          { new: true }
+        );
+      }
+    } else {
+      returns.push(shops[i]);
+    }
+    lat = shops[i].Slat;
+    long = shops[i].Slong;
+  }
+  // console.log(returns);
+
+  return { returns: returns };
+  // return shops;
+};
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -3778,4 +3843,5 @@ module.exports = {
   gomap_view_now,
   ward_by_users,
   getnotAssignSalesmanDataMap,
+  get_userbased_dataapproved,
 };
