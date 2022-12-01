@@ -333,6 +333,12 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   returnedCash: {
     type: Date,
   },
+  startSlot: {
+    type: Number,
+  },
+  endSlot: {
+    type: Number,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
