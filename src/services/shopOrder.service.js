@@ -5275,6 +5275,12 @@ const get_approved_orders = async (query) => {
         time_of_delivery: 1,
         paidAmount: '$orderpayments.amount',
         subtotal: '$productData.price',
+        timeloss: {
+          $or: [
+            {$and:[{ $lte: ['$endSlot', 15],},{ $eq: ['$delivery_type', 'IMD']},{ $eq: ['$date', today] }]},
+            {$and:[{ $lte: ['$endSlot', 15],},{ $eq: ['$delivery_type', 'NDD']},{ $eq: ['$date', yesterday] }]},
+          ],
+        },
       },
     },
     { $skip: 10 * page },
