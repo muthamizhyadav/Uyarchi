@@ -5286,7 +5286,11 @@ const get_approved_orders = async (query) => {
               ],
             },
             {
-              $and: [{ $lte: ['$endSlot', parseInt(lossTime)] }, { $eq: ['$delivery_type', 'NDD'] }, { $eq: ['$date', yesterday] }],
+              $and: [
+                { $lte: ['$endSlot', parseInt(lossTime)] },
+                { $eq: ['$delivery_type', 'NDD'] },
+                { $eq: ['$date', yesterday] },
+              ],
             },
           ],
         },
@@ -5833,6 +5837,12 @@ const get_ward_by_orders = async (query) => {
   return values;
 };
 
+const get_assignorder_timeloss = async (query) => {
+  let id = query.id;
+  await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Rejected_assign' }, { new: true });
+  return { message: 'Rejected' };
+};
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -5893,4 +5903,5 @@ module.exports = {
   getall_ordered_shops,
   get_approved_orders,
   get_ward_by_orders,
+  get_assignorder_timeloss,
 };

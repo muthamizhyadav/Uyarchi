@@ -71,5 +71,6 @@ router.route('/undelivered/ordes/data').get(shopOrderController.UnDeliveredOrder
 router.route('/getall/shoporder/ordered').get(shopOrderController.getall_ordered_shops);
 router.route('/getall/shoporder/approved').get(shopOrderController.get_approved_orders);
 router.route('/getpincode/getall/orders').get(shopOrderController.get_ward_by_orders);
+router.route('/reject/assignorder/timeloss').get(shopOrderController.get_assignorder_timeloss);
 
 module.exports = router;
