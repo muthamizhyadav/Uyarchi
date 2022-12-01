@@ -60,8 +60,9 @@ const getRaisedSupplier = async () => {
         _id: 1,
         supplierId: 1,
         raised_Amt: 1,
-        added_unBilled_amt: '$unbilled.total',
+        added_unBilled_amt: { $ifNull: ['$unbilled.total', 0] },
         supplierName: '$suppliers.primaryContactName',
+        raisedBy: 1,
       },
     },
   ]);
