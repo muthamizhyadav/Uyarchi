@@ -427,6 +427,7 @@ const getSupplierWith_Advanced = async () => {
         primaryContactName: 1,
         primaryContactNumber: 1,
         primaryContactName: 1,
+        tradeName: 1,
       },
     },
   ]);
