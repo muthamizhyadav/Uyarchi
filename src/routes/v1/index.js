@@ -104,15 +104,20 @@ const manageJob = require('./manageJob.route');
 const paymentgatway = require('./paymentgatway.route');
 const checkot = require('./checkout.route');
 const OrderReviewRoute = require('./orderReview.route');
-const supplierUnBilledRoute = require('./supplier.unbilled.route')
+const supplierUnBilledRoute = require('./supplier.unbilled.route');
+const supplierRaisedRoute = require('./supplier.raised.unbilled.route');
 const defaultRoutes = [
   {
     path: '/checkout',
     route: checkot,
   },
   {
+    path: '/supplierRaised',
+    route: supplierRaisedRoute,
+  },
+  {
     path: '/supplierUnBilled',
-    route: supplierUnBilledRoute
+    route: supplierUnBilledRoute,
   },
   {
     path: '/orderReview',
