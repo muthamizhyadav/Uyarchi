@@ -8,7 +8,7 @@ const moment = require('moment');
 const createCallStatus = async (callStatusBody) => {
   const serverdate = moment().format('YYYY-MM-DD');
   const servertime = moment().format('HHmmss');
-  let Buy = await CallStatus.find({ date: serverdate }).count()
+  let Buy = await CallStatus.find({ date: serverdate }).count();
   let centerdata = '';
   if (Buy < 9) {
     centerdata = '0000';
@@ -95,7 +95,20 @@ const getProductAndSupplierDetails = async (page) => {
   };
 };
 
-const getDataWithSupplierId = async (id, page) => {
+const getDataWithSupplierId = async (id, page, search, date) => {
+  console.log(search);
+  let dateM = { active: true };
+  let searchMatch = { active: true };
+  if (search !== 'null') {
+    searchMatch = { primaryContactName: { $regex: search, $options: 'i' } };
+  } else {
+    searchMatch;
+  }
+  if (date !== 'null') {
+    dateM = { date: { $eq: date } };
+  } else {
+    dateM;
+  }
   let values = await CallStatus.aggregate([
     {
       $match: {
@@ -103,7 +116,6 @@ const getDataWithSupplierId = async (id, page) => {
           { supplierid: { $eq: id } },
           { StockReceived: { $eq: 'Pending' } },
           { confirmcallstatus: { $eq: 'Accepted' } },
-          // {SuddenStatus:{$eq:'Approve'}},
         ],
       },
     },
@@ -123,6 +135,13 @@ const getDataWithSupplierId = async (id, page) => {
         from: 'suppliers',
         localField: 'supplierid',
         foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              $and: [searchMatch],
+            },
+          },
+        ],
         as: 'supplierData',
       },
     },
@@ -158,6 +177,11 @@ const getDataWithSupplierId = async (id, page) => {
         supplierContact: '$supplierData.primaryContactNumber',
         supplierName: '$supplierData.primaryContactName',
         productTitle: '$ProductData.productTitle',
+      },
+    },
+    {
+      $match: {
+        $and: [dateM],
       },
     },
     { $skip: 10 * page },

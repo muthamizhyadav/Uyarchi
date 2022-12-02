@@ -6,6 +6,7 @@ const CallStatus = require('../models/callStatus');
 const Supplier = require('../models/supplier.model');
 const supplierBills = require('../models/supplierBills.model');
 const ReceivedProduct = require('../models/receivedProduct.model');
+const { RaisedUnBilled } = require('../models/supplier.raised.unbilled.model');
 
 const createSupplierUnBilled = async (body) => {
   const { supplierId, un_Billed_amt } = body;
@@ -294,6 +295,9 @@ const getSupplierbill_amt = async (page) => {
       },
     },
     {
+      $match: { totalPending_amt: { $gt: 0 } },
+    },
+    {
       $skip: 10 * page,
     },
     { $limit: 10 },
@@ -433,6 +437,9 @@ const getSupplierbill_amt = async (page) => {
         lastPaid: { $ifNull: ['$supplierbill.Amount', 0] },
       },
     },
+    {
+      $match: { totalPending_amt: { $gt: 0 } },
+    },
   ]);
   return { values: values, total: total.length };
 };
@@ -512,6 +519,9 @@ const supplierOrders_amt_details = async (id) => {
         PendingAmount: { $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] }, 0] },
       },
     },
+    {
+      $match: { PendingAmount: { $gt: 0 } },
+    },
   ]);
   let supplier = await Supplier.findById(id);
   return { values: values, supplier: supplier };
@@ -527,6 +537,101 @@ const getPaid_history = async (id) => {
   return values;
 };
 
+const billAdjust = async (body) => {
+  let { arr, supplierId, amount } = body;
+  let values = await SupplierUnbilled.findOne({ supplierId: supplierId });
+  if (values.un_Billed_amt < amount) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invaid amount');
+  }
+  const pending = await ReceivedProduct.aggregate([
+    {
+      $match: { $and: [{ _id: { $in: arr } }] },
+    },
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
+        as: 'ReceivedData',
+      },
+    },
+    {
+      $unwind: '$ReceivedData',
+    },
+    {
+      $lookup: {
+        from: 'supplierbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$Amount' } } }],
+        as: 'supplierBills',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierBills',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        PendingAmount: { $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] }, 0] },
+      },
+    },
+  ]);
+  if (pending.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Pending Bill Not Available');
+  }
+
+  pending.forEach(async (e) => {
+    if (amount > 0) {
+      let pendingamount = e.PendingAmount;
+      console.log(pendingamount);
+      if (pendingamount > 0) {
+        let reduceAmount = amount - pendingamount;
+        if (reduceAmount >= 0) {
+          amount = amount - pendingamount;
+          await supplierBills.create({
+            status: 'Paid',
+            groupId: e._id,
+            Amount: pendingamount,
+            paymentMethod: 'Adjusted',
+            supplierId: supplierId,
+            created: moment(),
+            date: moment().format('YYYY-MM-DD'),
+          });
+        } else {
+          reduceAmount = amount;
+          amount = 0;
+          await supplierBills.create({
+            status: 'Paid',
+            groupId: e._id,
+            Amount: reduceAmount,
+            paymentMethod: 'Adjusted',
+            supplierId: supplierId,
+            created: moment(),
+            date: moment().format('YYYY-MM-DD'),
+          });
+        }
+      }
+    }
+  });
+
+  values = await SupplierUnbilled.findByIdAndUpdate(
+    { _id: values._id },
+    { un_Billed_amt: values.un_Billed_amt - body.amount },
+    { new: true }
+  );
+  return values;
+};
+
+const PayPendingAmount = async (body) => {
+  const {} = body;
+  
+};
+
 module.exports = {
   createSupplierUnBilled,
   getUnBilledBySupplier,
@@ -537,4 +642,5 @@ module.exports = {
   getBillDetails_bySupplier,
   supplierOrders_amt_details,
   getPaid_history,
+  billAdjust,
 };
