@@ -36,7 +36,7 @@ const createSupplierUnBilled = async (body) => {
 };
 
 const getUnBilledBySupplier = async () => {
-  let values = await SupplierUnbilled.aggregate([
+  let values = await RaisedUnBilled.aggregate([
     {
       $lookup: {
         from: 'suppliers',
@@ -102,25 +102,42 @@ const getUnBilledBySupplier = async () => {
       },
     },
     {
-      $project: {
-        _id: 1,
-        un_Billed_amt: 1,
-        date: 1,
-        supplierName: '$suppliers.primaryContactName',
-        total_UnbilledAmt: '$unBilledHistory.TotalUnbilled',
-        supplierId: '$suppliers._id',
-        tradeName: '$suppliers.tradeName',
-        primaryContactNumber: '$suppliers.primaryContactNumber',
-        suppliersRaisedUnBill: {
-          $ifNull: [{ $subtract: ['$suppliers.suppplierUnbilled.raised_Amt', '$un_Billed_amt'] }, 0],
-        },
+      $lookup: {
+        from: 'supplierunbilleds',
+        localField: 'supplierId',
+        foreignField: 'supplierId',
+        as: 'supplierUnBilled',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierUnBilled',
       },
     },
     {
       $project: {
         _id: 1,
-        un_Billed_amt: 1,
+        un_Billed_amt: { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] },
         date: 1,
+        raised_Amt: 1,
+        supplierName: '$suppliers.primaryContactName',
+        total_UnbilledAmt: { $ifNull: ['$unBilledHistory.TotalUnbilled', 0] },
+        supplierId: '$suppliers._id',
+        tradeName: '$suppliers.tradeName',
+        primaryContactNumber: '$suppliers.primaryContactNumber',
+        suppliersRaisedUnBill: {
+          $ifNull: [{ $subtract: ['$raised_Amt', { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] }] }, 0],
+        },
+      },
+    },
+    {
+      $project: {
+        _id: { $ifNull: ['$supplierUnBilled._id', 0] },
+        date: 1,
+        un_Billed_amt: 1,
+        supplierUnBilled: 1,
+        raised_Amt: 1,
         supplierName: 1,
         tradeName: 1,
         total_UnbilledAmt: 1,
