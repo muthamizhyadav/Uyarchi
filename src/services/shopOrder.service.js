@@ -123,7 +123,25 @@ const createshopOrderClone = async (body, userid) => {
   if (body.Payment == 'cod') {
     Payment_type = null;
   }
-
+  if (reorder_status) {
+    let paid = await OrderPayment.find({ orderId: body.RE_order_Id });
+    paid.forEach(async (e) => {
+      await OrderPayment.create({
+        uid: e.uid,
+        paidAmt: e.paidAmt,
+        date: e.date,
+        time: e.time,
+        created: e.created,
+        orderId: createShopOrderClone._id,
+        type: e.type,
+        pay_type: e.pay_type,
+        payment: e.payment,
+        paymentMethod: e.paymentMethod,
+        RE_order_Id: body.RE_order_Id,
+        reorder_status: true,
+      });
+    });
+  }
   await OrderPayment.create({
     uid: userid,
     paidAmt: paidamount,
