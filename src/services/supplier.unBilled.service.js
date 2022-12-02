@@ -415,14 +415,23 @@ const getSupplierOrdered_Details = async (id) => {
   return values;
 };
 
-const Unbilled_Details_bySupplier = async (id) => {
+const Unbilled_Details_bySupplier = async (id, query) => {
+  let page = query.page;
   const supplier = await SupplierUnbilledHistory.aggregate([
     {
       $match: { supplierId: { $eq: id } },
     },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
+  let total = await SupplierUnbilledHistory.aggregate([
+    {
+      $match: { supplierId: { $eq: id } },
+    },
+  ]);
+
   let supplierDetails = await Supplier.findById(id);
-  return { values: supplier, supplierDetails: supplierDetails };
+  return { values: supplier, supplierDetails: supplierDetails, total: total.length };
 };
 
 const getSupplierbill_amt = async (page) => {
@@ -745,8 +754,61 @@ const getBillDetails_bySupplier = async (id) => {
   return { values: values, supplier: supplier };
 };
 
-const supplierOrders_amt_details = async (id) => {
+const supplierOrders_amt_details = async (id, query) => {
+  let page = query.page;
   let values = await ReceivedProduct.aggregate([
+    {
+      $match: { supplierId: id },
+    },
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
+        as: 'ReceivedData',
+      },
+    },
+    {
+      $unwind: '$ReceivedData',
+    },
+    {
+      $lookup: {
+        from: 'supplierbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$Amount' } } }],
+        as: 'supplierBills',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierBills',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        supplierId: 1,
+        date: 1,
+        BillNo: 1,
+        TotalAmt: { $ifNull: ['$ReceivedData.billingTotal', 0] },
+        paidAmount: { $ifNull: ['$supplierBills.billingTotal', 0] },
+        PendingAmount: { $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] }, 0] },
+      },
+    },
+    {
+      $match: { PendingAmount: { $gt: 0 } },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await ReceivedProduct.aggregate([
     {
       $match: { supplierId: id },
     },
@@ -793,7 +855,7 @@ const supplierOrders_amt_details = async (id) => {
     },
   ]);
   let supplier = await Supplier.findById(id);
-  return { values: values, supplier: supplier };
+  return { values: values, supplier: supplier, total: total.length };
 };
 
 const getPaid_history = async (id) => {
