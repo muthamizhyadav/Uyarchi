@@ -631,7 +631,7 @@ const billAdjust = async (body) => {
 };
 
 const PayPendingAmount = async (body) => {
-  const { supplierId, amount, arr } = body;
+  const { supplierId, amount, arr, pay_method } = body;
   if (arr.length == 0) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Bill Not Available');
   }
@@ -641,7 +641,7 @@ const PayPendingAmount = async (body) => {
       status: 'Paid',
       groupId: values._id,
       Amount: amount,
-      paymentMethod: 'Payed',
+      paymentMethod: pay_method,
       supplierId: supplierId,
       created: moment(),
       date: moment().format('YYYY-MM-DD'),
