@@ -404,7 +404,7 @@ const getReportWithSupplierId = async (page, search, date) => {
   console.log(search);
   let dateM = { active: true };
   let searchMatch = { active: true };
-  if (search !== null) {
+  if (search !== 'null') {
     searchMatch = { primaryContactName: { $regex: search, $options: 'i' } };
   } else {
     searchMatch;
@@ -424,7 +424,7 @@ const getReportWithSupplierId = async (page, search, date) => {
         from: 'suppliers',
         localField: 'supplierid',
         foreignField: '_id',
-        // pipeline: [{ $match: { searchMatch } }],
+        pipeline: [{ $match: { $and: [searchMatch] } }],
         as: 'supplierdata',
       },
     },
@@ -469,40 +469,65 @@ const getReportWithSupplierId = async (page, search, date) => {
         productData: '$productData.productTitle',
       },
     },
+    // {
+    //   $match: { searchMatch },
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
   let total = await CallStatus.aggregate([
+    // {
+    //   $match: { $and: [dateM] },
+    // },
     {
-      $match: {
-        $and: [
-          { StockReceived: { $eq: 'Pending' } },
-          { confirmcallstatus: { $eq: 'Accepted' } },
-          // {SuddenStatus:{$eq:'Approve'}},
-        ],
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        // pipeline: [{ $match: { $and: [searchMatch] } }],
+        as: 'supplierdata',
       },
+    },
+    {
+      $unwind: '$supplierdata',
     },
     {
       $lookup: {
         from: 'products',
         localField: 'productid',
         foreignField: '_id',
-        as: 'ProductData',
+        as: 'productData',
       },
     },
     {
-      $unwind: '$ProductData',
+      $unwind: '$productData',
     },
     {
-      $lookup: {
-        from: 'suppliers',
-        localField: 'supplierid',
-        foreignField: '_id',
-        as: 'supplierData',
+      $project: {
+        _id: 1,
+        showWhs: 1,
+        active: 1,
+        StockReceived: 1,
+        archive: 1,
+        productid: 1,
+        supplierid: 1,
+        confirmOrder: 1,
+        confirmcallstatus: 1,
+        confirmprice: 1,
+        status: 1,
+        exp_date: 1,
+        orderType: 1,
+        order_Type: 1,
+        TotalAmount: 1,
+        SuddenCreatedBy: 1,
+        SuddenStatus: 1,
+        date: 1,
+        time: 1,
+        OrderId: 1,
+        supplierName: '$supplierdata.primaryContactName',
+        Net_Amount: { $multiply: ['$confirmOrder', '$confirmprice'] },
+        productData: '$productData.productTitle',
       },
-    },
-    {
-      $unwind: '$supplierData',
     },
   ]);
   let totalss = await CallStatus.aggregate([
