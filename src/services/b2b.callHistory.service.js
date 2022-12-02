@@ -529,11 +529,19 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
   let faildstatusMatch = {
     $or: [
       {
-        status: {
-          $in: ['Rejected', 'Rejected_assign'],
-        },
-        RE_order_status: { $ne: 'Re-Ordered' },
-        RE_order_status: { $ne: 'declined' },
+        $and: [
+          {
+            status: {
+              $in: ['Rejected', 'Rejected_assign'],
+            },
+          },
+          {
+            RE_order_status: { $ne: 'Re-Ordered' },
+          },
+          {
+            RE_order_status: { $ne: 'declined' },
+          },
+        ],
       },
     ],
   };
@@ -1021,11 +1029,19 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
   let faildstatusMatch = {
     $or: [
       {
-        status: {
-          $in: ['Rejected', 'Rejected_assign'],
-        },
-        RE_order_status: { $ne: 'Re-Ordered' },
-        RE_order_status: { $ne: 'declined' },
+        $and: [
+          {
+            status: {
+              $in: ['Rejected', 'Rejected_assign'],
+            },
+          },
+          {
+            RE_order_status: { $ne: 'Re-Ordered' },
+          },
+          {
+            RE_order_status: { $ne: 'declined' },
+          },
+        ],
       },
     ],
   };
@@ -1407,11 +1423,19 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
   let faildstatusMatch = {
     $or: [
       {
-        status: {
-          $in: ['Rejected', 'Rejected_assign'],
-        },
-        RE_order_status: { $ne: 'Re-Ordered' },
-        RE_order_status: { $ne: 'declined' },
+        $and: [
+          {
+            status: {
+              $in: ['Rejected', 'Rejected_assign'],
+            },
+          },
+          {
+            RE_order_status: { $ne: 'Re-Ordered' },
+          },
+          {
+            RE_order_status: { $ne: 'declined' },
+          },
+        ],
       },
     ],
   };
@@ -1796,15 +1820,22 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
   let today = moment().format('yyyy-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
   let threeDay = moment().subtract(2, 'days').format('yyyy-MM-DD');
-  
   let faildstatusMatch = {
     $or: [
       {
-        status: {
-          $in: ['Rejected', 'Rejected_assign'],
-        },
-        RE_order_status: { $ne: 'Re-Ordered' },
-        RE_order_status: { $ne: 'declined' },
+        $and: [
+          {
+            status: {
+              $in: ['Rejected', 'Rejected_assign'],
+            },
+          },
+          {
+            RE_order_status: { $ne: 'Re-Ordered' },
+          },
+          {
+            RE_order_status: { $ne: 'declined' },
+          },
+        ],
       },
     ],
   };
