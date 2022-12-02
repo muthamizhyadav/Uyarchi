@@ -75,17 +75,6 @@ const getAllPage = catchAsync(async (req, res) => {
       userId,
       userRole
     );
-  } else if (req.params.status == 'lapsed') {
-    // console.log('hello');
-    call = await callHistoryService.getShop_lapsed(
-      moment().format('DD-MM-YYYY'),
-      req.params.status,
-      req.params.key,
-      req.params.page,
-      userId,
-      userRole,
-      req.params.date
-    );
   }
   res.send(call);
 });
