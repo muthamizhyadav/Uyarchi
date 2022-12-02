@@ -109,7 +109,10 @@ const getUnBilledBySupplier = async () => {
         supplierName: '$suppliers.primaryContactName',
         total_UnbilledAmt: '$unBilledHistory.TotalUnbilled',
         supplierId: '$suppliers._id',
-        suppliersRaisedUnBill: { $ifNull: ['$suppliers.suppplierUnbilled.raised_Amt', 0] },
+        suppliersRaisedUnBill: {
+          $ifNull: [{ $subtract: ['$suppliers.suppplierUnbilled.raised_Amt', '$un_Billed_amt'] }, 0],
+        },
+        suppliersRaisedUnBills: { $ifNull: ['$suppliers.suppplierUnbilled.raised_Amt', 0] },
       },
     },
   ]);
@@ -644,7 +647,7 @@ const PayPendingAmount = async (body) => {
       date: moment().format('YYYY-MM-DD'),
     });
   });
-  return { message: "successFully paid" };
+  return { message: 'successFully paid' };
 };
 
 module.exports = {

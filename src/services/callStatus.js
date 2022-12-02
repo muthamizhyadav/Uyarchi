@@ -96,19 +96,19 @@ const getProductAndSupplierDetails = async (page) => {
 };
 
 const getDataWithSupplierId = async (id, page, search, date) => {
-  console.log(search);
-  let dateM = { active: true };
-  let searchMatch = { active: true };
-  if (search !== 'null') {
-    searchMatch = { primaryContactName: { $regex: search, $options: 'i' } };
-  } else {
-    searchMatch;
-  }
-  if (date !== 'null') {
-    dateM = { date: { $eq: date } };
-  } else {
-    dateM;
-  }
+  // console.log(search);
+  // let dateM = { active: true };
+  // let searchMatch = { active: true };
+  // if (search !== 'null') {
+  //   searchMatch = { primaryContactName: { $regex: search, $options: 'i' } };
+  // } else {
+  //   searchMatch;
+  // }
+  // if (date !== 'null') {
+  //   dateM = { date: { $eq: date } };
+  // } else {
+  //   dateM;
+  // }
   let values = await CallStatus.aggregate([
     {
       $match: {
@@ -135,13 +135,13 @@ const getDataWithSupplierId = async (id, page, search, date) => {
         from: 'suppliers',
         localField: 'supplierid',
         foreignField: '_id',
-        pipeline: [
-          {
-            $match: {
-              $and: [searchMatch],
-            },
-          },
-        ],
+        // pipeline: [
+        //   {
+        //     $match: {
+        //       $and: [searchMatch],
+        //     },
+        //   },
+        // ],
         as: 'supplierData',
       },
     },
@@ -179,11 +179,11 @@ const getDataWithSupplierId = async (id, page, search, date) => {
         productTitle: '$ProductData.productTitle',
       },
     },
-    {
-      $match: {
-        $and: [dateM],
-      },
-    },
+    // {
+    //   $match: {
+    //     $and: [dateM],
+    //   },
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
