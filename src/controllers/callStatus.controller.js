@@ -45,7 +45,6 @@ const getDataWithSupplierId = catchAsync(async (req, res) => {
 
 const getReportWithSupplierId = catchAsync(async (req, res) => {
   const callStatus = await CallStatusService.getReportWithSupplierId(
-    req.params.id,
     req.params.page,
     req.params.search,
     req.params.date
