@@ -770,7 +770,10 @@ const supplierOrders_amt_details = async (id, query) => {
       },
     },
     {
-      $unwind: '$ReceivedData',
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$ReceivedData',
+      },
     },
     {
       $lookup: {
@@ -795,7 +798,19 @@ const supplierOrders_amt_details = async (id, query) => {
         BillNo: 1,
         TotalAmt: { $ifNull: ['$ReceivedData.billingTotal', 0] },
         paidAmount: { $ifNull: ['$supplierBills.billingTotal', 0] },
-        PendingAmount: { $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] }, 0] },
+        // PendingAmount: { $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] }, 0] },
+        // PendingAmount: { $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        supplierId: 1,
+        date: 1,
+        BillNo: 1,
+        TotalAmt: 1,
+        paidAmount: 1,
+        PendingAmount: { $ifNull: [{ $subtract: ['$TotalAmt', '$paidAmount'] }, 0] },
       },
     },
     {
