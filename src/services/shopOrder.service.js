@@ -5768,8 +5768,6 @@ const get_rejected_orders = async (query) => {
   let today = moment().format('YYYY-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
   let dateMacth = { active: true };
-  ////console.log(today)
-  ////console.log(yesterday)
   if (query.status == 'all') {
     statusMatch = {
       status: {
@@ -5790,23 +5788,9 @@ const get_rejected_orders = async (query) => {
     };
     dateMacth = { active: true };
   }
-  if (query.deliverytype == 'IMD' || query.deliverytype == 'NDD') {
-    dateMacth = { date: { $in: [today] } };
-  }
-  if (query.deliverytype == 'YOD') {
-    dateMacth = { date: { $in: [yesterday] } };
-    deliveryType = { delivery_type: { $eq: 'NDD' } };
-  }
-  if (query.timeslot != 'all') {
-    timeSlot = { time_of_delivery: { $eq: query.timeslot } };
-  }
-  if (query.deliverymode != 'all') {
-    deliveryMode = { devevery_mode: { $eq: query.deliverymode } };
-  }
-
   let values = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
-    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
+    { $match: { $and: [statusMatch] } },
     {
       $lookup: {
         from: 'productorderclones',
@@ -5958,18 +5942,14 @@ const get_rejected_orders = async (query) => {
     { $limit: 10 },
   ]);
 
-  let total = await ShopOrderClone.aggregate([
-    { $sort: { created: -1 } },
-    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
-  ]);
+  let total = await ShopOrderClone.aggregate([{ $sort: { created: -1 } }, { $match: { $and: [statusMatch] } }]);
 
-  let counts = await get_order_counts_rejected(statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth);
+  let counts = await get_order_counts_rejected(statusMatch);
 
   return { value: values, total: total.length, counts: counts };
 };
 
-const get_order_counts_rejected = async (status, deliverytype, timeslot, deliverymode, dateMacth) => {
-  //console.log(pincode, 'sdf');
+const get_order_counts_rejected = async (status) => {
   let today = moment().format('YYYY-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
 
@@ -5978,19 +5958,19 @@ const get_order_counts_rejected = async (status, deliverytype, timeslot, deliver
       $match: {
         $and: [
           { status: { $eq: 'Rejected_assign' } },
-          {
-            $or: [
-              {
-                $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
-              },
-              {
-                $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
-              },
-              {
-                $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: today } }],
-              },
-            ],
-          },
+          // {
+          //   $or: [
+          //     {
+          //       $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
+          //     },
+          //     {
+          //       $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+          //     },
+          //     {
+          //       $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: today } }],
+          //     },
+          //   ],
+          // },
         ],
       },
     },
@@ -6000,19 +5980,19 @@ const get_order_counts_rejected = async (status, deliverytype, timeslot, deliver
       $match: {
         $and: [
           { status: { $eq: 'Rejected' } },
-          {
-            $or: [
-              {
-                $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
-              },
-              {
-                $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
-              },
-              {
-                $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: today } }],
-              },
-            ],
-          },
+          // {
+          //   $or: [
+          //     {
+          //       $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
+          //     },
+          //     {
+          //       $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+          //     },
+          //     {
+          //       $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: today } }],
+          //     },
+          //   ],
+          // },
         ],
       },
     },
@@ -6022,126 +6002,7 @@ const get_order_counts_rejected = async (status, deliverytype, timeslot, deliver
     Rejected_assign: Rejected_assignstatus.length,
   };
 
-  // Delivery type
-  let delevery_all = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [
-          status,
-          timeslot,
-          deliverymode,
-          {
-            $or: [
-              {
-                $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
-              },
-              {
-                $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
-              },
-            ],
-          },
-        ],
-      },
-    },
-  ]);
-  let delevery_imd = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
-      },
-    },
-  ]);
-  let delevery_yod = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
-      },
-    },
-  ]);
-
-  let delevery_ndd = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [status, timeslot, deliverymode, { delivery_type: { $eq: 'NDD' } }, { date: { $eq: today } }],
-      },
-    },
-  ]);
-  let deliveryType = {
-    all: delevery_all.length,
-    IMD: delevery_imd.length,
-    YOD: delevery_yod.length,
-    NDD: delevery_ndd.length,
-  };
-
-  //  Time Slots
-
-  let time_all = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [status, deliverytype, deliverymode, dateMacth],
-      },
-    },
-  ]);
-  let time_5_6 = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '5-7' } }],
-      },
-    },
-  ]);
-  let time_7_10 = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '7-10' } }],
-      },
-    },
-  ]);
-  let time_2_4 = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [status, deliverytype, deliverymode, dateMacth, { time_of_delivery: { $eq: '14-16' } }],
-      },
-    },
-  ]);
-
-  let timeSlots = {
-    all: time_all.length,
-    '5-7': time_5_6.length,
-    '7-10': time_7_10.length,
-    '14-16': time_2_4.length,
-  };
-
-  // Delivery Mode
-
-  let delivery_mode_all = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [status, deliverytype, timeslot, dateMacth],
-      },
-    },
-  ]);
-  let delivery_mode_sp = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [status, deliverytype, timeslot, { devevery_mode: { $eq: 'SP' } }, dateMacth],
-      },
-    },
-  ]);
-  let delivery_mode_de = await ShopOrderClone.aggregate([
-    {
-      $match: {
-        $and: [status, deliverytype, timeslot, { devevery_mode: { $eq: 'DE' } }, dateMacth],
-      },
-    },
-  ]);
-
-  let deliveryMode = {
-    all: delivery_mode_all.length,
-    SP: delivery_mode_sp.length,
-    DE: delivery_mode_de.length,
-  };
-
-  return { deliveryType: deliveryType, deliveryMode: deliveryMode, timeSlots: timeSlots, orders: orders };
+  return { orders: orders };
 };
 
 module.exports = {
