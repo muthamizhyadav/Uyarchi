@@ -10,7 +10,7 @@ const createSupplierUnBilled = catchAsync(async (req, res) => {
 });
 
 const getUnBilledBySupplier = catchAsync(async (req, res) => {
-  let data = await supplierUnBilledService.getUnBilledBySupplier();
+  let data = await supplierUnBilledService.getUnBilledBySupplier(req.query);
   res.send(data);
 });
 
