@@ -122,8 +122,9 @@ const getUnBilledBySupplier = async () => {
         supplierName: 1,
         total_UnbilledAmt: 1,
         supplierId: 1,
+        suppliersRaisedUnBills: 1,
         suppliersRaisedUnBill: {
-          $cond: [{ $lte: ['$suppliersRaisedUnBill', 0] }, 0, 0],
+          $cond: { if: { $lte: ['$suppliersRaisedUnBill', 0] }, then: 0, else: '$suppliersRaisedUnBill' },
         },
       },
     },
