@@ -628,8 +628,23 @@ const billAdjust = async (body) => {
 };
 
 const PayPendingAmount = async (body) => {
-  const {} = body;
-  
+  const { supplierId, amount, arr } = body;
+  if (arr.length == 0) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Bill Not Available');
+  }
+  arr.forEach(async (e) => {
+    let values = await ReceivedProduct.findById(e);
+    await supplierBills.create({
+      status: 'Paid',
+      groupId: values._id,
+      Amount: amount,
+      paymentMethod: 'Payed',
+      supplierId: supplierId,
+      created: moment(),
+      date: moment().format('YYYY-MM-DD'),
+    });
+  });
+  return { message: "successFully paid" };
 };
 
 module.exports = {
@@ -643,4 +658,5 @@ module.exports = {
   supplierOrders_amt_details,
   getPaid_history,
   billAdjust,
+  PayPendingAmount,
 };
