@@ -1027,21 +1027,17 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
   let threeDay = moment().subtract(2, 'days').format('yyyy-MM-DD');
   let faildstatusMatch = {
-    $or: [
+    $and: [
       {
-        $and: [
-          {
-            status: {
-              $in: ['Rejected', 'Rejected_assign'],
-            },
-          },
-          {
-            RE_order_status: { $ne: 'Re-Ordered' },
-          },
-          {
-            RE_order_status: { $ne: 'declined' },
-          },
-        ],
+        status: {
+          $in: ['Rejected', 'Rejected_assign'],
+        },
+      },
+      {
+        RE_order_status: { $ne: 'Re-Ordered' },
+      },
+      {
+        RE_order_status: { $ne: 'declined' },
       },
     ],
   };
@@ -1421,21 +1417,17 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
   let threeDay = moment().subtract(2, 'days').format('yyyy-MM-DD');
   let faildstatusMatch = {
-    $or: [
+    $and: [
       {
-        $and: [
-          {
-            status: {
-              $in: ['Rejected', 'Rejected_assign'],
-            },
-          },
-          {
-            RE_order_status: { $ne: 'Re-Ordered' },
-          },
-          {
-            RE_order_status: { $ne: 'declined' },
-          },
-        ],
+        status: {
+          $in: ['Rejected', 'Rejected_assign'],
+        },
+      },
+      {
+        RE_order_status: { $ne: 'Re-Ordered' },
+      },
+      {
+        RE_order_status: { $ne: 'declined' },
       },
     ],
   };
@@ -1506,8 +1498,8 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
     {
       $lookup: {
         from: 'shoporderclones',
-        localField: 'lapsedOrder',
-        foreignField: '_id',
+        localField: '_id',
+        foreignField: 'shopId',
         pipeline: [
           {
             $match: faildstatusMatch,
