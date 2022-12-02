@@ -121,6 +121,7 @@ const getUnBilledBySupplier = async () => {
         un_Billed_amt: { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] },
         date: 1,
         raised_Amt: 1,
+        raisedBy: 1,
         supplierName: '$suppliers.primaryContactName',
         total_UnbilledAmt: { $ifNull: ['$unBilledHistory.TotalUnbilled', 0] },
         supplierId: '$suppliers._id',
@@ -144,6 +145,7 @@ const getUnBilledBySupplier = async () => {
         supplierId: 1,
         suppliersRaisedUnBills: 1,
         primaryContactNumber: 1,
+        raisedBy: 1,
         suppliersRaisedUnBill: {
           $cond: { if: { $lte: ['$suppliersRaisedUnBill', 0] }, then: 0, else: '$suppliersRaisedUnBill' },
         },
