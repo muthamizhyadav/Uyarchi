@@ -43,6 +43,16 @@ const getDataWithSupplierId = catchAsync(async (req, res) => {
   res.send(callStatus);
 });
 
+const getReportWithSupplierId = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.getReportWithSupplierId(
+    req.params.id,
+    req.params.page,
+    req.params.search,
+    req.params.date
+  );
+  res.send(callStatus);
+});
+
 const deleteBusinessById = catchAsync(async (req, res) => {
   await CallStatusService.deleteCallStatusById(req.params.id);
   res.status(httpStatus.NO_CONTENT).send();
@@ -73,4 +83,5 @@ module.exports = {
   finishOrder,
   getCallstatusForSuddenOrders,
   suddenOrdersDisplay,
+  getReportWithSupplierId,
 };
