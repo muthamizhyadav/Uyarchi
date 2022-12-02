@@ -400,7 +400,7 @@ const suddenOrdersDisplay = async (productId) => {
   return values;
 };
 
-const getReportWithSupplierId = async (id, page, search, date) => {
+const getReportWithSupplierId = async (page, search, date) => {
   console.log(search);
   let dateM = { active: true };
   let searchMatch = { active: true };
@@ -414,123 +414,126 @@ const getReportWithSupplierId = async (id, page, search, date) => {
   } else {
     dateM;
   }
+  console.log('sadf');
   let values = await CallStatus.aggregate([
     {
-      $match: {
-        $and: [
-          { supplierid: { $eq: id } },
-          { StockReceived: { $eq: 'Pending' } },
-          { confirmcallstatus: { $eq: 'Accepted' } },
-        ],
-      },
-    },
-    {
-      $lookup: {
-        from: 'products',
-        localField: 'productid',
-        foreignField: '_id',
-        as: 'ProductData',
-      },
-    },
-    {
-      $unwind: '$ProductData',
+      $match: { $and: [dateM] },
     },
     {
       $lookup: {
         from: 'suppliers',
         localField: 'supplierid',
         foreignField: '_id',
-        pipeline: [
-          {
-            $match: {
-              $and: [searchMatch],
-            },
-          },
-        ],
-        as: 'supplierData',
+        pipeline: [{ $match: { $and: [searchMatch] } }],
+        as: 'supplierdata',
       },
     },
     {
-      $unwind: '$supplierData',
+      $unwind: '$supplierdata',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: '$productData',
     },
     {
       $project: {
         _id: 1,
+        showWhs: 1,
         active: 1,
         StockReceived: 1,
-        qtyOffered: 1,
-        strechedUpto: 1,
-        price: 1,
-        status: 1,
-        requestAdvancePayment: 1,
-        callstatus: 1,
-        callDetail: 1,
+        archive: 1,
         productid: 1,
         supplierid: 1,
-        date: 1,
-        time: 1,
-        phApproved: 1,
-        phStatus: 1,
-        phreason: 1,
         confirmOrder: 1,
-        orderType: 1,
-        confirmcallDetail: 1,
         confirmcallstatus: 1,
         confirmprice: 1,
+        status: 1,
         exp_date: 1,
-        ExpectedDate: { $ifNull: ['$Expdate', 'null'] },
-        supplierContact: '$supplierData.primaryContactNumber',
-        supplierName: '$supplierData.primaryContactName',
-        productTitle: '$ProductData.productTitle',
+        orderType: 1,
+        order_Type: 1,
+        TotalAmount: 1,
+        SuddenCreatedBy: 1,
+        SuddenStatus: 1,
+        date: 1,
+        time: 1,
+        OrderId: 1,
+        supplierName: '$supplierdata.primaryContactName',
+        Net_Amount: { $multiply: ['$confirmOrder', '$confirmprice'] },
+        productData: '$productData.productTitle',
       },
     },
-    {
-      $match: {
-        $and: [dateM],
-      },
-    },
+    // {
+    //   $match: { searchMatch },
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
   let total = await CallStatus.aggregate([
+    // {
+    //   $match: { $and: [dateM] },
+    // },
     {
-      $match: {
-        $and: [
-          { supplierid: { $eq: id } },
-          { StockReceived: { $eq: 'Pending' } },
-          { confirmcallstatus: { $eq: 'Accepted' } },
-          // {SuddenStatus:{$eq:'Approve'}},
-        ],
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        // pipeline: [{ $match: { $and: [searchMatch] } }],
+        as: 'supplierdata',
       },
+    },
+    {
+      $unwind: '$supplierdata',
     },
     {
       $lookup: {
         from: 'products',
         localField: 'productid',
         foreignField: '_id',
-        as: 'ProductData',
+        as: 'productData',
       },
     },
     {
-      $unwind: '$ProductData',
+      $unwind: '$productData',
     },
     {
-      $lookup: {
-        from: 'suppliers',
-        localField: 'supplierid',
-        foreignField: '_id',
-        as: 'supplierData',
+      $project: {
+        _id: 1,
+        showWhs: 1,
+        active: 1,
+        StockReceived: 1,
+        archive: 1,
+        productid: 1,
+        supplierid: 1,
+        confirmOrder: 1,
+        confirmcallstatus: 1,
+        confirmprice: 1,
+        status: 1,
+        exp_date: 1,
+        orderType: 1,
+        order_Type: 1,
+        TotalAmount: 1,
+        SuddenCreatedBy: 1,
+        SuddenStatus: 1,
+        date: 1,
+        time: 1,
+        OrderId: 1,
+        supplierName: '$supplierdata.primaryContactName',
+        Net_Amount: { $multiply: ['$confirmOrder', '$confirmprice'] },
+        productData: '$productData.productTitle',
       },
-    },
-    {
-      $unwind: '$supplierData',
     },
   ]);
   let totalss = await CallStatus.aggregate([
     {
       $match: {
         $and: [
-          { supplierid: { $eq: id } },
           { StockReceived: { $eq: 'Pending' } },
           { confirmcallstatus: { $eq: 'Accepted' } },
           { SuddenStatus: { $eq: 'Approve' } },
@@ -544,8 +547,7 @@ const getReportWithSupplierId = async (id, page, search, date) => {
       },
     },
   ]);
-  let getSupplier = await Supplier.findById(id);
-  return { values: values, total: total.length, supplier: getSupplier, totalss: totalss };
+  return { values: values, total: total.length };
 };
 
 module.exports = {

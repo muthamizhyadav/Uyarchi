@@ -35,57 +35,88 @@ const createSupplierUnBilled = async (body) => {
   }
 };
 
-const getUnBilledBySupplier = async () => {
-  let values = await RaisedUnBilled.aggregate([
+const getUnBilledBySupplier = async (query) => {
+  console.log(query);
+  let page = query.page;
+  let values = await Supplier.aggregate([
     {
       $lookup: {
-        from: 'suppliers',
-        localField: 'supplierId',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $lookup: {
-              from: 'callstatuses',
-              localField: '_id',
-              foreignField: 'supplierid',
-              pipeline: [
-                { $match: { status: 'Advance' } },
-                { $group: { _id: null, TotalAdvance: { $sum: '$TotalAmount' } } },
-              ],
-              as: 'suppplierOrders',
-            },
-          },
-          {
-            $unwind: {
-              preserveNullAndEmptyArrays: true,
-              path: '$suppplierOrders',
-            },
-          },
-          {
-            $lookup: {
-              from: 'supplierraisedunbilleds',
-              localField: '_id',
-              foreignField: 'supplierId',
-              as: 'suppplierUnbilled',
-            },
-          },
-          {
-            $unwind: {
-              preserveNullAndEmptyArrays: true,
-              path: '$suppplierUnbilled',
-            },
-          },
-        ],
-        as: 'suppliers',
+        from: 'callstatuses',
+        localField: '_id',
+        foreignField: 'supplierid',
+        pipeline: [{ $match: { status: 'Advance' } }, { $group: { _id: null, TotalAdvance: { $sum: '$TotalAmount' } } }],
+        as: 'suppplierOrders',
       },
     },
     {
-      $unwind: '$suppliers',
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$suppplierOrders',
+      },
     },
     {
       $lookup: {
+        from: 'supplierraisedunbilleds',
+        localField: '_id',
+        foreignField: 'supplierId',
+        as: 'suppplierUnbilleds',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$suppplierUnbilleds',
+      },
+    },
+    // {
+    //   $lookup: {
+    //     from: 'suppliers',
+    //     localField: 'supplierId',
+    //     foreignField: '_id',
+    //     pipeline: [
+    //       {
+    //         $lookup: {
+    //           from: 'callstatuses',
+    //           localField: '_id',
+    //           foreignField: 'supplierid',
+    //           pipeline: [
+    //             { $match: { status: 'Advance' } },
+    //             { $group: { _id: null, TotalAdvance: { $sum: '$TotalAmount' } } },
+    //           ],
+    //           as: 'suppplierOrders',
+    //         },
+    //       },
+    //       {
+    //         $unwind: {
+    //           preserveNullAndEmptyArrays: true,
+    //           path: '$suppplierOrders',
+    //         },
+    //       },
+    //       {
+    //         $lookup: {
+    //           from: 'supplierraisedunbilleds',
+    //           localField: '_id',
+    //           foreignField: 'supplierId',
+    //           as: 'suppplierUnbilled',
+    //         },
+    //       },
+    //       {
+    //         $unwind: {
+    //           preserveNullAndEmptyArrays: true,
+    //           path: '$suppplierUnbilled',
+    //         },
+    //       },
+    //     ],
+    //     as: 'suppliers',
+    //   },
+    // },
+    // {
+    //   $unwind: '$suppliers',
+    // },
+    {
+      $lookup: {
         from: 'supplierunbilledhistories',
-        localField: 'supplierId',
+        localField: '_id',
         foreignField: 'supplierId',
         pipeline: [
           {
@@ -104,7 +135,7 @@ const getUnBilledBySupplier = async () => {
     {
       $lookup: {
         from: 'supplierunbilleds',
-        localField: 'supplierId',
+        localField: '_id',
         foreignField: 'supplierId',
         as: 'supplierUnBilled',
       },
@@ -117,27 +148,48 @@ const getUnBilledBySupplier = async () => {
     },
     {
       $project: {
-        _id: 1,
+        supplierId: { $ifNull: ['$_id', 'nill'] },
+        supplierUnBilled: '$supplierUnBilled',
         un_Billed_amt: { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] },
-        date: 1,
-        raised_Amt: 1,
-        raisedBy: 1,
-        supplierName: '$suppliers.primaryContactName',
+        raised_Amt: { $ifNull: ['$suppplierUnbilleds.raised_Amt', 0] },
+        raisedBy: '$suppplierUnbilleds.raisedBy',
+        supplierName: { $ifNull: ['$primaryContactName', 0] },
         total_UnbilledAmt: { $ifNull: ['$unBilledHistory.TotalUnbilled', 0] },
-        supplierId: '$suppliers._id',
-        tradeName: '$suppliers.tradeName',
-        primaryContactNumber: '$suppliers.primaryContactNumber',
+        tradeName: { $ifNull: ['$tradeName', 'nill'] },
+        primaryContactNumber: 1,
         suppliersRaisedUnBill: {
-          $ifNull: [{ $subtract: ['$raised_Amt', { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] }] }, 0],
+          $ifNull: [
+            { $subtract: ['$suppplierUnbilleds.raised_Amt', { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] }] },
+            0,
+          ],
         },
+        date: { $ifNull: ['$suppplierUnbilleds.date', '$supplierUnBilled.date'] },
+        // suppplierUnbilled: '$supplierUnBilled',
       },
     },
+    // {
+    //   $project: {
+    //     _id: 1,
+    //     un_Billed_amt: { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] },
+    //     date: 1,
+    //     raised_Amt: '$suppplierUnbilled.raised_Amt',
+    //     raisedBy: 1,
+    //     supplierName: '$suppliers.primaryContactName',
+    //     total_UnbilledAmt: { $ifNull: ['$unBilledHistory.TotalUnbilled', 0] },
+    //     supplierId: '$suppliers._id',
+    //     tradeName: '$suppliers.tradeName',
+    //     primaryContactNumber: '$suppliers.primaryContactNumber',
+    //     suppliersRaisedUnBill: {
+    //       $ifNull: [{ $subtract: ['$suppplierUnbilled.raised_Amt', { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] }] }, 0],
+    //     },
+    //   },
+    // },
     {
       $project: {
-        _id: { $ifNull: ['$supplierUnBilled._id', 0] },
+        // _id: { $ifNull: ['$supplierUnBilled._id', 0] },
         date: 1,
+        // supplierUnBilled: 1,
         un_Billed_amt: 1,
-        supplierUnBilled: 1,
         raised_Amt: 1,
         supplierName: 1,
         tradeName: 1,
@@ -145,14 +197,190 @@ const getUnBilledBySupplier = async () => {
         supplierId: 1,
         suppliersRaisedUnBills: 1,
         primaryContactNumber: 1,
-        raisedBy: 1,
+        raisedBy: { $ifNull: ['$raisedBy', 'Unbilled'] },
         suppliersRaisedUnBill: {
           $cond: { if: { $lte: ['$suppliersRaisedUnBill', 0] }, then: 0, else: '$suppliersRaisedUnBill' },
         },
       },
     },
+    {
+      $match: { date: { $ne: null } },
+    },
+    {
+      $skip: 10 * page,
+    },
+    { $limit: 10 },
   ]);
-  return values;
+  let total = await Supplier.aggregate([
+    {
+      $lookup: {
+        from: 'callstatuses',
+        localField: '_id',
+        foreignField: 'supplierid',
+        pipeline: [{ $match: { status: 'Advance' } }, { $group: { _id: null, TotalAdvance: { $sum: '$TotalAmount' } } }],
+        as: 'suppplierOrders',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$suppplierOrders',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierraisedunbilleds',
+        localField: '_id',
+        foreignField: 'supplierId',
+        as: 'suppplierUnbilleds',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$suppplierUnbilleds',
+      },
+    },
+    // {
+    //   $lookup: {
+    //     from: 'suppliers',
+    //     localField: 'supplierId',
+    //     foreignField: '_id',
+    //     pipeline: [
+    //       {
+    //         $lookup: {
+    //           from: 'callstatuses',
+    //           localField: '_id',
+    //           foreignField: 'supplierid',
+    //           pipeline: [
+    //             { $match: { status: 'Advance' } },
+    //             { $group: { _id: null, TotalAdvance: { $sum: '$TotalAmount' } } },
+    //           ],
+    //           as: 'suppplierOrders',
+    //         },
+    //       },
+    //       {
+    //         $unwind: {
+    //           preserveNullAndEmptyArrays: true,
+    //           path: '$suppplierOrders',
+    //         },
+    //       },
+    //       {
+    //         $lookup: {
+    //           from: 'supplierraisedunbilleds',
+    //           localField: '_id',
+    //           foreignField: 'supplierId',
+    //           as: 'suppplierUnbilled',
+    //         },
+    //       },
+    //       {
+    //         $unwind: {
+    //           preserveNullAndEmptyArrays: true,
+    //           path: '$suppplierUnbilled',
+    //         },
+    //       },
+    //     ],
+    //     as: 'suppliers',
+    //   },
+    // },
+    // {
+    //   $unwind: '$suppliers',
+    // },
+    {
+      $lookup: {
+        from: 'supplierunbilledhistories',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $group: { _id: null, TotalUnbilled: { $sum: '$un_Billed_amt' } },
+          },
+        ],
+        as: 'unBilledHistory',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$unBilledHistory',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierunbilleds',
+        localField: '_id',
+        foreignField: 'supplierId',
+        as: 'supplierUnBilled',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierUnBilled',
+      },
+    },
+    {
+      $project: {
+        supplierId: { $ifNull: ['$_id', 'nill'] },
+        supplierUnBilled: '$supplierUnBilled',
+        un_Billed_amt: { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] },
+        raised_Amt: { $ifNull: ['$suppplierUnbilleds.raised_Amt', 0] },
+        raisedBy: '$suppplierUnbilleds.raisedBy',
+        supplierName: { $ifNull: ['$primaryContactName', 0] },
+        total_UnbilledAmt: { $ifNull: ['$unBilledHistory.TotalUnbilled', 0] },
+        tradeName: { $ifNull: ['$tradeName', 'nill'] },
+        primaryContactNumber: 1,
+        suppliersRaisedUnBill: {
+          $ifNull: [
+            { $subtract: ['$suppplierUnbilleds.raised_Amt', { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] }] },
+            0,
+          ],
+        },
+        date: { $ifNull: ['$suppplierUnbilleds.date', '$supplierUnBilled.date'] },
+        // suppplierUnbilled: '$supplierUnBilled',
+      },
+    },
+    // {
+    //   $project: {
+    //     _id: 1,
+    //     un_Billed_amt: { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] },
+    //     date: 1,
+    //     raised_Amt: '$suppplierUnbilled.raised_Amt',
+    //     raisedBy: 1,
+    //     supplierName: '$suppliers.primaryContactName',
+    //     total_UnbilledAmt: { $ifNull: ['$unBilledHistory.TotalUnbilled', 0] },
+    //     supplierId: '$suppliers._id',
+    //     tradeName: '$suppliers.tradeName',
+    //     primaryContactNumber: '$suppliers.primaryContactNumber',
+    //     suppliersRaisedUnBill: {
+    //       $ifNull: [{ $subtract: ['$suppplierUnbilled.raised_Amt', { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] }] }, 0],
+    //     },
+    //   },
+    // },
+    {
+      $project: {
+        // _id: { $ifNull: ['$supplierUnBilled._id', 0] },
+        date: 1,
+        // supplierUnBilled: 1,
+        un_Billed_amt: 1,
+        raised_Amt: 1,
+        supplierName: 1,
+        tradeName: 1,
+        total_UnbilledAmt: 1,
+        supplierId: 1,
+        suppliersRaisedUnBills: 1,
+        primaryContactNumber: 1,
+        raisedBy: { $ifNull: ['$raisedBy', 'Unbilled'] },
+        suppliersRaisedUnBill: {
+          $cond: { if: { $lte: ['$suppliersRaisedUnBill', 0] }, then: 0, else: '$suppliersRaisedUnBill' },
+        },
+      },
+    },
+    {
+      $match: { date: { $ne: null } },
+    },
+  ]);
+  return { values: values, total: total.length };
 };
 
 const getSupplierAdvance = async (supplierId) => {
@@ -187,14 +415,23 @@ const getSupplierOrdered_Details = async (id) => {
   return values;
 };
 
-const Unbilled_Details_bySupplier = async (id) => {
+const Unbilled_Details_bySupplier = async (id, query) => {
+  let page = query.page;
   const supplier = await SupplierUnbilledHistory.aggregate([
     {
       $match: { supplierId: { $eq: id } },
     },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
+  let total = await SupplierUnbilledHistory.aggregate([
+    {
+      $match: { supplierId: { $eq: id } },
+    },
+  ]);
+
   let supplierDetails = await Supplier.findById(id);
-  return { values: supplier, supplierDetails: supplierDetails };
+  return { values: supplier, supplierDetails: supplierDetails, total: total.length };
 };
 
 const getSupplierbill_amt = async (page) => {
@@ -517,8 +754,76 @@ const getBillDetails_bySupplier = async (id) => {
   return { values: values, supplier: supplier };
 };
 
-const supplierOrders_amt_details = async (id) => {
+const supplierOrders_amt_details = async (id, query) => {
+  let page = query.page;
   let values = await ReceivedProduct.aggregate([
+    {
+      $match: { supplierId: id },
+    },
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
+        as: 'ReceivedData',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$ReceivedData',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$Amount' } } }],
+        as: 'supplierBills',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierBills',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        supplierId: 1,
+        date: 1,
+        BillNo: 1,
+        TotalAmt: { $ifNull: ['$ReceivedData.billingTotal', 0] },
+        paidAmount: { $ifNull: ['$supplierBills.billingTotal', 0] },
+        // PendingAmount: { $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] }, 0] },
+        // PendingAmount: { $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        supplierId: 1,
+        date: 1,
+        BillNo: 1,
+        TotalAmt: 1,
+        paidAmount: 1,
+        PendingAmount: { $ifNull: [{ $subtract: ['$TotalAmt', '$paidAmount'] }, 0] },
+      },
+    },
+    {
+      $match: { PendingAmount: { $gt: 0 } },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await ReceivedProduct.aggregate([
     {
       $match: { supplierId: id },
     },
@@ -565,7 +870,7 @@ const supplierOrders_amt_details = async (id) => {
     },
   ]);
   let supplier = await Supplier.findById(id);
-  return { values: values, supplier: supplier };
+  return { values: values, supplier: supplier, total: total.length };
 };
 
 const getPaid_history = async (id) => {
@@ -618,14 +923,17 @@ const billAdjust = async (body) => {
     {
       $project: {
         _id: 1,
-        PendingAmount: { $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] }, 0] },
+        paidAmount: { $ifNull: ['$supplierBills.billingTotal', 0] },
+        PendingAmount: {
+          $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', { $ifNull: ['$supplierBills.billingTotal', 0] }] }, 0],
+        },
       },
     },
   ]);
   if (pending.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Pending Bill Not Available');
   }
-
+  console.log(pending);
   pending.forEach(async (e) => {
     if (amount > 0) {
       let pendingamount = e.PendingAmount;

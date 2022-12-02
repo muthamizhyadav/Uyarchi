@@ -420,10 +420,24 @@ const getSupplierWith_Advanced = async () => {
       },
     },
     {
+      $lookup: {
+        from: 'supplierunbilleds',
+        localField: '_id',
+        foreignField: 'supplierId',
+        as: 'supplierunbilled',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierunbilled',
+      },
+    },
+    {
       $project: {
         _id: 1,
         secondaryContactName: 1,
-        RaisedAmount: { $ifNull: ['$raised.raised_Amt', 0] },
+        RaisedAmount: { $ifNull: [{ $subtract: ['$raised.raised_Amt', '$supplierunbilled.un_Billed_amt'] }, 0] },
         primaryContactName: 1,
         primaryContactNumber: 1,
         primaryContactName: 1,

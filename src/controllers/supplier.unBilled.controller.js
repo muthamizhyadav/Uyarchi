@@ -10,7 +10,7 @@ const createSupplierUnBilled = catchAsync(async (req, res) => {
 });
 
 const getUnBilledBySupplier = catchAsync(async (req, res) => {
-  let data = await supplierUnBilledService.getUnBilledBySupplier();
+  let data = await supplierUnBilledService.getUnBilledBySupplier(req.query);
   res.send(data);
 });
 
@@ -25,7 +25,7 @@ const getSupplierOrdered_Details = catchAsync(async (req, res) => {
 });
 
 const Unbilled_Details_bySupplier = catchAsync(async (req, res) => {
-  const data = await supplierUnBilledService.Unbilled_Details_bySupplier(req.params.id);
+  const data = await supplierUnBilledService.Unbilled_Details_bySupplier(req.params.id, req.query);
   res.send(data);
 });
 
@@ -40,7 +40,7 @@ const getBillDetails_bySupplier = catchAsync(async (req, res) => {
 });
 
 const supplierOrders_amt_details = catchAsync(async (req, res) => {
-  const data = await supplierUnBilledService.supplierOrders_amt_details(req.params.id);
+  const data = await supplierUnBilledService.supplierOrders_amt_details(req.params.id, req.query);
   res.send(data);
 });
 
