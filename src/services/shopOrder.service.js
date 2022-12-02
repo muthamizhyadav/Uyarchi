@@ -325,57 +325,6 @@ const getShopOrderCloneById = async (id) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'RE_order_Id',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $lookup: {
-              from: 'orderpayments',
-              localField: '_id',
-              foreignField: 'orderId',
-              pipeline: [
-                {
-                  $group: {
-                    _id: null,
-                    amount: {
-                      $sum: '$paidAmt',
-                    },
-                  },
-                },
-              ],
-              as: 'orderpayments',
-            },
-          },
-          {
-            $unwind: {
-              path: '$orderpayments',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          {
-            $project: {
-              amount: '$orderpayments.amount',
-            },
-          },
-        ],
-        as: 'shoporderclones',
-      },
-    },
-    {
-      $unwind: {
-        path: '$shoporderclones',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $addFields: {
-        reorderamount: { $ifNull: ['$shoporderclones.amount', 0] },
-      },
-    },
     {
       $project: {
         _id: 1,
@@ -403,9 +352,7 @@ const getShopOrderCloneById = async (id) => {
         total: '$productDatadetails.amount',
         TotalGstAmount: { $sum: '$productData.GSTamount' },
         totalSum: { $round: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] } },
-        paidamount: {
-          $sum: ['$orderpayments.amount', '$reorderamount'],
-        },
+        paidamount: "$orderpayments.amount",
         shoporderclones: '$shoporderclones',
       },
     },
@@ -705,56 +652,6 @@ const getShopNameCloneWithPagination = async (page, userId) => {
     },
     {
       $lookup: {
-        from: 'shoporderclones',
-        localField: 'RE_order_Id',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $lookup: {
-              from: 'orderpayments',
-              localField: '_id',
-              foreignField: 'orderId',
-              pipeline: [
-                {
-                  $group: {
-                    _id: null,
-                    amount: {
-                      $sum: '$paidAmt',
-                    },
-                  },
-                },
-              ],
-              as: 'orderpayments',
-            },
-          },
-          {
-            $unwind: {
-              path: '$orderpayments',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          {
-            $project: {
-              amount: '$orderpayments.amount',
-            },
-          },
-        ],
-        as: 'shoporderclones',
-      },
-    },
-    {
-      $unwind: {
-        path: '$shoporderclones',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $addFields: {
-        reorderamount: { $ifNull: ['$shoporderclones.amount', 0] },
-      },
-    },
-    {
-      $lookup: {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
@@ -808,7 +705,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         CGST: 1,
         OrderId: 1,
         productTotal: { $size: '$product' },
-        paidamount: { $sum: ['$orderpayments.amount', '$reorderamount'] },
+        paidamount: '$orderpayments.amount',
         shopName: '$shopData.SName',
         contact: '$shopData.mobile',
         status: 1,
