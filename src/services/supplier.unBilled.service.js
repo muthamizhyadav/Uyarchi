@@ -36,7 +36,7 @@ const createSupplierUnBilled = async (body) => {
 };
 
 const getUnBilledBySupplier = async () => {
-  let values = await SupplierUnbilled.aggregate([
+  let values = await RaisedUnBilled.aggregate([
     {
       $lookup: {
         from: 'suppliers',
@@ -102,17 +102,51 @@ const getUnBilledBySupplier = async () => {
       },
     },
     {
+      $lookup: {
+        from: 'supplierunbilleds',
+        localField: 'supplierId',
+        foreignField: 'supplierId',
+        as: 'supplierUnBilled',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierUnBilled',
+      },
+    },
+    {
       $project: {
         _id: 1,
-        un_Billed_amt: 1,
+        un_Billed_amt: { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] },
         date: 1,
+        raised_Amt: 1,
         supplierName: '$suppliers.primaryContactName',
-        total_UnbilledAmt: '$unBilledHistory.TotalUnbilled',
+        total_UnbilledAmt: { $ifNull: ['$unBilledHistory.TotalUnbilled', 0] },
         supplierId: '$suppliers._id',
+        tradeName: '$suppliers.tradeName',
+        primaryContactNumber: '$suppliers.primaryContactNumber',
         suppliersRaisedUnBill: {
-          $ifNull: [{ $subtract: ['$suppliers.suppplierUnbilled.raised_Amt', '$un_Billed_amt'] }, 0],
+          $ifNull: [{ $subtract: ['$raised_Amt', { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] }] }, 0],
         },
-        suppliersRaisedUnBills: { $ifNull: ['$suppliers.suppplierUnbilled.raised_Amt', 0] },
+      },
+    },
+    {
+      $project: {
+        _id: { $ifNull: ['$supplierUnBilled._id', 0] },
+        date: 1,
+        un_Billed_amt: 1,
+        supplierUnBilled: 1,
+        raised_Amt: 1,
+        supplierName: 1,
+        tradeName: 1,
+        total_UnbilledAmt: 1,
+        supplierId: 1,
+        suppliersRaisedUnBills: 1,
+        primaryContactNumber: 1,
+        suppliersRaisedUnBill: {
+          $cond: { if: { $lte: ['$suppliersRaisedUnBill', 0] }, then: 0, else: '$suppliersRaisedUnBill' },
+        },
       },
     },
   ]);
@@ -292,6 +326,8 @@ const getSupplierbill_amt = async (page) => {
       $project: {
         _id: 1,
         primaryContactName: 1,
+        tradeName: 1,
+        primaryContactNumber: 1,
         totalPending_amt: { $ifNull: ['$receivedproducts.pendingAmount', 0] },
         current_UnBilled_amt: { $ifNull: ['$supplierbills.un_Billed_amt', 0] },
         lastPaid: { $ifNull: ['$supplierbill.Amount', 0] },
