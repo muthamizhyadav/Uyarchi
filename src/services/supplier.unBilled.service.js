@@ -923,14 +923,17 @@ const billAdjust = async (body) => {
     {
       $project: {
         _id: 1,
-        PendingAmount: { $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] }, 0] },
+        paidAmount: { $ifNull: ['$supplierBills.billingTotal', 0] },
+        PendingAmount: {
+          $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', { $ifNull: ['$supplierBills.billingTotal', 0] }] }, 0],
+        },
       },
     },
   ]);
   if (pending.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Pending Bill Not Available');
   }
-
+  console.log(pending);
   pending.forEach(async (e) => {
     if (amount > 0) {
       let pendingamount = e.PendingAmount;
