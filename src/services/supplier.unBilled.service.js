@@ -6,6 +6,7 @@ const CallStatus = require('../models/callStatus');
 const Supplier = require('../models/supplier.model');
 const supplierBills = require('../models/supplierBills.model');
 const ReceivedProduct = require('../models/receivedProduct.model');
+const { RaisedUnBilled } = require('../models/supplier.raised.unbilled.model');
 
 const createSupplierUnBilled = async (body) => {
   const { supplierId, un_Billed_amt } = body;
@@ -624,6 +625,11 @@ const billAdjust = async (body) => {
     { new: true }
   );
   return values;
+};
+
+const PayPendingAmount = async (body) => {
+  const {} = body;
+  
 };
 
 module.exports = {
