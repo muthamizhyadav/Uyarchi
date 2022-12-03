@@ -437,11 +437,23 @@ const getSupplierWith_Advanced = async () => {
       $project: {
         _id: 1,
         secondaryContactName: 1,
-        RaisedAmount: { $ifNull: [{ $subtract: ['$raised.raised_Amt', '$supplierunbilled.un_Billed_amt'] }, 0] },
         primaryContactName: 1,
         primaryContactNumber: 1,
         primaryContactName: 1,
         tradeName: 1,
+        raised: { $ifNull: ['$raised.raised_Amt', 0] },
+        unbilled: { $ifNull: ['$supplierunbilled.un_Billed_amt', 0] },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        secondaryContactName: 1,
+        primaryContactName: 1,
+        primaryContactNumber: 1,
+        primaryContactName: 1,
+        tradeName: 1,
+        RaisedAmount: { $subtract: ['$raised', '$unbilled'] },
       },
     },
   ]);
