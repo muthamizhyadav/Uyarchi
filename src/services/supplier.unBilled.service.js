@@ -977,7 +977,7 @@ const billAdjust = async (body) => {
   // values.un_Billed_amt getting from server side
   values = await SupplierUnbilled.findByIdAndUpdate(
     { _id: values._id },
-    { un_Billed_amt: values.un_Billed_amt - body.amount },
+    { un_Billed_amt: values.un_Billed_amt - amount },
     { new: true }
   );
   if (values.un_Billed_amt < 0) {
