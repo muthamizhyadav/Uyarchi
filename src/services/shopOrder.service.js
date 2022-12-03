@@ -5665,6 +5665,12 @@ const get_ward_by_orders = async (query) => {
               $in: ['Approved', 'Modified'],
             },
           },
+          {
+            finalStatus: { $ne: "reassgin" }
+          },
+          {
+            finalStatus: { $ne: "remove" }
+          },
           deliveryType,
         ],
       },
