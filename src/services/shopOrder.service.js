@@ -5798,7 +5798,7 @@ const get_rejected_orders = async (query) => {
             finalStatus: { $ne: "reassgin" }
           },
           {
-            finalStatus: { $ne: "reassgin" }
+            finalStatus: { $ne: "remove" }
           },
         ]
       }
@@ -5960,7 +5960,7 @@ const get_rejected_orders = async (query) => {
         finalStatus: { $ne: "reassgin" }
       },
         {
-          finalStatus: { $ne: "reassgin" }
+          finalStatus: { $ne: "remove" }
         },]
     }
   }]);
@@ -5983,7 +5983,7 @@ const get_order_counts_rejected = async (status) => {
             finalStatus: { $ne: "reassgin" }
           },
           {
-            finalStatus: { $ne: "reassgin" }
+            finalStatus: { $ne: "remove" }
           },
           // {
           //   $or: [
@@ -6011,7 +6011,7 @@ const get_order_counts_rejected = async (status) => {
             finalStatus: { $ne: "reassgin" }
           },
           {
-            finalStatus: { $ne: "reassgin" }
+            finalStatus: { $ne: "remove" }
           },
           // {
           //   $or: [
