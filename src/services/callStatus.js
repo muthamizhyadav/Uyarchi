@@ -405,7 +405,7 @@ const getReportWithSupplierId = async (page, search, date) => {
   let dateM = { active: true };
   let searchMatch = { active: true };
   if (search !== 'null') {
-    searchMatch = { primaryContactName: { $regex: search, $options: 'i' } };
+    searchMatch = {  _id: search  };
   } else {
     searchMatch;
   }
