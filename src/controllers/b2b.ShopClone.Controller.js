@@ -486,6 +486,12 @@ const get_userbased_dataapproved = catchAsync(async (req, res) => {
   const data = await b2bCloneService.get_userbased_dataapproved(req.query);
   res.send(data);
 });
+
+const managemap_data_approved = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.managemap_data_approved(req.query);
+  res.send(data);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -539,4 +545,5 @@ module.exports = {
   ward_by_users,
   getnotAssignSalesmanDataMap,
   get_userbased_dataapproved,
+  managemap_data_approved
 };

@@ -3748,8 +3748,7 @@ const get_userbased_dataapproved = async (query) => {
   for (let i = 0; i < shops.length; i++) {
     if (shops[i].distanceStatus != 'updated') {
       let response = await axios.get(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${
-          shops[i].Slat + ',' + shops[i].Slong
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${shops[i].Slat + ',' + shops[i].Slong
         }&destinations=${shops[i].da_lot + ',' + shops[i].da_long}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
       );
       if (i == 0) {
@@ -3757,8 +3756,7 @@ const get_userbased_dataapproved = async (query) => {
         long = shops[i].Slong;
       }
       let dis = await axios.get(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat + ',' + long}&destinations=${
-          shops[i].Slat + ',' + shops[i].Slong
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat + ',' + long}&destinations=${shops[i].Slat + ',' + shops[i].Slong
         }&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
       );
       // console.log(dis.data.rows[0].elements[0].distance.text);
@@ -3790,10 +3788,204 @@ const get_userbased_dataapproved = async (query) => {
     long = shops[i].Slong;
   }
   // console.log(returns);
-
   return { returns: returns };
   // return shops;
 };
+
+const managemap_data_approved = async (query) => {
+  let userId = { active: true };
+  let dastatus = { active: true };
+  let dateMatch = { active: true };
+  let userMatch = { active: true };
+  if (query.status != null && query.status != '' && query.status != 'null') {
+    dastatus = { daStatus: { $eq: query.status } }
+  }
+  if (query.date != null && query.date != '' && query.date != 'null') {
+    let date = query.date.split(',');
+    let startdate = date[0];
+    let enddata = date[1];
+    dateMatch = { $and: [{ DA_DATE: { $gte: startdate } }, { DA_DATE: { $lte: enddata } }] };
+  }
+  if (query.capture != null && query.capture != '' && query.capture != 'null') {
+    userMatch = { Uid: { $eq: query.capture } }
+  }
+  if (query.uid != null && query.uid != '' && query.uid != 'null') {
+    userId = { DA_USER: { $eq: query.uid } }
+  }
+
+  let values = await Shop.aggregate([
+    {
+      $match: {
+        $or: [
+          { salesManStatus: { $eq: 'Assign' } },
+          { salesManStatus: { $eq: 'tempReassign' } },
+          { salesManStatus: { $eq: 'Reassign' } },
+        ],
+        $and: [
+          dastatus,
+          dateMatch,
+          userMatch
+        ]
+      },
+    },
+    {
+      $lookup: {
+        from: 'salesmanshops',
+        localField: '_id',
+        foreignField: 'shopId',
+        pipeline: [
+          {
+            $match: {
+              $or: [
+                { salesManId: userId, fromSalesManId: userId, status: 'Assign' },
+                { salesManId: userId, status: 'tempReassign' },
+              ],
+            },
+          },
+        ],
+        as: 'salesmanshops',
+      },
+    },
+    {
+      $unwind: '$salesmanshops',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'zones',
+              localField: 'zoneId',
+              foreignField: '_id',
+
+              as: 'zonedata',
+            },
+          },
+          {
+            $unwind: '$zonedata',
+          },
+          {
+            $project: {
+              ward: 1,
+              zone: '$zonedata.zone',
+              zoneCode: '$zoneData.zoneCode',
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+              area: 1,
+              locality: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      },
+    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
+
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street: '$StreetData.street',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: { $cond: { if: { $isArray: '$shoptype' }, then: '$shoptype.shopList', else: [] } },
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
+        photoCapture: 1,
+        SName: 1,
+        address: 1,
+        Slat: 1,
+        Slong: 1,
+        type: 1,
+        status: 1,
+        created: 1,
+        SOwner: 1,
+        kyc_status: 1,
+        Uid: 1,
+        zone: '$WardData.zone',
+        zoneCode: '$WardData.zoneCode',
+        active: 1,
+        mobile: 1,
+        date: 1,
+        gomap: 1,
+        DA_Comment: 1,
+        daStatus: 1,
+        da_lot: 1,
+        da_long: 1,
+        DA_DATE: 1,
+        DA_USER: 1,
+        DA_CREATED: 1,
+        DA_TIME: 1,
+        da_landmark: 1,
+        salesmanOrderStatus: 1,
+        Pincode: 1,
+        distance: 1,
+        da_distance: 1,
+        distanceStatus: 1
+      },
+    },
+  ]);
+  return values;
+
+}
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -3845,4 +4037,5 @@ module.exports = {
   ward_by_users,
   getnotAssignSalesmanDataMap,
   get_userbased_dataapproved,
+  managemap_data_approved
 };
