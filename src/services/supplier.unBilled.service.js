@@ -572,9 +572,9 @@ const getSupplierbill_amt = async (page) => {
         lastPaid: { $ifNull: ['$supplierbill.Amount', 0] },
       },
     },
-    // {
-    //   $match: { totalPending_amt: { $gt: 0 } },
-    // },
+    {
+      $match: { totalPending_amt: { $gt: 0 } },
+    },
     {
       $skip: 10 * page,
     },
