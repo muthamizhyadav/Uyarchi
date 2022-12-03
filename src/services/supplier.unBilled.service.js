@@ -159,7 +159,7 @@ const getUnBilledBySupplier = async (query) => {
         primaryContactNumber: 1,
         suppliersRaisedUnBill: {
           $ifNull: [
-            { $subtract: ['$suppplierUnbilleds.raised_Amt', { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] }] },
+            { $subtract: ['$suppplierUnbilleds.raised_Amt', { $ifNull: ['$unBilledHistory.TotalUnbilled', 0] }] },
             0,
           ],
         },
