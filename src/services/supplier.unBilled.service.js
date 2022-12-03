@@ -886,9 +886,9 @@ const getPaid_history = async (id) => {
 const billAdjust = async (body) => {
   let { arr, supplierId, amount } = body;
   let values = await SupplierUnbilled.findOne({ supplierId: supplierId });
-  // if (values.un_Billed_amt < amount) {
-  //   throw new ApiError(httpStatus.NOT_FOUND, 'Invaid amount');
-  // }
+  if (values.un_Billed_amt < amount) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invaid amount');
+  }
   const pending = await ReceivedProduct.aggregate([
     {
       $match: { $and: [{ _id: { $in: arr } }] },
