@@ -382,12 +382,12 @@ const get_assignorder_timeloss = catchAsync(async (req, res) => {
 });
 
 const get_assignorder_reassgin = catchAsync(async (req, res) => {
-  const data = await shopOrderService.get_assignorder_reassgin(req.query);
+  const data = await shopOrderService.get_assignorder_reassgin(req.body);
   res.send(data);
 });
 
 const get_assignorder_remove = catchAsync(async (req, res) => {
-  const data = await shopOrderService.get_assignorder_remove(req.query);
+  const data = await shopOrderService.get_assignorder_remove(req.body);
   res.send(data);
 });
 module.exports = {

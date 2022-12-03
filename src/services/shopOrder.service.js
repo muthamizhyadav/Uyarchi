@@ -6006,13 +6006,13 @@ const get_order_counts_rejected = async (status) => {
 };
 
 
-const get_assignorder_reassgin = async (query) => {
+const get_assignorder_reassgin = async (body) => {
 
-  let shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: query.id }, { finalStatus: "reassgin" }, { new: true });
+  let shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: body.id }, { finalStatus: "reassgin" }, { new: true });
   return { message: "Success" }
 }
-const get_assignorder_remove = async (query) => {
-  let shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: query.id }, { finalStatus: "remove" }, { new: true });
+const get_assignorder_remove = async (body) => {
+  let shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: body.id }, { finalStatus: "remove" }, { new: true });
   return { message: "Success" }
 }
 module.exports = {
