@@ -339,6 +339,9 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   endSlot: {
     type: Number,
   },
+  finalStatus: {
+    type: String,
+  }
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
