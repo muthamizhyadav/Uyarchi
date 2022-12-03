@@ -4136,7 +4136,7 @@ const reverifiction_byshop = async (query, userId) => {
       $match: {
         $and: [
           {
-            daStatus: { $eq: 'Not Interested' }
+            daStatus: { $in: ['Not Interested','Cannot Spot the Shop'] }
           },
           {
             Uid: { $eq: userId }
