@@ -5665,12 +5665,6 @@ const get_ward_by_orders = async (query) => {
               $in: ['Approved', 'Modified'],
             },
           },
-          {
-            finalStatus: { $ne: "reassgin" }
-          },
-          {
-            finalStatus: { $ne: "remove" }
-          },
           deliveryType,
         ],
       },
@@ -5796,7 +5790,19 @@ const get_rejected_orders = async (query) => {
   }
   let values = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
-    { $match: { $and: [statusMatch] } },
+    {
+      $match: {
+        $and: [
+          statusMatch,
+          {
+            finalStatus: { $ne: "reassgin" }
+          },
+          {
+            finalStatus: { $ne: "reassgin" }
+          },
+        ]
+      }
+    },
     {
       $lookup: {
         from: 'productorderclones',
@@ -5948,7 +5954,16 @@ const get_rejected_orders = async (query) => {
     { $limit: 10 },
   ]);
 
-  let total = await ShopOrderClone.aggregate([{ $sort: { created: -1 } }, { $match: { $and: [statusMatch] } }]);
+  let total = await ShopOrderClone.aggregate([{ $sort: { created: -1 } }, {
+    $match: {
+      $and: [statusMatch, {
+        finalStatus: { $ne: "reassgin" }
+      },
+        {
+          finalStatus: { $ne: "reassgin" }
+        },]
+    }
+  }]);
 
   let counts = await get_order_counts_rejected(statusMatch);
 
@@ -5964,6 +5979,12 @@ const get_order_counts_rejected = async (status) => {
       $match: {
         $and: [
           { status: { $eq: 'Rejected_assign' } },
+          {
+            finalStatus: { $ne: "reassgin" }
+          },
+          {
+            finalStatus: { $ne: "reassgin" }
+          },
           // {
           //   $or: [
           //     {
@@ -5986,6 +6007,12 @@ const get_order_counts_rejected = async (status) => {
       $match: {
         $and: [
           { status: { $eq: 'Rejected' } },
+          {
+            finalStatus: { $ne: "reassgin" }
+          },
+          {
+            finalStatus: { $ne: "reassgin" }
+          },
           // {
           //   $or: [
           //     {
