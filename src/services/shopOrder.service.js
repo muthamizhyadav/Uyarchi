@@ -5795,7 +5795,7 @@ const get_rejected_orders = async (query) => {
         $and: [
           statusMatch,
           {
-            finalStatus: { $ne: "reassgin" }
+            finalStatus: { $ne: "reorder" }
           },
           {
             finalStatus: { $ne: "remove" }
@@ -5957,7 +5957,7 @@ const get_rejected_orders = async (query) => {
   let total = await ShopOrderClone.aggregate([{ $sort: { created: -1 } }, {
     $match: {
       $and: [statusMatch, {
-        finalStatus: { $ne: "reassgin" }
+        finalStatus: { $ne: "reorder" }
       },
         {
           finalStatus: { $ne: "remove" }
@@ -5980,7 +5980,7 @@ const get_order_counts_rejected = async (status) => {
         $and: [
           { status: { $eq: 'Rejected_assign' } },
           {
-            finalStatus: { $ne: "reassgin" }
+            finalStatus: { $ne: "reorder" }
           },
           {
             finalStatus: { $ne: "remove" }
@@ -6008,7 +6008,7 @@ const get_order_counts_rejected = async (status) => {
         $and: [
           { status: { $eq: 'Rejected' } },
           {
-            finalStatus: { $ne: "reassgin" }
+            finalStatus: { $ne: "reorder" }
           },
           {
             finalStatus: { $ne: "remove" }
@@ -6041,7 +6041,7 @@ const get_order_counts_rejected = async (status) => {
 
 const get_assignorder_reassgin = async (body) => {
 
-  let shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: body.id }, { finalStatus: "reassgin" }, { new: true });
+  let shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: body.id }, { finalStatus: "reorder" }, { new: true });
   return { message: "Success" }
 }
 const get_assignorder_remove = async (body) => {
