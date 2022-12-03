@@ -3793,7 +3793,7 @@ const get_userbased_dataapproved = async (query) => {
 };
 
 const managemap_data_approved = async (query) => {
-  let userId = { active: true };
+  let userId = [{ active: true }];
   let dastatus = { active: true };
   let dateMatch = { active: true };
   let userMatch = { active: true };
@@ -3810,7 +3810,10 @@ const managemap_data_approved = async (query) => {
     userMatch = { Uid: { $eq: query.capture } }
   }
   if (query.uid != null && query.uid != '' && query.uid != 'null') {
-    userId = { DA_USER: { $eq: query.uid } }
+    userId = [
+      { salesManId: query.uid, fromSalesManId: query.uid, status: 'Assign' },
+      { salesManId: query.uid, status: 'tempReassign' },
+    ]
   }
 
   let values = await Shop.aggregate([
@@ -3824,7 +3827,7 @@ const managemap_data_approved = async (query) => {
         $and: [
           dastatus,
           dateMatch,
-          userMatch
+          userMatch,
         ]
       },
     },
@@ -3836,10 +3839,7 @@ const managemap_data_approved = async (query) => {
         pipeline: [
           {
             $match: {
-              $or: [
-                { salesManId: userId, fromSalesManId: userId, status: 'Assign' },
-                { salesManId: userId, status: 'tempReassign' },
-              ],
+              $or: userId
             },
           },
         ],
