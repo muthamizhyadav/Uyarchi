@@ -572,9 +572,9 @@ const getSupplierbill_amt = async (page) => {
         lastPaid: { $ifNull: ['$supplierbill.Amount', 0] },
       },
     },
-    {
-      $match: { totalPending_amt: { $gt: 0 } },
-    },
+    // {
+    //   $match: { totalPending_amt: { $gt: 0 } },
+    // },
     {
       $skip: 10 * page,
     },
@@ -939,7 +939,7 @@ const billAdjust = async (body) => {
       let pendingamount = e.PendingAmount;
       console.log(pendingamount);
       if (pendingamount > 0) {
-        let reduceAmount = amount - pendingamount;
+        let reduceAmount = pendingamount - amount;
         if (reduceAmount >= 0) {
           amount = amount - pendingamount;
           await supplierBills.create({
@@ -953,7 +953,7 @@ const billAdjust = async (body) => {
           });
         } else {
           reduceAmount = amount;
-          amount = 0;
+          // amount = 0;
           await supplierBills.create({
             status: 'Paid',
             groupId: e._id,
