@@ -4139,7 +4139,7 @@ const reverifiction_byshop = async (query, userId) => {
             daStatus: { $eq: 'Not Interested' }
           },
           {
-            Uid: { $eq: "57889d2b-9dd6-40dc-aff9-67e52c19ab9b" }
+            Uid: { $eq: userId }
           }
         ],
       },
