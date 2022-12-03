@@ -927,6 +927,7 @@ const billAdjust = async (body) => {
         PendingAmount: {
           $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', { $ifNull: ['$supplierBills.billingTotal', 0] }] }, 0],
         },
+        ReceivedData: '$ReceivedData',
       },
     },
   ]);
@@ -937,15 +938,19 @@ const billAdjust = async (body) => {
   pending.forEach(async (e) => {
     if (amount > 0) {
       let pendingamount = e.PendingAmount;
+      // pending amount consolidated from billing amount and unbilled amount
       console.log(pendingamount);
       if (pendingamount > 0) {
         let reduceAmount = pendingamount - amount;
         if (reduceAmount >= 0) {
-          amount = amount - pendingamount;
+          console.log(reduceAmount);
+          // amount is getting from client side
+          console.log(pendingamount, 'pending');
+          console.log(amount, '1');
           await supplierBills.create({
             status: 'Paid',
             groupId: e._id,
-            Amount: pendingamount,
+            Amount: amount,
             paymentMethod: 'Adjusted',
             supplierId: supplierId,
             created: moment(),
@@ -954,6 +959,7 @@ const billAdjust = async (body) => {
         } else {
           reduceAmount = amount;
           // amount = 0;
+          console.log(reduceAmount, '2');
           await supplierBills.create({
             status: 'Paid',
             groupId: e._id,
@@ -967,7 +973,8 @@ const billAdjust = async (body) => {
       }
     }
   });
-
+  // body.amount getting from client side
+  // values.un_Billed_amt getting from server side
   values = await SupplierUnbilled.findByIdAndUpdate(
     { _id: values._id },
     { un_Billed_amt: values.un_Billed_amt - body.amount },
