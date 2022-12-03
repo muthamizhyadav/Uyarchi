@@ -5800,6 +5800,12 @@ const get_rejected_orders = async (query) => {
           {
             finalStatus: { $ne: "remove" }
           },
+          {
+            RE_order_status: { $ne: 'Re-Ordered' },
+          },
+          {
+            RE_order_status: { $ne: 'declined' },
+          },
         ]
       }
     },
@@ -5961,7 +5967,14 @@ const get_rejected_orders = async (query) => {
       },
         {
           finalStatus: { $ne: "remove" }
-        },]
+        },
+        {
+          RE_order_status: { $ne: 'Re-Ordered' },
+        },
+        {
+          RE_order_status: { $ne: 'declined' },
+        },
+      ]
     }
   }]);
 
@@ -5984,6 +5997,12 @@ const get_order_counts_rejected = async (status) => {
           },
           {
             finalStatus: { $ne: "remove" }
+          },
+          {
+            RE_order_status: { $ne: 'Re-Ordered' },
+          },
+          {
+            RE_order_status: { $ne: 'declined' },
           },
           // {
           //   $or: [
@@ -6012,6 +6031,12 @@ const get_order_counts_rejected = async (status) => {
           },
           {
             finalStatus: { $ne: "remove" }
+          },
+          {
+            RE_order_status: { $ne: 'Re-Ordered' },
+          },
+          {
+            RE_order_status: { $ne: 'declined' },
           },
           // {
           //   $or: [
