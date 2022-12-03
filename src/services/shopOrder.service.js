@@ -6005,6 +6005,16 @@ const get_order_counts_rejected = async (status) => {
   return { orders: orders };
 };
 
+
+const get_assignorder_reassgin = async (query) => {
+
+  let shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: query.id }, { finalStatus: "reassgin" }, { new: true });
+  return { message: "Success" }
+}
+const get_assignorder_remove = async (query) => {
+  let shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: query.id }, { finalStatus: "remove" }, { new: true });
+  return { message: "Success" }
+}
 module.exports = {
   // product
   createProductOrderClone,
@@ -6067,4 +6077,6 @@ module.exports = {
   get_ward_by_orders,
   get_assignorder_timeloss,
   get_rejected_orders,
+  get_assignorder_reassgin,
+  get_assignorder_remove
 };

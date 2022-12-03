@@ -74,11 +74,9 @@ const verifyRazorpay_Amount = async (body) => {
     //         }
     //     })
     // });
-
     let hmac = crypto.createHmac('sha256', '2dH1g68aK5K8fuTLi8BZZHBq');
     hmac.update(body.razorpay_order_id + "|" + body.razorpay_payment_id);
     const generated_signature = hmac.digest('hex');
-
     if (body.razorpay_signature === generated_signature) {
         console.log({ success: true, message: "Payment has been verified" })
     }

@@ -73,5 +73,8 @@ router.route('/getall/shoporder/approved').get(shopOrderController.get_approved_
 router.route('/getall/shoporder/rejected').get(shopOrderController.get_rejected_orders);
 router.route('/getpincode/getall/orders').get(shopOrderController.get_ward_by_orders);
 router.route('/reject/assignorder/timeloss').put(shopOrderController.get_assignorder_timeloss);
+router.route('/reject/assignorder/reassgin').put(shopOrderController.get_assignorder_reassgin);
+router.route('/reject/assignorder/remove').put(shopOrderController.get_assignorder_remove);
+
 
 module.exports = router;
