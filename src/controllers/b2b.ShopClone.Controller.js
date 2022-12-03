@@ -492,6 +492,11 @@ const managemap_data_approved = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const reverifiction_byshop = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.reverifiction_byshop(req.query,req.userId);
+  res.send(data);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -545,5 +550,6 @@ module.exports = {
   ward_by_users,
   getnotAssignSalesmanDataMap,
   get_userbased_dataapproved,
-  managemap_data_approved
+  managemap_data_approved,
+  reverifiction_byshop
 };
