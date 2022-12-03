@@ -531,8 +531,8 @@ const getShop_pending = async (date, status, key, page, userId, userRole) => {
       {
         $and: [
           {
-            status: {
-              $in: ['Rejected', 'Rejected_assign'],
+            finalStatus: {
+              $eq:"reorder",
             },
           },
           {
@@ -1029,8 +1029,8 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
   let faildstatusMatch = {
     $and: [
       {
-        status: {
-          $in: ['Rejected', 'Rejected_assign'],
+        finalStatus: {
+          $eq:"reorder",
         },
       },
       {
@@ -1419,8 +1419,8 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
   let faildstatusMatch = {
     $and: [
       {
-        status: {
-          $in: ['Rejected', 'Rejected_assign'],
+        finalStatus: {
+          $eq:"reorder",
         },
       },
       {
@@ -1817,8 +1817,8 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
       {
         $and: [
           {
-            status: {
-              $in: ['Rejected', 'Rejected_assign'],
+            finalStatus: {
+              $eq:"reorder",
             },
           },
           {
