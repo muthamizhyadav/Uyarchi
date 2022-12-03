@@ -476,15 +476,15 @@ const getReportWithSupplierId = async (page, search, date) => {
     { $limit: 10 },
   ]);
   let total = await CallStatus.aggregate([
-    // {
-    //   $match: { $and: [dateM] },
-    // },
+    {
+      $match: { $and: [dateM] },
+    },
     {
       $lookup: {
         from: 'suppliers',
         localField: 'supplierid',
         foreignField: '_id',
-        // pipeline: [{ $match: { $and: [searchMatch] } }],
+        pipeline: [{ $match: { $and: [searchMatch] } }],
         as: 'supplierdata',
       },
     },
