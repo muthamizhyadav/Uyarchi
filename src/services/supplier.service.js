@@ -44,8 +44,8 @@ const Supplier_setPassword = async (id,body) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'confirmpassword wrong');
   }
   const salt = await bcrypt.genSalt(10);
-  password = await bcrypt.hash(password, salt);
-  const data = await Supplier.findByIdAndUpdate({ _id: id }, { password: password }, { new: true });
+ let password1 = await bcrypt.hash(password, salt);
+  const data = await Supplier.findByIdAndUpdate({ _id: id }, { password: password1 }, { new: true });
   return data;
 };
 
