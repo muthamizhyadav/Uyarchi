@@ -4436,7 +4436,7 @@ const get_reassign_temp = async (query) => {
         da_landmark: 1,
         Pincode: 1,
         daStatus: 1,
-        DA_USER:1
+        DA_USER: 1
       },
     },
 
@@ -4612,14 +4612,19 @@ const get_reassign_temp = async (query) => {
       },
     },
   ]);
-return {values: values, total: total.length};
+  return { values: values, total: total.length };
 
 }
 
 const update_reassign_temp = async (body) => {
 
+  console.log(body)
 
+  body.arr.forEach(async (e) => {
+    await Shop.findByIdAndUpdate({ _id: e }, { re_Uid: body.assign ,reAssigin_date:moment()}, { new: true });
+  })
 
+  return { status:'success' };
 }
 module.exports = {
   createShopClone,

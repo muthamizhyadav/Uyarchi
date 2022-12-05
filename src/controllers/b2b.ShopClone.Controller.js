@@ -507,7 +507,7 @@ const get_reassign_temp = catchAsync(async (req, res) => {
   res.send(data);
 });
 const update_reassign_temp = catchAsync(async (req, res) => {
-  const data = await b2bCloneService.update_reassign_temp(req.query, req.userId);
+  const data = await b2bCloneService.update_reassign_temp(req.body);
   res.send(data);
 });
 
