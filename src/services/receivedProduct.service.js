@@ -1705,27 +1705,45 @@ const previousOrderdata = async (id) => {
   return data;
 };
 
-const getBilling_Details = async (page) => {
+const getbilled_Details = async (page) => {
+  console.log(page);
   let values = await ReceivedProduct.aggregate([
     {
       $lookup: {
         from: 'receivedstocks',
         localField: '_id',
         foreignField: 'groupId',
-        as: 'billingData',
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
+        as: 'receivedstocks',
       },
     },
     {
-      $unwind: '$billingData',
+      $unwind: '$receivedstocks',
+    },
+    {
+      $lookup: {
+        from: 'supplierbills',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [{ $group: { _id: null, Amount: { $sum: '$Amount' } } }],
+        as: 'billed',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$billed',
+      },
     },
     {
       $project: {
         _id: 1,
-        status: 1,
-        BillNo: 1,
-        date: 1,
         created: 1,
-        totalAmount: '$billingData.billingTotal',
+        date: 1,
+        BillNo: 1,
+        TotalAmount: { $ifNull: ['$receivedstocks.billingTotal', 0] },
+        paidAmount: { $ifNull: ['$billed.Amount', 0] },
+        PendingAmount: { $subtract: [{ $ifNull: ['$receivedstocks.billingTotal', 0] }, { $ifNull: ['$billed.Amount', 0] }] },
       },
     },
   ]);
@@ -1747,5 +1765,5 @@ module.exports = {
   getSupplierBillsDetails1,
   getAllWithPaginationBilled_Supplier1,
   previousOrderdata,
-  getBilling_Details,
+  getbilled_Details,
 };

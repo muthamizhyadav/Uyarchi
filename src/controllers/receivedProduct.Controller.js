@@ -125,8 +125,8 @@ const previousOrderdata = catchAsync(async (req, res) => {
   res.send(receivedProduct);
 });
 
-const getBilling_Details = catchAsync(async (req, res) => {
-  const data = await ReceivedProductService.getBilling_Details(req.query);
+const getbilled_Details = catchAsync(async (req, res) => {
+  const data = await ReceivedProductService.getbilled_Details(req.query);
   res.send(data);
 });
 
@@ -147,5 +147,5 @@ module.exports = {
   getSupplierBillsDetails1,
   getAllWithPagination_billed_supplier1,
   previousOrderdata,
-  getBilling_Details,
+  getbilled_Details,
 };
