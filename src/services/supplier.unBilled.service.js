@@ -568,6 +568,7 @@ const getSupplierbill_amt = async (page) => {
         tradeName: 1,
         primaryContactNumber: 1,
         totalPending_amt: { $ifNull: ['$receivedproducts.pendingAmount', 0] },
+        pendingBillcount: '$receivedproducts.pendingBillcount',
         current_UnBilled_amt: { $ifNull: ['$supplierbills.un_Billed_amt', 0] },
         lastPaid: { $ifNull: ['$supplierbill.Amount', 0] },
       },
