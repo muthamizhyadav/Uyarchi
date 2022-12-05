@@ -4005,6 +4005,10 @@ const managemap_data_approved = async (query) => {
 
 const reverifiction_byshop = async (query, userId) => {
   let page = query.page == '' || query.page == null || query.page == 'null' ? 0 : query.page;
+  let statusMatch = { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+  if (query.page == '' && query.page == null && query.page == 'null') {
+    statusMatch =  { $eq: query.status } 
+  }
   console.log(page)
   let values = await Shop.aggregate([
     {
@@ -4016,7 +4020,7 @@ const reverifiction_byshop = async (query, userId) => {
           {
             $and: [
               {
-                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+                daStatus:statusMatch
               },
               {
                 Uid: { $eq: userId }
@@ -4026,7 +4030,7 @@ const reverifiction_byshop = async (query, userId) => {
           {
             $and: [
               {
-                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+                daStatus: statusMatch
               },
               {
                 re_Uid: { $eq: userId }
@@ -4170,7 +4174,7 @@ const reverifiction_byshop = async (query, userId) => {
           {
             $and: [
               {
-                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+                daStatus:statusMatch
               },
               {
                 Uid: { $eq: userId }
@@ -4180,7 +4184,7 @@ const reverifiction_byshop = async (query, userId) => {
           {
             $and: [
               {
-                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+                daStatus:statusMatch
               },
               {
                 re_Uid: { $eq: userId }
