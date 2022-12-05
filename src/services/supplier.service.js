@@ -19,11 +19,11 @@ const createSupplier = async (supplierBody) => {
   }
   if(supplierBody.createdByStatus == "By Supplier"){
     await Textlocal.Otp(supplierBody.primaryContactNumber);
+    await Supplier.create(supplierBody);
     return 'OTP send successfully';
-}else {
-  return Supplier.create(supplierBody);
+}else{
+ return Supplier.create(supplierBody);
 }
-
 };
 
 const otpVerify_Setpassword = async (body) =>{
