@@ -105,6 +105,6 @@ router.route('/getuser/based/assignshops/dataapproved').get(b2bShopCloneControll
 router.route('/getmapview/data/approved').get(b2bShopCloneController.managemap_data_approved);
 router.route('/getmyshop/re/verification/byuser').get(authorization, b2bShopCloneController.reverifiction_byshop);
 router.route('/get/shops/reassigin').get(b2bShopCloneController.get_reassign_temp);
-router.route('/update/get/shops/reassigin').put(b2bShopCloneController.update_reassign_temp);
+router.route('/update/re/shops/reassigin/myshop').put(b2bShopCloneController.update_reassign_temp);
 
 module.exports = router;
