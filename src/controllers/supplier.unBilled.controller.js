@@ -59,6 +59,11 @@ const PayPendingAmount = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getUnBilledDetails = catchAsync(async (req, res) => {
+  const data = await supplierUnBilledService.getUnBilledDetails(req.query.id);
+  res.send(data);
+});
+
 module.exports = {
   createSupplierUnBilled,
   getUnBilledBySupplier,
@@ -71,4 +76,5 @@ module.exports = {
   getPaid_history,
   billAdjust,
   PayPendingAmount,
+  getUnBilledDetails,
 };

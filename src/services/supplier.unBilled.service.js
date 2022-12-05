@@ -1007,6 +1007,75 @@ const PayPendingAmount = async (body) => {
   return { message: 'successFully paid' };
 };
 
+const getUnBilledDetails = async (supplierId) => {
+  let values = await Supplier.aggregate([
+    {
+      $match: {
+        _id: supplierId,
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierraisedunbilleds',
+        localField: '_id',
+        foreignField: 'supplierId',
+        as: 'suppplierUnbilledRaised',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$suppplierUnbilledRaised',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierunbilleds',
+        localField: '_id',
+        foreignField: 'supplierId',
+        as: 'supplierUnBilled',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierUnBilled',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierunbilledhistories',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $group: { _id: null, TotalUnbilled: { $sum: '$un_Billed_amt' } },
+          },
+        ],
+        as: 'unBilledHistory',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$unBilledHistory',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        primaryContactName: 1,
+        primaryContactNumber: 1,
+        RegisteredAddress: 1,
+        UnbilledRaised: { $ifNull: ['$suppplierUnbilledRaised.raised_Amt', 0] },
+        current_UnBilled: { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] },
+        TotalUnbilled: { $ifNull: ['$unBilledHistory.TotalUnbilled', 0] },
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createSupplierUnBilled,
   getUnBilledBySupplier,
@@ -1019,4 +1088,5 @@ module.exports = {
   getPaid_history,
   billAdjust,
   PayPendingAmount,
+  getUnBilledDetails,
 };

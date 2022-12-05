@@ -130,6 +130,11 @@ const getbilled_Details = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getBill_History = catchAsync(async (req, res) => {
+  const data = await ReceivedProductService.getBill_History(req.query.id);
+  res.send(data);
+});
+
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,
@@ -148,4 +153,5 @@ module.exports = {
   getAllWithPagination_billed_supplier1,
   previousOrderdata,
   getbilled_Details,
+  getBill_History,
 };
