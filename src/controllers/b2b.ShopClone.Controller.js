@@ -497,7 +497,17 @@ const managemap_data_approved = catchAsync(async (req, res) => {
 });
 
 const reverifiction_byshop = catchAsync(async (req, res) => {
-  const data = await b2bCloneService.reverifiction_byshop(req.query,req.userId);
+  const data = await b2bCloneService.reverifiction_byshop(req.query, req.userId);
+  res.send(data);
+});
+
+
+const get_reassign_temp = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.get_reassign_temp(req.query);
+  res.send(data);
+});
+const update_reassign_temp = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.update_reassign_temp(req.query, req.userId);
   res.send(data);
 });
 
@@ -556,5 +566,7 @@ module.exports = {
   get_userbased_dataapproved,
   managemap_data_approved,
   reverifiction_byshop,
-  update_reverification
+  update_reverification,
+  get_reassign_temp,
+  update_reassign_temp,
 };
