@@ -4265,7 +4265,7 @@ const get_reassign_temp = async (query) => {
   let page = query.page == null || query.page == 'null' || query.page == '' ? 0 : query.page
   let assignby = { active: true };
   if (query.assign != null && query.assign != 'null' && query.assign != '') {
-    assignby = { re_Uid: { $eq: query.assign } }
+    assignby = { DA_USER: { $eq: query.assign } }
   }
   console.log(page)
 
@@ -4436,6 +4436,7 @@ const get_reassign_temp = async (query) => {
         da_landmark: 1,
         Pincode: 1,
         daStatus: 1,
+        DA_USER:1
       },
     },
     { $skip: 10 * page },
