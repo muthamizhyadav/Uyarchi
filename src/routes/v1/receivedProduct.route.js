@@ -24,9 +24,11 @@ router
 router.route('/getproducts/BySupplier/:page').get(receivedProductController.getreceivedProductBySupplier);
 router.route('/supplierDetail/byGroup/:id').get(receivedProductController.getSupplierDetailByGroupId);
 
-
 router.route('/updaterandom/product').post(receivedProductController.updaterandom_product);
 router.route('/getSupplierBillsDetails1/:id/:page').get(receivedProductController.getSupplierBillsDetails1);
-router.route('/getAllWithPagination_billed_supplier1/supplier/data/:id').get(receivedProductController.getAllWithPagination_billed_supplier1);
+router
+  .route('/getAllWithPagination_billed_supplier1/supplier/data/:id')
+  .get(receivedProductController.getAllWithPagination_billed_supplier1);
 router.route('/previousOrderdata/:id').get(receivedProductController.previousOrderdata);
+router.route('/Billed/data').get(receivedProductController.getbilled_Details);
 module.exports = router;
