@@ -2582,13 +2582,28 @@ const re_getAssign_bySalesman = async (userId) => {
     },
     {
       $match: {
-        $and: [
+        $or: [
           {
-            daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Uid: { $eq: userId }
+              }
+            ]
           },
           {
-            Uid: { $eq: userId }
-          }
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                re_Uid: { $eq: userId }
+              }
+            ]
+          },
+
         ],
       },
     },
@@ -2717,34 +2732,70 @@ const re_getAssign_bySalesman = async (userId) => {
   let dataApproved = await Shop.aggregate([
     {
       $match: {
-        $and: [
+        $or: [
           {
-            daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Re_daStatus: { $ne: null }
+              },
+              {
+                Uid: { $eq: userId }
+              }
+            ]
           },
           {
-            status: { $eq: 'data_approved' }
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Re_daStatus: { $ne: null }
+              },
+              {
+                re_Uid: { $eq: userId }
+              }
+            ]
           },
-          {
-            Uid: { $eq: userId }
-          }
+
         ],
       },
     },
 
   ]);
-  let dataNotApproved =await Shop.aggregate([
+  let dataNotApproved = await Shop.aggregate([
     {
       $match: {
-        $and: [
+        $or: [
           {
-            daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Re_daStatus: { $eq: null }
+              },
+              {
+                Uid: { $eq: userId }
+              }
+            ]
           },
           {
-            status: { $ne: 'data_approved' }
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Re_daStatus: { $eq: null }
+              },
+              {
+                re_Uid: { $eq: userId }
+              }
+            ]
           },
-          {
-            Uid: { $eq: userId }
-          }
+
         ],
       },
     },
@@ -2752,21 +2803,41 @@ const re_getAssign_bySalesman = async (userId) => {
   ]);
 
   let todaydate = moment().format('YYYY-MM-DD');
-  
-  let TodayApproved =await Shop.aggregate([
+
+  let TodayApproved = await Shop.aggregate([
     {
       $match: {
-        $and: [
+        $or: [
           {
-            daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Re_daStatus: { $ne: null }
+              },
+              {
+                Uid: { $eq: userId }
+              },
+              { Re_DA_DATE: { $eq: todaydate } }
+            ]
           },
           {
-            status: { $ne: 'data_approved' }
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Re_daStatus: { $ne: null }
+              },
+              {
+                re_Uid: { $eq: userId }
+              },
+              { Re_DA_DATE: { $eq: todaydate } }
+
+            ]
           },
-          {
-            Uid: { $eq: userId }
-          },
-          { Re_DA_DATE: { $eq: todaydate } }
+
         ],
       },
     },
