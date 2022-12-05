@@ -4439,8 +4439,7 @@ const get_reassign_temp = async (query) => {
         DA_USER:1
       },
     },
-    { $skip: 10 * page },
-    { $limit: 10 },
+
   ]);
 
 
