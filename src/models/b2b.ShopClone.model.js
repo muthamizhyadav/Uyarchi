@@ -141,13 +141,13 @@ const shopSchema = mongoose.Schema({
   lapsedOrder: {
     type: String,
   },
+  purchaseQTy: {
+    type: String,
+  },
   DA_Comment: {
     type: String,
   },
   daStatus: {
-    type: String,
-  },
-  purchaseQTy: {
     type: String,
   },
   da_lot: {
@@ -171,11 +171,11 @@ const shopSchema = mongoose.Schema({
   da_landmark: {
     type: String,
   },
-  salesmanOrderStatus: {
-    type: String,
-  },
   Pincode: {
     type: Number,
+  },
+  salesmanOrderStatus: {
+    type: String,
   },
   gomap: {
     type: Date,
@@ -188,6 +188,37 @@ const shopSchema = mongoose.Schema({
   },
   distanceStatus: {
     type: String,
+  },
+
+  Re_DA_Comment: {
+    type: String,
+  },
+  Re_daStatus: {
+    type: String,
+  },
+  Re_da_lot: {
+    type: Number,
+  },
+  Re_da_long: {
+    type: Number,
+  },
+  Re_DA_DATE: {
+    type: String,
+  },
+  Re_DA_USER: {
+    type: String,
+  },
+  Re_DA_CREATED: {
+    type: Date,
+  },
+  Re_DA_TIME: {
+    type: Number,
+  },
+  Re_da_landmark: {
+    type: String,
+  },
+  Re_Pincode: {
+    type: Number,
   },
 });
 
