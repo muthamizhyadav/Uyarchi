@@ -748,6 +748,7 @@ const getBillDetails_bySupplier = async (id) => {
         supplierId: 1,
         Billno: '$received.BillNo',
         date: '$received.date',
+        created: 1,
       },
     },
   ]);
@@ -799,6 +800,7 @@ const supplierOrders_amt_details = async (id, query) => {
         BillNo: 1,
         TotalAmt: { $ifNull: ['$ReceivedData.billingTotal', 0] },
         paidAmount: { $ifNull: ['$supplierBills.billingTotal', 0] },
+        created: 1,
         // PendingAmount: { $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] }, 0] },
         // PendingAmount: { $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] },
       },
@@ -812,6 +814,7 @@ const supplierOrders_amt_details = async (id, query) => {
         TotalAmt: 1,
         paidAmount: 1,
         PendingAmount: { $ifNull: [{ $subtract: ['$TotalAmt', '$paidAmount'] }, 0] },
+        created: 1,
       },
     },
     {
