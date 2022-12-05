@@ -23,6 +23,29 @@ const Otp = async (mobile) => {
   https.request(options, callback).end();
   return 'OTP Send Successfully';
 };
+
+const OtpForget = async (mobile) => {
+  var sender = 'txtlcl';
+  const contact = mobile;
+  numbers = '91' + contact;
+  apiKey = urlencode('NTgzOTZiMzY3MTQ4MzI0ODU1NmI0NDZhNDQ3NTQ5NmY=');
+  sender = urlencode('UYARBZ');
+  let OTPCODE = Math.floor(100000 + Math.random() * 900000);
+  message = urlencodeed(
+    'Dear ' +
+      contact +
+      ', thank you for registering with Kapture(An Uyarchi Solutions company). Your OTP for logging into the account is ' +
+      OTPCODE +
+      ' .'
+  );
+  data = 'send/?apikey=' + apiKey + '&numbers=' + numbers + '&sender=' + sender + '&message=' + message;
+  var options = 'https://api.textlocal.in/' + data;
+  console.log(data)
+  await saveOtp.updateOtp(contact, OTPCODE);
+  https.request(options, callback).end();
+  return 'OTP Send Successfully';
+};
+
 callback = function (response) {
   var str = '';
   response.on('data', function (chunk) {
@@ -33,4 +56,4 @@ callback = function (response) {
   });
 };
 
-module.exports = { Otp };
+module.exports = { Otp,OtpForget };

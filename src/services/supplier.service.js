@@ -19,11 +19,11 @@ const createSupplier = async (supplierBody) => {
   }
   if(supplierBody.createdByStatus == "By Supplier"){
     await Textlocal.Otp(supplierBody.primaryContactNumber);
+    await Supplier.create(supplierBody);
     return 'OTP send successfully';
-}else {
-  return Supplier.create(supplierBody);
+}else{
+ return Supplier.create(supplierBody);
 }
-
 };
 
 const otpVerify_Setpassword = async (body) =>{
@@ -44,8 +44,8 @@ const Supplier_setPassword = async (id,body) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'confirmpassword wrong');
   }
   const salt = await bcrypt.genSalt(10);
-  password = await bcrypt.hash(password, salt);
-  const data = await Supplier.findByIdAndUpdate({ _id: id }, { password: password }, { new: true });
+ let password1 = await bcrypt.hash(password, salt);
+  const data = await Supplier.findByIdAndUpdate({ _id: id }, { password: password1 }, { new: true });
   return data;
 };
 
@@ -64,6 +64,18 @@ const UsersLogin = async (userBody) => {
   }
   return userName;
 };
+
+const forgotPassword = async (body) => {
+  // const { phoneNumber } = body;
+  // await Textlocal.Otp(body);
+  let users = await Supplier.findOne({ primaryContactNumber: body.primaryContactNumber });
+  if (!users) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
+  }
+  return await Textlocal.OtpForget(body.primaryContactNumber);
+};
+
+
 
 const getAllSupplier = async () => {
   return Supplier.find({ active: true });
@@ -536,4 +548,5 @@ module.exports = {
   UsersLogin,
   otpVerify_Setpassword,
   Supplier_setPassword,
+  forgotPassword,
 };
