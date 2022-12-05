@@ -4012,13 +4012,28 @@ const reverifiction_byshop = async (query, userId) => {
     },
     {
       $match: {
-        $and: [
+        $or: [
           {
-            daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Uid: { $eq: userId }
+              }
+            ]
           },
           {
-            Uid: { $eq: userId }
-          }
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                re_Uid: { $eq: userId }
+              }
+            ]
+          },
+
         ],
       },
     },
@@ -4151,13 +4166,28 @@ const reverifiction_byshop = async (query, userId) => {
     },
     {
       $match: {
-        $and: [
+        $or: [
           {
-            daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Uid: { $eq: userId }
+              }
+            ]
           },
           {
-            Uid: { $eq: userId }
-          }
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                re_Uid: { $eq: userId }
+              }
+            ]
+          },
+
         ],
       },
     },
@@ -4621,10 +4651,10 @@ const update_reassign_temp = async (body) => {
   console.log(body)
 
   body.arr.forEach(async (e) => {
-    await Shop.findByIdAndUpdate({ _id: e }, { re_Uid: body.assign ,reAssigin_date:moment()}, { new: true });
+    await Shop.findByIdAndUpdate({ _id: e }, { re_Uid: body.assign, reAssigin_date: moment() }, { new: true });
   })
 
-  return { status:'success' };
+  return { status: 'success' };
 }
 module.exports = {
   createShopClone,
