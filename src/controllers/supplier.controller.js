@@ -120,6 +120,11 @@ const  Supplier_setPassword = catchAsync(async (req, res) => {
   res.send(getproduct);
 });
 
+const  forgotPassword = catchAsync(async (req, res) => {
+  const getproduct = await supplierService.forgotPassword(req.body);
+  res.send(getproduct);
+});
+
 module.exports = {
   createSupplier,
   getproductfromCallStatus,
@@ -141,4 +146,5 @@ module.exports = {
   UsersLogin,
   otpVerify_Setpassword,
   Supplier_setPassword,
+  forgotPassword,
 };

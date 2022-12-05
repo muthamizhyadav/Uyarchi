@@ -8,4 +8,9 @@ const saveOtp = async (number, otp) => {
   });
 };
 
-module.exports = { saveOtp };
+const updateOtp = async (number, otp) => {
+  console.log(number, otp)
+  return await OTPModel.findOneAndUpdate({mobileNumber:number}, { OTP:otp }, { new: true })
+};
+
+module.exports = { saveOtp, updateOtp };
