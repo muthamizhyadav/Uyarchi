@@ -28,7 +28,7 @@ const createRaisedUnbilled = async (body) => {
 };
 
 const getRaisedSupplier = async () => {
-  let values = await RaisedUnBilled.aggregate([
+  let values = await RaisedUnBilledHistory.aggregate([
     {
       $lookup: {
         from: 'suppliers',
