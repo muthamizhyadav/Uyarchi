@@ -220,6 +220,9 @@ const shopSchema = mongoose.Schema({
   Re_Pincode: {
     type: Number,
   },
+  Re_purchaseQTy: {
+    type: String,
+  },
 });
 
 // assignSchema.plugin(toJSON);
