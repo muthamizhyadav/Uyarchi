@@ -13,4 +13,5 @@ router.route('/supplier/amount/details/:id').get(supplierController.supplierOrde
 router.route('/getPaid/history/:id').get(supplierController.getPaid_history);
 router.route('/bill/adjust').post(supplierController.billAdjust);
 router.route('/pay/pending/Amount').post(supplierController.PayPendingAmount);
+router.route('/get/UnBilled/Details').get(supplierController.getUnBilledDetails);
 module.exports = router;

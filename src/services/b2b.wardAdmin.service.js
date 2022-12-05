@@ -4347,7 +4347,7 @@ const manage_group_orders = async () => {
         pettyCashAllocateStatus: 1,
         pettyStockAllocateStatus: 1,
         AllocateStatus: 1,
-        totalOrders: 1,
+        totalOrders: { $size: '$Orderdatas' },
         groupId: 1,
         assignDate: 1,
         assignTime: 1,

@@ -103,6 +103,8 @@ router.route('/addpincode/update/DAdata').put(b2bShopCloneController.update_pinc
 router.route('/wardby/shop/assigned').get(b2bShopCloneController.ward_by_users);
 router.route('/getuser/based/assignshops/dataapproved').get(b2bShopCloneController.get_userbased_dataapproved);
 router.route('/getmapview/data/approved').get(b2bShopCloneController.managemap_data_approved);
-router.route('/getmyshop/re/verification/byuser').get(authorization,b2bShopCloneController.reverifiction_byshop);
+router.route('/getmyshop/re/verification/byuser').get(authorization, b2bShopCloneController.reverifiction_byshop);
+router.route('/get/shops/reassigin').get(b2bShopCloneController.get_reassign_temp);
+router.route('/update/re/shops/reassigin/myshop').put(b2bShopCloneController.update_reassign_temp);
 
 module.exports = router;

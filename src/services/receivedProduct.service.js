@@ -4,6 +4,7 @@ const ReceivedProduct = require('../models/receivedProduct.model');
 const transportbill = require('../models/transportbill.model');
 const Supplier = require('../models/supplier.model');
 const ReceivedStock = require('../models/receivedStock.model');
+const Supplierbills = require('../models/supplierBills.model');
 
 const createReceivedProduct = async (body) => {
   let Rproduct = await ReceivedProduct.create(body);
@@ -1706,9 +1707,9 @@ const previousOrderdata = async (id) => {
 };
 
 const getbilled_Details = async (pages) => {
-  console.log(pages)
+  console.log(pages);
   let page = parseInt(pages);
-  console.log(page)
+  console.log(page);
   let values = await ReceivedProduct.aggregate([
     {
       $lookup: {
@@ -1798,6 +1799,15 @@ const getbilled_Details = async (pages) => {
   return { values: values, total: total.length };
 };
 
+const getBill_History = async (id) => {
+  let values = await Supplierbills.aggregate([
+    {
+      $match: { groupId: id },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createReceivedProduct,
   getAllWithPagination,
@@ -1814,4 +1824,5 @@ module.exports = {
   getAllWithPaginationBilled_Supplier1,
   previousOrderdata,
   getbilled_Details,
+  getBill_History,
 };

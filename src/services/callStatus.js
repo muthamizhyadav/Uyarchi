@@ -456,6 +456,7 @@ const getReportWithSupplierId = async (page, search, date) => {
         confirmprice: 1,
         status: 1,
         exp_date: 1,
+        Expdate:1,
         orderType: 1,
         order_Type: 1,
         TotalAmount: 1,

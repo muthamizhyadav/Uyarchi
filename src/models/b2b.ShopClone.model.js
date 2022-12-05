@@ -223,6 +223,12 @@ const shopSchema = mongoose.Schema({
   Re_purchaseQTy: {
     type: String,
   },
+  re_Uid:{
+    type: String,
+  },
+  reAssigin_date:{
+    type: String,
+  }
 });
 
 // assignSchema.plugin(toJSON);

@@ -4005,6 +4005,10 @@ const managemap_data_approved = async (query) => {
 
 const reverifiction_byshop = async (query, userId) => {
   let page = query.page == '' || query.page == null || query.page == 'null' ? 0 : query.page;
+  let statusMatch = { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+  if (query.page == '' && query.page == null && query.page == 'null') {
+    statusMatch =  { $eq: query.status } 
+  }
   console.log(page)
   let values = await Shop.aggregate([
     {
@@ -4012,13 +4016,28 @@ const reverifiction_byshop = async (query, userId) => {
     },
     {
       $match: {
-        $and: [
+        $or: [
           {
-            daStatus: { $in: ['Not Interested','Cannot Spot the Shop'] }
+            $and: [
+              {
+                daStatus:statusMatch
+              },
+              {
+                Uid: { $eq: userId }
+              }
+            ]
           },
           {
-            Uid: { $eq: userId }
-          }
+            $and: [
+              {
+                daStatus: statusMatch
+              },
+              {
+                re_Uid: { $eq: userId }
+              }
+            ]
+          },
+
         ],
       },
     },
@@ -4139,7 +4158,7 @@ const reverifiction_byshop = async (query, userId) => {
         mobile: 1,
         date: 1,
         gomap: 1,
-        Re_daStatus:1
+        Re_daStatus: 1
       },
     },
     { $skip: 10 * page },
@@ -4151,13 +4170,28 @@ const reverifiction_byshop = async (query, userId) => {
     },
     {
       $match: {
-        $and: [
+        $or: [
           {
-            daStatus: { $in: ['Not Interested','Cannot Spot the Shop'] }
+            $and: [
+              {
+                daStatus:statusMatch
+              },
+              {
+                Uid: { $eq: userId }
+              }
+            ]
           },
           {
-            Uid: { $eq: userId }
-          }
+            $and: [
+              {
+                daStatus:statusMatch
+              },
+              {
+                re_Uid: { $eq: userId }
+              }
+            ]
+          },
+
         ],
       },
     },
@@ -4257,6 +4291,375 @@ const reverifiction_byshop = async (query, userId) => {
   };
 
 }
+
+
+const get_reassign_temp = async (query) => {
+
+  console.log(query);
+  let page = query.page == null || query.page == 'null' || query.page == '' ? 0 : query.page
+  let assignby = { active: true };
+  if (query.assign != null && query.assign != 'null' && query.assign != '') {
+    assignby = { DA_USER: { $ne: query.assign } }
+  }
+  console.log(page)
+
+  let capture = query.capture;
+  let values = await Shop.aggregate([
+    {
+      $sort: { status: 1, gomap: -1 },
+    },
+    {
+      $match: {
+        $and: [
+          {
+            daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+          },
+          {
+            Uid: { $eq: capture }
+          },
+          { re_Uid: { $eq: null } },
+          assignby
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'zones',
+              localField: 'zoneId',
+              foreignField: '_id',
+
+              as: 'zonedata',
+            },
+          },
+          {
+            $unwind: '$zonedata',
+          },
+          {
+            $project: {
+              ward: 1,
+              zone: '$zonedata.zone',
+              zoneCode: '$zoneData.zoneCode',
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+              area: 1,
+              locality: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      },
+    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
+
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'DA_USER',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'data_approved',
+      },
+    },
+    {
+      $unwind: '$data_approved',
+    },
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street: '$StreetData.street',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: { $cond: { if: { $isArray: '$shoptype' }, then: '$shoptype.shopList', else: [] } },
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
+        photoCapture: 1,
+        SName: 1,
+        address: 1,
+        Slat: 1,
+        Slong: 1,
+        type: 1,
+        status: 1,
+        created: 1,
+        SOwner: 1,
+        kyc_status: 1,
+        Uid: 1,
+        zone: '$WardData.zone',
+        zoneCode: '$WardData.zoneCode',
+        active: 1,
+        mobile: 1,
+        date: 1,
+        gomap: 1,
+        Re_daStatus: 1,
+        DA_CREATED: 1,
+        DA_Comment: 1,
+        DA_DATE: 1,
+        DA_TIME: 1,
+        DA_CREATED: 1,
+        DA_USERNAME: '$data_approved.name',
+        purchaseQTy: 1,
+        da_lot: 1,
+        da_long: 1,
+        da_landmark: 1,
+        Pincode: 1,
+        daStatus: 1,
+        DA_USER: 1
+      },
+    },
+
+  ]);
+
+
+  let total = await Shop.aggregate([
+    {
+      $sort: { status: 1, gomap: -1 },
+    },
+    {
+      $match: {
+        $and: [
+          {
+            daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+          },
+          {
+            Uid: { $eq: capture }
+          },
+          { re_Uid: { $eq: null } },
+          assignby
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'zones',
+              localField: 'zoneId',
+              foreignField: '_id',
+
+              as: 'zonedata',
+            },
+          },
+          {
+            $unwind: '$zonedata',
+          },
+          {
+            $project: {
+              ward: 1,
+              zone: '$zonedata.zone',
+              zoneCode: '$zoneData.zoneCode',
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+              area: 1,
+              locality: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      },
+    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
+
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'DA_USER',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'data_approved',
+      },
+    },
+    {
+      $unwind: '$data_approved',
+    },
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street: '$StreetData.street',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: { $cond: { if: { $isArray: '$shoptype' }, then: '$shoptype.shopList', else: [] } },
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
+        photoCapture: 1,
+        SName: 1,
+        address: 1,
+        Slat: 1,
+        Slong: 1,
+        type: 1,
+        status: 1,
+        created: 1,
+        SOwner: 1,
+        kyc_status: 1,
+        Uid: 1,
+        zone: '$WardData.zone',
+        zoneCode: '$WardData.zoneCode',
+        active: 1,
+        mobile: 1,
+        date: 1,
+        gomap: 1,
+        Re_daStatus: 1,
+        DA_CREATED: 1,
+        DA_Comment: 1,
+        DA_DATE: 1,
+        DA_TIME: 1,
+        DA_CREATED: 1,
+        DA_USERNAME: '$data_approved.name',
+        purchaseQTy: 1,
+        da_lot: 1,
+        da_long: 1,
+        da_landmark: 1,
+        Pincode: 1,
+        daStatus: 1,
+      },
+    },
+  ]);
+  return { values: values, total: total.length };
+
+}
+
+const update_reassign_temp = async (body) => {
+
+  console.log(body)
+
+  body.arr.forEach(async (e) => {
+    await Shop.findByIdAndUpdate({ _id: e }, { re_Uid: body.assign, reAssigin_date: moment() }, { new: true });
+  })
+
+  return { status: 'success' };
+}
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -4310,7 +4713,9 @@ module.exports = {
   get_userbased_dataapproved,
   managemap_data_approved,
   reverifiction_byshop,
-  update_reverification
+  update_reverification,
+  get_reassign_temp,
+  update_reassign_temp,
 
   // bharathiraja
 

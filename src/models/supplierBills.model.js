@@ -46,6 +46,9 @@ const supplierbillsSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  PaidToBe: {
+    type: String,
+  },
   archive: {
     type: Boolean,
     default: false,

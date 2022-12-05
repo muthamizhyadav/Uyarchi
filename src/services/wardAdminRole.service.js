@@ -753,7 +753,7 @@ const createSalesmanShop = async (body) => {
   if (body.status == 'Assign') {
     arr.forEach(async (e) => {
       await Shop.findByIdAndUpdate({ _id: e }, { salesManStatus: body.status }, { new: true });
-     value = await SalesManShop.create({
+      value = await SalesManShop.create({
         salesManId: body.salesManId,
         shopId: e,
         status: body.status,
@@ -774,7 +774,7 @@ const createSalesmanShop = async (body) => {
       });
       data.forEach(async (f) => {
         await Shop.findByIdAndUpdate({ _id: f.shopId }, { salesManStatus: body.status }, { new: true });
-      value = await SalesManShop.findByIdAndUpdate(
+        value = await SalesManShop.findByIdAndUpdate(
           { _id: f._id },
           {
             salesManId: f.salesManId,
@@ -869,7 +869,7 @@ const getSalesman = async (id) => {
         shopId: 1,
         ward: '$wardsData.ward',
         zone: '$zonesData.zone',
-        dataApproved:"$b2bshopclonesData.status",
+        dataApproved: "$b2bshopclonesData.status",
         status: 1,
         reAssignDate: 1,
         reAssignTime: 1,
@@ -2574,6 +2574,284 @@ const getusertarget = async (userID) => {
   };
 };
 
+const re_getAssign_bySalesman = async (userId) => {
+  console.log("hello")
+  let values = await Shop.aggregate([
+    {
+      $sort: { status: 1, gomap: -1 },
+    },
+    {
+      $match: {
+        $or: [
+          {
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Uid: { $eq: userId }
+              }
+            ]
+          },
+          {
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                re_Uid: { $eq: userId }
+              }
+            ]
+          },
+
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'zones',
+              localField: 'zoneId',
+              foreignField: '_id',
+
+              as: 'zonedata',
+            },
+          },
+          {
+            $unwind: '$zonedata',
+          },
+          {
+            $project: {
+              ward: 1,
+              zone: '$zonedata.zone',
+              zoneCode: '$zoneData.zoneCode',
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+              area: 1,
+              locality: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      },
+    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
+
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street: '$StreetData.street',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: { $cond: { if: { $isArray: '$shoptype' }, then: '$shoptype.shopList', else: [] } },
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
+        photoCapture: 1,
+        SName: 1,
+        address: 1,
+        Slat: 1,
+        Slong: 1,
+        type: 1,
+        status: 1,
+        created: 1,
+        SOwner: 1,
+        kyc_status: 1,
+        Uid: 1,
+        zone: '$WardData.zone',
+        zoneCode: '$WardData.zoneCode',
+        active: 1,
+        mobile: 1,
+        date: 1,
+        gomap: 1,
+        Re_daStatus: 1
+      },
+    },
+  ]);
+
+  let dataApproved = await Shop.aggregate([
+    {
+      $match: {
+        $or: [
+          {
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Re_daStatus: { $ne: null }
+              },
+              {
+                Uid: { $eq: userId }
+              }
+            ]
+          },
+          {
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Re_daStatus: { $ne: null }
+              },
+              {
+                re_Uid: { $eq: userId }
+              }
+            ]
+          },
+
+        ],
+      },
+    },
+
+  ]);
+  let dataNotApproved = await Shop.aggregate([
+    {
+      $match: {
+        $or: [
+          {
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Re_daStatus: { $eq: null }
+              },
+              {
+                Uid: { $eq: userId }
+              }
+            ]
+          },
+          {
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Re_daStatus: { $eq: null }
+              },
+              {
+                re_Uid: { $eq: userId }
+              }
+            ]
+          },
+
+        ],
+      },
+    },
+
+  ]);
+
+  let todaydate = moment().format('YYYY-MM-DD');
+
+  let TodayApproved = await Shop.aggregate([
+    {
+      $match: {
+        $or: [
+          {
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Re_daStatus: { $ne: null }
+              },
+              {
+                Uid: { $eq: userId }
+              },
+              { Re_DA_DATE: { $eq: todaydate } }
+            ]
+          },
+          {
+            $and: [
+              {
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+              },
+              {
+                Re_daStatus: { $ne: null }
+              },
+              {
+                re_Uid: { $eq: userId }
+              },
+              { Re_DA_DATE: { $eq: todaydate } }
+
+            ]
+          },
+
+        ],
+      },
+    },
+
+  ]);
+  return {
+    values: values,
+    dataApproved: dataApproved.length,
+    dataNotApproved: dataNotApproved.length,
+    TodayApproved: TodayApproved.length,
+  };
+
+}
+
 const getAssign_bySalesman = async (id) => {
   let values = await SalesManShop.aggregate([
     {
@@ -2706,7 +2984,7 @@ const getAssign_bySalesman = async (id) => {
 };
 
 
-const map1 = async (id) =>{
+const map1 = async (id) => {
   return await Users.aggregate([
     {
       $match: { $and: [{ _id: { $eq: id } }] },
@@ -2723,7 +3001,7 @@ const map1 = async (id) =>{
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
-              pipeline:[
+              pipeline: [
                 {
                   $project: {
                     Slat: 1,
@@ -2734,7 +3012,7 @@ const map1 = async (id) =>{
               as: 'b2bshopclones',
             },
           },
-          { $unwind: '$b2bshopclones'},
+          { $unwind: '$b2bshopclones' },
           // {
           //   $group: {
           //     _id: null,
@@ -2742,19 +3020,19 @@ const map1 = async (id) =>{
           //   },
           // },
         ],
-        
+
         as: 'salesmanshopsdata',
       },
     },
     {
-      $project:{
-        data:"$salesmanshopsdata.b2bshopclones"
+      $project: {
+        data: "$salesmanshopsdata.b2bshopclones"
       }
     }
   ])
 }
 
-const map2 = async (id) =>{
+const map2 = async (id) => {
   return await Users.aggregate([
     {
       $match: { $and: [{ _id: { $eq: id } }] },
@@ -2771,7 +3049,7 @@ const map2 = async (id) =>{
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
-              pipeline:[
+              pipeline: [
                 { $match: { $and: [{ status: { $eq: 'data_approved' } }] } },
                 {
                   $project: {
@@ -2783,7 +3061,7 @@ const map2 = async (id) =>{
               as: 'b2bshopclones',
             },
           },
-          { $unwind: '$b2bshopclones'},
+          { $unwind: '$b2bshopclones' },
           // {
           //   $group: {
           //     _id: null,
@@ -2791,19 +3069,19 @@ const map2 = async (id) =>{
           //   },
           // },
         ],
-        
+
         as: 'salesmanshopsdata',
       },
     },
     {
-      $project:{
-        data:"$salesmanshopsdata.b2bshopclones"
+      $project: {
+        data: "$salesmanshopsdata.b2bshopclones"
       }
     }
   ])
 }
 
-const map3 = async (id) =>{
+const map3 = async (id) => {
   return await Users.aggregate([
     {
       $match: { $and: [{ _id: { $eq: id } }] },
@@ -2820,7 +3098,7 @@ const map3 = async (id) =>{
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
-              pipeline:[
+              pipeline: [
                 { $match: { $and: [{ status: { $eq: 'Pending' } }] } },
                 {
                   $project: {
@@ -2832,7 +3110,7 @@ const map3 = async (id) =>{
               as: 'b2bshopclones',
             },
           },
-          { $unwind: '$b2bshopclones'},
+          { $unwind: '$b2bshopclones' },
           // {
           //   $group: {
           //     _id: null,
@@ -2840,13 +3118,13 @@ const map3 = async (id) =>{
           //   },
           // },
         ],
-        
+
         as: 'salesmanshopsdata',
       },
     },
     {
-      $project:{
-        data:"$salesmanshopsdata.b2bshopclones"
+      $project: {
+        data: "$salesmanshopsdata.b2bshopclones"
       }
     }
   ])
@@ -2881,7 +3159,7 @@ const overall_Count_And_Data = async (id) => {
               as: 'b2bshopclones',
             },
           },
-          { $unwind: '$b2bshopclones'},
+          { $unwind: '$b2bshopclones' },
           {
             $group: {
               _id: null,
@@ -2889,7 +3167,7 @@ const overall_Count_And_Data = async (id) => {
             },
           },
         ],
-        
+
         as: 'salesmanshopsdata',
       },
     },
@@ -2991,7 +3269,7 @@ const overall_Count_And_Data = async (id) => {
   ]);
   const dateWise = await SalesManShop.aggregate([
     {
-      $match: { $and: [{ salesManId: { $eq: id } },{ status: { $eq: 'Assign' } }] },
+      $match: { $and: [{ salesManId: { $eq: id } }, { status: { $eq: 'Assign' } }] },
     },
     {
       $lookup: {
@@ -3001,9 +3279,9 @@ const overall_Count_And_Data = async (id) => {
         pipeline: [
           { $match: { $and: [{ status: { $eq: 'data_approved' } }] } },
           {
-            $group:{
-              _id:1,
-              count:{$sum:1},
+            $group: {
+              _id: 1,
+              count: { $sum: 1 },
             }
           }
         ],
@@ -3024,9 +3302,9 @@ const overall_Count_And_Data = async (id) => {
         pipeline: [
           { $match: { $and: [{ status: { $eq: 'Pending' } }] } },
           {
-            $group:{
-              _id:1,
-              count:{$sum:1},
+            $group: {
+              _id: 1,
+              count: { $sum: 1 },
             }
           }
         ],
@@ -3055,11 +3333,11 @@ const overall_Count_And_Data = async (id) => {
         localField: 'shopId',
         foreignField: '_id',
         pipeline: [
-          { $match: { $and: [{daStatus:"HighlyInterested"}] } },
+          { $match: { $and: [{ daStatus: "HighlyInterested" }] } },
           {
-            $group:{
-              _id:1,
-              count:{$sum:1},
+            $group: {
+              _id: 1,
+              count: { $sum: 1 },
             }
           }
         ],
@@ -3083,11 +3361,11 @@ const overall_Count_And_Data = async (id) => {
         localField: 'shopId',
         foreignField: '_id',
         pipeline: [
-          { $match: { $and: [{daStatus:"ModeratelyInterested"}] } },
+          { $match: { $and: [{ daStatus: "ModeratelyInterested" }] } },
           {
-            $group:{
-              _id:1,
-              count:{$sum:1},
+            $group: {
+              _id: 1,
+              count: { $sum: 1 },
             }
           }
         ],
@@ -3111,11 +3389,11 @@ const overall_Count_And_Data = async (id) => {
         localField: 'shopId',
         foreignField: '_id',
         pipeline: [
-          { $match: { $and: [{daStatus:"Not Interested"}] } },
+          { $match: { $and: [{ daStatus: "Not Interested" }] } },
           {
-            $group:{
-              _id:1,
-              count:{$sum:1},
+            $group: {
+              _id: 1,
+              count: { $sum: 1 },
             }
           }
         ],
@@ -3139,11 +3417,11 @@ const overall_Count_And_Data = async (id) => {
         localField: 'shopId',
         foreignField: '_id',
         pipeline: [
-          { $match: { $and: [{daStatus:"Cannot Spot the Shop"}] } },
+          { $match: { $and: [{ daStatus: "Cannot Spot the Shop" }] } },
           {
-            $group:{
-              _id:1,
-              count:{$sum:1},
+            $group: {
+              _id: 1,
+              count: { $sum: 1 },
             }
           }
         ],
@@ -3162,15 +3440,15 @@ const overall_Count_And_Data = async (id) => {
       },
     },
     {
-      $project:{
-        _id:1,
-        date:1,
-        pending:1,
-        approve:1,
-        HighlyInterested:1,
-        ModeratelyInterested:1,
-        NotInterested:1,
-        CannotSpottheShop:1,
+      $project: {
+        _id: 1,
+        date: 1,
+        pending: 1,
+        approve: 1,
+        HighlyInterested: 1,
+        ModeratelyInterested: 1,
+        NotInterested: 1,
+        CannotSpottheShop: 1,
       }
     },
     {
@@ -3179,23 +3457,23 @@ const overall_Count_And_Data = async (id) => {
         quantity: {
           $sum: 1,
         },
-        pending:{
-          $sum:"$pending"
+        pending: {
+          $sum: "$pending"
         },
-        approved:{
-          $sum:"$approve"
+        approved: {
+          $sum: "$approve"
         },
-        HighlyInterested:{
-          $sum:"$HighlyInterested"
+        HighlyInterested: {
+          $sum: "$HighlyInterested"
         },
-        ModeratelyInterested:{
-          $sum:"$ModeratelyInterested"
+        ModeratelyInterested: {
+          $sum: "$ModeratelyInterested"
         },
-        NotInterested:{
-          $sum:"$NotInterested"
+        NotInterested: {
+          $sum: "$NotInterested"
         },
-        CannotSpottheShop:{
-          $sum:"$CannotSpottheShop"
+        CannotSpottheShop: {
+          $sum: "$CannotSpottheShop"
         },
       },
     },
@@ -3216,13 +3494,13 @@ const overall_Count_And_Data = async (id) => {
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
-              pipeline:[
+              pipeline: [
                 { $match: { $and: [{ daStatus: { $eq: 'HighlyInterested' } }] } },
               ],
               as: 'b2bshopclones',
             },
           },
-          { $unwind: '$b2bshopclones'},
+          { $unwind: '$b2bshopclones' },
           // {
           //   $group: {
           //     _id: null,
@@ -3230,7 +3508,7 @@ const overall_Count_And_Data = async (id) => {
           //   },
           // },
         ],
-        
+
         as: 'salesmanshopsdata',
       },
     },
@@ -3246,13 +3524,13 @@ const overall_Count_And_Data = async (id) => {
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
-              pipeline:[
+              pipeline: [
                 { $match: { $and: [{ daStatus: { $eq: 'ModeratelyInterested' } }] } },
               ],
               as: 'b2bshopclones',
             },
           },
-          { $unwind: '$b2bshopclones'},
+          { $unwind: '$b2bshopclones' },
           // {
           //   $group: {
           //     _id: null,
@@ -3260,7 +3538,7 @@ const overall_Count_And_Data = async (id) => {
           //   },
           // },
         ],
-        
+
         as: 'salesmanshopsdataMod',
       },
     },
@@ -3276,13 +3554,13 @@ const overall_Count_And_Data = async (id) => {
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
-              pipeline:[
+              pipeline: [
                 { $match: { $and: [{ daStatus: { $eq: 'Not Interested' } }] } },
               ],
               as: 'b2bshopclones',
             },
           },
-          { $unwind: '$b2bshopclones'},
+          { $unwind: '$b2bshopclones' },
           // {
           //   $group: {
           //     _id: null,
@@ -3290,7 +3568,7 @@ const overall_Count_And_Data = async (id) => {
           //   },
           // },
         ],
-        
+
         as: 'salesmanshopsdataNot',
       },
     },
@@ -3306,13 +3584,13 @@ const overall_Count_And_Data = async (id) => {
               from: 'b2bshopclones',
               localField: 'shopId',
               foreignField: '_id',
-              pipeline:[
+              pipeline: [
                 { $match: { $and: [{ daStatus: { $eq: 'Cannot Spot the Shop' } }] } },
               ],
               as: 'b2bshopclones',
             },
           },
-          { $unwind: '$b2bshopclones'},
+          { $unwind: '$b2bshopclones' },
           // {
           //   $group: {
           //     _id: null,
@@ -3320,20 +3598,20 @@ const overall_Count_And_Data = async (id) => {
           //   },
           // },
         ],
-        
+
         as: 'salesmanshopsdataCan',
       },
     },
-{
-  $project:{
-       high:"$salesmanshopsdata.b2bshopclones",
-       mod:"$salesmanshopsdataMod.b2bshopclones",
-       not:"$salesmanshopsdataNot.b2bshopclones",
-       can:"$salesmanshopsdataCan.b2bshopclones"
-  }
-}
+    {
+      $project: {
+        high: "$salesmanshopsdata.b2bshopclones",
+        mod: "$salesmanshopsdataMod.b2bshopclones",
+        not: "$salesmanshopsdataNot.b2bshopclones",
+        can: "$salesmanshopsdataCan.b2bshopclones"
+      }
+    }
   ])
-  return { date: data, dateWise: dateWise, totalInterest:totalInterest};
+  return { date: data, dateWise: dateWise, totalInterest: totalInterest };
 };
 
 module.exports = {
@@ -3399,4 +3677,5 @@ module.exports = {
   map1,
   map2,
   map3,
+  re_getAssign_bySalesman
 };
