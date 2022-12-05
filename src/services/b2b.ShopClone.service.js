@@ -4005,10 +4005,6 @@ const managemap_data_approved = async (query) => {
 
 const reverifiction_byshop = async (query, userId) => {
   let page = query.page == '' || query.page == null || query.page == 'null' ? 0 : query.page;
-  let statusMatch = { $in: ['Not Interested', 'Cannot Spot the Shop'] }
-  if (query.page == '' && query.page == null && query.page == 'null') {
-    statusMatch =  { $eq: query.status } 
-  }
   console.log(page)
   let values = await Shop.aggregate([
     {
@@ -4020,7 +4016,7 @@ const reverifiction_byshop = async (query, userId) => {
           {
             $and: [
               {
-                daStatus:statusMatch
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
               },
               {
                 Uid: { $eq: userId }
@@ -4030,7 +4026,7 @@ const reverifiction_byshop = async (query, userId) => {
           {
             $and: [
               {
-                daStatus: statusMatch
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
               },
               {
                 re_Uid: { $eq: userId }
@@ -4174,7 +4170,7 @@ const reverifiction_byshop = async (query, userId) => {
           {
             $and: [
               {
-                daStatus:statusMatch
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
               },
               {
                 Uid: { $eq: userId }
@@ -4184,7 +4180,7 @@ const reverifiction_byshop = async (query, userId) => {
           {
             $and: [
               {
-                daStatus:statusMatch
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
               },
               {
                 re_Uid: { $eq: userId }
@@ -4301,9 +4297,13 @@ const get_reassign_temp = async (query) => {
   if (query.assign != null && query.assign != 'null' && query.assign != '') {
     assignby = { DA_USER: { $ne: query.assign } }
   }
-  console.log(page)
-
+  let statusMatch = { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+  if (query.status != '' && query.status != null && query.status != 'null') {
+    statusMatch =  { $eq: query.status } 
+  }
   let capture = query.capture;
+  console.log(statusMatch)
+
   let values = await Shop.aggregate([
     {
       $sort: { status: 1, gomap: -1 },
@@ -4312,7 +4312,7 @@ const get_reassign_temp = async (query) => {
       $match: {
         $and: [
           {
-            daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+            daStatus:statusMatch
           },
           {
             Uid: { $eq: capture }
@@ -4485,7 +4485,7 @@ const get_reassign_temp = async (query) => {
       $match: {
         $and: [
           {
-            daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+            daStatus:statusMatch
           },
           {
             Uid: { $eq: capture }
