@@ -4,10 +4,17 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const supplierService = require('../services/supplier.service');
 const { NO_CONTENT } = require('http-status');
+const tokenService = require('../services/token.service');
 
 const createSupplier = catchAsync(async (req, res) => {
   const supplier = await supplierService.createSupplier(req.body);
   res.status(httpStatus.CREATED).send(supplier);
+});
+
+const UsersLogin = catchAsync(async (req, res) => {
+  const users = await supplierService.UsersLogin(req.body);
+  const tokens = await tokenService.generateAuthTokens(users);
+  res.send({ users, tokens });
 });
 
 const getproductfromCallStatus = catchAsync(async (req, res) => {
@@ -121,4 +128,5 @@ module.exports = {
   getSupplierPaymentDetailsBySupplierId,
   getSupplierPaymentDetailsByProductId,
   getSupplierWith_Advanced,
+  UsersLogin,
 };
