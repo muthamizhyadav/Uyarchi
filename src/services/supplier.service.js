@@ -5,6 +5,10 @@ const { Product } = require('../models/product.model');
 const { ProductorderSchema } = require('../models/shopOrder.model');
 const CallStatus = require('../models/callStatus');
 const B2bBillStatus = require('../models/b2bbillStatus.model');
+const Verfy = require('../config/supplierOtpVerify');
+const Textlocal = require('../config/supplierRegisterOtp');
+const { OTPModel } = require('../models/supplierRegisterOtp.model');
+const bcrypt = require('bcryptjs');
 const moment = require('moment');
 
 const createSupplier = async (supplierBody) => {
@@ -14,12 +18,37 @@ const createSupplier = async (supplierBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Already Register this Number');
   }
   if(supplierBody.createdByStatus == "By Supplier"){
-  if(supplierBody.password != supplierBody.confirmpassword){
-    throw new ApiError(httpStatus.NOT_FOUND, 'Confirm password not match');
-  }
-}
+    await Textlocal.Otp(supplierBody.primaryContactNumber);
+    return 'OTP send successfully';
+}else {
   return Supplier.create(supplierBody);
+}
+
 };
+
+const otpVerify_Setpassword = async (body) =>{
+  // console.log(body)
+  const {OTP} = body
+    const data = await OTPModel.findOne({OTP:OTP})
+    if(!data){
+      throw new ApiError(httpStatus.NOT_FOUND, 'otp wrong');
+    }
+    const ewer = await Supplier.findOne({primaryContactNumber:data.mobileNumber})
+    return ewer
+}
+
+
+const Supplier_setPassword = async (id,body) => {
+  const {password,confirmpassword} = body
+  if(password != confirmpassword){
+    throw new ApiError(httpStatus.NOT_FOUND, 'confirmpassword wrong');
+  }
+  const salt = await bcrypt.genSalt(10);
+  password = await bcrypt.hash(password, salt);
+  const data = await Supplier.findByIdAndUpdate({ _id: id }, { password: password }, { new: true });
+  return data;
+};
+
 
 const UsersLogin = async (userBody) => {
   const { primaryContactNumber, password } = userBody;
@@ -501,4 +530,6 @@ module.exports = {
   getSupplierDataByProductId,
   getSupplierWith_Advanced,
   UsersLogin,
+  otpVerify_Setpassword,
+  Supplier_setPassword,
 };
