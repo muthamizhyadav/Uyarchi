@@ -4295,7 +4295,7 @@ const get_reassign_temp = async (query) => {
   let page = query.page == null || query.page == 'null' || query.page == '' ? 0 : query.page
   let assignby = { active: true };
   if (query.assign != null && query.assign != 'null' && query.assign != '') {
-    assignby = { DA_USER: { $eq: query.assign } }
+    assignby = { DA_USER: { $ne: query.assign } }
   }
   console.log(page)
 
