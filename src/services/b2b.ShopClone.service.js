@@ -4293,5 +4293,13 @@ module.exports = {
   getnotAssignSalesmanDataMap,
   get_userbased_dataapproved,
   managemap_data_approved,
+
+
+
+
+
+
   reverifiction_byshop
+
+  // bharathiraja
 };
