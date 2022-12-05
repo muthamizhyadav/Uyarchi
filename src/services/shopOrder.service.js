@@ -123,7 +123,25 @@ const createshopOrderClone = async (body, userid) => {
   if (body.Payment == 'cod') {
     Payment_type = null;
   }
-
+  if (reorder_status) {
+    let paid = await OrderPayment.find({ orderId: body.RE_order_Id });
+    paid.forEach(async (e) => {
+      await OrderPayment.create({
+        uid: e.uid,
+        paidAmt: e.paidAmt,
+        date: e.date,
+        time: e.time,
+        created: e.created,
+        orderId: createShopOrderClone._id,
+        type: e.type,
+        pay_type: e.pay_type,
+        payment: e.payment,
+        paymentMethod: e.paymentMethod,
+        RE_order_Id: body.RE_order_Id,
+        reorder_status: true,
+      });
+    });
+  }
   await OrderPayment.create({
     uid: userid,
     paidAmt: paidamount,
@@ -307,57 +325,6 @@ const getShopOrderCloneById = async (id) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-
-    {
-      $lookup: {
-        from: 'shoporderclones',
-        localField: 'RE_order_Id',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $lookup: {
-              from: 'orderpayments',
-              localField: '_id',
-              foreignField: 'orderId',
-              pipeline: [
-                {
-                  $group: {
-                    _id: null,
-                    amount: {
-                      $sum: '$paidAmt',
-                    },
-                  },
-                },
-              ],
-              as: 'orderpayments',
-            },
-          },
-          {
-            $unwind: {
-              path: '$orderpayments',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          {
-            $project: {
-              amount: '$orderpayments.amount',
-            },
-          },
-        ],
-        as: 'shoporderclones',
-      },
-    },
-    {
-      $unwind: {
-        path: '$shoporderclones',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $addFields: {
-        reorderamount: { $ifNull: ['$shoporderclones.amount', 0] },
-      },
-    },
     {
       $project: {
         _id: 1,
@@ -385,9 +352,7 @@ const getShopOrderCloneById = async (id) => {
         total: '$productDatadetails.amount',
         TotalGstAmount: { $sum: '$productData.GSTamount' },
         totalSum: { $round: { $add: ['$productDatadetails.amount', { $sum: '$productData.GSTamount' }] } },
-        paidamount: {
-          $sum: ['$orderpayments.amount', '$reorderamount'],
-        },
+        paidamount: '$orderpayments.amount',
         shoporderclones: '$shoporderclones',
       },
     },
@@ -687,56 +652,6 @@ const getShopNameCloneWithPagination = async (page, userId) => {
     },
     {
       $lookup: {
-        from: 'shoporderclones',
-        localField: 'RE_order_Id',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $lookup: {
-              from: 'orderpayments',
-              localField: '_id',
-              foreignField: 'orderId',
-              pipeline: [
-                {
-                  $group: {
-                    _id: null,
-                    amount: {
-                      $sum: '$paidAmt',
-                    },
-                  },
-                },
-              ],
-              as: 'orderpayments',
-            },
-          },
-          {
-            $unwind: {
-              path: '$orderpayments',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          {
-            $project: {
-              amount: '$orderpayments.amount',
-            },
-          },
-        ],
-        as: 'shoporderclones',
-      },
-    },
-    {
-      $unwind: {
-        path: '$shoporderclones',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $addFields: {
-        reorderamount: { $ifNull: ['$shoporderclones.amount', 0] },
-      },
-    },
-    {
-      $lookup: {
         from: 'productorderclones',
         localField: '_id',
         foreignField: 'orderId',
@@ -790,7 +705,7 @@ const getShopNameCloneWithPagination = async (page, userId) => {
         CGST: 1,
         OrderId: 1,
         productTotal: { $size: '$product' },
-        paidamount: { $sum: ['$orderpayments.amount', '$reorderamount'] },
+        paidamount: '$orderpayments.amount',
         shopName: '$shopData.SName',
         contact: '$shopData.mobile',
         status: 1,
@@ -5107,7 +5022,8 @@ const get_approved_orders = async (query) => {
   if (query.deliverymode != 'all') {
     deliveryMode = { devevery_mode: { $eq: query.deliverymode } };
   }
-
+  let lossTime = moment().format('H');
+  // console.log( moment().format("H"))
   let values = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
     { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
@@ -5275,6 +5191,24 @@ const get_approved_orders = async (query) => {
         time_of_delivery: 1,
         paidAmount: '$orderpayments.amount',
         subtotal: '$productData.price',
+        timeloss: {
+          $or: [
+            {
+              $and: [
+                { $lte: ['$endSlot', parseInt(lossTime)] },
+                { $eq: ['$delivery_type', 'IMD'] },
+                { $eq: ['$date', today] },
+              ],
+            },
+            {
+              $and: [
+                { $lte: ['$endSlot', parseInt(lossTime)] },
+                { $eq: ['$delivery_type', 'NDD'] },
+                { $eq: ['$date', yesterday] },
+              ],
+            },
+          ],
+        },
       },
     },
     { $skip: 10 * page },
@@ -5818,6 +5752,327 @@ const get_ward_by_orders = async (query) => {
   return values;
 };
 
+const get_assignorder_timeloss = async (query) => {
+  let id = query.id;
+  await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Rejected_assign' }, { new: true });
+  return { message: 'Rejected' };
+};
+
+const get_rejected_orders = async (query) => {
+  console.log(query, 'asd');
+  let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
+  let statusMatch = { status: { $eq: query.status } };
+  let deliveryType = { delivery_type: { $eq: query.deliverytype } };
+  let timeSlot = { active: true };
+  let deliveryMode = { active: true };
+  let today = moment().format('YYYY-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+  let dateMacth = { active: true };
+  if (query.status == 'all') {
+    statusMatch = {
+      status: {
+        $in: ['Rejected_assign', 'Rejected'],
+      },
+    };
+  }
+  if (query.deliverytype == 'all') {
+    deliveryType = {
+      $or: [
+        {
+          $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
+        },
+        {
+          $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+        },
+      ],
+    };
+    dateMacth = { active: true };
+  }
+  let values = await ShopOrderClone.aggregate([
+    { $sort: { created: -1 } },
+    {
+      $match: {
+        $and: [
+          statusMatch,
+          {
+            finalStatus: { $ne: "reorder" }
+          },
+          {
+            finalStatus: { $ne: "remove" }
+          },
+          {
+            RE_order_status: { $ne: 'Re-Ordered' },
+          },
+          {
+            RE_order_status: { $ne: 'declined' },
+          },
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+          {
+            $project: {
+              _id: 1,
+              GST_Number: 1,
+              created: 1,
+              HSN_Code: 1,
+              finalPricePerKg: 1,
+              finalQuantity: 1,
+              orderId: 1,
+              packKg: 1,
+              priceperkg: 1,
+              quantity: 1,
+              status: 1,
+              unit: 1,
+              productTitle: '$products.productTitle',
+            },
+          },
+        ],
+        as: 'productOrderdata',
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $group: {
+              _id: null,
+              amount: {
+                $sum: '$paidAmt',
+              },
+            },
+          },
+        ],
+        as: 'orderpayments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderpayments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'b2bshopclones',
+      },
+    },
+    {
+      $unwind: '$b2bshopclones',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'b2busers',
+      },
+    },
+    {
+      $unwind: {
+        path: '$b2busers',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+              GST_Number: 1,
+            },
+          },
+          {
+            $project: {
+              sum: '$sum',
+              percentage: {
+                $divide: [
+                  {
+                    $multiply: ['$GST_Number', '$Amount'],
+                  },
+                  100,
+                ],
+              },
+              value: '$Amount',
+            },
+          },
+          {
+            $project: {
+              price: { $sum: ['$value', '$percentage'] },
+              value: '$value',
+              GST: '$percentage',
+            },
+          },
+          { $group: { _id: null, price: { $sum: '$price' } } },
+        ],
+        as: 'productData',
+      },
+    },
+    { $unwind: '$productData' },
+    {
+      $project: {
+        _id: 1,
+        orderType: 1,
+        status: 1,
+        created: 1,
+        OrderId: 1,
+        product: '$productOrderdata',
+        SName: '$b2bshopclones.SName',
+        mobile: '$b2bshopclones.mobile',
+        address: '$b2bshopclones.address',
+        orderBy: '$b2busers.name',
+        delivery_type: 1,
+        devevery_mode: 1,
+        time_of_delivery: 1,
+        paidAmount: '$orderpayments.amount',
+        subtotal: '$productData.price',
+      },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+
+  let total = await ShopOrderClone.aggregate([{ $sort: { created: -1 } }, {
+    $match: {
+      $and: [statusMatch, {
+        finalStatus: { $ne: "reorder" }
+      },
+        {
+          finalStatus: { $ne: "remove" }
+        },
+        {
+          RE_order_status: { $ne: 'Re-Ordered' },
+        },
+        {
+          RE_order_status: { $ne: 'declined' },
+        },
+      ]
+    }
+  }]);
+
+  let counts = await get_order_counts_rejected(statusMatch);
+
+  return { value: values, total: total.length, counts: counts };
+};
+
+const get_order_counts_rejected = async (status) => {
+  let today = moment().format('YYYY-MM-DD');
+  let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
+
+  let Rejected_assignstatus = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { status: { $eq: 'Rejected_assign' } },
+          {
+            finalStatus: { $ne: "reorder" }
+          },
+          {
+            finalStatus: { $ne: "remove" }
+          },
+          {
+            RE_order_status: { $ne: 'Re-Ordered' },
+          },
+          {
+            RE_order_status: { $ne: 'declined' },
+          },
+          // {
+          //   $or: [
+          //     {
+          //       $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
+          //     },
+          //     {
+          //       $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+          //     },
+          //     {
+          //       $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: today } }],
+          //     },
+          //   ],
+          // },
+        ],
+      },
+    },
+  ]);
+  let rejectstatus = await ShopOrderClone.aggregate([
+    {
+      $match: {
+        $and: [
+          { status: { $eq: 'Rejected' } },
+          {
+            finalStatus: { $ne: "reorder" }
+          },
+          {
+            finalStatus: { $ne: "remove" }
+          },
+          {
+            RE_order_status: { $ne: 'Re-Ordered' },
+          },
+          {
+            RE_order_status: { $ne: 'declined' },
+          },
+          // {
+          //   $or: [
+          //     {
+          //       $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
+          //     },
+          //     {
+          //       $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+          //     },
+          //     {
+          //       $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: today } }],
+          //     },
+          //   ],
+          // },
+        ],
+      },
+    },
+  ]);
+  let orders = {
+    Rejected: rejectstatus.length,
+    Rejected_assign: Rejected_assignstatus.length,
+  };
+
+  return { orders: orders };
+};
+
+
+const get_assignorder_reassgin = async (body) => {
+
+  let shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: body.id }, { finalStatus: "reorder" }, { new: true });
+  return { message: "Success" }
+}
+const get_assignorder_remove = async (body) => {
+  let shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: body.id }, { finalStatus: "remove" }, { new: true });
+  return { message: "Success" }
+}
 module.exports = {
   // product
   createProductOrderClone,
@@ -5878,4 +6133,8 @@ module.exports = {
   getall_ordered_shops,
   get_approved_orders,
   get_ward_by_orders,
+  get_assignorder_timeloss,
+  get_rejected_orders,
+  get_assignorder_reassgin,
+  get_assignorder_remove
 };

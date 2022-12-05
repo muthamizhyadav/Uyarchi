@@ -72,6 +72,7 @@ router
   .get(b2bShopCloneController.getAllAttendanceCloneforMapView);
 
 router.route('/update/data/approved/:id').put(authorization, b2bShopCloneController.updateShopStatusdataapproved);
+router.route('/re/update/data/approved/:id').put(authorization, b2bShopCloneController.update_reverification);
 router.route('/update/phone/approved/:id').put(b2bShopCloneController.updateShopStatusphoneapproved);
 router.route('/update/kyc/approved/:id').put(b2bShopCloneController.updateShopStatuskycapproved);
 router.route('/getshopData/:id').get(b2bShopCloneController.getshopDataById);
@@ -101,5 +102,7 @@ router.route('/getshops/from/ward').get(b2bShopCloneController.get_wardby_shops)
 router.route('/addpincode/update/DAdata').put(b2bShopCloneController.update_pincode);
 router.route('/wardby/shop/assigned').get(b2bShopCloneController.ward_by_users);
 router.route('/getuser/based/assignshops/dataapproved').get(b2bShopCloneController.get_userbased_dataapproved);
+router.route('/getmapview/data/approved').get(b2bShopCloneController.managemap_data_approved);
+router.route('/getmyshop/re/verification/byuser').get(authorization,b2bShopCloneController.reverifiction_byshop);
 
 module.exports = router;

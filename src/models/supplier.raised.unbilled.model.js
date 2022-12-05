@@ -16,7 +16,7 @@ const RaisedUnBilledSchema = new mongoose.Schema({
   raised_Amt: {
     type: Number,
   },
-  raisedby: {
+  raisedBy: {
     type: String,
   },
   supplierId: {
@@ -50,7 +50,7 @@ const RaisedUnBilledHistorySchema = new mongoose.Schema({
   raisedId: {
     type: String,
   },
-  raisedby: {
+  raisedBy: {
     type: String,
   },
   active: {

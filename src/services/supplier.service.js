@@ -246,7 +246,6 @@ const productDealingWithsupplier = async (id) => {
             },
           },
           {
-
             $match: {
               $expr: {
                 $ne: ['$orderType', 'sudden'], // <-- This doesn't work. Dont want to use `$unwind` before `$match` stage
@@ -258,7 +257,7 @@ const productDealingWithsupplier = async (id) => {
       },
     },
   ]);
-  let today = moment().format("YYYY-MM-DD")
+  let today = moment().format('YYYY-MM-DD');
   let product = await Product.aggregate([
     { $match: { _id: { $eq: id } } },
     {
@@ -284,9 +283,7 @@ const productDealingWithsupplier = async (id) => {
         from: 'estimatedorders',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [
-          { $match: { date: { $eq: today } } },
-        ],
+        pipeline: [{ $match: { date: { $eq: today } } }],
         as: 'estimatedorders',
       },
     },
@@ -295,17 +292,18 @@ const productDealingWithsupplier = async (id) => {
         path: '$estimatedorders',
         preserveNullAndEmptyArrays: true,
       },
-    }, {
+    },
+    {
       $project: {
         _id: 1,
         productTitle: 1,
-        estimatedQTY: "$estimatedorders.closedQty",
-        liveStock: "$productorders.Qty",
-      }
-    }
-  ])
+        estimatedQTY: '$estimatedorders.closedQty',
+        liveStock: '$productorders.Qty',
+      },
+    },
+  ]);
 
-  return { Supplier: Suppliers, product: product[0] }
+  return { Supplier: Suppliers, product: product[0] };
 };
 
 const getSupplierDataByProductId = async (id) => {
@@ -412,36 +410,77 @@ const recoverById = async (supplierId) => {
   return supplier;
 };
 
-
 const getSupplierWith_Advanced = async () => {
-  let values = await Supplier.aggregate([{
-    $lookup: {
-      from: 'callstatuses',
-      localField: '_id',
-      foreignField: 'supplierid',
-      pipeline: [{ $match: { status: "Advance" } }, { $group: { _id: null, totalAdvancedAmt: { $sum: '$TotalAmount' } } }],
-      as: 'callstatus',
+  let values = await Supplier.aggregate([
+    //   {
+    //   $lookup: {
+    //     from: 'callstatuses',
+    //     localField: '_id',
+    //     foreignField: 'supplierid',
+    //     pipeline: [{ $match: { status: "Advance" } }, { $group: { _id: null, totalAdvancedAmt: { $sum: '$TotalAmount' } } }],
+    //     as: 'callstatus',
+    //   },
+    // },
+    // {
+    //   $unwind: {
+    //     preserveNullAndEmptyArrays: true,
+    //     path: '$callstatus'
+    //   }
+    // },
+    {
+      $lookup: {
+        from: 'supplierraisedunbilleds',
+        localField: '_id',
+        foreignField: 'supplierId',
+        as: 'raised',
+      },
     },
-  },
-  {
-    $unwind: {
-      preserveNullAndEmptyArrays: true,
-      path: '$callstatus'
-    }
-  },
-  {
-    $project: {
-      _id: 1,
-      secondaryContactName: 1,
-      totalAdvancedAmt: { $ifNull: ['$callstatus.totalAdvancedAmt', 0] },
-      primaryContactName: 1,
-      primaryContactNumber: 1,
-      primaryContactName: 1,
-    }
-  }
-  ])
-  return values
-}
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$raised',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierunbilleds',
+        localField: '_id',
+        foreignField: 'supplierId',
+        as: 'supplierunbilled',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierunbilled',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        secondaryContactName: 1,
+        primaryContactName: 1,
+        primaryContactNumber: 1,
+        primaryContactName: 1,
+        tradeName: 1,
+        raised: { $ifNull: ['$raised.raised_Amt', 0] },
+        unbilled: { $ifNull: ['$supplierunbilled.un_Billed_amt', 0] },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        secondaryContactName: 1,
+        primaryContactName: 1,
+        primaryContactNumber: 1,
+        primaryContactName: 1,
+        tradeName: 1,
+        RaisedAmount: { $subtract: ['$raised', '$unbilled'] },
+      },
+    },
+  ]);
+  return values;
+};
 
 module.exports = {
   createSupplier,

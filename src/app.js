@@ -53,6 +53,7 @@ const corsconfig = {
   credentials: true,
   origin: '*',
 };
+// git develper
 app.use(cors());
 app.options('*', cors());
 app.use(cookieparser());

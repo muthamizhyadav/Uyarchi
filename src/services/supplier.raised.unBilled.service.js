@@ -28,7 +28,7 @@ const createRaisedUnbilled = async (body) => {
 };
 
 const getRaisedSupplier = async () => {
-  let values = await RaisedUnBilled.aggregate([
+  let values = await RaisedUnBilledHistory.aggregate([
     {
       $lookup: {
         from: 'suppliers',
@@ -60,12 +60,24 @@ const getRaisedSupplier = async () => {
         _id: 1,
         supplierId: 1,
         raised_Amt: 1,
-        added_unBilled_amt: '$unbilled.total',
-        supplierName: '$suppliers.secondaryContactName',
+        added_unBilled_amt: { $ifNull: ['$unbilled.total', 0] },
+        supplierName: '$suppliers.primaryContactName',
+        raisedBy: 1,
+        date: 1,
+        tradeName: '$suppliers.tradeName',
       },
     },
   ]);
   return values;
 };
 
-module.exports = { createRaisedUnbilled, getRaisedSupplier };
+const getRaisedAmountHistory = async (id) => {
+  let values = await RaisedUnBilledHistory.aggregate([
+    {
+      $match: { supplierId: id },
+    },
+  ]);
+  return values;
+};
+
+module.exports = { createRaisedUnbilled, getRaisedSupplier, getRaisedAmountHistory };

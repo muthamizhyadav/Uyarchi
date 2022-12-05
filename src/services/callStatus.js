@@ -8,7 +8,7 @@ const moment = require('moment');
 const createCallStatus = async (callStatusBody) => {
   const serverdate = moment().format('YYYY-MM-DD');
   const servertime = moment().format('HHmmss');
-  let Buy = await CallStatus.find({ date: serverdate }).count()
+  let Buy = await CallStatus.find({ date: serverdate }).count();
   let centerdata = '';
   if (Buy < 9) {
     centerdata = '0000';
@@ -95,7 +95,20 @@ const getProductAndSupplierDetails = async (page) => {
   };
 };
 
-const getDataWithSupplierId = async (id, page) => {
+const getDataWithSupplierId = async (id, page, search, date) => {
+  // console.log(search);
+  // let dateM = { active: true };
+  // let searchMatch = { active: true };
+  // if (search !== 'null') {
+  //   searchMatch = { primaryContactName: { $regex: search, $options: 'i' } };
+  // } else {
+  //   searchMatch;
+  // }
+  // if (date !== 'null') {
+  //   dateM = { date: { $eq: date } };
+  // } else {
+  //   dateM;
+  // }
   let values = await CallStatus.aggregate([
     {
       $match: {
@@ -103,7 +116,6 @@ const getDataWithSupplierId = async (id, page) => {
           { supplierid: { $eq: id } },
           { StockReceived: { $eq: 'Pending' } },
           { confirmcallstatus: { $eq: 'Accepted' } },
-          // {SuddenStatus:{$eq:'Approve'}},
         ],
       },
     },
@@ -123,6 +135,13 @@ const getDataWithSupplierId = async (id, page) => {
         from: 'suppliers',
         localField: 'supplierid',
         foreignField: '_id',
+        // pipeline: [
+        //   {
+        //     $match: {
+        //       $and: [searchMatch],
+        //     },
+        //   },
+        // ],
         as: 'supplierData',
       },
     },
@@ -160,6 +179,11 @@ const getDataWithSupplierId = async (id, page) => {
         productTitle: '$ProductData.productTitle',
       },
     },
+    // {
+    //   $match: {
+    //     $and: [dateM],
+    //   },
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -376,6 +400,156 @@ const suddenOrdersDisplay = async (productId) => {
   return values;
 };
 
+const getReportWithSupplierId = async (page, search, date) => {
+  console.log(search);
+  let dateM = { active: true };
+  let searchMatch = { active: true };
+  if (search !== 'null') {
+    searchMatch = {  _id: search  };
+  } else {
+    searchMatch;
+  }
+  if (date !== 'null') {
+    dateM = { date: { $eq: date } };
+  } else {
+    dateM;
+  }
+  console.log('sadf');
+  let values = await CallStatus.aggregate([
+    {
+      $match: { $and: [dateM] },
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        pipeline: [{ $match: { $and: [searchMatch] } }],
+        as: 'supplierdata',
+      },
+    },
+    {
+      $unwind: '$supplierdata',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: '$productData',
+    },
+    {
+      $project: {
+        _id: 1,
+        showWhs: 1,
+        active: 1,
+        StockReceived: 1,
+        archive: 1,
+        productid: 1,
+        supplierid: 1,
+        confirmOrder: 1,
+        confirmcallstatus: 1,
+        confirmprice: 1,
+        status: 1,
+        exp_date: 1,
+        orderType: 1,
+        order_Type: 1,
+        TotalAmount: 1,
+        SuddenCreatedBy: 1,
+        SuddenStatus: 1,
+        date: 1,
+        time: 1,
+        OrderId: 1,
+        supplierName: '$supplierdata.primaryContactName',
+        Net_Amount: { $multiply: ['$confirmOrder', '$confirmprice'] },
+        productData: '$productData.productTitle',
+      },
+    },
+    // {
+    //   $match: { searchMatch },
+    // },
+    { $skip: 10 * page },
+    { $limit: 10 },
+  ]);
+  let total = await CallStatus.aggregate([
+    {
+      $match: { $and: [dateM] },
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierid',
+        foreignField: '_id',
+        pipeline: [{ $match: { $and: [searchMatch] } }],
+        as: 'supplierdata',
+      },
+    },
+    {
+      $unwind: '$supplierdata',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productid',
+        foreignField: '_id',
+        as: 'productData',
+      },
+    },
+    {
+      $unwind: '$productData',
+    },
+    {
+      $project: {
+        _id: 1,
+        showWhs: 1,
+        active: 1,
+        StockReceived: 1,
+        archive: 1,
+        productid: 1,
+        supplierid: 1,
+        confirmOrder: 1,
+        confirmcallstatus: 1,
+        confirmprice: 1,
+        status: 1,
+        exp_date: 1,
+        orderType: 1,
+        order_Type: 1,
+        TotalAmount: 1,
+        SuddenCreatedBy: 1,
+        SuddenStatus: 1,
+        date: 1,
+        time: 1,
+        OrderId: 1,
+        supplierName: '$supplierdata.primaryContactName',
+        Net_Amount: { $multiply: ['$confirmOrder', '$confirmprice'] },
+        productData: '$productData.productTitle',
+      },
+    },
+  ]);
+  let totalss = await CallStatus.aggregate([
+    {
+      $match: {
+        $and: [
+          { StockReceived: { $eq: 'Pending' } },
+          { confirmcallstatus: { $eq: 'Accepted' } },
+          { SuddenStatus: { $eq: 'Approve' } },
+        ],
+      },
+    },
+    {
+      $group: {
+        _id: { $dateToString: { format: '%Y-%m-%d', date: '$created' } },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+  return { values: values, total: total.length };
+};
+
 module.exports = {
   createCallStatus,
   getCallStatusById,
@@ -386,4 +560,5 @@ module.exports = {
   finishOrder,
   getCallstatusForSuddenOrders,
   suddenOrdersDisplay,
+  getReportWithSupplierId,
 };

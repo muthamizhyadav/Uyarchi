@@ -352,25 +352,44 @@ const getmanageIssus_byID = catchAsync(async (req, res) => {
 });
 
 const UnDeliveredOrders = catchAsync(async (req, res) => {
-  const data = await shopOrderService.UnDeliveredOrders(req.query)
-  res.send(data)
-})
+  const data = await shopOrderService.UnDeliveredOrders(req.query);
+  res.send(data);
+});
 
 const getall_ordered_shops = catchAsync(async (req, res) => {
-  const data = await shopOrderService.getall_ordered_shops(req.query)
-  res.send(data)
-})
+  const data = await shopOrderService.getall_ordered_shops(req.query);
+  res.send(data);
+});
 
 const get_approved_orders = catchAsync(async (req, res) => {
-  const data = await shopOrderService.get_approved_orders(req.query)
-  res.send(data)
-})
+  const data = await shopOrderService.get_approved_orders(req.query);
+  res.send(data);
+});
+
+const get_rejected_orders = catchAsync(async (req, res) => {
+  const data = await shopOrderService.get_rejected_orders(req.query);
+  res.send(data);
+});
 
 const get_ward_by_orders = catchAsync(async (req, res) => {
-  const data = await shopOrderService.get_ward_by_orders(req.query)
-  res.send(data)
-})
+  const data = await shopOrderService.get_ward_by_orders(req.query);
+  res.send(data);
+});
 
+const get_assignorder_timeloss = catchAsync(async (req, res) => {
+  const data = await shopOrderService.get_assignorder_timeloss(req.query);
+  res.send(data);
+});
+
+const get_assignorder_reassgin = catchAsync(async (req, res) => {
+  const data = await shopOrderService.get_assignorder_reassgin(req.body);
+  res.send(data);
+});
+
+const get_assignorder_remove = catchAsync(async (req, res) => {
+  const data = await shopOrderService.get_assignorder_remove(req.body);
+  res.send(data);
+});
 module.exports = {
   vieworderbill_byshop,
   createshopOrder,
@@ -427,5 +446,9 @@ module.exports = {
   UnDeliveredOrders,
   getall_ordered_shops,
   get_approved_orders,
-  get_ward_by_orders
+  get_ward_by_orders,
+  get_assignorder_timeloss,
+  get_rejected_orders,
+  get_assignorder_reassgin,
+  get_assignorder_remove
 };
