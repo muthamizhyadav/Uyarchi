@@ -2707,7 +2707,7 @@ const getBills_DetailsByshop = async (shopId, page) => {
         totalAmount: { $round: ['$productData.price'] },
         adjBill: '$adjBill.un_Billed_amt',
         shops: '$shops.SName',
-        OrderId: 1,
+        OrderId: {$ifNull:['$customerBillId', 'OrderId']},
         date: 1,
       },
     },
