@@ -341,6 +341,10 @@ const updateShopStatusdataapproved = catchAsync(async (req, res) => {
   res.send(shops);
 });
 
+const update_reverification = catchAsync(async (req, res) => {
+  const shops = await b2bCloneService.update_reverification(req.params.id, 'data_approved', req.body, req.userId);
+  res.send(shops);
+});
 const updateShopStatusphoneapproved = catchAsync(async (req, res) => {
   const shops = await b2bCloneService.updateShopStatus(req.params.id, 'phone_approved', req.body);
   res.send(shops);
@@ -551,5 +555,6 @@ module.exports = {
   getnotAssignSalesmanDataMap,
   get_userbased_dataapproved,
   managemap_data_approved,
-  reverifiction_byshop
+  reverifiction_byshop,
+  update_reverification
 };

@@ -1856,6 +1856,22 @@ const updateShopStatus = async (id, status, bodyData, userID) => {
   return shop;
 };
 
+
+const update_reverification = async (id, status, bodyData, userID) => {
+  let shop = await getShopById(id);
+  if (!shop) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'shop Not Found');
+  }
+  let servertime = moment().format('HHmm');
+  let serverdate = moment().format('YYYY-MM-DD');
+  shop = await Shop.findByIdAndUpdate(
+    { _id: id },
+    { ...bodyData, ...{ status: status, Re_DA_DATE: serverdate, Re_DA_USER: userID, Re_DA_CREATED: moment(), Re_DA_TIME: servertime } },
+    { new: true }
+  );
+  return shop;
+};
+
 // register user
 
 const craeteRegister = async (shopBody) => {
@@ -4123,6 +4139,7 @@ const reverifiction_byshop = async (query, userId) => {
         mobile: 1,
         date: 1,
         gomap: 1,
+        Re_daStatus:1
       },
     },
     { $skip: 10 * page },
@@ -4292,7 +4309,8 @@ module.exports = {
   getnotAssignSalesmanDataMap,
   get_userbased_dataapproved,
   managemap_data_approved,
-  reverifiction_byshop
+  reverifiction_byshop,
+  update_reverification
 
   // bharathiraja
 
