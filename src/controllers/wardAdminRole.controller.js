@@ -280,6 +280,13 @@ const getAssign_bySalesman = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const re_getAssign_bySalesman = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  console.log(userId);
+  const data = await wardAdminRoleService.re_getAssign_bySalesman(userId);
+  res.send(data);
+});
+
 
 const overall_Count_And_Data = catchAsync(async (req, res) => {
   const data = await wardAdminRoleService.overall_Count_And_Data(req.params.id, req.params.uid);
@@ -367,4 +374,5 @@ module.exports = {
   map2,
   map3,
   assignData,
+  re_getAssign_bySalesman
 };
