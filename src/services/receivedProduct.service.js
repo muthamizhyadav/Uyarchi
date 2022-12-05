@@ -1705,8 +1705,10 @@ const previousOrderdata = async (id) => {
   return data;
 };
 
-const getbilled_Details = async (page) => {
-  console.log(page);
+const getbilled_Details = async (pages) => {
+  console.log(pages)
+  let page = parseInt(pages);
+  console.log(page)
   let values = await ReceivedProduct.aggregate([
     {
       $lookup: {
