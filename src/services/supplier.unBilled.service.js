@@ -1003,6 +1003,7 @@ const PayPendingAmount = async (body) => {
       Amount: amount,
       paymentMethod: pay_method,
       supplierId: supplierId,
+      PaidToBe: body.PaidToBe,
       created: moment(),
       date: moment().format('YYYY-MM-DD'),
     });
