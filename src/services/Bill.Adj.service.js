@@ -76,7 +76,7 @@ const getCustomer_bills = async (page) => {
               foreignField: 'shopId',
               pipeline: [
                 {
-                  $match: { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } }
+                  $match: { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } },
                 },
                 {
                   $lookup: {
@@ -147,10 +147,16 @@ const getCustomer_bills = async (page) => {
                     preserveNullAndEmptyArrays: true,
                   },
                 },
-                { $group: { _id: null, totalOrdered: { $sum: '$productData.price' }, pendingAmt: { $sum: '$orderpayments.amount' } } }
+                {
+                  $group: {
+                    _id: null,
+                    totalOrdered: { $sum: '$productData.price' },
+                    pendingAmt: { $sum: '$orderpayments.amount' },
+                  },
+                },
               ],
-              as: 'shoporder'
-            }
+              as: 'shoporder',
+            },
           },
           {
             $unwind: {
@@ -177,7 +183,7 @@ const getCustomer_bills = async (page) => {
       },
     },
     {
-      $unwind: '$shops'
+      $unwind: '$shops',
     },
     {
       $project: {
@@ -190,8 +196,20 @@ const getCustomer_bills = async (page) => {
         shopId: '$shops._id',
         totalAmount: { $ifNull: ['$shopdata.shoporder.totalOrdered', 0] },
         paidAmt: { $ifNull: ['$shopdata.shoporder.pendingAmt', 0] },
-        totalPendingAmount: { $round: [{ $subtract: [{ $ifNull: ['$shopdata.shoporder.totalOrdered', 0] }, { $ifNull: ['$shopdata.shoporder.pendingAmt', 0] }] }] }
+        totalPendingAmount: {
+          $round: [
+            {
+              $subtract: [
+                { $ifNull: ['$shopdata.shoporder.totalOrdered', 0] },
+                { $ifNull: ['$shopdata.shoporder.pendingAmt', 0] },
+              ],
+            },
+          ],
+        },
       },
+    },
+    {
+      $match: { totalPendingAmount: { $gt: 0 } },
     },
     { $skip: 10 * page },
     {
@@ -211,6 +229,9 @@ const getCustomer_bills = async (page) => {
               localField: '_id',
               foreignField: 'shopId',
               pipeline: [
+                {
+                  $match: { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } },
+                },
                 {
                   $lookup: {
                     from: 'productorderclones',
@@ -280,10 +301,16 @@ const getCustomer_bills = async (page) => {
                     preserveNullAndEmptyArrays: true,
                   },
                 },
-                { $group: { _id: null, totalOrdered: { $sum: '$productData.price' }, pendingAmt: { $sum: '$orderpayments.amount' } } }
+                {
+                  $group: {
+                    _id: null,
+                    totalOrdered: { $sum: '$productData.price' },
+                    pendingAmt: { $sum: '$orderpayments.amount' },
+                  },
+                },
               ],
-              as: 'shoporder'
-            }
+              as: 'shoporder',
+            },
           },
           {
             $unwind: {
@@ -301,6 +328,43 @@ const getCustomer_bills = async (page) => {
         preserveNullAndEmptyArrays: true,
       },
     },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        as: 'shops',
+      },
+    },
+    {
+      $unwind: '$shops',
+    },
+    {
+      $project: {
+        _id: 1,
+        shopId: 1,
+        un_Billed_amt: 1,
+        payment_method: 1,
+        date: 1,
+        shopName: '$shops.SName',
+        shopId: '$shops._id',
+        totalAmount: { $ifNull: ['$shopdata.shoporder.totalOrdered', 0] },
+        paidAmt: { $ifNull: ['$shopdata.shoporder.pendingAmt', 0] },
+        totalPendingAmount: {
+          $round: [
+            {
+              $subtract: [
+                { $ifNull: ['$shopdata.shoporder.totalOrdered', 0] },
+                { $ifNull: ['$shopdata.shoporder.pendingAmt', 0] },
+              ],
+            },
+          ],
+        },
+      },
+    },
+    {
+      $match: { totalPendingAmount: { $gt: 0 } },
+    },
   ]);
   return { values: values, total: total.length };
 };
@@ -310,7 +374,10 @@ const adjustment_bill = async (id, userId) => {
   let shoporder = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ shopId: { $eq: id } }, { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } }],
+        $and: [
+          { shopId: { $eq: id } },
+          { statusActionArray: { $elemMatch: { status: { $in: ['Delivered', 'Delivery Completed'] } } } },
+        ],
       },
     },
     {
@@ -445,7 +512,7 @@ const adjustment_bill = async (id, userId) => {
       },
     },
   ]);
-  console.log(shoporder)
+  console.log(shoporder);
   if (shoporder.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Pending Bill Not Available');
   }
@@ -649,7 +716,7 @@ const adjustment_bill_pay = async (id, userId, body) => {
       },
     },
   ]);
-  console.log(shoporder)
+  console.log(shoporder);
   if (shoporder.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Pending Bill Not Available');
   }

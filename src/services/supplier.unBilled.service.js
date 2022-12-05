@@ -748,6 +748,7 @@ const getBillDetails_bySupplier = async (id) => {
         supplierId: 1,
         Billno: '$received.BillNo',
         date: '$received.date',
+        created: 1,
       },
     },
   ]);
@@ -799,6 +800,7 @@ const supplierOrders_amt_details = async (id, query) => {
         BillNo: 1,
         TotalAmt: { $ifNull: ['$ReceivedData.billingTotal', 0] },
         paidAmount: { $ifNull: ['$supplierBills.billingTotal', 0] },
+        created: 1,
         // PendingAmount: { $ifNull: [{ $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] }, 0] },
         // PendingAmount: { $subtract: ['$ReceivedData.billingTotal', '$supplierBills.billingTotal'] },
       },
@@ -812,6 +814,7 @@ const supplierOrders_amt_details = async (id, query) => {
         TotalAmt: 1,
         paidAmount: 1,
         PendingAmount: { $ifNull: [{ $subtract: ['$TotalAmt', '$paidAmount'] }, 0] },
+        created: 1,
       },
     },
     {
@@ -1000,11 +1003,81 @@ const PayPendingAmount = async (body) => {
       Amount: amount,
       paymentMethod: pay_method,
       supplierId: supplierId,
+      PaidToBe: body.PaidToBe,
       created: moment(),
       date: moment().format('YYYY-MM-DD'),
     });
   });
   return { message: 'successFully paid' };
+};
+
+const getUnBilledDetails = async (supplierId) => {
+  let values = await Supplier.aggregate([
+    {
+      $match: {
+        _id: supplierId,
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierraisedunbilleds',
+        localField: '_id',
+        foreignField: 'supplierId',
+        as: 'suppplierUnbilledRaised',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$suppplierUnbilledRaised',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierunbilleds',
+        localField: '_id',
+        foreignField: 'supplierId',
+        as: 'supplierUnBilled',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierUnBilled',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierunbilledhistories',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $group: { _id: null, TotalUnbilled: { $sum: '$un_Billed_amt' } },
+          },
+        ],
+        as: 'unBilledHistory',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$unBilledHistory',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        primaryContactName: 1,
+        primaryContactNumber: 1,
+        RegisteredAddress: 1,
+        UnbilledRaised: { $ifNull: ['$suppplierUnbilledRaised.raised_Amt', 0] },
+        current_UnBilled: { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] },
+        TotalUnbilled: { $ifNull: ['$unBilledHistory.TotalUnbilled', 0] },
+      },
+    },
+  ]);
+  return values;
 };
 
 module.exports = {
@@ -1019,4 +1092,5 @@ module.exports = {
   getPaid_history,
   billAdjust,
   PayPendingAmount,
+  getUnBilledDetails,
 };

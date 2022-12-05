@@ -30,6 +30,6 @@ router
   .route('/getAllWithPagination_billed_supplier1/supplier/data/:id')
   .get(receivedProductController.getAllWithPagination_billed_supplier1);
 router.route('/previousOrderdata/:id').get(receivedProductController.previousOrderdata);
-router.route('/get/billed/data').get(receivedProductController.getBilling_Details);
-
+router.route('/Billed/data').get(receivedProductController.getbilled_Details);
+router.route('/get/billed/history').get(receivedProductController.getBill_History);
 module.exports = router;

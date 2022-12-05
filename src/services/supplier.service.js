@@ -8,13 +8,35 @@ const B2bBillStatus = require('../models/b2bbillStatus.model');
 const moment = require('moment');
 
 const createSupplier = async (supplierBody) => {
-  const check = await Supplier.findOne({ primaryContactNumber: supplierBody.primaryContactNumber });
-  console.log(check);
+  const check = await Supplier.findOne({ primaryContactNumber: supplierBody.primaryContactNumber })
+  // console.log(check)
   if (check) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Already Register this Number');
   }
+  if(supplierBody.createdByStatus == "By Supplier"){
+  if(supplierBody.password != supplierBody.confirmpassword){
+    throw new ApiError(httpStatus.NOT_FOUND, 'Confirm password not match');
+  }
+}
   return Supplier.create(supplierBody);
 };
+
+const UsersLogin = async (userBody) => {
+  const { primaryContactNumber, password } = userBody;
+  let userName = await Supplier.findOne({ primaryContactNumber: primaryContactNumber });
+  if (!userName) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Phone Number Not Registered');
+  } else {
+    if (await userName.isPasswordMatch(password)) {
+      console.log('Password Macthed');
+    } else {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "Passwoed Doesn't Match");
+    }
+  }
+  return userName;
+};
+
+
 const getAllSupplier = async () => {
   return Supplier.find({ active: true });
 };
@@ -478,4 +500,5 @@ module.exports = {
   getSupplierPaymentDetailsBySupplierId,
   getSupplierDataByProductId,
   getSupplierWith_Advanced,
+  UsersLogin,
 };
