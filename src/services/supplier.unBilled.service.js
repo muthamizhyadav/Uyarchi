@@ -991,19 +991,20 @@ const billAdjust = async (body) => {
 };
 
 const PayPendingAmount = async (body) => {
-  const { supplierId, amount, arr, pay_method } = body;
+  const { supplierId, amount, arr, pay_method, PaidToBe } = body;
   if (arr.length == 0) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Bill Not Available');
   }
   arr.forEach(async (e) => {
     let values = await ReceivedProduct.findById(e);
+    console.log(PaidToBe);
     await supplierBills.create({
       status: 'Paid',
       groupId: values._id,
-      Amount: amount,
+      Amount: parseInt(amount),
       paymentMethod: pay_method,
       supplierId: supplierId,
-      PaidToBe: body.PaidToBe,
+      PaidToBe: PaidToBe,
       created: moment(),
       date: moment().format('YYYY-MM-DD'),
     });
