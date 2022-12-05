@@ -3998,7 +3998,7 @@ const reverifiction_byshop = async (query, userId) => {
       $match: {
         $and: [
           {
-            daStatus: { $eq: 'Not Interested' }
+            daStatus: { $in: ['Not Interested','Cannot Spot the Shop'] }
           },
           {
             Uid: { $eq: userId }
@@ -4233,7 +4233,6 @@ const reverifiction_byshop = async (query, userId) => {
     // {
     //   $unwind: '$shoptype',
     // },
-
   ]);
   return {
     values: values,
@@ -4294,4 +4293,7 @@ module.exports = {
   get_userbased_dataapproved,
   managemap_data_approved,
   reverifiction_byshop
-};
+
+  // bharathiraja
+
+}
