@@ -4303,11 +4303,11 @@ const get_reassign_temp = async (query) => {
   }
   let zoneMatch = { active: true };
   if (query.zone != '' && query.zone != null && query.zone != 'null') {
-    zoneMatch = {_id: { $eq: query.zone }}
+    zoneMatch = { _id: { $eq: query.zone } }
   }
   let wardMatch = { active: true };
   if (query.ward != '' && query.ward != null && query.ward != 'null') {
-    wardMatch = {Wardid: { $eq: query.ward }}
+    wardMatch = { Wardid: { $eq: query.ward } }
   }
   let capture = query.capture;
   console.log(wardMatch)
@@ -4361,8 +4361,8 @@ const get_reassign_temp = async (query) => {
               from: 'zones',
               localField: 'zoneId',
               foreignField: '_id',
-              pipeline:[
-                {$match:{$and:[zoneMatch]}}
+              pipeline: [
+                { $match: { $and: [zoneMatch] } }
               ],
               as: 'zonedata',
             },
@@ -4483,7 +4483,7 @@ const get_reassign_temp = async (query) => {
         Pincode: 1,
         daStatus: 1,
         DA_USER: 1,
-        Wardid:1
+        Wardid: 1
       },
     },
 
@@ -4504,6 +4504,33 @@ const update_reassign_temp = async (body) => {
 
   return { status: 'success' };
 }
+
+
+const get_data_approved_date = async (query) => {
+  let user = query.id;
+  console.log(user)
+  let shop = await Shop.aggregate([
+    { $match: { $and: [{ DA_USER: { $eq: user } }] } },
+    {
+      $project: {
+        _id: 1,
+        SOwner: 1,
+        SName: 1,
+        created: 1,
+        filterDate: 1,
+        Slong: 1,
+        Slat: 1,
+        address: 1,
+        daStatus: 1,
+        status: 1,
+      }
+    }
+  ])
+  return shop;
+}
+
+
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -4560,6 +4587,7 @@ module.exports = {
   update_reverification,
   get_reassign_temp,
   update_reassign_temp,
+  get_data_approved_date
 
   // bharathiraja
 
