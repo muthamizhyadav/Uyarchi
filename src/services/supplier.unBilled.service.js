@@ -6,7 +6,7 @@ const CallStatus = require('../models/callStatus');
 const Supplier = require('../models/supplier.model');
 const supplierBills = require('../models/supplierBills.model');
 const ReceivedProduct = require('../models/receivedProduct.model');
-const { RaisedUnBilled } = require('../models/supplier.raised.unbilled.model');
+const { RaisedUnBilled, RaisedUnBilledHistory } = require('../models/supplier.raised.unbilled.model');
 
 const createSupplierUnBilled = async (body) => {
   const { supplierId, un_Billed_amt } = body;
@@ -1081,6 +1081,109 @@ const getUnBilledDetails = async (supplierId) => {
   return values;
 };
 
+const supplierUnBilledBySupplier = async (supplierId) => {
+  let supplier = await Supplier.aggregate([
+    {
+      $match: { _id: supplierId },
+    },
+    {
+      $lookup: {
+        from: 'supplierunbilleds',
+        localField: '_id',
+        foreignField: 'supplierId',
+        as: 'supplierUnBilled',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierUnBilled',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierunbilledhistories',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $group: { _id: null, TotalUnbilled: { $sum: '$un_Billed_amt' } },
+          },
+        ],
+        as: 'unBilledHistory',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$unBilledHistory',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierunbilledhistories',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $sort: { created: -1 },
+          },
+          { $limit: 1 },
+        ],
+        as: 'lastunbilled',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$lastunbilled',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierraisedunbilleds',
+        localField: '_id',
+        foreignField: 'supplierId',
+        as: 'suppplierUnbilledRaised',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$suppplierUnbilledRaised',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        TotalUnbilled: { $ifNull: ['$unBilledHistory.TotalUnbilled', 0] },
+        CurrentUnBilled: { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] },
+        RaisedUnBilled: { $ifNull: ['$suppplierUnbilledRaised.raised_Amt', 0] },
+        date: { $ifNull: ['$lastunbilled.date', 'there is no un_Billed_amt'] },
+      },
+    },
+  ]);
+  return supplier;
+};
+
+const getUnBilledhistoryBySupplier = async (id) => {
+  let values = await SupplierUnbilledHistory.aggregate([
+    {
+      $match: { supplierId: id },
+    },
+  ]);
+  return values;
+};
+
+const getUnBilledRaisedhistoryBySupplier = async (id) => {
+  let values = await RaisedUnBilledHistory.aggregate([
+    {
+      $match: { supplierId: id },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createSupplierUnBilled,
   getUnBilledBySupplier,
@@ -1094,4 +1197,7 @@ module.exports = {
   billAdjust,
   PayPendingAmount,
   getUnBilledDetails,
+  supplierUnBilledBySupplier,
+  getUnBilledhistoryBySupplier,
+  getUnBilledRaisedhistoryBySupplier,
 };

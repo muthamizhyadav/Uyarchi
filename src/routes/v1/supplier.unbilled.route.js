@@ -1,6 +1,7 @@
 const express = require('express');
 const supplierController = require('../../controllers/supplier.unBilled.controller');
 const router = express.Router();
+const supplierAuth = require('../../controllers/supplier.authorizations');
 
 router.route('/').post(supplierController.createSupplierUnBilled);
 router.route('/unBilled').get(supplierController.getUnBilledBySupplier);
@@ -14,4 +15,7 @@ router.route('/getPaid/history/:id').get(supplierController.getPaid_history);
 router.route('/bill/adjust').post(supplierController.billAdjust);
 router.route('/pay/pending/Amount').post(supplierController.PayPendingAmount);
 router.route('/get/UnBilled/Details').get(supplierController.getUnBilledDetails);
+router.route('/supplier/unBilled/supplier').get(supplierAuth, supplierController.supplierUnBilledBySupplier);
+router.route('/get/UnBilled/history/BySupplier/:id').get(supplierController.getUnBilledhistoryBySupplier);
+router.route('/getUnBilled/Raisedhistory/BySupplier/:id').get(supplierController.getUnBilledRaisedhistoryBySupplier);
 module.exports = router;
