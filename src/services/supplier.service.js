@@ -564,6 +564,16 @@ const getSupplierthird = async (page) => {
   return { values: values, total: total };
 };
 
+const updateSupplierthird = async (id, updatebody) => {
+  let values = await Supplier.findById(id);
+  console.log(updatebody)
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'supplier Not found');
+  }
+  values = await Supplier.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  return values;
+};
+
 module.exports = {
   createSupplier,
   updateSupplierById,
@@ -588,4 +598,5 @@ module.exports = {
   forgotPassword,
   createSuppliers,
   getSupplierthird,
+  updateSupplierthird,
 };

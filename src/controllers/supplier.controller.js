@@ -143,6 +143,18 @@ const getSupplierthird = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const updateSupplierthird = catchAsync(async (req, res) => {
+  let data = await supplierService.updateSupplierthird(req.params.id, req.body);
+  if (req.files) {
+    data.image = []
+    req.files.forEach(function (files, index, arr) {
+      data.image.push('images/supplier/' + files.filename);
+    });
+  }
+  await data.save();
+  res.send(data);
+});
+
 module.exports = {
   createSupplier,
   getproductfromCallStatus,
@@ -167,4 +179,5 @@ module.exports = {
   forgotPassword,
   createSuppliers,
   getSupplierthird,
+  updateSupplierthird,
 };
