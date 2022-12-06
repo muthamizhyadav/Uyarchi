@@ -135,6 +135,25 @@ const getAllAppSupplier = async (id) => {
 };
 
 
+const getAllAppOnly_Supplier = async (id) => {
+  return Supplier.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    
+  ]);
+};
+
+
+const getAllAppOnly_Supplier_Update = async (id,updateBody) => {
+  console.log(updateBody)
+  const data = await Supplier.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return data;
+};
+
+
 const getAllSupplier = async () => {
   return Supplier.find({ active: true });
 };
@@ -662,4 +681,6 @@ module.exports = {
   createSuppliers,
   getSupplierthird,
   updateSupplierthird,
+  getAllAppOnly_Supplier,
+  getAllAppOnly_Supplier_Update
 };
