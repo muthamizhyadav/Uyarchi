@@ -64,6 +64,23 @@ const getUnBilledDetails = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const supplierUnBilledBySupplier = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  console.log(userId);
+  const data = await supplierUnBilledService.supplierUnBilledBySupplier(userId);
+  res.send(data);
+});
+
+const getUnBilledhistoryBySupplier = catchAsync(async (req, res) => {
+  const data = await supplierUnBilledService.getUnBilledhistoryBySupplier(req.params.id);
+  res.send(data);
+});
+
+const getUnBilledRaisedhistoryBySupplier = catchAsync(async (req, res) => {
+  const data = await supplierUnBilledService.getUnBilledRaisedhistoryBySupplier(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   createSupplierUnBilled,
   getUnBilledBySupplier,
@@ -77,4 +94,7 @@ module.exports = {
   billAdjust,
   PayPendingAmount,
   getUnBilledDetails,
+  supplierUnBilledBySupplier,
+  getUnBilledhistoryBySupplier,
+  getUnBilledRaisedhistoryBySupplier,
 };

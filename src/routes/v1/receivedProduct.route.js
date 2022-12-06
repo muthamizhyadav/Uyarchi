@@ -2,7 +2,7 @@ const express = require('express');
 const receivedProductController = require('../../controllers/receivedProduct.Controller');
 const router = express.Router();
 const receivedproductimage = require('../../middlewares/receivedproductimage');
-
+const supplierAuth = require('../../controllers/supplier.authorizations');
 router.route('/').post(receivedProductController.createReceivedProduct);
 
 router.route('/getAll/:page').get(receivedProductController.getAllWithPagination);
@@ -30,6 +30,6 @@ router
   .route('/getAllWithPagination_billed_supplier1/supplier/data/:id')
   .get(receivedProductController.getAllWithPagination_billed_supplier1);
 router.route('/previousOrderdata/:id').get(receivedProductController.previousOrderdata);
-router.route('/Billed/data').get(receivedProductController.getbilled_Details);
-router.route('/get/billed/history').get(receivedProductController.getBill_History);
+router.route('/Billed/data').get(supplierAuth, receivedProductController.getbilled_Details);
+router.route('/get/billed/history/:id').get(receivedProductController.getBill_History);
 module.exports = router;
