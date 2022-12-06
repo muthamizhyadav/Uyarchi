@@ -4297,9 +4297,22 @@ const get_reassign_temp = async (query) => {
   if (query.assign != null && query.assign != 'null' && query.assign != '') {
     assignby = { DA_USER: { $ne: query.assign } }
   }
-  console.log(page)
-
+  let statusMatch = { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+  if (query.status != '' && query.status != null && query.status != 'null') {
+    statusMatch = { $eq: query.status }
+  }
+  let zoneMatch = { active: true };
+  if (query.zone != '' && query.zone != null && query.zone != 'null') {
+    zoneMatch = {_id: { $eq: query.zone }}
+  }
+  let wardMatch = { active: true };
+  if (query.ward != '' && query.ward != null && query.ward != 'null') {
+    wardMatch = {Wardid: { $eq: query.ward }}
+  }
   let capture = query.capture;
+  console.log(wardMatch)
+  console.log(zoneMatch)
+
   let values = await Shop.aggregate([
     {
       $sort: { status: 1, gomap: -1 },
@@ -4308,13 +4321,14 @@ const get_reassign_temp = async (query) => {
       $match: {
         $and: [
           {
-            daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+            daStatus: statusMatch
           },
           {
             Uid: { $eq: capture }
           },
           { re_Uid: { $eq: null } },
-          assignby
+          assignby,
+          wardMatch
         ],
       },
     },
@@ -4347,7 +4361,9 @@ const get_reassign_temp = async (query) => {
               from: 'zones',
               localField: 'zoneId',
               foreignField: '_id',
-
+              pipeline:[
+                {$match:{$and:[zoneMatch]}}
+              ],
               as: 'zonedata',
             },
           },
@@ -4466,183 +4482,15 @@ const get_reassign_temp = async (query) => {
         da_landmark: 1,
         Pincode: 1,
         daStatus: 1,
-        DA_USER: 1
+        DA_USER: 1,
+        Wardid:1
       },
     },
 
   ]);
 
 
-  let total = await Shop.aggregate([
-    {
-      $sort: { status: 1, gomap: -1 },
-    },
-    {
-      $match: {
-        $and: [
-          {
-            daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
-          },
-          {
-            Uid: { $eq: capture }
-          },
-          { re_Uid: { $eq: null } },
-          assignby
-        ],
-      },
-    },
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'Uid',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $project: {
-              name: 1,
-            },
-          },
-        ],
-        as: 'UsersData',
-      },
-    },
-    {
-      $unwind: '$UsersData',
-    },
-    {
-      $lookup: {
-        from: 'wards',
-        localField: 'Wardid',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $lookup: {
-              from: 'zones',
-              localField: 'zoneId',
-              foreignField: '_id',
-
-              as: 'zonedata',
-            },
-          },
-          {
-            $unwind: '$zonedata',
-          },
-          {
-            $project: {
-              ward: 1,
-              zone: '$zonedata.zone',
-              zoneCode: '$zoneData.zoneCode',
-            },
-          },
-        ],
-        as: 'WardData',
-      },
-    },
-    {
-      $unwind: '$WardData',
-    },
-    {
-      $lookup: {
-        from: 'streets',
-        localField: 'Strid',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $project: {
-              street: 1,
-              area: 1,
-              locality: 1,
-            },
-          },
-        ],
-        as: 'StreetData',
-      },
-    },
-    {
-      $unwind: '$StreetData',
-    },
-    // shoplists
-    {
-      $lookup: {
-        from: 'shoplists',
-        localField: 'SType',
-        foreignField: '_id',
-        // pipeline:[
-        //     {
-        //       $project: {
-        //         street:1
-        //       }
-        //     }
-        // ],
-        as: 'shoptype',
-      },
-    },
-    // {
-    //   $unwind: '$shoptype',
-    // },
-
-    {
-      $lookup: {
-        from: 'b2busers',
-        localField: 'DA_USER',
-        foreignField: '_id',
-        pipeline: [
-          {
-            $project: {
-              name: 1,
-            },
-          },
-        ],
-        as: 'data_approved',
-      },
-    },
-    {
-      $unwind: '$data_approved',
-    },
-    {
-      $project: {
-        // _id:1,
-        // created:1,
-        street: '$StreetData.street',
-        ward: '$WardData.ward',
-        username: '$UsersData.name',
-        shoptype: { $cond: { if: { $isArray: '$shoptype' }, then: '$shoptype.shopList', else: [] } },
-        Area: '$StreetData.area',
-        Locality: '$StreetData.locality',
-        photoCapture: 1,
-        SName: 1,
-        address: 1,
-        Slat: 1,
-        Slong: 1,
-        type: 1,
-        status: 1,
-        created: 1,
-        SOwner: 1,
-        kyc_status: 1,
-        Uid: 1,
-        zone: '$WardData.zone',
-        zoneCode: '$WardData.zoneCode',
-        active: 1,
-        mobile: 1,
-        date: 1,
-        gomap: 1,
-        Re_daStatus: 1,
-        DA_CREATED: 1,
-        DA_Comment: 1,
-        DA_DATE: 1,
-        DA_TIME: 1,
-        DA_CREATED: 1,
-        DA_USERNAME: '$data_approved.name',
-        purchaseQTy: 1,
-        da_lot: 1,
-        da_long: 1,
-        da_landmark: 1,
-        Pincode: 1,
-        daStatus: 1,
-      },
-    },
-  ]);
-  return { values: values, total: total.length };
+  return { values: values };
 
 }
 

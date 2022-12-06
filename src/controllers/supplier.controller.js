@@ -110,6 +110,21 @@ const getSupplierWith_Advanced = catchAsync(async (req, res) => {
   res.send(supplier)
 })
 
+const  otpVerify_Setpassword = catchAsync(async (req, res) => {
+  const getproduct = await supplierService.otpVerify_Setpassword(req.body);
+  res.send(getproduct);
+});
+
+const  Supplier_setPassword = catchAsync(async (req, res) => {
+  const getproduct = await supplierService.Supplier_setPassword(req.params.id,req.body);
+  res.send(getproduct);
+});
+
+const  forgotPassword = catchAsync(async (req, res) => {
+  const getproduct = await supplierService.forgotPassword(req.body);
+  res.send(getproduct);
+});
+
 module.exports = {
   createSupplier,
   getproductfromCallStatus,
@@ -129,4 +144,7 @@ module.exports = {
   getSupplierPaymentDetailsByProductId,
   getSupplierWith_Advanced,
   UsersLogin,
+  otpVerify_Setpassword,
+  Supplier_setPassword,
+  forgotPassword,
 };

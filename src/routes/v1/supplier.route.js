@@ -3,6 +3,9 @@ const supplierController = require('../../controllers/supplier.controller');
 const router = express.Router();
 router.route('/').post(supplierController.createSupplier).get(supplierController.getAllSupplier);
 router.route('/login').post(supplierController.UsersLogin)
+router.route('/otp_verify').post(supplierController.otpVerify_Setpassword)
+router.route('/Supplier_setPassword/:id').put(supplierController.Supplier_setPassword)
+router.route('/forgotPassword').post(supplierController.forgotPassword)
 
 router
   .route('/:supplierId')
