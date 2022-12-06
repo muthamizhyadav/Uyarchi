@@ -69,6 +69,9 @@ const supplierSchema = new mongoose.Schema({
   ShopSize: {
     type: String,
   },
+  image: {
+    type: Array,
+  },
   GateEntryconvenience: {
     type: Number,
   },

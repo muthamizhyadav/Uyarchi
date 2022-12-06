@@ -1,6 +1,8 @@
 const express = require('express');
 const supplierController = require('../../controllers/supplier.controller');
 const router = express.Router();
+const supplierupload = require('../../middlewares/supplier');
+
 router.route('/').post(supplierController.createSupplier).get(supplierController.getAllSupplier);
 router.route('/login').post(supplierController.UsersLogin);
 router.route('/otp_verify').post(supplierController.otpVerify_Setpassword);
@@ -27,6 +29,6 @@ router.route('/supplier/paymend/details/:id').get(supplierController.getSupplier
 router.route('/productData/:id').get(supplierController.getSupplierPaymentDetailsByProductId);
 router.route('/getSupplierWith/Advanced').get(supplierController.getSupplierWith_Advanced);
 // create supplier fot third version
-router.route('/third/supplier').post(supplierController.createSuppliers);
+router.route('/third/supplier').post(supplierupload.array('image'), supplierController.createSuppliers);
 router.route('/third/supplier/:page').get(supplierController.getSupplierthird);
 module.exports = router;
