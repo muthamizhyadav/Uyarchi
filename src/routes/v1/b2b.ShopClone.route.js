@@ -107,6 +107,7 @@ router.route('/getmyshop/re/verification/byuser').get(authorization, b2bShopClon
 router.route('/get/shops/reassigin').get(b2bShopCloneController.get_reassign_temp);
 router.route('/update/re/shops/reassigin/myshop').put(b2bShopCloneController.update_reassign_temp);
 router.route('/get/datapproved/shops/assign').get(b2bShopCloneController.get_data_approved_date);
+router.route('/get/approved/getall/reapproved/data').get(b2bShopCloneController.get_data_approved_details);
 
 
 
