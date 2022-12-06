@@ -125,6 +125,13 @@ const  forgotPassword = catchAsync(async (req, res) => {
   res.send(getproduct);
 });
 
+const getAllAppSupplier = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  console.log(userId);
+  const users = await supplierService.getAllAppSupplier(userId);
+  res.send(users);
+});
+
 module.exports = {
   createSupplier,
   getproductfromCallStatus,
@@ -147,4 +154,5 @@ module.exports = {
   otpVerify_Setpassword,
   Supplier_setPassword,
   forgotPassword,
+  getAllAppSupplier,
 };
