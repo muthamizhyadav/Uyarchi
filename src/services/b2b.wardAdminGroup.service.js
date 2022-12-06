@@ -1678,6 +1678,9 @@ const getDeliveryOrderSeparate = async (id, page) => {
                   },
                 },
                 {
+                  $unwind: '$datass',
+                },
+                {
                   $project: {
                     _id: 1,
                     status: 1,
@@ -1755,7 +1758,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
               amountAfterSubtract: {
                 $subtract: ['$shopDatas.totalPrice', '$shopDatas.totalamountOverAll'],
               },
-              Slat:"$shopDatas.slat",
+              Slat:"$shopDatas.Slat",
               Slong:"$shopDatas.Slong",
             },
           },
