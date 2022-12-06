@@ -27,6 +27,6 @@ router.route('/supplier/paymend/details/:id').get(supplierController.getSupplier
 router.route('/productData/:id').get(supplierController.getSupplierPaymentDetailsByProductId);
 router.route('/getSupplierWith/Advanced').get(supplierController.getSupplierWith_Advanced);
 // create supplier fot third version
-
 router.route('/third/supplier').post(supplierController.createSuppliers);
+router.route('/third/supplier/:page').get(supplierController.getSupplierthird);
 module.exports = router;

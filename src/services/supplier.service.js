@@ -531,6 +531,19 @@ const createSuppliers = async (body) => {
   return create;
 };
 
+const getSupplierthird = async (page) => {
+  let values = await Supplier.aggregate([
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await Supplier.find().count();
+  return { values: values, total: total };
+};
+
 module.exports = {
   createSupplier,
   updateSupplierById,
@@ -554,4 +567,5 @@ module.exports = {
   Supplier_setPassword,
   forgotPassword,
   createSuppliers,
+  getSupplierthird,
 };

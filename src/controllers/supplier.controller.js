@@ -125,8 +125,15 @@ const forgotPassword = catchAsync(async (req, res) => {
   res.send(getproduct);
 });
 
+// supplier Api's for third versions
+
 const createSuppliers = catchAsync(async (req, res) => {
   const data = await supplierService.createSuppliers(req.body);
+  res.send(data);
+});
+
+const getSupplierthird = catchAsync(async (req, res) => {
+  const data = await supplierService.getSupplierthird(req.params.page);
   res.send(data);
 });
 
@@ -153,4 +160,5 @@ module.exports = {
   Supplier_setPassword,
   forgotPassword,
   createSuppliers,
+  getSupplierthird,
 };
