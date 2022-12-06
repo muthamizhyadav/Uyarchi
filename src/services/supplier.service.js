@@ -492,6 +492,21 @@ const getSupplierWith_Advanced = async () => {
       },
     },
     {
+      $lookup: {
+        from: 'supplierunbilledhistories',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [{ $group: { _id: null, TotalAmount: { $sum: '$un_Billed_amt' } } }],
+        as: 'supplierunbilledhistory',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierunbilledhistory',
+      },
+    },
+    {
       $project: {
         _id: 1,
         secondaryContactName: 1,
@@ -501,8 +516,11 @@ const getSupplierWith_Advanced = async () => {
         tradeName: 1,
         raised: { $ifNull: ['$raised.raised_Amt', 0] },
         unbilled: { $ifNull: ['$supplierunbilled.un_Billed_amt', 0] },
+        // RaisedAmounts: {
+        //   $ifNull: [{ $ifNull: ['$raised.raised_Amt', 0] }, { $ifNull: ['$supplierunbilled.un_Billed_amt', 0] }, 0],
+        // },
         RaisedAmount: {
-          $ifNull: [{ $ifNull: ['$raised.raised_Amt', 0] }, { $ifNull: ['$supplierunbilled.un_Billed_amt', 0] }, 0],
+          $subtract: [{ $ifNull: ['$raised.raised_Amt', 0] }, { $ifNull: ['$supplierunbilledhistory.TotalAmount', 0] }],
         },
       },
     },
@@ -516,7 +534,8 @@ const getSupplierWith_Advanced = async () => {
     //     tradeName: 1,
     //     raised: 1,
     //     unbilled: 1,
-    //     RaisedAmount: { $subtract: ['$unbilled', '$raised'] },
+    //     RaisedAmount: { $subtract: ['$RaisedAmounts', '$supplierunbilledhistory.TotalAmount'] },
+    //     supplierunbilledhistory: '$supplierunbilledhistory',
     //   },
     // },
   ]);
