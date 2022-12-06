@@ -511,6 +511,17 @@ const update_reassign_temp = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const get_data_approved_date= catchAsync(async (req, res) => {
+  const data = await b2bCloneService.get_data_approved_date(req.query);
+  res.send(data);
+});
+
+const get_data_approved_details= catchAsync(async (req, res) => {
+  const data = await b2bCloneService.get_data_approved_details(req.query);
+  res.send(data);
+
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -569,4 +580,6 @@ module.exports = {
   update_reverification,
   get_reassign_temp,
   update_reassign_temp,
+  get_data_approved_date,
+  get_data_approved_details
 };
