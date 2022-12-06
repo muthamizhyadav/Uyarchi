@@ -519,25 +519,26 @@ const getSupplierWith_Advanced = async () => {
         // RaisedAmounts: {
         //   $ifNull: [{ $ifNull: ['$raised.raised_Amt', 0] }, { $ifNull: ['$supplierunbilled.un_Billed_amt', 0] }, 0],
         // },
-        RaisedAmount: {
+        RaisedAmounts: {
           $subtract: [{ $ifNull: ['$raised.raised_Amt', 0] }, { $ifNull: ['$supplierunbilledhistory.TotalAmount', 0] }],
         },
       },
     },
-    // {
-    //   $project: {
-    //     _id: 1,
-    //     secondaryContactName: 1,
-    //     primaryContactName: 1,
-    //     primaryContactNumber: 1,
-    //     primaryContactName: 1,
-    //     tradeName: 1,
-    //     raised: 1,
-    //     unbilled: 1,
-    //     RaisedAmount: { $subtract: ['$RaisedAmounts', '$supplierunbilledhistory.TotalAmount'] },
-    //     supplierunbilledhistory: '$supplierunbilledhistory',
-    //   },
-    // },
+    {
+      $project: {
+        _id: 1,
+        secondaryContactName: 1,
+        primaryContactName: 1,
+        primaryContactNumber: 1,
+        primaryContactName: 1,
+        tradeName: 1,
+        raised: 1,
+        unbilled: 1,
+        RaisedAmount: {
+          $cond: { if: { $gte: ['$RaisedAmounts', 0] }, then: '$RaisedAmounts', else: 0 },
+        },
+      },
+    },
   ]);
   return values;
 };
