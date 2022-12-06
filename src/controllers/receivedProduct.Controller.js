@@ -131,7 +131,7 @@ const getbilled_Details = catchAsync(async (req, res) => {
 });
 
 const getBill_History = catchAsync(async (req, res) => {
-  const data = await ReceivedProductService.getBill_History(req.query.id);
+  const data = await ReceivedProductService.getBill_History(req.params.id);
   res.send(data);
 });
 

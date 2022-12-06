@@ -17,38 +17,36 @@ const createSupplier = async (supplierBody) => {
   if (check) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Already Register this Number');
   }
-  if(supplierBody.createdByStatus == "By Supplier"){
+  if (supplierBody.createdByStatus == 'By Supplier') {
     await Textlocal.Otp(supplierBody.primaryContactNumber);
     await Supplier.create(supplierBody);
     return 'OTP send successfully';
-}else{
- return Supplier.create(supplierBody);
-}
+  } else {
+    return Supplier.create(supplierBody);
+  }
 };
 
-const otpVerify_Setpassword = async (body) =>{
+const otpVerify_Setpassword = async (body) => {
   // console.log(body)
-  const {OTP} = body
-    const data = await OTPModel.findOne({OTP:OTP})
-    if(!data){
-      throw new ApiError(httpStatus.NOT_FOUND, 'otp wrong');
-    }
-    const ewer = await Supplier.findOne({primaryContactNumber:data.mobileNumber})
-    return ewer
-}
+  const { OTP } = body;
+  const data = await OTPModel.findOne({ OTP: OTP });
+  if (!data) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'otp wrong');
+  }
+  const ewer = await Supplier.findOne({ primaryContactNumber: data.mobileNumber });
+  return ewer;
+};
 
-
-const Supplier_setPassword = async (id,body) => {
-  const {password,confirmpassword} = body
-  if(password != confirmpassword){
+const Supplier_setPassword = async (id, body) => {
+  const { password, confirmpassword } = body;
+  if (password != confirmpassword) {
     throw new ApiError(httpStatus.NOT_FOUND, 'confirmpassword wrong');
   }
   const salt = await bcrypt.genSalt(10);
- let password1 = await bcrypt.hash(password, salt);
+  let password1 = await bcrypt.hash(password, salt);
   const data = await Supplier.findByIdAndUpdate({ _id: id }, { password: password1 }, { new: true });
   return data;
 };
-
 
 const UsersLogin = async (userBody) => {
   const { primaryContactNumber, password } = userBody;
@@ -556,6 +554,21 @@ const getSupplierWith_Advanced = async () => {
       },
     },
     {
+      $lookup: {
+        from: 'supplierunbilledhistories',
+        localField: '_id',
+        foreignField: 'supplierId',
+        pipeline: [{ $group: { _id: null, TotalAmount: { $sum: '$un_Billed_amt' } } }],
+        as: 'supplierunbilledhistory',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierunbilledhistory',
+      },
+    },
+    {
       $project: {
         _id: 1,
         secondaryContactName: 1,
@@ -565,25 +578,61 @@ const getSupplierWith_Advanced = async () => {
         tradeName: 1,
         raised: { $ifNull: ['$raised.raised_Amt', 0] },
         unbilled: { $ifNull: ['$supplierunbilled.un_Billed_amt', 0] },
-        RaisedAmount: {
-          $ifNull: [{ $ifNull: ['$raised.raised_Amt', 0] }, { $ifNull: ['$supplierunbilled.un_Billed_amt', 0] }, 0],
+        // RaisedAmounts: {
+        //   $ifNull: [{ $ifNull: ['$raised.raised_Amt', 0] }, { $ifNull: ['$supplierunbilled.un_Billed_amt', 0] }, 0],
+        // },
+        RaisedAmounts: {
+          $subtract: [{ $ifNull: ['$raised.raised_Amt', 0] }, { $ifNull: ['$supplierunbilledhistory.TotalAmount', 0] }],
         },
       },
     },
-    // {
-    //   $project: {
-    //     _id: 1,
-    //     secondaryContactName: 1,
-    //     primaryContactName: 1,
-    //     primaryContactNumber: 1,
-    //     primaryContactName: 1,
-    //     tradeName: 1,
-    //     raised: 1,
-    //     unbilled: 1,
-    //     RaisedAmount: { $subtract: ['$unbilled', '$raised'] },
-    //   },
-    // },
+    {
+      $project: {
+        _id: 1,
+        secondaryContactName: 1,
+        primaryContactName: 1,
+        primaryContactNumber: 1,
+        primaryContactName: 1,
+        tradeName: 1,
+        raised: 1,
+        unbilled: 1,
+        RaisedAmount: {
+          $cond: { if: { $gte: ['$RaisedAmounts', 0] }, then: '$RaisedAmounts', else: 0 },
+        },
+      },
+    },
   ]);
+  return values;
+};
+
+// supplier third versions
+
+const createSuppliers = async (body) => {
+  let values = { ...body, ...{ created: moment() } };
+  const create = await Supplier.create(values);
+  return create;
+};
+
+const getSupplierthird = async (page) => {
+  let values = await Supplier.aggregate([
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await Supplier.find().count();
+  return { values: values, total: total };
+};
+
+const updateSupplierthird = async (id, updatebody) => {
+  let values = await Supplier.findById(id);
+  console.log(updatebody)
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'supplier Not found');
+  }
+  values = await Supplier.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
   return values;
 };
 
@@ -610,4 +659,7 @@ module.exports = {
   Supplier_setPassword,
   forgotPassword,
   getAllAppSupplier,
+  createSuppliers,
+  getSupplierthird,
+  updateSupplierthird,
 };

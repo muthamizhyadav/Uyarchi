@@ -106,21 +106,21 @@ const getSupplierPaymentDetailsByProductId = catchAsync(async (req, res) => {
 });
 
 const getSupplierWith_Advanced = catchAsync(async (req, res) => {
-  const supplier = await supplierService.getSupplierWith_Advanced()
-  res.send(supplier)
-})
+  const supplier = await supplierService.getSupplierWith_Advanced();
+  res.send(supplier);
+});
 
-const  otpVerify_Setpassword = catchAsync(async (req, res) => {
+const otpVerify_Setpassword = catchAsync(async (req, res) => {
   const getproduct = await supplierService.otpVerify_Setpassword(req.body);
   res.send(getproduct);
 });
 
-const  Supplier_setPassword = catchAsync(async (req, res) => {
-  const getproduct = await supplierService.Supplier_setPassword(req.params.id,req.body);
+const Supplier_setPassword = catchAsync(async (req, res) => {
+  const getproduct = await supplierService.Supplier_setPassword(req.params.id, req.body);
   res.send(getproduct);
 });
 
-const  forgotPassword = catchAsync(async (req, res) => {
+const forgotPassword = catchAsync(async (req, res) => {
   const getproduct = await supplierService.forgotPassword(req.body);
   res.send(getproduct);
 });
@@ -130,6 +130,35 @@ const getAllAppSupplier = catchAsync(async (req, res) => {
   console.log(userId);
   const users = await supplierService.getAllAppSupplier(userId);
   res.send(users);
+})
+// supplier Api's for third versions
+
+const createSuppliers = catchAsync(async (req, res) => {
+  const data = await supplierService.createSuppliers(req.body);
+  if (req.files) {
+    req.files.forEach(function (files, index, arr) {
+      data.image.push('images/supplier/' + files.filename);
+    });
+  }
+  await data.save();
+  res.send(data);
+});
+
+const getSupplierthird = catchAsync(async (req, res) => {
+  const data = await supplierService.getSupplierthird(req.params.page);
+  res.send(data);
+});
+
+const updateSupplierthird = catchAsync(async (req, res) => {
+  let data = await supplierService.updateSupplierthird(req.params.id, req.body);
+  if (req.files) {
+    data.image = []
+    req.files.forEach(function (files, index, arr) {
+      data.image.push('images/supplier/' + files.filename);
+    });
+  }
+  await data.save();
+  res.send(data);
 });
 
 module.exports = {
@@ -155,4 +184,7 @@ module.exports = {
   Supplier_setPassword,
   forgotPassword,
   getAllAppSupplier,
+  createSuppliers,
+  getSupplierthird,
+  updateSupplierthird,
 };
