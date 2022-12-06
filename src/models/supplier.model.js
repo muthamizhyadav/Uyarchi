@@ -54,14 +54,26 @@ const supplierSchema = new mongoose.Schema({
   productDealingWith: {
     type: Array,
   },
-  createdByStatus:{
-    type:String
+  createdByStatus: {
+    type: String,
   },
-  approvedStatus:{
-    type:String,
+  approvedStatus: {
+    type: String,
   },
-  password:{
-    type:String,
+  password: {
+    type: String,
+  },
+  productSold: {
+    type: String,
+  },
+  ShopSize: {
+    type: String,
+  },
+  GateEntryconvenience: {
+    type: Number,
+  },
+  created: {
+    type: Date,
   },
   active: {
     type: Boolean,

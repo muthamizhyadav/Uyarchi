@@ -17,38 +17,36 @@ const createSupplier = async (supplierBody) => {
   if (check) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Already Register this Number');
   }
-  if(supplierBody.createdByStatus == "By Supplier"){
+  if (supplierBody.createdByStatus == 'By Supplier') {
     await Textlocal.Otp(supplierBody.primaryContactNumber);
     await Supplier.create(supplierBody);
     return 'OTP send successfully';
-}else{
- return Supplier.create(supplierBody);
-}
+  } else {
+    return Supplier.create(supplierBody);
+  }
 };
 
-const otpVerify_Setpassword = async (body) =>{
+const otpVerify_Setpassword = async (body) => {
   // console.log(body)
-  const {OTP} = body
-    const data = await OTPModel.findOne({OTP:OTP})
-    if(!data){
-      throw new ApiError(httpStatus.NOT_FOUND, 'otp wrong');
-    }
-    const ewer = await Supplier.findOne({primaryContactNumber:data.mobileNumber})
-    return ewer
-}
+  const { OTP } = body;
+  const data = await OTPModel.findOne({ OTP: OTP });
+  if (!data) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'otp wrong');
+  }
+  const ewer = await Supplier.findOne({ primaryContactNumber: data.mobileNumber });
+  return ewer;
+};
 
-
-const Supplier_setPassword = async (id,body) => {
-  const {password,confirmpassword} = body
-  if(password != confirmpassword){
+const Supplier_setPassword = async (id, body) => {
+  const { password, confirmpassword } = body;
+  if (password != confirmpassword) {
     throw new ApiError(httpStatus.NOT_FOUND, 'confirmpassword wrong');
   }
   const salt = await bcrypt.genSalt(10);
- let password1 = await bcrypt.hash(password, salt);
+  let password1 = await bcrypt.hash(password, salt);
   const data = await Supplier.findByIdAndUpdate({ _id: id }, { password: password1 }, { new: true });
   return data;
 };
-
 
 const UsersLogin = async (userBody) => {
   const { primaryContactNumber, password } = userBody;
@@ -74,8 +72,6 @@ const forgotPassword = async (body) => {
   }
   return await Textlocal.OtpForget(body.primaryContactNumber);
 };
-
-
 
 const getAllSupplier = async () => {
   return Supplier.find({ active: true });
@@ -527,6 +523,14 @@ const getSupplierWith_Advanced = async () => {
   return values;
 };
 
+// supplier third versions
+
+const createSuppliers = async (body) => {
+  let values = { ...body, ...{ created: moment() } };
+  const create = await Supplier.create(values);
+  return create;
+};
+
 module.exports = {
   createSupplier,
   updateSupplierById,
@@ -549,4 +553,5 @@ module.exports = {
   otpVerify_Setpassword,
   Supplier_setPassword,
   forgotPassword,
+  createSuppliers,
 };

@@ -106,23 +106,28 @@ const getSupplierPaymentDetailsByProductId = catchAsync(async (req, res) => {
 });
 
 const getSupplierWith_Advanced = catchAsync(async (req, res) => {
-  const supplier = await supplierService.getSupplierWith_Advanced()
-  res.send(supplier)
-})
+  const supplier = await supplierService.getSupplierWith_Advanced();
+  res.send(supplier);
+});
 
-const  otpVerify_Setpassword = catchAsync(async (req, res) => {
+const otpVerify_Setpassword = catchAsync(async (req, res) => {
   const getproduct = await supplierService.otpVerify_Setpassword(req.body);
   res.send(getproduct);
 });
 
-const  Supplier_setPassword = catchAsync(async (req, res) => {
-  const getproduct = await supplierService.Supplier_setPassword(req.params.id,req.body);
+const Supplier_setPassword = catchAsync(async (req, res) => {
+  const getproduct = await supplierService.Supplier_setPassword(req.params.id, req.body);
   res.send(getproduct);
 });
 
-const  forgotPassword = catchAsync(async (req, res) => {
+const forgotPassword = catchAsync(async (req, res) => {
   const getproduct = await supplierService.forgotPassword(req.body);
   res.send(getproduct);
+});
+
+const createSuppliers = catchAsync(async (req, res) => {
+  const data = await supplierService.createSuppliers(req.body);
+  res.send(data);
 });
 
 module.exports = {
@@ -147,4 +152,5 @@ module.exports = {
   otpVerify_Setpassword,
   Supplier_setPassword,
   forgotPassword,
+  createSuppliers,
 };
