@@ -1679,7 +1679,6 @@ const getDeliveryOrderSeparate = async (id, page) => {
                 },
                 {
                   $project: {
-                    shopName: '$datass.SName',
                     _id: 1,
                     status: 1,
                     productStatus: 1,
@@ -1714,6 +1713,9 @@ const getDeliveryOrderSeparate = async (id, page) => {
                       $size: '$productorderclonescount',
                     },
                     totalamountOverAll: '$orderpaymentsData.price',
+                    shopName: '$datass.SName',
+                    Slat: '$datass.Slat',
+                    Slong: '$datass.Slong',
                   },
                 },
               ],
@@ -1753,6 +1755,8 @@ const getDeliveryOrderSeparate = async (id, page) => {
               amountAfterSubtract: {
                 $subtract: ['$shopDatas.totalPrice', '$shopDatas.totalamountOverAll'],
               },
+              Slat:"$shopDatas.slat",
+              Slong:"$shopDatas.Slong",
             },
           },
         ],
