@@ -73,6 +73,68 @@ const forgotPassword = async (body) => {
   return await Textlocal.OtpForget(body.primaryContactNumber);
 };
 
+
+const getAllAppSupplier = async (id) => {
+  return Supplier.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'callstatuses',
+        localField: '_id',
+        foreignField: 'supplierid',
+        pipeline:[
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'productid',
+              foreignField: '_id',
+              as: 'products',
+            },
+          },
+          {
+            $unwind: '$products',
+          },
+        ],
+        as: 'callstatuses',
+      },
+    },
+    {
+      $unwind: '$callstatuses',
+    },
+    {
+      $project:{
+            primaryContactName:1,
+            product:"$callstatuses.products.productTitle",
+            calstatusId:"$callstatuses.calstatusId",
+            showWhs:"$callstatuses.showWhs",
+            StockReceived:"$callstatuses.StockReceived",
+            productid:"$callstatuses.productid",
+            supplierid:"$callstatuses.supplierid",
+            confirmOrder:"$callstatuses.confirmOrder",
+            confirmcallstatus:"$callstatuses.confirmcallstatus",
+            confirmprice:"$callstatuses.confirmprice",
+            status:"$callstatuses.status",
+            exp_date:"$callstatuses.exp_date",
+            orderType:"$callstatuses.orderType",
+            order_Type:"$callstatuses.order_Type",
+            SuddenCreatedBy:"$callstatuses.SuddenCreatedBy",
+            SuddenStatus:"$callstatuses.SuddenStatus",
+            date: "$callstatuses.date",
+            time:"$callstatuses.time",
+            created: "$callstatuses.created",
+            OrderId:"$callstatuses.OrderId",
+      }
+    }
+    
+  ]);
+};
+
+
 const getAllSupplier = async () => {
   return Supplier.find({ active: true });
 };
@@ -596,6 +658,7 @@ module.exports = {
   otpVerify_Setpassword,
   Supplier_setPassword,
   forgotPassword,
+  getAllAppSupplier,
   createSuppliers,
   getSupplierthird,
   updateSupplierthird,
