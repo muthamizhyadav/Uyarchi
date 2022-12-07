@@ -2341,7 +2341,7 @@ const getGroupDetailsForDE = async (page) => {
         assignTime: 1,
         deliveryExecutiveId: 1,
         manageDeliveryStatus: 1,
-        totalOrders: 1,
+        totalOrders: { $ifNull: [{ $size: '$Orderdatas' }, 0] },
         pettyCash: 1,
         status: 1,
         deliveryexecutiveName: '$b2buserDta.name',
