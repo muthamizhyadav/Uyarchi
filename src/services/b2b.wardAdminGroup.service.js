@@ -326,7 +326,7 @@ const updateOrderStatus = async (id, updateBody, userId) => {
   });
   return deliveryStatus;
 };
-const updateOrderStatus_forundelivey = async (id, updateBody) => {
+const updateOrderStatus_forundelivey = async (id, updateBody, userId) => {
   let body = {
     ...updateBody,
     ...{
@@ -341,7 +341,7 @@ const updateOrderStatus_forundelivey = async (id, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'status not found');
   }
   deliveryStatus = await ShopOrderClone.findByIdAndUpdate({ _id: id }, body, { new: true });
-  deliveryStatus.statusActionArray.push({ userid: '', date: moment().toString(), status: 'unDelivered' });
+  deliveryStatus.statusActionArray.push({ userid: '', date: moment().toString(), status: 'unDelivered', userid: userId });
   deliveryStatus.save();
   return deliveryStatus;
 };
@@ -374,7 +374,7 @@ const updateManageStatus = async (id, updateBody, userId) => {
       pettyStockAllocateStatus: 'Un Allocate',
       pettyStockUnAllocateCreated: moment(),
       StockUid: userId,
-      status: 'Packed'
+      status: 'Packed',
     },
     { new: true }
   );
@@ -1758,8 +1758,8 @@ const getDeliveryOrderSeparate = async (id, page) => {
               amountAfterSubtract: {
                 $subtract: ['$shopDatas.totalPrice', '$shopDatas.totalamountOverAll'],
               },
-              Slat:"$shopDatas.Slat",
-              Slong:"$shopDatas.Slong",
+              Slat: '$shopDatas.Slat',
+              Slong: '$shopDatas.Slong',
             },
           },
         ],

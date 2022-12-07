@@ -136,14 +136,28 @@ const getAllAppSupplier = async (id) => {
 
 
 const getAllAppOnly_Supplier = async (id) => {
-  return Supplier.aggregate([
-    {
-      $match: {
-        $and: [{ _id: { $eq: id } }],
-      },
-    },
+  let products =[]
+  let products1 = []
+  const data = await Supplier.findById(id)
+  data.productDealingWith.forEach(async (e) =>{
+      // const product = await Product.findById(e)
+      products1.push(e)
+
+  })
+  for(let i = 0 ; i<products1.length ; i++){
+    const product = await Product.findById(products1[i])
+    products.push(product.productTitle)
+  }
+  
+  return {data:data, products}
+  // return Supplier.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [{ _id: { $eq: id } }],
+  //     },
+  //   },
     
-  ]);
+  // ]);
 };
 
 
@@ -647,11 +661,22 @@ const getSupplierthird = async (page) => {
 
 const updateSupplierthird = async (id, updatebody) => {
   let values = await Supplier.findById(id);
-  console.log(updatebody)
+  console.log(updatebody);
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier Not found');
   }
   values = await Supplier.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  return values;
+};
+
+const getSupplierDetails = async (id) => {
+  let Id = id.toString();
+  console.log(Id);
+  let values = await Supplier.findById(Id);
+  console.log(values);
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'supplier Not Found');
+  }
   return values;
 };
 
@@ -681,6 +706,7 @@ module.exports = {
   createSuppliers,
   getSupplierthird,
   updateSupplierthird,
+  getSupplierDetails,
   getAllAppOnly_Supplier,
   getAllAppOnly_Supplier_Update
 };
