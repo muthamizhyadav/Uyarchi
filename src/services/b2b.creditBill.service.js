@@ -2336,7 +2336,7 @@ const getCreditBillMaster = async (query) => {
       $match: {
         $and: [
           { statusActionArray: { $elemMatch: { status: { $in: ['Delivered'] } } } },
-          { creditBillAssignedStatus: { $ne: 'Pending' } },
+          // { creditBillAssignedStatus: { $ne: 'Pending' } },
         ],
       },
     },
@@ -2604,7 +2604,7 @@ const getCreditBillMaster = async (query) => {
       $match: {
         $and: [
           { statusActionArray: { $elemMatch: { status: { $in: ['Delivered'] } } } },
-          { creditBillAssignedStatus: { $ne: 'Pending' } },
+          // { creditBillAssignedStatus: { $ne: 'Pending' } },
         ],
       },
     },
@@ -2871,7 +2871,7 @@ const getCreditBillMaster = async (query) => {
       $match: {
         $and: [
           { statusActionArray: { $elemMatch: { status: { $in: ['Delivered'] } } } },
-          { creditBillAssignedStatus: { $ne: 'Pending' } },
+          // { creditBillAssignedStatus: { $ne: 'Pending' } },
         ],
       },
     },
@@ -3131,7 +3131,7 @@ const getCreditBillMaster = async (query) => {
       $match: {
         $and: [
           { statusActionArray: { $elemMatch: { status: { $in: ['Delivered'] } } } },
-          { creditBillAssignedStatus: { $ne: 'Pending' } },
+          // { creditBillAssignedStatus: { $ne: 'Pending' } },
         ],
       },
     },
