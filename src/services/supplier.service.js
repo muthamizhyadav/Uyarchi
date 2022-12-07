@@ -136,14 +136,28 @@ const getAllAppSupplier = async (id) => {
 
 
 const getAllAppOnly_Supplier = async (id) => {
-  return Supplier.aggregate([
-    {
-      $match: {
-        $and: [{ _id: { $eq: id } }],
-      },
-    },
+  let products =[]
+  let products1 = []
+  const data = await Supplier.findById(id)
+  data.productDealingWith.forEach(async (e) =>{
+      // const product = await Product.findById(e)
+      products1.push(e)
+
+  })
+  for(let i = 0 ; i<products1.length ; i++){
+    const product = await Product.findById(products1[i])
+    products.push(product.productTitle)
+  }
+  
+  return {data:data, products}
+  // return Supplier.aggregate([
+  //   {
+  //     $match: {
+  //       $and: [{ _id: { $eq: id } }],
+  //     },
+  //   },
     
-  ]);
+  // ]);
 };
 
 
