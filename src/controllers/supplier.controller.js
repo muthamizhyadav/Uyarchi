@@ -125,6 +125,27 @@ const forgotPassword = catchAsync(async (req, res) => {
   res.send(getproduct);
 });
 
+const getAllAppSupplier = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  console.log(userId);
+  const users = await supplierService.getAllAppSupplier(userId);
+  res.send(users);
+})
+
+const getAllAppOnly_Supplier = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  console.log(userId);
+  const users = await supplierService.getAllAppOnly_Supplier(userId);
+  res.send(users);
+})
+
+
+const getAllAppOnly_Supplier_Update = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const getproduct = await supplierService.getAllAppOnly_Supplier_Update(userId, req.body);
+  res.send(getproduct);
+});
+
 // supplier Api's for third versions
 
 const createSuppliers = catchAsync(async (req, res) => {
@@ -183,8 +204,11 @@ module.exports = {
   otpVerify_Setpassword,
   Supplier_setPassword,
   forgotPassword,
+  getAllAppSupplier,
   createSuppliers,
   getSupplierthird,
   updateSupplierthird,
   getSupplierDetails,
+  getAllAppOnly_Supplier,
+  getAllAppOnly_Supplier_Update,
 };

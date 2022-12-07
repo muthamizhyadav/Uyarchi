@@ -1,13 +1,19 @@
 const express = require('express');
 const supplierController = require('../../controllers/supplier.controller');
+const auth = require('../../controllers/supplierAppAuth.controller');
 const router = express.Router();
 const supplierupload = require('../../middlewares/supplier');
 
 router.route('/').post(supplierController.createSupplier).get(supplierController.getAllSupplier);
-router.route('/login').post(supplierController.UsersLogin);
-router.route('/otp_verify').post(supplierController.otpVerify_Setpassword);
-router.route('/Supplier_setPassword/:id').put(supplierController.Supplier_setPassword);
-router.route('/forgotPassword').post(supplierController.forgotPassword);
+
+// appSupplier
+router.route('/login').post(supplierController.UsersLogin)
+router.route('/otp_verify').post(supplierController.otpVerify_Setpassword)
+router.route('/Supplier_setPassword/:id').put(supplierController.Supplier_setPassword)
+router.route('/forgotPassword').post(supplierController.forgotPassword)
+router.route('/getAppSupplier').get(auth, supplierController.getAllAppSupplier);
+router.route('/getAllAppOnly_Supplier').get(auth, supplierController.getAllAppOnly_Supplier);
+router.route('/getAllAppOnly_Supplier_Update').put(auth, supplierController.getAllAppOnly_Supplier_Update);
 
 router
   .route('/:supplierId')

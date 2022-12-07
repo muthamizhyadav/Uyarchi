@@ -484,6 +484,74 @@ const getsalesman = async () => {
       },
     },
     {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'b2busersData._id',
+        foreignField: 're_Uid',
+        as: 'b2bshopclones_re',
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'b2busersData._id',
+        foreignField: 'Uid',
+        pipeline: [
+          {
+            $match: {
+              $and: [
+                {
+                  daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+                },
+              ]
+            }
+          }
+        ],
+        as: 'b2bshopclones_re_not',
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'b2busersData._id',
+        foreignField: 're_Uid',
+        pipeline: [
+          {
+            $match: {
+              $and: [
+                {
+                  Re_daStatus: { $ne: null }
+                },
+              ]
+            }
+          }
+        ],
+        as: 'b2bshopclones_re_da',
+      },
+    },
+    
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'b2busersData._id',
+        foreignField: 'Uid',
+        pipeline: [
+          {
+            $match: {
+              $and: [
+                {
+                  Re_daStatus: { $ne: null }
+                },
+              ]
+            }
+          }
+        ],
+        as: 'b2bshopclones_re_not_da',
+      },
+    },
+    {
       $project: {
         name: '$b2busersData.name',
         b2buserId: '$b2busersData._id',
@@ -491,6 +559,12 @@ const getsalesman = async () => {
         assigncount: { $size: "$salesmanshops" },
         tempcount: { $size: "$salesmanshopsdata" },
         DA_count: { $size: "$b2bshopclones" },
+        re_assgin: { $size: "$b2bshopclones_re" },
+        re_assgin_da: { $size: "$b2bshopclones_re_da" },
+        not_intrested: { $size: "$b2bshopclones_re_not" },
+        not_intrested_da: { $size: "$b2bshopclones_re_not_da" },
+        total_re: { $add: [{ $size: "$b2bshopclones_re" }, { $size: "$b2bshopclones_re_not" }] },
+        total_re_da: { $add: [{ $size: "$b2bshopclones_re_da" }, { $size: "$b2bshopclones_re_not_da" }] },
         count: { $add: [{ $size: "$salesmanshops" }, { $size: "$salesmanshopsdata" }] },
         _id: 1,
       },
