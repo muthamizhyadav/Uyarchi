@@ -4867,6 +4867,226 @@ const get_data_approved_details = async (query) => {
 }
 
 
+const get_updated_pincode = async () => {
+  let shop = await Shop.aggregate([
+    { $match: { $and: [{status:{$eq:"data_approved"}},{Pincode:{$ne:null}}] }},
+    {
+      $group:{
+        _id:{Pincode:"$Pincode"},
+      }
+    },
+    {
+      $project:{
+        _id:"aa",
+        Pincode:"$_id.Pincode"
+      }
+    }
+
+  ]);
+
+  return shop;
+}
+
+
+
+
+const get_shop_in_pincode = async (query) => {
+  let pincode=query.pincode;
+  if(query.pincode !=null){
+    pincode=parseInt(query.pincode);
+  }
+  let shop = await Shop.aggregate([
+    { $match: { $and: [{status:{$eq:"data_approved"}},{Pincode:{$eq:pincode}}] }},
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'wards',
+        localField: 'Wardid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'zones',
+              localField: 'zoneId',
+              foreignField: '_id',
+              as: 'zonedata',
+            },
+          },
+          {
+            $unwind: '$zonedata',
+          },
+          {
+            $project: {
+              ward: 1,
+              zone: '$zonedata.zone',
+              zoneCode: '$zoneData.zoneCode',
+            },
+          },
+        ],
+        as: 'WardData',
+      },
+    },
+    {
+      $unwind: '$WardData',
+    },
+    {
+      $lookup: {
+        from: 'streets',
+        localField: 'Strid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              street: 1,
+              area: 1,
+              locality: 1,
+            },
+          },
+        ],
+        as: 'StreetData',
+      },
+    },
+    {
+      $unwind: '$StreetData',
+    },
+    // shoplists
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        // pipeline:[
+        //     {
+        //       $project: {
+        //         street:1
+        //       }
+        //     }
+        // ],
+        as: 'shoptype',
+      },
+    },
+    // {
+    //   $unwind: '$shoptype',
+    // },
+
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'DA_USER',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'data_approved',
+      },
+    },
+    {
+      $unwind: {
+        path: '$data_approved',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Re_DA_USER',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+            },
+          },
+        ],
+        as: 'data_approved_re',
+      },
+    },
+    {
+      $unwind: {
+        path: '$data_approved_re',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        // _id:1,
+        // created:1,
+        street: '$StreetData.street',
+        ward: '$WardData.ward',
+        username: '$UsersData.name',
+        shoptype: { $cond: { if: { $isArray: '$shoptype' }, then: '$shoptype.shopList', else: [] } },
+        Area: '$StreetData.area',
+        Locality: '$StreetData.locality',
+        photoCapture: 1,
+        SName: 1,
+        address: 1,
+        Slat: 1,
+        Slong: 1,
+        type: 1,
+        status: 1,
+        created: 1,
+        SOwner: 1,
+        kyc_status: 1,
+        Uid: 1,
+        zone: '$WardData.zone',
+        zoneCode: '$WardData.zoneCode',
+        active: 1,
+        mobile: 1,
+        date: 1,
+        gomap: 1,
+        Re_daStatus: 1,
+        DA_CREATED: 1,
+        DA_Comment: 1,
+        DA_DATE: 1,
+        DA_TIME: 1,
+        DA_CREATED: 1,
+        DA_USERNAME: '$data_approved.name',
+        purchaseQTy: 1,
+        da_lot: 1,
+        da_long: 1,
+        da_landmark: 1,
+        Pincode: 1,
+        daStatus: 1,
+        DA_USER: 1,
+        Re_DA_USER: 1,
+        Wardid: 1,
+        Re_DA_CREATED: 1,
+        Re_DA_Comment: 1,
+        Re_DA_DATE: 1,
+        Re_DA_TIME: 1,
+        Re_DA_CREATED: 1,
+        Re_DA_USERNAME: '$data_approved_re.name',
+        Re_purchaseQTy: 1,
+        Re_da_lot: 1,
+        Re_da_long: 1,
+        Re_da_landmark: 1,
+      },
+    },
+  ]);
+
+  return shop;
+}
 
 
 module.exports = {
@@ -4926,7 +5146,9 @@ module.exports = {
   get_reassign_temp,
   update_reassign_temp,
   get_data_approved_date,
-  get_data_approved_details
+  get_data_approved_details,
+  get_updated_pincode,
+  get_shop_in_pincode
 
   // bharathiraja
 
