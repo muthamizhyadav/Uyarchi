@@ -108,8 +108,6 @@ router.route('/get/shops/reassigin').get(b2bShopCloneController.get_reassign_tem
 router.route('/update/re/shops/reassigin/myshop').put(b2bShopCloneController.update_reassign_temp);
 router.route('/get/datapproved/shops/assign').get(b2bShopCloneController.get_data_approved_date);
 router.route('/get/approved/getall/reapproved/data').get(b2bShopCloneController.get_data_approved_details);
-
-
-
-
+router.route('/get/pincode/all/group').get(b2bShopCloneController.get_updated_pincode);
+router.route('/getshops/bypincode/all').get(b2bShopCloneController.get_shop_in_pincode);
 module.exports = router;

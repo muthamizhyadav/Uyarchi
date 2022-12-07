@@ -522,6 +522,17 @@ const get_data_approved_details= catchAsync(async (req, res) => {
 
 });
 
+const get_updated_pincode= catchAsync(async (req, res) => {
+  const data = await b2bCloneService.get_updated_pincode(req.query);
+  res.send(data);
+
+});
+const get_shop_in_pincode= catchAsync(async (req, res) => {
+  const data = await b2bCloneService.get_shop_in_pincode(req.query);
+  res.send(data);
+
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -581,5 +592,7 @@ module.exports = {
   get_reassign_temp,
   update_reassign_temp,
   get_data_approved_date,
-  get_data_approved_details
+  get_data_approved_details,
+  get_updated_pincode,
+  get_shop_in_pincode
 };
