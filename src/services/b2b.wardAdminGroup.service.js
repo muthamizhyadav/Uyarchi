@@ -1490,7 +1490,6 @@ const assignOnly_DE = async (query, status, userid) => {
         as: 'groupOrders',
       },
     },
-
     {
       $project: {
         shopOrderCloneId: '$wdfsaf._id',
