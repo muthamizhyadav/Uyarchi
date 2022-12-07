@@ -3483,7 +3483,14 @@ const update_pincode = async (query, body) => {
   );
   return shop;
 };
-
+const update_pincode_map = async (query, body) => {
+  let shop = await Shop.findByIdAndUpdate(
+    { _id: query.id },
+    { Pincode: body.pincode},
+    { new: true }
+  );
+  return shop;
+};
 const gomap_view_now = async (id) => {
   let shop = await Shop.findByIdAndUpdate({ _id: id }, { gomap: moment() }, { new: true });
   return shop;
@@ -5148,7 +5155,8 @@ module.exports = {
   get_data_approved_date,
   get_data_approved_details,
   get_updated_pincode,
-  get_shop_in_pincode
+  get_shop_in_pincode,
+  update_pincode_map
 
   // bharathiraja
 

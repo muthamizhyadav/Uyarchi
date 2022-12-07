@@ -533,6 +533,11 @@ const get_shop_in_pincode= catchAsync(async (req, res) => {
 
 });
 
+const update_pincode_map= catchAsync(async (req, res) => {
+  const data = await b2bCloneService.update_pincode_map(req.query,req.body);
+  res.send(data);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -594,5 +599,6 @@ module.exports = {
   get_data_approved_date,
   get_data_approved_details,
   get_updated_pincode,
-  get_shop_in_pincode
+  get_shop_in_pincode,
+  update_pincode_map
 };
