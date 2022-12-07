@@ -32,4 +32,5 @@ router.route('/getSupplierWith/Advanced').get(supplierController.getSupplierWith
 router.route('/third/supplier').post(supplierupload.array('image'), supplierController.createSuppliers);
 router.route('/third/supplier/:page').get(supplierController.getSupplierthird);
 router.route('/third/update/Supplier/:id').put(supplierupload.array('image'), supplierController.updateSupplierthird);
+router.route('/supplier/get/single/:id').get(supplierController.getSupplierDetails);
 module.exports = router;
