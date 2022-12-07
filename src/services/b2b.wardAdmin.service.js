@@ -4142,6 +4142,9 @@ const Mismatch_Stock_Reconcilation1 = async (id) => {
     //       $and: [{ mismatch: { $type: 'array', $ne: [] } }]
     //   },
     // },
+    {
+      $match: { mismatch: { $gt: 0 } },
+    },
   ]);
   return data;
 };

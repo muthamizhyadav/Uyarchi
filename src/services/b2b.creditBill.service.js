@@ -2579,7 +2579,6 @@ const getCreditBillMaster = async (query) => {
         },
         Schedulereason: 1,
         creditBillAssignedStatus: 1,
-        creditbills: '$creditbills',
         assignedUserName: '$creditbills.assignedUserName',
         AssignedUserId: '$creditbills.AssignedUserId',
         active: 1,
