@@ -2560,41 +2560,41 @@ const getCreditBillMaster = async (query) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-    // {
-    //   $project: {
-    //     customerBillId: 1,
-    //     OrderId: 1,
-    //     created: 1,
-    //     _id: 1,
-    //     SName: '$b2bshopclones.SName',
-    //     delivered_date: 1,
-    //     TotalAmount: { $round: '$productData.price' },
-    //     lastPaidAmount: '$orderpayments.paidAmt',
-    //     lastPaidDate: '$orderpayments.created',
-    //     paidAMount: {
-    //       $sum: ['$orderpaymentsall.amount', '$reorderamount'],
-    //     },
-    //     pendingAmount: {
-    //       $subtract: [{ $round: '$productData.price' }, { $sum: ['$orderpaymentsall.amount', '$reorderamount'] }],
-    //     },
-    //     Schedulereason: 1,
-    //     creditBillAssignedStatus: 1,
-    //     assignedUserName: '$creditbills.assignedUserName',
-    //     AssignedUserId: '$creditbills.AssignedUserId',
-    //     active: 1,
-    //     Scheduledate: 1,
-    //     creationDate: 1,
-    //     statusActionArray: 1,
-    //   },
-    // },
-    // {
-    //   $match: {
-    //     $and: [userMatch],
-    //   },
-    // },
-    // {
-    //   $match: { pendingAmount: { $gt: 0 } },
-    // },
+    {
+      $project: {
+        customerBillId: 1,
+        OrderId: 1,
+        created: 1,
+        _id: 1,
+        SName: '$b2bshopclones.SName',
+        delivered_date: 1,
+        TotalAmount: { $round: '$productData.price' },
+        lastPaidAmount: '$orderpayments.paidAmt',
+        lastPaidDate: '$orderpayments.created',
+        paidAMount: {
+          $sum: ['$orderpaymentsall.amount', '$reorderamount'],
+        },
+        pendingAmount: {
+          $subtract: [{ $round: '$productData.price' }, { $sum: ['$orderpaymentsall.amount', '$reorderamount'] }],
+        },
+        Schedulereason: 1,
+        creditBillAssignedStatus: 1,
+        assignedUserName: '$creditbills.assignedUserName',
+        AssignedUserId: '$creditbills.AssignedUserId',
+        active: 1,
+        Scheduledate: 1,
+        creationDate: 1,
+        statusActionArray: 1,
+      },
+    },
+    {
+      $match: {
+        $and: [userMatch],
+      },
+    },
+    {
+      $match: { pendingAmount: { $gt: 0 } },
+    },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
