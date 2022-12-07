@@ -2608,30 +2608,32 @@ const getCreditBillMaster = async (query) => {
         ],
       },
     },
-
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
+    {
+      $match: { $and: [dateM, dateMatch] },
+    },
     {
       $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
         pipeline: [
-          // {
-          //   $match: {
-          //     $and: [wardMatch, searchMatch],
-          //   },
-          // },
+          {
+            $match: {
+              $and: [wardMatch, searchMatch],
+            },
+          },
           {
             $lookup: {
               from: 'wards',
               localField: 'Wardid',
               foreignField: '_id',
               pipeline: [
-                // {
-                //   $match: {
-                //     $and: [zoneMatch],
-                //   },
-                // },
+                {
+                  $match: {
+                    $and: [zoneMatch],
+                  },
+                },
               ],
               as: 'wards',
             },
@@ -2853,11 +2855,11 @@ const getCreditBillMaster = async (query) => {
         statusActionArray: 1,
       },
     },
-    // {
-    //   $match: {
-    //     $and: [userMatch],
-    //   },
-    // },
+    {
+      $match: {
+        $and: [userMatch],
+      },
+    },
     {
       $match: { pendingAmount: { $gt: 0 } },
     },
