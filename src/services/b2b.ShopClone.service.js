@@ -4887,7 +4887,8 @@ const get_updated_pincode = async () => {
         _id:"aa",
         Pincode:"$_id.Pincode"
       }
-    }
+    },
+    {$sort:{Pincode:1}}
 
   ]);
 
