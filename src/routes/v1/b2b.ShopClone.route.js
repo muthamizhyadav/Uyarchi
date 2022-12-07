@@ -110,4 +110,7 @@ router.route('/get/datapproved/shops/assign').get(b2bShopCloneController.get_dat
 router.route('/get/approved/getall/reapproved/data').get(b2bShopCloneController.get_data_approved_details);
 router.route('/get/pincode/all/group').get(b2bShopCloneController.get_updated_pincode);
 router.route('/getshops/bypincode/all').get(b2bShopCloneController.get_shop_in_pincode);
+router.route('/update/pincode').put(b2bShopCloneController.update_pincode_map);
+
+
 module.exports = router;
