@@ -81,7 +81,8 @@ const scheduleshopdate = catchAsync(async (req, res) => {
 });
 
 const UpdateUnDeliveredStatus = catchAsync(async (req, res) => {
-  const deliveryStatus = await wardAdminGroupService.updateOrderStatus_forundelivey(req.params.id, req.body);
+  let userId = req.userId;
+  const deliveryStatus = await wardAdminGroupService.updateOrderStatus_forundelivey(req.params.id, req.body, userId);
   res.send(deliveryStatus);
 });
 
@@ -382,25 +383,24 @@ const returnedStock = catchAsync(async (req, res) => {
 });
 
 const updateFine_Credit_status = catchAsync(async (req, res) => {
-  const data = await wardAdminGroupService.updateFine_Credit_status(req.params.id, req.body)
-  res.send(data)
-})
-
+  const data = await wardAdminGroupService.updateFine_Credit_status(req.params.id, req.body);
+  res.send(data);
+});
 
 const misMatchProducts_by_group = catchAsync(async (req, res) => {
-  const data = await wardAdminGroupService.misMatchProducts_by_group(req.params.id)
-  res.send(data)
-})
+  const data = await wardAdminGroupService.misMatchProducts_by_group(req.params.id);
+  res.send(data);
+});
 
 const updateFine_Stock_status = catchAsync(async (req, res) => {
-  const data = await wardAdminGroupService.updateFine_Stock_status(req.params.id, req.body)
-  res.send(data)
-})
+  const data = await wardAdminGroupService.updateFine_Stock_status(req.params.id, req.body);
+  res.send(data);
+});
 
 const product_fine = catchAsync(async (req, res) => {
-  const data = await wardAdminGroupService.product_fine(req.body)
-  res.send(data)
-})
+  const data = await wardAdminGroupService.product_fine(req.body);
+  res.send(data);
+});
 
 module.exports = {
   createGroupOrder,
