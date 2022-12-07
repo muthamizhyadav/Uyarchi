@@ -2560,41 +2560,41 @@ const getCreditBillMaster = async (query) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-    {
-      $project: {
-        customerBillId: 1,
-        OrderId: 1,
-        created: 1,
-        _id: 1,
-        SName: '$b2bshopclones.SName',
-        delivered_date: 1,
-        TotalAmount: { $round: '$productData.price' },
-        lastPaidAmount: '$orderpayments.paidAmt',
-        lastPaidDate: '$orderpayments.created',
-        paidAMount: {
-          $sum: ['$orderpaymentsall.amount', '$reorderamount'],
-        },
-        pendingAmount: {
-          $subtract: [{ $round: '$productData.price' }, { $sum: ['$orderpaymentsall.amount', '$reorderamount'] }],
-        },
-        Schedulereason: 1,
-        creditBillAssignedStatus: 1,
-        assignedUserName: '$creditbills.assignedUserName',
-        AssignedUserId: '$creditbills.AssignedUserId',
-        active: 1,
-        Scheduledate: 1,
-        creationDate: 1,
-        statusActionArray: 1,
-      },
-    },
-    {
-      $match: {
-        $and: [userMatch],
-      },
-    },
-    {
-      $match: { pendingAmount: { $gt: 0 } },
-    },
+    // {
+    //   $project: {
+    //     customerBillId: 1,
+    //     OrderId: 1,
+    //     created: 1,
+    //     _id: 1,
+    //     SName: '$b2bshopclones.SName',
+    //     delivered_date: 1,
+    //     TotalAmount: { $round: '$productData.price' },
+    //     lastPaidAmount: '$orderpayments.paidAmt',
+    //     lastPaidDate: '$orderpayments.created',
+    //     paidAMount: {
+    //       $sum: ['$orderpaymentsall.amount', '$reorderamount'],
+    //     },
+    //     pendingAmount: {
+    //       $subtract: [{ $round: '$productData.price' }, { $sum: ['$orderpaymentsall.amount', '$reorderamount'] }],
+    //     },
+    //     Schedulereason: 1,
+    //     creditBillAssignedStatus: 1,
+    //     assignedUserName: '$creditbills.assignedUserName',
+    //     AssignedUserId: '$creditbills.AssignedUserId',
+    //     active: 1,
+    //     Scheduledate: 1,
+    //     creationDate: 1,
+    //     statusActionArray: 1,
+    //   },
+    // },
+    // {
+    //   $match: {
+    //     $and: [userMatch],
+    //   },
+    // },
+    // {
+    //   $match: { pendingAmount: { $gt: 0 } },
+    // },
     { $skip: 10 * page },
     { $limit: 10 },
   ]);
@@ -4260,6 +4260,82 @@ const getbilldetails = async (query) => {
       $unwind: {
         path: '$creditbillgroups',
         preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'roles',
+              localField: 'userRole',
+              foreignField: '_id',
+              as: 'roles',
+            },
+          },
+          {
+            $unwind: {
+              path: '$roles',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              rolename: '$roles.roleName',
+              name: 1,
+              _id: 1,
+            },
+          },
+        ],
+        as: 'b2busersid',
+      },
+    },
+    {
+      $unwind: {
+        path: '$b2busersid',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        as: 'shoporders',
+      },
+    },
+    {
+      $unwind: '$shoporders',
+    },
+    {
+      $project: {
+        _id: 1,
+        paidAmt: 1,
+        date: 1,
+        created: 1,
+        payment: 1,
+        paymentMethod: 1,
+        paymentstutes: 1,
+        type: 1,
+        groupId: '$creditbillgroups.groupId',
+        receiveStatus: '$creditbillgroups.receiveStatus',
+        assignedDate: '$creditbillgroups.assignedDate',
+        assignedTime: '$creditbillgroups.assignedTime',
+        Schedulereason: '$creditbillgroups.Schedulereason',
+        reasonScheduleOrDate: '$creditbillgroups.reasonScheduleOrDate',
+        assignedUserName: '$b2busersid.name',
+        assignedUserid: '$b2busersid._id',
+        rolename: '$b2busersid.rolename',
+        orderId: 1,
+        creditApprovalStatus: 1,
+      },
+    },
+    {
+      $match: {
+        paidAmt: { $gt: 0 },
       },
     },
   ]);
