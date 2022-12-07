@@ -4262,6 +4262,82 @@ const getbilldetails = async (query) => {
         preserveNullAndEmptyArrays: true,
       },
     },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'uid',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'roles',
+              localField: 'userRole',
+              foreignField: '_id',
+              as: 'roles',
+            },
+          },
+          {
+            $unwind: {
+              path: '$roles',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              rolename: '$roles.roleName',
+              name: 1,
+              _id: 1,
+            },
+          },
+        ],
+        as: 'b2busersid',
+      },
+    },
+    {
+      $unwind: {
+        path: '$b2busersid',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        as: 'shoporders',
+      },
+    },
+    {
+      $unwind: '$shoporders',
+    },
+    {
+      $project: {
+        _id: 1,
+        paidAmt: 1,
+        date: 1,
+        created: 1,
+        payment: 1,
+        paymentMethod: 1,
+        paymentstutes: 1,
+        type: 1,
+        groupId: '$creditbillgroups.groupId',
+        receiveStatus: '$creditbillgroups.receiveStatus',
+        assignedDate: '$creditbillgroups.assignedDate',
+        assignedTime: '$creditbillgroups.assignedTime',
+        Schedulereason: '$creditbillgroups.Schedulereason',
+        reasonScheduleOrDate: '$creditbillgroups.reasonScheduleOrDate',
+        assignedUserName: '$b2busersid.name',
+        assignedUserid: '$b2busersid._id',
+        rolename: '$b2busersid.rolename',
+        orderId: 1,
+        creditApprovalStatus: 1,
+      },
+    },
+    {
+      $match: {
+        paidAmt: { $gt: 0 },
+      },
+    },
   ]);
   return { value: orderspayments, orderDetails: order[0], total: total.length };
 };
