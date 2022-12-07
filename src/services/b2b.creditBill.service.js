@@ -2869,7 +2869,10 @@ const getCreditBillMaster = async (query) => {
   let todaycount = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ statusActionArray: { $elemMatch: { status: { $in: ['Delivered'] } } } }],
+        $and: [
+          { statusActionArray: { $elemMatch: { status: { $in: ['Delivered'] } } } },
+          { creditBillAssignedStatus: { $ne: 'Pending' } },
+        ],
       },
     },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
@@ -3126,7 +3129,10 @@ const getCreditBillMaster = async (query) => {
   let yersterdayCount = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ statusActionArray: { $elemMatch: { status: { $in: ['Delivered'] } } } }],
+        $and: [
+          { statusActionArray: { $elemMatch: { status: { $in: ['Delivered'] } } } },
+          { creditBillAssignedStatus: { $ne: 'Pending' } },
+        ],
       },
     },
     { $addFields: { creationDate: { $dateToString: { format: '%Y-%m-%d', date: '$delivered_date' } } } },
