@@ -149,7 +149,7 @@ const getAllAppOnly_Supplier_Update = catchAsync(async (req, res) => {
 // supplier Api's for third versions
 
 const createSuppliers = catchAsync(async (req, res) => {
-  const data = await supplierService.createSuppliers(req.body);
+  const data = await supplierService.createSuppliers();
   if (req.files) {
     req.files.forEach(function (files, index, arr) {
       data.image.push('images/supplier/' + files.filename);
@@ -167,12 +167,18 @@ const getSupplierthird = catchAsync(async (req, res) => {
 const updateSupplierthird = catchAsync(async (req, res) => {
   let data = await supplierService.updateSupplierthird(req.params.id, req.body);
   if (req.files) {
-    data.image = []
+    data.image = [];
     req.files.forEach(function (files, index, arr) {
       data.image.push('images/supplier/' + files.filename);
     });
   }
   await data.save();
+  res.send(data);
+});
+
+const getSupplierDetails = catchAsync(async (req, res) => {
+  console.log(req.params.id)
+  const data = await supplierService.getSupplierDetails(req.params.id);
   res.send(data);
 });
 
@@ -202,6 +208,7 @@ module.exports = {
   createSuppliers,
   getSupplierthird,
   updateSupplierthird,
+  getSupplierDetails,
   getAllAppOnly_Supplier,
   getAllAppOnly_Supplier_Update,
 };

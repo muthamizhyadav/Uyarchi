@@ -30,6 +30,12 @@ const supplierSchema = new mongoose.Schema({
   RegisteredAddress: {
     type: String,
   },
+  OfficeStaffnumber: {
+    type: Number,
+  },
+  ShopNo: {
+    type: String,
+  },
   countries: {
     type: String,
   },

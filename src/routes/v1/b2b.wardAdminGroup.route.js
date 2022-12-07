@@ -27,7 +27,7 @@ router.route('/update/delivered/:id').put(authorization, wardAdminGroupControlle
 router.route('/credit/update/delivered/:id').put(authorization, wardAdminGroupController.creditupdateDeliveryCompleted);
 router.route('/scheduleshop/assign/:id').put(authorization, wardAdminGroupController.scheduleshopdate);
 
-router.route('/update/unDelivered/:id').put(wardAdminGroupController.UpdateUnDeliveredStatus);
+router.route('/update/unDelivered/:id').put(authorization, wardAdminGroupController.UpdateUnDeliveredStatus);
 
 router.route('/getDetails/groupIdFromOrderId/:id').get(wardAdminGroupController.getByIdGroupOrderDetails);
 

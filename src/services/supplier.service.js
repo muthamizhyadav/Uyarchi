@@ -661,11 +661,22 @@ const getSupplierthird = async (page) => {
 
 const updateSupplierthird = async (id, updatebody) => {
   let values = await Supplier.findById(id);
-  console.log(updatebody)
+  console.log(updatebody);
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier Not found');
   }
   values = await Supplier.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  return values;
+};
+
+const getSupplierDetails = async (id) => {
+  let Id = id.toString();
+  console.log(Id);
+  let values = await Supplier.findById(Id);
+  console.log(values);
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'supplier Not Found');
+  }
   return values;
 };
 
@@ -695,6 +706,7 @@ module.exports = {
   createSuppliers,
   getSupplierthird,
   updateSupplierthird,
+  getSupplierDetails,
   getAllAppOnly_Supplier,
   getAllAppOnly_Supplier_Update
 };
