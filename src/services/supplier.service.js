@@ -20,7 +20,7 @@ const createSupplier = async (supplierBody) => {
   if (supplierBody.createdByStatus == 'By Supplier') {
     await Textlocal.Otp(supplierBody.primaryContactNumber);
     await Supplier.create(supplierBody);
-    return 'OTP send successfully';
+    console.log('OTP send successfully');
   } else {
     return Supplier.create(supplierBody);
   }

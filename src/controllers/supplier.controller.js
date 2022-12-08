@@ -127,14 +127,14 @@ const forgotPassword = catchAsync(async (req, res) => {
 
 const getAllAppSupplier = catchAsync(async (req, res) => {
   let userId = req.userId;
-  console.log(userId);
+  // console.log(userId);
   const users = await supplierService.getAllAppSupplier(userId);
   res.send(users);
 })
 
 const getAllAppOnly_Supplier = catchAsync(async (req, res) => {
   let userId = req.userId;
-  console.log(userId);
+  // console.log(userId);
   const users = await supplierService.getAllAppOnly_Supplier(userId);
   res.send(users);
 })
