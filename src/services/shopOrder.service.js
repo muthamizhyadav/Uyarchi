@@ -6076,12 +6076,12 @@ const get_assignorder_remove = async (body) => {
 
 
 const sort_by_order_wde = async (body) => {
-let count=1;
+let count=0;
   if (body) {
     body.orders.forEach(async (e) => {
       console.log(e)
-      await ShopOrderClone.findByIdAndUpdate({ _id: e._id},{sort_wde:count},{new:true});
       count=count+1;
+      await ShopOrderClone.findByIdAndUpdate({ _id: e._id},{sort_wde:count},{new:true});
     })
   }
   return { mesage:"success"};
