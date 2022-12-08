@@ -1618,6 +1618,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
               localField: 'orderId',
               foreignField: '_id',
               pipeline: [
+                {$sort:{sort_wde:1}},
                 {
                   $lookup: {
                     from: 'b2bshopclones',
@@ -1791,6 +1792,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
         orderassigns: '$orderassigns',
         status: 1,
         manageDeliveryStatus: 1,
+        sort_wde:1
       },
     },
     { $skip: 10 * page },
@@ -1821,6 +1823,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
   return {
     datas: datas[0].orderassigns,
     status: datas[0].status,
+    sort_wde: datas[0].sort_wde,
     manageDeliveryStatus: datas[0].manageDeliveryStatus,
     total: total.length,
   };
