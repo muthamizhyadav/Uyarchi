@@ -6081,7 +6081,7 @@ let count=1;
     body.orders.forEach(async (e) => {
       console.log(e)
       await ShopOrderClone.findByIdAndUpdate({ _id: e._id},{sort_wde:count},{new:true});
-      count++;
+      count=count+1;
     })
   }
   return { mesage:"success"};
