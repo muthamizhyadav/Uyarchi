@@ -1792,6 +1792,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
         orderassigns: '$orderassigns',
         status: 1,
         manageDeliveryStatus: 1,
+        sort_wde:1
       },
     },
     { $skip: 10 * page },
