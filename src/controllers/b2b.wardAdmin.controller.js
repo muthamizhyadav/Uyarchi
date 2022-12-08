@@ -249,26 +249,39 @@ const trackOrdersByGroupOrder = catchAsync(async (req, res) => {
 });
 
 const mismacthGroupCount = catchAsync(async (req, res) => {
-  const data = await wardAdminService.mismacthGroupCount(req.params.page)
-  res.send(data)
-})
+  const data = await wardAdminService.mismacthGroupCount(req.params.page);
+  res.send(data);
+});
 
 const group_In_misMatch = catchAsync(async (req, res) => {
   const data = await wardAdminService.group_In_misMatch(req.params.id, req.params.page);
-  res.send(data)
-})
+  res.send(data);
+});
+
+const MisMatch_Amount_For_Groups = catchAsync(async (req, res) => {
+  const data = await wardAdminService.MisMatch_Amount_For_Groups(req.params.de, req.params.date, req.params.page);
+  res.send(data);
+});
+
+const DeliveryExecutive = catchAsync(async (req, res) => {
+  const data = await wardAdminService.DeliveryExecutive();
+  res.send(data);
+});
 
 const mismacthStock = catchAsync(async (req, res) => {
-  const data = await wardAdminService.mismacthStock(req.params.page)
-  res.send(data)
-})
+  const data = await wardAdminService.mismacthStock(req.params.page);
+  res.send(data);
+});
 
 const misMatchStocks = catchAsync(async (req, res) => {
-  const data = await wardAdminService.misMatchStocks(req.params.id)
-  res.send(data)
-})
+  const data = await wardAdminService.misMatchStocks(req.params.id);
+  res.send(data);
+});
 
-
+const getTotalmisMatchStock = catchAsync(async (req, res) => {
+  const data = await wardAdminService.getTotalmisMatchStock(req.params.de, req.params.date, req.params.page);
+  res.send(data);
+});
 
 module.exports = {
   getDetails,
@@ -314,4 +327,7 @@ module.exports = {
   group_In_misMatch,
   mismacthStock,
   misMatchStocks,
+  MisMatch_Amount_For_Groups,
+  DeliveryExecutive,
+  getTotalmisMatchStock,
 };

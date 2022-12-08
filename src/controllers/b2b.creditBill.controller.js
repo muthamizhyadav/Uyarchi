@@ -167,7 +167,7 @@ const getPaidHistory_ByOrder = catchAsync(async (req, res) => {
 });
 
 const Approved_Mismatch_amount = catchAsync(async (req, res) => {
-  const data = await creditBillService.Approved_Mismatch_amount();
+  const data = await creditBillService.Approved_Mismatch_amount(req.params.page);
   res.send(data);
 });
 

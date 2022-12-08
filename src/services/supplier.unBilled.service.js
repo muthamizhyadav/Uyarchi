@@ -151,6 +151,7 @@ const getUnBilledBySupplier = async (query) => {
         supplierId: { $ifNull: ['$_id', 'nill'] },
         supplierUnBilled: '$supplierUnBilled',
         un_Billed_amt: { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] },
+        created: { $ifNull: ['$suppplierUnbilleds.created', 0] },
         raised_Amt: { $ifNull: ['$suppplierUnbilleds.raised_Amt', 0] },
         raisedBy: '$suppplierUnbilleds.raisedBy',
         supplierName: { $ifNull: ['$primaryContactName', 0] },
@@ -197,6 +198,7 @@ const getUnBilledBySupplier = async (query) => {
         supplierId: 1,
         suppliersRaisedUnBills: 1,
         primaryContactNumber: 1,
+        created: 1,
         raisedBy: { $ifNull: ['$raisedBy', 'Unbilled'] },
         suppliersRaisedUnBill: {
           $cond: { if: { $lte: ['$suppliersRaisedUnBill', 0] }, then: 0, else: '$suppliersRaisedUnBill' },
@@ -1148,18 +1150,15 @@ const supplierUnBilledBySupplier = async (supplierId) => {
       },
     },
     {
-      $unwind: {
-        preserveNullAndEmptyArrays: true,
-        path: '$suppplierUnbilledRaised',
-      },
+      $unwind: '$suppplierUnbilledRaised',
     },
     {
       $project: {
         _id: 1,
-        TotalUnbilled: { $ifNull: ['$unBilledHistory.TotalUnbilled', 0] },
-        CurrentUnBilled: { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] },
-        RaisedUnBilled: { $ifNull: ['$suppplierUnbilledRaised.raised_Amt', 0] },
-        date: { $ifNull: ['$lastunbilled.date', 'there is no un_Billed_amt'] },
+        TotalUnbilled: '$unBilledHistory.TotalUnbilled',
+        CurrentUnBilled: '$supplierUnBilled.un_Billed_amt',
+        RaisedUnBilled: '$suppplierUnbilledRaised.raised_Amt',
+        date: '$lastunbilled.date',
       },
     },
   ]);
