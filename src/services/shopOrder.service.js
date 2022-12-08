@@ -6084,6 +6084,8 @@ let count=0;
       await ShopOrderClone.findByIdAndUpdate({ _id: e._id},{sort_wde:count},{new:true});
     })
   }
+
+  await wardAdminGroup.findByIdAndUpdate((body.id),{sort_wde:true},{new: true});
   return { mesage:"success"};
 
 }
