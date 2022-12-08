@@ -390,6 +390,11 @@ const get_assignorder_remove = catchAsync(async (req, res) => {
   const data = await shopOrderService.get_assignorder_remove(req.body);
   res.send(data);
 });
+
+const sort_by_order_wde= catchAsync(async (req, res) => {
+  const data = await b2bCloneService.sort_by_order_wde(req.body);
+  res.send(data);
+});
 module.exports = {
   vieworderbill_byshop,
   createshopOrder,
@@ -450,5 +455,6 @@ module.exports = {
   get_assignorder_timeloss,
   get_rejected_orders,
   get_assignorder_reassgin,
-  get_assignorder_remove
+  get_assignorder_remove,
+  sort_by_order_wde
 };
