@@ -1490,25 +1490,27 @@ const assignOnly_DE = async (query, status, userid) => {
         as: 'groupOrders',
       },
     },
-    // {
-    //   $lookup: {
-    //     from: 'orderassigns',
-    //     localField: '_id',
-    //     foreignField: 'wardAdminGroupID',
-    //     pipeline: [
-    //       {
-    //         $lookup: {
-    //           from: 'shoporderclones',
-    //           localField: 'orderId',
-    //           foreignField: '_id',
-    //           pipeline: [{ $match: { customerDeliveryStatus: 'Pending' } }, { $group: { _id: null } }],
-    //           as: 'shoporders',
-    //         },
-    //       },
-    //     ],
-    //     as: 'orderassign',
-    //   },
-    // },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                { $match: { customerDeliveryStatus: 'Pending' } },
+              ],
+              as: 'shoporders',
+            },
+          },
+        ],
+        as: 'orderassign',
+      },
+    },
     {
       $project: {
         shopOrderCloneId: '$wdfsaf._id',
@@ -1526,10 +1528,8 @@ const assignOnly_DE = async (query, status, userid) => {
         groupOrders: '$groupOrders',
         pickputype: 1,
         FinishingStatus: 1,
-        statusButton: {
-          $cond: { if: { $eq: ['$manageDeliveryStatus', ['Delivered', 'UnDelivered']] }, then: true, else: false },
-        },
         Pending: '$Pending.pending',
+        orderassign: '$orderassign',
       },
     },
     { $skip: 10 * page },

@@ -3721,7 +3721,7 @@ const mismatchCount = async (page) => {
         pipeline: [
           {
             $match: {
-              $and: [{ ByCashIncPettyCash: { $ne: null } }],
+              $and: [{ ByCashIncPettyCash: { $ne: null } }, {misMatchAmountStatus:{$in:['Fine', 'excuse']}}],
             },
           },
           {
