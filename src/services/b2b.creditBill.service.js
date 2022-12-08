@@ -4886,7 +4886,7 @@ const getPaidHistory_ByOrder = async (id) => {
   return values;
 };
 
-const Approved_Mismatch_amount = async () => {
+const Approved_Mismatch_amount = async (page) => {
   let values = await orderPayment.aggregate([
     {
       $match: { creditApprovalStatus: 'Approved' },
@@ -5051,11 +5051,187 @@ const Approved_Mismatch_amount = async () => {
         shopName: '$shoporders.shopName',
         customerClaimedAmt: '$fine.customerClaimedAmt',
         lastPaidamt: '$fine.lastPaidamt',
-        Difference_Amt: '$fine.Difference_Amt',
+        Difference_Amt: { $subtract: [{ $ifNull: ['$fine.customerClaimedAmt', 0] }, { $ifNull: ['$fine.lastPaidamt', 0] }] },
       },
     },
+    {
+      $match: { Difference_Amt: { $gt: 0 } },
+    },
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
-  return values;
+  let total = await orderPayment.aggregate([
+    {
+      $match: { creditApprovalStatus: 'Approved' },
+    },
+    {
+      $lookup: {
+        from: 'shoporderclones',
+        localField: 'orderId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+          },
+
+          { $unwind: '$productData' },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: '_id',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'paymentData',
+            },
+          },
+          // { $unwind: '$paymentData' },
+          {
+            $unwind: {
+              preserveNullAndEmptyArrays: true,
+              path: '$paymentData',
+            },
+          },
+          {
+            $lookup: {
+              from: 'b2bshopclones',
+              localField: 'shopId',
+              foreignField: '_id',
+              as: 'shopDtaa',
+            },
+          },
+          // { $unwind: '$shopDtaa' },
+          {
+            $unwind: {
+              preserveNullAndEmptyArrays: true,
+              path: '$shopDtaa',
+            },
+          },
+          // {
+          //   $lookup: {
+          //     from: 'userfines',
+          //     localField: '_id',
+          //     foreignField: 'orderpaymentId',
+          //     as: 'fine',
+          //   },
+          // },
+          // {
+          //   $unwind: {
+          //     preserveNullAndEmptyArrays: true,
+          //     path: '$fine'
+          //   }
+          // },
+          {
+            $project: {
+              _id: 1,
+              shopId: 1,
+              status: 1,
+              OrderId: 1,
+              BillAmount: { $round: ['$productData.price', 0] },
+              shopName: '$shopDtaa.SName',
+              // salesmanEnteredamt: '$fine.lastPaidamt',
+              // customerSaidamt: '$fine.customerClaimedAmt',
+              // disputeamt: '$fine.Difference_Amt',
+              creditApprovalStatus: 1,
+            },
+          },
+        ],
+        as: 'shoporders',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$shoporders',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'uid',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users',
+    },
+    {
+      $lookup: {
+        from: 'userfines',
+        localField: '_id',
+        foreignField: 'orderpaymentId',
+        as: 'fine',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$fine',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        paidAmt: 1,
+        date: 1,
+        OrderId: { $ifNull: ['$shoporders.OrderId', 'null'] },
+        users: '$users.name',
+        OrderId: '$shoporders.OrderId',
+        disputeamt: '$shoporders.disputeamt',
+        customerSaidamt: '$shoporders.customerSaidamt',
+        salesmanEnteredamt: '$shoporders.salesmanEnteredamt',
+        creditApprovalStatus: '$shoporders.creditApprovalStatus',
+        orderedamt: '$shoporders.BillAmount',
+        shopName: '$shoporders.shopName',
+        customerClaimedAmt: '$fine.customerClaimedAmt',
+        lastPaidamt: '$fine.lastPaidamt',
+        Difference_Amt: { $subtract: [{ $ifNull: ['$fine.customerClaimedAmt', 0] }, { $ifNull: ['$fine.lastPaidamt', 0] }] },
+      },
+    },
+    {
+      $match: { Difference_Amt: { $gt: 0 } },
+    },
+  ]);
+  return { values: values, total: total.length };
 };
 
 module.exports = {
