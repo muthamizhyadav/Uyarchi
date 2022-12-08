@@ -40,6 +40,7 @@ const creditBillGroupSchema = mongoose.Schema({
   },
   fineStatus: {
     type: String,
+    default: 'Pending',
   },
   Disputestatus: {
     type: String,
