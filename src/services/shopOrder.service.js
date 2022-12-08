@@ -6073,6 +6073,22 @@ const get_assignorder_remove = async (body) => {
   let shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: body.id }, { finalStatus: "remove" }, { new: true });
   return { message: "Success" }
 }
+
+
+const sort_by_order_wde = async (body) => {
+let count=0;
+  if (body) {
+    body.orders.forEach(async (e) => {
+      console.log(e)
+      count=count+1;
+      await ShopOrderClone.findByIdAndUpdate({ _id: e._id},{sort_wde:count},{new:true});
+    })
+  }
+
+  await wardAdminGroup.findByIdAndUpdate((body.id),{sort_wde:true},{new: true});
+  return { mesage:"success"};
+
+}
 module.exports = {
   // product
   createProductOrderClone,
@@ -6136,5 +6152,6 @@ module.exports = {
   get_assignorder_timeloss,
   get_rejected_orders,
   get_assignorder_reassgin,
-  get_assignorder_remove
+  get_assignorder_remove,
+  sort_by_order_wde
 };

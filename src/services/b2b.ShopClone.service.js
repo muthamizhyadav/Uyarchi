@@ -5097,19 +5097,7 @@ const get_shop_in_pincode = async (query) => {
 }
 
 
-const sort_by_order_wde = async (body) => {
-  console.log("hello world",body.orders)
-let count=1;
-  if (body) {
-    body.orders.forEach(async (e) => {
-      console.log(e)
-      await Shop.findByIdAndUpdate({ _id: e._id},{sort_wde:count},{new:true});
-      count++;
-    })
-  }
-  return { mesage:"success"};
 
-}
 
 module.exports = {
   createShopClone,
@@ -5172,7 +5160,6 @@ module.exports = {
   get_updated_pincode,
   get_shop_in_pincode,
   update_pincode_map,
-  sort_by_order_wde
 
   // bharathiraja
 

@@ -539,7 +539,6 @@ const update_pincode_map= catchAsync(async (req, res) => {
 });
 
 const sort_by_order_wde= catchAsync(async (req, res) => {
-  console.log("hello world")
   const data = await b2bCloneService.sort_by_order_wde(req.body);
   res.send(data);
 });

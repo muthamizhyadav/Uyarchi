@@ -1779,6 +1779,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
               },
               Slat: '$shopDatas.Slat',
               Slong: '$shopDatas.Slong',
+              sort_wde:1,
             },
           },
         ],
