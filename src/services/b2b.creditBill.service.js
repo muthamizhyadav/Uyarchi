@@ -4284,6 +4284,7 @@ const getDisputegroupeOnly = async (de, date, page) => {
         assignedDate: 1,
         disputeAmount: 1,
         Disputestatus: 1,
+        fineStatus: 1,
         // count: { $size: '$Orderdatas' },
         // receiveStatus: 1,
         billCount: '$creditBillData.billCount',
