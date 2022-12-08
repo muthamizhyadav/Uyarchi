@@ -1823,6 +1823,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
   return {
     datas: datas[0].orderassigns,
     status: datas[0].status,
+    sort_wde: datas[0].sort_wde,
     manageDeliveryStatus: datas[0].manageDeliveryStatus,
     total: total.length,
   };
