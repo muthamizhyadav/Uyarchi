@@ -3957,6 +3957,9 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
         pendingbillCount: '$creditBillDatapending.billCount',
         noncollectedbillCount: { $subtract: ['$creditBillData.billCount', { $size: '$creditID' }] },
         pendingBillsCount: { $size: '$noncollected' },
+        collectedAmount: {
+          $add: [{ $ifNull: ['$creditbills_type.price', 0] }, { $ifNull: ['$creditbills_type_cash.price', 0] }],
+        },
       },
     },
 
