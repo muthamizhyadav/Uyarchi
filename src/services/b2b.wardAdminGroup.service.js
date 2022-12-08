@@ -1619,6 +1619,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
               localField: 'orderId',
               foreignField: '_id',
               pipeline: [
+                {$sort:{sort_wde:1}},
                 {
                   $lookup: {
                     from: 'b2bshopclones',
