@@ -5867,6 +5867,17 @@ const Approved_Mismatch_amount = async (page) => {
   return { values: values, total: total.length };
 };
 
+const updateFineStatus = async (id, body) => {
+  const { status } = body;
+  console.log(status);
+  let creditbill = await creditBillGroup.findById(id);
+  if (!creditbill) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Credit Bill Group Not Found');
+  }
+  creditbill = await creditBillGroup.findByIdAndUpdate({ _id: id }, { fineStatus: status }, { new: true });
+  return creditbill;
+};
+
 module.exports = {
   getShopWithBill,
   afterCompletion_Of_Delivered,
@@ -5900,4 +5911,5 @@ module.exports = {
   Approved_Mismatch_amount,
   getgroupbilldetails,
   getDisputegroupeOnly,
+  updateFineStatus,
 };
