@@ -538,6 +538,11 @@ const update_pincode_map= catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const sort_by_order_wde= catchAsync(async (req, res) => {
+  console.log("hello world")
+  const data = await b2bCloneService.sort_by_order_wde(req.body);
+  res.send(data);
+});
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -600,5 +605,6 @@ module.exports = {
   get_data_approved_details,
   get_updated_pincode,
   get_shop_in_pincode,
-  update_pincode_map
+  update_pincode_map,
+  sort_by_order_wde
 };
