@@ -226,6 +226,9 @@ const wardAdminGroupSchema = new mongoose.Schema({
   StockReturnedDE: {
     type: String,
   },
+  sort_wde: {
+    type:Boolean,
+  }
 });
 
 const wardAdminGroup = mongoose.model('wardAdminGroup', wardAdminGroupSchema);
