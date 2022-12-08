@@ -829,13 +829,13 @@ const pettyStockSubmit = async (id, updateBody, userId) => {
     { manageDeliveryStatus: 'Delivery Completed', deliveryCompleteCreate: moment(), deliveryCompleteUserId: userId },
     { new: true }
   );
-  deliveryStatus.Orderdatas.forEach(async (e) => {
-    let id = e._id;
-    let shoporder = await ShopOrderClone.findById(id);
-    shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Delivery Completed' }, { new: true });
-    shoporder.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Delivery Completed' });
-    shoporder.save();
-  });
+  // deliveryStatus.Orderdatas.forEach(async (e) => {
+  //   let id = e._id;
+  //   let shoporder = await ShopOrderClone.findById(id);
+  //   shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Delivery Completed' }, { new: true });
+  //   shoporder.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Delivery Completed' });
+  //   shoporder.save();
+  // });
 
   // let valueStatus = await wardAdminGroupModel_ORDERS.find({ orderId: id });
   // console.log(valueStatus);
