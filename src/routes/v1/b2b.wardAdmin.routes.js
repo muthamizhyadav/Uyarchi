@@ -70,7 +70,8 @@ router.route('/manage/group/orders').get(wardAdminController.manage_group_orders
 router.route('/manage/group/orders/bygroup/:id').get(wardAdminController.manage_Orders_ByGroup);
 router.route('/manage/group/orders/bygroup/byproducts/:id').get(wardAdminController.trackOrdersByGroupOrder);
 router.route('/mis/macthGroupCount/:page').get(wardAdminController.mismacthGroupCount);
-router.route('/group/misMatch/de/:id/:page').get(wardAdminController.group_In_misMatch)
+router.route('/group/misMatch/de/:id/:page').get(wardAdminController.group_In_misMatch);
 router.route('/stock/mis/macthGroupCount/:page').get(wardAdminController.mismacthStock);
-router.route('/stcks/mis/match/group/byDe/:id').get(wardAdminController.misMatchStocks)
+router.route('/stcks/mis/match/group/byDe/:id').get(wardAdminController.misMatchStocks);
+router.route('/mismatch/amount/groups/:de/:date/:page').get(wardAdminController.MisMatch_Amount_For_Groups);
 module.exports = router;
