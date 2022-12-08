@@ -263,6 +263,11 @@ const MisMatch_Amount_For_Groups = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const DeliveryExecutive = catchAsync(async (req, res) => {
+  const data = await wardAdminService.DeliveryExecutive();
+  res.send(data);
+});
+
 const mismacthStock = catchAsync(async (req, res) => {
   const data = await wardAdminService.mismacthStock(req.params.page);
   res.send(data);
@@ -318,4 +323,5 @@ module.exports = {
   mismacthStock,
   misMatchStocks,
   MisMatch_Amount_For_Groups,
+  DeliveryExecutive,
 };

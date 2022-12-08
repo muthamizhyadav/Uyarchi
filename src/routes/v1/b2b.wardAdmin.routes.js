@@ -74,4 +74,5 @@ router.route('/group/misMatch/de/:id/:page').get(wardAdminController.group_In_mi
 router.route('/stock/mis/macthGroupCount/:page').get(wardAdminController.mismacthStock);
 router.route('/stcks/mis/match/group/byDe/:id').get(wardAdminController.misMatchStocks);
 router.route('/mismatch/amount/groups/:de/:date/:page').get(wardAdminController.MisMatch_Amount_For_Groups);
+router.route('/DeliveryExecutive').get(wardAdminController.DeliveryExecutive);
 module.exports = router;

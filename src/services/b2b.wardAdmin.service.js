@@ -4108,6 +4108,11 @@ const MisMatch_Amount_For_Groups = async (de, date, page) => {
   return { values: values, total: total.length };
 };
 
+const DeliveryExecutive = async () => {
+  let DeliveryExecutives = await Users.find({ userRole: '36151bdd-a8ce-4f80-987e-1f454cd0993f' });
+  return DeliveryExecutives;
+};
+
 const mismatchGroup = async (id) => {
   let data = await Users.aggregate([
     {
@@ -5020,4 +5025,5 @@ module.exports = {
   mismacthStock,
   misMatchStocks,
   MisMatch_Amount_For_Groups,
+  DeliveryExecutive,
 };
