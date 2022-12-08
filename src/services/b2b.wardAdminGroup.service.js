@@ -1618,7 +1618,6 @@ const getDeliveryOrderSeparate = async (id, page) => {
               localField: 'orderId',
               foreignField: '_id',
               pipeline: [
-                {$sort:{sort_wde:1}},
                 {
                   $lookup: {
                     from: 'b2bshopclones',
@@ -1738,6 +1737,8 @@ const getDeliveryOrderSeparate = async (id, page) => {
                     shopName: '$datass.SName',
                     Slat: '$datass.Slat',
                     Slong: '$datass.Slong',
+                    sort_wde:1,
+
                   },
                 },
               ],
@@ -1779,9 +1780,10 @@ const getDeliveryOrderSeparate = async (id, page) => {
               },
               Slat: '$shopDatas.Slat',
               Slong: '$shopDatas.Slong',
-              sort_wde:1,
+              sort_wde:"$shopDatas.sort_wde"
             },
           },
+          {$sort:{sort_wde:1}}
         ],
         as: 'orderassigns',
       },
