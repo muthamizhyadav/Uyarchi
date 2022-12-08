@@ -228,6 +228,9 @@ const shopSchema = mongoose.Schema({
   },
   reAssigin_date:{
     type: String,
+  },
+  sort_wde:{
+    type: Number,
   }
 });
 
