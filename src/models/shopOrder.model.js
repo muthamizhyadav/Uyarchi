@@ -341,7 +341,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   finalStatus: {
     type: String,
-  }
+  },
+  sort_wde:{
+    type: Number,
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
