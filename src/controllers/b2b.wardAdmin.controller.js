@@ -278,6 +278,11 @@ const misMatchStocks = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getTotalmisMatchStock = catchAsync(async (req, res) => {
+  const data = await wardAdminService.getTotalmisMatchStock(req.params.de, req.params.date, req.params.page);
+  res.send(data);
+});
+
 module.exports = {
   getDetails,
   getproductDetails,
@@ -324,4 +329,5 @@ module.exports = {
   misMatchStocks,
   MisMatch_Amount_For_Groups,
   DeliveryExecutive,
+  getTotalmisMatchStock,
 };
