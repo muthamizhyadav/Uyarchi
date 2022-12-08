@@ -176,6 +176,11 @@ const getDisputegroupeOnly = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const updateFineStatus = catchAsync(async (req, res) => {
+  const data = await creditBillService.updateFineStatus(req.params.id, req.body);
+  res.send(data);
+});
+
 module.exports = {
   getShopWithBill,
   getWardExecutiveName,
@@ -210,4 +215,5 @@ module.exports = {
   Approved_Mismatch_amount,
   getgroupbilldetails,
   getDisputegroupeOnly,
+  updateFineStatus,
 };

@@ -2,23 +2,22 @@ const mongoose = require('mongoose');
 const { v4 } = require('uuid');
 const moment = require('moment');
 
-
 const creditBillGroupSchema = mongoose.Schema({
   _id: {
     type: String,
     default: v4,
   },
   groupId: {
-    type: String
+    type: String,
   },
   AssignedUserId: {
-    type: String
+    type: String,
   },
   assignedDate: {
     type: String,
   },
   assignedTime: {
-    type: String
+    type: String,
   },
   Orderdatas: {
     type: Array,
@@ -34,19 +33,21 @@ const creditBillGroupSchema = mongoose.Schema({
   },
   receiveStatus: {
     type: String,
-    default: "Pending"
+    default: 'Pending',
   },
   disputeAmount: {
     type: Number,
   },
+  fineStatus: {
+    type: String,
+    default: 'Pending',
+  },
   Disputestatus: {
-    type: String
+    type: String,
   },
   finishDate: {
-    type: Date
-  }
-
-
+    type: Date,
+  },
 });
 
 const creditBillGroup = mongoose.model('creditBillGroup', creditBillGroupSchema);
