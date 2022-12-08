@@ -392,7 +392,7 @@ const get_assignorder_remove = catchAsync(async (req, res) => {
 });
 
 const sort_by_order_wde= catchAsync(async (req, res) => {
-  const data = await b2bCloneService.sort_by_order_wde(req.body);
+  const data = await shopOrderService.sort_by_order_wde(req.body);
   res.send(data);
 });
 module.exports = {
