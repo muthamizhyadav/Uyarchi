@@ -817,7 +817,9 @@ const returnStock = async (id) => {
       },
     },
   ]);
-  return values;
+  let group = await wardAdminGroup.findById(id);
+  console.log(group);
+  return { values: values, group: group };
 };
 
 const pettyStockSubmit = async (id, updateBody, userId) => {
