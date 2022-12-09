@@ -1932,9 +1932,11 @@ const getstock_close_product = async () => {
         from: 'usablestocks',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [{
-          $match: { date: { $eq: moment().format('DD-MM-YYYY') }, status: { $ne: 'Closed' } }
-        }],
+        pipeline: [
+          {
+            $match: { date: { $eq: moment().format('DD-MM-YYYY') }, status: { $ne: 'Closed' } },
+          },
+        ],
         as: 'usablestocks',
       },
     },
@@ -1953,9 +1955,7 @@ const getstock_random_product = async () => {
         from: 'usablestocks',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [
-          { $match: { date: { $eq: moment().format('DD-MM-YYYY') } ,random_stock:{$eq:true}} }
-        ],
+        pipeline: [{ $match: { date: { $eq: moment().format('DD-MM-YYYY') }, random_stock: { $eq: true } } }],
         as: 'usablestocks',
       },
     },
@@ -1987,36 +1987,50 @@ const getstock_opening_product = async () => {
     },
     {
       $addFields: {
-        usablestocks_macth: { $ifNull: ["$usablestocks", false] },
+        usablestocks_macth: { $ifNull: ['$usablestocks', false] },
       },
     },
     {
       $match: {
-        $and: [{ usablestocks_macth: { $eq: false } }]
-      }
+        $and: [{ usablestocks_macth: { $eq: false } }],
+      },
     },
     {
       $lookup: {
         from: 'usablestocks',
         localField: '_id',
         foreignField: 'productId',
-        pipeline: [{ $match: { date: { $eq: moment().subtract(1, 'days').format('DD-MM-YYYY') }, closingStock: { $ne: 0 } } }],
+        pipeline: [
+          { $match: { date: { $eq: moment().subtract(1, 'days').format('DD-MM-YYYY') }, closingStock: { $ne: 0 } } },
+        ],
         as: 'usablestocksusablestocks',
       },
     },
     {
-      $unwind: '$usablestocksusablestocks'
+      $unwind: '$usablestocksusablestocks',
     },
     {
       $project: {
         _id: 1,
-        productTitle: 1
-      }
-    }
+        productTitle: 1,
+      },
+    },
   ]);
 
   return product;
 };
+
+const getProductbycategory = async (id) => {
+  let values;
+  if (id == 'both') {
+    values = await Product.find();
+    return values;
+  } else {
+    values = await Product.find({ category: id });
+    return values;
+  }
+};
+
 module.exports = {
   createProduct,
   getTrendsData,
@@ -2088,5 +2102,6 @@ module.exports = {
   get_Set_price_product,
   getstock_close_product,
   getstock_random_product,
-  getstock_opening_product
+  getstock_opening_product,
+  getProductbycategory,
 };

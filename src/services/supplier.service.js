@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const Supplier = require('../models/supplier.model');
+const Supplierhistory = require('../models/supplier.update.history.mode');
 const { Product } = require('../models/product.model');
 const { ProductorderSchema } = require('../models/shopOrder.model');
 const CallStatus = require('../models/callStatus');
@@ -73,7 +74,6 @@ const forgotPassword = async (body) => {
   return await Textlocal.OtpForget(body.primaryContactNumber);
 };
 
-
 const getAllAppSupplier = async (id) => {
   return Supplier.aggregate([
     {
@@ -87,10 +87,10 @@ const getAllAppSupplier = async (id) => {
         from: 'callstatuses',
         localField: '_id',
         foreignField: 'supplierid',
-        pipeline:[
+        pipeline: [
           {
             $match: {
-              $and: [{ order_Type: { $ne: "Need" } }],
+              $and: [{ order_Type: { $ne: 'Need' } }],
             },
           },
           {
@@ -112,31 +112,30 @@ const getAllAppSupplier = async (id) => {
       $unwind: '$callstatuses',
     },
     {
-      $project:{
-            primaryContactName:1,
-            product:"$callstatuses.products.productTitle",
-            calstatusId:"$callstatuses.calstatusId",
-            showWhs:"$callstatuses.showWhs",
-            StockReceived:"$callstatuses.StockReceived",
-            productid:"$callstatuses.productid",
-            supplierid:"$callstatuses.supplierid",
-            confirmOrder:"$callstatuses.confirmOrder",
-            confirmcallstatus:"$callstatuses.confirmcallstatus",
-            confirmprice:"$callstatuses.confirmprice",
-            status:"$callstatuses.status",
-            exp_date:"$callstatuses.exp_date",
-            orderType:"$callstatuses.orderType",
-            order_Type:"$callstatuses.order_Type",
-            SuddenCreatedBy:"$callstatuses.SuddenCreatedBy",
-            SuddenStatus:"$callstatuses.SuddenStatus",
-            date: "$callstatuses.date",
-            time:"$callstatuses.time",
-            created: "$callstatuses.created",
-            OrderId:"$callstatuses.OrderId",
-      }
+      $project: {
+        primaryContactName: 1,
+        product: '$callstatuses.products.productTitle',
+        calstatusId: '$callstatuses.calstatusId',
+        showWhs: '$callstatuses.showWhs',
+        StockReceived: '$callstatuses.StockReceived',
+        productid: '$callstatuses.productid',
+        supplierid: '$callstatuses.supplierid',
+        confirmOrder: '$callstatuses.confirmOrder',
+        confirmcallstatus: '$callstatuses.confirmcallstatus',
+        confirmprice: '$callstatuses.confirmprice',
+        status: '$callstatuses.status',
+        exp_date: '$callstatuses.exp_date',
+        orderType: '$callstatuses.orderType',
+        order_Type: '$callstatuses.order_Type',
+        SuddenCreatedBy: '$callstatuses.SuddenCreatedBy',
+        SuddenStatus: '$callstatuses.SuddenStatus',
+        date: '$callstatuses.date',
+        time: '$callstatuses.time',
+        created: '$callstatuses.created',
+        OrderId: '$callstatuses.OrderId',
+      },
     },
-    { $sort: { date: -1, time:-1 } },
-    
+    { $sort: { date: -1, time: -1 } },
   ]);
 };
 
@@ -155,10 +154,10 @@ const getAllAppSupplierApproved = async (id) => {
         from: 'callstatuses',
         localField: '_id',
         foreignField: 'supplierid',
-        pipeline:[
+        pipeline: [
           {
             $match: {
-              $and: [{ SuddenStatus: { $eq: "Approve" } }],
+              $and: [{ SuddenStatus: { $eq: 'Approve' } }],
             },
           },
           {
@@ -180,67 +179,62 @@ const getAllAppSupplierApproved = async (id) => {
       $unwind: '$callstatuses',
     },
     {
-      $project:{
-            primaryContactName:1,
-            product:"$callstatuses.products.productTitle",
-            calstatusId:"$callstatuses.calstatusId",
-            showWhs:"$callstatuses.showWhs",
-            StockReceived:"$callstatuses.StockReceived",
-            productid:"$callstatuses.productid",
-            supplierid:"$callstatuses.supplierid",
-            confirmOrder:"$callstatuses.confirmOrder",
-            confirmcallstatus:"$callstatuses.confirmcallstatus",
-            confirmprice:"$callstatuses.confirmprice",
-            status:"$callstatuses.status",
-            exp_date:"$callstatuses.exp_date",
-            orderType:"$callstatuses.orderType",
-            order_Type:"$callstatuses.order_Type",
-            SuddenCreatedBy:"$callstatuses.SuddenCreatedBy",
-            SuddenStatus:"$callstatuses.SuddenStatus",
-            date: "$callstatuses.date",
-            time:"$callstatuses.time",
-            created: "$callstatuses.created",
-            OrderId:"$callstatuses.OrderId",
-      }
+      $project: {
+        primaryContactName: 1,
+        product: '$callstatuses.products.productTitle',
+        calstatusId: '$callstatuses.calstatusId',
+        showWhs: '$callstatuses.showWhs',
+        StockReceived: '$callstatuses.StockReceived',
+        productid: '$callstatuses.productid',
+        supplierid: '$callstatuses.supplierid',
+        confirmOrder: '$callstatuses.confirmOrder',
+        confirmcallstatus: '$callstatuses.confirmcallstatus',
+        confirmprice: '$callstatuses.confirmprice',
+        status: '$callstatuses.status',
+        exp_date: '$callstatuses.exp_date',
+        orderType: '$callstatuses.orderType',
+        order_Type: '$callstatuses.order_Type',
+        SuddenCreatedBy: '$callstatuses.SuddenCreatedBy',
+        SuddenStatus: '$callstatuses.SuddenStatus',
+        date: '$callstatuses.date',
+        time: '$callstatuses.time',
+        created: '$callstatuses.created',
+        OrderId: '$callstatuses.OrderId',
+      },
     },
-    { $sort: { date: -1, time:-1 } },
+    { $sort: { date: -1, time: -1 } },
   ]);
 };
 
-
-
 const getAllAppOnly_Supplier = async (id) => {
-  let products =[]
-  let products1 = []
-  const data = await Supplier.findById(id)
-  data.productDealingWith.forEach(async (e) =>{
-      // const product = await Product.findById(e)
-      products1.push(e)
-
-  })
-  for(let i = 0 ; i<products1.length ; i++){
-    const product = await Product.findById(products1[i])
-    products.push(product.productTitle)
+  let products = [];
+  let products1 = [];
+  const data = await Supplier.findById(id);
+  data.productDealingWith.forEach(async (e) => {
+    // const product = await Product.findById(e)
+    products1.push(e);
+  });
+  for (let i = 0; i < products1.length; i++) {
+    const product = await Product.findById(products1[i]);
+    products.push(product.productTitle);
   }
-  
-  return {data:data, products}
+
+  return { data: data, products };
   // return Supplier.aggregate([
   //   {
   //     $match: {
   //       $and: [{ _id: { $eq: id } }],
   //     },
   //   },
-    
+
   // ]);
 };
 
-
-const getAllAppOnly_Supplier_Update = async (id,updateBody) => {
-  console.log(updateBody)
+const getAllAppOnly_Supplier_Update = async (id, updateBody) => {
+  console.log(updateBody);
   const data = await Supplier.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return data;
 };
-
 
 const getAllSupplier = async () => {
   return Supplier.find({ active: true });
@@ -736,10 +730,12 @@ const getSupplierthird = async (page) => {
 const updateSupplierthird = async (id, updatebody) => {
   let values = await Supplier.findById(id);
   console.log(updatebody);
+  let values1 = { ...updatebody, ...{ supplierId: id, created: moment() } };
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier Not found');
   }
   values = await Supplier.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  await Supplierhistory.create(values1);
   return values;
 };
 

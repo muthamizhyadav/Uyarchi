@@ -101,6 +101,6 @@ router.route('/stock/Assgin/:date/:page').get(productController.AssignStockGetal
 router.route('/getsetsales/dataOnly/:page').get(productController.getDataOnlySetSales);
 router.route('/setprice/details/:page').get(productController.get_Set_price_product);
 router.route('/getproduct/stock/:type').get(productController.get_random_product);
-
+router.route('/get/product/by/category/:id').get(productController.getProductbycategory);
 
 module.exports = router;

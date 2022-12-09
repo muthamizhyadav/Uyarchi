@@ -8,6 +8,9 @@ const supplierSchema = new mongoose.Schema({
     type: String,
     default: v4,
   },
+  supplierId: {
+    type: String,
+  },
   tradeName: {
     type: String,
   },
@@ -100,20 +103,6 @@ const supplierSchema = new mongoose.Schema({
   },
 });
 
-supplierSchema.plugin(toJSON);
-supplierSchema.plugin(paginate);
-supplierSchema.methods.isPasswordMatch = async function (password) {
-  const user = this;
-  return bcrypt.compare(password, user.password);
-};
+const Supplierhistory = mongoose.model('Supplierhistory', supplierSchema);
 
-supplierSchema.pre('save', async function (next) {
-  const user = this;
-  if (user.isModified('password')) {
-    user.password = await bcrypt.hash(user.password, 8);
-  }
-  next();
-});
-const Supplier = mongoose.model('Supplier', supplierSchema);
-
-module.exports = Supplier;
+module.exports = Supplierhistory;
