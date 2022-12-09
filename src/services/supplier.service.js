@@ -89,6 +89,11 @@ const getAllAppSupplier = async (id) => {
         foreignField: 'supplierid',
         pipeline:[
           {
+            $match: {
+              $and: [{ order_Type: { $ne: "Need" } }],
+            },
+          },
+          {
             $lookup: {
               from: 'products',
               localField: 'productid',
