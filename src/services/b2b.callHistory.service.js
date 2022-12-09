@@ -1238,7 +1238,7 @@ const getShop_oncall = async (date, status, key, page, userId, userRole) => {
         pipeline: [
           {
             $match: {
-              $and: [{ status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
+              $and: [{ status: { $eq: 'Delivery Completed' } }, { statusOfBill: { $eq: 'Pending' } }],
             },
           },
           {
@@ -1634,7 +1634,7 @@ const getShop_callback = async (date, status, key, page, userId, userRole) => {
         pipeline: [
           {
             $match: {
-              $and: [{ status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
+              $and: [{ status: { $eq: 'Delivery Completed' } }, { statusOfBill: { $eq: 'Pending' } }],
             },
           },
           {
@@ -2033,7 +2033,7 @@ const getShop_reshedule = async (date, status, key, page, userId, userRole) => {
         pipeline: [
           {
             $match: {
-              $and: [{ status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
+              $and: [{ status: { $eq: 'Delivery Completed' } }, { statusOfBill: { $eq: 'Pending' } }],
             },
           },
           {
