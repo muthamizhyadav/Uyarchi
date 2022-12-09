@@ -808,6 +808,7 @@ const returnStock = async (id) => {
         DEStatus: '$totalpetty.group.manageDeliveryStatus',
         groupStatus: '$totalpetty.group.manageDeliveryStatus',
         GroupBillId: '$totalpetty.group.status',
+        returnStockstatus: '$totalpetty.group.returnStockstatus',
       },
     },
     {
@@ -816,7 +817,8 @@ const returnStock = async (id) => {
       },
     },
   ]);
-  return values;
+  let group = await wardAdminGroup.findById(id);
+  return { values: values, group: group };
 };
 
 const pettyStockSubmit = async (id, updateBody, userId) => {
@@ -829,13 +831,13 @@ const pettyStockSubmit = async (id, updateBody, userId) => {
     { manageDeliveryStatus: 'Delivery Completed', deliveryCompleteCreate: moment(), deliveryCompleteUserId: userId },
     { new: true }
   );
-  deliveryStatus.Orderdatas.forEach(async (e) => {
-    let id = e._id;
-    let shoporder = await ShopOrderClone.findById(id);
-    shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Delivery Completed' }, { new: true });
-    shoporder.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Delivery Completed' });
-    shoporder.save();
-  });
+  // deliveryStatus.Orderdatas.forEach(async (e) => {
+  //   let id = e._id;
+  //   let shoporder = await ShopOrderClone.findById(id);
+  //   shoporder = await ShopOrderClone.findByIdAndUpdate({ _id: id }, { status: 'Delivery Completed' }, { new: true });
+  //   shoporder.statusActionArray.push({ userid: userId, date: moment().toString(), status: 'Delivery Completed' });
+  //   shoporder.save();
+  // });
 
   // let valueStatus = await wardAdminGroupModel_ORDERS.find({ orderId: id });
   // console.log(valueStatus);
@@ -1501,7 +1503,9 @@ const assignOnly_DE = async (query, status, userid) => {
     //           from: 'shoporderclones',
     //           localField: 'orderId',
     //           foreignField: '_id',
-    //           pipeline: [{ $match: { customerDeliveryStatus: 'Pending' } }, { $group: { _id: null } }],
+    //           pipeline: [
+    //             { $match: { customerDeliveryStatus: 'Pending' } },
+    //           ],
     //           as: 'shoporders',
     //         },
     //       },
@@ -1526,9 +1530,6 @@ const assignOnly_DE = async (query, status, userid) => {
         groupOrders: '$groupOrders',
         pickputype: 1,
         FinishingStatus: 1,
-        statusButton: {
-          $cond: { if: { $eq: ['$manageDeliveryStatus', ['Delivered', 'UnDelivered']] }, then: true, else: false },
-        },
         Pending: '$Pending.pending',
       },
     },
@@ -1738,6 +1739,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
                     shopName: '$datass.SName',
                     Slat: '$datass.Slat',
                     Slong: '$datass.Slong',
+                    sort_wde: 1,
                   },
                 },
               ],
@@ -1779,8 +1781,10 @@ const getDeliveryOrderSeparate = async (id, page) => {
               },
               Slat: '$shopDatas.Slat',
               Slong: '$shopDatas.Slong',
+              sort_wde: '$shopDatas.sort_wde',
             },
           },
+          { $sort: { sort_wde: 1 } },
         ],
         as: 'orderassigns',
       },
@@ -1791,6 +1795,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
         orderassigns: '$orderassigns',
         status: 1,
         manageDeliveryStatus: 1,
+        sort_wde: 1,
       },
     },
     { $skip: 10 * page },
@@ -1821,6 +1826,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
   return {
     datas: datas[0].orderassigns,
     status: datas[0].status,
+    sort_wde: datas[0].sort_wde,
     manageDeliveryStatus: datas[0].manageDeliveryStatus,
     total: total.length,
   };

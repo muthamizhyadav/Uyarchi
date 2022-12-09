@@ -3486,7 +3486,7 @@ const update_pincode = async (query, body) => {
 const update_pincode_map = async (query, body) => {
   let shop = await Shop.findByIdAndUpdate(
     { _id: query.id },
-    { Pincode: body.pincode},
+    { Pincode: body.pincode },
     { new: true }
   );
   return shop;
@@ -4538,14 +4538,14 @@ const get_data_approved_date = async (query) => {
 
 const get_data_approved_details = async (query) => {
   const page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
-  let userMatch = {active:true};
-  let daterange = {active:true};
-  let statusMatch = {Re_daStatus:{$ne:null}};
-  if(query.user != null && query.user != '' && query.user != 'null'){
-    userMatch={ $or:[{re_Uid:{$eq:query.user}},{Uid:{$eq:query.user}}]}
+  let userMatch = { active: true };
+  let daterange = { active: true };
+  let statusMatch = { Re_daStatus: { $ne: null } };
+  if (query.user != null && query.user != '' && query.user != 'null') {
+    userMatch = { $or: [{ re_Uid: { $eq: query.user } }, { Uid: { $eq: query.user } }] }
   }
-  if(query.status != null && query.status != '' && query.status != 'null'){
-    statusMatch={Re_daStatus:{$eq:query.status}}
+  if (query.status != null && query.status != '' && query.status != 'null') {
+    statusMatch = { Re_daStatus: { $eq: query.status } }
   }
   if (query.date != null && query.date != '' && query.date != 'null') {
     let date = query.date.split(',');
@@ -4554,7 +4554,7 @@ const get_data_approved_details = async (query) => {
     daterange = { $and: [{ Re_DA_DATE: { $gte: startdate } }, { Re_DA_DATE: { $lte: enddata } }] };
   }
   let shop = await Shop.aggregate([
-    { $match: { $and: [userMatch,daterange,statusMatch] } },
+    { $match: { $and: [userMatch, daterange, statusMatch] } },
     {
       $lookup: {
         from: 'b2busers',
@@ -4741,7 +4741,7 @@ const get_data_approved_details = async (query) => {
   ])
 
   let total = await Shop.aggregate([
-    { $match: { $and: [userMatch,daterange,statusMatch] } },
+    { $match: { $and: [userMatch, daterange, statusMatch] } },
     {
       $lookup: {
         from: 'b2busers',
@@ -4868,30 +4868,32 @@ const get_data_approved_details = async (query) => {
     {
       $unwind: '$data_approved_re',
     },
-   
+
   ])
-  return {value:shop,total: total.length};
+  return { value: shop, total: total.length };
 }
 
 
 const get_updated_pincode = async () => {
   let shop = await Shop.aggregate([
-    { $match: { $and: [{status:{$eq:"data_approved"}},{Pincode:{$ne:null}}] }},
+    { $match: { $and: [{ status: { $eq: "data_approved" } }, { Pincode: { $ne: null } }] } },
     {
-      $group:{
-        _id:{Pincode:"$Pincode"},
+      $group: {
+        _id: { Pincode: "$Pincode" },
+        count:{$sum: 1 }
       }
     },
     {
-      $project:{
-        _id:"aa",
-        Pincode:"$_id.Pincode"
+      $project: {
+        _id: "aa",
+        Pincode: "$_id.Pincode",
+        count:1
       }
     },
-    {$sort:{Pincode:1}}
+    { $sort: { Pincode: 1 } }
 
   ]);
-
+  
   return shop;
 }
 
@@ -4899,12 +4901,12 @@ const get_updated_pincode = async () => {
 
 
 const get_shop_in_pincode = async (query) => {
-  let pincode=query.pincode;
-  if(query.pincode !=null){
-    pincode=parseInt(query.pincode);
+  let pincode = query.pincode;
+  if (query.pincode != null) {
+    pincode = parseInt(query.pincode);
   }
   let shop = await Shop.aggregate([
-    { $match: { $and: [{status:{$eq:"data_approved"}},{Pincode:{$eq:pincode}}] }},
+    { $match: { $and: [{ status: { $eq: "data_approved" } }, { Pincode: { $eq: pincode } }] } },
     {
       $lookup: {
         from: 'b2busers',
@@ -5097,6 +5099,8 @@ const get_shop_in_pincode = async (query) => {
 }
 
 
+
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -5157,7 +5161,7 @@ module.exports = {
   get_data_approved_details,
   get_updated_pincode,
   get_shop_in_pincode,
-  update_pincode_map
+  update_pincode_map,
 
   // bharathiraja
 

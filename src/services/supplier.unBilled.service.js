@@ -1150,18 +1150,15 @@ const supplierUnBilledBySupplier = async (supplierId) => {
       },
     },
     {
-      $unwind: {
-        preserveNullAndEmptyArrays: true,
-        path: '$suppplierUnbilledRaised',
-      },
+      $unwind: '$suppplierUnbilledRaised',
     },
     {
       $project: {
         _id: 1,
-        TotalUnbilled: { $ifNull: ['$unBilledHistory.TotalUnbilled', 0] },
-        CurrentUnBilled: { $ifNull: ['$supplierUnBilled.un_Billed_amt', 0] },
-        RaisedUnBilled: { $ifNull: ['$suppplierUnbilledRaised.raised_Amt', 0] },
-        date: { $ifNull: ['$lastunbilled.date', 'there is no un_Billed_amt'] },
+        TotalUnbilled: '$unBilledHistory.TotalUnbilled',
+        CurrentUnBilled: '$supplierUnBilled.un_Billed_amt',
+        RaisedUnBilled: '$suppplierUnbilledRaised.raised_Amt',
+        date: '$lastunbilled.date',
       },
     },
   ]);

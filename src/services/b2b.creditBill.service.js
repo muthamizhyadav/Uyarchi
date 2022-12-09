@@ -3986,6 +3986,640 @@ const groupCreditBill = async (AssignedUserId, date, page) => {
   return { values: values, total: total.length };
 };
 
+const getDisputegroupeOnly = async (de, date, page) => {
+  let dateM = { active: true };
+  let AssignedUser = { active: true };
+  if (date != 'null') {
+    dateM = { assignedDate: { $eq: date } };
+  }
+  if (de != 'null') {
+    AssignedUser = { AssignedUserId: { $eq: de } };
+  }
+
+  let values = await creditBillGroup.aggregate([
+    {
+      $match: {
+        $and: [dateM, AssignedUser, { Disputestatus: { $ne: null } }, {disputeAmount:{$ne:null}}],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'AssignedUserId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    { $unwind: '$b2busersData' },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              price: '$productData.price',
+              orderpayments: '$orderpayments',
+              orderpaymentsnow: '$orderpaymentsnow',
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              totalAmount: { $sum: '$price' },
+              billCount: { $sum: 1 },
+              totalpaidAmount: { $sum: '$orderpayments.price' },
+            },
+          },
+        ],
+        as: 'creditBillData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditBillData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'creditID',
+        pipeline: [
+          {
+            $match: { paymentMethod: 'UPI' },
+          },
+          {
+            $group: { _id: { paymentMethod: '$paymentMethod' }, price: { $sum: '$paidAmt' } },
+          },
+          {
+            $project: {
+              paymentMethod: '$_id.paymentMethod',
+              price: 1,
+            },
+          },
+        ],
+        as: 'creditbills_type',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditbills_type',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'creditID',
+        pipeline: [
+          {
+            $match: { paymentMethod: 'By Cash' },
+          },
+          {
+            $group: { _id: { paymentMethod: '$paymentMethod' }, price: { $sum: '$paidAmt' } },
+          },
+          {
+            $project: {
+              paymentMethod: '$_id.paymentMethod',
+              price: 1,
+            },
+          },
+        ],
+        as: 'creditbills_type_cash',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditbills_type_cash',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [{ $match: { $and: [{ status: { $eq: 'paid' } }] } }],
+        as: 'creditID',
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [{ $match: { $and: [{ status: { $eq: 'reschedule' } }, { Schedulereason: { $ne: 'InpersonRefuse' } }] } }],
+        as: 'creditbillsreschedule',
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [{ $match: { $and: [{ Schedulereason: { $eq: 'InpersonRefuse' } }] } }],
+        as: 'InpersonRefuse',
+      },
+    },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              price: { $round: '$productData.price' },
+              orderpayments: '$orderpayments.price',
+              pendingAmount: { $subtract: [{ $round: '$productData.price' }, '$orderpayments.price'] },
+            },
+          },
+          {
+            $match: {
+              pendingAmount: { $ne: 0 },
+            },
+          },
+        ],
+        as: 'noncollected',
+      },
+    },
+
+    {
+      $project: {
+        executiveName: '$b2busersData.name',
+        groupId: 1,
+        assignedTime: 1,
+        assignedDate: 1,
+        disputeAmount: 1,
+        Disputestatus: 1,
+        fineStatus: 1,
+        count: { $size: '$Orderdatas' },
+        receiveStatus: 1,
+        billCount: '$creditBillData.billCount',
+        totalpaidAmount: "$creditBillData.totalpaidAmount",
+        collectedAmount: '$orderpaymentsnow.price',
+        creditbills_type_upi: '$creditbills_type.price',
+        creditbills_type_cash: '$creditbills_type_cash.price',
+        collectedbillCount: { $size: '$creditID' },
+        rescheduleCount: { $size: '$creditbillsreschedule' },
+        InpersonRefuse: { $size: '$InpersonRefuse' },
+        pendingbillCount: '$creditBillDatapending.billCount',
+        noncollectedbillCount: { $subtract: ['$creditBillData.billCount', { $size: '$creditID' }] },
+        pendingBillsCount: { $size: '$noncollected' },
+        collectedAmount: {
+          $add: [{ $ifNull: ['$creditbills_type.price', 0] }, { $ifNull: ['$creditbills_type_cash.price', 0] }],
+        },
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await creditBillGroup.aggregate([
+    {
+      $match: {
+        $and: [dateM, AssignedUser, { Disputestatus: { $ne: null } }, {disputeAmount:{$ne:null}}],
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'AssignedUserId',
+        foreignField: '_id',
+        as: 'b2busersData',
+      },
+    },
+    { $unwind: '$b2busersData' },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              price: '$productData.price',
+              orderpayments: '$orderpayments',
+              orderpaymentsnow: '$orderpaymentsnow',
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              totalAmount: { $sum: '$price' },
+              billCount: { $sum: 1 },
+              totalpaidAmount: { $sum: '$orderpayments.price' },
+            },
+          },
+        ],
+        as: 'creditBillData',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditBillData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'creditID',
+        pipeline: [
+          {
+            $match: { paymentMethod: 'UPI' },
+          },
+          {
+            $group: { _id: { paymentMethod: '$paymentMethod' }, price: { $sum: '$paidAmt' } },
+          },
+          {
+            $project: {
+              paymentMethod: '$_id.paymentMethod',
+              price: 1,
+            },
+          },
+        ],
+        as: 'creditbills_type',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditbills_type',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderpayments',
+        localField: '_id',
+        foreignField: 'creditID',
+        pipeline: [
+          {
+            $match: { paymentMethod: 'By Cash' },
+          },
+          {
+            $group: { _id: { paymentMethod: '$paymentMethod' }, price: { $sum: '$paidAmt' } },
+          },
+          {
+            $project: {
+              paymentMethod: '$_id.paymentMethod',
+              price: 1,
+            },
+          },
+        ],
+        as: 'creditbills_type_cash',
+      },
+    },
+    {
+      $unwind: {
+        path: '$creditbills_type_cash',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [{ $match: { $and: [{ status: { $eq: 'paid' } }] } }],
+        as: 'creditID',
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [{ $match: { $and: [{ status: { $eq: 'reschedule' } }, { Schedulereason: { $ne: 'InpersonRefuse' } }] } }],
+        as: 'creditbillsreschedule',
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [{ $match: { $and: [{ Schedulereason: { $eq: 'InpersonRefuse' } }] } }],
+        as: 'InpersonRefuse',
+      },
+    },
+    {
+      $lookup: {
+        from: 'creditbills',
+        localField: '_id',
+        foreignField: 'creditbillId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'productorderclones',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $project: {
+                    Amount: { $multiply: ['$finalQuantity', '$finalPricePerKg'] },
+                    GST_Number: 1,
+                  },
+                },
+                {
+                  $project: {
+                    sum: '$sum',
+                    percentage: {
+                      $divide: [
+                        {
+                          $multiply: ['$GST_Number', '$Amount'],
+                        },
+                        100,
+                      ],
+                    },
+                    value: '$Amount',
+                  },
+                },
+                {
+                  $project: {
+                    price: { $sum: ['$value', '$percentage'] },
+                    value: '$value',
+                    GST: '$percentage',
+                  },
+                },
+                { $group: { _id: null, price: { $sum: '$price' } } },
+              ],
+              as: 'productData',
+            },
+          },
+          {
+            $unwind: {
+              path: '$productData',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $group: { _id: null, price: { $sum: '$paidAmt' } },
+                },
+              ],
+              as: 'orderpayments',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderpayments',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              price: { $round: '$productData.price' },
+              orderpayments: '$orderpayments.price',
+              pendingAmount: { $subtract: [{ $round: '$productData.price' }, '$orderpayments.price'] },
+            },
+          },
+          {
+            $match: {
+              pendingAmount: { $ne: 0 },
+            },
+          },
+        ],
+        as: 'noncollected',
+      },
+    },
+
+    {
+      $project: {
+        executiveName: '$b2busersData.name',
+        groupId: 1,
+        assignedTime: 1,
+        assignedDate: 1,
+        disputeAmount: 1,
+        Disputestatus: 1,
+        // count: { $size: '$Orderdatas' },
+        // receiveStatus: 1,
+        billCount: '$creditBillData.billCount',
+        // totalpaidAmount: "$creditBillData.totalpaidAmount",
+        collectedAmount: '$orderpaymentsnow.price',
+        // creditbills_type_upi: '$creditbills_type.price',
+        // creditbills_type_cash: '$creditbills_type_cash.price',
+        // collectedbillCount: { $size: '$creditID' },
+        // rescheduleCount: { $size: '$creditbillsreschedule' },
+        // InpersonRefuse: { $size: '$InpersonRefuse' },
+        // pendingbillCount: '$creditBillDatapending.billCount',
+        // noncollectedbillCount: { $subtract: ['$creditBillData.billCount', { $size: '$creditID' }] },
+        // pendingBillsCount: { $size: '$noncollected' },
+        // collectedAmount: {
+        //   $add: [{ $ifNull: ['$creditbills_type.price', 0] }, { $ifNull: ['$creditbills_type_cash.price', 0] }],
+        // },
+      },
+    },
+  ]);
+  return { values: values, total: total.length };
+};
+
 const getbilldetails = async (query) => {
   // console.log(query.id)
   let id = query.id;
@@ -5234,6 +5868,17 @@ const Approved_Mismatch_amount = async (page) => {
   return { values: values, total: total.length };
 };
 
+const updateFineStatus = async (id, body) => {
+  const { status } = body;
+  console.log(status);
+  let creditbill = await creditBillGroup.findById(id);
+  if (!creditbill) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Credit Bill Group Not Found');
+  }
+  creditbill = await creditBillGroup.findByIdAndUpdate({ _id: id }, { fineStatus: status }, { new: true });
+  return creditbill;
+};
+
 module.exports = {
   getShopWithBill,
   afterCompletion_Of_Delivered,
@@ -5266,4 +5911,6 @@ module.exports = {
   getPaidHistory_ByOrder,
   Approved_Mismatch_amount,
   getgroupbilldetails,
+  getDisputegroupeOnly,
+  updateFineStatus,
 };

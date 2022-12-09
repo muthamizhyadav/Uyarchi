@@ -171,6 +171,16 @@ const Approved_Mismatch_amount = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getDisputegroupeOnly = catchAsync(async (req, res) => {
+  const data = await creditBillService.getDisputegroupeOnly(req.params.de, req.params.date, req.params.page);
+  res.send(data);
+});
+
+const updateFineStatus = catchAsync(async (req, res) => {
+  const data = await creditBillService.updateFineStatus(req.params.id, req.body);
+  res.send(data);
+});
+
 module.exports = {
   getShopWithBill,
   getWardExecutiveName,
@@ -204,4 +214,6 @@ module.exports = {
   getPaidHistory_ByOrder,
   Approved_Mismatch_amount,
   getgroupbilldetails,
+  getDisputegroupeOnly,
+  updateFineStatus,
 };

@@ -75,6 +75,7 @@ router.route('/getpincode/getall/orders').get(shopOrderController.get_ward_by_or
 router.route('/reject/assignorder/timeloss').put(shopOrderController.get_assignorder_timeloss);
 router.route('/reject/assignorder/reassgin').put(authorization, shopOrderController.get_assignorder_reassgin);
 router.route('/reject/assignorder/remove').put(authorization, shopOrderController.get_assignorder_remove);
+router.route('/sort/orders/wde/ordernow').post(shopOrderController.sort_by_order_wde);
 
 
 module.exports = router;

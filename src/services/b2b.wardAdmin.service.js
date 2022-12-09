@@ -3721,7 +3721,7 @@ const mismatchCount = async (page) => {
         pipeline: [
           {
             $match: {
-              $and: [{ ByCashIncPettyCash: { $ne: null } }],
+              $and: [{ ByCashIncPettyCash: { $ne: null } }, { misMatchAmountStatus: { $in: ['Fine', 'excuse'] } }],
             },
           },
           {
@@ -3928,6 +3928,190 @@ const group_In_misMatch = async (id, page) => {
     { $match: { mismatch: { $gt: 0 } } },
   ]);
   return { values: values, total: total.length };
+};
+
+const MisMatch_Amount_For_Groups = async (de, date, page) => {
+  let deMatch = { active: true };
+  let dateMatch = { active: true };
+  if (de != 'null' && de != '') {
+    deMatch = { deliveryExecutiveId: { $eq: de } };
+  }
+  if (date != 'null') {
+    dateMatch = { assignDate: { $eq: date } };
+  }
+
+  let values = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ ByCashIncPettyCash: { $ne: null } }, deMatch, dateMatch],
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ type: { $ne: 'advanced' } }],
+                  },
+                },
+                {
+                  $group: {
+                    _id: null,
+                    total: {
+                      $sum: '$paidAmt',
+                    },
+                  },
+                },
+              ],
+              as: 'orderpaymentsData',
+            },
+          },
+          {
+            $unwind: '$orderpaymentsData',
+          },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: '$orderpaymentsData.total' },
+            },
+          },
+        ],
+        as: 'orderassignsData',
+      },
+    },
+    {
+      $unwind: '$orderassignsData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users',
+    },
+    {
+      $project: {
+        _id: 1,
+        groupId: 1,
+        assignDate: 1,
+        GroupBillId: 1,
+        GroupBillDate: 1,
+        ByCashIncPettyCash: 1,
+        Disputestatus: 1,
+        pettyCash: 1,
+        CashUid: 1,
+        cash_As_perSystem: '$orderassignsData.total',
+        deliveryExecutiveId: 1,
+        deliveryExecutive: '$users.name',
+        status: { $ifNull: ['$misMatchAmountStatus', 'Pending'] },
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+
+  let total = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ ByCashIncPettyCash: { $ne: null } }, deMatch, dateMatch],
+      },
+    },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'orderpayments',
+              localField: 'orderId',
+              foreignField: 'orderId',
+              pipeline: [
+                {
+                  $match: {
+                    $and: [{ type: { $ne: 'advanced' } }],
+                  },
+                },
+                {
+                  $group: {
+                    _id: null,
+                    total: {
+                      $sum: '$paidAmt',
+                    },
+                  },
+                },
+              ],
+              as: 'orderpaymentsData',
+            },
+          },
+          {
+            $unwind: '$orderpaymentsData',
+          },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: '$orderpaymentsData.total' },
+            },
+          },
+        ],
+        as: 'orderassignsData',
+      },
+    },
+    {
+      $unwind: '$orderassignsData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users',
+    },
+    {
+      $project: {
+        _id: 1,
+        groupId: 1,
+        assignDate: 1,
+        GroupBillId: 1,
+        GroupBillDate: 1,
+        ByCashIncPettyCash: 1,
+        Disputestatus: 1,
+        pettyCash: 1,
+        CashUid: 1,
+        cash_As_perSystem: '$orderassignsData.total',
+        deliveryExecutiveId: 1,
+        deliveryExecutive: '$users.name',
+      },
+    },
+  ]);
+  return { values: values, total: total.length };
+};
+
+const DeliveryExecutive = async () => {
+  let DeliveryExecutives = await Users.find({ userRole: '36151bdd-a8ce-4f80-987e-1f454cd0993f' });
+  return DeliveryExecutives;
 };
 
 const mismatchGroup = async (id) => {
@@ -4799,6 +4983,144 @@ const misMatchStocks = async (id) => {
   return values;
 };
 
+const getTotalmisMatchStock = async (de, date, page) => {
+  let dateMatch = { active: true };
+  let userMatch = { active: true };
+  if (de != 'null') {
+    userMatch = { deliveryExecutiveId: { $eq: de } };
+  }
+  if (date != 'null') {
+    dateMatch = { assignDate: { $eq: date } };
+  }
+  let values = await wardAdminGroup.aggregate([
+    {
+      $match: { $and: [dateMatch, userMatch] },
+    },
+    {
+      $lookup: {
+        from: 'returnstockhistories',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          {
+            $group: { _id: null, totalMisMatch: { $sum: '$mismatch' } },
+          },
+        ],
+        as: 'returnStocks',
+      },
+    },
+    {
+      $unwind: '$returnStocks',
+    },
+    {
+      $lookup: {
+        from: 'returnstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        as: 'returnStock',
+      },
+    },
+    {
+      $unwind: '$returnStock',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users',
+    },
+    {
+      $project: {
+        _id: 1,
+        GroupBillId: 1,
+        assignDate: 1,
+        assignTime: 1,
+        deliveryExecutiveId: 1,
+        totalMis_match: '$returnStocks.totalMisMatch',
+        groupId: 1,
+        returnStock: '$returnStock.image',
+        deliveryExecutive: '$users.name',
+      },
+    },
+    {
+      $match: { totalMis_match: { $gt: 0 } },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+
+  let total = await wardAdminGroup.aggregate([
+    {
+      $match: { $and: [dateMatch, userMatch] },
+    },
+    {
+      $lookup: {
+        from: 'returnstockhistories',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          {
+            $group: { _id: null, totalMisMatch: { $sum: '$mismatch' } },
+          },
+        ],
+        as: 'returnStocks',
+      },
+    },
+    {
+      $unwind: '$returnStocks',
+    },
+    {
+      $lookup: {
+        from: 'returnstocks',
+        localField: '_id',
+        foreignField: 'groupId',
+        as: 'returnStock',
+      },
+    },
+    {
+      $unwind: '$returnStock',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: '$users',
+    },
+    {
+      $project: {
+        _id: 1,
+        GroupBillId: 1,
+        assignDate: 1,
+        assignTime: 1,
+        deliveryExecutiveId: 1,
+        totalMis_match: '$returnStocks.totalMisMatch',
+        groupId: 1,
+        returnStock: '$returnStock.image',
+        deliveryExecutive: '$users.name',
+      },
+    },
+    {
+      $match: { totalMis_match: { $gt: 0 } },
+    },
+  ]);
+
+  return { values: values, total: total.length };
+};
+
 module.exports = {
   getdetails,
   getproductdetails,
@@ -4841,4 +5163,7 @@ module.exports = {
   group_In_misMatch,
   mismacthStock,
   misMatchStocks,
+  MisMatch_Amount_For_Groups,
+  DeliveryExecutive,
+  getTotalmisMatchStock,
 };
