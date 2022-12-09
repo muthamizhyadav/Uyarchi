@@ -132,6 +132,13 @@ const getAllAppSupplier = catchAsync(async (req, res) => {
   res.send(users);
 })
 
+const getAllAppSupplierApproved = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  // console.log(userId);
+  const users = await supplierService.getAllAppSupplierApproved(userId);
+  res.send(users);
+})
+
 const getAllAppOnly_Supplier = catchAsync(async (req, res) => {
   let userId = req.userId;
   // console.log(userId);
@@ -211,4 +218,5 @@ module.exports = {
   getSupplierDetails,
   getAllAppOnly_Supplier,
   getAllAppOnly_Supplier_Update,
+  getAllAppSupplierApproved,
 };

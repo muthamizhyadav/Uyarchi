@@ -4893,7 +4893,7 @@ const get_updated_pincode = async () => {
     { $sort: { Pincode: 1 } }
 
   ]);
-
+  
   return shop;
 }
 
