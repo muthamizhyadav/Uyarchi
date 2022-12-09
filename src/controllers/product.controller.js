@@ -43,7 +43,12 @@ const getStockbyBillId = catchAsync(async (req, res) => {
 });
 
 const getAllTrends = catchAsync(async (req, res) => {
-  const trends = await productService.getTrendsData(req.params.wardId, req.params.street, req.params.shoptype, req.params.page);
+  const trends = await productService.getTrendsData(
+    req.params.wardId,
+    req.params.street,
+    req.params.shoptype,
+    req.params.page
+  );
   res.send(trends);
 });
 
@@ -473,6 +478,12 @@ const get_random_product = catchAsync(async (req, res) => {
   }
   res.send(product);
 });
+
+const getProductbycategory = catchAsync(async (req, res) => {
+  const data = await productService.getProductbycategory(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   createProduct,
   getAllienceBySupplierId,
@@ -541,5 +552,6 @@ module.exports = {
   AssignStockGetall,
   getDataOnlySetSales,
   get_Set_price_product,
-  get_random_product
+  get_random_product,
+  getProductbycategory,
 };
