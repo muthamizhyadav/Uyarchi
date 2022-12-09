@@ -818,7 +818,6 @@ const returnStock = async (id) => {
     },
   ]);
   let group = await wardAdminGroup.findById(id);
-  console.log(group);
   return { values: values, group: group };
 };
 
