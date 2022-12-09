@@ -1404,11 +1404,18 @@ const assignOnly_DE = async (query, status, userid) => {
               shopdata: '$shopdata.deliveryExecutiveId',
             },
           },
+          {$match:{pending:{$eq:true}}},
+          {$group:{_id: null}}
         ],
         as: 'dataDetails',
       },
     },
-    { $addFields: { Pending: { $arrayElemAt: ['$dataDetails', 0] } } },
+    {
+      $unwind: {
+        path: '$dataDetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $lookup: {
         from: 'b2busers',
@@ -1492,36 +1499,15 @@ const assignOnly_DE = async (query, status, userid) => {
         as: 'groupOrders',
       },
     },
-    // {
-    //   $lookup: {
-    //     from: 'orderassigns',
-    //     localField: '_id',
-    //     foreignField: 'wardAdminGroupID',
-    //     pipeline: [
-    //       {
-    //         $lookup: {
-    //           from: 'shoporderclones',
-    //           localField: 'orderId',
-    //           foreignField: '_id',
-    //           pipeline: [
-    //             { $match: { customerDeliveryStatus: 'Pending' } },
-    //           ],
-    //           as: 'shoporders',
-    //         },
-    //       },
-    //     ],
-    //     as: 'orderassign',
-    //   },
-    // },
     {
       $project: {
         shopOrderCloneId: '$wdfsaf._id',
         groupId: 1,
-        totalOrders: { $size: '$dataDetails' },
+        totalOrders: { $size: '$groupOrders' },
         assignDate: 1,
         assignTime: 1,
         manageDeliveryStatus: 1,
-        Pending: '$Pending.pending',
+        Pending: { $toBool:{$ifNull: ['$dataDetails', false] }},
         deliveryExecutiveId: 1,
         deliveryExecutiveName: '$UserName.name',
         pettyCashAllocateStatus: 1,
@@ -1530,7 +1516,8 @@ const assignOnly_DE = async (query, status, userid) => {
         groupOrders: '$groupOrders',
         pickputype: 1,
         FinishingStatus: 1,
-        Pending: '$Pending.pending',
+        // Pending: '$Pending.pending',
+        dataDetails:"$dataDetails"
       },
     },
     { $skip: 10 * page },
