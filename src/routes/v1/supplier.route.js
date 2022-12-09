@@ -14,6 +14,7 @@ router.route('/forgotPassword').post(supplierController.forgotPassword)
 router.route('/getAppSupplier').get(auth, supplierController.getAllAppSupplier);
 router.route('/getAllAppOnly_Supplier').get(auth, supplierController.getAllAppOnly_Supplier);
 router.route('/getAllAppOnly_Supplier_Update').put(auth, supplierController.getAllAppOnly_Supplier_Update);
+router.route('/getAllAppSupplierApproved').get(auth, supplierController.getAllAppSupplierApproved);
 
 router
   .route('/:supplierId')
