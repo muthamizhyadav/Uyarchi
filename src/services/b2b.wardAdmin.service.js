@@ -3721,7 +3721,7 @@ const mismatchCount = async (page) => {
         pipeline: [
           {
             $match: {
-              $and: [{ ByCashIncPettyCash: { $ne: null } }, {misMatchAmountStatus:{$in:['Fine', 'excuse']}}],
+              $and: [{ ByCashIncPettyCash: { $ne: null } }, { misMatchAmountStatus: { $in: ['Fine', 'excuse'] } }],
             },
           },
           {
@@ -5048,6 +5048,9 @@ const getTotalmisMatchStock = async (de, date, page) => {
       },
     },
     {
+      $match: { totalMis_match: { $gt: 0 } },
+    },
+    {
       $skip: 10 * page,
     },
     {
@@ -5109,6 +5112,9 @@ const getTotalmisMatchStock = async (de, date, page) => {
         returnStock: '$returnStock.image',
         deliveryExecutive: '$users.name',
       },
+    },
+    {
+      $match: { totalMis_match: { $gt: 0 } },
     },
   ]);
 
