@@ -2853,7 +2853,7 @@ const vieworderbill_byshop = async (id) => {
   let value = await ShopOrderClone.aggregate([
     {
       $match: {
-        $and: [{ shopId: { $eq: id } }, { status: { $eq: 'Delivery Completed' } }, { statusOfBill: { $eq: 'Pending' } }],
+        $and: [{ shopId: { $eq: id } }, { status: { $eq: 'Delivered' } }, { statusOfBill: { $eq: 'Pending' } }],
       },
     },
     {
