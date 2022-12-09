@@ -808,6 +808,7 @@ const returnStock = async (id) => {
         DEStatus: '$totalpetty.group.manageDeliveryStatus',
         groupStatus: '$totalpetty.group.manageDeliveryStatus',
         GroupBillId: '$totalpetty.group.status',
+        returnStockstatus: '$totalpetty.group.returnStockstatus',
       },
     },
     {
@@ -816,7 +817,8 @@ const returnStock = async (id) => {
       },
     },
   ]);
-  return values;
+  let group = await wardAdminGroup.findById(id);
+  return { values: values, group: group };
 };
 
 const pettyStockSubmit = async (id, updateBody, userId) => {
@@ -1737,8 +1739,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
                     shopName: '$datass.SName',
                     Slat: '$datass.Slat',
                     Slong: '$datass.Slong',
-                    sort_wde:1,
-
+                    sort_wde: 1,
                   },
                 },
               ],
@@ -1780,10 +1781,10 @@ const getDeliveryOrderSeparate = async (id, page) => {
               },
               Slat: '$shopDatas.Slat',
               Slong: '$shopDatas.Slong',
-              sort_wde:"$shopDatas.sort_wde"
+              sort_wde: '$shopDatas.sort_wde',
             },
           },
-          {$sort:{sort_wde:1}}
+          { $sort: { sort_wde: 1 } },
         ],
         as: 'orderassigns',
       },
@@ -1794,7 +1795,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
         orderassigns: '$orderassigns',
         status: 1,
         manageDeliveryStatus: 1,
-        sort_wde:1
+        sort_wde: 1,
       },
     },
     { $skip: 10 * page },

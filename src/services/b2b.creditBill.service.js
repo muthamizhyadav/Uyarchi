@@ -3999,7 +3999,7 @@ const getDisputegroupeOnly = async (de, date, page) => {
   let values = await creditBillGroup.aggregate([
     {
       $match: {
-        $and: [dateM, AssignedUser, { Disputestatus: { $ne: null } }],
+        $and: [dateM, AssignedUser, { Disputestatus: { $ne: null } }, {disputeAmount:{$ne:null}}],
       },
     },
     {
@@ -4313,7 +4313,7 @@ const getDisputegroupeOnly = async (de, date, page) => {
   let total = await creditBillGroup.aggregate([
     {
       $match: {
-        $and: [dateM, AssignedUser, { Disputestatus: { $ne: null } }],
+        $and: [dateM, AssignedUser, { Disputestatus: { $ne: null } }, {disputeAmount:{$ne:null}}],
       },
     },
     {
