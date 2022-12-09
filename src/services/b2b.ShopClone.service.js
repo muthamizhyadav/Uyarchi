@@ -4880,12 +4880,14 @@ const get_updated_pincode = async () => {
     {
       $group: {
         _id: { Pincode: "$Pincode" },
+        count:{$sum: 1 }
       }
     },
     {
       $project: {
         _id: "aa",
-        Pincode: "$_id.Pincode"
+        Pincode: "$_id.Pincode",
+        count:1
       }
     },
     { $sort: { Pincode: 1 } }
