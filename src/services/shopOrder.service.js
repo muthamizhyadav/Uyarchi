@@ -2960,6 +2960,9 @@ const vieworderbill_byshop = async (id) => {
         payment: '$lastpaid.payment',
         paymentMethod: '$lastpaid.paymentMethod',
         paymentstutes: '$lastpaid.paymentstutes',
+        creditBillAssignedStatus:1,
+        Schedulereason:1,
+        Scheduledate:1
       },
     },
   ]);
