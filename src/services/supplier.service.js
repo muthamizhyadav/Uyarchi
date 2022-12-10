@@ -735,7 +735,7 @@ const updateSupplierthird = async (id, updatebody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier Not found');
   }
   values = await Supplier.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
-  await Supplierhistory.create(values1);
+  await Supplierhistory.create({ ...values, ...{ supplierId: id } });
   return values;
 };
 
