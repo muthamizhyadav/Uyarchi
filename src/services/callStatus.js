@@ -405,7 +405,7 @@ const getReportWithSupplierId = async (page, search, date) => {
   let dateM = { active: true };
   let searchMatch = { active: true };
   if (search !== 'null') {
-    searchMatch = {  _id: search  };
+    searchMatch = { _id: search };
   } else {
     searchMatch;
   }
@@ -443,11 +443,25 @@ const getReportWithSupplierId = async (page, search, date) => {
       $unwind: '$productData',
     },
     {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: '_id',
+        foreignField: 'callstatusId',
+        as: 'receivedStock',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays:true,
+        path:'$receivedStock',
+      },
+    },
+    {
       $project: {
         _id: 1,
         showWhs: 1,
         active: 1,
-        StockReceived: 1,
+        StockReceived: {$ifNull:['$receivedStock.status', '$StockReceived']},
         archive: 1,
         productid: 1,
         supplierid: 1,
@@ -456,7 +470,7 @@ const getReportWithSupplierId = async (page, search, date) => {
         confirmprice: 1,
         status: 1,
         exp_date: 1,
-        Expdate:1,
+        Expdate: 1,
         orderType: 1,
         order_Type: 1,
         TotalAmount: 1,
