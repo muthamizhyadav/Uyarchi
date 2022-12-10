@@ -25,6 +25,12 @@ const B2bUsersLogin = catchAsync(async (req, res) => {
   res.send({ users, tokens });
 });
 
+const PurchaseExecutivelogin = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.PurchaseExecutivelogin(req.body);
+  // const tokens = await tokenService.generateAuthTokens(users);
+  res.send(users);
+});
+
 const getsalesExecuteRolesUsers = catchAsync(async (req, res) => {
   const users = await b2bUsersService.getsalesExecuteRolesUsers();
   res.send(users);
@@ -51,7 +57,7 @@ const B2bUsersLogout = catchAsync(async (req, res) => {
   res.send();
 });
 
-const smsGateway = catchAsync(async (req, res) => { });
+const smsGateway = catchAsync(async (req, res) => {});
 
 const getAllUsers = catchAsync(async (req, res) => {
   const user = await b2bUsersService.getAllUsers(req.params.page);
@@ -144,7 +150,6 @@ const gettargetedusers = catchAsync(async (req, res) => {
   res.send(users);
 });
 
-
 const gettargetedusers_credit = catchAsync(async (req, res) => {
   const users = await b2bUsersService.gettargetedusers_credit();
   res.send(users);
@@ -161,9 +166,9 @@ const get_drivers_all = catchAsync(async (req, res) => {
 });
 
 const deliveryExecutive = catchAsync(async (req, res) => {
-  const users = await b2bUsersService.deliveryExecutive()
-  res.send(users)
-})
+  const users = await b2bUsersService.deliveryExecutive();
+  res.send(users);
+});
 
 module.exports = {
   createB2bUsers,
@@ -193,4 +198,5 @@ module.exports = {
   get_stationery_user,
   get_drivers_all,
   deliveryExecutive,
+  PurchaseExecutivelogin,
 };

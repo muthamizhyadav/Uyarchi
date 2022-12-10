@@ -390,7 +390,7 @@ const shopverification = async (id) => {
   let users = await Users.findById(id);
   show = false;
   if (users.userRole == 'fb0dd028-c608-4caa-a7a9-b700389a098d') {
-    show = true
+    show = true;
   }
   return { show: show };
 };
@@ -401,31 +401,32 @@ const getrolebyuser_user = async (id) => {
 };
 
 const gettargetedusers = async (id) => {
-  let users = await Users.find({ userRole: { $in: ['fb0dd028-c608-4caa-a7a9-b700389a098d', '33a2ff87-400c-4c15-b607-7730a79b49a9'] } });
+  let users = await Users.find({
+    userRole: { $in: ['fb0dd028-c608-4caa-a7a9-b700389a098d', '33a2ff87-400c-4c15-b607-7730a79b49a9'] },
+  });
   return users;
 };
 
-
 const gettargetedusers_credit = async (id) => {
-  let users = await Users.find({ userRole: { $in: ['36151bdd-a8ce-4f80-987e-1f454cd0993f', 'fb0dd028-c608-4caa-a7a9-b700389a098d'] } });
+  let users = await Users.find({
+    userRole: { $in: ['36151bdd-a8ce-4f80-987e-1f454cd0993f', 'fb0dd028-c608-4caa-a7a9-b700389a098d'] },
+  });
   return users;
 };
 
 const get_stationery_user = async (id) => {
   let users = await Users.aggregate([
     {
-      $match: { userRole: { $in: ['ea1d0203-56fa-44f7-a1fb-73d3d5c3eac5'] } }
+      $match: { userRole: { $in: ['ea1d0203-56fa-44f7-a1fb-73d3d5c3eac5'] } },
     },
     {
       $lookup: {
         from: 'wardadmingroups',
         localField: '_id',
         foreignField: 'deliveryExecutiveId',
-        pipeline: [
-          { $match: { manageDeliveryStatus: { $ne: "Delivery Completed" } } }
-        ],
+        pipeline: [{ $match: { manageDeliveryStatus: { $ne: 'Delivery Completed' } } }],
         as: 'wardadmingroups',
-      }
+      },
     },
     {
       $project: {
@@ -433,18 +434,18 @@ const get_stationery_user = async (id) => {
         phoneNumber: 1,
         name: 1,
         email: 1,
-        wardadmingroups: { $size: "$wardadmingroups" }
-      }
+        wardadmingroups: { $size: '$wardadmingroups' },
+      },
     },
-    { $match: { wardadmingroups: { $eq: 0 } } }
-  ])
+    { $match: { wardadmingroups: { $eq: 0 } } },
+  ]);
   return users;
 };
 
 const get_drivers_all = async (id) => {
   let users = await Users.aggregate([
     {
-      $match: { userRole: { $in: ['d7d33955-c66f-4a45-b859-a41122a84b24'] } }
+      $match: { userRole: { $in: ['d7d33955-c66f-4a45-b859-a41122a84b24'] } },
     },
     {
       $project: {
@@ -452,20 +453,34 @@ const get_drivers_all = async (id) => {
         phoneNumber: 1,
         name: 1,
         email: 1,
-      }
+      },
     },
-
-  ])
+  ]);
   return users;
 };
 
 const deliveryExecutive = async () => {
-  let values = await Users.find({ userRole: "36151bdd-a8ce-4f80-987e-1f454cd0993f" })
+  let values = await Users.find({ userRole: '36151bdd-a8ce-4f80-987e-1f454cd0993f' });
   if (!values) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'There is no Delivery executive')
+    throw new ApiError(httpStatus.NOT_FOUND, 'There is no Delivery executive');
   }
-  return values
-}
+  return values;
+};
+
+const PurchaseExecutivelogin = async (userBody) => {
+  const { phoneNumber } = userBody;
+  let userName = await Users.findOne({ phoneNumber: phoneNumber });
+  if (!userName) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Phone Number Not Registered');
+  } else {
+    if (await userName.isPasswordMatch(password)) {
+      console.log('Password Macthed');
+    } else {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "Passwoed Doesn't Match");
+    }
+  }
+  return userName;
+};
 
 module.exports = {
   createUser,
@@ -494,5 +509,6 @@ module.exports = {
   get_stationery_user,
   get_stationery_user,
   get_drivers_all,
-  deliveryExecutive
+  deliveryExecutive,
+  PurchaseExecutivelogin,
 };

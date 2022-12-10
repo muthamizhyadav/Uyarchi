@@ -714,8 +714,22 @@ const createSuppliers = async (body) => {
   return create;
 };
 
-const getSupplierthird = async (page) => {
+const getSupplierthird = async (key, page) => {
+  let keys = { active: { $eq: true } };
+  if (key != 'null') {
+    keys = {
+      $or: [
+        { primaryContactName: { $regex: key, $options: 'i' } },
+        { secondaryContactNumber: { $regex: key, $options: 'i' } },
+        { primaryContactNumber: { $regex: key, $options: 'i' } },
+        { secondaryContactName: { $regex: key, $options: 'i' } },
+      ],
+    };
+  }
   let values = await Supplier.aggregate([
+    {
+      $match: { $and: [keys] },
+    },
     {
       $skip: 10 * page,
     },
@@ -723,8 +737,12 @@ const getSupplierthird = async (page) => {
       $limit: 10,
     },
   ]);
-  let total = await Supplier.find().count();
-  return { values: values, total: total };
+  let total = await Supplier.aggregate([
+    {
+      $match: { $and: [keys] },
+    },
+  ]);
+  return { values: values, total: total.length };
 };
 
 const updateSupplierthird = async (id, updatebody) => {

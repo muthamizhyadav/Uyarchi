@@ -33,6 +33,8 @@ router.route('/getuser/filter/roles').get(authorization, b2bUsersController.gett
 router.route('/stationeryuser/getall').get(authorization, b2bUsersController.get_stationery_user);
 router.route('/getdrivers/getall').get(authorization, b2bUsersController.get_drivers_all);
 router.route('/delivery/executive').get(b2bUsersController.deliveryExecutive);
+// third purchaseExecutive flow
 
+router.route('/Purchase/Executivelogin').post(b2bUsersController.PurchaseExecutivelogin);
 
 module.exports = router;

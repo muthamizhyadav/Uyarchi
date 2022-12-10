@@ -37,7 +37,7 @@ router.route('/productData/:id').get(supplierController.getSupplierPaymentDetail
 router.route('/getSupplierWith/Advanced').get(supplierController.getSupplierWith_Advanced);
 // create supplier fot third version
 router.route('/third/supplier').post(supplierController.createSuppliers);
-router.route('/third/supplier/:page').get(supplierController.getSupplierthird);
+router.route('/third/supplier/:key/:page').get(supplierController.getSupplierthird);
 router.route('/third/update/Supplier/:id').put(supplierupload.array('image'), supplierController.updateSupplierthird);
 router.route('/supplier/get/single/:id').get(supplierController.getSupplierDetails);
 module.exports = router;

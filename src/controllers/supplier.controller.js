@@ -161,7 +161,7 @@ const createSuppliers = catchAsync(async (req, res) => {
 });
 
 const getSupplierthird = catchAsync(async (req, res) => {
-  const data = await supplierService.getSupplierthird(req.params.page);
+  const data = await supplierService.getSupplierthird(req.params.key,req.params.page);
   res.send(data);
 });
 
