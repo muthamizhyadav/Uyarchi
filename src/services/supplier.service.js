@@ -723,6 +723,7 @@ const getSupplierthird = async (key, page) => {
         { secondaryContactNumber: { $regex: key, $options: 'i' } },
         { primaryContactNumber: { $regex: key, $options: 'i' } },
         { secondaryContactName: { $regex: key, $options: 'i' } },
+        { tradeName: { $regex: key, $options: 'i' } },
       ],
     };
   }
