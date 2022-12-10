@@ -36,5 +36,7 @@ router.route('/delivery/executive').get(b2bUsersController.deliveryExecutive);
 // third purchaseExecutive flow
 
 router.route('/Purchase/Executivelogin').post(b2bUsersController.PurchaseExecutivelogin);
-
+router.route('/send/OTP').post(b2bUsersController.sendOTP);
+router.route('/otpVerfiy/PurchaseExecutive').post(b2bUsersController.otpVerfiyPurchaseExecutive);
+router.route('/PurchaseExecutive/setPassword/:id').put(b2bUsersController.PurchaseExecutive_setPassword);
 module.exports = router;

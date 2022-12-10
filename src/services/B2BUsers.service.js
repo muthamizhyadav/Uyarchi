@@ -9,6 +9,7 @@ const Textlocal = require('../config/textLocal');
 const Verfy = require('../config/OtpVerify');
 const WardAssign = require('../models/wardAssign.model');
 const { MarketClone } = require('../models/market.model');
+const OTP = require('../models/saveOtp.model');
 
 const moment = require('moment');
 
@@ -194,6 +195,29 @@ const otpVerfiy = async (body) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
   }
   return await Verfy.verfiy(body, users);
+};
+
+const otpVerfiyPurchaseExecutive = async (body) => {
+  let users = await Users.findOne({
+    phoneNumber: body.mobileNumber,
+  });
+  if (!users) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
+  }
+  await OTP.findOneAndUpdate({ mobileNumber: body.mobileNumber, OTP: body.OTP }, { used: true });
+  users = await Users.findOneAndUpdate({ _id: users._id }, { otpVerified: true }, { new: true });
+  return users;
+};
+
+const PurchaseExecutive_setPassword = async (id, body) => {
+  const { password, confirmpassword } = body;
+  if (password != confirmpassword) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'confirmpassword wrong');
+  }
+  const salt = await bcrypt.genSalt(10);
+  let password1 = await bcrypt.hash(password, salt);
+  const data = await Users.findByIdAndUpdate({ _id: id }, { password: password1 }, { new: true });
+  return data;
 };
 
 const getForMyAccount = async (userId) => {
@@ -468,7 +492,7 @@ const deliveryExecutive = async () => {
 };
 
 const PurchaseExecutivelogin = async (userBody) => {
-  const { phoneNumber } = userBody;
+  const { phoneNumber, password } = userBody;
   let userName = await Users.findOne({ phoneNumber: phoneNumber });
   if (!userName) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Phone Number Not Registered');
@@ -480,6 +504,15 @@ const PurchaseExecutivelogin = async (userBody) => {
     }
   }
   return userName;
+};
+
+const sendOTP = async (body) => {
+  const { mobileNumber } = body;
+  let users = await Users.findOne({ phoneNumber: body.mobileNumber });
+  if (!users) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Users Not Found');
+  }
+  return Textlocal.Otp(body, users);
 };
 
 module.exports = {
@@ -511,4 +544,7 @@ module.exports = {
   get_drivers_all,
   deliveryExecutive,
   PurchaseExecutivelogin,
+  sendOTP,
+  otpVerfiyPurchaseExecutive,
+  PurchaseExecutive_setPassword,
 };

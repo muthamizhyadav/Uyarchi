@@ -55,17 +55,21 @@ const B2BusersSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    salesManagerStatus:{
-      type:String,
+    otpVerified: {
+      type: Boolean,
+      default: false,
     },
-    salesManStatus:{
-      type:String,
+    salesManagerStatus: {
+      type: String,
     },
-    telecallerStatus:{
-      type:String,
+    salesManStatus: {
+      type: String,
     },
-    salesmanOrderStatus:{
-      type:String,
+    telecallerStatus: {
+      type: String,
+    },
+    salesmanOrderStatus: {
+      type: String,
     },
     active: {
       type: Boolean,

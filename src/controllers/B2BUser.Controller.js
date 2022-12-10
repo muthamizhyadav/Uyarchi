@@ -27,8 +27,8 @@ const B2bUsersLogin = catchAsync(async (req, res) => {
 
 const PurchaseExecutivelogin = catchAsync(async (req, res) => {
   const users = await b2bUsersService.PurchaseExecutivelogin(req.body);
-  // const tokens = await tokenService.generateAuthTokens(users);
-  res.send(users);
+  const tokens = await tokenService.generateAuthTokens(users);
+  res.send({users, tokens});
 });
 
 const getsalesExecuteRolesUsers = catchAsync(async (req, res) => {
@@ -170,6 +170,21 @@ const deliveryExecutive = catchAsync(async (req, res) => {
   res.send(users);
 });
 
+const sendOTP = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.sendOTP(req.body);
+  res.send(users);
+});
+
+const otpVerfiyPurchaseExecutive = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.otpVerfiyPurchaseExecutive(req.body);
+  res.send(users);
+});
+
+const PurchaseExecutive_setPassword = catchAsync(async (req, res) => {
+  const users = await b2bUsersService.PurchaseExecutive_setPassword(req.params.id, req.body);
+  res.send(users);
+});
+
 module.exports = {
   createB2bUsers,
   getsalesExecuteRolesUsers,
@@ -199,4 +214,7 @@ module.exports = {
   get_drivers_all,
   deliveryExecutive,
   PurchaseExecutivelogin,
+  sendOTP,
+  otpVerfiyPurchaseExecutive,
+  PurchaseExecutive_setPassword,
 };
