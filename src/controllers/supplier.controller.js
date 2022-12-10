@@ -157,12 +157,6 @@ const getAllAppOnly_Supplier_Update = catchAsync(async (req, res) => {
 
 const createSuppliers = catchAsync(async (req, res) => {
   const data = await supplierService.createSuppliers(req.body);
-  if (req.files) {
-    req.files.forEach(function (files, index, arr) {
-      data.image.push('images/supplier/' + files.filename);
-    });
-  }
-  await data.save();
   res.send(data);
 });
 
