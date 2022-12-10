@@ -216,7 +216,7 @@ const PurchaseExecutive_setPassword = async (id, body) => {
   }
   const salt = await bcrypt.genSalt(10);
   let password1 = await bcrypt.hash(password, salt);
-  const data = await Users.findByIdAndUpdate({ _id: id }, { password: password1 }, { new: true });
+  const data = await Users.findOneAndUpdate({ _id: id, otpVerified: true }, { password: password1 }, { new: true });
   return data;
 };
 
