@@ -21,7 +21,7 @@ const Otp = async (bodydata, user) => {
   var options = 'https://api.textlocal.in/' + data;
   await saveOtp.saveOtp(contact, OTPCODE, user);
   https.request(options, callback).end();
-  return 'OTP Send Successfully';
+  return { Message: 'OTP Send Successfully' };
 };
 
 const sendPwd = async (mobileNumber, name, OTPCODE) => {
@@ -41,7 +41,7 @@ const sendPwd = async (mobileNumber, name, OTPCODE) => {
   var options = 'https://api.textlocal.in/' + data;
   // await saveOtp.saveOtp(contact, OTPCODE, user);
   https.request(options, callback).end();
-  return 'Password Send Successfully';
+  return { Message: 'Password Send Successfully' };
 };
 
 callback = function (response) {
