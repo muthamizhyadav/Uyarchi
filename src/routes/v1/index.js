@@ -106,10 +106,16 @@ const checkot = require('./checkout.route');
 const OrderReviewRoute = require('./orderReview.route');
 const supplierUnBilledRoute = require('./supplier.unbilled.route');
 const supplierRaisedRoute = require('./supplier.raised.unbilled.route');
+const CustomerWallet = require('./customer.wallet.route');
+
 const defaultRoutes = [
   {
     path: '/checkout',
     route: checkot,
+  },
+  {
+    path: '/customerWallet',
+    route: CustomerWallet,
   },
   {
     path: '/supplierRaised',
