@@ -41,5 +41,5 @@ router.route('/third/supplier/:key/:page').get(supplierController.getSupplierthi
 router.route('/third/update/Supplier/:id').put(supplierupload.array('image'), supplierController.updateSupplierthird);
 router.route('/supplier/get/single/:id').get(supplierController.getSupplierDetails);
 router.route('/store/:id').put(authorization, supplierController.Store_lat_long);
-router.route('/getSupplier/WithverifiedUser/:page').get(supplierController.getSupplierWithverifiedUser);
+router.route('/getSupplier/WithverifiedUser/:key/:page').get(supplierController.getSupplierWithverifiedUser);
 module.exports = router;

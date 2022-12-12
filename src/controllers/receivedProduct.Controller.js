@@ -126,7 +126,9 @@ const previousOrderdata = catchAsync(async (req, res) => {
 });
 
 const getbilled_Details = catchAsync(async (req, res) => {
-  const data = await ReceivedProductService.getbilled_Details(req.query.page);
+  let userId = req.userId;
+  console.log(userId);
+  const data = await ReceivedProductService.getbilled_Details(req.query.page, userId);
   res.send(data);
 });
 

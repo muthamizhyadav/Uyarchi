@@ -189,7 +189,7 @@ const Store_lat_long = catchAsync(async (req, res) => {
 });
 
 const getSupplierWithverifiedUser = catchAsync(async (req, res) => {
-  const data = await supplierService.getSupplierWithverifiedUser(req.params.page);
+  const data = await supplierService.getSupplierWithverifiedUser(req.params.key, req.params.page);
   res.send(data);
 });
 
