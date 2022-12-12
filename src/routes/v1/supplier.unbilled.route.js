@@ -18,4 +18,5 @@ router.route('/get/UnBilled/Details').get(supplierController.getUnBilledDetails)
 router.route('/supplier/unBilled/supplier').get(supplierAuth, supplierController.supplierUnBilledBySupplier);
 router.route('/get/UnBilled/history/BySupplier/:id').get(supplierController.getUnBilledhistoryBySupplier);
 router.route('/getUnBilled/Raisedhistory/BySupplier/:id').get(supplierController.getUnBilledRaisedhistoryBySupplier);
+router.route('/getUnBilled/Raisedhistory').get(supplierController.getUnBilledRaisedhistory);
 module.exports = router;
