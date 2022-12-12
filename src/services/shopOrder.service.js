@@ -5188,6 +5188,8 @@ const get_approved_orders = async (query) => {
         OrderId: 1,
         product: '$productOrderdata',
         SName: '$b2bshopclones.SName',
+        Slat: '$b2bshopclones.Slat',
+        Slong: '$b2bshopclones.Slong',
         mobile: '$b2bshopclones.mobile',
         address: '$b2bshopclones.address',
         Pincode: '$b2bshopclones.Pincode',
