@@ -1213,6 +1213,17 @@ const getUnBilledRaisedhistory = async () => {
   return values;
 };
 
+const getpaidraisedbyindivitual = async (id) => {
+  let values = await RaisedUnBilledHistory.aggregate([
+    {
+      $match: {
+        _id: id,
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createSupplierUnBilled,
   getUnBilledBySupplier,
@@ -1230,4 +1241,5 @@ module.exports = {
   getUnBilledhistoryBySupplier,
   getUnBilledRaisedhistoryBySupplier,
   getUnBilledRaisedhistory,
+  getpaidraisedbyindivitual,
 };

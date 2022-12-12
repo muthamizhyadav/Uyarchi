@@ -11,7 +11,7 @@ const createWallet = async (body, userId) => {
     let wallets = await customerWallet.create(values);
     let wallethistory = { ...values, ...{ walletId: wallets._id } };
     await customerWalletHistory.create(wallethistory);
-    return true;
+    return wallets;
   }
   let oldAmount = parseInt(wallet.Amount);
   let newAmount = parseInt(body.Amount);
