@@ -5179,6 +5179,24 @@ const get_approved_orders = async (query) => {
     },
     { $unwind: '$productData' },
     {
+      $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {
+            $project: {
+              quantity: { $multiply: ['$packKg', '$finalQuantity'] },
+            },
+          },
+          { $group: { _id: null, quantity: { $sum: '$quantity' } } },
+        ],
+        as: 'productData_capcity',
+      },
+    },
+    { $unwind: '$productData_capcity' },
+
+    {
       $project: {
         _id: 1,
         orderType: 1,
@@ -5221,6 +5239,7 @@ const get_approved_orders = async (query) => {
             },
           ],
         },
+        productData_capcity:"$productData_capcity.quantity"
       },
     },
     skip,
