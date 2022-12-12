@@ -22,11 +22,19 @@ const createWallet = async (body, userId) => {
   return wallets;
 };
 
-// const getCustomerWallet = async (userId) => {
-//   let wallet = await customerWallet.findOne({ customerId: userId });
-//   let values = await customerWalletHistory.aggregate([]);
-// };
+const getCustomerWallet = async (userId) => {
+  let wallet = await customerWallet.findOne({ customerId: userId });
+  let values = await customerWalletHistory.aggregate([
+    {
+      $match: {
+        customerId: userId,
+      },
+    },
+  ]);
+  return { wallet: wallet, values: values };
+};
 
 module.exports = {
   createWallet,
+  getCustomerWallet,
 };
