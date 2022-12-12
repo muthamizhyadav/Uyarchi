@@ -1183,6 +1183,36 @@ const getUnBilledRaisedhistoryBySupplier = async (id) => {
   return values;
 };
 
+const getUnBilledRaisedhistory = async () => {
+  let values = await RaisedUnBilledHistory.aggregate([
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'suppliers',
+      },
+    },
+    {
+      $unwind: '$suppliers',
+    },
+    {
+      $project: {
+        _id: 1,
+        active: 1,
+        supplierId: 1,
+        raised_Amt: 1,
+        raisedBy: 1,
+        created: 1,
+        date: 1,
+        raisedId: 1,
+        supplierName: '$suppliers.primaryContactName',
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createSupplierUnBilled,
   getUnBilledBySupplier,
@@ -1199,4 +1229,5 @@ module.exports = {
   supplierUnBilledBySupplier,
   getUnBilledhistoryBySupplier,
   getUnBilledRaisedhistoryBySupplier,
+  getUnBilledRaisedhistory,
 };
