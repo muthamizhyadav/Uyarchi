@@ -49,6 +49,10 @@ const VehicleSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  kgsValue:{
+    type: Number,
+    default: 0,
+  }
 });
 
 const Vehicle = mongoose.model('Vehicle', VehicleSchema);

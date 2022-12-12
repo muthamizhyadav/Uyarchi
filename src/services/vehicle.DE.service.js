@@ -7,7 +7,7 @@ const { response } = require('express');
 
 // create New Vehicle for DeliveryExecutive
 const createVehicle = async (body) => {
-  const values = { ...body, ...{ created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HH:mm') } };
+  const values = { ...body, ...{ created: moment(), date: moment().format('YYYY-MM-DD'), time: moment().format('HH:mm') ,kgsValue:body.tonne_Capacity*1000} };
   let create = await Vehicle.create(values);
   return create;
 };
