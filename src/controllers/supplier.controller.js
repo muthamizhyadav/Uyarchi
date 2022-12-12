@@ -182,7 +182,9 @@ const getSupplierDetails = catchAsync(async (req, res) => {
 });
 
 const Store_lat_long = catchAsync(async (req, res) => {
-  const data = await supplierService.Store_lat_long(req.params.id, req.body);
+  let userId = req.userId;
+  console.log(userId);
+  const data = await supplierService.Store_lat_long(req.params.id, req.body, userId);
   res.send(data);
 });
 

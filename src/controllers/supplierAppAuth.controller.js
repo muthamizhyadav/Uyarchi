@@ -17,10 +17,13 @@ const authorization = async (req, res, next) => {
   }
   try {
     const payload = jwt.verify(token, config.jwt.secret);
-    // console.log(payload);
-    const userss = await Supplier.findOne({ _id: payload._id, active: true });
+    console.log(payload);
+    const userss = await Supplier.findOne({ _id: payload._id});
+
     if (!userss) {
       return res.send(httpStatus.UNAUTHORIZED, 'User Not Available');
+    }else{
+
     }
     req.userId = payload._id;
     // req.userRole = payload.userRole;

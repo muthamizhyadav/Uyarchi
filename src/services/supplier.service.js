@@ -769,13 +769,17 @@ const getSupplierDetails = async (id) => {
   return values;
 };
 
-const Store_lat_long = async (id, body) => {
+const Store_lat_long = async (id, body, userId) => {
   const { lat, long, status } = body;
   let values = await Supplier.findById(id);
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Suppier Not_Found');
   }
-  values = await Supplier.findByIdAndUpdate({ _id: id }, { lat: lat, long: long, verifyStatus: status }, { new: true });
+  values = await Supplier.findByIdAndUpdate(
+    { _id: id },
+    { lat: lat, long: long, verifyStatus: status, verifiedUser: userId },
+    { new: true }
+  );
   return values;
 };
 
