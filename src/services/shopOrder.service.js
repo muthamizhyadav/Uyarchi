@@ -5239,7 +5239,8 @@ const get_approved_orders = async (query) => {
             },
           ],
         },
-        productData_capcity:"$productData_capcity.quantity"
+        productData_capcity:"$productData_capcity.quantity",
+        checked:'false'
       },
     },
     skip,
