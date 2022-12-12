@@ -792,12 +792,27 @@ const Store_lat_long = async (id, body, userId) => {
   return values;
 };
 
-const getSupplierWithverifiedUser = async (page) => {
+const getSupplierWithverifiedUser = async (key, page) => {
+  let keys = { active: { $eq: true } };
+  if (key != 'null') {
+    keys = {
+      $or: [
+        { primaryContactName: { $regex: key, $options: 'i' } },
+        { secondaryContactNumber: { $regex: key, $options: 'i' } },
+        { primaryContactNumber: { $regex: key, $options: 'i' } },
+        { secondaryContactName: { $regex: key, $options: 'i' } },
+        { tradeName: { $regex: key, $options: 'i' } },
+      ],
+    };
+  }
   let values = await Supplier.aggregate([
     {
       $match: {
         active: true,
       },
+    },
+    {
+      $match: { $and: [keys] },
     },
     {
       $lookup: {
@@ -844,7 +859,12 @@ const getSupplierWithverifiedUser = async (page) => {
   ]);
   let total = await Supplier.aggregate([
     {
-      $match: { active: true },
+      $match: {
+        active: true,
+      },
+    },
+    {
+      $match: { $and: [keys] },
     },
     {
       $lookup: {
