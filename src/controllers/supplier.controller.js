@@ -188,6 +188,11 @@ const Store_lat_long = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getSupplierWithverifiedUser = catchAsync(async (req, res) => {
+  const data = await supplierService.getSupplierWithverifiedUser(req.params.page);
+  res.send(data);
+});
+
 module.exports = {
   createSupplier,
   getproductfromCallStatus,
@@ -219,4 +224,5 @@ module.exports = {
   getAllAppOnly_Supplier_Update,
   getAllAppSupplierApproved,
   Store_lat_long,
+  getSupplierWithverifiedUser,
 };

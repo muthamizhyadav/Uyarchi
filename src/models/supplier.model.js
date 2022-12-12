@@ -102,6 +102,15 @@ const supplierSchema = new mongoose.Schema({
   long: {
     type: Number,
   },
+  verifiedDate: {
+    type: String,
+  },
+  verifiedTime: {
+    type: String,
+  },
+  verifiedCreated: {
+    type: Date,
+  },
   active: {
     type: Boolean,
     default: true,

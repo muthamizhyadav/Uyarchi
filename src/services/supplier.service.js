@@ -777,10 +777,104 @@ const Store_lat_long = async (id, body, userId) => {
   }
   values = await Supplier.findByIdAndUpdate(
     { _id: id },
-    { lat: lat, long: long, verifyStatus: status, verifiedUser: userId },
+    {
+      lat: lat,
+      long: long,
+      verifyStatus: status,
+      verifiedUser: userId,
+      verifiedDate: moment().format('YYYY-MM-DD'),
+      verifiedTime: moment().format('HHmmss'),
+      verifiedCreated: moment(),
+    },
     { new: true }
   );
   return values;
+};
+
+const getSupplierWithverifiedUser = async (page) => {
+  let values = await Supplier.aggregate([
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'verifiedUser',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$users',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        productDealingWith: 1,
+        image: 1,
+        tradeName: 1,
+        ShopNo: 1,
+        ShopSize: 1,
+        productSold: 1,
+        primaryContactName: 1,
+        secondaryContactName: 1,
+        secondaryContactNumber: 1,
+        GateEntryconvenience: 1,
+        lat: 1,
+        long: 1,
+        verifyStatus: 1,
+        verifiedUser: 1,
+        verifiedCreated: 1,
+        verifiedDate: 1,
+        verifiedUserName: '$users.name',
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await Supplier.aggregate([
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'verifiedUser',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$users',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        productDealingWith: 1,
+        image: 1,
+        tradeName: 1,
+        ShopNo: 1,
+        ShopSize: 1,
+        productSold: 1,
+        primaryContactName: 1,
+        secondaryContactName: 1,
+        secondaryContactNumber: 1,
+        GateEntryconvenience: 1,
+        lat: 1,
+        long: 1,
+        verifyStatus: 1,
+        verifiedUser: 1,
+        verifiedCreated: 1,
+        verifiedDate: 1,
+        verifiedUserName: '$users.name',
+      },
+    },
+  ]);
+  return { values: values, total: total.length };
 };
 
 module.exports = {
@@ -814,4 +908,5 @@ module.exports = {
   getAllAppOnly_Supplier_Update,
   getAllAppSupplierApproved,
   Store_lat_long,
+  getSupplierWithverifiedUser,
 };
