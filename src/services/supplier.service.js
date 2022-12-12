@@ -582,7 +582,7 @@ const getSupplierById = async (id) => {
 };
 
 const updateSupplierById = async (supplierId, updateBody) => {
-  let supplier = await getSupplierById(supplierId);
+  let supplier = await Supplier.findById(supplierId);
   console.log(supplier);
   if (!supplier) {
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier not found');
@@ -592,11 +592,12 @@ const updateSupplierById = async (supplierId, updateBody) => {
 };
 
 const deleteSupplierById = async (supplierId) => {
-  const supplier = await getSupplierById(supplierId);
+  let supplier = await Supplier.findById(supplierId);
   if (!supplier) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Supplier not found');
   }
-  (supplier.active = false), (supplier.archive = true), await supplier.save();
+  (supplier.active = false), (supplier.archive = true);
+  await supplier.save();
   return supplier;
 };
 
@@ -772,7 +773,7 @@ const getSupplierDetails = async (id) => {
 const Store_lat_long = async (id, body, userId) => {
   const { lat, long, status } = body;
   let values = await Supplier.findById(id);
-  if (!values) {
+  if (!values || values.active === false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Suppier Not_Found');
   }
   values = await Supplier.findByIdAndUpdate(
@@ -793,6 +794,11 @@ const Store_lat_long = async (id, body, userId) => {
 
 const getSupplierWithverifiedUser = async (page) => {
   let values = await Supplier.aggregate([
+    {
+      $match: {
+        active: true,
+      },
+    },
     {
       $lookup: {
         from: 'b2busers',
@@ -837,6 +843,9 @@ const getSupplierWithverifiedUser = async (page) => {
     },
   ]);
   let total = await Supplier.aggregate([
+    {
+      $match: { active: true },
+    },
     {
       $lookup: {
         from: 'b2busers',
