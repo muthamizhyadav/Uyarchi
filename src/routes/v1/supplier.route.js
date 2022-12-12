@@ -40,4 +40,5 @@ router.route('/third/supplier').post(supplierController.createSuppliers);
 router.route('/third/supplier/:key/:page').get(supplierController.getSupplierthird);
 router.route('/third/update/Supplier/:id').put(supplierupload.array('image'), supplierController.updateSupplierthird);
 router.route('/supplier/get/single/:id').get(supplierController.getSupplierDetails);
+router.route('/store/:id').put(supplierController.Store_lat_long);
 module.exports = router;

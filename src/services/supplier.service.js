@@ -769,6 +769,16 @@ const getSupplierDetails = async (id) => {
   return values;
 };
 
+const Store_lat_long = async (id, body) => {
+  const { lat, long } = body;
+  let values = await Supplier.findById(id);
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Suppier Not_Found');
+  }
+  values = await Supplier.findByIdAndUpdate({ _id: id }, { lat: lat, long: long }, { new: true });
+  return values;
+};
+
 module.exports = {
   createSupplier,
   updateSupplierById,
@@ -799,4 +809,5 @@ module.exports = {
   getAllAppOnly_Supplier,
   getAllAppOnly_Supplier_Update,
   getAllAppSupplierApproved,
+  Store_lat_long,
 };

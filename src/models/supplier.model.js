@@ -90,6 +90,12 @@ const supplierSchema = new mongoose.Schema({
   created: {
     type: Date,
   },
+  lat: {
+    type: Number,
+  },
+  long: {
+    type: Number,
+  },
   active: {
     type: Boolean,
     default: true,

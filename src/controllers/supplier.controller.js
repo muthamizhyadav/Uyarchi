@@ -130,22 +130,21 @@ const getAllAppSupplier = catchAsync(async (req, res) => {
   // console.log(userId);
   const users = await supplierService.getAllAppSupplier(userId);
   res.send(users);
-})
+});
 
 const getAllAppSupplierApproved = catchAsync(async (req, res) => {
   let userId = req.userId;
   // console.log(userId);
   const users = await supplierService.getAllAppSupplierApproved(userId);
   res.send(users);
-})
+});
 
 const getAllAppOnly_Supplier = catchAsync(async (req, res) => {
   let userId = req.userId;
   // console.log(userId);
   const users = await supplierService.getAllAppOnly_Supplier(userId);
   res.send(users);
-})
-
+});
 
 const getAllAppOnly_Supplier_Update = catchAsync(async (req, res) => {
   let userId = req.userId;
@@ -161,7 +160,7 @@ const createSuppliers = catchAsync(async (req, res) => {
 });
 
 const getSupplierthird = catchAsync(async (req, res) => {
-  const data = await supplierService.getSupplierthird(req.params.key,req.params.page);
+  const data = await supplierService.getSupplierthird(req.params.key, req.params.page);
   res.send(data);
 });
 
@@ -178,8 +177,12 @@ const updateSupplierthird = catchAsync(async (req, res) => {
 });
 
 const getSupplierDetails = catchAsync(async (req, res) => {
-  console.log(req.params.id)
   const data = await supplierService.getSupplierDetails(req.params.id);
+  res.send(data);
+});
+
+const Store_lat_long = catchAsync(async (req, res) => {
+  const data = await supplierService.Store_lat_long(req.params.id, req.body);
   res.send(data);
 });
 
@@ -213,4 +216,5 @@ module.exports = {
   getAllAppOnly_Supplier,
   getAllAppOnly_Supplier_Update,
   getAllAppSupplierApproved,
+  Store_lat_long,
 };
