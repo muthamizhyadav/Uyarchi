@@ -770,12 +770,12 @@ const getSupplierDetails = async (id) => {
 };
 
 const Store_lat_long = async (id, body) => {
-  const { lat, long } = body;
+  const { lat, long, status } = body;
   let values = await Supplier.findById(id);
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Suppier Not_Found');
   }
-  values = await Supplier.findByIdAndUpdate({ _id: id }, { lat: lat, long: long }, { new: true });
+  values = await Supplier.findByIdAndUpdate({ _id: id }, { lat: lat, long: long, verifyStatus: status }, { new: true });
   return values;
 };
 

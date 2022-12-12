@@ -54,6 +54,9 @@ const supplierSchema = new mongoose.Schema({
   gstNo: {
     type: String,
   },
+  verifyStatus: {
+    type: String,
+  },
   email: {
     type: String,
   },
