@@ -1706,11 +1706,13 @@ const previousOrderdata = async (id) => {
   return data;
 };
 
-const getbilled_Details = async (pages) => {
-  console.log(pages);
+const getbilled_Details = async (pages, userId) => {
+  console.log(userId);
   let page = parseInt(pages);
-  console.log(page);
   let values = await ReceivedProduct.aggregate([
+    {
+      $match: { supplierId: userId },
+    },
     {
       $lookup: {
         from: 'receivedstocks',
@@ -1757,6 +1759,9 @@ const getbilled_Details = async (pages) => {
     },
   ]);
   let total = await ReceivedProduct.aggregate([
+    {
+      $match: { supplierId: userId },
+    },
     {
       $lookup: {
         from: 'receivedstocks',
