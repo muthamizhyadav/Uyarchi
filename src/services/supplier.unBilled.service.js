@@ -9,13 +9,13 @@ const ReceivedProduct = require('../models/receivedProduct.model');
 const { RaisedUnBilled, RaisedUnBilledHistory } = require('../models/supplier.raised.unbilled.model');
 
 const createSupplierUnBilled = async (body) => {
-  const { supplierId, un_Billed_amt } = body;
+  const { supplierId, un_Billed_amt, raisedId } = body;
   const sunbilled = await SupplierUnbilled.findOne({ supplierId: supplierId });
   if (!sunbilled) {
     let values = await SupplierUnbilled.create({ ...body, ...{ date: moment().format('YYYY-MM-DD'), created: moment() } });
     await SupplierUnbilledHistory.create({
       ...body,
-      ...{ date: moment().format('YYYY-MM-DD'), created: moment(), un_BilledId: values._id },
+      ...{ date: moment().format('YYYY-MM-DD'), created: moment(), un_BilledId: values._id, raisedId: raisedId },
     });
     return values;
   } else {
@@ -29,7 +29,7 @@ const createSupplierUnBilled = async (body) => {
     );
     await SupplierUnbilledHistory.create({
       ...body,
-      ...{ date: moment().format('YYYY-MM-DD'), created: moment(), un_BilledId: value._id },
+      ...{ date: moment().format('YYYY-MM-DD'), created: moment(), un_BilledId: value._id, raisedId: raisedId },
     });
     return value;
   }
