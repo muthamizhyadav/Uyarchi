@@ -87,7 +87,7 @@ const getUnBilledRaisedhistory = catchAsync(async (req, res) => {
 });
 
 const getpaidraisedbyindivitual = catchAsync(async (req, res) => {
-  const data = await supplierUnBilledService.getpaidraisedbyindivitual(req.params.id);
+  const data = await supplierUnBilledService.getpaidraisedbyindivitual(req.params.id, req.params.supplierId);
   res.send(data);
 });
 

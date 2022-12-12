@@ -1213,7 +1213,7 @@ const getUnBilledRaisedhistory = async () => {
   return values;
 };
 
-const getpaidraisedbyindivitual = async (id) => {
+const getpaidraisedbyindivitual = async (id, supplierId) => {
   let values = await RaisedUnBilledHistory.aggregate([
     {
       $match: {
@@ -1221,7 +1221,37 @@ const getpaidraisedbyindivitual = async (id) => {
       },
     },
   ]);
-  return values;
+  let CurrentUnBilled = await RaisedUnBilled.aggregate([
+    {
+      $match: {
+        supplierId: supplierId,
+      },
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'suppliers',
+      },
+    },
+    {
+      $unwind: '$suppliers',
+    },
+    {
+      $project: {
+        _id: 1,
+        active: 1,
+        supplierId: 1,
+        current_UnBilled: { $ifNull: ['$raised_Amt', 0] },
+        raisedBy: 1,
+        created: 1,
+        date: 1,
+        supplierName: '$suppliers.primaryContactName',
+      },
+    },
+  ]);
+  return { values: values, CurrentUnBilled: CurrentUnBilled[0] };
 };
 
 module.exports = {
