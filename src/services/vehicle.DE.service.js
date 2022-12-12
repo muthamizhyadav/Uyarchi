@@ -56,6 +56,7 @@ const getAll_Vehicle_Details = async () => {
         created: 1,
         date: 1,
         time: 1,
+        kgsValue:1,
         // wardadmingroups: '$wardadmingroups',
         wardadmingroups: { $size: '$wardadmingroups' }
       },
