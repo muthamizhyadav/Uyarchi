@@ -1337,6 +1337,103 @@ const getpaidraisedbyindivitual = async (id, supplierId) => {
         path: '$supplierBillss',
       },
     },
+
+    {
+      $lookup: {
+        from: 'receivedproducts',
+        localField: 'supplierId',
+        foreignField: 'supplierId',
+        pipeline: [
+          {
+            $match: {
+              status: { $eq: 'Billed' },
+            },
+          },
+          {
+            $lookup: {
+              from: 'receivedstocks',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [
+                { $match: { status: { $eq: 'Billed' } } },
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: {
+                        $multiply: ['$billingQuantity', '$billingPrice'],
+                      },
+                    },
+                  },
+                },
+              ],
+              as: 'receivedstocks',
+            },
+          },
+          {
+            $lookup: {
+              from: 'supplierbills',
+              localField: '_id',
+              foreignField: 'groupId',
+              pipeline: [
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: '$Amount',
+                    },
+                  },
+                },
+              ],
+              as: 'supplierbills',
+            },
+          },
+          {
+            $unwind: {
+              path: '$supplierbills',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $unwind: {
+              path: '$receivedstocks',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              paidAmount: { $ifNull: ['$supplierbills.amount', 0] },
+              totalAmount: { $ifNull: ['$receivedstocks.amount', 0] },
+            },
+          },
+          {
+            $project: {
+              paidAmount: 1,
+              totalAmount: 1,
+              pendingAmount: { $subtract: ['$totalAmount', '$paidAmount'] },
+              match: { $eq: ['$totalAmount', '$paidAmount'] },
+            },
+          },
+          {
+            $match: { match: { $ne: true } },
+          },
+          {
+            $group: {
+              _id: null,
+              pendingBillcount: { $sum: 1 },
+              pendingAmount: { $sum: '$pendingAmount' },
+            },
+          },
+        ],
+        as: 'receivedproducts',
+      },
+    },
+    {
+      $unwind: {
+        path: '$receivedproducts',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
         _id: 1,
@@ -1349,7 +1446,7 @@ const getpaidraisedbyindivitual = async (id, supplierId) => {
         supplierName: '$suppliers.primaryContactName',
         receivedproducts: 1,
         // suppliersunbilled: '$suppliersunbilled',
-        billcount: { $size: '$supplierBillscount' },
+        billcount: { $size: '$receivedproducts.pendingBillcount' },
         lastPaidAmt: { $ifNull: ['$supplierBillss.Amount', 0] },
         lasPaidDate: { $ifNull: ['$supplierBillss.date', 'nill'] },
         PendingAmount: { $subtract: [{ $ifNull: ['$stocks.total', 0] }, { $ifNull: ['$supplierBills.billingTotal', 0] }] },
