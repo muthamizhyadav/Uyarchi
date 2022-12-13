@@ -11,7 +11,7 @@ const createWallet = async (body, userId) => {
     let wallets = await customerWallet.create(values);
     let wallethistory = { ...values, ...{ walletId: wallets._id } };
     await customerWalletHistory.create(wallethistory);
-    return true;
+    return wallets;
   }
   let oldAmount = parseInt(wallet.Amount);
   let newAmount = parseInt(body.Amount);
@@ -22,11 +22,19 @@ const createWallet = async (body, userId) => {
   return wallets;
 };
 
-// const getCustomerWallet = async (userId) => {
-//   let wallet = await customerWallet.findOne({ customerId: userId });
-//   let values = await customerWalletHistory.aggregate([]);
-// };
+const getCustomerWallet = async (userId) => {
+  let wallet = await customerWallet.findOne({ customerId: userId });
+  let values = await customerWalletHistory.aggregate([
+    {
+      $match: {
+        customerId: userId,
+      },
+    },
+  ]);
+  return { wallet: wallet, values: values };
+};
 
 module.exports = {
   createWallet,
+  getCustomerWallet,
 };

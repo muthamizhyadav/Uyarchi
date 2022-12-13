@@ -11,6 +11,13 @@ const createCustomerWallet = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getCustomerWallet = catchAsync(async (req, res) => {
+  let userId = req.shopId;
+  const data = await customerWalletService.getCustomerWallet(userId);
+  res.send(data);
+});
+
 module.exports = {
   createCustomerWallet,
+  getCustomerWallet,
 };

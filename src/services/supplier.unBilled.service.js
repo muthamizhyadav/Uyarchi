@@ -9,13 +9,13 @@ const ReceivedProduct = require('../models/receivedProduct.model');
 const { RaisedUnBilled, RaisedUnBilledHistory } = require('../models/supplier.raised.unbilled.model');
 
 const createSupplierUnBilled = async (body) => {
-  const { supplierId, un_Billed_amt } = body;
+  const { supplierId, un_Billed_amt, raisedId } = body;
   const sunbilled = await SupplierUnbilled.findOne({ supplierId: supplierId });
   if (!sunbilled) {
     let values = await SupplierUnbilled.create({ ...body, ...{ date: moment().format('YYYY-MM-DD'), created: moment() } });
     await SupplierUnbilledHistory.create({
       ...body,
-      ...{ date: moment().format('YYYY-MM-DD'), created: moment(), un_BilledId: values._id },
+      ...{ date: moment().format('YYYY-MM-DD'), created: moment(), un_BilledId: values._id, raisedId: raisedId },
     });
     return values;
   } else {
@@ -29,7 +29,7 @@ const createSupplierUnBilled = async (body) => {
     );
     await SupplierUnbilledHistory.create({
       ...body,
-      ...{ date: moment().format('YYYY-MM-DD'), created: moment(), un_BilledId: value._id },
+      ...{ date: moment().format('YYYY-MM-DD'), created: moment(), un_BilledId: value._id, raisedId: raisedId },
     });
     return value;
   }
@@ -1213,6 +1213,47 @@ const getUnBilledRaisedhistory = async () => {
   return values;
 };
 
+const getpaidraisedbyindivitual = async (id, supplierId) => {
+  let values = await RaisedUnBilledHistory.aggregate([
+    {
+      $match: {
+        _id: id,
+      },
+    },
+  ]);
+  let CurrentUnBilled = await RaisedUnBilled.aggregate([
+    {
+      $match: {
+        supplierId: supplierId,
+      },
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'suppliers',
+      },
+    },
+    {
+      $unwind: '$suppliers',
+    },
+    {
+      $project: {
+        _id: 1,
+        active: 1,
+        supplierId: 1,
+        current_UnBilled: { $ifNull: ['$raised_Amt', 0] },
+        raisedBy: 1,
+        created: 1,
+        date: 1,
+        supplierName: '$suppliers.primaryContactName',
+      },
+    },
+  ]);
+  return { values: values, CurrentUnBilled: CurrentUnBilled[0] };
+};
+
 module.exports = {
   createSupplierUnBilled,
   getUnBilledBySupplier,
@@ -1230,4 +1271,5 @@ module.exports = {
   getUnBilledhistoryBySupplier,
   getUnBilledRaisedhistoryBySupplier,
   getUnBilledRaisedhistory,
+  getpaidraisedbyindivitual,
 };
