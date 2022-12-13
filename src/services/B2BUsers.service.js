@@ -201,7 +201,9 @@ const otpVerfiyPurchaseExecutive = async (body) => {
   let users = await Users.findOne({
     phoneNumber: body.mobileNumber,
   });
-  if (!users) {
+  let otp = await OTP.findOne({ OTP: body.OTP });
+  console.log(otp);
+  if (!users || otp == null) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
   }
   await OTP.findOneAndUpdate({ mobileNumber: body.mobileNumber, OTP: body.OTP }, { used: true });
