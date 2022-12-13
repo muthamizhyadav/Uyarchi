@@ -78,7 +78,7 @@ const getAllAppSupplier = async (id) => {
   return Supplier.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }],
+        $and: [{ _id: { $eq: id } },{approvedStatus:{$eq:"Approved"}}],
       },
     },
 
@@ -145,7 +145,7 @@ const getAllAppSupplierApproved = async (id) => {
   return Supplier.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }],
+        $and: [{ _id: { $eq: id } },{approvedStatus:{$eq:"Approved"}}],
       },
     },
 
@@ -181,6 +181,7 @@ const getAllAppSupplierApproved = async (id) => {
     {
       $project: {
         primaryContactName: 1,
+        approvedStatus:1,
         product: '$callstatuses.products.productTitle',
         calstatusId: '$callstatuses.calstatusId',
         showWhs: '$callstatuses.showWhs',
