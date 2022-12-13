@@ -1710,7 +1710,6 @@ const getbilled_Details = async (pages, userId) => {
   console.log(userId);
   let page = parseInt(pages);
   let approved = await Supplier.findOne({ _id: userId, approvedStatus: 'Approved' });
-  console.log(approved);
   if(approved){
     let values = await ReceivedProduct.aggregate([
       {
