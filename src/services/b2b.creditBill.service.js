@@ -5689,7 +5689,7 @@ const Approved_Mismatch_amount = async (page) => {
       },
     },
     {
-      $match: { Difference_Amt: { $gt: 0 } },
+      $match: { Difference_Amt: { $ne: 0 } },
     },
     { $skip: 10 * page },
     { $limit: 10 },
