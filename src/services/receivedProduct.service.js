@@ -1709,101 +1709,105 @@ const previousOrderdata = async (id) => {
 const getbilled_Details = async (pages, userId) => {
   console.log(userId);
   let page = parseInt(pages);
-  let values = await ReceivedProduct.aggregate([
-    {
-      $match: { supplierId: userId },
-    },
-    {
-      $lookup: {
-        from: 'receivedstocks',
-        localField: '_id',
-        foreignField: 'groupId',
-        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
-        as: 'receivedstocks',
+  let approved = await Supplier.findOne({ _id: userId, approvedStatus: 'Approved' });
+  if(approved){
+    let values = await ReceivedProduct.aggregate([
+      {
+        $match: { supplierId: userId },
       },
-    },
-    {
-      $unwind: '$receivedstocks',
-    },
-    {
-      $lookup: {
-        from: 'supplierbills',
-        localField: '_id',
-        foreignField: 'groupId',
-        pipeline: [{ $group: { _id: null, Amount: { $sum: '$Amount' } } }],
-        as: 'billed',
+      {
+        $lookup: {
+          from: 'receivedstocks',
+          localField: '_id',
+          foreignField: 'groupId',
+          pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
+          as: 'receivedstocks',
+        },
       },
-    },
-    {
-      $unwind: {
-        preserveNullAndEmptyArrays: true,
-        path: '$billed',
+      {
+        $unwind: '$receivedstocks',
       },
-    },
-    {
-      $project: {
-        _id: 1,
-        created: 1,
-        date: 1,
-        BillNo: 1,
-        TotalAmount: { $ifNull: ['$receivedstocks.billingTotal', 0] },
-        paidAmount: { $ifNull: ['$billed.Amount', 0] },
-        PendingAmount: { $subtract: [{ $ifNull: ['$receivedstocks.billingTotal', 0] }, { $ifNull: ['$billed.Amount', 0] }] },
+      {
+        $lookup: {
+          from: 'supplierbills',
+          localField: '_id',
+          foreignField: 'groupId',
+          pipeline: [{ $group: { _id: null, Amount: { $sum: '$Amount' } } }],
+          as: 'billed',
+        },
       },
-    },
-    {
-      $skip: 10 * page,
-    },
-    {
-      $limit: 10,
-    },
-  ]);
-  let total = await ReceivedProduct.aggregate([
-    {
-      $match: { supplierId: userId },
-    },
-    {
-      $lookup: {
-        from: 'receivedstocks',
-        localField: '_id',
-        foreignField: 'groupId',
-        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
-        as: 'receivedstocks',
+      {
+        $unwind: {
+          preserveNullAndEmptyArrays: true,
+          path: '$billed',
+        },
       },
-    },
-    {
-      $unwind: '$receivedstocks',
-    },
-    {
-      $lookup: {
-        from: 'supplierbills',
-        localField: '_id',
-        foreignField: 'groupId',
-        pipeline: [{ $group: { _id: null, Amount: { $sum: '$Amount' } } }],
-        as: 'billed',
+      {
+        $project: {
+          _id: 1,
+          created: 1,
+          date: 1,
+          BillNo: 1,
+          TotalAmount: { $ifNull: ['$receivedstocks.billingTotal', 0] },
+          paidAmount: { $ifNull: ['$billed.Amount', 0] },
+          PendingAmount: { $subtract: [{ $ifNull: ['$receivedstocks.billingTotal', 0] }, { $ifNull: ['$billed.Amount', 0] }] },
+        },
       },
-    },
-    {
-      $unwind: {
-        preserveNullAndEmptyArrays: true,
-        path: '$billed',
+      {
+        $skip: 10 * page,
       },
-    },
-    {
-      $project: {
-        _id: 1,
-        created: 1,
-        date: 1,
-        BillNo: 1,
-        TotalAmount: { $ifNull: ['$receivedstocks.billingTotal', 0] },
-        paidAmount: { $ifNull: ['$billed.Amount', 0] },
-        PendingAmount: { $subtract: [{ $ifNull: ['$receivedstocks.billingTotal', 0] }, { $ifNull: ['$billed.Amount', 0] }] },
+      {
+        $limit: 10,
       },
-    },
-  ]);
-  return { values: values, total: total.length };
-};
-
+    ]);
+    let total = await ReceivedProduct.aggregate([
+      {
+        $match: { supplierId: userId },
+      },
+      {
+        $lookup: {
+          from: 'receivedstocks',
+          localField: '_id',
+          foreignField: 'groupId',
+          pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$billingTotal' } } }],
+          as: 'receivedstocks',
+        },
+      },
+      {
+        $unwind: '$receivedstocks',
+      },
+      {
+        $lookup: {
+          from: 'supplierbills',
+          localField: '_id',
+          foreignField: 'groupId',
+          pipeline: [{ $group: { _id: null, Amount: { $sum: '$Amount' } } }],
+          as: 'billed',
+        },
+      },
+      {
+        $unwind: {
+          preserveNullAndEmptyArrays: true,
+          path: '$billed',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          created: 1,
+          date: 1,
+          BillNo: 1,
+          TotalAmount: { $ifNull: ['$receivedstocks.billingTotal', 0] },
+          paidAmount: { $ifNull: ['$billed.Amount', 0] },
+          PendingAmount: { $subtract: [{ $ifNull: ['$receivedstocks.billingTotal', 0] }, { $ifNull: ['$billed.Amount', 0] }] },
+        },
+      },
+    ]);
+    return { values: values, total: total.length };
+  };
+  
+  }
+  
 const getBill_History = async (id) => {
   let values = await Supplierbills.aggregate([
     {
