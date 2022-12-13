@@ -612,6 +612,9 @@ const recoverById = async (supplierId) => {
 
 const getSupplierWith_Advanced = async () => {
   let values = await Supplier.aggregate([
+    {
+      $match: { approvedStatus: 'Approved' },
+    },
     //   {
     //   $lookup: {
     //     from: 'callstatuses',
