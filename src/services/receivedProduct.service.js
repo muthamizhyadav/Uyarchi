@@ -1710,7 +1710,7 @@ const getbilled_Details = async (pages, userId) => {
   console.log(userId);
   let page = parseInt(pages);
   let approved = await Supplier.findOne({ _id: userId, approvedStatus: 'Approved' });
-  if(approved){
+  if (approved) {
     let values = await ReceivedProduct.aggregate([
       {
         $match: { supplierId: userId },
@@ -1750,7 +1750,9 @@ const getbilled_Details = async (pages, userId) => {
           BillNo: 1,
           TotalAmount: { $ifNull: ['$receivedstocks.billingTotal', 0] },
           paidAmount: { $ifNull: ['$billed.Amount', 0] },
-          PendingAmount: { $subtract: [{ $ifNull: ['$receivedstocks.billingTotal', 0] }, { $ifNull: ['$billed.Amount', 0] }] },
+          PendingAmount: {
+            $subtract: [{ $ifNull: ['$receivedstocks.billingTotal', 0] }, { $ifNull: ['$billed.Amount', 0] }],
+          },
         },
       },
       {
@@ -1799,15 +1801,18 @@ const getbilled_Details = async (pages, userId) => {
           BillNo: 1,
           TotalAmount: { $ifNull: ['$receivedstocks.billingTotal', 0] },
           paidAmount: { $ifNull: ['$billed.Amount', 0] },
-          PendingAmount: { $subtract: [{ $ifNull: ['$receivedstocks.billingTotal', 0] }, { $ifNull: ['$billed.Amount', 0] }] },
+          PendingAmount: {
+            $subtract: [{ $ifNull: ['$receivedstocks.billingTotal', 0] }, { $ifNull: ['$billed.Amount', 0] }],
+          },
         },
       },
     ]);
     return { values: values, total: total.length };
-  };
-  
+  } else {
+    return { values: [] };
   }
-  
+};
+
 const getBill_History = async (id) => {
   let values = await Supplierbills.aggregate([
     {
