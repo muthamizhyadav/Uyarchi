@@ -1261,6 +1261,20 @@ const getpaidraisedbyindivitual = async (id, supplierId) => {
     },
     {
       $lookup: {
+        from: 'supplierunbilleds',
+        localField: 'supplierId',
+        foreignField: 'supplierId',
+        as: 'suppliersunbilled',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$suppliersunbilled',
+      },
+    },
+    {
+      $lookup: {
         from: 'suppliers',
         localField: 'supplierId',
         foreignField: '_id',
@@ -1328,12 +1342,13 @@ const getpaidraisedbyindivitual = async (id, supplierId) => {
         _id: 1,
         active: 1,
         supplierId: 1,
-        current_UnBilled: { $ifNull: ['$raised_Amt', 0] },
+        current_UnBilled: { $ifNull: ['$suppliersunbilled.un_Billed_amt', 0] },
         raisedBy: 1,
         created: 1,
         date: 1,
         supplierName: '$suppliers.primaryContactName',
         receivedproducts: 1,
+        // suppliersunbilled: '$suppliersunbilled',
         billcount: { $size: '$supplierBillscount' },
         lastPaidAmt: { $ifNull: ['$supplierBillss.Amount', 0] },
         lasPaidDate: { $ifNull: ['$supplierBillss.date', 'nill'] },
