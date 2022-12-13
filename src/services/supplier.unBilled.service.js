@@ -1223,6 +1223,35 @@ const getpaidraisedbyindivitual = async (id, supplierId) => {
         _id: id,
       },
     },
+    {
+      $lookup: {
+        from: 'supplierunbilledhistories',
+        localField: '_id',
+        foreignField: 'raisedId',
+        as: 'suppliers',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$suppliers',
+      },
+    },
+    {
+      $project:{
+        un_Billed_amt:1,
+        pay_method:1,
+        date:1,
+        un_BilledId:1,
+        created:1,
+        supplierId:1,
+        raisedId:1,
+        suppliers:"$suppliers"
+      }
+    }
+    // {
+    //   $unwind: '$suppliers',
+    // },
   ]);
   let CurrentUnBilled = await RaisedUnBilled.aggregate([
     {
@@ -1241,6 +1270,7 @@ const getpaidraisedbyindivitual = async (id, supplierId) => {
     {
       $unwind: '$suppliers',
     },
+    
     {
       $project: {
         _id: 1,
