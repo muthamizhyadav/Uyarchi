@@ -1270,7 +1270,59 @@ const getpaidraisedbyindivitual = async (id, supplierId) => {
     {
       $unwind: '$suppliers',
     },
-
+    {
+      $lookup: {
+        from: 'receivedstocks',
+        localField: 'supplierId',
+        foreignField: 'supplierId',
+        pipeline: [{ $group: { _id: null, total: { $sum: '$billingTotal' } } }],
+        as: 'stocks',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$stocks',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierbills',
+        localField: 'supplierId',
+        foreignField: 'supplierId',
+        pipeline: [{ $group: { _id: null, billingTotal: { $sum: '$Amount' } } }],
+        as: 'supplierBills',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierBills',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierbills',
+        localField: 'supplierId',
+        foreignField: 'supplierId',
+        as: 'supplierBillscount',
+      },
+    },
+    {
+      $lookup: {
+        from: 'supplierbills',
+        localField: 'supplierId',
+        foreignField: 'supplierId',
+        pipeline: [{ $sort: { created: -1 } }, { $limit: 1 }],
+        as: 'supplierBillss',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierBillss',
+      },
+    },
     {
       $project: {
         _id: 1,
@@ -1281,6 +1333,11 @@ const getpaidraisedbyindivitual = async (id, supplierId) => {
         created: 1,
         date: 1,
         supplierName: '$suppliers.primaryContactName',
+        receivedproducts: 1,
+        billcount: { $size: '$supplierBillscount' },
+        lastPaidAmt: { $ifNull: ['$supplierBillss.Amount', 0] },
+        lasPaidDate: { $ifNull: ['$supplierBillss.date', 0] },
+        PendingAmount: { $subtract: [{ $ifNull: ['$stocks.total', 0] }, { $ifNull: ['$supplierBills.billingTotal', 0] }] },
       },
     },
   ]);
