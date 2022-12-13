@@ -1336,7 +1336,7 @@ const getpaidraisedbyindivitual = async (id, supplierId) => {
         receivedproducts: 1,
         billcount: { $size: '$supplierBillscount' },
         lastPaidAmt: { $ifNull: ['$supplierBillss.Amount', 0] },
-        lasPaidDate: { $ifNull: ['$supplierBillss.date', 0] },
+        lasPaidDate: { $ifNull: ['$supplierBillss.date', 'nill'] },
         PendingAmount: { $subtract: [{ $ifNull: ['$stocks.total', 0] }, { $ifNull: ['$supplierBills.billingTotal', 0] }] },
       },
     },
