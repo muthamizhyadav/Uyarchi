@@ -15,8 +15,9 @@ const createSupplierUnBilled = async (body) => {
     let values = await SupplierUnbilled.create({ ...body, ...{ date: moment().format('YYYY-MM-DD'), created: moment() } });
     await SupplierUnbilledHistory.create({
       ...body,
-      ...{ date: moment().format('YYYY-MM-DD'), created: moment(), un_BilledId: values._id, raisedId: raisedId },
+      ...{ date: moment().format('YYYY-MM-DD'), created: moment(), un_BilledId: values._id, raisedId: raisedId}
     });
+    await RaisedUnBilledHistory.findByIdAndUpdate({_id:raisedId}, {paidStatus:"Paid"},{new:true})
     return values;
   } else {
     let unBamt = parseInt(un_Billed_amt);
@@ -29,8 +30,9 @@ const createSupplierUnBilled = async (body) => {
     );
     await SupplierUnbilledHistory.create({
       ...body,
-      ...{ date: moment().format('YYYY-MM-DD'), created: moment(), un_BilledId: value._id, raisedId: raisedId },
+      ...{ date: moment().format('YYYY-MM-DD'), created: moment(), un_BilledId: value._id, raisedId: raisedId},
     });
+    await RaisedUnBilledHistory.findByIdAndUpdate({_id:raisedId}, {paidStatus:"Paid"},{new:true})
     return value;
   }
 };
@@ -1207,6 +1209,7 @@ const getUnBilledRaisedhistory = async () => {
         date: 1,
         raisedId: 1,
         supplierName: '$suppliers.primaryContactName',
+        paidStatus:1,
       },
     },
   ]);

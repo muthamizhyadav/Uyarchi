@@ -53,6 +53,10 @@ const RaisedUnBilledHistorySchema = new mongoose.Schema({
   raisedBy: {
     type: String,
   },
+  paidStatus:{
+    type:String,
+    default:"Pending",
+  },
   active: {
     type: Boolean,
     default: true,
