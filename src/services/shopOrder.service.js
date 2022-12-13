@@ -4991,7 +4991,7 @@ const get_approved_orders = async (query) => {
       $in: ['Approved', 'Modified'],
     },
   };
-  // let deliveryType = { delivery_type: { $eq: query.deliverytype } };
+  let deliveryType = { active: true };
   // let timeSlot = { active: true };
   // let deliveryMode = { active: true };
   let today = moment().format('YYYY-MM-DD');
@@ -5000,16 +5000,16 @@ const get_approved_orders = async (query) => {
   // ////console.log(today)
   // ////console.log(yesterday)
   // if (query.deliverytype == 'all') {
-  //   deliveryType = {
-  //     $or: [
-  //       {
-  //         $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
-  //       },
-  //       {
-  //         $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
-  //       },
-  //     ],
-  //   };
+    deliveryType = {
+      $or: [
+        {
+          $and: [{ delivery_type: { $eq: 'IMD' } }, { date: { $eq: today } }],
+        },
+        {
+          $and: [{ delivery_type: { $eq: 'NDD' } }, { date: { $eq: yesterday } }],
+        },
+      ],
+    };
   //   dateMacth = { active: true };
   // }
   // if (query.deliverytype == 'IMD' || query.deliverytype == 'NDD') {
@@ -5036,7 +5036,7 @@ const get_approved_orders = async (query) => {
   let lossTime = moment().format('H');
   let values = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
-    { $match: { $and: [statusMatch] } },
+    { $match: { $and: [statusMatch,deliveryType] } },
     {
       $lookup: {
         from: 'productorderclones',
