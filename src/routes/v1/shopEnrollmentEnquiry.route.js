@@ -9,4 +9,5 @@ router.route('/getAllEnquiryDatas/:pincode').get(shopEnrollmentEnquiryController
 router.route('/update/:id').get(shopEnrollmentEnquiryController.updateEnquiryById);
 
 router.route('/AssignShops').post(shopEnrollmentEnquiryController.AssignShops);
+router.route('/pincode').get(shopEnrollmentEnquiryController.pincode);
 module.exports = router;

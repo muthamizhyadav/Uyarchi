@@ -32,9 +32,15 @@ const AssignShops = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const pincode = catchAsync(async (req, res) => {
+    const data = await shopEnrollmentEnquiryService.pincode();
+    res.send(data);
+  });
+
 module.exports = {
     createEnquiry,
     getAllEnquiryDatas,
     updateEnquiryById,
     AssignShops,
+    pincode,
 };

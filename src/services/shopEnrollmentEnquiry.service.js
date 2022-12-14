@@ -8,9 +8,10 @@ const createEnquiry = async (userId, body) => {
 };
 
 const getAllEnquiryDatas = async (pincode) => {
+
   let pincodematch = [{ active: { $eq: true } }];
     if(pincode != "null"){
-        pincodematch = [{ pincode: { $eq: pincode } }];
+        pincodematch = [{ pincode: { $eq: parseInt(pincode) } }];
     }
     const data = await ShopEnrollmentEnquiry.aggregate([
         {
@@ -95,9 +96,26 @@ const getAllEnquiryDatas = async (pincode) => {
     return {message:"Assignshops Completed"};
   };
 
+  const pincode = async () => {
+      const data = await ShopEnrollmentEnquiry.aggregate([
+          {
+            $group: {
+              _id: {pincode:'$pincode'},
+            },
+          },
+          {
+            $project:{
+                pincode:"$_id.pincode",
+            }
+          }
+         ])
+      return data
+  }
+
 module.exports = {
     createEnquiry,
     getAllEnquiryDatas,
     updateEnquiryById,
     AssignShops,
+    pincode,
 };
