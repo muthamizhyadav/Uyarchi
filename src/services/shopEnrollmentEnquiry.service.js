@@ -2,8 +2,9 @@ const httpStatus = require('http-status');
 const { ShopEnrollmentEnquiry } = require('../models/shopEnrollmentEnquiry.model');
 const ApiError = require('../utils/ApiError');
 
-const createEnquiry = async (body) => {
-  return ShopEnrollmentEnquiry.create(body);
+const createEnquiry = async (userId, body) => {
+    let value = {...body, ...{uid:userId}}
+  return ShopEnrollmentEnquiry.create(value);
 };
 
 const getAllEnquiryDatas = async () => {

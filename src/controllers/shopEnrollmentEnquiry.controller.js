@@ -5,7 +5,9 @@ const catchAsync = require('../utils/catchAsync');
 const shopEnrollmentEnquiryService = require('../services/shopEnrollmentEnquiry.service');
 
 const createEnquiry = catchAsync(async (req, res) => {
-  const data = await shopEnrollmentEnquiryService.createEnquiry(req.body);
+    let userId = req.userId;
+    console.log(userId);
+  const data = await shopEnrollmentEnquiryService.createEnquiry(userId, req.body);
   if (!data) {
     throw new ApiError(httpStatus.NOT_FOUND, 'ShopEnrollmentEnquiry Not Fount');
   }
