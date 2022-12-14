@@ -28,7 +28,7 @@ const B2bUsersLogin = catchAsync(async (req, res) => {
 const PurchaseExecutivelogin = catchAsync(async (req, res) => {
   const users = await b2bUsersService.PurchaseExecutivelogin(req.body);
   const tokens = await tokenService.generateAuthTokens(users);
-  res.send({users, tokens});
+  res.send({ users, tokens });
 });
 
 const getsalesExecuteRolesUsers = catchAsync(async (req, res) => {
@@ -185,6 +185,12 @@ const PurchaseExecutive_setPassword = catchAsync(async (req, res) => {
   res.send(users);
 });
 
+const supplierEnroll = catchAsync(async (req, res) => {
+  console.log("sadfsdf")
+  const users = await b2bUsersService.supplierEnroll();
+  res.send(users);
+});
+
 module.exports = {
   createB2bUsers,
   getsalesExecuteRolesUsers,
@@ -217,4 +223,5 @@ module.exports = {
   sendOTP,
   otpVerfiyPurchaseExecutive,
   PurchaseExecutive_setPassword,
+  supplierEnroll,
 };

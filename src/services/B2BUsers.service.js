@@ -517,6 +517,14 @@ const sendOTP = async (body) => {
   return Textlocal.Otp(body, users);
 };
 
+const supplierEnroll = async () => {
+  let values = await Users.find({ userRole: 'a5a14b92-d6e0-49d7-b496-4a4779f45d3b' });
+  if (!values) {
+    throw new ApiError('there no user in this Role');
+  }
+  return values;
+};
+
 module.exports = {
   createUser,
   UsersLogin,
@@ -549,4 +557,5 @@ module.exports = {
   sendOTP,
   otpVerfiyPurchaseExecutive,
   PurchaseExecutive_setPassword,
+  supplierEnroll,
 };
