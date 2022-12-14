@@ -110,7 +110,9 @@ const getAllEnquiryDatas = async (pincode) => {
           }
          ])
       return data
-  }
+}
+
+
 
 module.exports = {
     createEnquiry,
