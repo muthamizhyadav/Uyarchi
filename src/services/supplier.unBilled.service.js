@@ -1088,7 +1088,7 @@ const getUnBilledDetails = async (supplierId) => {
 const supplierUnBilledBySupplier = async (supplierId) => {
   let supplier = await Supplier.aggregate([
     {
-      $match: { _id: supplierId },
+      $match: { _id: supplierId, approvedStatus: 'Approved' },
     },
     {
       $lookup: {
