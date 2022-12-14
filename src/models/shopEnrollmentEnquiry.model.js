@@ -34,8 +34,12 @@ const shopEnrollmentEnquirySchema = new mongoose.Schema({
   pincode:{
     type:Number,
   },
+  assignedTo:{
+    type:String,
+  },
   status:{
     type:String,
+    default:"Pending"
   },
   uid:{
     type:String,
@@ -56,4 +60,43 @@ const shopEnrollmentEnquirySchema = new mongoose.Schema({
 
 const ShopEnrollmentEnquiry = mongoose.model('enrollmentEnquiryShop', shopEnrollmentEnquirySchema);
 
-module.exports = {ShopEnrollmentEnquiry};
+
+const shopEnrollmentEnquiryAssignSchema = new mongoose.Schema({
+    _id: {
+      type: String,
+      default: v4,
+    },
+    date: {
+      type: String,
+      default:moment().format('YYYY-MM-DD'),
+    },
+    time: {
+      type: String,
+      default:moment().format('h:mm a'),
+    },
+    shopId: {
+      type: String,
+    },
+    status:{
+      type:String,
+    },
+    assignTo:{
+      type:String,
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    archive: {
+      type: Boolean,
+      default: false,
+    },
+  },
+    {
+      timestamps: { createdAt: 'createdDate', updatedAt: 'updatedDate' },
+    }
+    );
+  
+  const ShopEnrollmentEnquiryAssign = mongoose.model('shopEnrollmentEnquiryAssign', shopEnrollmentEnquiryAssignSchema);
+
+module.exports = {ShopEnrollmentEnquiry, ShopEnrollmentEnquiryAssign };

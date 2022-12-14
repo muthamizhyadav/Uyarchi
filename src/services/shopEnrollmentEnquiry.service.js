@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { ShopEnrollmentEnquiry } = require('../models/shopEnrollmentEnquiry.model');
+const { ShopEnrollmentEnquiry, ShopEnrollmentEnquiryAssign} = require('../models/shopEnrollmentEnquiry.model');
 const ApiError = require('../utils/ApiError');
 
 const createEnquiry = async (userId, body) => {
@@ -7,19 +7,42 @@ const createEnquiry = async (userId, body) => {
   return ShopEnrollmentEnquiry.create(value);
 };
 
-const getAllEnquiryDatas = async () => {
+const getAllEnquiryDatas = async (pincode) => {
+  let pincodematch = [{ active: { $eq: true } }];
+    if(pincode != "null"){
+        pincodematch = [{ pincode: { $eq: pincode } }];
+    }
     const data = await ShopEnrollmentEnquiry.aggregate([
+        {
+            $match: {
+              $and: pincodematch,
+            },
+        },
         {
             $lookup: {
               from: 'b2busers',
               localField: 'uid',
               foreignField: '_id',
+              pipeline:[
+                {
+                    $lookup: {
+                      from: 'roles',
+                      localField: 'userRole',
+                      foreignField: '_id',
+                      as: 'rolesData',
+                    },
+                  },
+                  {
+                    $unwind: '$rolesData',
+                  }, 
+              ],
               as: 'b2busersData',
             },
           },
           {
             $unwind: '$b2busersData',
-          },   
+          },  
+
           {
             $project:{
                 date:1,
@@ -32,14 +55,49 @@ const getAllEnquiryDatas = async () => {
                 pincode:1,
                 status:1,
                 uid:1,
-                name:"$b2busersData.name"
+                name:"$b2busersData.name",
+                createdBy:"$b2busersData.rolesData.roleName"
             }
           }    
     ]);
     return data;
   };
 
+  const getEnquiryById = async (id) => {
+    let values = await ShopEnrollmentEnquiry.findById(id);
+    if (!values) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'ShopEnrollmentEnquiry Not Found');
+    }
+    return values;
+  };
+
+  const updateEnquiryById = async (id,updateBody) => {
+    const {arr} = updateBody
+    let data = await getEnquiryById.findById(id);
+    if (!data) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'ShopEnrollmentEnquiry Not Found');
+    }
+    data = await ShopEnrollmentEnquiry.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+    return data;
+  };
+
+
+  const AssignShops = async (body) => {
+    const {arr, assignTo, status} = body
+    arr.forEach(async (e) => {
+        data = await ShopEnrollmentEnquiry.findByIdAndUpdate({ _id: e }, {status:status}, { new: true });
+        await ShopEnrollmentEnquiryAssign.create({
+          assignTo:assignTo,
+          shopId: e,
+          status:status,
+        });
+    })
+    return {message:"Assignshops Completed"};
+  };
+
 module.exports = {
     createEnquiry,
     getAllEnquiryDatas,
+    updateEnquiryById,
+    AssignShops,
 };

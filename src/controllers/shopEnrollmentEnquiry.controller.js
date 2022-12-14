@@ -16,10 +16,25 @@ const createEnquiry = catchAsync(async (req, res) => {
 
 
 const getAllEnquiryDatas = catchAsync(async (req, res) => {
-    const data = await shopEnrollmentEnquiryService.getAllEnquiryDatas();
+    const data = await shopEnrollmentEnquiryService.getAllEnquiryDatas(req.params.pincode);
     res.send(data);
   });
+
+const updateEnquiryById = catchAsync(async (req, res) => {
+    const data = await shopEnrollmentEnquiryService.updateEnquiryById(req.params.id, req.body);
+    res.send(data);
+});
+
+
+
+const AssignShops = catchAsync(async (req, res) => {
+  const data = await shopEnrollmentEnquiryService.AssignShops(req.body);
+  res.send(data);
+});
+
 module.exports = {
     createEnquiry,
     getAllEnquiryDatas,
+    updateEnquiryById,
+    AssignShops,
 };
