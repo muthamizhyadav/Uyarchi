@@ -53,6 +53,13 @@ const pincode = catchAsync(async (req, res) => {
   res.send(data);
   await data.save();
 });
+
+const getAllSupplierDatas = catchAsync(async (req, res) => {
+    const data = await shopEnrollmentEnquiryService.getAllSupplierDatas();
+    res.send(data);
+  });
+
+
 module.exports = {
     createEnquiry,
     getAllEnquiryDatas,
@@ -61,4 +68,5 @@ module.exports = {
     pincode,
     viewdatagetById,
     createShops,
+    getAllSupplierDatas,
 };

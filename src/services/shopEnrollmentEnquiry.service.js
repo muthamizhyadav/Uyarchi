@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { ShopEnrollmentEnquiry, ShopEnrollmentEnquiryAssign} = require('../models/shopEnrollmentEnquiry.model');
 const {Shop} = require('../models/b2b.ShopClone.model');
+const Supplier = require('../models/supplier.model');
 const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 
@@ -162,8 +163,10 @@ const createShops = async (body) =>{
     return shop;
 }
 
-
-
+const getAllSupplierDatas = async () =>{
+    const data = await Supplier.find({active:true});
+    return data
+}
 module.exports = {
     createEnquiry,
     getAllEnquiryDatas,
@@ -172,4 +175,5 @@ module.exports = {
     pincode,
     viewdatagetById,
     createShops,
+    getAllSupplierDatas,
 };

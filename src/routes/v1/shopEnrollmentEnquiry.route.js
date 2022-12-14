@@ -14,4 +14,5 @@ router.route('/pincode').get(shopEnrollmentEnquiryController.pincode);
 router.route('/viewdatagetById').get(authorization, shopEnrollmentEnquiryController.viewdatagetById);
 
 router.route('/createShops').post(b2bCloneshopImage.array('photoCapture'), shopEnrollmentEnquiryController.createShops);
+router.route('/getAllSupplierDatas').get(shopEnrollmentEnquiryController.getAllSupplierDatas);
 module.exports = router;
