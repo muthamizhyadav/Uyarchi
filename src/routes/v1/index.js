@@ -107,6 +107,7 @@ const OrderReviewRoute = require('./orderReview.route');
 const supplierUnBilledRoute = require('./supplier.unbilled.route');
 const supplierRaisedRoute = require('./supplier.raised.unbilled.route');
 const CustomerWallet = require('./customer.wallet.route');
+const shopEnrollmentEnquiryRoute = require('./shopEnrollmentEnquiry.route');
 
 const defaultRoutes = [
   {
@@ -527,6 +528,10 @@ const defaultRoutes = [
   {
     path: '/manageJobPath',
     route: manageJob,
+  },
+  {
+    path: '/shopEnrollmentEnquiry',
+    route: shopEnrollmentEnquiryRoute,
   },
   // {
   //   path: '/sales',
