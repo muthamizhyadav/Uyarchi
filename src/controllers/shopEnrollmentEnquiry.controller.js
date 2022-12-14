@@ -42,7 +42,17 @@ const pincode = catchAsync(async (req, res) => {
     res.send(data);
   });
 
-
+  const createShops = catchAsync(async (req, res) => {
+  const data = await shopEnrollmentEnquiryService.createShops(req.body);
+//   console.log(req.files)
+  if (req.files) {
+    req.files.forEach(function (files, index, arr) {
+        data.photoCapture.push('images/shopClone/' + files.filename);
+    });
+  }
+  res.send(data);
+  await data.save();
+});
 module.exports = {
     createEnquiry,
     getAllEnquiryDatas,
@@ -50,4 +60,5 @@ module.exports = {
     AssignShops,
     pincode,
     viewdatagetById,
+    createShops,
 };

@@ -1,6 +1,8 @@
 const httpStatus = require('http-status');
 const { ShopEnrollmentEnquiry, ShopEnrollmentEnquiryAssign} = require('../models/shopEnrollmentEnquiry.model');
+const {Shop} = require('../models/b2b.ShopClone.model');
 const ApiError = require('../utils/ApiError');
+const moment = require('moment');
 
 const createEnquiry = async (userId, body) => {
     let value = {...body, ...{uid:userId}}
@@ -137,12 +139,27 @@ const viewdatagetById = async (id) =>{
                 shopName:"$enrollmentenquiryshops.shopName",
                 status:"$enrollmentenquiryshops.status",
                 area:"$enrollmentenquiryshops.area",
-                pincode:"$enrollmentenquiryshops.pincode"
+                pincode:"$enrollmentenquiryshops.pincode",
+                mobileNumber:"$enrollmentenquiryshops.mobileNumber",
+                shopType:"$enrollmentenquiryshops.shopType"
             }
           }
 
        ])
     return data
+}
+
+const createShops = async (body) =>{
+    let servertime = moment().format('HHmm');
+    let createdtime = moment().format('hh:mm a');
+    let serverdate = moment().format('DD-MM-yyy');
+    let filterDate = moment().format('yyy-MM-DD');
+    let values = {
+      ...body,
+      ...{ date: serverdate, time: servertime, filterDate: filterDate, status: 'Pending', created: createdtime },
+    };
+    const shop = await Shop.create(values);
+    return shop;
 }
 
 
@@ -154,4 +171,5 @@ module.exports = {
     AssignShops,
     pincode,
     viewdatagetById,
+    createShops,
 };
