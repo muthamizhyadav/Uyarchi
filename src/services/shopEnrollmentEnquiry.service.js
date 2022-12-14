@@ -137,12 +137,14 @@ const viewdatagetById = async (id) =>{
           },
           {
             $project:{
+                assignTo:1,
                 shopName:"$enrollmentenquiryshops.shopName",
                 status:"$enrollmentenquiryshops.status",
                 area:"$enrollmentenquiryshops.area",
                 pincode:"$enrollmentenquiryshops.pincode",
                 mobileNumber:"$enrollmentenquiryshops.mobileNumber",
-                shopType:"$enrollmentenquiryshops.shopType"
+                shopType:"$enrollmentenquiryshops.shopType",
+                shopId:"$enrollmentenquiryshops._id",
             }
           }
 
@@ -167,6 +169,45 @@ const getAllSupplierDatas = async () =>{
     const data = await Supplier.find({active:true});
     return data
 }
+
+
+const getIdEnquiryShops = async (id) =>{
+    const data = await ShopEnrollmentEnquiry.aggregate([
+        {
+            $match: {
+              $and: [{ _id: { $eq:id} }],
+            },
+        },
+        {
+            $lookup: {
+              from: 'shoplists',
+              localField: 'shopType',
+              foreignField: '_id',
+              as: 'shoplists',
+            },
+          },
+          {
+            $unwind: '$shoplists',
+          },
+          {
+            $project:{
+                date:1,
+                time:1,
+                status:1,
+                shopName:1,
+                shopType:1,
+                mobileNumber:1,
+                area:1,
+                contactName:1,
+                pincode:1,
+                uid:1,
+                shopTypeName:"$shoplists.shopList",
+            }
+          }
+    ])
+    return data
+}
+
 module.exports = {
     createEnquiry,
     getAllEnquiryDatas,
@@ -176,4 +217,5 @@ module.exports = {
     viewdatagetById,
     createShops,
     getAllSupplierDatas,
+    getIdEnquiryShops,
 };

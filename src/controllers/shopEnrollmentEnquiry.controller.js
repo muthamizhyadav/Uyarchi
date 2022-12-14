@@ -59,6 +59,10 @@ const getAllSupplierDatas = catchAsync(async (req, res) => {
     res.send(data);
   });
 
+  const getIdEnquiryShops = catchAsync(async (req, res) => {
+    const data = await shopEnrollmentEnquiryService.getIdEnquiryShops(req.params.id);
+    res.send(data);
+  });
 
 module.exports = {
     createEnquiry,
@@ -69,4 +73,5 @@ module.exports = {
     viewdatagetById,
     createShops,
     getAllSupplierDatas,
+    getIdEnquiryShops,
 };
