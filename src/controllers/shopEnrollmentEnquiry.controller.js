@@ -38,7 +38,7 @@ const pincode = catchAsync(async (req, res) => {
   });
 
   const viewdatagetById = catchAsync(async (req, res) => {
-    const data = await shopEnrollmentEnquiryService.viewdatagetById(req.params.id);
+    const data = await shopEnrollmentEnquiryService.viewdatagetById(req.userId);
     res.send(data);
   });
 

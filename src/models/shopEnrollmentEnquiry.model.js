@@ -44,6 +44,9 @@ const shopEnrollmentEnquirySchema = new mongoose.Schema({
   uid:{
     type:String,
   },
+  enquiryType:{
+    type:String,
+  },
   active: {
     type: Boolean,
     default: true,
