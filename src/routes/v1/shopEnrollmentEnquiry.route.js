@@ -10,4 +10,5 @@ router.route('/update/:id').get(shopEnrollmentEnquiryController.updateEnquiryByI
 
 router.route('/AssignShops').post(shopEnrollmentEnquiryController.AssignShops);
 router.route('/pincode').get(shopEnrollmentEnquiryController.pincode);
+router.route('/viewdatagetById/:id').get(shopEnrollmentEnquiryController.viewdatagetById);
 module.exports = router;

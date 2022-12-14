@@ -113,6 +113,39 @@ const getAllEnquiryDatas = async (pincode) => {
 }
 
 
+const viewdatagetById = async (id) =>{
+    const data = await ShopEnrollmentEnquiryAssign.aggregate([
+        {
+            $match: {
+              $and: [{ assignTo: { $eq:id} }],
+            },
+        },
+
+        {
+            $lookup: {
+              from: 'enrollmentenquiryshops',
+              localField: 'shopId',
+              foreignField: '_id',
+              as: 'enrollmentenquiryshops',
+            },
+          },
+          {
+            $unwind: '$enrollmentenquiryshops',
+          },
+          {
+            $project:{
+                shopName:"$enrollmentenquiryshops.shopName",
+                status:"$enrollmentenquiryshops.status",
+                area:"$enrollmentenquiryshops.area",
+                pincode:"$enrollmentenquiryshops.pincode"
+            }
+          }
+
+       ])
+    return data
+}
+
+
 
 module.exports = {
     createEnquiry,
@@ -120,4 +153,5 @@ module.exports = {
     updateEnquiryById,
     AssignShops,
     pincode,
+    viewdatagetById,
 };
