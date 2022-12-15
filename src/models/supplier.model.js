@@ -102,6 +102,9 @@ const supplierSchema = new mongoose.Schema({
   long: {
     type: Number,
   },
+  DoorNo: {
+    type: String,
+  },
   createdBy: {
     type: String,
   },
