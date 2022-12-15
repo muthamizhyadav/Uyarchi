@@ -4022,6 +4022,7 @@ const getallmanageIssus = async (query) => {
         reason: 1,
         status: 1,
         issueStatus: 1,
+        order_issues:1
       },
     },
     { $skip: 10 * page },
@@ -6168,7 +6169,7 @@ const order_process_to_completed= async (query) => {
 }
 
 const order_process_to_return= async (query) => {
-  return await ShopOrderClone.findByIdAndUpdate({_id:query.id},{issueStatus:"process_to_return"},{new : true})
+  return await ShopOrderClone.findByIdAndUpdate({_id:query.id,issueStatus:{$in:["Approved","Decline"]}},{order_issues:"Process To Return"},{new : true})
 
 }
 
