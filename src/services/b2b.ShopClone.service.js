@@ -5075,18 +5075,14 @@ const get_shop_in_pincode = async (query) => {
   return shop;
 };
 
-const getindividualSupplierAttendence = async (userId) => {
+const getindividualSupplierAttendence = async () => {
   let values = await AttendanceClonenew.aggregate([
-    {
-      $match: {
-        Uid: userId,
-      },
-    },
     {
       $lookup: {
         from: 'b2busers',
         localField: 'Uid',
         foreignField: '_id',
+        pipeline: [{ $match: { userRole: 'a5a14b92-d6e0-49d7-b496-4a4779f45d3b' } }],
         as: 'UsersData',
       },
     },
