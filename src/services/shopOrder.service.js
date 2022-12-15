@@ -4146,6 +4146,17 @@ const getmanageIssus_byID = async (query) => {
     },
     {
       $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $match: { $and: [{ issueraised: { $eq: true } },{issueStatus:{$eq:"Pending"}}] } },
+        ],
+        as: 'issueProducts_status',
+      },
+    },
+    {
+      $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
@@ -4195,6 +4206,8 @@ const getmanageIssus_byID = async (query) => {
         status: 1,
         allProducts: '$allProducts',
         issueProducts: '$issueProducts',
+        issueProducts_status:"$issueProducts_status",
+        issueStatus_show: { $anyElementTrue: ['$issueProducts_status'] }
       },
     },
   ]);
