@@ -5678,6 +5678,7 @@ const Approved_Mismatch_amount = async (page) => {
         date: 1,
         OrderId: { $ifNull: ['$shoporders.OrderId', 'null'] },
         users: '$users.name',
+        userId: '$users._id',
         orderId: 1,
         shoporderId: '$shoporders.OrderId',
         disputeamt: '$shoporders.disputeamt',
@@ -5883,123 +5884,47 @@ const updateFineStatus = async (id, body) => {
 };
 
 const getOrdersBills = async (id, page) => {
-  let today = moment().format('YYYY-MM-DD');
-  let values = await ShopOrderClone.aggregate([
+  let values = await creditBillGroup.aggregate([
     {
       $match: {
-        _id: id,
+        AssignedUserId: id,
       },
     },
-    {
-      $lookup: {
-        from: 'creditbills',
-        localField: '_id',
-        foreignField: 'orderId',
-        pipeline: [
-          { $match: { date: today } },
-          {
-            $lookup: {
-              from: 'creditbillgroups',
-              localField: 'creditbillId',
-              foreignField: '_id',
-              as: 'cgroups',
-            },
-          },
-          {
-            $unwind: '$cgroups',
-          },
-        ],
-        as: 'credit',
-      },
-    },
-    {
-      $unwind: {
-        preserveNullAndEmptyArrays: true,
-        path: '$credit',
-      },
-    },
-
     {
       $project: {
         _id: 1,
-        shopId: 1,
-        status: 1,
-        productStatus: 1,
-        creditApprovalStatus: 1,
-        OrderId: 1,
-        customerBillId: 1,
-        deliveryExecutiveId: 1,
-        Scheduledate: 1,
-        Schedulereason: 1,
-        disputStatus: '$credit.cgroups.Disputestatus',
-        disputeamt: '$credit.cgroups.disputeAmount',
-        groupId: '$credit.cgroups.groupId',
-        fineStatus: '$credit.cgroups.fineStatus',
-        totalBillCount: { $size: '$credit.cgroups.Orderdatas' },
+        fineStatus: 1,
+        AssignedUserId: 1,
+        groupId: 1,
+        assignedTime: 1,
+        assignedDate: 1,
+        Disputestatus: { $ifNull: ['$Disputestatus', 'nill'] },
+        disputeAmount: { $ifNull: ['$disputeAmount', 'nill'] },
+        finishDate: { $ifNull: ['$finishDate', 'nill'] },
       },
-    },
-    {
-      $skip: 10 * page,
-    },
-    {
-      $limit: 10,
     },
   ]);
-  let total = await ShopOrderClone.aggregate([
+  let total = await creditBillGroup.aggregate([
     {
       $match: {
-        _id: id,
+        AssignedUserId: id,
       },
     },
-    {
-      $lookup: {
-        from: 'creditbills',
-        localField: '_id',
-        foreignField: 'orderId',
-        pipeline: [
-          { $match: { date: today } },
-          {
-            $lookup: {
-              from: 'creditbillgroups',
-              localField: 'creditbillId',
-              foreignField: '_id',
-              as: 'cgroups',
-            },
-          },
-          {
-            $unwind: '$cgroups',
-          },
-        ],
-        as: 'credit',
-      },
-    },
-    {
-      $unwind: {
-        preserveNullAndEmptyArrays: true,
-        path: '$credit',
-      },
-    },
-
     {
       $project: {
         _id: 1,
-        shopId: 1,
-        status: 1,
-        productStatus: 1,
-        creditApprovalStatus: 1,
-        OrderId: 1,
-        customerBillId: 1,
-        deliveryExecutiveId: 1,
-        Scheduledate: 1,
-        Schedulereason: 1,
-        disputStatus: '$credit.cgroups.Disputestatus',
-        disputeamt: '$credit.cgroups.disputeAmount',
-        groupId: '$credit.cgroups.groupId',
-        fineStatus: '$credit.cgroups.fineStatus',
-        totalBillCount: { $size: '$credit.cgroups.Orderdatas' },
+        fineStatus: 1,
+        AssignedUserId: 1,
+        groupId: 1,
+        assignedTime: 1,
+        assignedDate: 1,
+        Disputestatus: 1,
+        disputeAmount: 1,
+        finishDate: 1,
       },
     },
   ]);
+
   return { values: values, total: total.length };
 };
 
