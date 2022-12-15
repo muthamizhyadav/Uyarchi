@@ -4021,6 +4021,7 @@ const getallmanageIssus = async (query) => {
         delivered_date: 1,
         reason: 1,
         status: 1,
+        issueStatus: 1,
       },
     },
     { $skip: 10 * page },
@@ -4207,7 +4208,8 @@ const getmanageIssus_byID = async (query) => {
         allProducts: '$allProducts',
         issueProducts: '$issueProducts',
         issueProducts_status:"$issueProducts_status",
-        issueStatus_show: { $anyElementTrue: ['$issueProducts_status'] }
+        issueStatus_show: { $anyElementTrue: ['$issueProducts_status'] },
+        issueStatus:1,
       },
     },
   ]);
@@ -6152,10 +6154,17 @@ const update_issue_status_decline= async (query) => {
 
 }
 const order_process_to_completed= async (query) => {
-  let product=await ProductorderClone.find({orderId:query.id,issueStatus:"Approved" , issueStatus:{$ne:"Pending" }})
-  // return await ShopOrderClone.findByIdAndUpdate({_id:query.id},{issueStatus:"Decline"},{new : true})
+  let status="Decline";
+  let approved=await ProductorderClone.find({orderId:query.id,issueStatus:"Approved" ,issueraised:true})
+  let total=await ProductorderClone.find({orderId:query.id,issueraised:true ,issueStatus:"Pending"}).count();
+  if (total.length  !=0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order Pending');
+  }
+  if(approved !=0){
+    status="Approved";
+  }
+  return await ShopOrderClone.findByIdAndUpdate({_id:query.id},{issueStatus:status},{new : true})
 
-  return product;
 }
 
 const order_process_to_return= async (query) => {
