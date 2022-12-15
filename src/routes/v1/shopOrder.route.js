@@ -76,6 +76,11 @@ router.route('/reject/assignorder/timeloss').put(shopOrderController.get_assigno
 router.route('/reject/assignorder/reassgin').put(authorization, shopOrderController.get_assignorder_reassgin);
 router.route('/reject/assignorder/remove').put(authorization, shopOrderController.get_assignorder_remove);
 router.route('/sort/orders/wde/ordernow').post(shopOrderController.sort_by_order_wde);
+router.route('/update/issue/approved').put(shopOrderController.update_issue_status_approved);
+router.route('/update/issue/decline').put(shopOrderController.update_issue_status_decline);
+router.route('/update/process/to/completed').put(shopOrderController.order_process_to_completed);
+router.route('/update/process/to/return').put(shopOrderController.order_process_to_return);
+
 
 
 module.exports = router;

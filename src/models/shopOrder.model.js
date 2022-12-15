@@ -345,6 +345,10 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   sort_wde:{
     type: Number,
   },
+  issueStatus: {
+    type: String,
+    default: 'Pending',
+  },
 });
 
 ShopOrderClonePriceSchema.plugin(toJSON);
@@ -497,6 +501,10 @@ const productorderCloneSchema = new mongoose.Schema({
   issueDate: {
     type: Date,
   },
+  issueStatus:{
+    type: String,
+    default: 'Pending',
+  }
 });
 
 productorderCloneSchema.plugin(toJSON);
