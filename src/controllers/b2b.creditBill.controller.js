@@ -181,6 +181,11 @@ const updateFineStatus = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getOrdersBills = catchAsync(async (req, res) => {
+  const data = await creditBillService.getOrdersBills(req.params.id, req.params.page);
+  res.send(data);
+});
+
 module.exports = {
   getShopWithBill,
   getWardExecutiveName,
@@ -216,4 +221,5 @@ module.exports = {
   getgroupbilldetails,
   getDisputegroupeOnly,
   updateFineStatus,
+  getOrdersBills,
 };
