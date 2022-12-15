@@ -17,4 +17,5 @@ router.route('/createShops').post(b2bCloneshopImage.array('photoCapture'), shopE
 router.route('/getAllSupplierDatas').get(shopEnrollmentEnquiryController.getAllSupplierDatas);
 router.route('/getIdEnquiryShops/:id').get(shopEnrollmentEnquiryController.getIdEnquiryShops);
 router.route('/createSupplierEnquiry').post(authorization, shopEnrollmentEnquiryController.createSupplierEnquiry);
+router.route('/product/:id').get(shopEnrollmentEnquiryController.product);
 module.exports = router;
