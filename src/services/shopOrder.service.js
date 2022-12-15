@@ -3974,6 +3974,23 @@ const getallmanageIssus = async (query) => {
     },
     {
       $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {$group:{_id:null,count:{$sum:1}}}
+        ],
+        as: 'total_order',
+      },
+    },
+    {
+      $unwind: {
+        path: '$total_order',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
@@ -4021,6 +4038,9 @@ const getallmanageIssus = async (query) => {
         delivered_date: 1,
         reason: 1,
         status: 1,
+        issueStatus: 1,
+        order_issues:1,
+        total_order:"$total_order.count"
       },
     },
     { $skip: 10 * page },
@@ -4146,6 +4166,17 @@ const getmanageIssus_byID = async (query) => {
     },
     {
       $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          { $match: { $and: [{ issueraised: { $eq: true } },{issueStatus:{$eq:"Pending"}}] } },
+        ],
+        as: 'issueProducts_status',
+      },
+    },
+    {
+      $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
@@ -4195,6 +4226,9 @@ const getmanageIssus_byID = async (query) => {
         status: 1,
         allProducts: '$allProducts',
         issueProducts: '$issueProducts',
+        issueProducts_status:"$issueProducts_status",
+        issueStatus_show: { $anyElementTrue: ['$issueProducts_status'] },
+        issueStatus:1,
       },
     },
   ]);
@@ -6139,14 +6173,21 @@ const update_issue_status_decline= async (query) => {
 
 }
 const order_process_to_completed= async (query) => {
-  let product=await ProductorderClone.find({orderId:query.id,issueStatus:"Approved" , issueStatus:{$ne:"Pending" }})
-  // return await ShopOrderClone.findByIdAndUpdate({_id:query.id},{issueStatus:"Decline"},{new : true})
+  let status="Decline";
+  let approved=await ProductorderClone.find({orderId:query.id,issueStatus:"Approved" ,issueraised:true}).count();
+  let total=await ProductorderClone.find({orderId:query.id,issueraised:true ,issueStatus:"Pending"}).count();
+  if (total  !=0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order Pending');
+  }
+  if(approved !=0){
+    status="Approved";
+  }
+  return await ShopOrderClone.findByIdAndUpdate({_id:query.id},{issueStatus:status},{new : true})
 
-  return product;
 }
 
 const order_process_to_return= async (query) => {
-  return await ShopOrderClone.findByIdAndUpdate({_id:query.id},{issueStatus:"process_to_return"},{new : true})
+  return await ShopOrderClone.findByIdAndUpdate({_id:query.id,issueStatus:{$in:["Approved","Decline"]}},{order_issues:"Process To Return"},{new : true})
 
 }
 
