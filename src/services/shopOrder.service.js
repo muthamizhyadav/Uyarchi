@@ -6155,9 +6155,9 @@ const update_issue_status_decline= async (query) => {
 }
 const order_process_to_completed= async (query) => {
   let status="Decline";
-  let approved=await ProductorderClone.find({orderId:query.id,issueStatus:"Approved" ,issueraised:true})
+  let approved=await ProductorderClone.find({orderId:query.id,issueStatus:"Approved" ,issueraised:true}).count();
   let total=await ProductorderClone.find({orderId:query.id,issueraised:true ,issueStatus:"Pending"}).count();
-  if (total.length  !=0) {
+  if (total  !=0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Order Pending');
   }
   if(approved !=0){
