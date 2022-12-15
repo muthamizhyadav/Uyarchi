@@ -5678,7 +5678,9 @@ const Approved_Mismatch_amount = async (page) => {
         date: 1,
         OrderId: { $ifNull: ['$shoporders.OrderId', 'null'] },
         users: '$users.name',
-        OrderId: '$shoporders.OrderId',
+        userId: '$users._id',
+        orderId: 1,
+        shoporderId: '$shoporders.OrderId',
         disputeamt: '$shoporders.disputeamt',
         customerSaidamt: '$shoporders.customerSaidamt',
         salesmanEnteredamt: '$shoporders.salesmanEnteredamt',
@@ -5881,6 +5883,51 @@ const updateFineStatus = async (id, body) => {
   return creditbill;
 };
 
+const getOrdersBills = async (id, page) => {
+  let values = await creditBillGroup.aggregate([
+    {
+      $match: {
+        AssignedUserId: id,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        fineStatus: 1,
+        AssignedUserId: 1,
+        groupId: 1,
+        assignedTime: 1,
+        assignedDate: 1,
+        Disputestatus: { $ifNull: ['$Disputestatus', 'nill'] },
+        disputeAmount: { $ifNull: ['$disputeAmount', 'nill'] },
+        finishDate: { $ifNull: ['$finishDate', 'nill'] },
+      },
+    },
+  ]);
+  let total = await creditBillGroup.aggregate([
+    {
+      $match: {
+        AssignedUserId: id,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        fineStatus: 1,
+        AssignedUserId: 1,
+        groupId: 1,
+        assignedTime: 1,
+        assignedDate: 1,
+        Disputestatus: 1,
+        disputeAmount: 1,
+        finishDate: 1,
+      },
+    },
+  ]);
+
+  return { values: values, total: total.length };
+};
+
 module.exports = {
   getShopWithBill,
   afterCompletion_Of_Delivered,
@@ -5915,4 +5962,5 @@ module.exports = {
   getgroupbilldetails,
   getDisputegroupeOnly,
   updateFineStatus,
+  getOrdersBills,
 };
