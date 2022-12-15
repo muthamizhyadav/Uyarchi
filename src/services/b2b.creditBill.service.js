@@ -5901,6 +5901,7 @@ const getOrdersBills = async (id, page) => {
         Disputestatus: { $ifNull: ['$Disputestatus', 'nill'] },
         disputeAmount: { $ifNull: ['$disputeAmount', 'nill'] },
         finishDate: { $ifNull: ['$finishDate', 'nill'] },
+        totalbill: { $size: '$Orderdatas' },
       },
     },
   ]);
