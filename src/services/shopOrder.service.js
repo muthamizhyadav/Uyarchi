@@ -4137,6 +4137,7 @@ const getmanageIssus_byID = async (query) => {
               issuediscription: 1,
               issuequantity: 1,
               issuetype: 1,
+              issueStatus:1
             },
           },
         ],

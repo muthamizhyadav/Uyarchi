@@ -397,21 +397,21 @@ const sort_by_order_wde= catchAsync(async (req, res) => {
 });
 
 const update_issue_status_approved= catchAsync(async (req, res) => {
-  const data = await shopOrderService.update_issue_status_approved(req.body);
+  const data = await shopOrderService.update_issue_status_approved(req.query);
   res.send(data);
 });
 const update_issue_status_decline= catchAsync(async (req, res) => {
-  const data = await shopOrderService.update_issue_status_decline(req.body);
+  const data = await shopOrderService.update_issue_status_decline(req.query);
   res.send(data);
 });
 
 const order_process_to_completed= catchAsync(async (req, res) => {
-  const data = await shopOrderService.order_process_to_completed(req.body);
+  const data = await shopOrderService.order_process_to_completed(req.query);
   res.send(data);
 });
 
 const order_process_to_return= catchAsync(async (req, res) => {
-  const data = await shopOrderService.order_process_to_return(req.body);
+  const data = await shopOrderService.order_process_to_return(req.query);
   res.send(data);
 });
 module.exports = {
