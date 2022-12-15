@@ -5035,6 +5035,24 @@ const getTotalmisMatchStock = async (de, date, page) => {
       $unwind: '$users',
     },
     {
+      $lookup: {
+        from: 'returnstockhistories',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          { $match: { mismatch: { $ne: 0 } } },
+          { $group: { _id: null, total: { $sum: { $multiply: ['$actualStock', '$mismatch'] } } } },
+        ],
+        as: 'returnStockk',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$returnStockk',
+      },
+    },
+    {
       $project: {
         _id: 1,
         GroupBillId: 1,
@@ -5045,6 +5063,7 @@ const getTotalmisMatchStock = async (de, date, page) => {
         groupId: 1,
         returnStock: '$returnStock.image',
         deliveryExecutive: '$users.name',
+        TotalMismatchAmt: '$returnStockk.total',
       },
     },
     {
@@ -5099,6 +5118,24 @@ const getTotalmisMatchStock = async (de, date, page) => {
     },
     {
       $unwind: '$users',
+    },
+    {
+      $lookup: {
+        from: 'returnstockhistories',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          { $match: { mismatch: { $ne: 0 } } },
+          { $group: { _id: null, total: { $sum: { $multiply: ['$actualStock', '$mismatch'] } } } },
+        ],
+        as: 'returnStockk',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$returnStockk',
+      },
     },
     {
       $project: {
