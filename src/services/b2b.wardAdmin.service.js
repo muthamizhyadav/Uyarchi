@@ -5040,8 +5040,39 @@ const getTotalmisMatchStock = async (de, date, page) => {
         localField: '_id',
         foreignField: 'groupId',
         pipeline: [
-          { $match: { mismatch: { $ne: 0 } } },
-          { $group: { _id: null, total: { $sum: { $multiply: ['$actualStock', '$mismatch'] } } } },
+          {
+            $addFields: { dates: { $dateToString: { format: '%Y-%m-%d', date: '$created' } } },
+          },
+          {
+            $lookup: {
+              from: 'historypacktypes',
+              let: { productid: '$productId', date: '$dates' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [{ $eq: ['$productId', '$$productid'] }, { $eq: ['$date', '$$date'] }],
+                    },
+                  },
+                },
+              ],
+              as: 'packtype',
+            },
+          },
+          {
+            $unwind: '$packtype',
+          },
+          {
+            $project: {
+              _id: 1,
+              mismatch: 1,
+              salesendPrice: '$packtype.salesendPrice',
+              price: { $multiply: ['$mismatch', '$packtype.salesendPrice'] },
+            },
+          },
+          {
+            $group: { _id: null, total: { $sum: '$price' } },
+          },
         ],
         as: 'returnStockk',
       },
