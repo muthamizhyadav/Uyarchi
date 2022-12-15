@@ -64,6 +64,12 @@ const getAllSupplierDatas = catchAsync(async (req, res) => {
     res.send(data);
   });
 
+  const createSupplierEnquiry = catchAsync(async (req, res) => {
+    console.log(req.userId)
+    const data = await shopEnrollmentEnquiryService.createSupplierEnquiry(req.userId, req.body);
+    res.send(data);
+  });
+
 module.exports = {
     createEnquiry,
     getAllEnquiryDatas,
@@ -74,4 +80,5 @@ module.exports = {
     createShops,
     getAllSupplierDatas,
     getIdEnquiryShops,
+    createSupplierEnquiry,
 };

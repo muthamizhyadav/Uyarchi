@@ -105,4 +105,55 @@ const shopEnrollmentEnquiryAssignSchema = new mongoose.Schema({
   
   const ShopEnrollmentEnquiryAssign = mongoose.model('shopEnrollmentEnquiryAssign', shopEnrollmentEnquiryAssignSchema);
 
-module.exports = {ShopEnrollmentEnquiry, ShopEnrollmentEnquiryAssign };
+  const supplierEnrollmentSchema = new mongoose.Schema({
+    _id: {
+      type: String,
+      default: v4,
+    },
+    date: {
+      type: String,
+      default:moment().format('YYYY-MM-DD'),
+    },
+    time: {
+      type: String,
+      default:moment().format('h:mm a'),
+    },
+    tradeName: {
+      type: String,
+    },
+    suplierName:{
+      type:String,
+    },
+    mobileNumber:{
+      type:Number,
+    },
+    Area:{
+      type:String,
+    },
+    productDealingwith:{
+      type:Array,
+    },
+    createdBy:{
+      type:String,
+    },
+    status:{
+      type:String,
+      default:"Pending"
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    archive: {
+      type: Boolean,
+      default: false,
+    },
+  },
+    {
+      timestamps: { createdAt: 'createdDate', updatedAt: 'updatedDate' },
+    }
+    );
+  
+  const SupplierEnrollment = mongoose.model('supplierEnrollment', supplierEnrollmentSchema);
+
+module.exports = {ShopEnrollmentEnquiry, ShopEnrollmentEnquiryAssign,  SupplierEnrollment};
