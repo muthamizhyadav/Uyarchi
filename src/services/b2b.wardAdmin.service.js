@@ -5061,10 +5061,9 @@ const getTotalmisMatchStock = async (de, date, page) => {
         deliveryExecutiveId: 1,
         totalMis_match: '$returnStocks.totalMisMatch',
         groupId: 1,
-        returnStockimages:1,
+        returnStockimages: 1,
         deliveryExecutive: '$users.name',
         TotalMismatchAmt: '$returnStockk.total',
-
       },
     },
     {
