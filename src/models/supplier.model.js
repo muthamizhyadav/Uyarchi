@@ -102,6 +102,9 @@ const supplierSchema = new mongoose.Schema({
   long: {
     type: Number,
   },
+  createdBy: {
+    type: String,
+  },
   verifiedDate: {
     type: String,
   },
