@@ -70,6 +70,11 @@ const getAllSupplierDatas = catchAsync(async (req, res) => {
     res.send(data);
   });
 
+  const product = catchAsync(async (req, res) => {
+    const data = await shopEnrollmentEnquiryService.product(req.params.id);
+    res.send(data);
+  });
+
 module.exports = {
     createEnquiry,
     getAllEnquiryDatas,
@@ -81,4 +86,5 @@ module.exports = {
     getAllSupplierDatas,
     getIdEnquiryShops,
     createSupplierEnquiry,
+    product,
 };

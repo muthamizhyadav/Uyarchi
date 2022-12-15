@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const { ShopEnrollmentEnquiry, ShopEnrollmentEnquiryAssign, SupplierEnrollment} = require('../models/shopEnrollmentEnquiry.model');
 const {Shop} = require('../models/b2b.ShopClone.model');
-const Supplier = require('../models/supplier.model');
+const {Product} = require('../models/product.model');
 const ApiError = require('../utils/ApiError');
 const moment = require('moment');
 
@@ -216,6 +216,36 @@ const getAllSupplierDatas = async () =>{
 }
 
 
+// product 
+
+const product = async (id) =>{
+  let product = []
+  let push = []
+  const data = await SupplierEnrollment.findById(id)
+  if(!data){
+    throw new ApiError(httpStatus.NOT_FOUND, 'ShopEnrollmentEnquiry Not Found');
+  }
+  // data.productDealingwith.forEach(async (e) => {
+  //   product = await Product.findById(e)
+  //   push.push(product)
+  //   console.log(push)
+  // })
+  // return push;
+  data.productDealingwith.forEach(async (e) => {
+    // const product = await Product.findById(e)
+    product.push(e);
+    console.log(e)
+  });
+  for (let i = 0; i < product.length; i++) {
+    const pro = await Product.findById(product[i]);
+    push.push(pro.productTitle);
+  }
+
+  
+  return { data: data, products:push };
+}
+
+
 const getIdEnquiryShops = async (id) =>{
     const data = await ShopEnrollmentEnquiry.aggregate([
         {
@@ -270,4 +300,5 @@ module.exports = {
     getAllSupplierDatas,
     getIdEnquiryShops,
     createSupplierEnquiry,
+    product,
 };
