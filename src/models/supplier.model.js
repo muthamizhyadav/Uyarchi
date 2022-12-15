@@ -23,6 +23,7 @@ const supplierSchema = new mongoose.Schema({
   },
   primaryContactNumber: {
     type: String,
+    unique: true,
   },
   primaryContactName: {
     type: String,
@@ -62,6 +63,7 @@ const supplierSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    unique: true,
   },
   pinCode: {
     type: Number,
