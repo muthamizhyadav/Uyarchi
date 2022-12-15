@@ -505,6 +505,9 @@ const PurchaseExecutivelogin = async (userBody) => {
       throw new ApiError(httpStatus.UNAUTHORIZED, "Passwoed Doesn't Match");
     }
   }
+  if (userName.userRole !== 'a5a14b92-d6e0-49d7-b496-4a4779f45d3b') {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid Role');
+  }
   return userName;
 };
 
