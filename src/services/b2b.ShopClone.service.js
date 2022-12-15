@@ -1856,7 +1856,6 @@ const updateShopStatus = async (id, status, bodyData, userID) => {
   return shop;
 };
 
-
 const update_reverification = async (id, status, bodyData, userID) => {
   let shop = await getShopById(id);
   if (!shop) {
@@ -1866,7 +1865,10 @@ const update_reverification = async (id, status, bodyData, userID) => {
   let serverdate = moment().format('YYYY-MM-DD');
   shop = await Shop.findByIdAndUpdate(
     { _id: id },
-    { ...bodyData, ...{ status: status, Re_DA_DATE: serverdate, Re_DA_USER: userID, Re_DA_CREATED: moment(), Re_DA_TIME: servertime } },
+    {
+      ...bodyData,
+      ...{ status: status, Re_DA_DATE: serverdate, Re_DA_USER: userID, Re_DA_CREATED: moment(), Re_DA_TIME: servertime },
+    },
     { new: true }
   );
   return shop;
@@ -3484,11 +3486,7 @@ const update_pincode = async (query, body) => {
   return shop;
 };
 const update_pincode_map = async (query, body) => {
-  let shop = await Shop.findByIdAndUpdate(
-    { _id: query.id },
-    { Pincode: body.pincode },
-    { new: true }
-  );
+  let shop = await Shop.findByIdAndUpdate({ _id: query.id }, { Pincode: body.pincode }, { new: true });
   return shop;
 };
 const gomap_view_now = async (id) => {
@@ -3771,7 +3769,8 @@ const get_userbased_dataapproved = async (query) => {
   for (let i = 0; i < shops.length; i++) {
     if (shops[i].distanceStatus != 'updated') {
       let response = await axios.get(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${shops[i].Slat + ',' + shops[i].Slong
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${
+          shops[i].Slat + ',' + shops[i].Slong
         }&destinations=${shops[i].da_lot + ',' + shops[i].da_long}&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
       );
       if (i == 0) {
@@ -3779,7 +3778,8 @@ const get_userbased_dataapproved = async (query) => {
         long = shops[i].Slong;
       }
       let dis = await axios.get(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat + ',' + long}&destinations=${shops[i].Slat + ',' + shops[i].Slong
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat + ',' + long}&destinations=${
+          shops[i].Slat + ',' + shops[i].Slong
         }&key=AIzaSyDoYhbYhtl9HpilAZSy8F_JHmzvwVDoeHI`
       );
       // console.log(dis.data.rows[0].elements[0].distance.text);
@@ -3821,7 +3821,7 @@ const managemap_data_approved = async (query) => {
   let dateMatch = { active: true };
   let userMatch = { active: true };
   if (query.status != null && query.status != '' && query.status != 'null') {
-    dastatus = { daStatus: { $eq: query.status } }
+    dastatus = { daStatus: { $eq: query.status } };
   }
   if (query.date != null && query.date != '' && query.date != 'null') {
     let date = query.date.split(',');
@@ -3830,13 +3830,13 @@ const managemap_data_approved = async (query) => {
     dateMatch = { $and: [{ DA_DATE: { $gte: startdate } }, { DA_DATE: { $lte: enddata } }] };
   }
   if (query.capture != null && query.capture != '' && query.capture != 'null') {
-    userMatch = { Uid: { $eq: query.capture } }
+    userMatch = { Uid: { $eq: query.capture } };
   }
   if (query.uid != null && query.uid != '' && query.uid != 'null') {
     userId = [
       { salesManId: query.uid, fromSalesManId: query.uid, status: 'Assign' },
       { salesManId: query.uid, status: 'tempReassign' },
-    ]
+    ];
   }
 
   let values = await Shop.aggregate([
@@ -3847,11 +3847,7 @@ const managemap_data_approved = async (query) => {
           { salesManStatus: { $eq: 'tempReassign' } },
           { salesManStatus: { $eq: 'Reassign' } },
         ],
-        $and: [
-          dastatus,
-          dateMatch,
-          userMatch,
-        ]
+        $and: [dastatus, dateMatch, userMatch],
       },
     },
     {
@@ -3862,7 +3858,7 @@ const managemap_data_approved = async (query) => {
         pipeline: [
           {
             $match: {
-              $or: userId
+              $or: userId,
             },
           },
         ],
@@ -4002,17 +3998,16 @@ const managemap_data_approved = async (query) => {
         Pincode: 1,
         distance: 1,
         da_distance: 1,
-        distanceStatus: 1
+        distanceStatus: 1,
       },
     },
   ]);
   return values;
-
-}
+};
 
 const reverifiction_byshop = async (query, userId) => {
   let page = query.page == '' || query.page == null || query.page == 'null' ? 0 : query.page;
-  console.log(page)
+  console.log(page);
   let values = await Shop.aggregate([
     {
       $sort: { status: 1, gomap: -1 },
@@ -4023,24 +4018,23 @@ const reverifiction_byshop = async (query, userId) => {
           {
             $and: [
               {
-                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] },
               },
               {
-                Uid: { $eq: userId }
-              }
-            ]
+                Uid: { $eq: userId },
+              },
+            ],
           },
           {
             $and: [
               {
-                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] },
               },
               {
-                re_Uid: { $eq: userId }
-              }
-            ]
+                re_Uid: { $eq: userId },
+              },
+            ],
           },
-
         ],
       },
     },
@@ -4161,7 +4155,7 @@ const reverifiction_byshop = async (query, userId) => {
         mobile: 1,
         date: 1,
         gomap: 1,
-        Re_daStatus: 1
+        Re_daStatus: 1,
       },
     },
     { $skip: 10 * page },
@@ -4177,24 +4171,23 @@ const reverifiction_byshop = async (query, userId) => {
           {
             $and: [
               {
-                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] },
               },
               {
-                Uid: { $eq: userId }
-              }
-            ]
+                Uid: { $eq: userId },
+              },
+            ],
           },
           {
             $and: [
               {
-                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+                daStatus: { $in: ['Not Interested', 'Cannot Spot the Shop'] },
               },
               {
-                re_Uid: { $eq: userId }
-              }
-            ]
+                re_Uid: { $eq: userId },
+              },
+            ],
           },
-
         ],
       },
     },
@@ -4292,33 +4285,30 @@ const reverifiction_byshop = async (query, userId) => {
     values: values,
     total: total.length,
   };
-
-}
-
+};
 
 const get_reassign_temp = async (query) => {
-
   console.log(query);
-  let page = query.page == null || query.page == 'null' || query.page == '' ? 0 : query.page
+  let page = query.page == null || query.page == 'null' || query.page == '' ? 0 : query.page;
   let assignby = { active: true };
   if (query.assign != null && query.assign != 'null' && query.assign != '') {
-    assignby = { DA_USER: { $ne: query.assign } }
+    assignby = { DA_USER: { $ne: query.assign } };
   }
-  let statusMatch = { $in: ['Not Interested', 'Cannot Spot the Shop'] }
+  let statusMatch = { $in: ['Not Interested', 'Cannot Spot the Shop'] };
   if (query.status != '' && query.status != null && query.status != 'null') {
-    statusMatch = { $eq: query.status }
+    statusMatch = { $eq: query.status };
   }
   let zoneMatch = { active: true };
   if (query.zone != '' && query.zone != null && query.zone != 'null') {
-    zoneMatch = { _id: { $eq: query.zone } }
+    zoneMatch = { _id: { $eq: query.zone } };
   }
   let wardMatch = { active: true };
   if (query.ward != '' && query.ward != null && query.ward != 'null') {
-    wardMatch = { Wardid: { $eq: query.ward } }
+    wardMatch = { Wardid: { $eq: query.ward } };
   }
   let capture = query.capture;
-  console.log(wardMatch)
-  console.log(zoneMatch)
+  console.log(wardMatch);
+  console.log(zoneMatch);
 
   let values = await Shop.aggregate([
     {
@@ -4328,14 +4318,14 @@ const get_reassign_temp = async (query) => {
       $match: {
         $and: [
           {
-            daStatus: statusMatch
+            daStatus: statusMatch,
           },
           {
-            Uid: { $eq: capture }
+            Uid: { $eq: capture },
           },
           { re_Uid: { $eq: null } },
           assignby,
-          wardMatch
+          wardMatch,
         ],
       },
     },
@@ -4368,9 +4358,7 @@ const get_reassign_temp = async (query) => {
               from: 'zones',
               localField: 'zoneId',
               foreignField: '_id',
-              pipeline: [
-                { $match: { $and: [zoneMatch] } }
-              ],
+              pipeline: [{ $match: { $and: [zoneMatch] } }],
               as: 'zonedata',
             },
           },
@@ -4490,32 +4478,27 @@ const get_reassign_temp = async (query) => {
         Pincode: 1,
         daStatus: 1,
         DA_USER: 1,
-        Wardid: 1
+        Wardid: 1,
       },
     },
-
   ]);
 
-
   return { values: values };
-
-}
+};
 
 const update_reassign_temp = async (body) => {
-
-  console.log(body)
+  console.log(body);
 
   body.arr.forEach(async (e) => {
     await Shop.findByIdAndUpdate({ _id: e }, { re_Uid: body.assign, reAssigin_date: moment() }, { new: true });
-  })
+  });
 
   return { status: 'success' };
-}
-
+};
 
 const get_data_approved_date = async (query) => {
   let user = query.id;
-  console.log(user)
+  console.log(user);
   let shop = await Shop.aggregate([
     { $match: { $and: [{ DA_USER: { $eq: user } }] } },
     {
@@ -4530,11 +4513,11 @@ const get_data_approved_date = async (query) => {
         address: 1,
         daStatus: 1,
         status: 1,
-      }
-    }
-  ])
+      },
+    },
+  ]);
   return shop;
-}
+};
 
 const get_data_approved_details = async (query) => {
   const page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
@@ -4542,10 +4525,10 @@ const get_data_approved_details = async (query) => {
   let daterange = { active: true };
   let statusMatch = { Re_daStatus: { $ne: null } };
   if (query.user != null && query.user != '' && query.user != 'null') {
-    userMatch = { $or: [{ re_Uid: { $eq: query.user } }, { Uid: { $eq: query.user } }] }
+    userMatch = { $or: [{ re_Uid: { $eq: query.user } }, { Uid: { $eq: query.user } }] };
   }
   if (query.status != null && query.status != '' && query.status != 'null') {
-    statusMatch = { Re_daStatus: { $eq: query.status } }
+    statusMatch = { Re_daStatus: { $eq: query.status } };
   }
   if (query.date != null && query.date != '' && query.date != 'null') {
     let date = query.date.split(',');
@@ -4738,7 +4721,7 @@ const get_data_approved_details = async (query) => {
     },
     { $skip: 10 * page },
     { $limit: 10 },
-  ])
+  ]);
 
   let total = await Shop.aggregate([
     { $match: { $and: [userMatch, daterange, statusMatch] } },
@@ -4868,37 +4851,31 @@ const get_data_approved_details = async (query) => {
     {
       $unwind: '$data_approved_re',
     },
-
-  ])
+  ]);
   return { value: shop, total: total.length };
-}
-
+};
 
 const get_updated_pincode = async () => {
   let shop = await Shop.aggregate([
-    { $match: { $and: [{ status: { $eq: "data_approved" } }, { Pincode: { $ne: null } }] } },
+    { $match: { $and: [{ status: { $eq: 'data_approved' } }, { Pincode: { $ne: null } }] } },
     {
       $group: {
-        _id: { Pincode: "$Pincode" },
-        count:{$sum: 1 }
-      }
+        _id: { Pincode: '$Pincode' },
+        count: { $sum: 1 },
+      },
     },
     {
       $project: {
-        _id: "aa",
-        Pincode: "$_id.Pincode",
-        count:1
-      }
+        _id: 'aa',
+        Pincode: '$_id.Pincode',
+        count: 1,
+      },
     },
-    { $sort: { Pincode: 1 } }
-
+    { $sort: { Pincode: 1 } },
   ]);
-  
+
   return shop;
-}
-
-
-
+};
 
 const get_shop_in_pincode = async (query) => {
   let pincode = query.pincode;
@@ -4906,7 +4883,7 @@ const get_shop_in_pincode = async (query) => {
     pincode = parseInt(query.pincode);
   }
   let shop = await Shop.aggregate([
-    { $match: { $and: [{ status: { $eq: "data_approved" } }, { Pincode: { $eq: pincode } }] } },
+    { $match: { $and: [{ status: { $eq: 'data_approved' } }, { Pincode: { $eq: pincode } }] } },
     {
       $lookup: {
         from: 'b2busers',
@@ -5096,10 +5073,45 @@ const get_shop_in_pincode = async (query) => {
   ]);
 
   return shop;
-}
+};
 
-
-
+const getindividualSupplierAttendence = async (userId) => {
+  let values = await AttendanceClonenew.aggregate([
+    {
+      $match: {
+        Uid: userId,
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $project: {
+        _id: 1,
+        photoCapture: 1,
+        active: 1,
+        archive: 1,
+        Alat: 1,
+        Along: 1,
+        image: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        Uid: 1,
+        userName: '$UsersData.name',
+      },
+    },
+  ]);
+  return values;
+};
 
 module.exports = {
   createShopClone,
@@ -5162,7 +5174,6 @@ module.exports = {
   get_updated_pincode,
   get_shop_in_pincode,
   update_pincode_map,
-
+  getindividualSupplierAttendence,
   // bharathiraja
-
-}
+};

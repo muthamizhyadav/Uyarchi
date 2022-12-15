@@ -155,7 +155,8 @@ const getAllAppOnly_Supplier_Update = catchAsync(async (req, res) => {
 // supplier Api's for third versions
 
 const createSuppliers = catchAsync(async (req, res) => {
-  const data = await supplierService.createSuppliers(req.body);
+  let userId = req.userId;
+  const data = await supplierService.createSuppliers(req.body, userId);
   res.send(data);
 });
 

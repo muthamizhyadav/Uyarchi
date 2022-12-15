@@ -501,7 +501,6 @@ const reverifiction_byshop = catchAsync(async (req, res) => {
   res.send(data);
 });
 
-
 const get_reassign_temp = catchAsync(async (req, res) => {
   const data = await b2bCloneService.get_reassign_temp(req.query);
   res.send(data);
@@ -511,37 +510,41 @@ const update_reassign_temp = catchAsync(async (req, res) => {
   res.send(data);
 });
 
-const get_data_approved_date= catchAsync(async (req, res) => {
+const get_data_approved_date = catchAsync(async (req, res) => {
   const data = await b2bCloneService.get_data_approved_date(req.query);
   res.send(data);
 });
 
-const get_data_approved_details= catchAsync(async (req, res) => {
+const get_data_approved_details = catchAsync(async (req, res) => {
   const data = await b2bCloneService.get_data_approved_details(req.query);
   res.send(data);
-
 });
 
-const get_updated_pincode= catchAsync(async (req, res) => {
+const get_updated_pincode = catchAsync(async (req, res) => {
   const data = await b2bCloneService.get_updated_pincode(req.query);
   res.send(data);
-
 });
-const get_shop_in_pincode= catchAsync(async (req, res) => {
+const get_shop_in_pincode = catchAsync(async (req, res) => {
   const data = await b2bCloneService.get_shop_in_pincode(req.query);
   res.send(data);
-
 });
 
-const update_pincode_map= catchAsync(async (req, res) => {
-  const data = await b2bCloneService.update_pincode_map(req.query,req.body);
+const update_pincode_map = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.update_pincode_map(req.query, req.body);
   res.send(data);
 });
 
-const sort_by_order_wde= catchAsync(async (req, res) => {
+const sort_by_order_wde = catchAsync(async (req, res) => {
   const data = await b2bCloneService.sort_by_order_wde(req.body);
   res.send(data);
 });
+
+const getindividualSupplierAttendence = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const data = await b2bCloneService.getindividualSupplierAttendence(userId);
+  res.send(data);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -605,5 +608,6 @@ module.exports = {
   get_updated_pincode,
   get_shop_in_pincode,
   update_pincode_map,
-  sort_by_order_wde
+  sort_by_order_wde,
+  getindividualSupplierAttendence,
 };
