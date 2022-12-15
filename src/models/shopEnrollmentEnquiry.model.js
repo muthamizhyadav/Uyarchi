@@ -47,6 +47,9 @@ const shopEnrollmentEnquirySchema = new mongoose.Schema({
   enquiryType:{
     type:String,
   },
+  b2bshopcloneId:{
+    type:String,
+  },
   active: {
     type: Boolean,
     default: true,
