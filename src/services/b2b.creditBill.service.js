@@ -4826,6 +4826,7 @@ const getbilldetails = async (query) => {
     {
       $match: {
         paidAmt: { $gt: 0 },
+        creditApprovalStatus: { $ne: 'Approved' },
       },
     },
   ]);
@@ -4973,6 +4974,7 @@ const getbilldetails = async (query) => {
     {
       $match: {
         paidAmt: { $gt: 0 },
+        creditApprovalStatus: { $ne: 'Approved' },
       },
     },
   ]);
