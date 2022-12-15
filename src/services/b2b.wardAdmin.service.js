@@ -5035,6 +5035,55 @@ const getTotalmisMatchStock = async (de, date, page) => {
       $unwind: '$users',
     },
     {
+      $lookup: {
+        from: 'returnstockhistories',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          {
+            $addFields: { dates: { $dateToString: { format: '%Y-%m-%d', date: '$created' } } },
+          },
+          {
+            $lookup: {
+              from: 'historypacktypes',
+              let: { productid: '$productId', date: '$dates' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [{ $eq: ['$productId', '$$productid'] }, { $eq: ['$date', '$$date'] }],
+                    },
+                  },
+                },
+              ],
+              as: 'packtype',
+            },
+          },
+          {
+            $unwind: '$packtype',
+          },
+          {
+            $project: {
+              _id: 1,
+              mismatch: 1,
+              salesendPrice: '$packtype.salesendPrice',
+              price: { $multiply: ['$mismatch', '$packtype.salesendPrice'] },
+            },
+          },
+          {
+            $group: { _id: null, total: { $sum: '$price' } },
+          },
+        ],
+        as: 'returnStockk',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$returnStockk',
+      },
+    },
+    {
       $project: {
         _id: 1,
         GroupBillId: 1,
@@ -5043,8 +5092,9 @@ const getTotalmisMatchStock = async (de, date, page) => {
         deliveryExecutiveId: 1,
         totalMis_match: '$returnStocks.totalMisMatch',
         groupId: 1,
-        returnStock: '$returnStock.image',
+        returnStockimages: 1,
         deliveryExecutive: '$users.name',
+        TotalMismatchAmt: '$returnStockk.total',
       },
     },
     {
@@ -5099,6 +5149,24 @@ const getTotalmisMatchStock = async (de, date, page) => {
     },
     {
       $unwind: '$users',
+    },
+    {
+      $lookup: {
+        from: 'returnstockhistories',
+        localField: '_id',
+        foreignField: 'groupId',
+        pipeline: [
+          { $match: { mismatch: { $ne: 0 } } },
+          { $group: { _id: null, total: { $sum: { $multiply: ['$actualStock', '$mismatch'] } } } },
+        ],
+        as: 'returnStockk',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$returnStockk',
+      },
     },
     {
       $project: {

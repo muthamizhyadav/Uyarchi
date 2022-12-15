@@ -367,6 +367,7 @@ const storeReturn_images_toGroup = catchAsync(async (req, res) => {
       group.returnStockimages.push('images/returnstock/' + files.filename);
     });
   }
+  group.save();
   res.send(group);
 });
 
