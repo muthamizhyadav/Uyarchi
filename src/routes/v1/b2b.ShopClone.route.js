@@ -112,6 +112,6 @@ router.route('/get/approved/getall/reapproved/data').get(b2bShopCloneController.
 router.route('/get/pincode/all/group').get(b2bShopCloneController.get_updated_pincode);
 router.route('/getshops/bypincode/all').get(b2bShopCloneController.get_shop_in_pincode);
 router.route('/update/pincode').put(b2bShopCloneController.update_pincode_map);
-router.route('/getindividual/SupplierAttendence').get(authorization, b2bShopCloneController.getindividualSupplierAttendence);
+router.route('/getindividual/SupplierAttendence/:user/:page').get(b2bShopCloneController.getindividualSupplierAttendence);
 
 module.exports = router;
