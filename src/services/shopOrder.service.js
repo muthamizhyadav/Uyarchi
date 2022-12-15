@@ -3974,6 +3974,23 @@ const getallmanageIssus = async (query) => {
     },
     {
       $lookup: {
+        from: 'productorderclones',
+        localField: '_id',
+        foreignField: 'orderId',
+        pipeline: [
+          {$group:{_id:null,count:{$sum:1}}}
+        ],
+        as: 'total_order',
+      },
+    },
+    {
+      $unwind: {
+        path: '$total_order',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
         from: 'b2bshopclones',
         localField: 'shopId',
         foreignField: '_id',
@@ -4022,7 +4039,8 @@ const getallmanageIssus = async (query) => {
         reason: 1,
         status: 1,
         issueStatus: 1,
-        order_issues:1
+        order_issues:1,
+        total_order:"$total_order.count"
       },
     },
     { $skip: 10 * page },
