@@ -753,10 +753,10 @@ const getSupplierthird = async (key, page) => {
 
 const updateSupplierthird = async (id, updatebody) => {
   let values = await Supplier.findById(id);
-  console.log(values.lat);
-  if (values.lat) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Already Verified');
-  }
+  // console.log(values.lat);
+  // if (values.lat) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'Already Verified');
+  // }
   let values1 = { ...updatebody, ...{ supplierId: id, created: moment() } };
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier Not found');
