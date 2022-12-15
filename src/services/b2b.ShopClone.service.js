@@ -5108,6 +5108,8 @@ const getindividualSupplierAttendence = async (user, page) => {
         created: 1,
         Uid: 1,
         userName: '$UsersData.name',
+        phoneNumber: '$UsersData.phoneNumber',
+        email: '$UsersData.email',
       },
     },
     {
