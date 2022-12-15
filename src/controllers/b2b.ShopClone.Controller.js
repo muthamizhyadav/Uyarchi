@@ -540,7 +540,7 @@ const sort_by_order_wde = catchAsync(async (req, res) => {
 });
 
 const getindividualSupplierAttendence = catchAsync(async (req, res) => {
-  const data = await b2bCloneService.getindividualSupplierAttendence();
+  const data = await b2bCloneService.getindividualSupplierAttendence(req.params.user, req.params.page);
   res.send(data);
 });
 

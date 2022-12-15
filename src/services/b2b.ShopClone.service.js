@@ -5075,7 +5075,12 @@ const get_shop_in_pincode = async (query) => {
   return shop;
 };
 
-const getindividualSupplierAttendence = async () => {
+const getindividualSupplierAttendence = async (user, page) => {
+  console.log(user);
+  let userFilter = [{ active: true }];
+  if (user !== 'null') {
+    userFilter = [{ Uid: { $eq: user } }];
+  }
   let values = await AttendanceClonenew.aggregate([
     {
       $lookup: {
@@ -5105,8 +5110,50 @@ const getindividualSupplierAttendence = async () => {
         userName: '$UsersData.name',
       },
     },
+    {
+      $match: { $and: userFilter },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
   ]);
-  return values;
+  let total = await AttendanceClonenew.aggregate([
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        pipeline: [{ $match: { userRole: 'a5a14b92-d6e0-49d7-b496-4a4779f45d3b' } }],
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $project: {
+        _id: 1,
+        photoCapture: 1,
+        active: 1,
+        archive: 1,
+        Alat: 1,
+        Along: 1,
+        image: 1,
+        date: 1,
+        time: 1,
+        created: 1,
+        Uid: 1,
+        userName: '$UsersData.name',
+      },
+    },
+    {
+      $match: { $and: userFilter },
+    },
+  ]);
+  return { values: values, total: total.length };
 };
 
 module.exports = {
