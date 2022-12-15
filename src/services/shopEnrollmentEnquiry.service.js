@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { ShopEnrollmentEnquiry, ShopEnrollmentEnquiryAssign} = require('../models/shopEnrollmentEnquiry.model');
+const { ShopEnrollmentEnquiry, ShopEnrollmentEnquiryAssign, SupplierEnrollment} = require('../models/shopEnrollmentEnquiry.model');
 const {Shop} = require('../models/b2b.ShopClone.model');
 const Supplier = require('../models/supplier.model');
 const ApiError = require('../utils/ApiError');
@@ -169,7 +169,49 @@ const createShops = async (body) =>{
 }
 
 const getAllSupplierDatas = async () =>{
-    const data = await Supplier.find({active:true});
+    const data = await SupplierEnrollment.aggregate([
+      
+      {
+        $lookup: {
+          from: 'b2busers',
+          localField: 'createdBy',
+          pipeline:[
+            {
+              $lookup: {
+                from: 'roles',
+                localField: 'userRole',
+                foreignField: '_id',
+                as: 'roles',
+              },
+            },
+            {
+              $unwind: '$roles',
+            },
+          ],
+          foreignField: '_id',
+          as: 'b2busers',
+        },
+      },
+      {
+        $unwind: '$b2busers',
+      },
+      {
+        $project:{
+          createdBy:"$b2busers.roles.roleName",
+          createrName:"$b2busers.name",
+          productDealingwith:1,
+          status:1,
+          tradeName:1,
+          suplierName:1,
+          mobileNumber:1,
+          Area:1,
+          date:1,
+          time:1,
+          // createdBy:1,
+        }
+      }
+
+    ]);
     return data
 }
 
@@ -211,6 +253,12 @@ const getIdEnquiryShops = async (id) =>{
     return data
 }
 
+const createSupplierEnquiry = async (userId, body) => {
+  console.log(userId)
+  let value = {...body, ...{createdBy:userId}}
+return SupplierEnrollment.create(value);
+};
+
 module.exports = {
     createEnquiry,
     getAllEnquiryDatas,
@@ -221,4 +269,5 @@ module.exports = {
     createShops,
     getAllSupplierDatas,
     getIdEnquiryShops,
+    createSupplierEnquiry,
 };
