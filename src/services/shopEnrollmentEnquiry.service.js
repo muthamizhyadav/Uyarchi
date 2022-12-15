@@ -56,6 +56,7 @@ const getAllEnquiryDatas = async (pincode) => {
                 mobileNumber:1,
                 area:1,
                 contactName:1,
+                enquiryType:1,
                 pincode:1,
                 status:1,
                 uid:1,
@@ -162,6 +163,8 @@ const createShops = async (body) =>{
       ...{ date: serverdate, time: servertime, filterDate: filterDate, status: 'Pending', created: createdtime },
     };
     const shop = await Shop.create(values);
+    // console.log(shop)
+    // await ShopEnrollmentEnquiry.findOneAndUpdate({mobileNumber:shop.mobile, shopName:shop.SName, contactName:shop.SOwner}, {b2bshopcloneId:shop._id}, {new:true})
     return shop;
 }
 
