@@ -5017,7 +5017,7 @@ const get_order_counts_ordered = async (status, deliverytype, timeslot, delivery
 
 const get_approved_orders = async (query) => {
   //console.log(query);
-  // let pincode = { $and: [{ Pincode: { $eq: parseInt(query.pincode) } }, { Wardid: { $eq: query.wardId } }] };
+  let pincode = { $and: [{ Pincode: { $eq: parseInt(query.pincode) } }, { Wardid: { $eq: query.wardId } }] };
   //console.log(pincode);
 
   let page = query.page == null || query.page == '' || query.page == 'null' ? 0 : query.page;
@@ -5026,15 +5026,15 @@ const get_approved_orders = async (query) => {
       $in: ['Approved', 'Modified'],
     },
   };
-  let deliveryType = { active: true };
-  // let timeSlot = { active: true };
-  // let deliveryMode = { active: true };
+  let deliveryType = { delivery_type: { $eq: query.deliverytype } };
+  let timeSlot = { active: true };
+  let deliveryMode = { active: true };
   let today = moment().format('YYYY-MM-DD');
   let yesterday = moment().subtract(1, 'days').format('yyyy-MM-DD');
-  // let dateMacth = { active: true };
-  // ////console.log(today)
-  // ////console.log(yesterday)
-  // if (query.deliverytype == 'all') {
+  let dateMacth = { active: true };
+  ////console.log(today)
+  ////console.log(yesterday)
+  if (query.deliverytype == 'all') {
     deliveryType = {
       $or: [
         {
@@ -5045,33 +5045,26 @@ const get_approved_orders = async (query) => {
         },
       ],
     };
-  //   dateMacth = { active: true };
-  // }
-  // if (query.deliverytype == 'IMD' || query.deliverytype == 'NDD') {
-  //   dateMacth = { date: { $in: [today] } };
-  // }
-  // if (query.deliverytype == 'YOD') {
-  //   dateMacth = { date: { $in: [yesterday] } };
-  //   deliveryType = { delivery_type: { $eq: 'NDD' } };
-  // }
-  // if (query.timeslot != 'all') {
-  //   timeSlot = { time_of_delivery: { $eq: query.timeslot } };
-  // }
-  // if (query.deliverymode != 'all') {
-  //   deliveryMode = { devevery_mode: { $eq: query.deliverymode } };
-  // }
-  let limit = { $limit: 10 }
-  let skip = { $skip: 10 * page }
-  if (query.view == 'map') {
-    limit = { $match: { $and: [{ active: true }] } }
-    skip = { $match: { $and: [{ active: true }] } }
+    dateMacth = { active: true };
   }
-// console.log(limit,skip)
-
+  if (query.deliverytype == 'IMD' || query.deliverytype == 'NDD') {
+    dateMacth = { date: { $in: [today] } };
+  }
+  if (query.deliverytype == 'YOD') {
+    dateMacth = { date: { $in: [yesterday] } };
+    deliveryType = { delivery_type: { $eq: 'NDD' } };
+  }
+  if (query.timeslot != 'all') {
+    timeSlot = { time_of_delivery: { $eq: query.timeslot } };
+  }
+  if (query.deliverymode != 'all') {
+    deliveryMode = { devevery_mode: { $eq: query.deliverymode } };
+  }
   let lossTime = moment().format('H');
+  // console.log( moment().format("H"))
   let values = await ShopOrderClone.aggregate([
     { $sort: { created: -1 } },
-    { $match: { $and: [statusMatch,deliveryType] } },
+    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
     {
       $lookup: {
         from: 'productorderclones',
@@ -5141,6 +5134,7 @@ const get_approved_orders = async (query) => {
         localField: 'shopId',
         foreignField: '_id',
         pipeline: [
+          { $match: { $and: [pincode] } },
           {
             $lookup: {
               from: 'streets',
@@ -5214,35 +5208,14 @@ const get_approved_orders = async (query) => {
     },
     { $unwind: '$productData' },
     {
-      $lookup: {
-        from: 'productorderclones',
-        localField: '_id',
-        foreignField: 'orderId',
-        pipeline: [
-          {
-            $project: {
-              quantity: { $multiply: ['$packKg', '$finalQuantity'] },
-            },
-          },
-          { $group: { _id: null, quantity: { $sum: '$quantity' } } },
-        ],
-        as: 'productData_capcity',
-      },
-    },
-    { $unwind: '$productData_capcity' },
-
-    {
       $project: {
         _id: 1,
         orderType: 1,
-        active:1,
         status: 1,
         created: 1,
         OrderId: 1,
         product: '$productOrderdata',
         SName: '$b2bshopclones.SName',
-        Slat: '$b2bshopclones.Slat',
-        Slong: '$b2bshopclones.Slong',
         mobile: '$b2bshopclones.mobile',
         address: '$b2bshopclones.address',
         Pincode: '$b2bshopclones.Pincode',
@@ -5274,38 +5247,32 @@ const get_approved_orders = async (query) => {
             },
           ],
         },
-        productData_capcity:"$productData_capcity.quantity",
-        checked:'false'
       },
     },
-    skip,
-    limit
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
 
-  // let total = await ShopOrderClone.aggregate([
-  //   { $sort: { created: -1 } },
-  //   { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
-  //   {
-  //     $lookup: {
-  //       from: 'b2bshopclones',
-  //       localField: 'shopId',
-  //       foreignField: '_id',
-  //       pipeline: [{ $match: { $and: [pincode] } }],
-  //       as: 'b2bshopclones',
-  //     },
-  //   },
-  //   {
-  //     $unwind: '$b2bshopclones',
-  //   },
-  // ]);
+  let total = await ShopOrderClone.aggregate([
+    { $sort: { created: -1 } },
+    { $match: { $and: [statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth] } },
+    {
+      $lookup: {
+        from: 'b2bshopclones',
+        localField: 'shopId',
+        foreignField: '_id',
+        pipeline: [{ $match: { $and: [pincode] } }],
+        as: 'b2bshopclones',
+      },
+    },
+    {
+      $unwind: '$b2bshopclones',
+    },
+  ]);
 
-  // let counts = await get_order_counts(statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth, pincode);
+  let counts = await get_order_counts(statusMatch, deliveryType, timeSlot, deliveryMode, dateMacth, pincode);
 
-  return {
-    value: values,
-    // total: total.length, 
-    // counts: counts
-  };
+  return { value: values, total: total.length, counts: counts };
 };
 
 const get_order_counts = async (status, deliverytype, timeslot, deliverymode, dateMacth, pincode) => {
