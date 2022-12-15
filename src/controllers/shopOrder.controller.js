@@ -395,6 +395,25 @@ const sort_by_order_wde= catchAsync(async (req, res) => {
   const data = await shopOrderService.sort_by_order_wde(req.body);
   res.send(data);
 });
+
+const update_issue_status_approved= catchAsync(async (req, res) => {
+  const data = await shopOrderService.update_issue_status_approved(req.body);
+  res.send(data);
+});
+const update_issue_status_decline= catchAsync(async (req, res) => {
+  const data = await shopOrderService.update_issue_status_decline(req.body);
+  res.send(data);
+});
+
+const order_process_to_completed= catchAsync(async (req, res) => {
+  const data = await shopOrderService.order_process_to_completed(req.body);
+  res.send(data);
+});
+
+const order_process_to_return= catchAsync(async (req, res) => {
+  const data = await shopOrderService.order_process_to_return(req.body);
+  res.send(data);
+});
 module.exports = {
   vieworderbill_byshop,
   createshopOrder,
@@ -456,5 +475,9 @@ module.exports = {
   get_rejected_orders,
   get_assignorder_reassgin,
   get_assignorder_remove,
-  sort_by_order_wde
+  sort_by_order_wde,
+  update_issue_status_approved,
+  update_issue_status_decline,
+  order_process_to_completed,
+  order_process_to_return
 };

@@ -6125,6 +6125,30 @@ const sort_by_order_wde = async (body) => {
   return { mesage: "success" };
 
 }
+
+const update_issue_status_approved= async (query) => {
+
+  
+  return await ProductorderClone.findByIdAndUpdate({issueraised:true,_id:query.id},{issueStatus:"Approved"},{new : true})
+
+}
+const update_issue_status_decline= async (query) => {
+
+  return await ProductorderClone.findByIdAndUpdate({issueraised:true,_id:query.id},{issueStatus:"Decline"},{new : true})
+
+}
+const order_process_to_completed= async (query) => {
+  let product=await ProductorderClone.find({orderId:query.id,issueStatus:"Approved" , issueStatus:{$ne:"Pending" }})
+  // return await ShopOrderClone.findByIdAndUpdate({_id:query.id},{issueStatus:"Decline"},{new : true})
+
+  return product;
+}
+
+const order_process_to_return= async (query) => {
+  return await ShopOrderClone.findByIdAndUpdate({_id:query.id},{issueStatus:"process_to_return"},{new : true})
+
+}
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -6189,5 +6213,9 @@ module.exports = {
   get_rejected_orders,
   get_assignorder_reassgin,
   get_assignorder_remove,
-  sort_by_order_wde
+  sort_by_order_wde,
+  update_issue_status_approved,
+  update_issue_status_decline,
+  order_process_to_return,
+  order_process_to_completed
 };
