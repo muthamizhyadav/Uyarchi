@@ -7,7 +7,7 @@ const b2bCloneshopImage = require('../../middlewares/shopCloneImage');
 
 router.route('/').post(authorization, shopEnrollmentEnquiryController.createEnquiry);
 router.route('/getAllEnquiryDatas/:pincode/:page').get(shopEnrollmentEnquiryController.getAllEnquiryDatas);
-router.route('/update/:id').get(shopEnrollmentEnquiryController.updateEnquiryById);
+router.route('/update/:id').put(shopEnrollmentEnquiryController.updateEnquiryById);
 
 router.route('/AssignShops').post(shopEnrollmentEnquiryController.AssignShops);
 router.route('/pincode').get(shopEnrollmentEnquiryController.pincode);

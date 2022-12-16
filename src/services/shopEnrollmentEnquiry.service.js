@@ -133,7 +133,7 @@ const getAllEnquiryDatas = async (pincode,page) => {
 
   const updateEnquiryById = async (id,updateBody) => {
     const {arr} = updateBody
-    let data = await getEnquiryById.findById(id);
+    let data = await getEnquiryById(id);
     if (!data) {
       throw new ApiError(httpStatus.NOT_FOUND, 'ShopEnrollmentEnquiry Not Found');
     }
@@ -201,6 +201,7 @@ const viewdatagetById = async (id) =>{
                 mobileNumber:"$enrollmentenquiryshops.mobileNumber",
                 shopType:"$enrollmentenquiryshops.shopType",
                 shopId:"$enrollmentenquiryshops._id",
+                contactName:"$enrollmentenquiryshops.contactName",
             }
           }
 

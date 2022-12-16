@@ -18,7 +18,7 @@ const supplierSchema = new mongoose.Schema({
     type: String,
     // enum: ['Proprietorship', 'LLP', 'Partnership', 'Private Limited', 'Public Limited', 'Others', 'Individual'],
   },
-  businesstype: {
+  businessType: {
     type: String,
   },
   primaryContactNumber: {
