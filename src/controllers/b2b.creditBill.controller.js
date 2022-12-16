@@ -186,6 +186,11 @@ const getOrdersBills = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const fineAnd_Execuse = catchAsync(async (req, res) => {
+  const data = await creditBillService.fineAnd_Execuse(req.body);
+  res.send(data);
+});
+
 module.exports = {
   getShopWithBill,
   getWardExecutiveName,
@@ -222,4 +227,5 @@ module.exports = {
   getDisputegroupeOnly,
   updateFineStatus,
   getOrdersBills,
+  fineAnd_Execuse,
 };

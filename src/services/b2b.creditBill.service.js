@@ -11,7 +11,7 @@ const creditBillPaymentModel = require('../models/b2b.creditBillPayments.History
 const { Roles } = require('../models');
 const { Users } = require('../models/B2Busers.model');
 const OrderPayment = require('../models/orderpayment.model');
-
+const ExecutiveFine = require('../models/executive.fine.model');
 const getShopWithBill = async (page) => {
   let values = await ShopOrderClone.aggregate([
     {
@@ -5687,6 +5687,7 @@ const Approved_Mismatch_amount = async (page) => {
         creditApprovalStatus: '$shoporders.creditApprovalStatus',
         orderedamt: '$shoporders.BillAmount',
         shopName: '$shoporders.shopName',
+        shopId: '$shoporders.shopId',
         customerClaimedAmt: '$fine.customerClaimedAmt',
         lastPaidamt: '$fine.lastPaidamt',
         Difference_Amt: { $subtract: [{ $ifNull: ['$fine.customerClaimedAmt', 0] }, { $ifNull: ['$fine.lastPaidamt', 0] }] },
@@ -5853,7 +5854,9 @@ const Approved_Mismatch_amount = async (page) => {
         date: 1,
         OrderId: { $ifNull: ['$shoporders.OrderId', 'null'] },
         users: '$users.name',
-        OrderId: '$shoporders.OrderId',
+        userId: '$users._id',
+        orderId: 1,
+        shoporderId: '$shoporders.OrderId',
         disputeamt: '$shoporders.disputeamt',
         customerSaidamt: '$shoporders.customerSaidamt',
         salesmanEnteredamt: '$shoporders.salesmanEnteredamt',
@@ -5866,7 +5869,7 @@ const Approved_Mismatch_amount = async (page) => {
       },
     },
     {
-      $match: { Difference_Amt: { $gt: 0 } },
+      $match: { Difference_Amt: { $ne: 0 } },
     },
   ]);
   return { values: values, total: total.length };
@@ -5929,6 +5932,13 @@ const getOrdersBills = async (id, page) => {
   return { values: values, total: total.length };
 };
 
+const fineAnd_Execuse = async (body) => {
+  const { shopId, orderId, userId, status, amount } = body;
+  let values = { ...body, ...{ created: moment() } };
+  const executiveFine = await ExecutiveFine.create(values);
+  return executiveFine;
+};
+
 module.exports = {
   getShopWithBill,
   afterCompletion_Of_Delivered,
@@ -5964,4 +5974,5 @@ module.exports = {
   getDisputegroupeOnly,
   updateFineStatus,
   getOrdersBills,
+  fineAnd_Execuse,
 };
