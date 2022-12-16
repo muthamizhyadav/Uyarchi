@@ -1810,12 +1810,139 @@ const getDeliveryOrderSeparate = async (id, page) => {
   if (datas.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'order not Found');
   }
+
+  let return_order = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [{ _id: { $eq: id } }],
+      },
+    },
+    {
+      $lookup: {
+        from: 'issueassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'b2bshopclones',
+                    localField: 'shopId',
+                    foreignField: '_id',
+                    as: 'datass',
+                  },
+                },
+                {$unwind:"$datass"},
+                {
+                  $lookup: {
+                    from: 'productorderclones',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    pipeline: [
+                      {$match:{$and:[{issueraised:{$eq:true}}]}},
+                      {
+                        $lookup: {
+                          from: 'products',
+                          localField: 'productid',
+                          foreignField: '_id',
+                          as: 'productsData',
+                        },
+                      },
+                      {
+                        $unwind: '$productsData',
+                      },
+                      {
+                        $project: {
+                          quantity: 1,
+                          priceperkg: 1,
+                          product: '$productsData.productTitle',
+                          productId: '$productsData._id',
+                          issue:1,
+                          issueDate:1,
+                          issuediscription:1,
+                          issuequantity:1,
+                          issuetype:1,
+                          issueStatus:1,
+                          unit:1,
+                          date:1,
+                          finalQuantity:1,
+                          finalPricePerKg:1
+
+                        },
+                      },
+                    ],
+                    as: 'productorderclonescount',
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    status: 1,
+                    productStatus: 1,
+                    customerDeliveryStatus: 1,
+                    shopName: '$datass.SName',
+                    Slat: '$datass.Slat',
+                    Slong: '$datass.Slong',
+                    productorderclonescount:"$productorderclonescount",
+                    OrderId:1,
+                    customerDeliveryStatus:1,
+                    receiveStatus:1,
+                    completeStatus:1,
+
+                   
+                  },
+                },
+              ],
+              as: 'shopDatas',
+            },
+          },
+          { $unwind: '$shopDatas' },
+
+          {
+            $project: {
+              _id: '$shopDatas._id',
+              status: '$shopDatas.status',
+              customerDeliveryStatus: '$shopDatas.customerDeliveryStatus',
+              receiveStatus: '$shopDatas.receiveStatus',
+              pettyCashReceiveStatus: '$shopDatas.pettyCashReceiveStatus',
+              AssignedStatus: '$shopDatas.AssignedStatus',
+              completeStatus: '$shopDatas.completeStatus',
+              OrderId: '$shopDatas.OrderId',
+              shopName: '$shopDatas.shopName',
+              Slat: '$shopDatas.Slat',
+              Slong: '$shopDatas.Slong',
+              sort_wde: '$shopDatas.sort_wde',
+              productorderclonescount: '$shopDatas.productorderclonescount',
+            },
+          },
+          { $sort: { sort_wde: 1 } },
+        ],
+        as: 'orderassigns',
+      },
+    },
+
+    {
+      $project: {
+        orderassigns: '$orderassigns',
+        status: 1,
+        manageDeliveryStatus: 1,
+        sort_wde: 1,
+      },
+    },
+  ]);
+
   return {
     datas: datas[0].orderassigns,
     status: datas[0].status,
     sort_wde: datas[0].sort_wde,
     manageDeliveryStatus: datas[0].manageDeliveryStatus,
     total: total.length,
+    return_order:return_order
   };
 };
 
@@ -4278,6 +4405,8 @@ const assign_to_return_orders = async (body) => {
   return { message: "true" }
 
 }
+
+
 
 module.exports = {
   getPEttyCashQuantity,
