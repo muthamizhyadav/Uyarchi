@@ -16,7 +16,7 @@ const createEnquiry = catchAsync(async (req, res) => {
 
 
 const getAllEnquiryDatas = catchAsync(async (req, res) => {
-    const data = await shopEnrollmentEnquiryService.getAllEnquiryDatas(req.params.pincode);
+    const data = await shopEnrollmentEnquiryService.getAllEnquiryDatas(req.params.pincode, req.params.page);
     res.send(data);
   });
 

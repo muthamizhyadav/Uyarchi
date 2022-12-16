@@ -6161,7 +6161,7 @@ const order_process_to_return = async (query) => {
 
 const order_issue_return = async () => {
   let orders = await ShopOrderClone.aggregate([
-    { $match: { $and: [{ issueStatus: { $eq: "Approved" } }] } },
+    { $match: { $and: [{ issueStatus: { $eq: "Approved" } },{issueAssign:{$ne:"Assigned"}}] } },
     {
       $lookup: {
         from: 'b2bshopclones',

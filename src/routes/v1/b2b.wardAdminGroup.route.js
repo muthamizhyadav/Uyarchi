@@ -151,6 +151,10 @@ router.route('/mismatch/products/stocks/by/group/:id').get(wardAdminGroupControl
 router.route('/updateFine/Credit/status/update/stock/:id').put(wardAdminGroupController.updateFine_Stock_status);
 router.route('/update/fine/status').post(wardAdminGroupController.product_fine);
 router.route('/get/existing/groups/all').get(wardAdminGroupController.get_existing_group);
+router.route('/assgin/return/order/collection').post(wardAdminGroupController.assign_to_return_orders);
+
+
+
 
 
 module.exports = router;

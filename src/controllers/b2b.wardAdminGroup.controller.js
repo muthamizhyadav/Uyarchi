@@ -408,6 +408,11 @@ const get_existing_group= catchAsync(async (req, res) => {
   const data = await wardAdminGroupService.get_existing_group(req.body);
   res.send(data);
 });
+
+const assign_to_return_orders= catchAsync(async (req, res) => {
+  const data = await wardAdminGroupService.assign_to_return_orders(req.body);
+  res.send(data);
+});
 module.exports = {
   createGroupOrder,
   updateOrderPickedStatus,
@@ -507,5 +512,6 @@ module.exports = {
   misMatchProducts_by_group,
   updateFine_Stock_status,
   product_fine,
-  get_existing_group
+  get_existing_group,
+  assign_to_return_orders
 };

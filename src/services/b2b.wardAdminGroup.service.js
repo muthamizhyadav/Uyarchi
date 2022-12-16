@@ -4128,7 +4128,7 @@ const product_fine = async (body) => {
 
 
 const get_existing_group = async (body) => {
-  let today= moment().format('YYYY-MM-DD');
+  let today = moment().format('YYYY-MM-DD');
 
   let values = await wardAdminGroup.aggregate([
     {
@@ -4138,7 +4138,7 @@ const get_existing_group = async (body) => {
           { manageDeliveryStatus: { $ne: "cashReturned" } },
           { manageDeliveryStatus: { $ne: "Delivery Completed" } },
           { status: { $ne: "returnedStock" } },
-          {assignDate:{$eq:today}}
+          { assignDate: { $eq: today } }
         ]
       }
     },
@@ -4258,8 +4258,25 @@ const get_existing_group = async (body) => {
       },
     },
   ])
-  
+
   return values;
+}
+
+const assign_to_return_orders = async (body) => {
+  // let wardAdminGroupModel_issue
+  let ward= await wardAdminGroup.findById(body.groupId)
+  body.shops.forEach(async (e) => {
+    let orders = await ShopOrderClone.aggregate([
+      { $match: { $and: [{ issueStatus: { $eq: "Approved" } }, { shopId: { $eq: e._id } }] } },
+    ]);
+    orders.forEach(async (a) => {
+      await ShopOrderClone.findByIdAndUpdate({ _id: a._id},{issueAssign:"Assigned"},{ new: true});
+      await wardAdminGroupModel_issue.create({deliveryExecutiveId:ward.deliveryExecutiveId,orderId:a._id,wardAdminGroupID:body.groupId,created:moment(),date: moment().format('YYYY-MM-DD'),time: moment().format('HHmm')})
+    })
+
+  })
+  return { message: "true" }
+
 }
 
 module.exports = {
@@ -4338,5 +4355,6 @@ module.exports = {
   updateFine_Stock_status,
   product_fine,
 
-  get_existing_group
+  get_existing_group,
+  assign_to_return_orders
 };

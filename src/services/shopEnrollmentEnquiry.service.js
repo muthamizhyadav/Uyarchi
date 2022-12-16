@@ -10,7 +10,7 @@ const createEnquiry = async (userId, body) => {
   return ShopEnrollmentEnquiry.create(value);
 };
 
-const getAllEnquiryDatas = async (pincode) => {
+const getAllEnquiryDatas = async (pincode,page) => {
 
   let pincodematch = [{ active: { $eq: true } }];
     if(pincode != "null"){
@@ -63,9 +63,64 @@ const getAllEnquiryDatas = async (pincode) => {
                 name:"$b2busersData.name",
                 createdBy:"$b2busersData.rolesData.roleName"
             }
-          }    
+          },  
+          {
+            $skip: 10 * parseInt(page),
+          },
+          {
+            $limit: 10,
+          },
     ]);
-    return data;
+    const total = await ShopEnrollmentEnquiry.aggregate([
+      {
+          $match: {
+            $and: pincodematch,
+          },
+      },
+      {
+          $lookup: {
+            from: 'b2busers',
+            localField: 'uid',
+            foreignField: '_id',
+            pipeline:[
+              {
+                  $lookup: {
+                    from: 'roles',
+                    localField: 'userRole',
+                    foreignField: '_id',
+                    as: 'rolesData',
+                  },
+                },
+                {
+                  $unwind: '$rolesData',
+                }, 
+            ],
+            as: 'b2busersData',
+          },
+        },
+        {
+          $unwind: '$b2busersData',
+        },  
+
+        {
+          $project:{
+              date:1,
+              time:1,
+              shopType:1,
+              shopName:1,
+              mobileNumber:1,
+              area:1,
+              contactName:1,
+              enquiryType:1,
+              pincode:1,
+              status:1,
+              uid:1,
+              name:"$b2busersData.name",
+              createdBy:"$b2busersData.rolesData.roleName"
+          }
+        }    
+  ]);
+    return {data:data, count:total.length};
   };
 
   const getEnquiryById = async (id) => {
@@ -146,6 +201,7 @@ const viewdatagetById = async (id) =>{
                 mobileNumber:"$enrollmentenquiryshops.mobileNumber",
                 shopType:"$enrollmentenquiryshops.shopType",
                 shopId:"$enrollmentenquiryshops._id",
+                contactName:"$enrollmentenquiryshops.contactName",
             }
           }
 
@@ -234,14 +290,14 @@ const product = async (id) =>{
   data.productDealingwith.forEach(async (e) => {
     // const product = await Product.findById(e)
     product.push(e);
-    console.log(e)
+    // console.log(e)
   });
   for (let i = 0; i < product.length; i++) {
     const pro = await Product.findById(product[i]);
     push.push(pro.productTitle);
   }
 
-  
+
   return { data: data, products:push };
 }
 
