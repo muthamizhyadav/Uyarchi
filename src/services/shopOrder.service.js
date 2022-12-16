@@ -6158,6 +6158,15 @@ const order_process_to_return= async (query) => {
 
 }
 
+
+const order_issue_return= async () => {
+  let orders= await ShopOrderClone.aggregate([
+    {$match:{$and:[{issueStatus:{$eq:"Approved"}}]}},
+  ]);
+  return orders;
+
+}
+
 module.exports = {
   // product
   createProductOrderClone,
@@ -6226,5 +6235,6 @@ module.exports = {
   update_issue_status_approved,
   update_issue_status_decline,
   order_process_to_return,
-  order_process_to_completed
+  order_process_to_completed,
+  order_issue_return
 };
