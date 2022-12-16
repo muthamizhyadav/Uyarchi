@@ -1893,7 +1893,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
                     customerDeliveryStatus:1,
                     receiveStatus:1,
                     completeStatus:1,
-
+                    created:1
                    
                   },
                 },
@@ -1918,6 +1918,7 @@ const getDeliveryOrderSeparate = async (id, page) => {
               Slong: '$shopDatas.Slong',
               sort_wde: '$shopDatas.sort_wde',
               productorderclonescount: '$shopDatas.productorderclonescount',
+              created:"$shopDatas.created",
             },
           },
           { $sort: { sort_wde: 1 } },
