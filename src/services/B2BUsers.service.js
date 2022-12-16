@@ -528,6 +528,63 @@ const supplierEnroll = async () => {
   return values;
 };
 
+const getUserAttendance = async (page) => {
+  let values = await Users.aggregate([
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'userRole',
+        foreignField: '_id',
+        as: 'roles',
+      },
+    },
+    {
+      $unwind: '$roles',
+    },
+    {
+      $project: {
+        _id: 1,
+        isEmailVerified: 1,
+        active: 1,
+        name: 1,
+        email: 1,
+        salary: 1,
+        role: '$roles.roleName',
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
+    { $limit: 10 },
+  ]);
+  let total = await Users.aggregate([
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'userRole',
+        foreignField: '_id',
+        as: 'roles',
+      },
+    },
+    {
+      $unwind: '$roles',
+    },
+    {
+      $project: {
+        _id: 1,
+        isEmailVerified: 1,
+        active: 1,
+        name: 1,
+        email: 1,
+        salary: 1,
+        role: '$roles.roleName',
+      },
+    },
+  ]);
+
+  return { values: values, total: total.length };
+};
+
 module.exports = {
   createUser,
   UsersLogin,
@@ -561,4 +618,5 @@ module.exports = {
   otpVerfiyPurchaseExecutive,
   PurchaseExecutive_setPassword,
   supplierEnroll,
+  getUserAttendance,
 };
