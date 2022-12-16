@@ -11,7 +11,7 @@ const creditBillPaymentModel = require('../models/b2b.creditBillPayments.History
 const { Roles } = require('../models');
 const { Users } = require('../models/B2Busers.model');
 const OrderPayment = require('../models/orderpayment.model');
-
+const ExecutiveFine = require('../models/executive.fine.model');
 const getShopWithBill = async (page) => {
   let values = await ShopOrderClone.aggregate([
     {
@@ -5929,6 +5929,13 @@ const getOrdersBills = async (id, page) => {
   return { values: values, total: total.length };
 };
 
+const fineAnd_Execuse = async (body) => {
+  const { shopId, orderId, userId, status, amount } = body;
+  let values = { ...body, ...{ created: moment() } };
+  const executiveFine = await ExecutiveFine.create(values);
+  return executiveFine;
+};
+
 module.exports = {
   getShopWithBill,
   afterCompletion_Of_Delivered,
@@ -5964,4 +5971,5 @@ module.exports = {
   getDisputegroupeOnly,
   updateFineStatus,
   getOrdersBills,
+  fineAnd_Execuse,
 };

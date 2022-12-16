@@ -42,5 +42,6 @@ router.route('/approved/mismatch/amount/:page').get(creditBillController.Approve
 router.route('/getDisputegroupeOnly/:de/:date/:page').get(creditBillController.getDisputegroupeOnly);
 router.route('/update/FineStatus/:id').put(creditBillController.updateFineStatus);
 router.route('/getOrdersBills/:id/:page').get(creditBillController.getOrdersBills);
+router.route('/fineAnd/Execuse').post(creditBillController.fineAnd_Execuse);
 
 module.exports = router;
