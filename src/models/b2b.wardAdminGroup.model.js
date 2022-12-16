@@ -268,6 +268,44 @@ const wardAdminGroupSchema_ORDER = new mongoose.Schema({
 });
 
 const wardAdminGroupModel_ORDERS = mongoose.model('orderAssign', wardAdminGroupSchema_ORDER);
+
+
+const wardAdminGroupSchema_issue = new mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  orderId: {
+    type: String,
+  },
+  wardAdminGroupID: {
+    type: String,
+  },
+  status: {
+    type: String,
+    default: 'Assigned',
+  },
+  vehicleId: {
+    type: String,
+  },
+  created: {
+    type: Date,
+  },
+  date: {
+    type: String,
+    default: moment().utcOffset(330).format('DD-MM-yyy'),
+  },
+  time: {
+    type: String,
+    default: moment().utcOffset(330).format('h:mm a'),
+  },
+  AssignedstatusPerDay: {
+    type: String,
+  },
+});
+
+const wardAdminGroupModel_issue = mongoose.model('issueAssign', wardAdminGroupSchema_issue);
+
 const wardAdminGroupfineSchema = new mongoose.Schema({
   _id: {
     type: String,
@@ -303,4 +341,4 @@ const wardAdminGroupfineSchema = new mongoose.Schema({
 });
 
 const WardAdminGroupfine = mongoose.model('wardAdminGroupfine', wardAdminGroupfineSchema);
-module.exports = { wardAdminGroup, wardAdminGroupModel_ORDERS, WardAdminGroupfine };
+module.exports = { wardAdminGroup, wardAdminGroupModel_ORDERS, WardAdminGroupfine ,wardAdminGroupModel_issue};

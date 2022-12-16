@@ -6,7 +6,7 @@ const { Shop } = require('../models/b2b.ShopClone.model');
 const { ShopOrderClone } = require('../models/shopOrder.model');
 const { ProductorderClone } = require('../models/shopOrder.model');
 const pettyStockModel = require('../models/b2b.pettyStock.model');
-const { wardAdminGroup, wardAdminGroupModel_ORDERS, WardAdminGroupfine } = require('../models/b2b.wardAdminGroup.model');
+const { wardAdminGroup, wardAdminGroupModel_ORDERS, WardAdminGroupfine, wardAdminGroupModel_issue } = require('../models/b2b.wardAdminGroup.model');
 const wardAdminGroupDetails = require('../models/b2b.wardAdminGroupDetails.model');
 const { Product } = require('../models/product.model');
 const orderPayment = require('../models/orderpayment.model');
@@ -1404,8 +1404,8 @@ const assignOnly_DE = async (query, status, userid) => {
               shopdata: '$shopdata.deliveryExecutiveId',
             },
           },
-          {$match:{pending:{$eq:true}}},
-          {$group:{_id: null}}
+          { $match: { pending: { $eq: true } } },
+          { $group: { _id: null } }
         ],
         as: 'dataDetails',
       },
@@ -1507,7 +1507,7 @@ const assignOnly_DE = async (query, status, userid) => {
         assignDate: 1,
         assignTime: 1,
         manageDeliveryStatus: 1,
-        Pending: { $toBool:{$ifNull: ['$dataDetails', false] }},
+        Pending: { $toBool: { $ifNull: ['$dataDetails', false] } },
         deliveryExecutiveId: 1,
         deliveryExecutiveName: '$UserName.name',
         pettyCashAllocateStatus: 1,
@@ -1517,7 +1517,7 @@ const assignOnly_DE = async (query, status, userid) => {
         pickputype: 1,
         FinishingStatus: 1,
         // Pending: '$Pending.pending',
-        dataDetails:"$dataDetails"
+        dataDetails: "$dataDetails"
       },
     },
     { $skip: 10 * page },
@@ -4126,6 +4126,140 @@ const product_fine = async (body) => {
   }
 };
 
+
+const get_existing_group = async (body) => {
+
+  let values = await wardAdminGroup.aggregate([
+    {
+      $match: {
+        $and: [
+          { manageDeliveryStatus: { $ne: "returnedStock" } },
+          { manageDeliveryStatus: { $ne: "cashReturned" } },
+          { manageDeliveryStatus: { $ne: "Delivery Completed" } },
+          { status: { $ne: "returnedStock" } },
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: 'orderassigns',
+        localField: '_id',
+        foreignField: 'wardAdminGroupID',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'shoporderclones',
+              localField: 'orderId',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'b2bshopclones',
+                    localField: 'shopId',
+                    foreignField: '_id',
+                    as: 'b2bshopclones',
+                  },
+                },
+                {
+                  $unwind: '$b2bshopclones',
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    SName: '$b2bshopclones.SName',
+                    Slat: '$b2bshopclones.Slat',
+                    Slong: '$b2bshopclones.Slong',
+                    status: 1,
+                    productStatus: 1,
+                    customerDeliveryStatus: 1,
+                    delivery_type: 1,
+                    time_of_delivery: 1,
+                    paidamount: 1,
+                    OrderId: 1,
+                    date: 1,
+                    created: 1,
+                  },
+                },
+              ],
+              as: 'shoporderclones',
+            },
+          },
+          {
+            $unwind: '$shoporderclones',
+          },
+          {
+            $project: {
+              _id: '$shoporderclones._id',
+              SName: '$shoporderclones.SName',
+              Slat: '$shoporderclones.Slat',
+              Slong: '$shoporderclones.Slong',
+              mobile: '$shoporderclones.mobile',
+              status: '$shoporderclones.status',
+              productStatus: '$shoporderclones.productStatus',
+              customerDeliveryStatus: '$shoporderclones.customerDeliveryStatus',
+              delivery_type: '$shoporderclones.delivery_type',
+              time_of_delivery: '$shoporderclones.time_of_delivery',
+              paidamount: '$shoporderclones.paidamount',
+              OrderId: '$shoporderclones.OrderId',
+              date: '$shoporderclones.date',
+              created: '$shoporderclones.created',
+            },
+          },
+        ],
+        as: 'groupOrders',
+      },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'deliveryExecutiveId',
+        foreignField: '_id',
+        as: 'b2bsersData',
+      },
+    },
+    {
+      $unwind: '$b2bsersData',
+    },
+    {
+      $lookup: {
+        from: 'vehicles',
+        localField: 'vehicleId',
+        foreignField: '_id',
+        as: 'vehicles',
+      },
+    },
+    {
+      $unwind: {
+        path: '$vehicles',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        groupId: 1,
+        assignDate: 1,
+        assignTime: 1,
+        totalOrders: { $size: '$groupOrders' },
+        orderassigns: '$groupOrders',
+        deliveryExecutivename: '$b2bsersData.name',
+        pettystockmodels: '$pettystockmodels',
+        pettyCash: 1,
+        pettyCashAllocateStatus: 1,
+        pettyStockAllocateStatus: 1,
+        status: 1,
+        manageDeliveryStatus: 1,
+        route: 1,
+        vehicle_type: "$vehicles.vehicle_type",
+        vehicle_Owner_Name: "$vehicles.vehicle_Owner_Name",
+        ownerShip_Type: "$vehicles.ownerShip_Type",
+        vehicleNo: "$vehicles.vehicleNo"
+      },
+    },
+  ])
+  
+  return values;
+}
+
 module.exports = {
   getPEttyCashQuantity,
   createGroup,
@@ -4201,4 +4335,6 @@ module.exports = {
   misMatchProducts_by_group,
   updateFine_Stock_status,
   product_fine,
+
+  get_existing_group
 };

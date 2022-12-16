@@ -150,4 +150,7 @@ router.route('/mismatch/products/stocks/by/group/:id').get(wardAdminGroupControl
 // updateFine_Stock_status
 router.route('/updateFine/Credit/status/update/stock/:id').put(wardAdminGroupController.updateFine_Stock_status);
 router.route('/update/fine/status').post(wardAdminGroupController.product_fine);
+router.route('/get/existing/groups/all').get(wardAdminGroupController.get_existing_group);
+
+
 module.exports = router;
