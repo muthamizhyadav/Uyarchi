@@ -716,11 +716,14 @@ const getSupplierWith_Advanced = async () => {
 const createSuppliers = async (body, userId) => {
   let values = { ...body, ...{ created: moment(), createdBy: userId } };
   const validate = await Supplier.find({ primaryContactNumber: body.primaryContactNumber });
-  if (validate.lenth !== 0) {
+  console.log(validate.length);
+  let len = validate.length
+  if (len > 0) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Mobile Number Already Registered');
+  } else {
+    const create = await Supplier.create(values);
+    return create;
   }
-  const create = await Supplier.create(values);
-  return create;
 };
 
 const getSupplierthird = async (key, page) => {
