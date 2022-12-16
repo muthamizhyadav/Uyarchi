@@ -25,6 +25,9 @@ const ExecutiveFineSchema = new mongoose.Schema({
   created: {
     type: Date,
   },
+  date: {
+    type: String,
+  },
   active: {
     type: Boolean,
     default: true,

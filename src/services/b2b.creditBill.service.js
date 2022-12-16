@@ -2106,6 +2106,8 @@ const getgroupbilldetails = async (id) => {
         reasonScheduleOrDate: '$billData.reasonScheduleOrDate',
         Schedulereason: '$billData.Schedulereason',
         SName: '$b2bshopclones.SName',
+        Scheduledate: 1,
+        Schedulereason: 1,
       },
     },
   ]);
@@ -5401,6 +5403,7 @@ const last_Paid_amt = async (id) => {
 };
 
 const getPaidHistory_ByOrder = async (id) => {
+  let today = moment().format('YYYY-MM-DD');
   let values = await ShopOrderClone.aggregate([
     {
       $match: { _id: id },
@@ -5523,6 +5526,7 @@ const getPaidHistory_ByOrder = async (id) => {
 };
 
 const Approved_Mismatch_amount = async (page) => {
+  let today = moment().format('YYYY-MM-DD');
   let values = await orderPayment.aggregate([
     {
       $match: { creditApprovalStatus: 'Approved' },
@@ -5672,6 +5676,21 @@ const Approved_Mismatch_amount = async (page) => {
       },
     },
     {
+      $lookup: {
+        from: 'executivefines',
+        localField: 'orderId',
+        foreignField: 'orderId',
+        pipeline: [{ $match: { date: today } }, { $sort: { created: -1 } }, { $limit: 1 }],
+        as: 'executiveStatus',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$executiveStatus',
+      },
+    },
+    {
       $project: {
         _id: 1,
         paidAmt: 1,
@@ -5690,6 +5709,7 @@ const Approved_Mismatch_amount = async (page) => {
         shopId: '$shoporders.shopId',
         customerClaimedAmt: '$fine.customerClaimedAmt',
         lastPaidamt: '$fine.lastPaidamt',
+        fineStatus: { $ifNull: ['$executiveStatus.status', 'Pending'] },
         Difference_Amt: { $subtract: [{ $ifNull: ['$fine.customerClaimedAmt', 0] }, { $ifNull: ['$fine.lastPaidamt', 0] }] },
       },
     },
@@ -5934,7 +5954,7 @@ const getOrdersBills = async (id, page) => {
 
 const fineAnd_Execuse = async (body) => {
   const { shopId, orderId, userId, status, amount } = body;
-  let values = { ...body, ...{ created: moment() } };
+  let values = { ...body, ...{ created: moment(), date: moment().format('YYYY-MM-DD') } };
   const executiveFine = await ExecutiveFine.create(values);
   return executiveFine;
 };
