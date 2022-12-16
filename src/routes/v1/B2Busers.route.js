@@ -40,5 +40,6 @@ router.route('/send/OTP').post(b2bUsersController.sendOTP);
 router.route('/otpVerfiy/PurchaseExecutive').post(b2bUsersController.otpVerfiyPurchaseExecutive);
 router.route('/PurchaseExecutive/setPassword/:id').put(b2bUsersController.PurchaseExecutive_setPassword);
 router.route('/supplier/Enrolls').get(b2bUsersController.supplierEnroll);
-
+// salary Attendance
+router.route('/getUser/Attendance/:page').get(b2bUsersController.getUserAttendance);
 module.exports = router;
