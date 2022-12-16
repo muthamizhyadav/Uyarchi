@@ -4128,6 +4128,7 @@ const product_fine = async (body) => {
 
 
 const get_existing_group = async (body) => {
+  let today= moment().format('YYYY-MM-DD');
 
   let values = await wardAdminGroup.aggregate([
     {
@@ -4137,6 +4138,7 @@ const get_existing_group = async (body) => {
           { manageDeliveryStatus: { $ne: "cashReturned" } },
           { manageDeliveryStatus: { $ne: "Delivery Completed" } },
           { status: { $ne: "returnedStock" } },
+          {assignDate:{$eq:today}}
         ]
       }
     },
