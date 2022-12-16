@@ -5672,6 +5672,15 @@ const Approved_Mismatch_amount = async (page) => {
       },
     },
     {
+      $lookup: {
+        from: 'executivefines',
+        localField: 'orderId',
+        foreignField: 'orderId',
+        as: 'executiveStatus',
+      },
+    },
+    {},
+    {
       $project: {
         _id: 1,
         paidAmt: 1,
@@ -5934,7 +5943,7 @@ const getOrdersBills = async (id, page) => {
 
 const fineAnd_Execuse = async (body) => {
   const { shopId, orderId, userId, status, amount } = body;
-  let values = { ...body, ...{ created: moment() } };
+  let values = { ...body, ...{ created: moment(), date: moment().format('YYYY-MM-DD') } };
   const executiveFine = await ExecutiveFine.create(values);
   return executiveFine;
 };
