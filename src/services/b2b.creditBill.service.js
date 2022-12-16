@@ -2106,6 +2106,8 @@ const getgroupbilldetails = async (id) => {
         reasonScheduleOrDate: '$billData.reasonScheduleOrDate',
         Schedulereason: '$billData.Schedulereason',
         SName: '$b2bshopclones.SName',
+        Scheduledate: 1,
+        Schedulereason: 1,
       },
     },
   ]);
