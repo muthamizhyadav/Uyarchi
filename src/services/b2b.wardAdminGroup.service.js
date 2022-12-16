@@ -4264,13 +4264,14 @@ const get_existing_group = async (body) => {
 
 const assign_to_return_orders = async (body) => {
   // let wardAdminGroupModel_issue
+  let ward= await wardAdminGroup.findById(body.groupId)
   body.shops.forEach(async (e) => {
     let orders = await ShopOrderClone.aggregate([
       { $match: { $and: [{ issueStatus: { $eq: "Approved" } }, { shopId: { $eq: e._id } }] } },
     ]);
     orders.forEach(async (a) => {
       await ShopOrderClone.findByIdAndUpdate({ _id: a._id},{issueAssign:"Assigned"},{ new: true});
-      await wardAdminGroupModel_issue.create({orderId:a._id,wardAdminGroupID:body.groupId,created:moment(),date: moment().format('YYYY-MM-DD'),time: moment().format('HHmm')})
+      await wardAdminGroupModel_issue.create({deliveryExecutiveId:ward.deliveryExecutiveId,orderId:a._id,wardAdminGroupID:body.groupId,created:moment(),date: moment().format('YYYY-MM-DD'),time: moment().format('HHmm')})
     })
 
   })

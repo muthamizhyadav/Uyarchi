@@ -302,6 +302,9 @@ const wardAdminGroupSchema_issue = new mongoose.Schema({
   AssignedstatusPerDay: {
     type: String,
   },
+  deliveryExecutiveId:{
+    type: String,
+  }
 });
 
 const wardAdminGroupModel_issue = mongoose.model('issueAssign', wardAdminGroupSchema_issue);
