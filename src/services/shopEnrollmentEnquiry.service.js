@@ -201,6 +201,7 @@ const viewdatagetById = async (id) =>{
                 mobileNumber:"$enrollmentenquiryshops.mobileNumber",
                 shopType:"$enrollmentenquiryshops.shopType",
                 shopId:"$enrollmentenquiryshops._id",
+                contactName:"$enrollmentenquiryshops.contactName",
             }
           }
 
