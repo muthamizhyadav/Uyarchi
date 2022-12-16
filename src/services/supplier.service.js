@@ -778,7 +778,7 @@ const getSupplierDetails = async (id) => {
 };
 
 const Store_lat_long = async (id, body, userId) => {
-  const { lat, long, status } = body;
+  const { lat, long, verifyStatus } = body;
   let values = await Supplier.findById(id);
   if (!values || values.active === false) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Suppier Not_Found');
@@ -788,7 +788,7 @@ const Store_lat_long = async (id, body, userId) => {
     {
       lat: lat,
       long: long,
-      verifyStatus: status,
+      verifyStatus: verifyStatus,
       verifiedUser: userId,
       verifiedDate: moment().format('YYYY-MM-DD'),
       verifiedTime: moment().format('HHmmss'),
