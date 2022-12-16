@@ -414,6 +414,11 @@ const order_process_to_return= catchAsync(async (req, res) => {
   const data = await shopOrderService.order_process_to_return(req.query);
   res.send(data);
 });
+
+const order_issue_return= catchAsync(async (req, res) => {
+  const data = await shopOrderService.order_issue_return();
+  res.send(data);
+});
 module.exports = {
   vieworderbill_byshop,
   createshopOrder,
@@ -479,5 +484,6 @@ module.exports = {
   update_issue_status_approved,
   update_issue_status_decline,
   order_process_to_completed,
-  order_process_to_return
+  order_process_to_return,
+  order_issue_return
 };
