@@ -5671,15 +5671,15 @@ const Approved_Mismatch_amount = async (page) => {
         path: '$fine',
       },
     },
-    {
-      $lookup: {
-        from: 'executivefines',
-        localField: 'orderId',
-        foreignField: 'orderId',
-        as: 'executiveStatus',
-      },
-    },
-    {},
+    // {
+    //   $lookup: {
+    //     from: 'executivefines',
+    //     localField: 'orderId',
+    //     foreignField: 'orderId',
+    //     as: 'executiveStatus',
+    //   },
+    // },
+    // {},
     {
       $project: {
         _id: 1,
