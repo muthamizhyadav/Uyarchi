@@ -717,7 +717,7 @@ const createSuppliers = async (body, userId) => {
   let values = { ...body, ...{ created: moment(), createdBy: userId } };
   const validate = await Supplier.find({ primaryContactNumber: body.primaryContactNumber });
   console.log(validate.length);
-  let len = validate.length
+  let len = validate.length;
   if (len > 0) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Mobile Number Already Registered');
   } else {

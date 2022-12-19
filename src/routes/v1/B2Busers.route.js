@@ -42,4 +42,5 @@ router.route('/PurchaseExecutive/setPassword/:id').put(b2bUsersController.Purcha
 router.route('/supplier/Enrolls').get(b2bUsersController.supplierEnroll);
 // salary Attendance
 router.route('/getUser/Attendance/:page').get(b2bUsersController.getUserAttendance);
+router.route('/getFines/Details/ByUsers/:id').get(b2bUsersController.getFines_Details);
 module.exports = router;

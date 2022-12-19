@@ -585,6 +585,45 @@ const getUserAttendance = async (page) => {
   return { values: values, total: total.length };
 };
 
+const getFines_Details = async (id) => {
+  let values = await Users.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'executivefines',
+        localField: '_id',
+        foreignField: 'userId',
+        pipeline: [{ $group: { _id: { month: { $month: '$created' } }, totalAmount: { $sum: '$fineAmount' } } }],
+        as: 'BillVerification',
+      },
+    },
+    {
+      $unwind: '$BillVerification',
+    },
+    {
+      $lookup: {
+        from: 'creditbillgroups',
+        localField: '_id',
+        foreignField: 'AssignedUserId',
+        pipeline: [
+          { $match: { fineStatus: 'Fine' } },
+          { $group: { _id: { month: { $month: '$finishDate' } }, totalAmount: { $sum: '$disputeAmount' } } },
+        ],
+        as: 'crediteFine',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$crediteFine',
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createUser,
   UsersLogin,
@@ -619,4 +658,5 @@ module.exports = {
   PurchaseExecutive_setPassword,
   supplierEnroll,
   getUserAttendance,
+  getFines_Details,
 };
