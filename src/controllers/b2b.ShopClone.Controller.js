@@ -544,6 +544,11 @@ const getindividualSupplierAttendence = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const HighlyIntrestedShops = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.HighlyIntrestedShops(req.params.type);
+  res.send(data);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -609,4 +614,5 @@ module.exports = {
   update_pincode_map,
   sort_by_order_wde,
   getindividualSupplierAttendence,
+  HighlyIntrestedShops
 };

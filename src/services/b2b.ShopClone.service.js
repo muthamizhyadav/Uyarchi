@@ -5158,6 +5158,24 @@ const getindividualSupplierAttendence = async (user, page) => {
   return { values: values, total: total.length };
 };
 
+const HighlyIntrestedShops = async (type) => {
+  let typeMatch;
+  console.log(type);
+  if (type == 'ModeratelyInterested') {
+    typeMatch = { daStatus: 'ModeratelyInterested', status: 'data_approved' };
+  } else if (type == 'both') {
+    typeMatch = { daStatus: { $in: ['ModeratelyInterested', 'HighlyInterested'] } };
+  } else {
+    typeMatch = { daStatus: 'HighlyInterested', status: 'data_approved' };
+  }
+  let values = await Shop.aggregate([
+    {
+      $match: { $and: [typeMatch] },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -5221,4 +5239,5 @@ module.exports = {
   update_pincode_map,
   getindividualSupplierAttendence,
   // bharathiraja
+  HighlyIntrestedShops,
 };
