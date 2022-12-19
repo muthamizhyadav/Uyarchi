@@ -920,6 +920,16 @@ const getSupplierWithverifiedUser = async (key, page) => {
   return { values: values, total: total.length };
 };
 
+const checkMobileExestOrNot = async (number) => {
+  let values = await Supplier.find({ primaryContactNumber: number });
+  let len = values.length;
+  console.log(len);
+  if (len > 0) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Mobile Already Exist');
+  }
+  return { Message: 'Success' };
+};
+
 module.exports = {
   createSupplier,
   updateSupplierById,
@@ -952,4 +962,5 @@ module.exports = {
   getAllAppSupplierApproved,
   Store_lat_long,
   getSupplierWithverifiedUser,
+  checkMobileExestOrNot,
 };

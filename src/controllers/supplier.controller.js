@@ -194,6 +194,11 @@ const getSupplierWithverifiedUser = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const checkMobileExestOrNot = catchAsync(async (req, res) => {
+  const data = await supplierService.checkMobileExestOrNot(req.params.number);
+  res.send(data);
+});
+
 module.exports = {
   createSupplier,
   getproductfromCallStatus,
@@ -226,4 +231,5 @@ module.exports = {
   getAllAppSupplierApproved,
   Store_lat_long,
   getSupplierWithverifiedUser,
+  checkMobileExestOrNot,
 };
