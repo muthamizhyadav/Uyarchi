@@ -773,6 +773,15 @@ const updateSupplierthird = async (id, updatebody) => {
   return values;
 };
 
+const UpdateSupplierByIdThird = async (id, updateBody) => {
+  let values = await Supplier.findByIdAndUpdate(id);
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Supplier Not Found');
+  }
+  values = await Supplier.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
+  return values;
+};
+
 const getSupplierDetails = async (id) => {
   let Id = id.toString();
   console.log(Id);
@@ -963,4 +972,5 @@ module.exports = {
   Store_lat_long,
   getSupplierWithverifiedUser,
   checkMobileExestOrNot,
+  UpdateSupplierByIdThird,
 };

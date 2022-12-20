@@ -43,4 +43,5 @@ router.route('/supplier/get/single/:id').get(supplierController.getSupplierDetai
 router.route('/store/:id').put(authorization, supplierController.Store_lat_long);
 router.route('/getSupplier/WithverifiedUser/:key/:page').get(supplierController.getSupplierWithverifiedUser);
 router.route('/checkMobile/ExestOrNot/:number').get(supplierController.checkMobileExestOrNot);
+router.route('/UpdateSupplierBy/IdThird/:id').put(supplierupload.array('image'), supplierController.UpdateSupplierByIdThird);
 module.exports = router;
