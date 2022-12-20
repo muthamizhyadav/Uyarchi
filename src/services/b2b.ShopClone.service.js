@@ -5255,13 +5255,19 @@ const HighlyIntrestedShops = async (type) => {
 };
 // changeMap chLat chLong
 const ChangeOneMap_to_AnotherMap = async (body) => {
-  const { arr } = body;
+  const { arr, revert } = body;
   let len = arr.length;
   if (len <= 0) {
     throw new ApiError(httpStatus[400], 'Select Shops');
   }
+  if (revert === 1) {
+    arr.forEach(async (e) => {
+      await Shop.findByIdAndUpdate({ _id: e }, { changeMap: true }, { new: true });
+    });
+    return { Message: 'SuccesFully Changed' };
+  }
   arr.forEach(async (e) => {
-    await Shop.findByIdAndUpdate({ _id: e }, { changeMap: true }, { new: true });
+    await Shop.findByIdAndUpdate({ _id: e }, { changeMap: false }, { new: true });
   });
   return { Message: 'SuccesFully Changed' };
 };
