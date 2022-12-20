@@ -115,4 +115,5 @@ router.route('/update/pincode').put(b2bShopCloneController.update_pincode_map);
 router.route('/getindividual/SupplierAttendence/:user/:page').get(b2bShopCloneController.getindividualSupplierAttendence);
 router.route('/Highly/IntrestedShops/:type').get(b2bShopCloneController.HighlyIntrestedShops);
 router.route('/ChangeOneMap/AnotherMap').post(b2bShopCloneController.ChangeOneMap_to_AnotherMap);
+router.route('/getRevertShops/onlyMap').get(b2bShopCloneController.getRevertShops);
 module.exports = router;

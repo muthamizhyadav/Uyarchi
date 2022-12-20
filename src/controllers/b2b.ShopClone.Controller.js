@@ -554,6 +554,11 @@ const ChangeOneMap_to_AnotherMap = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getRevertShops = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.getRevertShops();
+  res.send(data);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -621,4 +626,5 @@ module.exports = {
   getindividualSupplierAttendence,
   HighlyIntrestedShops,
   ChangeOneMap_to_AnotherMap,
+  getRevertShops,
 };

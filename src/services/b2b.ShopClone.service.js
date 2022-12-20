@@ -5272,6 +5272,90 @@ const ChangeOneMap_to_AnotherMap = async (body) => {
   return { Message: 'SuccesFully Changed' };
 };
 
+const getRevertShops = async () => {
+  let values = await Shop.aggregate([
+    {
+      $match: { changeMap: true },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'DA_USER',
+        foreignField: '_id',
+        as: 'ApprovedUsersData',
+      },
+    },
+    {
+      $unwind: '$ApprovedUsersData',
+    },
+    {
+      $project: {
+        _id: 1,
+        photoCapture: 1,
+        status: 1,
+        kyc_status: 1,
+        callingStatus: 1,
+        callingStatusSort: 1,
+        active: 1,
+        archive: 1,
+        Wardid: 1,
+        type: 1,
+        SName: 1,
+        SType: 1,
+        SOwner: 1,
+        mobile: 1,
+        Slat: 1,
+        Strid: 1,
+        Slong: 1,
+        address: 1,
+        created: 1,
+        date: 1,
+        time: 1,
+        Uid: 1,
+        callingUserId: 1,
+        sorttime: 1,
+        sortdate: 1,
+        filterDate: 1,
+        historydate: 1,
+        salesManStatus: 1,
+        displaycount: 1,
+        DA_CREATED: 1,
+        DA_Comment: 1,
+        DA_DATE: 1,
+        DA_TIME: 1,
+        DA_USER: 1,
+        Pincode: 1,
+        daStatus: 1,
+        da_landmark: 1,
+        da_long: 1,
+        da_lot: 1,
+        purchaseQTy: 1,
+        kapturedUser: '$UsersData.name',
+        kapturedUserContact: '$UsersData.phoneNumber',
+        kapturedUseremail: '$UsersData.email',
+        kapturedUsersalary: '$UsersData.salary',
+        dataApprovedUser: '$ApprovedUsersData.name',
+        dataApprovedUserContact: '$ApprovedUsersData.phoneNumber',
+        dataApprovedUseremail: '$ApprovedUsersData.email',
+        dataApprovedUserSalary: '$ApprovedUsersData.salary',
+        changeMap: 1,
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -5337,4 +5421,5 @@ module.exports = {
   // bharathiraja
   HighlyIntrestedShops,
   ChangeOneMap_to_AnotherMap,
+  getRevertShops,
 };
