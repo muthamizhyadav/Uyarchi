@@ -5260,9 +5260,8 @@ const ChangeOneMap_to_AnotherMap = async (body) => {
   if (len <= 0) {
     throw new ApiError(httpStatus[400], 'Select Shops');
   }
-  let shops;
   arr.forEach(async (e) => {
-    await Shop.findByIdAndUpdate({ _id: e._id }, { changeMap: true, chLat: e.Slat, chLong: e.Slong });
+    await Shop.findByIdAndUpdate({ _id: e }, { changeMap: true }, { new: true });
   });
   return { Message: 'SuccesFully Changed' };
 };
