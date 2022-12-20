@@ -5244,10 +5244,24 @@ const HighlyIntrestedShops = async (type) => {
         dataApprovedUserContact: '$ApprovedUsersData.phoneNumber',
         dataApprovedUseremail: '$ApprovedUsersData.email',
         dataApprovedUserSalary: '$ApprovedUsersData.salary',
+        changeMap: { $ifNull: ['$changeMap', false] },
       },
     },
   ]);
   return values;
+};
+// changeMap chLat chLong
+const ChangeOneMap_to_AnotherMap = async (body) => {
+  const { arr } = body;
+  let len = arr.length;
+  if (len <= 0) {
+    throw new ApiError(httpStatus[400], 'Select Shops');
+  }
+  let shops;
+  arr.forEach(async (e) => {
+    await Shop.findByIdAndUpdate({ _id: e._id }, { changeMap: true, chLat: e.Slat, chLong: e.Slong });
+  });
+  return { Message: 'SuccesFully Changed' };
 };
 
 module.exports = {
@@ -5314,4 +5328,5 @@ module.exports = {
   getindividualSupplierAttendence,
   // bharathiraja
   HighlyIntrestedShops,
+  ChangeOneMap_to_AnotherMap,
 };
