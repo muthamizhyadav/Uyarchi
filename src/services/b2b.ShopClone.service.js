@@ -5247,6 +5247,9 @@ const HighlyIntrestedShops = async (type) => {
         changeMap: { $ifNull: ['$changeMap', false] },
       },
     },
+    {
+      $match: { changeMap: { $eq: false } },
+    },
   ]);
   return values;
 };
