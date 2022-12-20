@@ -5237,7 +5237,13 @@ const HighlyIntrestedShops = async (type) => {
         da_lot: 1,
         purchaseQTy: 1,
         kapturedUser: '$UsersData.name',
+        kapturedUserContact: '$UsersData.phoneNumber',
+        kapturedUseremail: '$UsersData.email',
+        kapturedUsersalary: '$UsersData.salary',
         dataApprovedUser: '$ApprovedUsersData.name',
+        dataApprovedUserContact: '$ApprovedUsersData.phoneNumber',
+        dataApprovedUseremail: '$ApprovedUsersData.email',
+        dataApprovedUserSalary: '$ApprovedUsersData.salary',
       },
     },
   ]);
