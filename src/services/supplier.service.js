@@ -939,6 +939,17 @@ const checkMobileExestOrNot = async (number) => {
   return { Message: 'Success' };
 };
 
+const ValidateMobileNumber = async (id, phone) => {
+  let values = await Supplier.findById(id);
+  let values1 = await Supplier.findOne({ primaryContactNumber: phone });
+  if (values1 !== null) {
+    if (values.primaryContactNumber !== values1.primaryContactNumber) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Already Register');
+    }
+  }
+  return values;
+};
+
 module.exports = {
   createSupplier,
   updateSupplierById,
@@ -973,4 +984,5 @@ module.exports = {
   getSupplierWithverifiedUser,
   checkMobileExestOrNot,
   UpdateSupplierByIdThird,
+  ValidateMobileNumber,
 };

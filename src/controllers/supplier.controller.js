@@ -211,6 +211,11 @@ const checkMobileExestOrNot = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const ValidateMobileNumber = catchAsync(async (req, res) => {
+  const data = await supplierService.ValidateMobileNumber(req.params.id, req.params.phone);
+  res.send(data);
+});
+
 module.exports = {
   createSupplier,
   getproductfromCallStatus,
@@ -245,4 +250,5 @@ module.exports = {
   getSupplierWithverifiedUser,
   checkMobileExestOrNot,
   UpdateSupplierByIdThird,
+  ValidateMobileNumber,
 };
