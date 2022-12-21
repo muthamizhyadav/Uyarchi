@@ -5353,6 +5353,9 @@ const getRevertShops = async () => {
         dummySort: 1,
       },
     },
+    {
+      $sort: { dummySort: 1 },
+    },
   ]);
   return values;
 };
