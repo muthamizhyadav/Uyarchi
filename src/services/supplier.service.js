@@ -744,6 +744,9 @@ const getSupplierthird = async (key, page) => {
       $match: { $and: [keys] },
     },
     {
+      $sort: { verifyStatus: 1 },
+    },
+    {
       $skip: 10 * page,
     },
     {
