@@ -60,6 +60,9 @@ const shopSchema = mongoose.Schema({
   chLong: {
     type: String,
   },
+  dummySort: {
+    type: Number,
+  },
   whatsappnumber: {
     type: Number,
   },

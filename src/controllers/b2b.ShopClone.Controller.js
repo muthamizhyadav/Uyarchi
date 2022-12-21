@@ -559,6 +559,11 @@ const getRevertShops = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const DummySort = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.DummySort(req.body);
+  res.send(data);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -627,4 +632,5 @@ module.exports = {
   HighlyIntrestedShops,
   ChangeOneMap_to_AnotherMap,
   getRevertShops,
+  DummySort,
 };

@@ -5350,10 +5350,21 @@ const getRevertShops = async () => {
         dataApprovedUseremail: '$ApprovedUsersData.email',
         dataApprovedUserSalary: '$ApprovedUsersData.salary',
         changeMap: 1,
+        dummySort: 1,
       },
     },
   ]);
   return values;
+};
+
+const DummySort = async (body) => {
+  let count = 0;
+  const { arr } = body;
+  arr.forEach(async (e) => {
+    count = count + 1;
+    await Shop.findByIdAndUpdate({ _id: e._id }, { dummySort: count }, { new: true });
+  });
+  return { Message: 'Sucess' };
 };
 
 module.exports = {
@@ -5422,4 +5433,5 @@ module.exports = {
   HighlyIntrestedShops,
   ChangeOneMap_to_AnotherMap,
   getRevertShops,
+  DummySort,
 };
