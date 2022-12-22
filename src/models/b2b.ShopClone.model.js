@@ -353,6 +353,9 @@ const attendanceSchemaclone = new mongoose.Schema({
   created: {
     type: String,
   },
+  createdAt: {
+    type: Date,
+  },
   date: {
     type: String,
   },

@@ -878,6 +878,9 @@ const getSupplierWithverifiedUser = async (key, page) => {
       },
     },
     {
+      $sort: { verifyStatus: 1 },
+    },
+    {
       $skip: 10 * page,
     },
     {
