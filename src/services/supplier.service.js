@@ -761,17 +761,18 @@ const getSupplierthird = async (key, page) => {
   return { values: values, total: total.length };
 };
 
-const updateSupplierthird = async (id, updatebody) => {
+const updateSupplierthird = async (id, updatebody, userId) => {
   let values = await Supplier.findById(id);
   // console.log(values.lat);
   // if (values.lat) {
   //   throw new ApiError(httpStatus.NOT_FOUND, 'Already Verified');
   // }
   let values1 = { ...updatebody, ...{ supplierId: id, created: moment() } };
+  let body = { ...updatebody, ...{ verifiedUser: userId } };
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier Not found');
   }
-  values = await Supplier.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  values = await Supplier.findByIdAndUpdate({ _id: id }, body, { new: true });
   await Supplierhistory.create({ ...values, ...{ supplierId: id } });
   return values;
 };

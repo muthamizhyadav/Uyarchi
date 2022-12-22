@@ -166,7 +166,8 @@ const getSupplierthird = catchAsync(async (req, res) => {
 });
 
 const updateSupplierthird = catchAsync(async (req, res) => {
-  let data = await supplierService.updateSupplierthird(req.params.id, req.body);
+  let userId = req.userId;
+  let data = await supplierService.updateSupplierthird(req.params.id, req.body, userId);
   if (req.files) {
     data.image = [];
     req.files.forEach(function (files, index, arr) {
