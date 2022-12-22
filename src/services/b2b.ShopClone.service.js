@@ -5083,6 +5083,9 @@ const getindividualSupplierAttendence = async (user, page) => {
   }
   let values = await AttendanceClonenew.aggregate([
     {
+      $sort: { date: -1, time: -1 },
+    },
+    {
       $lookup: {
         from: 'b2busers',
         localField: 'Uid',
@@ -5110,6 +5113,7 @@ const getindividualSupplierAttendence = async (user, page) => {
         userName: '$UsersData.name',
         phoneNumber: '$UsersData.phoneNumber',
         email: '$UsersData.email',
+        createdAt: 1,
       },
     },
     {
