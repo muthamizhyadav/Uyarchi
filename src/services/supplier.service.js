@@ -616,21 +616,6 @@ const getSupplierWith_Advanced = async () => {
     {
       $match: { approvedStatus: 'Approved' },
     },
-    //   {
-    //   $lookup: {
-    //     from: 'callstatuses',
-    //     localField: '_id',
-    //     foreignField: 'supplierid',
-    //     pipeline: [{ $match: { status: "Advance" } }, { $group: { _id: null, totalAdvancedAmt: { $sum: '$TotalAmount' } } }],
-    //     as: 'callstatus',
-    //   },
-    // },
-    // {
-    //   $unwind: {
-    //     preserveNullAndEmptyArrays: true,
-    //     path: '$callstatus'
-    //   }
-    // },
     {
       $lookup: {
         from: 'supplierraisedunbilleds',
@@ -684,9 +669,6 @@ const getSupplierWith_Advanced = async () => {
         tradeName: 1,
         raised: { $ifNull: ['$raised.raised_Amt', 0] },
         unbilled: { $ifNull: ['$supplierunbilled.un_Billed_amt', 0] },
-        // RaisedAmounts: {
-        //   $ifNull: [{ $ifNull: ['$raised.raised_Amt', 0] }, { $ifNull: ['$supplierunbilled.un_Billed_amt', 0] }, 0],
-        // },
         RaisedAmounts: {
           $subtract: [{ $ifNull: ['$raised.raised_Amt', 0] }, { $ifNull: ['$supplierunbilledhistory.TotalAmount', 0] }],
         },
@@ -736,6 +718,7 @@ const getSupplierthird = async (key, page) => {
         { primaryContactNumber: { $regex: key, $options: 'i' } },
         { secondaryContactName: { $regex: key, $options: 'i' } },
         { tradeName: { $regex: key, $options: 'i' } },
+        { DoorNo: { $regex: key, $options: 'i' } },
       ],
     };
   }
@@ -763,10 +746,6 @@ const getSupplierthird = async (key, page) => {
 
 const updateSupplierthird = async (id, updatebody, userId) => {
   let values = await Supplier.findById(id);
-  // console.log(values.lat);
-  // if (values.lat) {
-  //   throw new ApiError(httpStatus.NOT_FOUND, 'Already Verified');
-  // }
   let values1 = { ...updatebody, ...{ supplierId: id, created: moment() } };
   let body = { ...updatebody, ...{ verifiedUser: userId } };
   if (!values) {
@@ -859,22 +838,22 @@ const getSupplierWithverifiedUser = async (key, page) => {
       $project: {
         _id: 1,
         productDealingWith: 1,
-        categoryDealingWith:1,
-        businessType:1,
-        DoorNo:1,
+        categoryDealingWith: 1,
+        businessType: 1,
+        DoorNo: 1,
         image: 1,
         tradeName: 1,
         ShopNo: 1,
         ShopSize: 1,
         productSold: 1,
         primaryContactName: 1,
-        primaryContactNumber:1,
-        productSold:1,
-        pinCode:1,
-        countries:1,
-        RegisteredAddress:1,
-        gstNo:1,
-        email:1,
+        primaryContactNumber: 1,
+        productSold: 1,
+        pinCode: 1,
+        countries: 1,
+        RegisteredAddress: 1,
+        gstNo: 1,
+        email: 1,
         secondaryContactName: 1,
         secondaryContactNumber: 1,
         GateEntryconvenience: 1,
