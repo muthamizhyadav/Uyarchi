@@ -20,7 +20,6 @@ const generateToken = (userId, userRole, expires, type, secret = config.jwt.secr
     _id: userId,
     userRole: userRole,
     iat: moment().unix(),
-
     exp: expires.unix(),
     type,
   };
