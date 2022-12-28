@@ -767,13 +767,18 @@ const UpdateSupplierByIdThird = async (id, updateBody) => {
 
 const getSupplierDetails = async (id) => {
   let Id = id.toString();
+  let value = [];
   console.log(Id);
   let values = await Supplier.findById(Id);
   console.log(values);
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier Not Found');
   }
-  return values;
+  for (let i = 0; i < values.productDealingWith.length; i++) {
+    let ff = await Product.findById(values.productDealingWith[i]);
+    value.push(ff);
+  }
+  return { values: values, products: value };
 };
 
 const Store_lat_long = async (id, body, userId) => {
