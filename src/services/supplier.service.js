@@ -616,21 +616,6 @@ const getSupplierWith_Advanced = async () => {
     {
       $match: { approvedStatus: 'Approved' },
     },
-    //   {
-    //   $lookup: {
-    //     from: 'callstatuses',
-    //     localField: '_id',
-    //     foreignField: 'supplierid',
-    //     pipeline: [{ $match: { status: "Advance" } }, { $group: { _id: null, totalAdvancedAmt: { $sum: '$TotalAmount' } } }],
-    //     as: 'callstatus',
-    //   },
-    // },
-    // {
-    //   $unwind: {
-    //     preserveNullAndEmptyArrays: true,
-    //     path: '$callstatus'
-    //   }
-    // },
     {
       $lookup: {
         from: 'supplierraisedunbilleds',
@@ -684,9 +669,6 @@ const getSupplierWith_Advanced = async () => {
         tradeName: 1,
         raised: { $ifNull: ['$raised.raised_Amt', 0] },
         unbilled: { $ifNull: ['$supplierunbilled.un_Billed_amt', 0] },
-        // RaisedAmounts: {
-        //   $ifNull: [{ $ifNull: ['$raised.raised_Amt', 0] }, { $ifNull: ['$supplierunbilled.un_Billed_amt', 0] }, 0],
-        // },
         RaisedAmounts: {
           $subtract: [{ $ifNull: ['$raised.raised_Amt', 0] }, { $ifNull: ['$supplierunbilledhistory.TotalAmount', 0] }],
         },
@@ -717,7 +699,7 @@ const createSuppliers = async (body, userId) => {
   let values = { ...body, ...{ created: moment(), createdBy: userId } };
   const validate = await Supplier.find({ primaryContactNumber: body.primaryContactNumber });
   console.log(validate.length);
-  let len = validate.length
+  let len = validate.length;
   if (len > 0) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Mobile Number Already Registered');
   } else {
@@ -736,12 +718,16 @@ const getSupplierthird = async (key, page) => {
         { primaryContactNumber: { $regex: key, $options: 'i' } },
         { secondaryContactName: { $regex: key, $options: 'i' } },
         { tradeName: { $regex: key, $options: 'i' } },
+        { DoorNo: { $regex: key, $options: 'i' } },
       ],
     };
   }
   let values = await Supplier.aggregate([
     {
       $match: { $and: [keys] },
+    },
+    {
+      $sort: { verifyStatus: 1 },
     },
     {
       $skip: 10 * page,
@@ -758,30 +744,41 @@ const getSupplierthird = async (key, page) => {
   return { values: values, total: total.length };
 };
 
-const updateSupplierthird = async (id, updatebody) => {
+const updateSupplierthird = async (id, updatebody, userId) => {
   let values = await Supplier.findById(id);
-  // console.log(values.lat);
-  // if (values.lat) {
-  //   throw new ApiError(httpStatus.NOT_FOUND, 'Already Verified');
-  // }
   let values1 = { ...updatebody, ...{ supplierId: id, created: moment() } };
+  let body = { ...updatebody, ...{ verifiedUser: userId } };
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier Not found');
   }
-  values = await Supplier.findByIdAndUpdate({ _id: id }, updatebody, { new: true });
+  values = await Supplier.findByIdAndUpdate({ _id: id }, body, { new: true });
   await Supplierhistory.create({ ...values, ...{ supplierId: id } });
+  return values;
+};
+
+const UpdateSupplierByIdThird = async (id, updateBody) => {
+  let values = await Supplier.findByIdAndUpdate(id);
+  if (!values) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Supplier Not Found');
+  }
+  values = await Supplier.findByIdAndUpdate({ _id: id }, updateBody, { new: true });
   return values;
 };
 
 const getSupplierDetails = async (id) => {
   let Id = id.toString();
+  let value = [];
   console.log(Id);
   let values = await Supplier.findById(Id);
   console.log(values);
   if (!values) {
     throw new ApiError(httpStatus.NOT_FOUND, 'supplier Not Found');
   }
-  return values;
+  for (let i = 0; i < values.productDealingWith.length; i++) {
+    let ff = await Product.findById(values.productDealingWith[i]);
+    value.push(ff);
+  }
+  return { values: values, products: value };
 };
 
 const Store_lat_long = async (id, body, userId) => {
@@ -846,12 +843,22 @@ const getSupplierWithverifiedUser = async (key, page) => {
       $project: {
         _id: 1,
         productDealingWith: 1,
+        categoryDealingWith: 1,
+        businessType: 1,
+        DoorNo: 1,
         image: 1,
         tradeName: 1,
         ShopNo: 1,
         ShopSize: 1,
         productSold: 1,
         primaryContactName: 1,
+        primaryContactNumber: 1,
+        productSold: 1,
+        pinCode: 1,
+        countries: 1,
+        RegisteredAddress: 1,
+        gstNo: 1,
+        email: 1,
         secondaryContactName: 1,
         secondaryContactNumber: 1,
         GateEntryconvenience: 1,
@@ -863,6 +870,9 @@ const getSupplierWithverifiedUser = async (key, page) => {
         verifiedDate: 1,
         verifiedUserName: '$users.name',
       },
+    },
+    {
+      $sort: { verifyStatus: 1 },
     },
     {
       $skip: 10 * page,
@@ -920,6 +930,27 @@ const getSupplierWithverifiedUser = async (key, page) => {
   return { values: values, total: total.length };
 };
 
+const checkMobileExestOrNot = async (number) => {
+  let values = await Supplier.find({ primaryContactNumber: number });
+  let len = values.length;
+  console.log(len);
+  if (len > 0) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Mobile Already Exist');
+  }
+  return { Message: 'Success' };
+};
+
+const ValidateMobileNumber = async (id, phone) => {
+  let values = await Supplier.findById(id);
+  let values1 = await Supplier.findOne({ primaryContactNumber: phone });
+  if (values1 !== null) {
+    if (values.primaryContactNumber !== values1.primaryContactNumber) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Already Register');
+    }
+  }
+  return values;
+};
+
 module.exports = {
   createSupplier,
   updateSupplierById,
@@ -952,4 +983,7 @@ module.exports = {
   getAllAppSupplierApproved,
   Store_lat_long,
   getSupplierWithverifiedUser,
+  checkMobileExestOrNot,
+  UpdateSupplierByIdThird,
+  ValidateMobileNumber,
 };

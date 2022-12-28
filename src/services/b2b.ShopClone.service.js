@@ -1924,7 +1924,7 @@ const createAttendanceClone_new = async (shopBody) => {
   let servertime = moment().format('HHmmss');
   let servercreatetime = moment().format('hh:mm a');
   let serverdate = moment().format('yyyy-MM-DD');
-  let values = { ...shopBody, ...{ date: serverdate, time: servertime, created: servercreatetime } };
+  let values = { ...shopBody, ...{ date: serverdate, time: servertime, created: servercreatetime, createdAt: moment() } };
   const attendance = await AttendanceClonenew.create(values);
   return attendance;
 };
@@ -4878,12 +4878,22 @@ const get_updated_pincode = async () => {
 };
 
 const get_shop_in_pincode = async (query) => {
-  let pincode = query.pincode;
-  if (query.pincode != null) {
-    pincode = parseInt(query.pincode);
+  let pincode = {active:true};
+  let status = {active:true};
+  // query.status;
+  let approved = {active:true} 
+  // query.approved;
+  if(query.pincode  !=null && query.pincode  !='null' && query.pincode  !=''){
+    pincode = { Pincode: { $eq: parseInt(query.pincode) } }
+  }
+  if(query.status  !=null && query.status  !='null' && query.status  !=''){
+    status= { daStatus: { $eq: query.status} };
+  }
+  if(query.approved  !=null && query.approved  !='null' && query.approved  !=''){
+    approved= { DA_USER: { $eq: query.approved} };
   }
   let shop = await Shop.aggregate([
-    { $match: { $and: [{ status: { $eq: 'data_approved' } }, { Pincode: { $eq: pincode } }] } },
+    { $match: { $and: [{ status: { $eq: 'data_approved' } },approved,status,pincode] } },
     {
       $lookup: {
         from: 'b2busers',
@@ -5083,6 +5093,9 @@ const getindividualSupplierAttendence = async (user, page) => {
   }
   let values = await AttendanceClonenew.aggregate([
     {
+      $sort: { date: -1, time: -1 },
+    },
+    {
       $lookup: {
         from: 'b2busers',
         localField: 'Uid',
@@ -5110,6 +5123,7 @@ const getindividualSupplierAttendence = async (user, page) => {
         userName: '$UsersData.name',
         phoneNumber: '$UsersData.phoneNumber',
         email: '$UsersData.email',
+        createdAt: 1,
       },
     },
     {
@@ -5156,6 +5170,218 @@ const getindividualSupplierAttendence = async (user, page) => {
     },
   ]);
   return { values: values, total: total.length };
+};
+
+const HighlyIntrestedShops = async (type) => {
+  let typeMatch;
+  console.log(type);
+  if (type == 'ModeratelyInterested') {
+    typeMatch = { daStatus: 'ModeratelyInterested', status: 'data_approved' };
+  } else if (type == 'both') {
+    typeMatch = { daStatus: { $in: ['ModeratelyInterested', 'HighlyInterested'] } };
+  } else {
+    typeMatch = { daStatus: 'HighlyInterested', status: 'data_approved' };
+  }
+  let values = await Shop.aggregate([
+    {
+      $match: { $and: [typeMatch] },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'DA_USER',
+        foreignField: '_id',
+        as: 'ApprovedUsersData',
+      },
+    },
+    {
+      $unwind: '$ApprovedUsersData',
+    },
+    {
+      $project: {
+        _id: 1,
+        photoCapture: 1,
+        status: 1,
+        kyc_status: 1,
+        callingStatus: 1,
+        callingStatusSort: 1,
+        active: 1,
+        archive: 1,
+        Wardid: 1,
+        type: 1,
+        SName: 1,
+        SType: 1,
+        SOwner: 1,
+        mobile: 1,
+        Slat: 1,
+        Strid: 1,
+        Slong: 1,
+        address: 1,
+        created: 1,
+        date: 1,
+        time: 1,
+        Uid: 1,
+        callingUserId: 1,
+        sorttime: 1,
+        sortdate: 1,
+        filterDate: 1,
+        historydate: 1,
+        salesManStatus: 1,
+        displaycount: 1,
+        DA_CREATED: 1,
+        DA_Comment: 1,
+        DA_DATE: 1,
+        DA_TIME: 1,
+        DA_USER: 1,
+        Pincode: 1,
+        daStatus: 1,
+        da_landmark: 1,
+        da_long: 1,
+        da_lot: 1,
+        purchaseQTy: 1,
+        kapturedUser: '$UsersData.name',
+        kapturedUserContact: '$UsersData.phoneNumber',
+        kapturedUseremail: '$UsersData.email',
+        kapturedUsersalary: '$UsersData.salary',
+        dataApprovedUser: '$ApprovedUsersData.name',
+        dataApprovedUserContact: '$ApprovedUsersData.phoneNumber',
+        dataApprovedUseremail: '$ApprovedUsersData.email',
+        dataApprovedUserSalary: '$ApprovedUsersData.salary',
+        changeMap: { $ifNull: ['$changeMap', false] },
+      },
+    },
+    {
+      $match: { changeMap: { $eq: false } },
+    },
+  ]);
+  return values;
+};
+// changeMap chLat chLong
+const ChangeOneMap_to_AnotherMap = async (body) => {
+  const { arr, revert } = body;
+  let len = arr.length;
+  if (len <= 0) {
+    throw new ApiError(httpStatus[400], 'Select Shops');
+  }
+  if (revert === 1) {
+    arr.forEach(async (e) => {
+      await Shop.findByIdAndUpdate({ _id: e }, { changeMap: true }, { new: true });
+    });
+    return { Message: 'SuccesFully Changed' };
+  }
+  arr.forEach(async (e) => {
+    await Shop.findByIdAndUpdate({ _id: e }, { changeMap: false }, { new: true });
+  });
+  return { Message: 'SuccesFully Changed' };
+};
+
+const getRevertShops = async () => {
+  let values = await Shop.aggregate([
+    {
+      $match: { changeMap: true },
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'Uid',
+        foreignField: '_id',
+        as: 'UsersData',
+      },
+    },
+    {
+      $unwind: '$UsersData',
+    },
+    {
+      $lookup: {
+        from: 'b2busers',
+        localField: 'DA_USER',
+        foreignField: '_id',
+        as: 'ApprovedUsersData',
+      },
+    },
+    {
+      $unwind: '$ApprovedUsersData',
+    },
+    {
+      $project: {
+        _id: 1,
+        photoCapture: 1,
+        status: 1,
+        kyc_status: 1,
+        callingStatus: 1,
+        callingStatusSort: 1,
+        active: 1,
+        archive: 1,
+        Wardid: 1,
+        type: 1,
+        SName: 1,
+        SType: 1,
+        SOwner: 1,
+        mobile: 1,
+        Slat: 1,
+        Strid: 1,
+        Slong: 1,
+        address: 1,
+        created: 1,
+        date: 1,
+        time: 1,
+        Uid: 1,
+        callingUserId: 1,
+        sorttime: 1,
+        sortdate: 1,
+        filterDate: 1,
+        historydate: 1,
+        salesManStatus: 1,
+        displaycount: 1,
+        DA_CREATED: 1,
+        DA_Comment: 1,
+        DA_DATE: 1,
+        DA_TIME: 1,
+        DA_USER: 1,
+        Pincode: 1,
+        daStatus: 1,
+        da_landmark: 1,
+        da_long: 1,
+        da_lot: 1,
+        purchaseQTy: 1,
+        kapturedUser: '$UsersData.name',
+        kapturedUserContact: '$UsersData.phoneNumber',
+        kapturedUseremail: '$UsersData.email',
+        kapturedUsersalary: '$UsersData.salary',
+        dataApprovedUser: '$ApprovedUsersData.name',
+        dataApprovedUserContact: '$ApprovedUsersData.phoneNumber',
+        dataApprovedUseremail: '$ApprovedUsersData.email',
+        dataApprovedUserSalary: '$ApprovedUsersData.salary',
+        changeMap: 1,
+        dummySort: 1,
+      },
+    },
+    {
+      $sort: { dummySort: 1 },
+    },
+  ]);
+  return values;
+};
+
+const DummySort = async (body) => {
+  let count = 0;
+  const { arr } = body;
+  arr.forEach(async (e) => {
+    count = count + 1;
+    await Shop.findByIdAndUpdate({ _id: e._id }, { dummySort: count }, { new: true });
+  });
+  return { Message: 'Sucess' };
 };
 
 module.exports = {
@@ -5221,4 +5447,8 @@ module.exports = {
   update_pincode_map,
   getindividualSupplierAttendence,
   // bharathiraja
+  HighlyIntrestedShops,
+  ChangeOneMap_to_AnotherMap,
+  getRevertShops,
+  DummySort,
 };

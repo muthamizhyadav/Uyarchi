@@ -50,6 +50,19 @@ const shopSchema = mongoose.Schema({
     type: String,
     default: 'Pending',
   },
+  changeMap: {
+    type: Boolean,
+    default: false,
+  },
+  chLat: {
+    type: String,
+  },
+  chLong: {
+    type: String,
+  },
+  dummySort: {
+    type: Number,
+  },
   whatsappnumber: {
     type: Number,
   },
@@ -223,15 +236,15 @@ const shopSchema = mongoose.Schema({
   Re_purchaseQTy: {
     type: String,
   },
-  re_Uid:{
+  re_Uid: {
     type: String,
   },
-  reAssigin_date:{
+  reAssigin_date: {
     type: String,
   },
-  sort_wde:{
+  sort_wde: {
     type: Number,
-  }
+  },
 });
 
 // assignSchema.plugin(toJSON);
@@ -339,6 +352,9 @@ const attendanceSchemaclone = new mongoose.Schema({
   },
   created: {
     type: String,
+  },
+  createdAt: {
+    type: Date,
   },
   date: {
     type: String,

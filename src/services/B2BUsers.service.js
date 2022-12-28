@@ -528,6 +528,102 @@ const supplierEnroll = async () => {
   return values;
 };
 
+const getUserAttendance = async (page) => {
+  let values = await Users.aggregate([
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'userRole',
+        foreignField: '_id',
+        as: 'roles',
+      },
+    },
+    {
+      $unwind: '$roles',
+    },
+    {
+      $project: {
+        _id: 1,
+        isEmailVerified: 1,
+        active: 1,
+        name: 1,
+        email: 1,
+        salary: 1,
+        role: '$roles.roleName',
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
+    { $limit: 10 },
+  ]);
+  let total = await Users.aggregate([
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'userRole',
+        foreignField: '_id',
+        as: 'roles',
+      },
+    },
+    {
+      $unwind: '$roles',
+    },
+    {
+      $project: {
+        _id: 1,
+        isEmailVerified: 1,
+        active: 1,
+        name: 1,
+        email: 1,
+        salary: 1,
+        role: '$roles.roleName',
+      },
+    },
+  ]);
+
+  return { values: values, total: total.length };
+};
+
+const getFines_Details = async (id) => {
+  let values = await Users.aggregate([
+    {
+      $match: { _id: id },
+    },
+    {
+      $lookup: {
+        from: 'executivefines',
+        localField: '_id',
+        foreignField: 'userId',
+        pipeline: [{ $group: { _id: { month: { $month: '$created' } }, totalAmount: { $sum: '$fineAmount' } } }],
+        as: 'BillVerification',
+      },
+    },
+    {
+      $unwind: '$BillVerification',
+    },
+    {
+      $lookup: {
+        from: 'creditbillgroups',
+        localField: '_id',
+        foreignField: 'AssignedUserId',
+        pipeline: [
+          { $match: { fineStatus: 'Fine' } },
+          { $group: { _id: { month: { $month: '$finishDate' } }, totalAmount: { $sum: '$disputeAmount' } } },
+        ],
+        as: 'crediteFine',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$crediteFine',
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
   createUser,
   UsersLogin,
@@ -561,4 +657,6 @@ module.exports = {
   otpVerfiyPurchaseExecutive,
   PurchaseExecutive_setPassword,
   supplierEnroll,
+  getUserAttendance,
+  getFines_Details,
 };

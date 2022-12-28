@@ -186,9 +186,19 @@ const PurchaseExecutive_setPassword = catchAsync(async (req, res) => {
 });
 
 const supplierEnroll = catchAsync(async (req, res) => {
-  console.log("sadfsdf")
+  console.log('sadfsdf');
   const users = await b2bUsersService.supplierEnroll();
   res.send(users);
+});
+
+const getUserAttendance = catchAsync(async (req, res) => {
+  const data = await b2bUsersService.getUserAttendance(req.params.page);
+  res.send(data);
+});
+
+const getFines_Details = catchAsync(async (req, res) => {
+  const data = await b2bUsersService.getFines_Details(req.params.id);
+  res.send(data);
 });
 
 module.exports = {
@@ -224,4 +234,6 @@ module.exports = {
   otpVerfiyPurchaseExecutive,
   PurchaseExecutive_setPassword,
   supplierEnroll,
+  getUserAttendance,
+  getFines_Details,
 };
