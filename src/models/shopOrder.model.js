@@ -355,7 +355,6 @@ const ShopOrderClonePriceSchema = new mongoose.Schema({
   },
   issueAssign: {
     type: String,
-
   }
 });
 

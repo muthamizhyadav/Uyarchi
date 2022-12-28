@@ -4878,12 +4878,22 @@ const get_updated_pincode = async () => {
 };
 
 const get_shop_in_pincode = async (query) => {
-  let pincode = query.pincode;
-  if (query.pincode != null) {
-    pincode = parseInt(query.pincode);
+  let pincode = {active:true};
+  let status = {active:true};
+  // query.status;
+  let approved = {active:true} 
+  // query.approved;
+  if(query.pincode  !=null && query.pincode  !='null' && query.pincode  !=''){
+    pincode = { Pincode: { $eq: parseInt(query.pincode) } }
+  }
+  if(query.status  !=null && query.status  !='null' && query.status  !=''){
+    status= { daStatus: { $eq: query.status} };
+  }
+  if(query.approved  !=null && query.approved  !='null' && query.approved  !=''){
+    approved= { DA_USER: { $eq: query.approved} };
   }
   let shop = await Shop.aggregate([
-    { $match: { $and: [{ status: { $eq: 'data_approved' } }, { Pincode: { $eq: pincode } }] } },
+    { $match: { $and: [{ status: { $eq: 'data_approved' } },approved,status,pincode] } },
     {
       $lookup: {
         from: 'b2busers',
