@@ -45,4 +45,5 @@ router.route('/getUser/Attendance/:page').get(b2bUsersController.getUserAttendan
 router.route('/getFines/Details/ByUsers/:id').get(b2bUsersController.getFines_Details);
 // chatBot
 router.route('/chatBotOtp').post(b2bUsersController.chatBotOtp);
+router.route('/chatBotOtpVerify').post(b2bUsersController.chatBotOtpVerify);
 module.exports = router;
