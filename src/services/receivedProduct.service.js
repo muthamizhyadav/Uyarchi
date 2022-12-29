@@ -1713,7 +1713,7 @@ const getbilled_Details = async (pages, userId) => {
   if (approved) {
     let values = await ReceivedProduct.aggregate([
       {
-        $match: { supplierId: userId },
+        $match: { supplierId: userId, status: 'Billed' },
       },
       {
         $lookup: {
@@ -1747,6 +1747,7 @@ const getbilled_Details = async (pages, userId) => {
           _id: 1,
           created: 1,
           date: 1,
+          status: 1,
           BillNo: 1,
           TotalAmount: { $ifNull: ['$receivedstocks.billingTotal', 0] },
           paidAmount: { $ifNull: ['$billed.Amount', 0] },
@@ -1764,7 +1765,7 @@ const getbilled_Details = async (pages, userId) => {
     ]);
     let total = await ReceivedProduct.aggregate([
       {
-        $match: { supplierId: userId },
+        $match: { supplierId: userId, status: 'Billed' },
       },
       {
         $lookup: {

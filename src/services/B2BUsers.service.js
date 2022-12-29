@@ -6,10 +6,12 @@ const Role = require('../models/roles.model');
 const bcrypt = require('bcryptjs');
 const ApiError = require('../utils/ApiError');
 const Textlocal = require('../config/textLocal');
+const TextlocalChat = require('../config/chat-bot.OTP');
 const Verfy = require('../config/OtpVerify');
 const WardAssign = require('../models/wardAssign.model');
 const { MarketClone } = require('../models/market.model');
 const OTP = require('../models/saveOtp.model');
+const ChatBotOTP = require('../models/chatBot.OTP.model');
 
 const moment = require('moment');
 
@@ -180,7 +182,16 @@ const forgotPassword = async (body) => {
 
 const chatBotOtp = async (body) => {
   let user = { name: 'chatBotUser' };
-  return await Textlocal.Otp(body, user);
+  return await TextlocalChat.Otp(body, user);
+};
+
+const chatBotOtpVerify = async (body) => {
+  let findOtp = await ChatBotOTP.findOne({ OTP: body.otp, used: false, date: moment().format('YYYY-MM-DD') });
+  if (!findOtp) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Otp Not Valid');
+  }
+  findOtp = await ChatBotOTP.findByIdAndUpdate({ _id: findOtp._id }, { used: true }, { new: true });
+  return findOtp;
 };
 
 const otpVerfiy = async (body) => {
@@ -666,4 +677,5 @@ module.exports = {
   getUserAttendance,
   getFines_Details,
   chatBotOtp,
+  chatBotOtpVerify,
 };

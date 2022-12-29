@@ -1,14 +1,10 @@
-const OTP = require('../models/saveOtp.model');
+const OTP = require('../models/chatBot.OTP.model');
 const moment = require('moment');
 
-const saveOtp = async (number, otp, user) => {
+const saveOtp = async (number, otp) => {
   return await OTP.create({
     OTP: otp,
-    mobileNumber: number,
-    userId: user._id,
-    create: moment(),
     date: moment().format('YYYY-MM-DD'),
-    time: moment().format('HHmms'),
   });
 };
 module.exports = { saveOtp };
