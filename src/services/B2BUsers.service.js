@@ -177,6 +177,12 @@ const forgotPassword = async (body) => {
   }
   return await Textlocal.Otp(body, users);
 };
+
+const chatBotOtp = async (body) => {
+  let user = { name: 'chatBotUser' };
+  return await Textlocal.Otp(body, user);
+};
+
 const otpVerfiy = async (body) => {
   let users = await Users.findOne({
     phoneNumber: body.mobileNumber,
@@ -659,4 +665,5 @@ module.exports = {
   supplierEnroll,
   getUserAttendance,
   getFines_Details,
+  chatBotOtp,
 };

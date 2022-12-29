@@ -1167,6 +1167,85 @@ const supplierUnBilledBySupplier = async (supplierId) => {
   return supplier;
 };
 
+const getRaisedUnBilled_PaidUnbilled_Details = async (page, id) => {
+  let values = await RaisedUnBilledHistory.aggregate([
+    {
+      $match: { supplierId: id },
+    },
+    {
+      $lookup: {
+        from: 'supplierunbilledhistories',
+        localField: '_id',
+        foreignField: 'raisedId',
+        pipeline: [
+          {
+            $group: { _id: null, TotalUnbilled: { $sum: '$un_Billed_amt' } },
+          },
+        ],
+        as: 'supplierUnBilled',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierUnBilled',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        active: 1,
+        date: 1,
+        raised_Amt: 1,
+        raisedBy: 1,
+        paidAmount: '$supplierUnBilled.TotalUnbilled',
+      },
+    },
+    {
+      $skip: 10 * page,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  let total = await RaisedUnBilledHistory.aggregate([
+    {
+      $match: { supplierId: id },
+    },
+    {
+      $lookup: {
+        from: 'supplierunbilledhistories',
+        localField: '_id',
+        foreignField: 'raisedId',
+        pipeline: [
+          {
+            $group: { _id: null, TotalUnbilled: { $sum: '$un_Billed_amt' } },
+          },
+        ],
+        as: 'supplierUnBilled',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$supplierUnBilled',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        active: 1,
+        date: 1,
+        raised_Amt: 1,
+        raisedBy: 1,
+        paidAmount: '$supplierUnBilled.TotalUnbilled',
+      },
+    },
+  ]);
+  let unBilled = await SupplierUnbilled.findOne({ supplierId: id });
+  return { values: values, total: total.length, unBilled: unBilled };
+};
+
 const getUnBilledhistoryBySupplier = async (id) => {
   let values = await SupplierUnbilledHistory.aggregate([
     {
@@ -1211,6 +1290,15 @@ const getUnBilledRaisedhistory = async () => {
         supplierName: '$suppliers.primaryContactName',
         paidStatus: 1,
       },
+    },
+  ]);
+  return values;
+};
+
+const getPaidUnBilledHistory = async (id) => {
+  let values = await SupplierUnbilledHistory.aggregate([
+    {
+      $match: { raisedId: id },
     },
   ]);
   return values;
@@ -1474,4 +1562,6 @@ module.exports = {
   getUnBilledRaisedhistoryBySupplier,
   getUnBilledRaisedhistory,
   getpaidraisedbyindivitual,
+  getRaisedUnBilled_PaidUnbilled_Details,
+  getPaidUnBilledHistory,
 };

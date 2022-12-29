@@ -157,7 +157,7 @@ const getAllAppSupplierApproved = async (id) => {
         pipeline: [
           {
             $match: {
-              $and: [{ SuddenStatus: { $eq: 'Approve' } },{ order_Type: { $eq: 'Need' } }],
+              $and: [{ SuddenStatus: { $eq: 'Approve' } }, { order_Type: { $eq: 'Need' } }],
             },
           },
           {
@@ -696,7 +696,20 @@ const getSupplierWith_Advanced = async () => {
 // supplier third versions
 
 const createSuppliers = async (body, userId) => {
-  let values = { ...body, ...{ created: moment(), createdBy: userId } };
+  let values = {
+    ...body,
+    ...{
+      created: moment(),
+      createdBy: userId,
+      verifiedUser: userId,
+      lat: body.lat,
+      long: body.long,
+      verifyStatus: 'verified',
+      verifiedDate: moment().format('YYYY-MM-DD'),
+      verifiedTime: moment().format('HHmmss'),
+      verifiedCreated: moment(),
+    },
+  };
   const validate = await Supplier.find({ primaryContactNumber: body.primaryContactNumber });
   console.log(validate.length);
   let len = validate.length;
