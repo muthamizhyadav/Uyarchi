@@ -18,6 +18,9 @@ const createSupplier = async (supplierBody) => {
   if (check) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Already Register this Number');
   }
+  if(check.active == false){
+    throw new ApiError(httpStatus.NOT_FOUND, 'User Disable ');
+  }
   if (supplierBody.createdByStatus == 'By Supplier') {
     await Textlocal.Otp(supplierBody.primaryContactNumber);
     await Supplier.create(supplierBody);
