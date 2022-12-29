@@ -803,8 +803,9 @@ const Store_lat_long = async (id, body, userId) => {
   return values;
 };
 
-const getSupplierWithverifiedUser = async (key, page) => {
+const getSupplierWithverifiedUser = async (key, date, page) => {
   let keys = { active: { $eq: true } };
+  let dateMatch = { active: { $eq: true } };
   if (key != 'null') {
     keys = {
       $or: [
@@ -816,14 +817,17 @@ const getSupplierWithverifiedUser = async (key, page) => {
       ],
     };
   }
+  if (date != 'null') {
+    dateMatch = { date: date };
+  }
   let values = await Supplier.aggregate([
     {
-      $match: {
-        active: true,
+      $addFields: {
+        date: { $dateToString: { format: '%Y-%m-%d', date: '$verifiedCreated' } },
       },
     },
     {
-      $match: { $and: [keys] },
+      $match: { $and: [keys, dateMatch] },
     },
     {
       $lookup: {
@@ -868,6 +872,7 @@ const getSupplierWithverifiedUser = async (key, page) => {
         verifiedUser: 1,
         verifiedCreated: 1,
         verifiedDate: 1,
+        date: 1,
         verifiedUserName: '$users.name',
       },
     },
