@@ -20,4 +20,7 @@ router.route('/get/UnBilled/history/BySupplier/:id').get(supplierController.getU
 router.route('/getUnBilled/Raisedhistory/BySupplier/:id').get(supplierController.getUnBilledRaisedhistoryBySupplier);
 router.route('/getUnBilled/Raisedhistory').get(supplierController.getUnBilledRaisedhistory);
 router.route('/getpaidraisedby/indivitual/:id/:supplierId').get(supplierController.getpaidraisedbyindivitual);
+router
+  .route('/getRaisedUnBilled/PaidUnbilled/Details/:page')
+  .get(supplierAuth, supplierController.getRaisedUnBilled_PaidUnbilled_Details);
 module.exports = router;
