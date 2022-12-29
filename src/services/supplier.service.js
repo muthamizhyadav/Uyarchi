@@ -160,7 +160,7 @@ const getAllAppSupplierApproved = async (id) => {
         pipeline: [
           {
             $match: {
-              $and: [{ SuddenStatus: { $eq: 'Approve' } }],
+              $and: [{ SuddenStatus: { $eq: 'Approve' } },{ order_Type: { $eq: 'Need' } }],
             },
           },
           {
