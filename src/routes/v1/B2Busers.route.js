@@ -43,4 +43,6 @@ router.route('/supplier/Enrolls').get(b2bUsersController.supplierEnroll);
 // salary Attendance
 router.route('/getUser/Attendance/:page').get(b2bUsersController.getUserAttendance);
 router.route('/getFines/Details/ByUsers/:id').get(b2bUsersController.getFines_Details);
+// chatBot
+router.route('/chatBotOtp').post(b2bUsersController.chatBotOtp);
 module.exports = router;
