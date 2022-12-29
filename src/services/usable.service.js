@@ -622,24 +622,28 @@ const getstockDetails = async (id) => {
 };
 
 const updatestcokDetails = async (body) => {
-  console.log(body)
+  console.log(body);
   const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   const tomorrow = moment().subtract(-1, 'days').format('DD-MM-YYYY');
   const todayfor = moment().format('DD-MM-YYYY');
   body.product.forEach(async (e) => {
-    console.log(e)
+    console.log(e);
     let NSFQ1 = e.NSFQ1 == null || e.NSFQ1 == '' ? 0 : e.NSFQ1;
     let NSFQ2 = e.NSFQ2 == null || e.NSFQ2 == '' ? 0 : e.NSFQ2;
     let NSFQ3 = e.NSFQ3 == null || e.NSFQ3 == '' ? 0 : e.NSFQ3;
     let NSFW_Wastage = e.NSFW_Wastage == null || e.NSFW_Wastage == '' ? 0 : e.NSFW_Wastage;
-    console.log(NSFW_Wastage)
+    console.log(NSFW_Wastage);
     // let wastedImageFile = e.wastedImageFile == null ? 0 : e.wastedImageFile;
-    let Pid = e.Pid
+    let Pid = e.Pid;
     let total = NSFQ1 + NSFQ2 + NSFQ3;
     let usablestocks = await usableStock.findOne({ productId: Pid, date: todayfor });
     if (usablestocks) {
       // console.log(usablestocks, 'asd')
-      usablestocks = await usableStock.findByIdAndUpdate({ _id: usablestocks._id }, { closingStock: total, status: "Closed", closingWastage: NSFW_Wastage, closingTime: moment() }, { new: true });
+      usablestocks = await usableStock.findByIdAndUpdate(
+        { _id: usablestocks._id },
+        { closingStock: total, status: 'Closed', closingWastage: NSFW_Wastage, closingTime: moment() },
+        { new: true }
+      );
       // await usablestocks.create({
       //   b2cStock: 0,
       //   b2bStock: 0,
@@ -652,10 +656,9 @@ const updatestcokDetails = async (body) => {
       //   openingStock: totalStock,
       //   openingStock: totalStock,
       // })
-
     }
     // console.log(usablestocks)
-  })
+  });
   // body.product.forEach((res)=>{
   //   // console.log(res.wastedImageFile)
   //   res.wastedImageFile.forEach((s)=>{
@@ -663,11 +666,10 @@ const updatestcokDetails = async (body) => {
   //   })
   // })
   return { success: true };
-
-}
+};
 
 const updatestcokDetails_Opening = async (body) => {
-  console.log(body)
+  console.log(body);
   const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   const tomorrow = moment().subtract(-1, 'days').format('DD-MM-YYYY');
   const todayfor = moment().format('DD-MM-YYYY');
@@ -678,7 +680,7 @@ const updatestcokDetails_Opening = async (body) => {
     let NSFQ2 = e.NSFQ2 == null || e.NSFQ2 == '' ? 0 : e.NSFQ2;
     let NSFQ3 = e.NSFQ3 == null || e.NSFQ3 == '' ? 0 : e.NSFQ3;
     let NSFW_Wastage = e.NSFW_Wastage == null || e.NSFW_Wastage == '' ? 0 : e.NSFW_Wastage;
-    let Pid = e.Pid
+    let Pid = e.Pid;
     let total = NSFQ1 + NSFQ2 + NSFQ3;
     let groupstatus = await usableStock.create({
       b2cStock: 0,
@@ -692,8 +694,8 @@ const updatestcokDetails_Opening = async (body) => {
       totalStock: total,
       openingStock: total,
       wastage: NSFW_Wastage,
-      status: "Opening",
-      productId: Pid
+      status: 'Opening',
+      productId: Pid,
     });
     await Stockhistory.create({
       usableStock: groupstatus._id,
@@ -704,31 +706,30 @@ const updatestcokDetails_Opening = async (body) => {
       date: todayfor,
       time: time,
       created: moment(),
-    })
-  })
+    });
+  });
   return { success: true };
-
-}
+};
 
 const updatestcokDetails_Random = async (body) => {
-  console.log(body)
+  console.log(body);
   const today = moment().format('DD-MM-YYYY');
   const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
   const tomorrow = moment().subtract(-1, 'days').format('DD-MM-YYYY');
   const todayfor = moment().format('DD-MM-YYYY');
   const time = moment().format('hhmmss');
   body.product.forEach(async (e) => {
-    console.log(e)
+    console.log(e);
     let NSFQ1 = e.NSFQ1 == null || e.NSFQ1 == '' ? 0 : e.NSFQ1;
     let NSFQ2 = e.NSFQ2 == null || e.NSFQ2 == '' ? 0 : e.NSFQ2;
     let NSFQ3 = e.NSFQ3 == null || e.NSFQ3 == '' ? 0 : e.NSFQ3;
     let NSFW_Wastage = e.NSFW_Wastage == null || e.NSFW_Wastage == '' ? 0 : e.NSFW_Wastage;
-    let Pid = e.Pid
+    let Pid = e.Pid;
     let total = NSFQ1 + NSFQ2 + NSFQ3;
     let usableStockss = await usableStock.findOne({ productId: e.Pid, date: today });
-    let randomarray = usableStockss.randomStock_History
+    let randomarray = usableStockss.randomStock_History;
     usableStockss.random_stock = false;
-    usableStockss.save()
+    usableStockss.save();
     // await Stockhistory.create({
     //   usableStock: groupstatus._id,
     //   FQ1: NSFQ1,
@@ -739,26 +740,25 @@ const updatestcokDetails_Random = async (body) => {
     //   time: time,
     //   created: moment(),
     // })
-  })
+  });
   return { success: true };
-
-}
+};
 
 const updaterandom_product = async (body, userId) => {
   const today = moment().format('DD-MM-YYYY');
   body.forEach(async (e) => {
     let usableStockss = await usableStock.findOne({ productId: e.Pid, date: today });
-    let randomarray = usableStockss.randomStock_History
+    let randomarray = usableStockss.randomStock_History;
     randomarray.push({
       date: moment().format('YYYY-MM-DD'),
       time: moment().format('hh:mm a'),
-      user: userId
+      user: userId,
     });
     usableStockss.random_stock = true;
-    usableStockss.save()
-  })
+    usableStockss.save();
+  });
   return { updated: 'successfull' };
-}
+};
 module.exports = {
   createusableStock,
   getAllusableStock,
@@ -770,5 +770,5 @@ module.exports = {
   updatestcokDetails,
   updatestcokDetails_Opening,
   updaterandom_product,
-  updatestcokDetails_Random
+  updatestcokDetails_Random,
 };
