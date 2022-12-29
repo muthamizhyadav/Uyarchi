@@ -1295,6 +1295,15 @@ const getUnBilledRaisedhistory = async () => {
   return values;
 };
 
+const getPaidUnBilledHistory = async (id) => {
+  let values = await SupplierUnbilledHistory.aggregate([
+    {
+      $match: { raisedId: id },
+    },
+  ]);
+  return values;
+};
+
 const getpaidraisedbyindivitual = async (id, supplierId) => {
   let values = await RaisedUnBilledHistory.aggregate([
     {
@@ -1554,4 +1563,5 @@ module.exports = {
   getUnBilledRaisedhistory,
   getpaidraisedbyindivitual,
   getRaisedUnBilled_PaidUnbilled_Details,
+  getPaidUnBilledHistory,
 };

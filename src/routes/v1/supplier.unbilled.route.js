@@ -23,4 +23,5 @@ router.route('/getpaidraisedby/indivitual/:id/:supplierId').get(supplierControll
 router
   .route('/getRaisedUnBilled/PaidUnbilled/Details/:page')
   .get(supplierAuth, supplierController.getRaisedUnBilled_PaidUnbilled_Details);
+router.route('/getPaidUnBilledHistory/:id').get(supplierController.getPaidUnBilledHistory);
 module.exports = router;

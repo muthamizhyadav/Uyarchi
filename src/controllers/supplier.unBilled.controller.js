@@ -97,6 +97,11 @@ const getRaisedUnBilled_PaidUnbilled_Details = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getPaidUnBilledHistory = catchAsync(async (req, res) => {
+  const data = await supplierUnBilledService.getPaidUnBilledHistory(req.params.id);
+  res.send(data);
+});
+
 module.exports = {
   createSupplierUnBilled,
   getUnBilledBySupplier,
@@ -116,4 +121,5 @@ module.exports = {
   getUnBilledRaisedhistory,
   getpaidraisedbyindivitual,
   getRaisedUnBilled_PaidUnbilled_Details,
+  getPaidUnBilledHistory,
 };
