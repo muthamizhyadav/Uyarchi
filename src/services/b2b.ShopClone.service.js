@@ -4878,22 +4878,22 @@ const get_updated_pincode = async () => {
 };
 
 const get_shop_in_pincode = async (query) => {
-  let pincode = {active:true};
-  let status = {active:true};
+  let pincode = { active: true };
+  let status = { active: true };
   // query.status;
-  let approved = {active:true} 
+  let approved = { active: true };
   // query.approved;
-  if(query.pincode  !=null && query.pincode  !='null' && query.pincode  !=''){
-    pincode = { Pincode: { $eq: parseInt(query.pincode) } }
+  if (query.pincode != null && query.pincode != 'null' && query.pincode != '') {
+    pincode = { Pincode: { $eq: parseInt(query.pincode) } };
   }
-  if(query.status  !=null && query.status  !='null' && query.status  !=''){
-    status= { daStatus: { $eq: query.status} };
+  if (query.status != null && query.status != 'null' && query.status != '') {
+    status = { daStatus: { $eq: query.status } };
   }
-  if(query.approved  !=null && query.approved  !='null' && query.approved  !=''){
-    approved= { DA_USER: { $eq: query.approved} };
+  if (query.approved != null && query.approved != 'null' && query.approved != '') {
+    approved = { DA_USER: { $eq: query.approved } };
   }
   let shop = await Shop.aggregate([
-    { $match: { $and: [{ status: { $eq: 'data_approved' } },approved,status,pincode] } },
+    { $match: { $and: [{ status: { $eq: 'data_approved' } }, approved, status, pincode] } },
     {
       $lookup: {
         from: 'b2busers',
@@ -5085,13 +5085,22 @@ const get_shop_in_pincode = async (query) => {
   return shop;
 };
 
-const getindividualSupplierAttendence = async (user, page) => {
+const getindividualSupplierAttendence = async (user, date, page) => {
   console.log(user);
   let userFilter = [{ active: true }];
   if (user !== 'null') {
     userFilter = [{ Uid: { $eq: user } }];
   }
+  let dateMatch = { active: true };
+  if (date !== 'null') {
+    dateMatch = { date: date };
+  }
   let values = await AttendanceClonenew.aggregate([
+    {
+      $match: {
+        $and: [dateMatch],
+      },
+    },
     {
       $sort: { date: -1, time: -1 },
     },
@@ -5137,6 +5146,11 @@ const getindividualSupplierAttendence = async (user, page) => {
     },
   ]);
   let total = await AttendanceClonenew.aggregate([
+    {
+      $match: {
+        $and: [dateMatch],
+      },
+    },
     {
       $lookup: {
         from: 'b2busers',
