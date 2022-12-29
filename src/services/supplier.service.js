@@ -18,9 +18,6 @@ const createSupplier = async (supplierBody) => {
   if (check) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Already Register this Number');
   }
-  if (check.active == false) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User Disable ');
-  }
   if (supplierBody.createdByStatus == 'By Supplier') {
     await Textlocal.Otp(supplierBody.primaryContactNumber);
     await Supplier.create(supplierBody);
@@ -55,8 +52,8 @@ const Supplier_setPassword = async (id, body) => {
 const UsersLogin = async (userBody) => {
   const { primaryContactNumber, password } = userBody;
   let userName = await Supplier.findOne({ primaryContactNumber: primaryContactNumber });
-  if (!userName) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Phone Number Not Registered');
+  if (!userName || userName.active == false) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Phone Number Not Registered (or) User Disable');
   } else {
     if (await userName.isPasswordMatch(password)) {
       console.log('Password Macthed');
