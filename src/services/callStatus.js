@@ -6,6 +6,7 @@ const { Product } = require('../models/product.model');
 const moment = require('moment');
 
 const createCallStatus = async (callStatusBody) => {
+  console.log(callStatusBody)
   const serverdate = moment().format('YYYY-MM-DD');
   const servertime = moment().format('HHmmss');
   let Buy = await CallStatus.find({ date: serverdate }).count();
@@ -25,6 +26,10 @@ const createCallStatus = async (callStatusBody) => {
   let BillId = '';
   let totalcounts = Buy + 1;
   BillId = 'OD' + centerdata + totalcounts;
+  let disable = await Supplier.findOne({_id:callStatusBody.supplierid, active:false})
+  if(disable){
+    throw new ApiError(httpStatus.NOT_FOUND, 'User Disable');
+  }
   let values = { ...callStatusBody, ...{ date: serverdate, time: servertime, created: moment(), OrderId: BillId } };
   return CallStatus.create(values);
 };

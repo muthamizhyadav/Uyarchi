@@ -75,10 +75,11 @@ const forgotPassword = async (body) => {
 };
 
 const getAllAppSupplier = async (id) => {
+
   return Supplier.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }, { approvedStatus: { $eq: 'Approved' } }],
+        $and: [{ _id: { $eq: id } }, { approvedStatus: { $eq: 'Approved' } }, { active: { $eq:true} }],
       },
     },
 
