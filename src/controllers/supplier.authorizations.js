@@ -19,7 +19,7 @@ const authorization = async (req, res, next) => {
   try {
     const payload = jwt.verify(tokens, config.jwt.secret);
     // console.log(payload, 'asld;fsdafklh');
-    const userss = await Suppliers.findOne({ _id: payload._id });
+    const userss = await Suppliers.findOne({ _id: payload._id, active: true });
     // console.log(userss);
     if (!userss) {
       return res.send(httpStatus.UNAUTHORIZED, 'User Not Available');

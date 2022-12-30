@@ -3,7 +3,7 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const supplierUnBilledService = require('../services/supplier.unBilled.service');
-
+const Supplier = require('../models/supplier.model');
 const createSupplierUnBilled = catchAsync(async (req, res) => {
   let data = await supplierUnBilledService.createSupplierUnBilled(req.body);
   res.send(data);
@@ -93,6 +93,11 @@ const getpaidraisedbyindivitual = catchAsync(async (req, res) => {
 
 const getRaisedUnBilled_PaidUnbilled_Details = catchAsync(async (req, res) => {
   let userId = req.userId;
+  console.log(userId);
+  let supplierData = await Supplier.findById(userId);
+  if (supplierData.active === false) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Supplier Not Active');
+  }
   const data = await supplierUnBilledService.getRaisedUnBilled_PaidUnbilled_Details(req.params.page, userId);
   res.send(data);
 });
