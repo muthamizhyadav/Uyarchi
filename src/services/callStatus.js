@@ -150,7 +150,7 @@ const getDataWithSupplierId = async (id, page, search, date) => {
           { supplierid: { $eq: id } },
           { StockReceived: { $eq: 'Pending' } },
           { confirmcallstatus: { $eq: 'Accepted' } },
-          // {SuddenStatus:{$eq:'Approve'}},
+          { SuddenStatus: { $eq: 'Approve' } },
         ],
       },
     },
