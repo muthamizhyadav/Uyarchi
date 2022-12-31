@@ -30,7 +30,7 @@ const createCallStatus = async (callStatusBody) => {
   // if (disable) {
   //   throw new ApiError(httpStatus.NOT_FOUND, 'User Disable');
   // }
-  let values = { ...callStatusBody, ...{ date: serverdate, time: servertime, created: moment(), OrderId: BillId } };
+  let values = { ...callStatusBody, ...{SuddenCreatedBy:"By Admin", date: serverdate, time: servertime, created: moment(), OrderId: BillId } };
   return CallStatus.create(values);
 };
 
