@@ -55,10 +55,10 @@ const createCallStatus_suppierApp = async (userId, callStatusBody) => {
   let BillId = '';
   let totalcounts = Buy + 1;
   BillId = 'OD' + centerdata + totalcounts;
-  // let disable = await Supplier.findOne({ _id: callStatusBody.supplierid, active: false });
-  // if (disable) {
-  //   throw new ApiError(httpStatus.NOT_FOUND, 'User Disable');
-  // }
+  let disable = await Supplier.findOne({ _id: userId, active: false });
+  if (disable) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User Disable');
+  }
   let values = {
     ...callStatusBody,
     ...{ supplierid: userId, date: serverdate, time: servertime, created: moment(), OrderId: BillId },
