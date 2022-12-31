@@ -4,6 +4,7 @@ const router = express.Router();
 const stockImage = require('../../middlewares/stock');
 
 router.route('/').post(CallStatusController.createCallStatus);
+router.route('/suppierApp').post(CallStatusController.createCallStatus_suppierApp);
 router
   .route('/:id')
   .get(CallStatusController.getCallStatusbyId)

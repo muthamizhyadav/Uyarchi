@@ -14,7 +14,13 @@ const createCallStatus = catchAsync(async (req, res) => {
   }
   res.status(httpStatus.CREATED).send(callStatus);
 });
-
+const createCallStatus_suppierApp = catchAsync(async (req, res) => {
+  const callStatus = await CallStatusService.createCallStatus_suppierApp(req.body);
+  if (!callStatus) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus Not Fount.');
+  }
+  res.status(httpStatus.CREATED).send(callStatus);
+});
 const getProductAndSupplierDetails = catchAsync(async (req, res) => {
   const callStatus = await CallStatusService.getProductAndSupplierDetails(req.params.page);
   res.send(callStatus);
@@ -44,11 +50,7 @@ const getDataWithSupplierId = catchAsync(async (req, res) => {
 });
 
 const getReportWithSupplierId = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.getReportWithSupplierId(
-    req.params.page,
-    req.params.search,
-    req.params.date
-  );
+  const callStatus = await CallStatusService.getReportWithSupplierId(req.params.page, req.params.search, req.params.date);
   res.send(callStatus);
 });
 
@@ -83,4 +85,5 @@ module.exports = {
   getCallstatusForSuddenOrders,
   suddenOrdersDisplay,
   getReportWithSupplierId,
+  createCallStatus_suppierApp,
 };

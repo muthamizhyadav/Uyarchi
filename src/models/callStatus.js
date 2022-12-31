@@ -104,6 +104,7 @@ const callStatusSchema = mongoose.Schema({
   },
   SuddenStatus: {
     type: String,
+    default:"Approve"
   },
 });
 
