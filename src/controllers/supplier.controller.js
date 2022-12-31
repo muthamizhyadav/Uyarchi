@@ -21,6 +21,12 @@ const getproductfromCallStatus = catchAsync(async (req, res) => {
   res.send(getproduct);
 });
 
+
+const already_Customer = catchAsync(async (req, res) => {
+  const data = await supplierService.already_Customer(req.body);
+  res.send(data);
+});
+
 const getSupplierWithApprovedstatus = catchAsync(async (req, res) => {
   const supplier = await supplierService.getSupplierWithApprovedstatus(req.params.date);
   res.send(supplier);
@@ -251,4 +257,5 @@ module.exports = {
   checkMobileExestOrNot,
   UpdateSupplierByIdThird,
   ValidateMobileNumber,
+  already_Customer,
 };

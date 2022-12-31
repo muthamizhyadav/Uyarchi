@@ -27,6 +27,16 @@ const createSupplier = async (supplierBody) => {
   }
 };
 
+const already_Customer  = async (body) => {
+  const { mobileNumber } = body;
+  const ewer = await Supplier.findOne({ primaryContactNumber:mobileNumber });
+  if (!ewer) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Mobile Number NOt Customer');
+  }
+  await Textlocal.Otp(mobileNumber);
+  return {message:"Send OTP Successfully......"};
+};
+
 const otpVerify_Setpassword = async (body) => {
   // console.log(body)
   const { OTP } = body;
@@ -1008,4 +1018,5 @@ module.exports = {
   checkMobileExestOrNot,
   UpdateSupplierByIdThird,
   ValidateMobileNumber,
+  already_Customer,
 };
