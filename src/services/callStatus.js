@@ -59,7 +59,10 @@ const createCallStatus_suppierApp = async (userId, callStatusBody) => {
   // if (disable) {
   //   throw new ApiError(httpStatus.NOT_FOUND, 'User Disable');
   // }
-  let values = { ...callStatusBody, ...{supplierid:userId, date: serverdate, time: servertime, created: moment(), OrderId: BillId } };
+  let values = {
+    ...callStatusBody,
+    ...{ supplierid: userId, date: serverdate, time: servertime, created: moment(), OrderId: BillId },
+  };
   return CallStatus.create(values);
 };
 
@@ -75,7 +78,7 @@ const getProductAndSupplierDetails = async (page) => {
         localField: '_id',
         foreignField: 'supplierid',
         pipeline: [
-          { $match: { confirmcallstatus: 'Accepted', StockReceived: 'Pending', showWhs: true } },
+          { $match: { confirmcallstatus: 'Accepted', StockReceived: 'Pending', showWhs: true, SuddenStatus: 'Approve' } },
           { $group: { _id: null, myCount: { $sum: 1 } } },
         ],
         as: 'CallstatusData',
