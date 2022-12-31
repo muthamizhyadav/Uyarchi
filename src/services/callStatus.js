@@ -6,7 +6,7 @@ const { Product } = require('../models/product.model');
 const moment = require('moment');
 
 const createCallStatus = async (callStatusBody) => {
-  console.log(callStatusBody)
+  console.log(callStatusBody);
   const serverdate = moment().format('YYYY-MM-DD');
   const servertime = moment().format('HHmmss');
   let Buy = await CallStatus.find({ date: serverdate }).count();
@@ -26,11 +26,43 @@ const createCallStatus = async (callStatusBody) => {
   let BillId = '';
   let totalcounts = Buy + 1;
   BillId = 'OD' + centerdata + totalcounts;
-  let disable = await Supplier.findOne({_id:callStatusBody.supplierid, active:false})
-  if(disable){
-    throw new ApiError(httpStatus.NOT_FOUND, 'User Disable');
-  }
+  // let disable = await Supplier.findOne({ _id: callStatusBody.supplierid, active: false });
+  // if (disable) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'User Disable');
+  // }
   let values = { ...callStatusBody, ...{ date: serverdate, time: servertime, created: moment(), OrderId: BillId } };
+  return CallStatus.create(values);
+};
+
+const createCallStatus_suppierApp = async (userId, callStatusBody) => {
+  console.log(callStatusBody);
+  const serverdate = moment().format('YYYY-MM-DD');
+  const servertime = moment().format('HHmmss');
+  let Buy = await CallStatus.find({ date: serverdate }).count();
+  let centerdata = '';
+  if (Buy < 9) {
+    centerdata = '0000';
+  }
+  if (Buy < 99 && Buy >= 9) {
+    centerdata = '000';
+  }
+  if (Buy < 999 && Buy >= 99) {
+    centerdata = '00';
+  }
+  if (Buy < 9999 && Buy >= 999) {
+    centerdata = '0';
+  }
+  let BillId = '';
+  let totalcounts = Buy + 1;
+  BillId = 'OD' + centerdata + totalcounts;
+  // let disable = await Supplier.findOne({ _id: callStatusBody.supplierid, active: false });
+  // if (disable) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'User Disable');
+  // }
+  let values = {
+    ...callStatusBody,
+    ...{ supplierid: userId, date: serverdate, time: servertime, created: moment(), OrderId: BillId },
+  };
   return CallStatus.create(values);
 };
 
@@ -46,7 +78,7 @@ const getProductAndSupplierDetails = async (page) => {
         localField: '_id',
         foreignField: 'supplierid',
         pipeline: [
-          { $match: { confirmcallstatus: 'Accepted', StockReceived: 'Pending', showWhs: true } },
+          { $match: { confirmcallstatus: 'Accepted', StockReceived: 'Pending', showWhs: true, SuddenStatus: 'Approve' } },
           { $group: { _id: null, myCount: { $sum: 1 } } },
         ],
         as: 'CallstatusData',
@@ -121,7 +153,7 @@ const getDataWithSupplierId = async (id, page, search, date) => {
           { supplierid: { $eq: id } },
           { StockReceived: { $eq: 'Pending' } },
           { confirmcallstatus: { $eq: 'Accepted' } },
-          // {SuddenStatus:{$eq:'Approve'}},
+          { SuddenStatus: { $eq: 'Approve' } },
         ],
       },
     },
@@ -159,7 +191,7 @@ const getDataWithSupplierId = async (id, page, search, date) => {
         _id: 1,
         active: 1,
         StockReceived: 1,
-        SuddenStatus:1,
+        SuddenStatus: 1,
         qtyOffered: 1,
         strechedUpto: 1,
         price: 1,
@@ -201,7 +233,7 @@ const getDataWithSupplierId = async (id, page, search, date) => {
           { supplierid: { $eq: id } },
           { StockReceived: { $eq: 'Pending' } },
           { confirmcallstatus: { $eq: 'Accepted' } },
-          {SuddenStatus:{$eq:'Approve'}},
+          { SuddenStatus: { $eq: 'Approve' } },
         ],
       },
     },
@@ -459,8 +491,8 @@ const getReportWithSupplierId = async (page, search, date) => {
     },
     {
       $unwind: {
-        preserveNullAndEmptyArrays:true,
-        path:'$receivedStock',
+        preserveNullAndEmptyArrays: true,
+        path: '$receivedStock',
       },
     },
     {
@@ -468,7 +500,7 @@ const getReportWithSupplierId = async (page, search, date) => {
         _id: 1,
         showWhs: 1,
         active: 1,
-        StockReceived: {$ifNull:['$receivedStock.status', '$StockReceived']},
+        StockReceived: { $ifNull: ['$receivedStock.status', '$StockReceived'] },
         archive: 1,
         productid: 1,
         supplierid: 1,
@@ -583,4 +615,5 @@ module.exports = {
   getCallstatusForSuddenOrders,
   suddenOrdersDisplay,
   getReportWithSupplierId,
+  createCallStatus_suppierApp,
 };

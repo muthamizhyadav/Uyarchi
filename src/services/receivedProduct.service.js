@@ -741,8 +741,9 @@ const getSupplierBillsDetails = async (page, find) => {
         // lastBill: "$supplierbillsONE"
       },
     },
+    { $unwind: '$pendingAmount' },
     {
-      $match: { pendingAmount: { $ne: 0 } },
+      $match: { $and: [{ pendingAmount: { $ne: 0 } }, { pendingAmount: { $ne: '' } }] },
     },
     {
       $limit: 10,
@@ -872,8 +873,9 @@ const getSupplierBillsDetails = async (page, find) => {
         pendingBillcount: '$receivedproducts.pendingBillcount',
       },
     },
+    { $unwind: '$pendingAmount' },
     {
-      $match: { pendingAmount: { $ne: 0 } },
+      $match: { $and: [{ pendingAmount: { $ne: 0 } }, { pendingAmount: { $ne: '' } }] },
     },
   ]);
   return { values: values, total: total.length };
