@@ -741,8 +741,9 @@ const getSupplierBillsDetails = async (page, find) => {
         // lastBill: "$supplierbillsONE"
       },
     },
+    { $unwind: '$pendingAmount' },
     {
-      $match: { pendingAmount: { $ne: 0 } },
+      $match: { $and: [{ pendingAmount: { $ne: 0 } }, { pendingAmount: { $ne: '' } }] },
     },
     {
       $limit: 10,
@@ -847,30 +848,9 @@ const getSupplierBillsDetails = async (page, find) => {
         as: 'receivedproducts',
       },
     },
+
     {
-      $unwind: {
-        path: '$receivedproducts',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $lookup: {
-        from: 'supplierbills',
-        localField: '_id',
-        foreignField: 'supplierId',
-        pipeline: [
-          {
-            $sort: { created: -1 },
-          },
-          {
-            $limit: 10,
-          },
-          {
-            $skip: 10 * page,
-          },
-        ],
-        as: 'supplierbills',
-      },
+      $unwind: '$receivedproducts',
     },
     {
       $project: {
@@ -891,18 +871,11 @@ const getSupplierBillsDetails = async (page, find) => {
         gpsLocat: 1,
         pendingAmount: '$receivedproducts.pendingAmount',
         pendingBillcount: '$receivedproducts.pendingBillcount',
-        supplierbills: '$supplierbills',
-        // lastBill: "$supplierbillsONE"
       },
     },
+    { $unwind: '$pendingAmount' },
     {
-      $match: { pendingAmount: { $ne: 0 } },
-    },
-    {
-      $limit: 10,
-    },
-    {
-      $skip: 10 * page,
+      $match: { $and: [{ pendingAmount: { $ne: 0 } }, { pendingAmount: { $ne: '' } }] },
     },
   ]);
   return { values: values, total: total.length };
