@@ -2,9 +2,10 @@ const express = require('express');
 const CallStatusController = require('../../controllers/callStatus.controller');
 const router = express.Router();
 const stockImage = require('../../middlewares/stock');
+const authorization = require('../../controllers/supplierAppAuth.controller');
 
 router.route('/').post(CallStatusController.createCallStatus);
-router.route('/suppierApp').post(CallStatusController.createCallStatus_suppierApp);
+router.route('/suppierApp').post(authorization, CallStatusController.createCallStatus_suppierApp);
 router
   .route('/:id')
   .get(CallStatusController.getCallStatusbyId)

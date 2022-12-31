@@ -26,15 +26,15 @@ const createCallStatus = async (callStatusBody) => {
   let BillId = '';
   let totalcounts = Buy + 1;
   BillId = 'OD' + centerdata + totalcounts;
-  let disable = await Supplier.findOne({ _id: callStatusBody.supplierid, active: false });
-  if (disable) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User Disable');
-  }
+  // let disable = await Supplier.findOne({ _id: callStatusBody.supplierid, active: false });
+  // if (disable) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'User Disable');
+  // }
   let values = { ...callStatusBody, ...{ date: serverdate, time: servertime, created: moment(), OrderId: BillId } };
   return CallStatus.create(values);
 };
 
-const createCallStatus_suppierApp = async (callStatusBody) => {
+const createCallStatus_suppierApp = async (userId, callStatusBody) => {
   console.log(callStatusBody);
   const serverdate = moment().format('YYYY-MM-DD');
   const servertime = moment().format('HHmmss');
@@ -55,11 +55,11 @@ const createCallStatus_suppierApp = async (callStatusBody) => {
   let BillId = '';
   let totalcounts = Buy + 1;
   BillId = 'OD' + centerdata + totalcounts;
-  let disable = await Supplier.findOne({ _id: callStatusBody.supplierid, active: false });
-  if (disable) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User Disable');
-  }
-  let values = { ...callStatusBody, ...{ date: serverdate, time: servertime, created: moment(), OrderId: BillId } };
+  // let disable = await Supplier.findOne({ _id: callStatusBody.supplierid, active: false });
+  // if (disable) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'User Disable');
+  // }
+  let values = { ...callStatusBody, ...{supplierid:userId, date: serverdate, time: servertime, created: moment(), OrderId: BillId } };
   return CallStatus.create(values);
 };
 

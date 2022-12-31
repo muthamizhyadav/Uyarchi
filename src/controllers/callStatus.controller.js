@@ -15,7 +15,8 @@ const createCallStatus = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(callStatus);
 });
 const createCallStatus_suppierApp = catchAsync(async (req, res) => {
-  const callStatus = await CallStatusService.createCallStatus_suppierApp(req.body);
+  const userId = req.userId
+  const callStatus = await CallStatusService.createCallStatus_suppierApp(userId, req.body);
   if (!callStatus) {
     throw new ApiError(httpStatus.NOT_FOUND, 'CallStatus Not Fount.');
   }
