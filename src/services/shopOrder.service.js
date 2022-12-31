@@ -4759,7 +4759,12 @@ const getall_ordered_shops = async (query) => {
         as: 'productData',
       },
     },
-    { $unwind: '$productData' },
+    {
+      $unwind: {
+        path: '$productData',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
         _id: 1,
@@ -4777,6 +4782,7 @@ const getall_ordered_shops = async (query) => {
         time_of_delivery: 1,
         paidAmount: '$orderpayments.amount',
         subtotal: '$productData.price',
+        productData:"$productData"
       },
     },
     { $skip: 10 * page },

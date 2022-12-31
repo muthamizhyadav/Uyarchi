@@ -100,7 +100,7 @@ const getAllAppSupplier = async (id) => {
         pipeline: [
           {
             $match: {
-              $and: [{ order_Type: { $ne: 'Need' } }],
+              $and: [{ order_Type: { $ne: 'Need' } },{ SuddenCreatedBy: { $eq:"By Suplier"} }],
             },
           },
           {
