@@ -709,6 +709,7 @@ const createSuppliers = async (body, userId) => {
       verifiedDate: moment().format('YYYY-MM-DD'),
       verifiedTime: moment().format('HHmmss'),
       verifiedCreated: moment(),
+      SuddenCreatedBy:"By Supplier Executive"
     },
   };
   const validate = await Supplier.find({ primaryContactNumber: body.primaryContactNumber });
