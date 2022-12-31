@@ -27,14 +27,14 @@ const createSupplier = async (supplierBody) => {
   }
 };
 
-const already_Customer  = async (body) => {
+const already_Customer = async (body) => {
   const { mobileNumber } = body;
-  const ewer = await Supplier.findOne({ primaryContactNumber:mobileNumber });
+  const ewer = await Supplier.findOne({ primaryContactNumber: mobileNumber });
   if (!ewer) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Mobile Number NOt Customer');
   }
   await Textlocal.Otp(mobileNumber);
-  return {message:"Send OTP Successfully......"};
+  return { message: 'Send OTP Successfully......' };
 };
 
 const otpVerify_Setpassword = async (body) => {
@@ -85,11 +85,10 @@ const forgotPassword = async (body) => {
 };
 
 const getAllAppSupplier = async (id) => {
-
   return Supplier.aggregate([
     {
       $match: {
-        $and: [{ _id: { $eq: id } }, { approvedStatus: { $eq: 'Approved' } }, { active: { $eq:true} }],
+        $and: [{ _id: { $eq: id } }, { approvedStatus: { $eq: 'Approved' } }, { active: { $eq: true } }],
       },
     },
 
@@ -168,7 +167,21 @@ const getAllAppSupplierApproved = async (id) => {
         pipeline: [
           {
             $match: {
-              $and: [{ SuddenStatus: { $eq: 'Approve' } }, { order_Type: { $eq: 'Need' } }],
+              $or: [
+                {
+                  $and: [
+                    { SuddenStatus: { $eq: 'Approve' } },
+                    { order_Type: { $eq: 'Need' } },
+                    { SuddenCreatedBy: { $eq: 'By Suplier' } },
+                  ],
+                },
+                {
+                  $and: [{ SuddenStatus: { $eq: 'Approve' } }, { SuddenCreatedBy: { $eq: 'By Admin' } }],
+                },
+                {
+                  $and: [{ SuddenStatus: { $eq: 'Approve' } }, { SuddenCreatedBy: { $eq: 'By Supplier Executive' } }],
+                },
+              ],
             },
           },
           {
@@ -182,39 +195,42 @@ const getAllAppSupplierApproved = async (id) => {
           {
             $unwind: '$products',
           },
+          {
+            $project: {
+              _id: 1,
+              product: '$products.productTitle',
+              calstatusId: 1,
+              showWhs: 1,
+              StockReceived: 1,
+              productid: 1,
+              supplierid: 1,
+              confirmOrder: 1,
+              confirmcallstatus: 1,
+              confirmprice: 1,
+              status: 1,
+              exp_date: 1,
+              orderType: 1,
+              order_Type: 1,
+              SuddenCreatedBy: 1,
+              SuddenStatus: 1,
+              date: 1,
+              time: 1,
+              created: 1,
+              OrderId: 1,
+            },
+          },
+          { $sort: { date: -1, time: -1 } },
         ],
         as: 'callstatuses',
       },
     },
     {
-      $unwind: '$callstatuses',
-    },
-    {
       $project: {
         primaryContactName: 1,
         approvedStatus: 1,
-        product: '$callstatuses.products.productTitle',
-        calstatusId: '$callstatuses.calstatusId',
-        showWhs: '$callstatuses.showWhs',
-        StockReceived: '$callstatuses.StockReceived',
-        productid: '$callstatuses.productid',
-        supplierid: '$callstatuses.supplierid',
-        confirmOrder: '$callstatuses.confirmOrder',
-        confirmcallstatus: '$callstatuses.confirmcallstatus',
-        confirmprice: '$callstatuses.confirmprice',
-        status: '$callstatuses.status',
-        exp_date: '$callstatuses.exp_date',
-        orderType: '$callstatuses.orderType',
-        order_Type: '$callstatuses.order_Type',
-        SuddenCreatedBy: '$callstatuses.SuddenCreatedBy',
-        SuddenStatus: '$callstatuses.SuddenStatus',
-        date: '$callstatuses.date',
-        time: '$callstatuses.time',
-        created: '$callstatuses.created',
-        OrderId: '$callstatuses.OrderId',
+        callstatuses: '$callstatuses',
       },
     },
-    { $sort: { date: -1, time: -1 } },
   ]);
 };
 
