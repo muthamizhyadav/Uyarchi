@@ -71,7 +71,7 @@ const verifycheckout = async (shopId) => {
         cartPrduct.push({ ...cart.cart[i], ...{ stock: stock } })
 
     }
-    return { totalPrice: totalPrice, cartPrduct: cartPrduct, totalGST: totalGST, subtotal: totalPrice + totalGST, gst_array: gst_array };
+    return { totalPrice: totalPrice, cartPrduct: cartPrduct, totalGST: totalGST, subtotal: totalPrice + totalGST, gst_array: gst_array ,cart};
 
 
 
