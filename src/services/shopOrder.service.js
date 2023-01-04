@@ -4198,7 +4198,10 @@ const getmanageIssus_byID = async (query) => {
       },
     },
     {
-      $unwind: '$b2busersData',
+      $unwind: {
+        path: '$b2busersData',
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $lookup: {
