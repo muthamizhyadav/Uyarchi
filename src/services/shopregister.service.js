@@ -804,7 +804,9 @@ const get_raiseonissue = async (shopId) => {
         date: 1,
         time: 1,
         time_of_delivery: 1,
-        delivered_date: 1
+        delivered_date: 1,
+        order_issues:1,
+        issueStatus:1
       }
     }
 
