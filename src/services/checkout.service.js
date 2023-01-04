@@ -71,7 +71,7 @@ const verifycheckout = async (shopId) => {
         cartPrduct.push({ ...cart.cart[i], ...{ stock: stock } })
 
     }
-    return { totalPrice: totalPrice, cartPrduct: cartPrduct, totalGST: totalGST, subtotal: totalPrice + totalGST, gst_array: gst_array ,cart};
+    return { totalPrice: totalPrice, cartPrduct: cartPrduct, totalGST: totalGST, subtotal: totalPrice + totalGST, gst_array: gst_array, cart };
 
 
 
@@ -122,6 +122,19 @@ const confirmOrder_razerpay = async (shopId, body) => {
     // console.log(body)
     // return orders
 };
+const confirmOrder_cod = async (shopId, body) => {
+    let orders;
+
+    let cart = await AddToCart.findOne({ shopId: shopId, date: moment().format("YYYY-MM-DD"), status: "Pending" });
+    orders = await add_shopOrderclone(shopId, body, cart);
+    let paymantss = await add_odrerPayment(shopId, body, orders, payment);
+    body.OdrerDetails.Product.forEach(async (e) => {
+        await add_productOrderClone(shopId, e, orders)
+    });
+    cart.status = "ordered";
+    cart.save();
+    return orders
+};
 const add_shopOrderclone = async (shopId, body, cart) => {
     let orderDetails = body.OdrerDetails
     let currentDate = moment().format('YYYY-MM-DD');
@@ -154,7 +167,7 @@ const add_shopOrderclone = async (shopId, body, cart) => {
         time: currenttime,
         created: moment(),
         timeslot: timeslot,
-        paidamount: orderDetails.Amount,
+        paidamount: 0,
         reorder_status: false,
         devevery_mode: orderDetails.delivery_mode,
         status: "ordered",
@@ -230,5 +243,6 @@ module.exports = {
     add_to_cart,
     getcartProduct,
     confirmOrder_razerpay,
-    getshoporder_byID
+    getshoporder_byID,
+    confirmOrder_cod
 }
