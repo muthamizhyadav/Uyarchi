@@ -80,7 +80,69 @@ const login_now = async (body) => {
   return userName;
 };
 const get_myDetails = async (req) => {
-  const shop = await Shop.aggregate([{ $match: { _id: req.shopId } }]);
+  const shop = await Shop.aggregate([
+    { $match: { _id: req.shopId } },
+    {
+      $lookup: {
+        from: 'shoplists',
+        localField: 'SType',
+        foreignField: '_id',
+        as: 'shoplists',
+      },
+    },
+    {
+      $unwind: {
+        path: '$shoplists',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        DA_CREATED: 1,
+        DA_Comment: 1,
+        DA_DATE: 1,
+        DA_TIME: 1,
+        DA_USER: 1,
+        Pincode: 1,
+        SName: 1,
+        SOwner: 1,
+        SType: 1,
+        Slat: 1,
+        Slong: 1,
+        Strid: 1,
+        Uid: 1,
+        Wardid: 1,
+        active: 1,
+        address: 1,
+        archive: 1,
+        callingStatus: 1,
+        callingStatusSort: 1,
+        callingUserId: 1,
+        created: 1,
+        daStatus: 1,
+        da_long: 1,
+        da_lot: 1,
+        date: 1,
+        filterDate: 1,
+        historydate: 1,
+        kyc_status : 1,
+        mobile: 1,
+        password  : 1,
+        photoCapture: 1,
+        purchaseQTy: 1,
+        registered: 1,
+        salesManStatus : 1,
+        sortdate: 1,
+        sorttime : 1,
+        status: 1,
+        time : 1,
+        shop: 1,
+        _id: 1,
+        shopTypename:"$shoplists.shopList"
+
+      }
+    }
+  ]);
   if (shop.length == 0) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Shop Not Registered');
   }
