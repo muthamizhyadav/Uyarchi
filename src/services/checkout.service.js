@@ -127,7 +127,7 @@ const confirmOrder_cod = async (shopId, body) => {
 
     let cart = await AddToCart.findOne({ shopId: shopId, date: moment().format("YYYY-MM-DD"), status: "Pending" });
     orders = await add_shopOrderclone(shopId, body, cart);
-    let paymantss = await add_odrerPayment(shopId, body, orders, payment);
+    let paymantss = await add_odrerPayment_cod(shopId, body, orders);
     body.OdrerDetails.Product.forEach(async (e) => {
         await add_productOrderClone(shopId, e, orders)
     });
@@ -226,6 +226,26 @@ const add_odrerPayment = async (shopId, body, orders, payment) => {
         onlineorderId: payment.order_id,
         paymentTypes: "Online",
         paymentGatway: "razorpay"
+    });
+}
+
+const add_odrerPayment_cod = async (shopId, body, orders, payment) => {
+    let currentDate = moment().format('YYYY-MM-DD');
+    let currenttime = moment().format('HHmmss');
+    return await OrderPayment.create({
+        uid: shopId,
+        paidAmt: 0,
+        date: currentDate,
+        time: currenttime,
+        created: moment(),
+        orderId: orders._id,
+        type: 'customer',
+        pay_type: "cod",
+        payment: 0,
+        paymentMethod: "cod",
+        reorder_status: false,
+        paymentTypes: "Online",
+        paymentGatway: "cod"
     });
 }
 
