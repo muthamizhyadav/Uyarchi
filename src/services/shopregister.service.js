@@ -891,7 +891,8 @@ const get_raiseorder_issue = async (shopId, orderId) => {
         created: 1,
         delivered_date: 1,
         reason: 1,
-        product: "$productOrderdata"
+        product: "$productOrderdata",
+        issueStatus:1
       }
     }
   ])
