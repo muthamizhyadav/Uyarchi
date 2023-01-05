@@ -37,7 +37,7 @@ const forget_password = async (body) => {
   if (!shop) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Shop-Not-registered');
   }
-  await OTP.updateMany({ mobile: mobileNumber},{$set:{active:false}})
+  await OTP.updateMany({ mobile: mobileNumber,active:true},{$set:{active:false}})
   const otp = await sentOTP(mobileNumber, shop);
   console.log(otp);
   return { message: 'Otp Send Successfull' };
