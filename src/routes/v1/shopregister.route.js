@@ -5,6 +5,7 @@ const shopverify = require('../../controllers/shoptokenverify.controller');
 
 router.route('/getmyorders/vieworder').get(shopverify, shopregister.getmyorder_byId);
 router.route('/regiter').post(shopregister.register_shop);
+router.route('/forget').post(shopregister.forget_password);
 router.route('/verify').post(shopregister.verify_otp);
 router.route('/setpassword').post(shopregister.set_password);
 router.route('/changepassword').post(shopverify, shopregister.change_password);

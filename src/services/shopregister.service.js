@@ -24,6 +24,25 @@ const register_shop = async (body) => {
   return { message: 'Otp Send Successfull' };
 };
 
+
+
+
+const forget_password = async (body) => {
+  const mobileNumber = body.mobile;
+  let shop = await Shop.findOne({ mobile: mobileNumber });
+  if (!shop) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop-Not-found');
+  }
+  shop = await Shop.findOne({ mobile: mobileNumber, registered: { $eq: true } });
+  if (!shop) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop-Not-registered');
+  }
+  const otp = await sentOTP(mobileNumber, shop);
+  console.log(otp);
+  return { message: 'Otp Send Successfull' };
+};
+
+
 const verify_otp = async (body) => {
   const mobileNumber = body.mobile;
   const otp = body.otp;
@@ -1452,5 +1471,6 @@ module.exports = {
   get_my_issue_byorder,
   getmyorder_byId,
   cancelorder_byshop,
-  cancelbyorder
+  cancelbyorder,
+  forget_password
 };

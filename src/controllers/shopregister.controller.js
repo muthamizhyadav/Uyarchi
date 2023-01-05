@@ -10,6 +10,11 @@ const register_shop = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(shop);
 });
 
+const forget_password = catchAsync(async (req, res) => {
+  const shop = await registerShop.forget_password(req.body);
+  res.status(httpStatus.CREATED).send(shop);
+});
+
 const verify_otp = catchAsync(async (req, res) => {
   const otp = await registerShop.verify_otp(req.body);
   res.status(httpStatus.CREATED).send(otp);
@@ -117,5 +122,6 @@ module.exports = {
   get_my_issue_byorder,
   getmyorder_byId,
   cancelorder_byshop,
-  cancelbyorder
+  cancelbyorder,
+  forget_password
 };
