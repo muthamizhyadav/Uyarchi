@@ -222,6 +222,13 @@ const ValidateMobileNumber = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const checkApproved = catchAsync(async (req, res) => {
+  let userId = req.userId;
+  const data = await supplierService.checkApproved(userId);
+  res.send(data);
+});
+
+
 module.exports = {
   createSupplier,
   getproductfromCallStatus,
@@ -258,4 +265,5 @@ module.exports = {
   UpdateSupplierByIdThird,
   ValidateMobileNumber,
   already_Customer,
+  checkApproved,
 };
