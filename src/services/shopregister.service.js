@@ -42,8 +42,6 @@ const forget_password = async (body) => {
   console.log(otp);
   return { message: 'Otp Send Successfull' };
 };
-
-
 const verify_otp = async (body) => {
   const mobileNumber = body.mobile;
   const otp = body.otp;
