@@ -27,6 +27,13 @@ const confirmOrder_razerpay = catchAsync(async (req, res) => {
     const category = await checkOut.confirmOrder_razerpay(req.shopId, req.body);
     res.send(category);
 });
+const confirmOrder_cod = catchAsync(async (req, res) => {
+    const category = await checkOut.confirmOrder_cod(req.shopId, req.body);
+    res.send(category);
+});
+
+
+
 
 const getshoporder_byID = catchAsync(async (req, res) => {
     const check = await checkOut.getshoporder_byID(req.shopId, req.query);
@@ -43,5 +50,6 @@ module.exports = {
     add_to_cart,
     getcartProduct,
     confirmOrder_razerpay,
-    getshoporder_byID
+    getshoporder_byID,
+    confirmOrder_cod
 }

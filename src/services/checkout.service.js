@@ -71,7 +71,7 @@ const verifycheckout = async (shopId) => {
         cartPrduct.push({ ...cart.cart[i], ...{ stock: stock } })
 
     }
-    return { totalPrice: totalPrice, cartPrduct: cartPrduct, totalGST: totalGST, subtotal: totalPrice + totalGST, gst_array: gst_array };
+    return { totalPrice: totalPrice, cartPrduct: cartPrduct, totalGST: totalGST, subtotal: totalPrice + totalGST, gst_array: gst_array, cart };
 
 
 
@@ -122,6 +122,19 @@ const confirmOrder_razerpay = async (shopId, body) => {
     // console.log(body)
     // return orders
 };
+const confirmOrder_cod = async (shopId, body) => {
+    let orders;
+
+    let cart = await AddToCart.findOne({ shopId: shopId, date: moment().format("YYYY-MM-DD"), status: "Pending" });
+    orders = await add_shopOrderclone(shopId, body, cart);
+    let paymantss = await add_odrerPayment_cod(shopId, body, orders);
+    body.OdrerDetails.Product.forEach(async (e) => {
+        await add_productOrderClone(shopId, e, orders)
+    });
+    cart.status = "ordered";
+    cart.save();
+    return orders
+};
 const add_shopOrderclone = async (shopId, body, cart) => {
     let orderDetails = body.OdrerDetails
     let currentDate = moment().format('YYYY-MM-DD');
@@ -154,7 +167,7 @@ const add_shopOrderclone = async (shopId, body, cart) => {
         time: currenttime,
         created: moment(),
         timeslot: timeslot,
-        paidamount: orderDetails.Amount,
+        paidamount: 0,
         reorder_status: false,
         devevery_mode: orderDetails.delivery_mode,
         status: "ordered",
@@ -216,6 +229,26 @@ const add_odrerPayment = async (shopId, body, orders, payment) => {
     });
 }
 
+const add_odrerPayment_cod = async (shopId, body, orders, payment) => {
+    let currentDate = moment().format('YYYY-MM-DD');
+    let currenttime = moment().format('HHmmss');
+    return await OrderPayment.create({
+        uid: shopId,
+        paidAmt: 0,
+        date: currentDate,
+        time: currenttime,
+        created: moment(),
+        orderId: orders._id,
+        type: 'customer',
+        pay_type: "cod",
+        payment: 0,
+        paymentMethod: "cod",
+        reorder_status: false,
+        paymentTypes: "Online",
+        paymentGatway: "cod"
+    });
+}
+
 const getshoporder_byID = async (shopId, query) => {
     let odrerId = query.id;
     let shopOrder = await ShopOrderClone.findOne({ shopId: shopId, _id: odrerId });
@@ -230,5 +263,6 @@ module.exports = {
     add_to_cart,
     getcartProduct,
     confirmOrder_razerpay,
-    getshoporder_byID
+    getshoporder_byID,
+    confirmOrder_cod
 }
