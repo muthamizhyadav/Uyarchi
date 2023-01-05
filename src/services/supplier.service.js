@@ -1000,6 +1000,14 @@ const ValidateMobileNumber = async (id, phone) => {
   return values;
 };
 
+const checkApproved = async (id) => {
+  const data = await Supplier.findById(id)
+    if(!data){
+      throw new ApiError(httpStatus.BAD_REQUEST, 'user not found');
+    }
+  return data 
+}
+
 module.exports = {
   createSupplier,
   updateSupplierById,
@@ -1036,4 +1044,5 @@ module.exports = {
   UpdateSupplierByIdThird,
   ValidateMobileNumber,
   already_Customer,
+  checkApproved,
 };

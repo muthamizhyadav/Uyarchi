@@ -16,6 +16,7 @@ router.route('/getAllAppOnly_Supplier').get(auth, supplierController.getAllAppOn
 router.route('/getAllAppOnly_Supplier_Update').put(auth, supplierController.getAllAppOnly_Supplier_Update);
 router.route('/getAllAppSupplierApproved').get(auth, supplierController.getAllAppSupplierApproved);
 router.route('/already_Customer').post(supplierController.already_Customer);
+router.route('/checkApproved').get(auth, supplierController.checkApproved);
 
 router
   .route('/:supplierId')
