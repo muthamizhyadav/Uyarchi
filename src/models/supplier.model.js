@@ -119,6 +119,10 @@ const supplierSchema = new mongoose.Schema({
   verifiedCreated: {
     type: Date,
   },
+  passwordSet:{
+    type:Boolean,
+    default:false,
+  },
   active: {
     type: Boolean,
     default: true,
