@@ -119,4 +119,5 @@ router.route('/Highly/IntrestedShops/:type').get(b2bShopCloneController.HighlyIn
 router.route('/ChangeOneMap/AnotherMap').post(b2bShopCloneController.ChangeOneMap_to_AnotherMap);
 router.route('/getRevertShops/onlyMap').get(b2bShopCloneController.getRevertShops);
 router.route('/DummySort').post(b2bShopCloneController.DummySort);
+router.route('/getShopByPincode/:pincode').get(b2bShopCloneController.getShopByPincode);
 module.exports = router;
