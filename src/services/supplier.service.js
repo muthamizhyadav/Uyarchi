@@ -64,7 +64,7 @@ const UsersLogin = async (userBody) => {
   const { primaryContactNumber, password } = userBody;
   let userName = await Supplier.findOne({ primaryContactNumber: primaryContactNumber });
   let already = await Supplier.findOne({ primaryContactNumber: primaryContactNumber, createdByStatus:"By Admin", passwordSet:false});
-  if(!already){
+  if(already){
     throw new ApiError(httpStatus.UNAUTHORIZED, 'set password');
   }
   if (!userName || userName.active == false) {
