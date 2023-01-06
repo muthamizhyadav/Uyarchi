@@ -218,12 +218,12 @@ const otpVerfiyPurchaseExecutive = async (body) => {
   let users = await Users.findOne({
     phoneNumber: body.mobileNumber,
   });
-  let otp = await OTP.findOne({ OTP: body.OTP });
+  let otp = await ChatBotOTP.findOne({ OTP: body.OTP, used: false });
   console.log(otp);
   if (!users || otp == null) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
   }
-  await OTP.findOneAndUpdate({ mobileNumber: body.mobileNumber, OTP: body.OTP }, { used: true });
+  await ChatBotOTP.findOneAndUpdate({ _id: otp._id }, { used: true }, { new: true });
   users = await Users.findOneAndUpdate({ _id: users._id }, { otpVerified: true }, { new: true });
   return users;
 };
