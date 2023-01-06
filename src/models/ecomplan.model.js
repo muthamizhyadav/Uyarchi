@@ -73,7 +73,10 @@ const streamplanschema = mongoose.Schema({
   },
   salesPrice: {
     type: Number,
-  }
+  },
+  max_post_per_stream: {
+    type: Number,
+  },
 });
 streamplanschema.plugin(toJSON);
 streamplanschema.plugin(paginate);
@@ -81,23 +84,3 @@ const Streamplan = mongoose.model('streamplan', streamplanschema);
 
 module.exports = { Streamplan };
 
-// planName: new FormControl('', Validators.required),
-//   typeofplan: new FormControl('', Validators.required),
-//     expireIn: new FormControl('', Validators.required),
-//       Duration: new FormControl('', Validators.required),
-//         DurationType: new FormControl('', Validators.required),
-//           numberOfParticipants: new FormControl('', Validators.required),
-//             numberofStream: new FormControl('', Validators.required),
-//               validityofStream: new FormControl('', Validators.required),
-//                 additionalDuration: new FormControl('', Validators.required),
-//                   additionalParticipants: new FormControl('', Validators.required),
-//                     DurationIncrementCost: new FormControl('', Validators.required),
-//                       noOfParticipantsCost: new FormControl('', Validators.required),
-//                         chatNeed: new FormControl('', Validators.required),
-//                           commision: new FormControl('', Validators.required),
-//                             commition_value: new FormControl('',),
-//                               post_expire_hours: new FormControl(''),
-//                                 post_expire_days: new FormControl(''),
-//                                   post_expire_minutes: new FormControl('', Validators.required),
-//                                     regularPrice: new FormControl('', Validators.required),
-//                                       salesPrice
