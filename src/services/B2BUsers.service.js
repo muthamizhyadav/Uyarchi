@@ -530,7 +530,7 @@ const PurchaseExecutivelogin = async (userBody) => {
 
 const sendOTP = async (body) => {
   const { mobileNumber } = body;
-  let users = await Users.findOne({ phoneNumber: body.mobileNumber });
+  let users = await Users.findOne({ phoneNumber: body.mobileNumber, active: true });
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Users Not Found');
   }
