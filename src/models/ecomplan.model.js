@@ -23,26 +23,20 @@ const streamplanschema = mongoose.Schema({
   planName: {
     type: String,
   },
-  typeofplan: {
-    type: String,
-  },
   Duration: {
-    type: String,
-  },
-  DurationType: {
-    type: String,
+    type: Number,
   },
   DurationType: {
     type: String,
   },
   numberOfParticipants: {
-    type: String,
+    type: Number,
   },
   numberofStream: {
-    type: String,
+    type: Number,
   },
   validityofStream: {
-    type: String,
+    type: Number,
   },
   additionalDuration: {
     type: String,
@@ -51,10 +45,10 @@ const streamplanschema = mongoose.Schema({
     type: String,
   },
   DurationIncrementCost: {
-    type: String,
+    type: Number,
   },
   noOfParticipantsCost: {
-    type: String,
+    type: Number,
   },
   chatNeed: {
     type: String,
@@ -63,22 +57,22 @@ const streamplanschema = mongoose.Schema({
     type: String,
   },
   commition_value: {
-    type: String,
+    type: Number,
   },
   post_expire_hours: {
-    type: String,
+    type: Number,
   },
   post_expire_days: {
-    type: String,
+    type: Number,
   },
   post_expire_minutes: {
-    type: String,
+    type: Number,
   },
   regularPrice: {
-    type: String,
+    type: Number,
   },
   salesPrice: {
-    type: String,
+    type: Number,
   }
 });
 streamplanschema.plugin(toJSON);
