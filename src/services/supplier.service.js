@@ -90,7 +90,8 @@ const forgotPassword = async (body) => {
    if(check){
     throw new ApiError(httpStatus.NOT_FOUND, 'user is disable');
    }
-  return await Textlocal.OtpForget(body.primaryContactNumber);
+   await Textlocal.OtpForget(body.primaryContactNumber);
+  return {message:'Send OTP Successfully......' }
 };
 
 const getAllAppSupplier = async (id) => {
