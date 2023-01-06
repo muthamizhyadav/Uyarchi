@@ -13,9 +13,9 @@ const create_Plans = async (req) => {
 };
 
 const get_all_Plans = async (req) => {
-    let page =req.query.page=='' || req.query.page ==null || req.query.page ==null?0:req.query.page;
+    let page = req.query.page == '' || req.query.page == null || req.query.page == null ? 0 : req.query.page;
     const value = await Streamplan.aggregate([
-        {$sort:{DateIso:-1}},
+        { $sort: { DateIso: -1 } },
         { $skip: 10 * page },
         { $limit: 10 },
     ])
@@ -23,7 +23,29 @@ const get_all_Plans = async (req) => {
 };
 
 
+
+const get_one_Plans = async (req) => {
+    let page = req.query.page == '' || req.query.page == null || req.query.page == null ? 0 : req.query.page;
+    const value = await Streamplan.findById(req.query.id);
+    return value;
+};
+
+
+const update_one_Plans = async (req) => {
+    const value = await Streamplan.findByIdAndUpdate({_id: req.query.id},req.body,{new:true})
+    return value;
+};
+
+
+const delete_one_Plans = async (req) => {
+   await Streamplan.findByIdAndDelete({_id: req.query.id});
+    return {message:"deleted"};
+};
+
 module.exports = {
     create_Plans,
-    get_all_Plans
+    get_all_Plans,
+    get_one_Plans,
+    update_one_Plans,
+    delete_one_Plans
 };
