@@ -108,6 +108,7 @@ const supplierUnBilledRoute = require('./supplier.unbilled.route');
 const supplierRaisedRoute = require('./supplier.raised.unbilled.route');
 const CustomerWallet = require('./customer.wallet.route');
 const shopEnrollmentEnquiryRoute = require('./shopEnrollmentEnquiry.route');
+const EcomPlan = require('./ecomplan.route');
 
 const defaultRoutes = [
   {
@@ -533,6 +534,12 @@ const defaultRoutes = [
     path: '/shopEnrollmentEnquiry',
     route: shopEnrollmentEnquiryRoute,
   },
+  {
+    path: '/ecomplan',
+    route: EcomPlan,
+  },
+
+  
   // {
   //   path: '/sales',
   //   route: salesApp,
