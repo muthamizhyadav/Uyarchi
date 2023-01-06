@@ -86,6 +86,10 @@ const forgotPassword = async (body) => {
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
   }
+  let check = await Supplier.findOne({ primaryContactNumber: body.primaryContactNumber, active:false });
+   if(check){
+    throw new ApiError(httpStatus.NOT_FOUND, 'user is disable');
+   }
   return await Textlocal.OtpForget(body.primaryContactNumber);
 };
 
