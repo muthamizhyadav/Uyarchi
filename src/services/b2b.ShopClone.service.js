@@ -5398,6 +5398,17 @@ const DummySort = async (body) => {
   return { Message: 'Sucess' };
 };
 
+const getShopByPincode = async (pincode) => {
+  console.log(pincode);
+  let code = parseInt(pincode);
+  let shop = await Shop.aggregate([
+    {
+      $match: { $and: [{ daStatus: { $in: ['ModeratelyInterested', 'HighlyInterested'] }, Pincode: { $ne: code } }] },
+    },
+  ]);
+  return shop;
+};
+
 module.exports = {
   createShopClone,
   getAllShopClone,
@@ -5465,4 +5476,5 @@ module.exports = {
   ChangeOneMap_to_AnotherMap,
   getRevertShops,
   DummySort,
+  getShopByPincode,
 };

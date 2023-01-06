@@ -564,6 +564,11 @@ const DummySort = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const getShopByPincode = catchAsync(async (req, res) => {
+  const data = await b2bCloneService.getShopByPincode(req.params.pincode);
+  res.send(data);
+});
+
 module.exports = {
   createB2bShopClone,
   getAllB2BshopClone,
@@ -610,7 +615,7 @@ module.exports = {
   searchShops_By_Name,
   data2,
   data3,
-
+  getShopByPincode,
   get_wardby_shops,
   update_pincode,
   gomap_view_now,
