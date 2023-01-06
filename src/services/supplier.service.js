@@ -34,7 +34,7 @@ const already_Customer = async (body) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Mobile Number NOt Customer');
   }
   await Textlocal.Otp(mobileNumber);
-  await Supplier.findOne({ primaryContactNumber: mobileNumber, createdByStatus:"By Admin"},{passwordSet:true}, {new:true});
+   await Supplier.findOneAndUpdate({ primaryContactNumber: mobileNumber, createdByStatus:"By Admin"},{passwordSet:true}, {new:true});
   return { message: 'Send OTP Successfully......' };
 };
 
