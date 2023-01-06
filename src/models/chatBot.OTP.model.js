@@ -13,6 +13,9 @@ const chatBotOtpSchema = new mongoose.Schema({
   OTP: {
     type: Number,
   },
+  mobileNumber: {
+    type: Number,
+  },
   date: {
     type: String,
   },
