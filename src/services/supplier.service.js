@@ -34,6 +34,7 @@ const already_Customer = async (body) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Mobile Number NOt Customer');
   }
   await Textlocal.Otp(mobileNumber);
+  await Supplier.findOne({ primaryContactNumber: mobileNumber, createdByStatus:"By Admin"},{passwordSet:true}, {new:true});
   return { message: 'Send OTP Successfully......' };
 };
 
@@ -62,6 +63,10 @@ const Supplier_setPassword = async (id, body) => {
 const UsersLogin = async (userBody) => {
   const { primaryContactNumber, password } = userBody;
   let userName = await Supplier.findOne({ primaryContactNumber: primaryContactNumber });
+  let already = await Supplier.findOne({ primaryContactNumber: primaryContactNumber, createdByStatus:"By Admin", passwordSet:false});
+  if(already){
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'set password');
+  }
   if (!userName || userName.active == false) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Phone Number Not Registered (or) User Disable');
   } else {
@@ -81,6 +86,10 @@ const forgotPassword = async (body) => {
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
   }
+  let check = await Supplier.findOne({ primaryContactNumber: body.primaryContactNumber, active:false });
+   if(check){
+    throw new ApiError(httpStatus.NOT_FOUND, 'user is disable');
+   }
   return await Textlocal.OtpForget(body.primaryContactNumber);
 };
 
