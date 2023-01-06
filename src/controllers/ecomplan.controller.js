@@ -14,15 +14,15 @@ const get_all_Plans= catchAsync(async (req, res) => {
 });
 
 const get_one_Plans= catchAsync(async (req, res) => {
-  const value =await Ecomserive.get_all_Plans(req);
+  const value =await Ecomserive.get_one_Plans(req);
   res.send(value);
 });
 const update_one_Plans= catchAsync(async (req, res) => {
-  const value =await Ecomserive.get_all_Plans(req);
+  const value =await Ecomserive.update_one_Plans(req);
   res.send(value);
 });
 const delete_one_Plans= catchAsync(async (req, res) => {
-  const value =await Ecomserive.get_all_Plans(req);
+  const value =await Ecomserive.delete_one_Plans(req);
   res.send(value);
 });
 module.exports = {
