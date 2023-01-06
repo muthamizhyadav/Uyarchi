@@ -19,11 +19,30 @@ const register_shop = async (body) => {
   if (!shop) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Shop-Already-registered');
   }
+  await OTP.updateMany({ mobileNumber: mobileNumber,active:true},{$set:{active:false}})
   const otp = await sentOTP(mobileNumber, shop);
   console.log(otp);
   return { message: 'Otp Send Successfull' };
 };
 
+
+
+
+const forget_password = async (body) => {
+  const mobileNumber = body.mobile;
+  let shop = await Shop.findOne({ mobile: mobileNumber });
+  if (!shop) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop-Not-found');
+  }
+  shop = await Shop.findOne({ mobile: mobileNumber, registered: { $eq: true } });
+  if (!shop) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Shop-Not-registered');
+  }
+  await OTP.updateMany({ mobileNumber: mobileNumber,active:true},{$set:{active:false}})
+  const otp = await sentOTP(mobileNumber, shop);
+  console.log(otp);
+  return { message: 'Otp Send Successfull' };
+};
 const verify_otp = async (body) => {
   const mobileNumber = body.mobile;
   const otp = body.otp;
@@ -31,6 +50,7 @@ const verify_otp = async (body) => {
     mobileNumber: mobileNumber,
     OTP: otp,
     create: { $gte: moment(new Date().getTime() - 15 * 60 * 1000) },
+    active:true
   });
   if (!findOTP) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Invalid OTP');
@@ -1452,5 +1472,6 @@ module.exports = {
   get_my_issue_byorder,
   getmyorder_byId,
   cancelorder_byshop,
-  cancelbyorder
+  cancelbyorder,
+  forget_password
 };
