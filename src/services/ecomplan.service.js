@@ -24,9 +24,9 @@ const get_all_Plans = async (req) => {
                 as: 'productName',
             },
         },
-        {
-            $unwind: '$productName',
-        },
+        // {
+        //     $unwind: '$productName',
+        // },
         {
             $lookup: {
                 from: 'categories',
@@ -35,9 +35,9 @@ const get_all_Plans = async (req) => {
                 as: 'categories',
             },
         },
-        {
-            $unwind: '$categories',
-        },
+        // {
+        //     $unwind: '$categories',
+        // },
         // categoryName
         { $skip: 10 * page },
         { $limit: 10 },
