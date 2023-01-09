@@ -42,10 +42,8 @@ const delete_one_Plans = async (req) => {
 };
 
 const create_post = async (req) => {
-    const value = await StreamPost.create(req.body)
+    const value = await StreamPost.create({...req.body,...{suppierId:req.userId}})
     await Date.create_date(value)
-    value.suppierId = req.userId;
-    value.save();
     return value;
 };
 
