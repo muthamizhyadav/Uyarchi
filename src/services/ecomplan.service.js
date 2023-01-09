@@ -16,6 +16,29 @@ const get_all_Plans = async (req) => {
     let page = req.query.page == '' || req.query.page == null || req.query.page == null ? 0 : req.query.page;
     const value = await Streamplan.aggregate([
         { $sort: { DateIso: -1 } },
+        {
+            $lookup: {
+                from: 'products',
+                localField: 'productId',
+                foreignField: '_id',
+                as: 'productName',
+            },
+        },
+        {
+            $unwind: '$productName',
+        },
+        {
+            $lookup: {
+                from: 'categories',
+                localField: 'categoryId',
+                foreignField: '_id',
+                as: 'categories',
+            },
+        },
+        {
+            $unwind: '$categories',
+        },
+        // categoryName
         { $skip: 10 * page },
         { $limit: 10 },
     ])
@@ -64,9 +87,9 @@ const get_all_Post = async (req) => {
 
 const get_one_Post = async (req) => {
     const value = await StreamPost.findById(req.query.id);
-    if (value.suppierId !=req.userId) {
+    if (value.suppierId != req.userId) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
-      }
+    }
     return value;
 };
 
@@ -75,14 +98,15 @@ const update_one_Post = async (req) => {
     const value = await StreamPost.findByIdAndUpdate({ _id: req.query.id, suppierId: req.userId }, req.body, { new: true })
     if (!value) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
-      }
+    }
     return value;
 };
-const delete_one_Post = async (req) => {f
+const delete_one_Post = async (req) => {
+    f
     const value = await StreamPost.findByIdAndDelete({ _id: req.query.id, suppierId: req.userId });
     if (!value) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
-      }
+    }
     return { message: "deleted" };
 };
 
