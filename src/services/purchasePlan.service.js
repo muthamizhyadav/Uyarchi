@@ -60,8 +60,33 @@ const get_all_my_orders = async (req) => {
                 preserveNullAndEmptyArrays: true,
             },
         },
+        {
+            $project: {
+                _id: 1,
+                DateIso: 1,
+                active: 1,
+                archived: 1,
+                created: 1,
+                order_id: 1,
+                paidAmount: 1,
+                paymentStatus: 1,
+                planId: 1,
+                razorpay_order_id: 1,
+                razorpay_payment_id: 1,
+                razorpay_signature: 1,
+                Duration:"$streamplans.Duration",
+                commision:"$streamplans.commision",
+                commition_value:"$streamplans.commition_value",
+                numberOfParticipants:"$streamplans.numberOfParticipants",
+                numberofStream:"$streamplans.numberofStream",
+                post_expire_days:"$streamplans.post_expire_days",
+                post_expire_hours:"$streamplans.post_expire_hours",
+                post_expire_minutes:"$streamplans.post_expire_minutes",
+                regularPrice:"$streamplans.regularPrice",
+                validityofStream:"$streamplans.validityofStream",
+            }
+        }
     ])
-
     return plan;
 }
 
