@@ -42,8 +42,8 @@ const delete_one_Plans = async (req) => {
 };
 
 const create_post = async (req) => {
-    console.log(req.userId,"asdas",{...req.body,...{suppierId:req.userId}})
-    const value = await StreamPost.create({...req.body,...{suppierId:req.userId}})
+    console.log(req.userId, "asdas", { ...req.body, ...{ suppierId: req.userId } })
+    const value = await StreamPost.create({ ...req.body, ...{ suppierId: req.userId } })
     await Date.create_date(value)
     return value;
 };
@@ -61,9 +61,9 @@ const get_all_Post = async (req) => {
                 as: 'productName',
             },
         },
-        // {
-        //     $unwind: '$productName',
-        // },
+        {
+            $unwind: '$productName',
+        },
         {
             $lookup: {
                 from: 'categories',
@@ -72,10 +72,27 @@ const get_all_Post = async (req) => {
                 as: 'categories',
             },
         },
-        // {
-        //     $unwind: '$categories',
-        // },
-        // categoryName
+        {
+            $unwind: '$categories',
+        },
+        {
+            $project: {
+                productId: 1,
+                categoryId: 1,
+                quantity: 1,
+                marketPlace: 1,
+                offerPrice: 1,
+                postLiveStreamingPirce: 1,
+                validity: 1,
+                minLots: 1,
+                incrementalLots: 1,
+                _id:1,
+                catName:"$categories.categoryName",
+                productName:"$productName.productTitle",
+                created:1,
+                DateIso:1
+            }
+        },
         { $sort: { DateIso: -1 } },
         { $skip: 10 * page },
         { $limit: 10 },
@@ -87,9 +104,9 @@ const get_all_Post = async (req) => {
 
 const get_one_Post = async (req) => {
     const value = await StreamPost.findById(req.query.id);
-    if (value.suppierId !=req.userId) {
+    if (value.suppierId != req.userId) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
-      }
+    }
     return value;
 };
 
@@ -98,14 +115,14 @@ const update_one_Post = async (req) => {
     const value = await StreamPost.findByIdAndUpdate({ _id: req.query.id, suppierId: req.userId }, req.body, { new: true })
     if (!value) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
-      }
+    }
     return value;
 };
 const delete_one_Post = async (req) => {
     const value = await StreamPost.findByIdAndDelete({ _id: req.query.id, suppierId: req.userId });
     if (!value) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
-      }
+    }
     return { message: "deleted" };
 };
 
