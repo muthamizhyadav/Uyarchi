@@ -76,6 +76,7 @@ const get_all_my_orders = async (req) => {
                 razorpay_signature: 1,
                 Duration:"$streamplans.Duration",
                 commision:"$streamplans.commision",
+                planName:"$streamplans.planName",
                 commition_value:"$streamplans.commition_value",
                 numberOfParticipants:"$streamplans.numberOfParticipants",
                 numberofStream:"$streamplans.numberofStream",
