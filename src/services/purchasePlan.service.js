@@ -78,6 +78,7 @@ const get_all_my_orders = async (req) => {
                 commision:"$streamplans.commision",
                 planName:"$streamplans.planName",
                 commition_value:"$streamplans.commition_value",
+                chatNeed:"$streamplans.chatNeed",
                 numberOfParticipants:"$streamplans.numberOfParticipants",
                 numberofStream:"$streamplans.numberofStream",
                 post_expire_days:"$streamplans.post_expire_days",
