@@ -130,7 +130,7 @@ const streamPostschema = mongoose.Schema({
     type: String
   },
   suppierId:{
-    typr:String
+    type:String
   }
 });
 

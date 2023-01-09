@@ -42,6 +42,7 @@ const delete_one_Plans = async (req) => {
 };
 
 const create_post = async (req) => {
+    console.log(req.userId,"asdas",{...req.body,...{suppierId:req.userId}})
     const value = await StreamPost.create({...req.body,...{suppierId:req.userId}})
     await Date.create_date(value)
     return value;
