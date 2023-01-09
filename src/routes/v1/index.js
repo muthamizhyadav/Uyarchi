@@ -109,8 +109,14 @@ const supplierRaisedRoute = require('./supplier.raised.unbilled.route');
 const CustomerWallet = require('./customer.wallet.route');
 const shopEnrollmentEnquiryRoute = require('./shopEnrollmentEnquiry.route');
 const EcomPlan = require('./ecomplan.route');
+const purchasePlan = require('./purchasePlan.route');
 
 const defaultRoutes = [
+  
+  {
+    path: '/purchaseplan',
+    route: purchasePlan,
+  },
   {
     path: '/checkout',
     route: checkot,
