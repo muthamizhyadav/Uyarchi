@@ -112,6 +112,7 @@ const get_one_Post = async (req) => {
 
 
 const update_one_Post = async (req) => {
+    console.log( req.userId )
     const value = await StreamPost.findByIdAndUpdate({ _id: req.query.id, suppierId: req.userId }, req.body, { new: true })
     if (!value) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
