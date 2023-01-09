@@ -45,6 +45,7 @@ const get_order_details = async (req) => {
 
 const get_all_my_orders = async (req) => {
     let plan = await purchasePlan.aggregate([
+        {$sort:{DateIso:-1}},
         { $match: { suppierId: req.userId } },
         {
             $lookup: {
@@ -88,6 +89,8 @@ const get_all_my_orders = async (req) => {
                 validityofStream:"$streamplans.validityofStream",
             }
         }
+
+
     ])
     return plan;
 }
