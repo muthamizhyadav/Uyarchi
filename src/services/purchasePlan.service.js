@@ -34,7 +34,7 @@ const create_purchase_plan = async (req) => {
 
 const get_order_details = async (req) => {
     let order = await purchasePlan.findById(req.query.id);
-    if (!plan || plan.suppierId != req.userId) {
+    if (!order || order.suppierId != req.userId) {
         throw new ApiError(httpStatus.NOT_FOUND, 'User Not Found');
     }
     let plan = await Streamplan.findById(order.planId);
