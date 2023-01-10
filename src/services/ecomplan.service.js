@@ -51,7 +51,6 @@ const create_post = async (req) => {
 
 const get_all_Post = async (req) => {
     let page = req.query.page == '' || req.query.page == null || req.query.page == null ? 0 : req.query.page;
-    console.log(req.userId)
     const value = await StreamPost.aggregate([
         { $match: { $and: [{ suppierId: { $eq: req.userId } },{isUsed:{$eq:false}}] } },
         {
