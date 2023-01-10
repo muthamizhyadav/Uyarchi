@@ -78,9 +78,63 @@ const streamplanschema = mongoose.Schema({
     type: Number,
   },
 });
-streamplanschema.plugin(toJSON);
-streamplanschema.plugin(paginate);
+
 const Streamplan = mongoose.model('streamplan', streamplanschema);
 
-module.exports = { Streamplan };
+const streamPostschema = mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+  created: {
+    type: Date
+  },
+  DateIso: {
+    type: Number
+  },
+  quantity: {
+    type: Number
+  },
+  marketPlace: {
+    type: Number
+  },
+  offerPrice: {
+    type: Number
+  },
+  postLiveStreamingPirce: {
+    type: Number
+  },
+  validity: {
+    type: Number
+  },  DateIso: {
+    type: Number
+  },
+  minLots: {
+    type: Number
+  },
+  incrementalLots: {
+    type: Number
+  },
+  productId: {
+    type: String
+  },
+  categoryId: {
+    type: String
+  },
+  suppierId:{
+    type:String
+  }
+});
+
+const StreamPost = mongoose.model('Streampost', streamPostschema);
+
+module.exports = { Streamplan,StreamPost };
 
