@@ -3,6 +3,8 @@ const express = require('express');
 const Ecomcontroller = require('../../controllers/ecomplan.controller');
 const router = express.Router();
 const supplierAuth = require('../../controllers/supplier.authorizations');
+const multer=require('multer');
+const ecommulter=require('../../middlewares/ecomstrean')
 
 // plan APIS
 router.route('/create/plan').post(Ecomcontroller.create_Plans)
@@ -17,5 +19,28 @@ router.route('/get/all/post').get(supplierAuth,Ecomcontroller.get_all_post)
 router.route('/get/one/post').get(supplierAuth,Ecomcontroller.get_one_post)
 router.route('/update/one/post').put(supplierAuth,Ecomcontroller.update_one_post)
 router.route('/delete/one/post').delete(supplierAuth,Ecomcontroller.delete_one_post)
+
+
+// const storage = multer.memoryStorage({
+//     destination: function (req, res, callback) {
+//         callback(null, '');
+//     },
+    
+// });
+// const upload = multer({ storage }).single('image');
+
+
+// Stream Request APIS
+router.route('/create/stream/one').post(supplierAuth,Ecomcontroller.create_stream_one)
+router.route('/create/stream/one/image').post(ecommulter.single('image') ,Ecomcontroller.create_stream_one_image)
+router.route('/create/stream/two').post(supplierAuth,Ecomcontroller.create_stream_two)
+router.route('/get/all/stream').get(supplierAuth,Ecomcontroller.get_all_stream)
+router.route('/get/one/stream').get(supplierAuth,Ecomcontroller.get_one_stream)
+router.route('/get/my/stream/step/two').get(supplierAuth,Ecomcontroller.get_one_stream_step_two)
+router.route('/update/one/stream').put(supplierAuth,Ecomcontroller.update_one_stream)
+router.route('/update/step/two/stream').put(supplierAuth,Ecomcontroller.update_one_stream_two)
+router.route('/delete/one/stream').delete(supplierAuth,Ecomcontroller.delete_one_stream)
+
+
 
 module.exports = router;

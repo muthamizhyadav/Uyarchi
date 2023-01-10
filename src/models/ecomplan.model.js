@@ -131,10 +131,109 @@ const streamPostschema = mongoose.Schema({
   },
   suppierId:{
     type:String
+  },
+  isUsed:{
+    type: Boolean,
+    default: false,
   }
 });
 
 const StreamPost = mongoose.model('Streampost', streamPostschema);
 
-module.exports = { Streamplan,StreamPost };
+
+
+const streamRequestschema = mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+  created: {
+    type: Date
+  },
+  DateIso: {
+    type: Number
+  },
+  quantity: {
+    type: Number
+  },
+  suppierId:{
+    type:String
+  },
+  post:{
+    type:Array
+  },
+  bookingAmount:{
+    type:Number
+  },
+  communicationMode:{
+    type:Array
+  },
+  streamingDate:{
+    type:String
+  },
+  streamingTime:{
+    type:String
+  },
+  image:{
+    type:String
+  }, 
+  video:{
+    type:String
+  },
+  postCount:{
+    type:Number
+  },
+  sepTwo:{
+    type:String,
+    default:'Pending'
+  },
+  planId:{
+    type:String
+  }
+});
+
+const Streamrequest = mongoose.model('StreamRequest', streamRequestschema);
+
+
+const streamRequestschema_post = mongoose.Schema({
+  _id: {
+    type: String,
+    default: v4,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  archive: {
+    type: Boolean,
+    default: false,
+  },
+  postId: {
+    type: String
+  },
+  streamRequest: {
+    type: String
+  },
+  created: {
+    type: Date
+  },
+  DateIso: {
+    type: Number
+  },
+  suppierId:{
+    type:String
+  },
+});
+
+const StreamrequestPost = mongoose.model('StreamRequestpost', streamRequestschema_post);
+
+module.exports = { Streamplan,StreamPost,Streamrequest,StreamrequestPost };
 

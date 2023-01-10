@@ -16,6 +16,7 @@ const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 const cookieparser = require('cookie-parser');
 const app = express();
+const bodyParser = require("body-parser");
 
 // app.use(session( { secret:'hello world',
 // store:SessionStore,
@@ -24,7 +25,6 @@ const app = express();
 // secure:false,
 // httpOnly:false // by default it's boolean value true }
 // }}));
-
 app.use(express.static('public'));
 
 if (config.env !== 'test') {
@@ -62,6 +62,11 @@ app.use(cookieparser());
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy)
 ;
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
+app.use(bodyParser.json());
 
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {

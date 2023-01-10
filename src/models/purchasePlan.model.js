@@ -45,6 +45,10 @@ const purchasePlanSchema = mongoose.Schema({
     archived: {
         type: Boolean,
         default: false
+    },
+    numberOfStreamused:{
+        type: Number,
+        default:0,
     }
 });
 
