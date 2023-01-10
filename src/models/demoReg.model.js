@@ -25,6 +25,9 @@ const DemoSchema = new mongoose.Schema({
   password: {
     type: String,
   },
+  marriage_status: {
+    type: String,
+  },
   skills: {
     type: Array,
     default: [],
