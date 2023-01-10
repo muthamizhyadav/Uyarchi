@@ -34,7 +34,11 @@ const already_Customer = async (body) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Mobile Number NOt Customer');
   }
   await Textlocal.Otp(mobileNumber);
-   await Supplier.findOneAndUpdate({ primaryContactNumber: mobileNumber, createdByStatus:"By Admin"},{passwordSet:true}, {new:true});
+  await Supplier.findOneAndUpdate(
+    { primaryContactNumber: mobileNumber, createdByStatus: 'By Admin' },
+    { passwordSet: true },
+    { new: true }
+  );
   return { message: 'Send OTP Successfully......' };
 };
 
@@ -63,8 +67,12 @@ const Supplier_setPassword = async (id, body) => {
 const UsersLogin = async (userBody) => {
   const { primaryContactNumber, password } = userBody;
   let userName = await Supplier.findOne({ primaryContactNumber: primaryContactNumber });
-  let already = await Supplier.findOne({ primaryContactNumber: primaryContactNumber, createdByStatus:"By Admin", passwordSet:false});
-  if(already){
+  let already = await Supplier.findOne({
+    primaryContactNumber: primaryContactNumber,
+    createdByStatus: 'By Admin',
+    passwordSet: false,
+  });
+  if (already) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'set password');
   }
   if (!userName || userName.active == false) {
@@ -86,12 +94,12 @@ const forgotPassword = async (body) => {
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user not Found');
   }
-  let check = await Supplier.findOne({ primaryContactNumber: body.primaryContactNumber, active:false });
-   if(check){
+  let check = await Supplier.findOne({ primaryContactNumber: body.primaryContactNumber, active: false });
+  if (check) {
     throw new ApiError(httpStatus.NOT_FOUND, 'user is disable');
-   }
-   await Textlocal.OtpForget(body.primaryContactNumber);
-  return {message:'Send OTP Successfully......' }
+  }
+  await Textlocal.OtpForget(body.primaryContactNumber);
+  return { message: 'Send OTP Successfully......' };
 };
 
 const getAllAppSupplier = async (id) => {
@@ -110,7 +118,7 @@ const getAllAppSupplier = async (id) => {
         pipeline: [
           {
             $match: {
-              $and: [{ order_Type: { $ne: 'Need' } },{ SuddenCreatedBy: { $eq:"By Suplier"} }],
+              $and: [{ order_Type: { $ne: 'Need' } }, { SuddenCreatedBy: { $eq: 'By Suplier' } }],
             },
           },
           {
@@ -745,7 +753,7 @@ const createSuppliers = async (body, userId) => {
       verifiedDate: moment().format('YYYY-MM-DD'),
       verifiedTime: moment().format('HHmmss'),
       verifiedCreated: moment(),
-      SuddenCreatedBy:"By Supplier Executive"
+      SuddenCreatedBy: 'By Supplier Executive',
     },
   };
   const validate = await Supplier.find({ primaryContactNumber: body.primaryContactNumber });
@@ -1011,12 +1019,12 @@ const ValidateMobileNumber = async (id, phone) => {
 };
 
 const checkApproved = async (id) => {
-  const data = await Supplier.findById(id)
-    if(!data){
-      throw new ApiError(httpStatus.BAD_REQUEST, 'user not found');
-    }
-  return data 
-}
+  const data = await Supplier.findById(id);
+  if (!data) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'user not found');
+  }
+  return data;
+};
 
 module.exports = {
   createSupplier,
