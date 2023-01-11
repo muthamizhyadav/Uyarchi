@@ -82,6 +82,10 @@ const update_one_stream = catchAsync(async (req, res) => {
   const value = await Ecomserive.update_one_stream(req);
   res.send(value);
 });
+const update_one_stream_one= catchAsync(async (req, res) => {
+  const value = await Ecomserive.update_one_stream_one(req);
+  res.send(value);
+});
 const update_one_stream_two = catchAsync(async (req, res) => {
   const value = await Ecomserive.update_one_stream_two(req);
   res.send(value);
@@ -111,6 +115,7 @@ module.exports = {
   delete_one_stream,
   create_stream_one_image,
   get_one_stream_step_two,
-  update_one_stream_two
+  update_one_stream_two,
+  update_one_stream_one
 
 };

@@ -38,6 +38,7 @@ router.route('/get/all/stream').get(supplierAuth,Ecomcontroller.get_all_stream)
 router.route('/get/one/stream').get(supplierAuth,Ecomcontroller.get_one_stream)
 router.route('/get/my/stream/step/two').get(supplierAuth,Ecomcontroller.get_one_stream_step_two)
 router.route('/update/one/stream').put(supplierAuth,Ecomcontroller.update_one_stream)
+router.route('/update/step/one/stream').put(supplierAuth,Ecomcontroller.update_one_stream)
 router.route('/update/step/two/stream').put(supplierAuth,Ecomcontroller.update_one_stream_two)
 router.route('/delete/one/stream').delete(supplierAuth,Ecomcontroller.delete_one_stream)
 

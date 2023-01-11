@@ -197,7 +197,13 @@ const streamRequestschema = mongoose.Schema({
   },
   planId:{
     type:String
-  }
+  },
+  streamName:{
+    type:String
+  },
+  discription:{
+    type:String
+  },
 });
 
 const Streamrequest = mongoose.model('StreamRequest', streamRequestschema);

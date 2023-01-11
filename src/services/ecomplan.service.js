@@ -247,6 +247,11 @@ const update_one_stream = async (req) => {
     }
     return { message: "deleted" };
 };
+const update_one_stream_one= async (req) => {
+
+    // let value = await Streamrequest.findByIdAndUpdate({ _id: req.query.id }, { sepTwo: "Completed", planId: req.body.plan_name }, { new: true })
+    return value;
+};
 
 const update_one_stream_two = async (req) => {
     let myplan = await purchasePlan.findById(req.body.plan_name);
@@ -288,5 +293,6 @@ module.exports = {
     delete_one_stream,
     create_stream_one_image,
     get_one_stream_step_two,
-    update_one_stream_two
+    update_one_stream_two,
+    update_one_stream_one
 };
