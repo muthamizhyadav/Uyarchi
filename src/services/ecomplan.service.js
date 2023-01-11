@@ -366,7 +366,8 @@ const get_all_admin = async (req) => {
                 DateIso: 1,
                 created: 1,
                 planId: 1,
-                streamrequestposts: "$streamrequestposts"
+                streamrequestposts: "$streamrequestposts",
+                adminApprove:1
             }
         },
 
