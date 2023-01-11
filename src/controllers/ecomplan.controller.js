@@ -99,6 +99,14 @@ const get_all_admin= catchAsync(async (req, res) => {
   const value = await Ecomserive.get_all_admin(req);
   res.send(value);
 });
+const update_approved= catchAsync(async (req, res) => {
+  const value = await Ecomserive.update_approved(req);
+  res.send(value);
+});
+const update_reject= catchAsync(async (req, res) => {
+  const value = await Ecomserive.update_reject(req);
+  res.send(value);
+});
 module.exports = {
   create_Plans,
   get_all_Plans,
@@ -122,6 +130,8 @@ module.exports = {
   get_one_stream_step_two,
   update_one_stream_two,
   update_one_stream_one,
-  get_all_admin
+  get_all_admin,
+  update_approved,
+  update_reject
 
 };

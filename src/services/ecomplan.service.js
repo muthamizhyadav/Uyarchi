@@ -378,6 +378,17 @@ const get_all_admin = async (req) => {
 
 };
 
+const update_approved= async (req) => {
+    let value = await Streamrequest.findByIdAndUpdate({ _id: req.query.id }, { adminApprove: "Approved",  }, { new: true })
+    return value;
+};
+
+const update_reject= async (req) => {
+    let value = await Streamrequest.findByIdAndUpdate({ _id: req.query.id }, { adminApprove: "Rejected",  }, { new: true })
+    return value;
+};
+
+
 module.exports = {
     create_Plans,
     get_all_Plans,
@@ -400,5 +411,7 @@ module.exports = {
     get_one_stream_step_two,
     update_one_stream_two,
     update_one_stream_one,
-    get_all_admin
+    get_all_admin,
+    update_approved,
+    update_reject
 };

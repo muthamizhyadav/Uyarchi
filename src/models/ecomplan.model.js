@@ -204,6 +204,10 @@ const streamRequestschema = mongoose.Schema({
   discription:{
     type:String
   },
+  adminApprove:{
+    type:String,
+    default:"Pending"
+  }
 });
 
 const Streamrequest = mongoose.model('StreamRequest', streamRequestschema);
