@@ -52,7 +52,7 @@ const create_post = async (req) => {
 const get_all_Post = async (req) => {
     let page = req.query.page == '' || req.query.page == null || req.query.page == null ? 0 : req.query.page;
     const value = await StreamPost.aggregate([
-        { $match: { $and: [{ suppierId: { $eq: req.userId } },{isUsed:{$eq:false}}] } },
+        { $match: { $and: [{ suppierId: { $eq: req.userId } }, { isUsed: { $eq: false } }] } },
         {
             $lookup: {
                 from: 'products',
@@ -204,7 +204,7 @@ const get_one_stream_step_two = async (req) => {
     const myorders = await purchasePlan.aggregate([
         {
             $match: {
-                $and:[{suppierId:{$eq :req.userId}},{active:{$eq:true}}]
+                $and: [{ suppierId: { $eq: req.userId } }, { active: { $eq: true } }]
             }
         },
         {
@@ -247,7 +247,7 @@ const update_one_stream = async (req) => {
     }
     return { message: "deleted" };
 };
-const update_one_stream_one= async (req) => {
+const update_one_stream_one = async (req) => {
 
     // let value = await Streamrequest.findByIdAndUpdate({ _id: req.query.id }, { sepTwo: "Completed", planId: req.body.plan_name }, { new: true })
     return value;
@@ -257,8 +257,8 @@ const update_one_stream_two = async (req) => {
     let myplan = await purchasePlan.findById(req.body.plan_name);
     let plan = await Streamplan.findById(myplan.planId);
     console.log(myplan.numberOfStreamused)
-    if(myplan.numberOfStreamused + 1==plan.numberofStream){
-        myplan.active=false;
+    if (myplan.numberOfStreamused + 1 == plan.numberofStream) {
+        myplan.active = false;
     }
     myplan.numberOfStreamused = myplan.numberOfStreamused + 1
     myplan.save();
@@ -271,6 +271,111 @@ const delete_one_stream = async (req) => {
         throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
     }
     return { message: "deleted" };
+};
+
+const get_all_admin = async (req) => {
+    let page = req.query.page == '' || req.query.page == null || req.query.page == null ? 0 : req.query.page;
+    const value = await Streamrequest.aggregate([
+        {
+            $lookup: {
+                from: 'streamrequestposts',
+                localField: '_id',
+                foreignField: 'streamRequest',
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: 'streamposts',
+                            localField: 'postId',
+                            foreignField: '_id',
+                            pipeline: [
+                                {
+                                    $lookup: {
+                                        from: 'products',
+                                        localField: 'productId',
+                                        foreignField: '_id',
+                                        as: 'products',
+                                    },
+                                },
+                                { $unwind: "$products" },
+                                {
+                                    $project: {
+                                        _id: 1,
+                                        productTitle: "$products.productTitle",
+                                        productId: 1,
+                                        categoryId: 1,
+                                        quantity: 1,
+                                        marketPlace: 1,
+                                        offerPrice: 1,
+                                        postLiveStreamingPirce: 1,
+                                        validity: 1,
+                                        minLots: 1,
+                                        incrementalLots: 1,
+                                        suppierId: 1,
+                                        DateIso: 1,
+                                        created: 1,
+                                    }
+                                }
+                            ],
+                            as: 'streamposts',
+                        },
+                    },
+                    { $unwind: "$streamposts" },
+                    {
+                        $project: {
+                            _id: 1,
+                            productTitle: "$streamposts.productTitle",
+                            productId: "$streamposts.productId",
+                            quantity: "$streamposts.quantity",
+                            marketPlace: "$streamposts.marketPlace",
+                            offerPrice: "$streamposts.offerPrice",
+                            postLiveStreamingPirce: "$streamposts.postLiveStreamingPirce",
+                            validity: "$streamposts.validity",
+                            minLots: "$streamposts.minLots",
+                            incrementalLots: "$streamposts.incrementalLots",
+                        }
+                    }
+                ],
+                as: 'streamrequestposts',
+            },
+        },
+        {
+            $lookup: {
+                from: 'suppliers',
+                localField: 'suppierId',
+                foreignField: '_id',
+                as: 'suppliers',
+            },
+        },
+        { $unwind: "$suppliers" },
+        {
+            $project: {
+                _id: 1,
+                supplierName: "$suppliers.primaryContactName",
+                active: 1,
+                archive: 1,
+                post: 1,
+                communicationMode: 1,
+                sepTwo: 1,
+                bookingAmount: 1,
+                streamingDate: 1,
+                streamingTime: 1,
+                discription: 1,
+                streamName: 1,
+                suppierId: 1,
+                postCount: 1,
+                DateIso: 1,
+                created: 1,
+                planId: 1,
+                streamrequestposts: "$streamrequestposts"
+            }
+        },
+
+        { $sort: { DateIso: -1 } },
+        { $skip: 10 * page },
+        { $limit: 10 },
+    ])
+    return value;
+
 };
 
 module.exports = {
@@ -294,5 +399,6 @@ module.exports = {
     create_stream_one_image,
     get_one_stream_step_two,
     update_one_stream_two,
-    update_one_stream_one
+    update_one_stream_one,
+    get_all_admin
 };

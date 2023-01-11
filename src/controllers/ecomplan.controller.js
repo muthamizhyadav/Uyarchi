@@ -94,6 +94,11 @@ const delete_one_stream = catchAsync(async (req, res) => {
   const value = await Ecomserive.delete_one_stream(req);
   res.send(value);
 });
+
+const get_all_admin= catchAsync(async (req, res) => {
+  const value = await Ecomserive.get_all_admin(req);
+  res.send(value);
+});
 module.exports = {
   create_Plans,
   get_all_Plans,
@@ -116,6 +121,7 @@ module.exports = {
   create_stream_one_image,
   get_one_stream_step_two,
   update_one_stream_two,
-  update_one_stream_one
+  update_one_stream_one,
+  get_all_admin
 
 };
