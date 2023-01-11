@@ -109,6 +109,7 @@ const update_reject= catchAsync(async (req, res) => {
 });
 
 const get_all_streams= catchAsync(async (req, res) => {
+  console.log("sdas")
   const value = await Ecomserive.get_all_streams(req);
   res.send(value);
 });
