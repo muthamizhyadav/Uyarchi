@@ -53,6 +53,7 @@
     "prettier"
   ],
   "dependencies": {
+    "agora-access-token": "^2.0.4",
     "aws-sdk": "^2.1291.0",
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
@@ -87,7 +88,7 @@
     "rawurlencode": "^1.0.2",
     "razorpay": "^2.8.3",
     "serverless-http": "^3.0.1",
-    "socket.io": "^4.5.1",
+    "socket.io": "^4.5.4",
     "swagger-jsdoc": "^6.0.8",
     "swagger-ui-express": "^4.1.6",
     "twilio": "^3.76.1",

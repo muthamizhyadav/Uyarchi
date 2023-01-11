@@ -17,6 +17,8 @@ const ApiError = require('./utils/ApiError');
 const cookieparser = require('cookie-parser');
 const app = express();
 const bodyParser = require("body-parser");
+const routes_v2 = require('./routes/v1/liveStreaming');
+const logger = require('./config/logger');
 
 // app.use(session( { secret:'hello world',
 // store:SessionStore,
@@ -25,6 +27,30 @@ const bodyParser = require("body-parser");
 // secure:false,
 // httpOnly:false // by default it's boolean value true }
 // }}));
+
+let http = require('http');
+let server = http.Server(app);
+let socketIO = require('socket.io');
+let io = socketIO(server);
+
+server.listen(config.port, () => {
+  logger.info(`Listening to port ${config.port}`);
+});
+
+io.sockets.on('connection', async (socket) => {
+  socket.on('groupchat', async (data) => {
+    await chetModule.chat_room_create(data,io)
+  });
+  socket.on('', (msg) => {
+    console.log('message: ' + msg);
+  });
+});
+app.use(function (req, res, next) {
+  req.io = io;
+  next();
+});
+
+
 app.use(express.static('public'));
 
 if (config.env !== 'test') {
@@ -74,6 +100,8 @@ if (config.env === 'production') {
 }
 // v1 api routes
 app.use('/v1', routes);
+app.use('/v2', routes_v2);
+
 
 //default routes
 
