@@ -114,6 +114,12 @@ const get_all_streams= catchAsync(async (req, res) => {
   res.send(value);
 });
 
+const go_live_stream_host= catchAsync(async (req, res) => {
+  console.log("sdas")
+  const value = await Ecomserive.get_all_streams(req);
+  res.send(value);
+});
+
 module.exports = {
   create_Plans,
   get_all_Plans,
@@ -140,6 +146,9 @@ module.exports = {
   get_all_admin,
   update_approved,
   update_reject,
-  get_all_streams
+  get_all_streams,
+
+
+  go_live_stream_host
 
 };

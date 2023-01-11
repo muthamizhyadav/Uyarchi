@@ -4,6 +4,7 @@ const ApiError = require('../utils/ApiError');
 const AWS = require('aws-sdk')
 const Date = require('./Date.serive')
 const { purchasePlan } = require('../models/purchasePlan.model');
+const { tempTokenModel } = require('../models/liveStreaming/generateToken.model');
 
 const create_Plans = async (req) => {
     console.log(req.body)
@@ -367,7 +368,7 @@ const get_all_admin = async (req) => {
                 created: 1,
                 planId: 1,
                 streamrequestposts: "$streamrequestposts",
-                adminApprove:1
+                adminApprove: 1
             }
         },
 
@@ -379,22 +380,22 @@ const get_all_admin = async (req) => {
 
 };
 
-const update_approved= async (req) => {
-    let value = await Streamrequest.findByIdAndUpdate({ _id: req.query.id }, { adminApprove: "Approved",  }, { new: true })
+const update_approved = async (req) => {
+    let value = await Streamrequest.findByIdAndUpdate({ _id: req.query.id }, { adminApprove: "Approved", }, { new: true })
     return value;
 };
 
-const update_reject= async (req) => {
-    let value = await Streamrequest.findByIdAndUpdate({ _id: req.query.id }, { adminApprove: "Rejected",  }, { new: true })
+const update_reject = async (req) => {
+    let value = await Streamrequest.findByIdAndUpdate({ _id: req.query.id }, { adminApprove: "Rejected", }, { new: true })
     return value;
 };
 
 
-const get_all_streams= async (req) => {
+const get_all_streams = async (req) => {
     let page = req.query.page == '' || req.query.page == null || req.query.page == null ? 0 : req.query.page;
     console.log(req.userId)
     const value = await Streamrequest.aggregate([
-        { $match: { $and: [{ suppierId: { $eq: req.userId } },{adminApprove:{$eq:"Approved"}}] } },
+        { $match: { $and: [{ suppierId: { $eq: req.userId } }, { adminApprove: { $eq: "Approved" } }] } },
         {
             $lookup: {
                 from: 'streamrequestposts',
@@ -486,13 +487,125 @@ const get_all_streams= async (req) => {
                 created: 1,
                 planId: 1,
                 streamrequestposts: "$streamrequestposts",
-                adminApprove:1
+                adminApprove: 1
             }
         },
 
         { $sort: { DateIso: -1 } },
         { $skip: 10 * page },
         { $limit: 10 },
+    ])
+    return value;
+};
+
+const go_live_stream_host = async (req) => {
+    let value = await Streamrequest.aggregate([
+        { $match: { $and: [{ suppierId: { $eq: req.userId } }, { adminApprove: { $eq: "Approved" } }] } },
+        {
+            $lookup: {
+                from: 'streamrequestposts',
+                localField: '_id',
+                foreignField: 'streamRequest',
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: 'streamposts',
+                            localField: 'postId',
+                            foreignField: '_id',
+                            pipeline: [
+                                {
+                                    $lookup: {
+                                        from: 'products',
+                                        localField: 'productId',
+                                        foreignField: '_id',
+                                        as: 'products',
+                                    },
+                                },
+                                { $unwind: "$products" },
+                                {
+                                    $project: {
+                                        _id: 1,
+                                        productTitle: "$products.productTitle",
+                                        productId: 1,
+                                        categoryId: 1,
+                                        quantity: 1,
+                                        marketPlace: 1,
+                                        offerPrice: 1,
+                                        postLiveStreamingPirce: 1,
+                                        validity: 1,
+                                        minLots: 1,
+                                        incrementalLots: 1,
+                                        suppierId: 1,
+                                        DateIso: 1,
+                                        created: 1,
+                                    }
+                                }
+                            ],
+                            as: 'streamposts',
+                        },
+                    },
+                    { $unwind: "$streamposts" },
+                    {
+                        $project: {
+                            _id: 1,
+                            productTitle: "$streamposts.productTitle",
+                            productId: "$streamposts.productId",
+                            quantity: "$streamposts.quantity",
+                            marketPlace: "$streamposts.marketPlace",
+                            offerPrice: "$streamposts.offerPrice",
+                            postLiveStreamingPirce: "$streamposts.postLiveStreamingPirce",
+                            validity: "$streamposts.validity",
+                            minLots: "$streamposts.minLots",
+                            incrementalLots: "$streamposts.incrementalLots",
+                        }
+                    }
+                ],
+                as: 'streamrequestposts',
+            },
+        },
+        {
+            $lookup: {
+                from: 'suppliers',
+                localField: 'suppierId',
+                foreignField: '_id',
+                as: 'suppliers',
+            },
+        },
+        { $unwind: "$suppliers" },
+        {
+            $lookup: {
+                from: 'temptokens',
+                localField: 'tokenDetails',
+                foreignField: '_id',
+                as: 'temptokens',
+            },
+        },
+        { $unwind: "$temptokens" },
+        {
+            $project: {
+                _id: 1,
+                supplierName: "$suppliers.primaryContactName",
+                active: 1,
+                archive: 1,
+                post: 1,
+                communicationMode: 1,
+                sepTwo: 1,
+                bookingAmount: 1,
+                streamingDate: 1,
+                streamingTime: 1,
+                discription: 1,
+                streamName: 1,
+                suppierId: 1,
+                postCount: 1,
+                DateIso: 1,
+                created: 1,
+                planId: 1,
+                streamrequestposts: "$streamrequestposts",
+                adminApprove: 1,
+                temptokens:"$temptokens"
+            }
+        },
+
     ])
     return value;
 };

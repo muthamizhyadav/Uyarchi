@@ -47,5 +47,11 @@ router.route('/update/reject').put(Ecomcontroller.update_reject)
 router.route('/my/approved/streams').get(supplierAuth,Ecomcontroller.get_all_streams)
 
 
+// live Stream APIS
+
+
+router.route('/golive/host/view').get(supplierAuth,Ecomcontroller.go_live_stream_host)
+
+
 
 module.exports = router;
