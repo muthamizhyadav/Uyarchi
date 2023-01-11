@@ -10,6 +10,8 @@ const appCertificate = 'bfb596743d2b4414a1895ac2edb1d1f0';
 const Authorization = `Basic ${Buffer.from(`8f68dcbfe5494cf8acf83d5836a1effc:b222bdfa2a5a4a04afccacb60b1fa2a1`).toString(
   'base64'
 )}`;
+const { Streamplan, StreamPost, Streamrequest, StreamrequestPost } = require('../../models/ecomplan.model');
+
 
 const generateUid = async (req) => {
   const length = 5;
@@ -18,11 +20,16 @@ const generateUid = async (req) => {
 };
 
 const generateToken = async (req) => {
+  let supplierId = req.userId;
+  let streamId = req.body.streamId;
+  console.log(streamId)
+  if (!streamId) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
   const expirationTimeInSeconds = 3600;
   const uid = await generateUid();
   const uid_cloud = await generateUid();
   const role = req.body.isPublisher ? Agora.RtcRole.PUBLISHER : Agora.RtcRole.SUBSCRIBER;
-
   const moment_curr = moment();
   const currentTimestamp = moment_curr.add(30, 'minutes');
   const expirationTimestamp =
@@ -33,6 +40,8 @@ const generateToken = async (req) => {
     ...{
       date: moment().format('YYYY-MM-DD'),
       time: moment().format('HHMMSS'),
+      supplierId:supplierId,
+      streamId:streamId,
       created: moment(),
       Uid: uid,
       participents: 3,
@@ -49,15 +58,14 @@ const generateToken = async (req) => {
   value.cloud_recording = cloud_recording.value.token;
   value.uid_cloud = cloud_recording.value.Uid;
   value.cloud_id = cloud_recording.value._id;
-
   value.save();
+  let stream=await Streamrequest.findByIdAndUpdate({ _id: streamId }, { tokenDetails: value._id ,tokenGeneration:true}, { new: true });
 
-  return { uid, token, value, cloud_recording };
+  return { uid, token, value, cloud_recording ,stream};
 };
 const geenerate_rtc_token = async (chennel, uid, role, expirationTimestamp) => {
   return Agora.RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, chennel, uid, role, expirationTimestamp);
 };
-
 const generateToken_sub_record = async (channel, isPublisher, req) => {
   const expirationTimeInSeconds = 3600;
   const uid = await generateUid();
@@ -89,33 +97,35 @@ const generateToken_sub_record = async (channel, isPublisher, req) => {
 };
 
 const generateToken_sub = async (req) => {
-  const expirationTimeInSeconds = 3600;
-  const uid = await generateUid();
-  const role = req.body.isPublisher ? Agora.RtcRole.PUBLISHER : Agora.RtcRole.SUBSCRIBER;
-  const channel = req.body.channel;
+  // const expirationTimeInSeconds = 3600;
+  // const uid = await generateUid();
+  // const role = req.body.isPublisher ? Agora.RtcRole.PUBLISHER : Agora.RtcRole.SUBSCRIBER;
+  // const channel = req.body.channel;
 
-  const moment_curr = moment();
-  const currentTimestamp = moment_curr.add(30, 'minutes');
-  const expirationTimestamp =
-    new Date(new Date(currentTimestamp.format('YYYY-MM-DD') + ' ' + currentTimestamp.format('HH:mm:ss'))).getTime() / 1000;
-  let value = await tempTokenModel.create({
-    ...req.body,
-    ...{
-      date: moment().format('YYYY-MM-DD'),
-      time: moment().format('HHMMSS'),
-      created: moment(),
-      Uid: uid,
-      chennel: channel,
-      participents: 3,
-      created_num: new Date(new Date(moment().format('YYYY-MM-DD') + ' ' + moment().format('HH:mm:ss'))).getTime(),
-      expDate: expirationTimestamp * 1000,
-    },
-  });
-  console.log(role);
-  const token = await geenerate_rtc_token(channel, uid, role, expirationTimestamp);
-  value.token = token;
-  value.save();
-  return { uid, token, value };
+  // const moment_curr = moment();
+  // const currentTimestamp = moment_curr.add(30, 'minutes');
+  // const expirationTimestamp =
+  //   new Date(new Date(currentTimestamp.format('YYYY-MM-DD') + ' ' + currentTimestamp.format('HH:mm:ss'))).getTime() / 1000;
+  // let value = await tempTokenModel.create({
+  //   ...req.body,
+  //   ...{
+  //     date: moment().format('YYYY-MM-DD'),
+  //     time: moment().format('HHMMSS'),
+  //     created: moment(),
+  //     Uid: uid,
+  //     chennel: channel,
+  //     participents: 3,
+  //     created_num: new Date(new Date(moment().format('YYYY-MM-DD') + ' ' + moment().format('HH:mm:ss'))).getTime(),
+  //     expDate: expirationTimestamp * 1000,
+  //   },
+  // });
+  // console.log(role);
+  // const token = await geenerate_rtc_token(channel, uid, role, expirationTimestamp);
+  // value.token = token;
+  // value.save();
+  // return { uid, token, value };
+
+  return { asd: "asda" }
 };
 
 const getHostTokens = async (req) => {
@@ -359,7 +369,7 @@ const get_sub_token = async (req) => {
         as: 'active_users',
       },
     },
-    {$unwind:"$active_users"},
+    { $unwind: "$active_users" },
     {
       $project: {
         _id: 1,
@@ -376,13 +386,13 @@ const get_sub_token = async (req) => {
         created_num: 1,
         expDate: 1,
         token: 1,
-        hostUid:"$active_users.Uid",
-        expDate_host:"$active_users.expDate",
+        hostUid: "$active_users.Uid",
+        expDate_host: "$active_users.expDate",
 
       }
     }
   ])
-  if(value.length ==0){
+  if (value.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'plan_not_found');
   }
   return value[0];

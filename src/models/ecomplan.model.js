@@ -207,7 +207,19 @@ const streamRequestschema = mongoose.Schema({
   adminApprove:{
     type:String,
     default:"Pending"
+  },
+  tokenDetails:{
+    type:String
+  },
+  activelive:{
+    type:String,
+    default:"Pending"
+  },
+  tokenGeneration:{
+    type: Boolean,
+    default: false,
   }
+
 });
 
 const Streamrequest = mongoose.model('StreamRequest', streamRequestschema);
@@ -239,6 +251,9 @@ const streamRequestschema_post = mongoose.Schema({
     type: Number
   },
   suppierId:{
+    type:String
+  },
+  tokenDetails:{
     type:String
   },
 });
