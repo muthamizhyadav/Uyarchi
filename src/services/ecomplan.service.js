@@ -500,7 +500,7 @@ const get_all_streams = async (req) => {
 
 const go_live_stream_host = async (req) => {
     let value = await Streamrequest.aggregate([
-        { $match: { $and: [{ suppierId: { $eq: req.userId } }, { adminApprove: { $eq: "Approved" } }] } },
+        { $match: { $and: [{ suppierId: { $eq: req.userId } }, { adminApprove: { $eq: "Approved" } },{_id:{$eq:req.query.id}}] } },
         {
             $lookup: {
                 from: 'streamrequestposts',
@@ -635,5 +635,7 @@ module.exports = {
     get_all_admin,
     update_approved,
     update_reject,
-    get_all_streams
+    get_all_streams,
+
+    go_live_stream_host
 };

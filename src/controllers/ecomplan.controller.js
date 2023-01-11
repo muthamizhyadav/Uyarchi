@@ -116,7 +116,7 @@ const get_all_streams= catchAsync(async (req, res) => {
 
 const go_live_stream_host= catchAsync(async (req, res) => {
   console.log("sdas")
-  const value = await Ecomserive.get_all_streams(req);
+  const value = await Ecomserive.go_live_stream_host(req);
   res.send(value);
 });
 
