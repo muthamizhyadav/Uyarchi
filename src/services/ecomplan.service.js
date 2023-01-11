@@ -390,6 +390,18 @@ const update_reject= async (req) => {
 };
 
 
+const get_all_streams= async (req) => {
+    let page = req.query.page == '' || req.query.page == null || req.query.page == null ? 0 : req.query.page;
+    console.log(req.userId)
+    const value = await Streamrequest.aggregate([
+        { $match: { $and: [{ suppierId: { $eq: req.userId } },{adminApprove:{$eq:"Approved"}}] } },
+        { $sort: { DateIso: -1 } },
+        { $skip: 10 * page },
+        { $limit: 10 },
+    ])
+    return value;
+};
+
 module.exports = {
     create_Plans,
     get_all_Plans,
@@ -414,5 +426,6 @@ module.exports = {
     update_one_stream_one,
     get_all_admin,
     update_approved,
-    update_reject
+    update_reject,
+    get_all_streams
 };

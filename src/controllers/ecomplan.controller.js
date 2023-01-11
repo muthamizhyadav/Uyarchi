@@ -107,6 +107,12 @@ const update_reject= catchAsync(async (req, res) => {
   const value = await Ecomserive.update_reject(req);
   res.send(value);
 });
+
+const get_all_streams= catchAsync(async (req, res) => {
+  const value = await Ecomserive.get_all_streams(req);
+  res.send(value);
+});
+
 module.exports = {
   create_Plans,
   get_all_Plans,
@@ -132,6 +138,7 @@ module.exports = {
   update_one_stream_one,
   get_all_admin,
   update_approved,
-  update_reject
+  update_reject,
+  get_all_streams
 
 };

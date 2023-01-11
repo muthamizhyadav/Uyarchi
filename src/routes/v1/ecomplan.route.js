@@ -44,6 +44,7 @@ router.route('/delete/one/stream').delete(supplierAuth,Ecomcontroller.delete_one
 router.route('/getall/admin/streams').get(Ecomcontroller.get_all_admin)
 router.route('/update/approved').put(Ecomcontroller.update_approved)
 router.route('/update/reject').put(Ecomcontroller.update_reject)
+router.route('/getall/approved/streams').get(Ecomcontroller.update_reject)
 
 
 
