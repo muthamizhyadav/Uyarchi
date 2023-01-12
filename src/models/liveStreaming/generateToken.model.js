@@ -70,6 +70,9 @@ const tempToken = mongoose.Schema({
   streamId:{
     type: String,
   },
+  shopId:{
+    type: String,
+  }
 });
 
 const tempTokenModel = mongoose.model('tempToken', tempToken);
