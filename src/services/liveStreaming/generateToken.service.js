@@ -97,6 +97,7 @@ const generateToken_sub_record = async (channel, isPublisher, req) => {
 
 const generateToken_sub = async (req) => {
   const channel = req.query.id;
+  let str = await Streamrequest.findById(channel)
   let stream = await tempTokenModel.findOne({ shopId: req.shopId, streamId: channel });
   if (!stream) {
     const uid = await generateUid();
@@ -109,6 +110,7 @@ const generateToken_sub = async (req) => {
     let value = await tempTokenModel.create({
       ...req.body,
       ...{
+        hostId:str.tokenDetails,
         type: 'sub',
         date: moment().format('YYYY-MM-DD'),
         time: moment().format('HHMMSS'),
@@ -126,7 +128,7 @@ const generateToken_sub = async (req) => {
     const token = await geenerate_rtc_token(channel, uid, role, expirationTimestamp);
     value.token = token;
     value.save();
-    stream=value;
+    stream = value;
   }
   return stream;
 };
