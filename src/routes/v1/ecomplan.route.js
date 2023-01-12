@@ -53,6 +53,7 @@ router.route('/my/approved/streams').get(supplierAuth,Ecomcontroller.get_all_str
 router.route('/golive/host/view').get(supplierAuth,Ecomcontroller.go_live_stream_host)
 
 router.route('/getAll/shop/live/stream').get(Ecomcontroller.get_watch_live_steams)
+router.route('/watchlive/go/live').get(Ecomcontroller.get_watch_live_token)
 
 
 

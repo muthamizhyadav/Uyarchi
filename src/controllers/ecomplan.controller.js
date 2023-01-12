@@ -126,6 +126,13 @@ const get_watch_live_steams= catchAsync(async (req, res) => {
   const value = await Ecomserive.get_watch_live_steams(req);
   res.send(value);
 });
+
+const get_watch_live_token= catchAsync(async (req, res) => {
+  console.log("sdas")
+  const value = await Ecomserive.get_watch_live_token(req);
+  res.send(value);
+});
+
 module.exports = {
   create_Plans,
   get_all_Plans,
@@ -156,6 +163,7 @@ module.exports = {
 
 
   go_live_stream_host,
-  get_watch_live_steams
+  get_watch_live_steams,
+  get_watch_live_token
 
 };

@@ -68,13 +68,19 @@ const recording_updateLayout = catchAsync(async (req, res) => {
   const tokens = await generateTokenService.recording_updateLayout(req.query);
   res.status(httpStatus.CREATED).send(tokens);
 });
-const chat_rooms= catchAsync(async (req, res) => {
+const chat_rooms = catchAsync(async (req, res) => {
   const tokens = await generateTokenService.chat_rooms(req.query);
   res.status(httpStatus.CREATED).send(tokens);
 });
 
-const get_sub_token= catchAsync(async (req, res) => {
+const get_sub_token = catchAsync(async (req, res) => {
   const tokens = await generateTokenService.get_sub_token(req.query);
+  res.status(httpStatus.CREATED).send(tokens);
+});
+
+const get_sub_token_single = catchAsync(async (req, res) => {
+  let tokens = await generateTokenService.generateToken_sub(req);
+  req.io.emit('subscriberjoined', { user: 'sd' });
   res.status(httpStatus.CREATED).send(tokens);
 });
 
@@ -93,5 +99,6 @@ module.exports = {
   recording_updateLayout,
   gettokenById_host,
   chat_rooms,
-  get_sub_token
+  get_sub_token,
+  get_sub_token_single
 };
