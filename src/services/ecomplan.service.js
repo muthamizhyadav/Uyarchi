@@ -610,6 +610,13 @@ const go_live_stream_host = async (req) => {
     return value;
 };
 
+const get_watch_live_steams= async (req) => {
+    let value = await Streamrequest.aggregate([
+        { $match: { $and: [{ adminApprove: { $eq: "Approved" } }] } },
+    ]);
+    return value;
+};
+
 module.exports = {
     create_Plans,
     get_all_Plans,
@@ -637,5 +644,6 @@ module.exports = {
     update_reject,
     get_all_streams,
 
-    go_live_stream_host
+    go_live_stream_host,
+    get_watch_live_steams
 };
