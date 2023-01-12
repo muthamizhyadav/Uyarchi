@@ -487,7 +487,10 @@ const get_all_streams = async (req) => {
                 created: 1,
                 planId: 1,
                 streamrequestposts: "$streamrequestposts",
-                adminApprove: 1
+                adminApprove: 1,
+                tokenGeneration:1,
+                tokenDetails:1
+
             }
         },
 
