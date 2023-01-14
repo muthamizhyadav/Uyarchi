@@ -14,7 +14,7 @@ const chat_room_create = async (req,io) => {
     let dateIso= new Date(new Date(moment().format('YYYY-MM-DD') + ' ' + moment().format('HH:mm:ss'))).getTime();
     let stream=await tempTokenModel.findById(req.id)
     let user=await Shop.findById(stream.shopId)
-    let data=await Groupchat.create({...req,...{created:moment(),dateISO:dateIso,userName:user.SName,userType:"buyer",userId:req.id}})
+    let data=await Groupchat.create({...req,...{created:moment(),dateISO:dateIso,userName:user.SName,userType:"buyer",shopId:req.id}})
     io.sockets.emit(req.channel, data);
 }
 

@@ -31,7 +31,7 @@ const Groupchat_schema = mongoose.Schema({
         type: Boolean,
         default: true,
     },
-    userId:{
+    shopId:{
         type: String,
     },
     userName:{
