@@ -19,6 +19,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const routes_v2 = require('./routes/v1/liveStreaming');
 const logger = require('./config/logger');
+const chetModule = require("./services/liveStreaming/chat.service")
 
 // app.use(session( { secret:'hello world',
 // store:SessionStore,
@@ -39,6 +40,7 @@ server.listen(config.port, () => {
 
 io.sockets.on('connection', async (socket) => {
   socket.on('groupchat', async (data) => {
+    console.log("hello",data)
     await chetModule.chat_room_create(data,io)
   });
   socket.on('', (msg) => {

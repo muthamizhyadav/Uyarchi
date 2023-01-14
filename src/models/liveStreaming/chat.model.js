@@ -30,6 +30,15 @@ const Groupchat_schema = mongoose.Schema({
     active: {
         type: Boolean,
         default: true,
+    },
+    userId:{
+        type: String,
+    },
+    userName:{
+        type: String,
+    },
+    userType:{
+        type: String,
     }
 
 });

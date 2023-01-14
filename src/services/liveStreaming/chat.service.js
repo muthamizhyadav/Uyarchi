@@ -4,13 +4,17 @@ const { RtcTokenBuilder, RtcRole } = require('agora-access-token');
 const Agora = require('agora-access-token');
 const moment = require('moment');
 const { Groupchat } = require('../../models/liveStreaming/chat.model');
+const { Shop } = require('../../models/b2b.ShopClone.model');
+const { Streamplan, StreamPost, Streamrequest, StreamrequestPost } = require('../../models/ecomplan.model');
 
+const { tempTokenModel } = require('../../models/liveStreaming/generateToken.model');
 
 
 const chat_room_create = async (req,io) => {
-    console.log(req)
     let dateIso= new Date(new Date(moment().format('YYYY-MM-DD') + ' ' + moment().format('HH:mm:ss'))).getTime();
-    let data=await Groupchat.create({...req,...{created:moment(),dateISO:dateIso}})
+    let stream=await tempTokenModel.findById(req.id)
+    let user=await Shop.findById(stream.shopId)
+    let data=await Groupchat.create({...req,...{created:moment(),dateISO:dateIso,userName:user.SName,userType:"buyer",userId:req.id}})
     io.sockets.emit(req.channel, data);
 }
 
