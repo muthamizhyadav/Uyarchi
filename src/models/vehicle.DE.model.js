@@ -49,12 +49,12 @@ const VehicleSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  extendedKg: {
-    type: String,
-  },
   kgsValue: {
     type: Number,
-    default: 0,
+    // default: 0,
+  },
+  extendedKg: {
+    type: String,
   },
 });
 
